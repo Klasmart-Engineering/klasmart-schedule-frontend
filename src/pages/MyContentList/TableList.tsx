@@ -10,7 +10,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Share, RemoveCircle, SaveAlt, Visibility} from '@material-ui/icons';
+import { Share, RemoveCircle, SaveAlt, Visibility, DoneOutlined, CloseOutlined, PublishOutlined, DeleteOutlineOutlined} from '@material-ui/icons';
 
 function createData(type: string, name: string, developmental: string, skills: string, age: string,settings: string,status: string,created: string,action: string) {
   return { type, name, developmental, skills, age,settings,status,created,action };
@@ -67,7 +67,6 @@ const headCells = [
 
 function EnhancedTableHead(props:any) {
   const {onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-
   return (
       <TableHead>
         <TableRow>
