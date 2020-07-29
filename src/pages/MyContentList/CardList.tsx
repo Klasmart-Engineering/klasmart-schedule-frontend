@@ -1,44 +1,53 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { Grid, Card, CardMedia, CardActions, CardContent, Typography, IconButton, Collapse, createStyles, styled, Chip, Checkbox, ButtonBase, CardActionArea, Box } from '@material-ui/core';
+import { Grid, Card, CardMedia, CardActions, CardContent, Typography, IconButton, Collapse, createStyles, styled, Chip, Checkbox, ButtonBase, CardActionArea, Box, Container } from '@material-ui/core';
 import { ExpandMore, RemoveCircleOutline, Share, GetApp, CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
 
 
-const calcGridWidth = (n: number, w: number) => n === 1 ? '100%' : `calc(100% * ${n/(n-1)} - ${n/(n-1) * w}px)`;
+const calcGridWidth = (n: number, p: number) => n === 1 ? '100%' : `calc(100% * ${n/(n-p)})`;
 
 const useStyles = makeStyles((theme) => createStyles({
-  box: {
+  main: {
+    flex: '1 1 1125px',
     overflowX: 'hidden',
+  },
+  holder: {
+    flex: '0.6 0 40px',
   },
   gridContainer: {
     [theme.breakpoints.only('xl')]: {
-      width: calcGridWidth(4, 338),
+      width: calcGridWidth(4, 0.15),
     },
     [theme.breakpoints.only('lg')]: {
-      width: calcGridWidth(4, 338),
+      width: calcGridWidth(4, 0.15),
     },
     [theme.breakpoints.only('md')]: {
-      width: calcGridWidth(3, 338),
+      width: calcGridWidth(3, 0.15),
     },
     [theme.breakpoints.only('sm')]: {
-      width: calcGridWidth(2, 338),
+      width: calcGridWidth(2, 0.15),
     },
     [theme.breakpoints.only('xs')]: {
-      width: calcGridWidth(1, 338),
+      width: calcGridWidth(1, 0.15),
     },
-    backgroundColor: 'grey',
   },
   card: {
-    width: 338,
+    width: '85%',
     marginBottom: 40,
+    [theme.breakpoints.only('sm')]: {
+      width: '90%',
+    },
+    [theme.breakpoints.only('xs')]: {
+      width: '100%',
+    },
   },
   cardContent: {
     padding: '10px 8px 4px 10px',
   },
   cardMedia: {
-    width: 338,
-    height: 161,
+    width: '100%',
+    paddingTop: '47.6%',
     position: 'relative',
   },
   checkbox: {
@@ -152,39 +161,43 @@ function ContentCard(props: ContentCardProps) {
 export default function ContentCardList() {
   const css = useStyles();
   return (
-    <Box className={css.box}>
-      <Grid className={css.gridContainer} container>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard>        
+    <Box display="flex">
+      <Box className={css.holder}></Box>
+      <Box className={css.main}>
+        <Grid className={css.gridContainer} container>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+            <ContentCard selected={false}></ContentCard> 
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
-        </Grid>
-      </Grid>
+      </Box>
+      <Box className={css.holder}></Box>
     </Box>
   )
 }
