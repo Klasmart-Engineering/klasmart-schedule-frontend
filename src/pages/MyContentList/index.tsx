@@ -1,5 +1,5 @@
 import React from 'react';
-import {useLocation} from 'react-router-dom';
+import {Redirect, useLocation} from 'react-router-dom';
 import CardList from './CardList';
 import TableList from './TableList';
 import {makeStyles, withStyles} from '@material-ui/core/styles';
@@ -14,8 +14,7 @@ import {
     PublishOutlined,
     DescriptionOutlined,
     Search,
-    MoreHoriz,
-    Share
+    MoreHoriz
 } from '@material-ui/icons';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
@@ -36,7 +35,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Tooltip from '@material-ui/core/Tooltip';
-
+import Typography from '@material-ui/core/Typography';
 
 const useLayout = () => {
     const {search} = useLocation();
@@ -128,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: '22px'
     },
     navigation: {
-        padding: '30px 0px 10px 0px'
+        padding: '20px 0px 10px 0px'
     },
     searchText: {
         width: '34%'
@@ -328,6 +327,23 @@ function SelectTemplateMb(props: any) {
     );
 }
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index } = props;
+    return (
+        <div>
+            {value === index && (
+                <Typography>{children}</Typography>
+            )}
+        </div>
+    );
+}
+
 function SecondaryMenu(props: any) {
     const classes = useStyles();
     const status = useStatus()
@@ -384,8 +400,11 @@ function SecondaryMenu(props: any) {
 function SecondaryMenuMb(props: any) {
     const classes = useStyles();
     const status = useStatus()
-    const value = ['content', 'assets', 'published', 'pending', 'archived'].indexOf(status)
     const usePaths = usePath()
+    const [value, setValue] = React.useState(0);
+    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setValue(newValue);
+    };
     return (
         <div className={classes.root}>
             <Hidden only={['md', 'lg', 'xl']}>
@@ -394,34 +413,35 @@ function SecondaryMenuMb(props: any) {
                         <AppBar position="static" color="inherit">
                             <Tabs
                                 value={value}
+                                onChange={handleChange}
                                 variant="scrollable"
                                 scrollButtons="on"
                                 indicatorColor="primary"
                                 textColor="primary"
                                 aria-label="scrollable force tabs example"
                             >
-                                <Link to={`${usePath()}&status=content`}
-                                      style={{color: 'black', textDecoration: 'none'}}>
                                     <Tab label="My Content"/>
-                                </Link>
-                                <Link to={`${usePath()}&status=assets`}
-                                      style={{color: 'black', textDecoration: 'none'}}>
                                     <Tab label="Assets"/>
-                                </Link>
-                                <Link to={`${usePath()}&status=published`}
-                                      style={{color: 'black', textDecoration: 'none'}}>
                                     <Tab label="Published"/>
-                                </Link>
-                                <Link to={`${usePath()}&status=pending`}
-                                      style={{color: 'black', textDecoration: 'none'}}>
                                     <Tab label="Pending"/>
-                                </Link>
-                                <Link to={`${usePath()}&status=archived`}
-                                      style={{color: 'black', textDecoration: 'none'}}>
                                     <Tab label="Archived"/>
-                                </Link>
                             </Tabs>
                         </AppBar>
+                        <TabPanel value={value} index={0}>
+                            <Redirect to={`${usePath()}&status=content`} />
+                        </TabPanel>
+                        <TabPanel value={value} index={1}>
+                            <Redirect to={`${usePath()}&status=assets`} />
+                        </TabPanel>
+                        <TabPanel value={value} index={2}>
+                            <Redirect to={`${usePath()}&status=published`} />
+                        </TabPanel>
+                        <TabPanel value={value} index={3}>
+                            <Redirect to={`${usePath()}&status=pending`} />
+                        </TabPanel>
+                        <TabPanel value={value} index={4}>
+                            <Redirect to={`${usePath()}&status=archived`} />
+                        </TabPanel>
                     </Grid>
                 </Grid>
             </Hidden>
