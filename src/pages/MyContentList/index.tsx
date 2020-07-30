@@ -347,6 +347,7 @@ function TabPanel(props: TabPanelProps) {
 function SecondaryMenu(props: any) {
     const classes = useStyles();
     const status = useStatus()
+    const path = usePath()
     return (
         <div className={classes.root}>
             <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -363,27 +364,27 @@ function SecondaryMenu(props: any) {
                             justify="space-evenly"
                             alignItems="center"
                             item md={7} lg={6} xl={5}>
-                            <Link to={`${usePath()}&status=content`} style={{color: 'black', textDecoration: 'none'}}>
+                            <Link to={`${path}&status=content`} style={{color: 'black', textDecoration: 'none'}}>
                                 <div className={`${classes.nav} ${status === 'content' ? classes.actives : ''}`}>
                                     <DescriptionOutlined className={classes.navIcon}/> <span
                                     className={classes.navTitle}>My Content</span></div>
                             </Link>
-                            <Link to={`${usePath()}&status=assets`} style={{color: 'black', textDecoration: 'none'}}>
+                            <Link to={`${path}&status=assets`} style={{color: 'black', textDecoration: 'none'}}>
                                 <div className={`${classes.nav} ${status === 'assets' ? classes.actives : ''}`}>
                                     <PermMediaOutlined className={classes.navIcon}/> <span
                                     className={classes.navTitle}>Assets</span></div>
                             </Link>
-                            <Link to={`${usePath()}&status=published`} style={{color: 'black', textDecoration: 'none'}}>
+                            <Link to={`${path}&status=published`} style={{color: 'black', textDecoration: 'none'}}>
                                 <div className={`${classes.nav} ${status === 'published' ? classes.actives : ''}`}>
                                     <PublishOutlined className={classes.navIcon}/> <span
                                     className={classes.navTitle}>Published</span></div>
                             </Link>
-                            <Link to={`${usePath()}&status=pending`} style={{color: 'black', textDecoration: 'none'}}>
+                            <Link to={`${path}&status=pending`} style={{color: 'black', textDecoration: 'none'}}>
                                 <div className={`${classes.nav} ${status === 'pending' ? classes.actives : ''}`}>
                                     <HourglassEmptyOutlined className={classes.navIcon}/> <span
                                     className={classes.navTitle}>Pending</span></div>
                             </Link>
-                            <Link to={`${usePath()}&status=archived`} style={{color: 'black', textDecoration: 'none'}}>
+                            <Link to={`${path}&status=archived`} style={{color: 'black', textDecoration: 'none'}}>
                                 <div className={`${classes.nav} ${status === 'archived' ? classes.actives : ''}`}>
                                     <ArchiveOutlined className={classes.navIcon}/> <span
                                     className={classes.navTitle}>Archived</span></div>
@@ -400,7 +401,7 @@ function SecondaryMenu(props: any) {
 function SecondaryMenuMb(props: any) {
     const classes = useStyles();
     const status = useStatus()
-    const usePaths = usePath()
+    const path = usePath()
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
@@ -428,19 +429,19 @@ function SecondaryMenuMb(props: any) {
                             </Tabs>
                         </AppBar>
                         <TabPanel value={value} index={0}>
-                            <Redirect to={`${usePath()}&status=content`} />
+                            <Redirect to={`${path}&status=content`} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <Redirect to={`${usePath()}&status=assets`} />
+                            <Redirect to={`${path}&status=assets`} />
                         </TabPanel>
                         <TabPanel value={value} index={2}>
-                            <Redirect to={`${usePath()}&status=published`} />
+                            <Redirect to={`${path}&status=published`} />
                         </TabPanel>
                         <TabPanel value={value} index={3}>
-                            <Redirect to={`${usePath()}&status=pending`} />
+                            <Redirect to={`${path}&status=pending`} />
                         </TabPanel>
                         <TabPanel value={value} index={4}>
-                            <Redirect to={`${usePath()}&status=archived`} />
+                            <Redirect to={`${path}&status=archived`} />
                         </TabPanel>
                     </Grid>
                 </Grid>
