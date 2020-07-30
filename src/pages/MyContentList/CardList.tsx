@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Grid, Card, CardMedia, CardActions, CardContent, Typography, IconButton, Collapse, createStyles, styled, Chip, Checkbox, ButtonBase, CardActionArea, Box, Container } from '@material-ui/core';
-import { ExpandMore, RemoveCircleOutline, Share, GetApp, CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
+import { ExpandMore, RemoveCircleOutline, Share, GetApp, CheckBox, CheckBoxOutlineBlank, UnarchiveOutlined, DeleteOutlineOutlined } from '@material-ui/icons';
 import LayoutBox from '../../components/LayoutBox';
 
 
@@ -63,17 +63,20 @@ const useStyles = makeStyles((theme) => createStyles({
   body2: {
     color: '#666',
   },
+  ChipLabel: {
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
   previewChip: {
     color: '#0E78D5',
     borderColor: '#0E78D5',
     marginRight: 'auto',
   },
-  previewChipLabel: {
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  removeCircle: {
+  remove: {
     color: '#D32F2F',
+  },
+  unarchive: {
+    color: '#0E78D5',
   },
   share: {
     color: 'black',
@@ -81,10 +84,21 @@ const useStyles = makeStyles((theme) => createStyles({
   getApp: {
     color: 'black',
   },
+  approveChip: {
+    color: '#4CAF50',
+    borderColor: '#4CAF50',
+  },
+  rejectChip: {
+    color: '#D32F2F',
+    borderColor: '#D32F2F',
+  },
   iconButtonBottom: {
     padding: 2,
     marginLeft: 10,
-  }
+  },
+  chipBottom: {
+    marginLeft: 10,
+  },
 }));
 
 
@@ -101,12 +115,55 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   transform: props.open ? 'rotate(180deg)' : 'none',
 }));
 
+function MyOperations() {
+  const css = useStyles();
+  return (
+    <React.Fragment>
+      <IconButton className={css.iconButtonBottom}>
+        <RemoveCircleOutline className={css.remove} fontSize="small"></RemoveCircleOutline>
+      </IconButton>
+      <IconButton className={css.iconButtonBottom}>
+        <Share className={css.share} fontSize="small"></Share>
+      </IconButton>
+      <IconButton className={css.iconButtonBottom}>
+        <GetApp className={css.getApp} fontSize="small"></GetApp>
+      </IconButton>
+    </React.Fragment>
+  )
+}
+
+function PendingOperations() {
+  const css = useStyles();
+  return (
+    <React.Fragment>
+      <Chip className={clsx(css.chipBottom, css.approveChip)} clickable label="Approve" variant="outlined" classes={{ label: css.ChipLabel }}></Chip>
+      <Chip className={clsx(css.chipBottom, css.rejectChip)} clickable label="Reject" variant="outlined" classes={{ label: css.ChipLabel }}></Chip>
+    </React.Fragment>
+  )
+}
+
+function ArchivedOperations() {
+  const css = useStyles();
+  return (
+    <React.Fragment>
+      <IconButton className={css.iconButtonBottom}>
+        <UnarchiveOutlined className={css.unarchive} fontSize="small"></UnarchiveOutlined>
+      </IconButton>
+      <IconButton className={css.iconButtonBottom}>
+        <DeleteOutlineOutlined className={css.remove} fontSize="small"></DeleteOutlineOutlined>
+      </IconButton>
+    </React.Fragment>
+  )
+}
+
 interface ContentCardProps {
   selected: boolean;
+  status: string;
 }
 function ContentCard(props: ContentCardProps) {
   const css = useStyles();
   const expand = useExpand();
+  const { status } = props;
   return (
     <Card className={css.card}>
       <CardActionArea>
@@ -137,19 +194,17 @@ function ContentCard(props: ContentCardProps) {
         </Typography>
       </CardContent>
       <CardActions className={css.cardActions}>
-        <Chip clickable label="Preview" variant="outlined" classes={{ root: css.previewChip, label: css.previewChipLabel }}></Chip>
-        <IconButton className={clsx(css.removeCircle, css.iconButtonBottom)}>
-          <RemoveCircleOutline fontSize="small"></RemoveCircleOutline>
-        </IconButton>
-        <IconButton className={css.iconButtonBottom}>
-          <Share className={css.share} fontSize="small"></Share>
-        </IconButton>
-        <IconButton className={css.iconButtonBottom}>
-          <GetApp className={css.getApp} fontSize="small"></GetApp>
-        </IconButton>
+        <Chip className={css.previewChip} clickable label="Preview" variant="outlined" classes={{ label: css.ChipLabel }}></Chip>
+        {status === 'my' && <MyOperations />}
+        {status === 'pending' && <PendingOperations />}
+        {status === 'archived' && <ArchivedOperations />}
       </CardActions>
     </Card>
   )
+}
+
+interface ContentCardListProps {
+  status: string;
 }
 
 export default function ContentCardList() {
@@ -158,34 +213,34 @@ export default function ContentCardList() {
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Grid className={css.gridContainer} container>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="my"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="my"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="pending"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="pending"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="archived"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="archived"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="archived"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="archived"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="archived"></ContentCard> 
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false}></ContentCard> 
+          <ContentCard selected={false} status="archived"></ContentCard> 
         </Grid>
       </Grid>
     </LayoutBox>
