@@ -11,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Share, RemoveCircle, SaveAlt, Visibility, DoneOutlined, CloseOutlined, PublishOutlined, DeleteOutlineOutlined} from '@material-ui/icons';
+import LayoutBox from '../../components/LayoutBox';
 
 function createData(type: string, name: string, developmental: string, skills: string, age: string,settings: string,status: string,created: string,action: string) {
   return { type, name, developmental, skills, age,settings,status,created,action };
@@ -106,7 +107,8 @@ EnhancedTableHead.propTypes = {
 // @ts-ignore
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
+    width: '90%',
+    margin: '0 auto'
   },
   paper: {
     width: '100%',
@@ -207,80 +209,82 @@ export default function TableList() {
   const isSelected = (name:String) => selected.indexOf(name) !== -1;
 
   return (
-      <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <TableContainer>
-            <Table
-                className={classes.table}
-                aria-labelledby="tableTitle"
-                size={dense ? 'small' : 'medium'}
-                aria-label="enhanced table"
-            >
-              <EnhancedTableHead
-                  classes={classes}
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
-                  onRequestSort={handleRequestSort}
-                  rowCount={state.rows.length}
-              />
-              <TableBody>
-                {stableSort(state.rows, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row:any, index:number) => {
-                      const isItemSelected = isSelected(row.name);
-                      const labelId = `enhanced-table-checkbox-${index}`;
-                      return (
-                          <TableRow
-                              hover
-                              role="checkbox"
-                              aria-checked={isItemSelected}
-                              tabIndex={-1}
-                              key={row.name}
-                              selected={isItemSelected}
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                  checked={isItemSelected}
-                                  inputProps={{ 'aria-labelledby': labelId }}
-                                  onClick={(event) => handleClick(event, row.name)}
-                              />
-                            </TableCell>
-                            <TableCell component="th" id={labelId} scope="row" padding="none" align="center">
-                              {row.type} <Visibility style={{color:'#0E78D5',fontSize:'16px'}} />
-                            </TableCell>
-                            <TableCell align="center">{row.name}</TableCell>
-                            <TableCell align="center">{row.developmental}</TableCell>
-                            <TableCell align="center">{row.skills}</TableCell>
-                            <TableCell align="center">{row.age}</TableCell>
-                            <TableCell align="center">{row.settings}</TableCell>
-                            <TableCell align="center">{row.status}</TableCell>
-                            <TableCell align="center">{row.created}</TableCell>
-                            <TableCell align="center">
-                              <Share style={{color:'#000000',fontSize:'18px',marginLeft: '8px',cursor: 'pointer'}} />
-                              <SaveAlt style={{color:'#000000',fontSize:'18px',marginLeft: '8px',cursor: 'pointer'}} />
-                              <RemoveCircle style={{color:'#D32F2F',fontSize:'18px',marginLeft: '8px',cursor: 'pointer'}} onClick={(event) => removeData(index)} />
-                            </TableCell>
-                          </TableRow>
-                      );
-                    })}
-                <TableRow>
-                  <TableCell colSpan={10} />
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-              rowsPerPageOptions={[8, 10, 25]}
-              component="div"
-              count={state.rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </div>
+
+          <div className={classes.root}>
+              <Paper className={classes.paper}>
+                  <TableContainer>
+                      <Table
+                          className={classes.table}
+                          aria-labelledby="tableTitle"
+                          size={dense ? 'small' : 'medium'}
+                          aria-label="enhanced table"
+                      >
+                          <EnhancedTableHead
+                              classes={classes}
+                              numSelected={selected.length}
+                              order={order}
+                              orderBy={orderBy}
+                              onSelectAllClick={handleSelectAllClick}
+                              onRequestSort={handleRequestSort}
+                              rowCount={state.rows.length}
+                          />
+                          <TableBody>
+                              {stableSort(state.rows, getComparator(order, orderBy))
+                                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                  .map((row:any, index:number) => {
+                                      const isItemSelected = isSelected(row.name);
+                                      const labelId = `enhanced-table-checkbox-${index}`;
+                                      return (
+                                          <TableRow
+                                              hover
+                                              role="checkbox"
+                                              aria-checked={isItemSelected}
+                                              tabIndex={-1}
+                                              key={row.name}
+                                              selected={isItemSelected}
+                                          >
+                                              <TableCell padding="checkbox">
+                                                  <Checkbox
+                                                      checked={isItemSelected}
+                                                      inputProps={{ 'aria-labelledby': labelId }}
+                                                      onClick={(event) => handleClick(event, row.name)}
+                                                  />
+                                              </TableCell>
+                                              <TableCell component="th" id={labelId} scope="row" padding="none" align="center">
+                                                  {row.type} <Visibility style={{color:'#0E78D5',fontSize:'16px'}} />
+                                              </TableCell>
+                                              <TableCell align="center">{row.name}</TableCell>
+                                              <TableCell align="center">{row.developmental}</TableCell>
+                                              <TableCell align="center">{row.skills}</TableCell>
+                                              <TableCell align="center">{row.age}</TableCell>
+                                              <TableCell align="center">{row.settings}</TableCell>
+                                              <TableCell align="center">{row.status}</TableCell>
+                                              <TableCell align="center">{row.created}</TableCell>
+                                              <TableCell align="center">
+                                                  <Share style={{color:'#000000',fontSize:'18px',marginLeft: '8px',cursor: 'pointer'}} />
+                                                  <SaveAlt style={{color:'#000000',fontSize:'18px',marginLeft: '8px',cursor: 'pointer'}} />
+                                                  <RemoveCircle style={{color:'#D32F2F',fontSize:'18px',marginLeft: '8px',cursor: 'pointer'}} onClick={(event) => removeData(index)} />
+                                              </TableCell>
+                                          </TableRow>
+                                      );
+                                  })}
+                              <TableRow>
+                                  <TableCell colSpan={10} />
+                              </TableRow>
+                          </TableBody>
+                      </Table>
+                  </TableContainer>
+                  <TablePagination
+                      rowsPerPageOptions={[8, 10, 25]}
+                      component="div"
+                      count={state.rows.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onChangePage={handleChangePage}
+                      onChangeRowsPerPage={handleChangeRowsPerPage}
+                  />
+              </Paper>
+          </div>
+
   );
 }
