@@ -276,9 +276,9 @@ function ContentCard(props: ContentCardProps) {
 
 interface ContentCardListProps {
   status: string;
+  list: any[];
 }
-
-export default function ContentCardList() {
+export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>

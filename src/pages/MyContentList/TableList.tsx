@@ -59,11 +59,6 @@ function createData(
   };
 }
 
-const useStatus = () => {
-  const { search } = useLocation();
-  return new URLSearchParams(search).get("status") || "content";
-};
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -227,7 +222,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TableList() {
+interface TableListProps {
+  status: string;
+  list: any[];
+}
+export default function TableList(props: TableListProps) {
+  const { list, status } = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -235,7 +235,6 @@ export default function TableList() {
   const [page, setPage] = React.useState(0);
   const [dense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(8);
-  const status = useStatus();
   const [state, setState] = React.useState({
     rows: [
       createData(

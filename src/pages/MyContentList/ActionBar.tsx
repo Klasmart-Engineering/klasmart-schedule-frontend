@@ -34,14 +34,6 @@ import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
 import InputBase from "@material-ui/core/InputBase/InputBase";
 
-const useQuery = () => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const layout = query.get("layout") || "card";
-  const status = query.get("status") || "content";
-  return { layout, status };
-};
-
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -89,13 +81,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "23px",
     height: "48px",
     backgroundColor: "#0E78D5",
-    textTransform: 'capitalize'
+    textTransform: "capitalize",
   },
   nav: {
     cursor: "pointer",
     fontWeight: "bold",
     marginRight: "3px",
-    textTransform: 'capitalize'
+    textTransform: "capitalize",
   },
   searchBtn: {
     width: "111px",
@@ -131,8 +123,8 @@ const useStyles = makeStyles((theme) => ({
     height: "40px",
   },
   capitalize: {
-    textTransform: 'capitalize'
-  }
+    textTransform: "capitalize",
+  },
 }));
 
 interface TabPanelProps {
@@ -251,11 +243,11 @@ function SecondaryMenuMb() {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab label="My Content" className={classes.capitalize}/>
-                <Tab label="Assets" className={classes.capitalize}/>
-                <Tab label="Published" className={classes.capitalize}/>
-                <Tab label="Pending" className={classes.capitalize}/>
-                <Tab label="Archived" className={classes.capitalize}/>
+                <Tab label="My Content" className={classes.capitalize} />
+                <Tab label="Assets" className={classes.capitalize} />
+                <Tab label="Published" className={classes.capitalize} />
+                <Tab label="Pending" className={classes.capitalize} />
+                <Tab label="Archived" className={classes.capitalize} />
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
@@ -418,7 +410,7 @@ function SelectTemplate() {
               <BootstrapInput
                 id="filled-multiline-static"
                 className={classes.searchText}
-                placeholder={'Search'}
+                placeholder={"Search"}
               />
               <Button
                 variant="contained"
@@ -490,7 +482,12 @@ function SelectTemplate() {
   );
 }
 
-export default function ActionBar() {
+interface ActionBarProps {
+  layout: string;
+  status: string;
+}
+export default function ActionBar(props: ActionBarProps) {
+  const { layout, status } = props;
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
