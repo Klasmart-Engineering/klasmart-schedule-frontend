@@ -213,7 +213,6 @@ function ArchivedOperations() {
 }
 
 interface ContentCardProps {
-  selected: boolean;
   status: string;
 }
 function ContentCard(props: ContentCardProps) {
@@ -228,14 +227,13 @@ function ContentCard(props: ContentCardProps) {
           image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
         >
           <Checkbox
-            checked={props.selected}
             icon={
               <CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>
             }
             checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
             size="small"
             className={css.checkbox}
-            color="primary"
+            color="secondary"
           ></Checkbox>
         </CardMedia>
       </CardActionArea>
@@ -286,34 +284,34 @@ export default function ContentCardList() {
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Grid className={css.gridContainer} container>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="my"></ContentCard>
+          <ContentCard status="my"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="my"></ContentCard>
+          <ContentCard status="my"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="pending"></ContentCard>
+          <ContentCard status="pending"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="pending"></ContentCard>
+          <ContentCard status="pending"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="archived"></ContentCard>
+          <ContentCard status="archived"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="archived"></ContentCard>
+          <ContentCard status="archived"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="archived"></ContentCard>
+          <ContentCard status="archived"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="archived"></ContentCard>
+          <ContentCard status="archived"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="archived"></ContentCard>
+          <ContentCard status="archived"></ContentCard>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard selected={false} status="archived"></ContentCard>
+          <ContentCard status="archived"></ContentCard>
         </Grid>
       </Grid>
     </LayoutBox>

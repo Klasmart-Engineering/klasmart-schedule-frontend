@@ -29,8 +29,8 @@
     "extends": "react-app"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json}": ["eslint --fix", "prettier --write", "git add"],
-    "src/**/*.{css,scss,md}": ["prettier --write", "git add"]
+    "src/**/*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write", "git add"],
+    "src/**/*.{css,scss,md,json}": ["prettier --write", "git add"]
   },
   "husky": {
     "hooks": {
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.1.5",
-    "eslint": "^7.5.0",
+    "eslint": "^6.6.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5"
