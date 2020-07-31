@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { Grid, Card, CardMedia, CardActions, CardContent, Typography, IconButton, Collapse, createStyles, styled, Chip, Checkbox, ButtonBase, CardActionArea, Box, Container } from '@material-ui/core';
+import { Grid, Card, CardMedia, CardActions, CardContent, Typography, IconButton, Collapse, createStyles, styled, Chip, Checkbox, ButtonBase, CardActionArea, Box, Container, Tooltip } from '@material-ui/core';
 import { ExpandMore, RemoveCircleOutline, Share, GetApp, CheckBox, CheckBoxOutlineBlank, UnarchiveOutlined, DeleteOutlineOutlined } from '@material-ui/icons';
 import LayoutBox from '../../components/LayoutBox';
 
@@ -119,15 +119,21 @@ function MyOperations() {
   const css = useStyles();
   return (
     <React.Fragment>
-      <IconButton className={css.iconButtonBottom}>
-        <RemoveCircleOutline className={css.remove} fontSize="small"></RemoveCircleOutline>
-      </IconButton>
-      <IconButton className={css.iconButtonBottom}>
-        <Share className={css.share} fontSize="small"></Share>
-      </IconButton>
-      <IconButton className={css.iconButtonBottom}>
-        <GetApp className={css.getApp} fontSize="small"></GetApp>
-      </IconButton>
+      <Tooltip title="Delete">
+        <IconButton className={css.iconButtonBottom}>
+          <RemoveCircleOutline className={css.remove} fontSize="small"></RemoveCircleOutline>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Share">
+        <IconButton className={css.iconButtonBottom}>
+          <Share className={css.share} fontSize="small"></Share>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Download">
+        <IconButton className={css.iconButtonBottom}>
+          <GetApp className={css.getApp} fontSize="small"></GetApp>
+        </IconButton>
+      </Tooltip>
     </React.Fragment>
   )
 }
@@ -146,12 +152,16 @@ function ArchivedOperations() {
   const css = useStyles();
   return (
     <React.Fragment>
-      <IconButton className={css.iconButtonBottom}>
-        <UnarchiveOutlined className={css.unarchive} fontSize="small"></UnarchiveOutlined>
-      </IconButton>
-      <IconButton className={css.iconButtonBottom}>
-        <DeleteOutlineOutlined className={css.remove} fontSize="small"></DeleteOutlineOutlined>
-      </IconButton>
+      <Tooltip title="Publish">
+        <IconButton className={css.iconButtonBottom}>
+          <UnarchiveOutlined className={css.unarchive} fontSize="small"></UnarchiveOutlined>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete">
+        <IconButton className={css.iconButtonBottom}>
+          <DeleteOutlineOutlined className={css.remove} fontSize="small"></DeleteOutlineOutlined>
+        </IconButton>
+      </Tooltip>
     </React.Fragment>
   )
 }
