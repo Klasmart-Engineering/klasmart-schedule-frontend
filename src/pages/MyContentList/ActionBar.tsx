@@ -55,7 +55,7 @@ const BootstrapInput = withStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     border: "1px solid #ced4da",
     fontSize: 16,
-    padding: "10px 26px 10px 12px",
+    padding: "8px 26px 13px 12px",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
     // Use the system font instead of the default Roboto font.
     fontFamily: [
@@ -89,11 +89,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "23px",
     height: "48px",
     backgroundColor: "#0E78D5",
+    textTransform: 'capitalize'
   },
   nav: {
     cursor: "pointer",
     fontWeight: "bold",
     marginRight: "3px",
+    textTransform: 'capitalize'
   },
   searchBtn: {
     width: "111px",
@@ -128,6 +130,9 @@ const useStyles = makeStyles((theme) => ({
     width: "60px",
     height: "40px",
   },
+  capitalize: {
+    textTransform: 'capitalize'
+  }
 }));
 
 interface TabPanelProps {
@@ -246,11 +251,11 @@ function SecondaryMenuMb() {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab label="My Content" />
-                <Tab label="Assets" />
-                <Tab label="Published" />
-                <Tab label="Pending" />
-                <Tab label="Archived" />
+                <Tab label="My Content" className={classes.capitalize}/>
+                <Tab label="Assets" className={classes.capitalize}/>
+                <Tab label="Published" className={classes.capitalize}/>
+                <Tab label="Pending" className={classes.capitalize}/>
+                <Tab label="Archived" className={classes.capitalize}/>
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
@@ -400,9 +405,6 @@ function SelectTemplateMb() {
 function SelectTemplate() {
   const classes = useStyles();
   const [value, setValue] = React.useState("");
-  const [state, setState] = React.useState({
-    value: 30,
-  });
   const { layout } = useQuery();
   const handleChange = (event: any) => {
     setValue(event.target.value);
@@ -413,15 +415,10 @@ function SelectTemplate() {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <TextField
-                id="outlined-multiline-flexible"
+              <BootstrapInput
+                id="filled-multiline-static"
                 className={classes.searchText}
-                label="Search"
-                multiline
-                rowsMax={4}
-                onChange={handleChange}
-                variant="outlined"
-                size="small"
+                placeholder={'Search'}
               />
               <Button
                 variant="contained"
@@ -433,7 +430,7 @@ function SelectTemplate() {
               <FormControl variant="outlined" className={classes.formControl}>
                 <NativeSelect
                   id="demo-customized-select-native"
-                  value={state.value}
+                  value={value}
                   onChange={handleChange}
                   input={<BootstrapInput />}
                 >
