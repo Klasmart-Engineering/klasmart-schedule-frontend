@@ -5,11 +5,6 @@ import TableList from "./TableList";
 import ActionBar from "./ActionBar";
 import mockList from "../../mocks/contentList.json";
 
-const useLayout = () => {
-  const { search } = useLocation();
-  return new URLSearchParams(search).get("layout") || "card";
-};
-
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
