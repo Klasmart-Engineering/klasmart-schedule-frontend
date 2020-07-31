@@ -141,7 +141,7 @@ function TabPanel(props: TabPanelProps) {
 function SecondaryMenu(props: ActionBarProps) {
   const classes = useStyles();
   const { layout, status } = props;
-  const path = `/#/my-content-list?layout=${layout}`;
+  const path = `#/my-content-list?layout=${layout}`;
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
