@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { styled, Box, makeStyles } from '@material-ui/core';
+import React, { ReactNode } from "react";
+import { Box, makeStyles } from "@material-ui/core";
 
 interface LayoutBoxProps {
   mainBase: number;
@@ -31,4 +31,4 @@ export default function LayoutBox(props: LayoutBoxProps) {
       <Box className={css.holder} />
     </Box>
   );
-};
+}

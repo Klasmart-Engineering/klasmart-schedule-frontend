@@ -1,7 +1,7 @@
-import React from 'react';
-import MyContentList from './pages/MyContentList/index';
-import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
-import './App.css';
+import React from "react";
+import MyContentList from "./pages/MyContentList/index";
+import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
+import "./App.css";
 
 function App() {
   return (
@@ -17,7 +17,6 @@ function App() {
           <Redirect to="/my-content-card?layout=card" />
         </Route>
       </Switch>
-
     </HashRouter>
   );
 }
