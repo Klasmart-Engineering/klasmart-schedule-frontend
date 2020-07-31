@@ -264,14 +264,6 @@ export default function TableList(props: TableListProps) {
     setPage(0);
   };
 
-  const removeData = (index: number) => {
-    setState((prevState: any) => {
-      const data = prevState.rows;
-      data.splice(index, 1);
-      return { ...prevState, data };
-    });
-  };
-
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
   const editTemplate = (index: number) => {
@@ -307,7 +299,6 @@ export default function TableList(props: TableListProps) {
                   marginLeft: "8px",
                   cursor: "pointer",
                 }}
-                onClick={(event) => removeData(index)}
               />
             </Tooltip>
           </TableCell>
@@ -333,7 +324,6 @@ export default function TableList(props: TableListProps) {
                   marginLeft: "8px",
                   cursor: "pointer",
                 }}
-                onClick={(event) => removeData(index)}
               />
             </Tooltip>
           </TableCell>
@@ -359,7 +349,6 @@ export default function TableList(props: TableListProps) {
                   marginLeft: "8px",
                   cursor: "pointer",
                 }}
-                onClick={(event) => removeData(index)}
               />
             </Tooltip>
           </TableCell>
@@ -395,7 +384,6 @@ export default function TableList(props: TableListProps) {
                   marginLeft: "8px",
                   cursor: "pointer",
                 }}
-                onClick={(event) => removeData(index)}
               />
             </Tooltip>
           </TableCell>

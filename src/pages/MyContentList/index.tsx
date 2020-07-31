@@ -15,7 +15,7 @@ const useQuery = () => {
 
 export default function MyContentList() {
   const { layout, status } = useQuery();
-  const total = 20;
+  const total = mockList.length;
   return (
     <div>
       <ActionBar layout={layout} status={status} />
