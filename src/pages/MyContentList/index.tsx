@@ -15,13 +15,14 @@ const useQuery = () => {
 
 export default function MyContentList() {
   const { layout, status } = useQuery();
+  const total = 20;
   return (
     <div>
       <ActionBar layout={layout} status={status} />
       {layout === "card" ? (
-        <CardList list={mockList} status={status} />
+        <CardList list={mockList} status={status} total={total} />
       ) : (
-        <TableList list={mockList} status={status} />
+        <TableList list={mockList} status={status} total={total} />
       )}
     </div>
   );

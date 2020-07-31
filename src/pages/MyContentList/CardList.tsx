@@ -16,7 +16,9 @@ import {
   Checkbox,
   CardActionArea,
   Tooltip,
+  Container,
 } from "@material-ui/core";
+import { Pagination } from "@material-ui/lab";
 import {
   ExpandMore,
   RemoveCircleOutline,
@@ -123,6 +125,12 @@ const useStyles = makeStyles((theme) =>
     },
     chipBottom: {
       marginLeft: 10,
+    },
+    pagination: {
+      marginBottom: 40,
+    },
+    paginationUl: {
+      justifyContent: "center",
     },
   })
 );
@@ -281,12 +289,14 @@ function ContentCard(props: ContentCardProps) {
 }
 
 interface ContentCardListProps {
+  total: number;
+  amountPerPage?: number;
   status: string;
   list: ContentCardProps[];
 }
 export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
-  const { status, list } = props;
+  const { status, list, total, amountPerPage = 16 } = props;
   const cardlist = list.map((item, idx) => (
     <Grid key={idx} item xs={12} sm={6} md={4} lg={3} xl={3}>
       <ContentCard {...item} status={status}></ContentCard>
@@ -297,6 +307,12 @@ export default function ContentCardList(props: ContentCardListProps) {
       <Grid className={css.gridContainer} container>
         {cardlist}
       </Grid>
+      <Pagination
+        className={css.pagination}
+        classes={{ ul: css.paginationUl }}
+        count={Math.ceil(total / amountPerPage)}
+        color="primary"
+      />
     </LayoutBox>
   );
 }

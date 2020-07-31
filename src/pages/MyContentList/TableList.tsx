@@ -200,9 +200,10 @@ const useStyles = makeStyles((theme) => ({
 interface TableListProps {
   status: string;
   list: any[];
+  total: number;
 }
 export default function TableList(props: TableListProps) {
-  const { list, status } = props;
+  const { list, status, total } = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -477,7 +478,7 @@ export default function TableList(props: TableListProps) {
         <TablePagination
           rowsPerPageOptions={[8, 10, 25]}
           component="div"
-          count={state.rows.length}
+          count={total}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
