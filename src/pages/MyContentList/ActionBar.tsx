@@ -2,7 +2,7 @@ import LayoutBox from "../../components/LayoutBox";
 import Hidden from "@material-ui/core/Hidden";
 import { Grid, withStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { Link, Redirect, useLocation } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import {
   ViewQuiltOutlined,
   ViewListOutlined,
