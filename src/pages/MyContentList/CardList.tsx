@@ -214,6 +214,15 @@ function ArchivedOperations() {
 
 interface ContentCardProps {
   status: string;
+  type: string;
+  name: string;
+  img: string;
+  developmental: string;
+  skills: string;
+  age: string;
+  settings: string;
+  created: string;
+  action: string;
 }
 function ContentCard(props: ContentCardProps) {
   const css = useStyles();
@@ -222,10 +231,7 @@ function ContentCard(props: ContentCardProps) {
   return (
     <Card className={css.card}>
       <CardActionArea>
-        <CardMedia
-          className={css.cardMedia}
-          image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
-        >
+        <CardMedia className={css.cardMedia} image={props.img}>
           <Checkbox
             icon={
               <CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>
@@ -239,9 +245,7 @@ function ContentCard(props: ContentCardProps) {
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container>
-          <Typography variant="subtitle1">
-            Badanamu Zoo: Snow Leopard
-          </Typography>
+          <Typography variant="subtitle1">{props.name}</Typography>
           <ExpandBtn
             className={css.iconButtonExpandMore}
             {...expand.expandMore}
@@ -251,11 +255,11 @@ function ContentCard(props: ContentCardProps) {
         </Grid>
         <Collapse {...expand.collapse} unmountOnExit>
           <Typography className={css.body2} variant="body2">
-            some details
+            {props.age}
           </Typography>
         </Collapse>
         <Typography className={css.body2} variant="body2">
-          Plan
+          {props.developmental}
         </Typography>
       </CardContent>
       <CardActions className={css.cardActions}>
@@ -266,7 +270,9 @@ function ContentCard(props: ContentCardProps) {
           variant="outlined"
           classes={{ label: css.ChipLabel }}
         ></Chip>
-        {status === "my" && <MyOperations />}
+        {(status === "content" ||
+          status === "published" ||
+          status === "assets") && <MyOperations />}
         {status === "pending" && <PendingOperations />}
         {status === "archived" && <ArchivedOperations />}
       </CardActions>
@@ -276,43 +282,20 @@ function ContentCard(props: ContentCardProps) {
 
 interface ContentCardListProps {
   status: string;
-  list: any[];
+  list: ContentCardProps[];
 }
 export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
+  const { status, list } = props;
+  const cardlist = list.map((item, idx) => (
+    <Grid key={idx} item xs={12} sm={6} md={4} lg={3} xl={3}>
+      <ContentCard {...item} status={status}></ContentCard>
+    </Grid>
+  ));
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Grid className={css.gridContainer} container>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="my"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="my"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="pending"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="pending"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="archived"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="archived"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="archived"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="archived"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="archived"></ContentCard>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-          <ContentCard status="archived"></ContentCard>
-        </Grid>
+        {cardlist}
       </Grid>
     </LayoutBox>
   );

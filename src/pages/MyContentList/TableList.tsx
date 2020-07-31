@@ -211,7 +211,7 @@ export default function TableList(props: TableListProps) {
   const [dense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(8);
   const [state, setState] = React.useState({
-    rows: list
+    rows: list,
   });
 
   const handleRequestSort = (
@@ -433,7 +433,7 @@ export default function TableList(props: TableListProps) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={index}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
