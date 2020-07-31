@@ -22,7 +22,7 @@ export default function MyContentList() {
   const { layout, status } = useQuery();
   return (
     <div>
-      <ActionBar />
+      <ActionBar  layout={layout} status={status}/>
       {layout === "card" ? (
         <CardList list={mockList} status={status} />
       ) : (

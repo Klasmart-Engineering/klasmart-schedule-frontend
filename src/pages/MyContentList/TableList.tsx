@@ -21,7 +21,6 @@ import {
   PublishOutlined,
   DeleteOutlineOutlined,
 } from "@material-ui/icons";
-import { useLocation } from "react-router";
 
 interface Data {
   type: string;
@@ -33,30 +32,6 @@ interface Data {
   status: string;
   created: string;
   action: string;
-}
-
-function createData(
-  type: string,
-  name: string,
-  developmental: string,
-  skills: string,
-  age: string,
-  settings: string,
-  status: string,
-  created: string,
-  action: string
-): Data {
-  return {
-    type,
-    name,
-    developmental,
-    skills,
-    age,
-    settings,
-    status,
-    created,
-    action,
-  };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -236,107 +211,7 @@ export default function TableList(props: TableListProps) {
   const [dense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(8);
   const [state, setState] = React.useState({
-    rows: [
-      createData(
-        "Lesson Plan",
-        "All Activities",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Video",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Ordering",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Book",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Matching",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Song",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Sticker",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Pdf",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-      createData(
-        "Lesson Plan",
-        "Images",
-        "Communication and Language",
-        "Listening and attention",
-        "12-18 Month",
-        "Private",
-        "Published",
-        "06/13/2020 10:58:20",
-        "操作"
-      ),
-    ],
+    rows: list
   });
 
   const handleRequestSort = (

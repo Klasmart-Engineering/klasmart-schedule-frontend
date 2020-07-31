@@ -138,9 +138,9 @@ function TabPanel(props: TabPanelProps) {
   return <div>{value === index && <Typography>{children}</Typography>}</div>;
 }
 
-function SecondaryMenu() {
+function SecondaryMenu(props: ActionBarProps) {
   const classes = useStyles();
-  const { status, layout } = useQuery();
+  const { layout, status } = props;
   const path = `/#/my-content-list?layout=${layout}`;
   return (
     <div className={classes.root}>
@@ -215,14 +215,14 @@ function SecondaryMenu() {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SecondaryMenuMb />
+      <SecondaryMenuMb layout={layout} />
     </div>
   );
 }
 
-function SecondaryMenuMb() {
+function SecondaryMenuMb(props: ActionBarLayout) {
   const classes = useStyles();
-  const { layout } = useQuery();
+  const { layout } = props;
   const path = `/my-content-list?layout=${layout}`;
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -272,12 +272,15 @@ function SecondaryMenuMb() {
   );
 }
 
-function SelectTemplateMb() {
+interface ActionBarLayout {
+  layout: string;
+}
+function SelectTemplateMb(props: ActionBarLayout) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const [value, setValue] = React.useState("");
-  const { layout } = useQuery();
+  const { layout } = props;
   const handleChange = (event: any) => {
     setValue(event.target.value);
   };
@@ -394,10 +397,10 @@ function SelectTemplateMb() {
   );
 }
 
-function SelectTemplate() {
+function SelectTemplate(props: ActionBarProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState("");
-  const { layout } = useQuery();
+  const { layout } = props;
   const handleChange = (event: any) => {
     setValue(event.target.value);
   };
@@ -477,7 +480,7 @@ function SelectTemplate() {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SelectTemplateMb />
+      <SelectTemplateMb layout={layout} />
     </div>
   );
 }
@@ -491,8 +494,8 @@ export default function ActionBar(props: ActionBarProps) {
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
-      <SecondaryMenu />
-      <SelectTemplate />
+      <SecondaryMenu layout={layout} status={status} />
+      <SelectTemplate layout={layout} status={status} />
     </div>
   );
 }
