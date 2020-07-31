@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: "white",
     },
     cardActions: {
-      paddingBottom: 10,
+      flexWrap: "wrap",
     },
     iconButtonExpandMore: {
       marginLeft: "auto",
@@ -97,6 +97,7 @@ const useStyles = makeStyles((theme) =>
       color: "#0E78D5",
       borderColor: "#0E78D5",
       marginRight: "auto",
+      marginBottom: 10,
     },
     remove: {
       color: "#D32F2F",
@@ -121,9 +122,11 @@ const useStyles = makeStyles((theme) =>
     iconButtonBottom: {
       padding: 2,
       marginLeft: 10,
+      marginBottom: 10,
     },
     chipBottom: {
       marginLeft: 10,
+      marginBottom: 10,
     },
     pagination: {
       marginBottom: 40,
