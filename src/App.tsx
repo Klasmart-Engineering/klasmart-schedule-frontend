@@ -13,11 +13,11 @@ function App() {
           <Route path="/content-edit">
             <ContentEdit />
           </Route>
-          <Route path="/my-content-card">
+          <Route path="/my-content-list">
             <MyContentList />
           </Route>
           <Route path="/">
-            <Redirect to="/my-content-card?layout=card" />
+            <Redirect to="/my-content-list?layout=card" />
           </Route>
         </Switch>
       </HashRouter>
