@@ -13,19 +13,26 @@ import {
   createMuiTheme,
   ThemeProvider,
   AppBar,
+  Tabs,
 } from "@material-ui/core";
 import { CloudUploadOutlined, SettingsOutlined } from "@material-ui/icons";
 import LayoutPair from "./Layout";
 import clsx from "clsx";
 
-const useStyles = makeStyles(({ breakpoints }) => ({
+const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
+  tabs: {
+    backgroundColor: palette.grey[200],
+    boxShadow: shadows[3],
+  },
   tabPane: {
     padding: "7.8% 8.5%",
   },
   tab: {
+    fontWeight: 'bold',
     padding: 0,
     [breakpoints.down("sm")]: {
       fontSize: 13,
+      letterSpacing: 0,
     },
   },
   fieldset: {
@@ -44,14 +51,15 @@ export default function LessonMaterial() {
   const css = useStyles();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
+  const size = sm ? 'small' : 'medium';
   const theme = createMuiTheme(defaultTheme, {
     props: {
       MuiTextField: {
-        size: sm ? "small" : "medium",
+        size,
         fullWidth: true,
       },
       MuiButton: {
-        size: sm ? "small" : "medium",
+        size,
       },
       MuiSvgIcon: {
         fontSize: sm ? "small" : "default",
@@ -70,17 +78,15 @@ export default function LessonMaterial() {
       >
         <Paper elevation={sm ? 0 : 3}>
           <TabContext value="details">
-            <AppBar position="static" color="default">
-              <TabList variant="fullWidth">
-                <Tab className={css.tab} label="Details" value="details" />
-                <Tab
-                  className={css.tab}
-                  label="Learning Outcomes"
-                  value="outcomes"
-                />
-                <Tab className={css.tab} label="Media Assets" value="assets" />
-              </TabList>
-            </AppBar>
+            <Tabs value="details" className={css.tabs} variant="fullWidth" indicatorColor="primary" textColor="primary">
+              <Tab className={css.tab} label="Details" value="details" />
+              <Tab
+                className={css.tab}
+                label="Learning Outcomes"
+                value="outcomes"
+              />
+              <Tab className={css.tab} label="Media Assets" value="assets" />
+            </Tabs>
             <TabPanel className={css.tabPane} value="details">
               <TextField label="Lesson Material"></TextField>
               <Box className={css.fieldset}>
@@ -148,8 +154,8 @@ export default function LessonMaterial() {
             </TabPanel>
           </TabContext>
         </Paper>
-        <Box flex="1 1 1105px" boxShadow={1}>
-          h5p
+        <Box flex="1 1 1105px" boxShadow={sm ? 0 : 1} textAlign="center">
+          h5p content
         </Box>
       </LayoutPair>
     </ThemeProvider>
