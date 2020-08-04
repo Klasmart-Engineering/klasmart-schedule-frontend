@@ -23,4 +23,9 @@ export default createMuiTheme({
       textTransform: "none",
     },
   },
+  props: {
+    MuiTextField: {
+      variant: "outlined",
+    },
+  },
 });

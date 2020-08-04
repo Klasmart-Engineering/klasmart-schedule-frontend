@@ -9,6 +9,7 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
+  fade,
 } from "@material-ui/core";
 import {
   ArrowBack,
@@ -21,7 +22,7 @@ import {
 import { ReactComponent as KidsloopLogo } from "../../assets/icons/kidsloop-logo.svg";
 import clsx from "clsx";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(({ palette, breakpoints }) => ({
   arrowBack: {
     marginRight: 28,
   },
@@ -31,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginRight: "auto",
+    [breakpoints.down("sm")]: {
+      fontSize: 16,
+    },
   },
   headerButton: {
     fontWeight: "bold",
@@ -40,16 +44,24 @@ const useStyles = makeStyles((theme) => ({
   },
   redButton: {
     color: "white",
-    backgroundColor: theme.palette.error.main,
+    backgroundColor: palette.error.main,
     "&:hover": {
-      backgroundColor: theme.palette.error.dark,
+      backgroundColor: palette.error.dark,
+    },
+  },
+  redOutlinedButton: {
+    color: palette.error.main,
+    borderColor: palette.error.light,
+    "&:hover": {
+      borderColor: palette.error.main,
+      backgroundColor: fade(palette.error.main, palette.action.hoverOpacity),
     },
   },
   greenButton: {
     color: "white",
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: palette.success.main,
     "&:hover": {
-      backgroundColor: theme.palette.success.dark,
+      backgroundColor: palette.success.dark,
     },
   },
   radioGroup: {
@@ -132,7 +144,7 @@ export default function Header() {
         <Button
           variant="outlined"
           startIcon={<RemoveCircleOutline />}
-          className={clsx(css.headerButton, css.redButton)}
+          className={clsx(css.headerButton, css.redOutlinedButton)}
         >
           Remove to Archive
         </Button>

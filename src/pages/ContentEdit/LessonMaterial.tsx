@@ -7,12 +7,26 @@ import {
   makeStyles,
   Button,
   MenuItem,
+  Paper,
+  useMediaQuery,
+  useTheme,
+  createMuiTheme,
+  ThemeProvider,
+  AppBar,
 } from "@material-ui/core";
 import { CloudUploadOutlined, SettingsOutlined } from "@material-ui/icons";
+import LayoutPair from "./Layout";
+import clsx from "clsx";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ breakpoints }) => ({
   tabPane: {
     padding: "7.8% 8.5%",
+  },
+  tab: {
+    padding: 0,
+    [breakpoints.down("sm")]: {
+      fontSize: 13,
+    },
   },
   fieldset: {
     marginTop: 20,
@@ -24,117 +38,120 @@ const useStyles = makeStyles({
       marginLeft: 20,
     },
   },
-});
+}));
 
 export default function LessonMaterial() {
   const css = useStyles();
+  const defaultTheme = useTheme();
+  const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
+  const theme = createMuiTheme(defaultTheme, {
+    props: {
+      MuiTextField: {
+        size: sm ? "small" : "medium",
+        fullWidth: true,
+      },
+      MuiButton: {
+        size: sm ? "small" : "medium",
+      },
+      MuiSvgIcon: {
+        fontSize: sm ? "small" : "default",
+      },
+    },
+  });
+
   return (
-    <Box display="flex" p={5}>
-      <Box
-        display="flex"
-        mr={4}
-        flex="1 1 703px"
-        flexDirection="column"
-        boxShadow={3}
+    <ThemeProvider theme={theme}>
+      <LayoutPair
+        breakpoint="md"
+        leftWidth={703}
+        rightWidth={1105}
+        spacing={32}
+        p={sm ? 0 : 5}
       >
-        <TabContext value="details">
-          <TabList variant="fullWidth">
-            <Tab label="Details" value="details" />
-            <Tab label="Learning Outcomes" value="outcomes" />
-            <Tab label="Media Assets" value="assets" />
-          </TabList>
-          <TabPanel className={css.tabPane} value="details">
-            <TextField
-              label="Lesson Material"
-              variant="outlined"
-              fullWidth
-            ></TextField>
-            <Box className={css.fieldset}>
-              <input
-                id="thumbnail-file-input"
-                type="file"
-                accept="image/*"
-                hidden
-              ></input>
-              <label htmlFor="thumbnail-file-input">
-                <Button
-                  size="large"
-                  variant="contained"
-                  component="span"
-                  color="primary"
-                  endIcon={<CloudUploadOutlined />}
-                >
-                  Thumbnail
-                </Button>
-              </label>
-            </Box>
-            <TextField
-              className={css.fieldset}
-              variant="outlined"
-              fullWidth
-              label="Material Name"
-            ></TextField>
-            <TextField
-              className={css.fieldset}
-              variant="outlined"
-              fullWidth
-              label="Program"
-              InputProps={{ endAdornment: <SettingsOutlined /> }}
-            ></TextField>
-            <TextField
-              className={css.fieldset}
-              variant="outlined"
-              fullWidth
-              label="Subject"
-            ></TextField>
-            <Box>
+        <Paper elevation={sm ? 0 : 3}>
+          <TabContext value="details">
+            <AppBar position="static" color="default">
+              <TabList variant="fullWidth">
+                <Tab className={css.tab} label="Details" value="details" />
+                <Tab
+                  className={css.tab}
+                  label="Learning Outcomes"
+                  value="outcomes"
+                />
+                <Tab className={css.tab} label="Media Assets" value="assets" />
+              </TabList>
+            </AppBar>
+            <TabPanel className={css.tabPane} value="details">
+              <TextField label="Lesson Material"></TextField>
+              <Box className={css.fieldset}>
+                <input
+                  id="thumbnail-file-input"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                ></input>
+                <label htmlFor="thumbnail-file-input">
+                  <Button
+                    size={sm ? "medium" : "large"}
+                    variant="contained"
+                    component="span"
+                    color="primary"
+                    endIcon={<CloudUploadOutlined />}
+                  >
+                    Thumbnail
+                  </Button>
+                </label>
+              </Box>
               <TextField
-                className={css.halfFieldset}
-                variant="outlined"
-                label="Developmental"
-                InputProps={{ endAdornment: <SettingsOutlined /> }}
+                className={css.fieldset}
+                label="Material Name"
               ></TextField>
               <TextField
-                className={css.halfFieldset}
-                variant="outlined"
-                label="Skills"
+                className={css.fieldset}
+                label="Program"
                 InputProps={{ endAdornment: <SettingsOutlined /> }}
               ></TextField>
-            </Box>
-            <TextField
-              className={css.fieldset}
-              variant="outlined"
-              fullWidth
-              label="Visibility Settings"
-              select
-            >
-              <MenuItem>Organization</MenuItem>
-              <MenuItem>School</MenuItem>
-            </TextField>
-            <TextField
-              className={css.fieldset}
-              variant="outlined"
-              fullWidth
-              label="Description"
-            ></TextField>
-            <TextField
-              className={css.fieldset}
-              variant="outlined"
-              fullWidth
-              label="Keywords"
-            ></TextField>
-          </TabPanel>
-          <TabPanel className={css.tabPane} value="outcomes">
-            outcomes
-          </TabPanel>
-          <TabPanel className={css.tabPane} value="assets">
-            assets
-          </TabPanel>
-        </TabContext>
-      </Box>
-      <Box flex="1 1 1105px" boxShadow={1}>
-        h5p
-      </Box>
-    </Box>
+              <TextField className={css.fieldset} label="Subject"></TextField>
+              <Box>
+                <TextField
+                  className={sm ? css.fieldset : css.halfFieldset}
+                  fullWidth={sm}
+                  label="Developmental"
+                  InputProps={{ endAdornment: <SettingsOutlined /> }}
+                ></TextField>
+                <TextField
+                  className={sm ? css.fieldset : css.halfFieldset}
+                  fullWidth={sm}
+                  label="Skills"
+                  InputProps={{ endAdornment: <SettingsOutlined /> }}
+                ></TextField>
+              </Box>
+              <TextField
+                className={css.fieldset}
+                label="Visibility Settings"
+                select
+              >
+                <MenuItem>Organization</MenuItem>
+                <MenuItem>School</MenuItem>
+              </TextField>
+              <TextField
+                className={css.fieldset}
+                label="Description"
+              ></TextField>
+              <TextField className={css.fieldset} label="Keywords"></TextField>
+            </TabPanel>
+            <TabPanel className={css.tabPane} value="outcomes">
+              outcomes
+            </TabPanel>
+            <TabPanel className={css.tabPane} value="assets">
+              assets
+            </TabPanel>
+          </TabContext>
+        </Paper>
+        <Box flex="1 1 1105px" boxShadow={1}>
+          h5p
+        </Box>
+      </LayoutPair>
+    </ThemeProvider>
   );
 }
