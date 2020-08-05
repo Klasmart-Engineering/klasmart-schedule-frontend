@@ -6,8 +6,12 @@ import clsx from "clsx";
 const useStyles = makeStyles(({ breakpoints }) => ({
   layoutPair: (props: LayoutPairProps) => ({
     display: "flex",
+    padding: props.padding,
     [breakpoints.down(props.breakpoint)]: {
       flexDirection: "column",
+    },
+    [breakpoints.down("sm")]: {
+      padding: props.basePadding,
     },
   }),
   layoutLeft: (props: LayoutPairProps) => ({
@@ -37,6 +41,8 @@ interface LayoutPairProps extends BoxProps {
   spacing: string | number;
   leftWidth: string | number;
   rightWidth: string | number;
+  basePadding: string | number;
+  padding: string | number;
   children: ReactNode;
 }
 export default function LayoutPair(props: LayoutPairProps) {
@@ -45,6 +51,8 @@ export default function LayoutPair(props: LayoutPairProps) {
     spacing,
     leftWidth,
     rightWidth,
+    basePadding,
+    padding,
     children,
     ...restProps
   } = props;

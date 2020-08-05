@@ -27,7 +27,10 @@ import { ReactComponent as KidsloopLogo } from "../../assets/icons/kidsloop-logo
 import clsx from "clsx";
 import { PaletteColor, Palette } from "@material-ui/core/styles/createPalette";
 
-const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
+const createContainedColor = (
+  paletteColor: PaletteColor,
+  palette: Palette
+) => ({
   color: palette.common.white,
   backgroundColor: paletteColor.main,
   "&:hover": {
@@ -71,7 +74,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   iconButton: {
     marginRight: 16,
     padding: 5,
-    border: 'thin solid currentColor',
+    border: "thin solid currentColor",
   },
   redButton: createContainedColor(palette.error, palette),
   redOutlinedButton: createOutlinedColor(palette.error, palette),
@@ -86,74 +89,79 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     "&:not(:first-child)": {
       marginLeft: 64,
     },
-    [breakpoints.down('sm')]: {
+    [breakpoints.down("sm")]: {
       marginRight: 0,
-    }
+    },
   },
 }));
 
-export default function Header() {
+interface HeaderProps {
+  lesson: string;
+  onChangeLesson: (lesson: string) => any;
+}
+export default function Header(props: HeaderProps) {
+  const { lesson, onChangeLesson } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
-  const sm = useMediaQuery(breakpoints.down('sm'));
-  const size = sm ? 'small' : 'medium';
-  const radioTypography = sm ? 'subtitle2' : 'h5';
+  const sm = useMediaQuery(breakpoints.down("sm"));
+  const size = sm ? "small" : "medium";
+  const radioTypography = sm ? "subtitle2" : "h5";
   return (
     <Fragment>
-        <Box
-          display="flex"
-          alignItems="center"
-          pl={sm ? 2 : 3}
-          pr={10}
-          height={72}
-          boxShadow={3}
-        >
-          <IconButton size="small" className={css.arrowBack}>
-            <ArrowBack fontSize={sm ? 'small' : 'default'} />
-          </IconButton>
-          <Hidden smDown>
-            <SvgIcon
-              component={KidsloopLogo}
-              className={css.kidsloopLogo}
-              viewBox="0 0 49 42"
-            />
-          </Hidden>
-          <Typography variant="h6" className={css.title}>
-            {sm ? 'Create New Content' : 'For Organizations'}
-          </Typography>
-          <Hidden smDown>
-            <Button
-              variant="outlined"
-              endIcon={<PlayCircleOutline />}
-              color="primary"
-              className={css.headerButton}
-            >
-              Preview
-            </Button>
-            <Button
-              variant="contained"
-              endIcon={<Cancel />}
-              className={clsx(css.headerButton, css.redButton)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              endIcon={<Save />}
-              color="primary"
-              className={css.headerButton}
-            >
-              Save
-            </Button>
-            <Button
-              variant="contained"
-              endIcon={<Publish />}
-              className={clsx(css.headerButton, css.greenButton)}
-            >
-              Publish
-            </Button>
-          </Hidden>
-        </Box>
+      <Box
+        display="flex"
+        alignItems="center"
+        pl={sm ? 2 : 3}
+        pr={10}
+        height={72}
+        boxShadow={3}
+      >
+        <IconButton size="small" className={css.arrowBack}>
+          <ArrowBack fontSize={sm ? "small" : "default"} />
+        </IconButton>
+        <Hidden smDown>
+          <SvgIcon
+            component={KidsloopLogo}
+            className={css.kidsloopLogo}
+            viewBox="0 0 49 42"
+          />
+        </Hidden>
+        <Typography variant="h6" className={css.title}>
+          {sm ? "Create New Content" : "For Organizations"}
+        </Typography>
+        <Hidden smDown>
+          <Button
+            variant="outlined"
+            endIcon={<PlayCircleOutline />}
+            color="primary"
+            className={css.headerButton}
+          >
+            Preview
+          </Button>
+          <Button
+            variant="contained"
+            endIcon={<Cancel />}
+            className={clsx(css.headerButton, css.redButton)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            endIcon={<Save />}
+            color="primary"
+            className={css.headerButton}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            endIcon={<Publish />}
+            className={clsx(css.headerButton, css.greenButton)}
+          >
+            Publish
+          </Button>
+        </Hidden>
+      </Box>
       <Hidden smDown>
         <Box
           display="flex"
@@ -177,36 +185,58 @@ export default function Header() {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          <IconButton className={clsx(css.iconButton, css.redOutlinedButton)} color="primary">
+          <IconButton
+            className={clsx(css.iconButton, css.redOutlinedButton)}
+            color="primary"
+          >
             <RemoveCircleOutline fontSize="small" />
           </IconButton>
           <IconButton className={css.iconButton} color="primary">
             <PlayCircleOutline fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary">
+          <IconButton
+            className={clsx(css.iconButton, css.redButton)}
+            color="primary"
+          >
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary">
+          <IconButton
+            className={clsx(css.iconButton, css.primaryIconButton)}
+            color="primary"
+          >
             <Save fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary">
+          <IconButton
+            className={clsx(css.iconButton, css.greenButton)}
+            color="primary"
+          >
             <Publish fontSize="small" />
           </IconButton>
         </Box>
       </Hidden>
       <Box display="flex" justifyContent="center">
-        <RadioGroup className={css.radioGroup} value={"material"}>
+        <RadioGroup
+          className={css.radioGroup}
+          value={lesson}
+          onChange={(e) => {
+            onChangeLesson(e.target.value);
+          }}
+        >
           <FormControlLabel
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="material" />}
-            label={<Typography variant={radioTypography}>Lesson Material</Typography>}
+            label={
+              <Typography variant={radioTypography}>Lesson Material</Typography>
+            }
           />
           <FormControlLabel
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="plan" />}
-            label={<Typography variant={radioTypography}>Lesson Plan</Typography>}
+            label={
+              <Typography variant={radioTypography}>Lesson Plan</Typography>
+            }
           />
         </RadioGroup>
       </Box>

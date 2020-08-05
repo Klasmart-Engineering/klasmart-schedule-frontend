@@ -10,8 +10,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <HashRouter>
         <Switch>
-          <Route path="/content-edit">
+          <Route path={ContentEdit.routeMatchPath}>
             <ContentEdit />
+          </Route>
+          <Route path={ContentEdit.routeBasePath}>
+            <Redirect to={ContentEdit.routeRedirectDefault} />
           </Route>
           <Route path="/my-content-list">
             <MyContentList />
