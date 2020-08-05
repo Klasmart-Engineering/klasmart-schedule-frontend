@@ -3,7 +3,6 @@ import {
   Box,
   IconButton,
   makeStyles,
-  SvgIcon,
   Typography,
   Button,
   FormControlLabel,
@@ -23,7 +22,7 @@ import {
   RemoveCircleOutline,
   CancelOutlined,
 } from "@material-ui/icons";
-import { ReactComponent as KidsloopLogo } from "../../assets/icons/kidsloop-logo.svg";
+import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import clsx from "clsx";
 import { PaletteColor, Palette } from "@material-ui/core/styles/createPalette";
 
@@ -56,7 +55,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     },
   },
   kidsloopLogo: {
-    fontSize: 40,
+    width: 40,
+    height: 40,
     marginRight: 16,
   },
   title: {
@@ -120,10 +120,10 @@ export default function Header(props: HeaderProps) {
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
         <Hidden smDown>
-          <SvgIcon
-            component={KidsloopLogo}
+          <img
             className={css.kidsloopLogo}
-            viewBox="0 0 49 42"
+            src={KidsloopLogo}
+            alt="kidsloop logo"
           />
         </Hidden>
         <Typography variant="h6" className={css.title}>
