@@ -67,7 +67,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
   headerButton: {
     fontWeight: "bold",
-    textTransform: "none",
     borderRadius: 27,
     marginLeft: 50,
   },
@@ -99,7 +98,7 @@ interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
 }
-export default function Header(props: HeaderProps) {
+export default function ContentHeader(props: HeaderProps) {
   const { lesson, onChangeLesson } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();

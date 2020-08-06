@@ -44,56 +44,57 @@ export default function Details() {
       },
     },
   });
-
   return (
     <ThemeProvider theme={theme}>
-      <TextField label="Lesson Material"></TextField>
-      <Box className={css.fieldset}>
-        <input
-          id="thumbnail-file-input"
-          type="file"
-          accept="image/*"
-          hidden
-        ></input>
-        <label htmlFor="thumbnail-file-input">
-          <Button
-            size={sm ? "medium" : "large"}
-            variant="contained"
-            component="span"
-            color="primary"
-            endIcon={<CloudUploadOutlined />}
-          >
-            Thumbnail
-          </Button>
-        </label>
-      </Box>
-      <TextField className={css.fieldset} label="Material Name"></TextField>
-      <TextField
-        className={css.fieldset}
-        label="Program"
-        InputProps={{ endAdornment: <SettingsOutlined /> }}
-      ></TextField>
-      <TextField className={css.fieldset} label="Subject"></TextField>
-      <Box>
+      <Box p="7.8% 8.5%">
+        <TextField label="Lesson Material"></TextField>
+        <Box className={css.fieldset}>
+          <input
+            id="thumbnail-file-input"
+            type="file"
+            accept="image/*"
+            hidden
+          ></input>
+          <label htmlFor="thumbnail-file-input">
+            <Button
+              size={sm ? "medium" : "large"}
+              variant="contained"
+              component="span"
+              color="primary"
+              endIcon={<CloudUploadOutlined />}
+            >
+              Thumbnail
+            </Button>
+          </label>
+        </Box>
+        <TextField className={css.fieldset} label="Material Name"></TextField>
         <TextField
-          className={sm ? css.fieldset : css.halfFieldset}
-          fullWidth={sm}
-          label="Developmental"
+          className={css.fieldset}
+          label="Program"
           InputProps={{ endAdornment: <SettingsOutlined /> }}
         ></TextField>
-        <TextField
-          className={sm ? css.fieldset : css.halfFieldset}
-          fullWidth={sm}
-          label="Skills"
-          InputProps={{ endAdornment: <SettingsOutlined /> }}
-        ></TextField>
+        <TextField className={css.fieldset} label="Subject"></TextField>
+        <Box>
+          <TextField
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Developmental"
+            InputProps={{ endAdornment: <SettingsOutlined /> }}
+          ></TextField>
+          <TextField
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Skills"
+            InputProps={{ endAdornment: <SettingsOutlined /> }}
+          ></TextField>
+        </Box>
+        <TextField className={css.fieldset} label="Visibility Settings" select>
+          <MenuItem>Organization</MenuItem>
+          <MenuItem>School</MenuItem>
+        </TextField>
+        <TextField className={css.fieldset} label="Description"></TextField>
+        <TextField className={css.fieldset} label="Keywords"></TextField>
       </Box>
-      <TextField className={css.fieldset} label="Visibility Settings" select>
-        <MenuItem>Organization</MenuItem>
-        <MenuItem>School</MenuItem>
-      </TextField>
-      <TextField className={css.fieldset} label="Description"></TextField>
-      <TextField className={css.fieldset} label="Keywords"></TextField>
     </ThemeProvider>
   );
 }

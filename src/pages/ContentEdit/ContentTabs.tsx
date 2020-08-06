@@ -15,7 +15,7 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     boxShadow: shadows[3],
   },
   tabPane: {
-    padding: "7.8% 8.5%",
+    padding: 0,
   },
   tab: {
     fontWeight: "bold",

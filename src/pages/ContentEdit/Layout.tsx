@@ -3,6 +3,12 @@ import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 import React, { ReactNode, Children } from "react";
 import clsx from "clsx";
 
+const maxLeftWidth = (props: LayoutPairProps) => {
+  return `calc((100% - ${2 * props.padding + props.spacing}px) * ${
+    props.leftWidth / (props.leftWidth + props.rightWidth)
+  })`;
+};
+
 const useStyles = makeStyles(({ breakpoints }) => ({
   layoutPair: (props: LayoutPairProps) => ({
     display: "flex",
@@ -16,6 +22,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   }),
   layoutLeft: (props: LayoutPairProps) => ({
     flexBasis: props.leftWidth,
+    maxWidth: maxLeftWidth(props),
     flexGrow: 1,
     flexShrink: 1,
     marginRight: props.spacing,
@@ -23,6 +30,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       marginRight: 0,
       marginBottom: 40,
       flexBasis: "100%",
+      maxWidth: "none",
     },
   }),
   layoutRight: (props: LayoutPairProps) => ({
@@ -38,11 +46,11 @@ const useStyles = makeStyles(({ breakpoints }) => ({
 
 interface LayoutPairProps extends BoxProps {
   breakpoint: Breakpoint | number;
-  spacing: string | number;
-  leftWidth: string | number;
-  rightWidth: string | number;
+  spacing: number;
+  leftWidth: number;
+  rightWidth: number;
   basePadding: string | number;
-  padding: string | number;
+  padding: number;
   children: ReactNode;
 }
 export default function LayoutPair(props: LayoutPairProps) {
