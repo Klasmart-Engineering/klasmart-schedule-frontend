@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   makeStyles,
   Box,
@@ -6,6 +6,9 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  useTheme,
+  useMediaQuery,
+  Paper,
 } from "@material-ui/core";
 import { ArrowBackIosOutlined, Search } from "@material-ui/icons";
 import clsx from "clsx";
@@ -30,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MediaAssetsLibraryHeader() {
+export function MediaAssetsLibraryHeader() {
   const css = useStyles();
   return (
     <Box px={3} py={2.5}>
@@ -73,4 +76,13 @@ export default function MediaAssetsLibraryHeader() {
       </Box>
     </Box>
   );
+}
+
+interface MediaAssetsLibraryProps {
+  children: ReactNode;
+}
+export function MediaAssetsLibrary(props: MediaAssetsLibraryProps) {
+  const { breakpoints } = useTheme();
+  const sm = useMediaQuery(breakpoints.down("sm"));
+  return <Paper elevation={sm ? 0 : 3}>{props.children}</Paper>;
 }

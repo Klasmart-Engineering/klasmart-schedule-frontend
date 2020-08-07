@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import ContentHeader from "./ContentHeader";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 import ContentTabs from "./ContentTabs";
 import ContentH5p from "./ContentH5p";
 import LayoutPair from "./Layout";
@@ -9,12 +9,42 @@ import Outcomes from "./Outcomes";
 import MediaAssets from "./MediaAssets";
 import mockList from "../../mocks/contentList.json";
 import { Box } from "@material-ui/core";
-import MediaAssetsLibraryHeader from "./MediaAssetsLibraryHeader";
+import {
+  MediaAssetsLibraryHeader,
+  MediaAssetsLibrary,
+} from "./MediaAssetsLibrary";
+import MediaAssetsEdit from "./MediaAssetsEdit";
+
+interface RouteParams {
+  lesson: "assets" | "material" | "plan";
+  tab: "details" | "outcomes" | "assets";
+  rightside:
+    | "contentH5p"
+    | "assetPreview"
+    | "assetEdit"
+    | "assetPreviewH5p"
+    | "uploadH5p";
+}
+
+const useQuery = () => {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const assetId = query.get("assetId");
+  return { assetId };
+};
+
+const parseRightside = (rightside: RouteParams["rightside"]) => ({
+  includeH5p: rightside.includes("H5p"),
+  includeAsset: rightside.includes("asset"),
+  readonly: rightside.includes("Preview"),
+});
 
 export default function ContentEdit() {
-  const { lesson, tab } = useParams();
+  const { lesson, tab, rightside } = useParams();
+  const { assetId } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
+  const { includeAsset, includeH5p, readonly } = parseRightside(rightside);
   const handleChangeLesson = (lesson: string) => {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/details`);
   };
@@ -22,10 +52,10 @@ export default function ContentEdit() {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}`);
   };
   const assetsLibrary = (
-    <Box>
+    <MediaAssetsLibrary>
       <MediaAssetsLibraryHeader />
       <MediaAssets list={mockList} library />
-    </Box>
+    </MediaAssetsLibrary>
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
@@ -46,12 +76,17 @@ export default function ContentEdit() {
         padding={40}
       >
         {tab === "assetsLibrary" ? assetsLibrary : contentTabs}
-        <ContentH5p />
+        {includeH5p && <ContentH5p />}
+        {includeAsset && (
+          <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />
+        )}
       </LayoutPair>
     </Fragment>
   );
 }
 
 ContentEdit.routeBasePath = "/content-edit";
-ContentEdit.routeMatchPath = "/content-edit/lesson/:lesson/tab/:tab";
-ContentEdit.routeRedirectDefault = "/content-edit/lesson/material/tab/details";
+ContentEdit.routeMatchPath =
+  "/content-edit/lesson/:lesson/tab/:tab/rightside/:rightside";
+ContentEdit.routeRedirectDefault =
+  "/content-edit/lesson/material/tab/details/rightside/contentH5p";
