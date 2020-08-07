@@ -8,7 +8,6 @@ import Details from "./Details";
 import Outcomes from "./Outcomes";
 import MediaAssets from "./MediaAssets";
 import mockList from "../../mocks/contentList.json";
-import { Box } from "@material-ui/core";
 import {
   MediaAssetsLibraryHeader,
   MediaAssetsLibrary,
@@ -64,6 +63,11 @@ export default function ContentEdit() {
       <MediaAssets list={mockList} />
     </ContentTabs>
   );
+  const contentH5p = (
+    <ContentH5p>
+      {includeAsset && <MediaAssetsEdit readonly={readonly} overlay />}
+    </ContentH5p>
+  );
   return (
     <Fragment>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />
@@ -76,8 +80,9 @@ export default function ContentEdit() {
         padding={40}
       >
         {tab === "assetsLibrary" ? assetsLibrary : contentTabs}
-        {includeH5p && <ContentH5p />}
-        {includeAsset && (
+        {includeH5p ? (
+          contentH5p
+        ) : (
           <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />
         )}
       </LayoutPair>

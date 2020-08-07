@@ -1,5 +1,8 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-export default function ContentH5p() {
-  return <>h5p content</>;
+interface ContentH5pProps {
+  children: ReactNode;
+}
+export default function ContentH5p(props: ContentH5pProps) {
+  return <>{props.children}h5p content</>;
 }
