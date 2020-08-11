@@ -13,6 +13,8 @@ import {
   MediaAssetsLibrary,
 } from "./MediaAssetsLibrary";
 import MediaAssetsEdit from "./MediaAssetsEdit";
+import PlanComposeGraphic from "./PlanComposeGraphic";
+import PlanComposeText from "./PlanComposeText";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -22,7 +24,8 @@ interface RouteParams {
     | "assetPreview"
     | "assetEdit"
     | "assetPreviewH5p"
-    | "uploadH5p";
+    | "uploadH5p"
+    | "planComposeGraphic";
 }
 
 const useQuery = () => {
@@ -33,6 +36,8 @@ const useQuery = () => {
 };
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
+  includePlanComposeGraphic: rightside.includes("planComposeGraphic"),
+  includePlanComposeText: rightside.includes("planComposeText"),
   includeH5p: rightside.includes("H5p"),
   includeAsset: rightside.includes("asset"),
   readonly: rightside.includes("Preview"),
@@ -43,7 +48,13 @@ export default function ContentEdit() {
   const { assetId } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
-  const { includeAsset, includeH5p, readonly } = parseRightside(rightside);
+  const {
+    includeAsset,
+    includeH5p,
+    readonly,
+    includePlanComposeGraphic,
+    includePlanComposeText,
+  } = parseRightside(rightside);
   const handleChangeLesson = (lesson: string) => {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/details`);
   };
@@ -63,10 +74,20 @@ export default function ContentEdit() {
       <MediaAssets list={mockList} />
     </ContentTabs>
   );
-  const contentH5p = (
-    <ContentH5p>
-      {includeAsset && <MediaAssetsEdit readonly={readonly} overlay />}
-    </ContentH5p>
+  const rightsideArea = (
+    <>
+      {includeH5p && includeAsset && (
+        <ContentH5p>
+          <MediaAssetsEdit readonly={readonly} overlay />
+        </ContentH5p>
+      )}
+      {includeH5p && !includeAsset && <ContentH5p />}
+      {!includeH5p && includeAsset && (
+        <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />
+      )}
+      {includePlanComposeGraphic && <PlanComposeGraphic />}
+      {includePlanComposeText && <PlanComposeText />}
+    </>
   );
   return (
     <Fragment>
@@ -80,11 +101,7 @@ export default function ContentEdit() {
         padding={40}
       >
         {tab === "assetsLibrary" ? assetsLibrary : contentTabs}
-        {includeH5p ? (
-          contentH5p
-        ) : (
-          <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />
-        )}
+        {rightsideArea}
       </LayoutPair>
     </Fragment>
   );
