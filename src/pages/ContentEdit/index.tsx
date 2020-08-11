@@ -12,7 +12,7 @@ import {
   MediaAssetsLibraryHeader,
   MediaAssetsLibrary,
 } from "./MediaAssetsLibrary";
-import MediaAssetsEdit from "./MediaAssetsEdit";
+import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
 import PlanComposeGraphic from "./PlanComposeGraphic";
 import PlanComposeText from "./PlanComposeText";
 
@@ -56,7 +56,10 @@ export default function ContentEdit() {
     includePlanComposeText,
   } = parseRightside(rightside);
   const handleChangeLesson = (lesson: string) => {
-    history.push(`${routeBasePath}/lesson/${lesson}/tab/details`);
+    const rightSide = `/rightside/${
+      lesson === "assets" ? "assetEdit" : "contentH5p"
+    }`;
+    history.push(`${routeBasePath}/lesson/${lesson}/tab/details${rightSide}`);
   };
   const handleChangeTab = (tab: string) => {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}`);
@@ -65,6 +68,12 @@ export default function ContentEdit() {
     <MediaAssetsLibrary>
       <MediaAssetsLibraryHeader />
       <MediaAssets list={mockList} library />
+    </MediaAssetsLibrary>
+  );
+  const assetsCreate = (
+    <MediaAssetsLibrary>
+      <MediaAssetsEditHeader />
+      <Details />
     </MediaAssetsLibrary>
   );
   const contentTabs = (
@@ -89,6 +98,12 @@ export default function ContentEdit() {
       {includePlanComposeText && <PlanComposeText />}
     </>
   );
+  const leftsideArea =
+    tab === "assetsLibrary"
+      ? assetsLibrary
+      : tab === "assetsDetail"
+      ? assetsCreate
+      : contentTabs;
   return (
     <Fragment>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />
@@ -100,7 +115,7 @@ export default function ContentEdit() {
         basePadding={0}
         padding={40}
       >
-        {tab === "assetsLibrary" ? assetsLibrary : contentTabs}
+        {leftsideArea}
         {rightsideArea}
       </LayoutPair>
     </Fragment>

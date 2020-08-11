@@ -224,6 +224,12 @@ export default function ContentHeader(props: HeaderProps) {
           <FormControlLabel
             className={css.radio}
             color="primary"
+            control={<Radio size={size} color="primary" value="assets" />}
+            label={<Typography variant={radioTypography}>Assets</Typography>}
+          />
+          <FormControlLabel
+            className={css.radio}
+            color="primary"
             control={<Radio size={size} color="primary" value="material" />}
             label={
               <Typography variant={radioTypography}>Lesson Material</Typography>

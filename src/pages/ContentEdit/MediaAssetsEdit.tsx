@@ -3,6 +3,17 @@ import { DropzoneDialog } from "material-ui-dropzone";
 
 import React from "react";
 import Button from "@material-ui/core/Button";
+import { connect } from "react-redux";
+
+interface Props extends MediaAssetsEditProps {
+  file_type: String;
+}
+
+const mapStateToProps = (state: any) => {
+  return {
+    file_type: state.content.file_type,
+  };
+};
 
 const useStyles = makeStyles((theme) => ({
   assetImg: {
@@ -24,6 +35,14 @@ const useStyles = makeStyles((theme) => ({
     color: "#000000",
     fontSize: "18px",
   },
+  assetsHeader: {
+    fontSize: "20px",
+    fontWeight: "bold",
+    height: "64px",
+    backgroundColor: "#F0F0F0",
+    paddingLeft: "30px",
+    lineHeight: "64px",
+  },
 }));
 
 function AssetPreview() {
@@ -39,13 +58,34 @@ function AssetPreview() {
     </Box>
   );
 }
+
+interface FileTypeProps {
+  fileFormat: any;
+  fileType: any;
+}
+function FileText(props: FileTypeProps) {
+  const { fileType, fileFormat } = props;
+  const format = fileFormat[fileType];
+  return (
+    <p style={{ color: "#666666" }}>
+      Upload a {fileType} (
+      {format.map((item: String, index: number) => {
+        return `${item.substr(1)}${index + 1 < format.length ? "," : ""}`;
+      })}
+      ) here
+    </p>
+  );
+}
+
 interface AssetEditProps {
   asset?: any;
+  fileType?: any;
 }
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const [open, setOpen] = React.useState(false);
   const [files, setFiles] = React.useState([]);
+  const { fileType } = props;
   const handleClose = () => {
     setOpen(false);
   };
@@ -56,11 +96,11 @@ function AssetEdit(props: AssetEditProps) {
     setOpen(false);
     setFiles(files);
   };
-  const fileType = {
-    video: [".ogg", ".mp4", ".avi"],
-    images: ["image/jpeg", "image/png", "image/bmp"],
-    file: [".pdf"],
-    audio: [".mp3"],
+  const fileFormat = {
+    video: [".avi", ".mov", ".mp4"],
+    images: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
+    document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
+    audio: [".mp3", ".wav"],
   };
   return (
     <Box className={css.uploadBox} boxShadow={3}>
@@ -73,8 +113,7 @@ function AssetEdit(props: AssetEditProps) {
         className={css.uploadTool}
       >
         <div className={css.uploadBtn}>
-          <p style={{ color: "#666666" }}>Drop a file here</p>
-          <p style={{ color: "#666666" }}>OR</p>
+          <FileText fileFormat={fileFormat} fileType={fileType} />
           <Button variant="contained" color="primary" onClick={handleOpen}>
             Upload Files
           </Button>
@@ -82,7 +121,7 @@ function AssetEdit(props: AssetEditProps) {
         <DropzoneDialog
           open={open}
           onSave={handleSave}
-          acceptedFiles={fileType.images}
+          acceptedFiles={fileFormat.images}
           showPreviews={true}
           maxFileSize={5000000}
           onClose={handleClose}
@@ -90,6 +129,11 @@ function AssetEdit(props: AssetEditProps) {
       </Box>
     </Box>
   );
+}
+
+export function MediaAssetsEditHeader() {
+  const css = useStyles();
+  return <Box className={css.assetsHeader}>Asset Details</Box>;
 }
 
 function AssetPreviewOverlay() {
@@ -101,9 +145,13 @@ interface MediaAssetsEditProps extends AssetEditProps {
   overlay: boolean;
 }
 
-export default function MediaAssetsEdit(props: MediaAssetsEditProps) {
-  const { readonly, overlay, asset } = props;
-  if (overlay) return <AssetPreviewOverlay />;
-  if (readonly) return <AssetPreview />;
-  return <AssetEdit asset={asset} />;
+class MediaAssetsEdit extends React.PureComponent<Props> {
+  public render() {
+    const { file_type, readonly, overlay, asset } = this.props;
+    if (overlay) return <AssetPreviewOverlay />;
+    if (readonly) return <AssetPreview />;
+    return <AssetEdit asset={asset} fileType={file_type} />;
+  }
 }
+
+export default connect(mapStateToProps)(MediaAssetsEdit);
