@@ -7,14 +7,15 @@ import LayoutPair from "./Layout";
 import Details from "./Details";
 import Outcomes from "./Outcomes";
 import MediaAssets from "./MediaAssets";
-import mockList from "../../mocks/contentList.json";
 import {
   MediaAssetsLibraryHeader,
   MediaAssetsLibrary,
 } from "./MediaAssetsLibrary";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
-import PlanComposeGraphic from "./PlanComposeGraphic";
+import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
 import PlanComposeText from "./PlanComposeText";
+import mockList from "../../mocks/contentList.json";
+import mockLessonPlan from "../../mocks/lessonPlan.json";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -25,7 +26,8 @@ interface RouteParams {
     | "assetEdit"
     | "assetPreviewH5p"
     | "uploadH5p"
-    | "planComposeGraphic";
+    | "planComposeGraphic"
+    | "planComposeText";
 }
 
 const useQuery = () => {
@@ -94,7 +96,12 @@ export default function ContentEdit() {
       {!includeH5p && includeAsset && (
         <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />
       )}
-      {includePlanComposeGraphic && <PlanComposeGraphic />}
+      {includePlanComposeGraphic && (
+        <PlanComposeGraphic
+          plan={mockLessonPlan as Segment}
+          droppableType="condition"
+        />
+      )}
       {includePlanComposeText && <PlanComposeText />}
     </>
   );
