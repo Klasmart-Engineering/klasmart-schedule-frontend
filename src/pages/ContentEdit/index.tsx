@@ -57,7 +57,7 @@ export default function ContentEdit() {
   const assetsCreate = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
-      <Details />
+      <Details detailType={includeAsset ? "assets" : "default"} />
     </MediaAssetsLibrary>
   );
   const contentTabs = (

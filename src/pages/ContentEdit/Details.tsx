@@ -108,47 +108,27 @@ function AssetsDetails(props: DetailProps) {
     keywords: "",
   });
 
-  const handleTopicListChange = (
-    event: React.ChangeEvent<{ value: String }>,
-    name: string
-  ) => {
-    const inputName = name;
-    const inputValue = event.target.value as string;
-    setTopicList(({
+  const handleTopicListChange = (event: React.ChangeEvent<{ value: String }>, name: string) => {
+    const newTopocList = {
       ...topicList,
-      [inputName]: inputValue,
-    } as unknown) as { [key in keyof InitData]: InitData[key] });
-    dispatch({ type: "save", topicList: topicList });
+      [name]: event.target.value as string,
+    };
+    setTopicList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+    dispatch({ type: "save", topicList: newTopocList });
   };
   return (
     <ThemeProvider theme={theme}>
       <Box p="7.8% 8.5%">
-        <TextField
-          label="Lesson Material"
-          value={topicList.fileType}
-          onChange={(e) => handleTopicListChange(e, "fileType")}
-          select
-        >
+        <TextField label="Lesson Material" value={topicList.fileType} onChange={(e) => handleTopicListChange(e, "fileType")} select>
           <MenuItem value="images">Image</MenuItem>
           <MenuItem value="video">Video</MenuItem>
           <MenuItem value="audio">Audio</MenuItem>
           <MenuItem value="document">Document</MenuItem>
         </TextField>
         <Box className={css.fieldset}>
-          <input
-            id="thumbnail-file-input"
-            type="file"
-            accept="image/*"
-            hidden
-          ></input>
+          <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
           <label htmlFor="thumbnail-file-input">
-            <Button
-              size={sm ? "medium" : "large"}
-              variant="contained"
-              component="span"
-              color="primary"
-              endIcon={<CloudUploadOutlined />}
-            >
+            <Button size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
               Thumbnail
             </Button>
           </label>
@@ -190,13 +170,7 @@ function AssetsDetails(props: DetailProps) {
             InputProps={{ endAdornment: <SettingsOutlined /> }}
           ></TextField>
         </Box>
-        <TextField
-          className={css.fieldset}
-          label="age"
-          value={topicList.age}
-          onChange={(e) => handleTopicListChange(e, "age")}
-          select
-        >
+        <TextField className={css.fieldset} label="age" value={topicList.age} onChange={(e) => handleTopicListChange(e, "age")} select>
           <MenuItem value={1}>3-4</MenuItem>
           <MenuItem value={2}>4-2</MenuItem>
           <MenuItem value={3}>5-6</MenuItem>

@@ -10,7 +10,7 @@ export interface ReduxState {
 }
 
 const defaultState = {
-  type: "creat",
+  type: "save",
   topicList: {
     fileType: "images",
     assetsName: "",
@@ -25,8 +25,9 @@ const defaultState = {
 };
 
 const content = (state: ReduxState = defaultState, action: ReduxState) => {
-  console.log(action);
   switch (action.type) {
+    case "save":
+      return action;
     default:
       return state;
   }
