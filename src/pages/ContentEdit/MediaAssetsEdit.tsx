@@ -75,7 +75,7 @@ function FileText(props: FileTypeProps) {
 
 interface AssetEditProps {
   asset?: any;
-  fileType?: any;
+  topicList?: any;
 }
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
