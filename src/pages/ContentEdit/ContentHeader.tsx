@@ -17,6 +17,7 @@ import { ArrowBack, PlayCircleOutline, Cancel, Save, Publish, RemoveCircleOutlin
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import clsx from "clsx";
 import { PaletteColor, Palette } from "@material-ui/core/styles/createPalette";
+import { connect } from "react-redux";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -86,14 +87,24 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
+  topicList: [];
 }
-export default function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson } = props;
+const mapStateToProps = (state: any) => {
+  return {
+    topicList: state.content.topicList,
+  };
+};
+
+function ContentHeader(props: HeaderProps) {
+  const { lesson, onChangeLesson, topicList } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const radioTypography = sm ? "subtitle2" : "h5";
+  const stateSubmit = (type: string) => {
+    console.log(topicList);
+  };
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -107,16 +118,16 @@ export default function ContentHeader(props: HeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          <Button variant="outlined" endIcon={<PlayCircleOutline />} color="primary" className={css.headerButton}>
+          <Button variant="outlined" endIcon={<PlayCircleOutline />} color="primary" className={css.headerButton} onClick={() => {stateSubmit("preview")}}>
             Preview
           </Button>
-          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)}>
+          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={() => {stateSubmit("cancel")}}>
             Cancel
           </Button>
-          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton}>
+          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={() => {stateSubmit("save")}}>
             Save
           </Button>
-          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)}>
+          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={() => {stateSubmit("publish")}}>
             Publish
           </Button>
         </Hidden>
@@ -181,3 +192,5 @@ export default function ContentHeader(props: HeaderProps) {
     </Fragment>
   );
 }
+
+export default connect(mapStateToProps)(ContentHeader);

@@ -80,7 +80,7 @@ export default function ContentEdit() {
       {includePlanComposeText && <PlanComposeText />}
     </>
   );
-  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetsDetail" ? assetsCreate : contentTabs;
+  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "details" ? assetsCreate : contentTabs;
   return (
     <Fragment>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />

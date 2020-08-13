@@ -6,12 +6,12 @@ import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 
 interface Props extends MediaAssetsEditProps {
-  file_type: String;
+  topicList: [];
 }
 
 const mapStateToProps = (state: any) => {
   return {
-    file_type: state.content.file_type,
+    topicList: state.content.topicList,
   };
 };
 
@@ -81,7 +81,7 @@ function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const [open, setOpen] = React.useState(false);
   const [files, setFiles] = React.useState([]);
-  const { fileType } = props;
+  const { topicList } = props;
   const handleClose = () => {
     setOpen(false);
   };
@@ -103,7 +103,7 @@ function AssetEdit(props: AssetEditProps) {
       <p className={css.title}>Select a file or drop it here</p>
       <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
         <div className={css.uploadBtn}>
-          <FileText fileFormat={fileFormat} fileType={fileType} />
+          <FileText fileFormat={fileFormat} fileType={topicList.fileType} />
           <Button variant="contained" color="primary" onClick={handleOpen}>
             Upload Files
           </Button>
@@ -137,10 +137,10 @@ interface MediaAssetsEditProps extends AssetEditProps {
 
 class MediaAssetsEdit extends React.PureComponent<Props> {
   public render() {
-    const { file_type, readonly, overlay, asset } = this.props;
+    const { topicList, readonly, overlay, asset } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
     if (readonly) return <AssetPreview />;
-    return <AssetEdit asset={asset} fileType={file_type} />;
+    return <AssetEdit asset={asset} topicList={topicList} />;
   }
 }
 
