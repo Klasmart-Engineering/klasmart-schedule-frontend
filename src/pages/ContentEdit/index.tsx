@@ -7,10 +7,7 @@ import LayoutPair from "./Layout";
 import Details from "./Details";
 import Outcomes from "./Outcomes";
 import MediaAssets from "./MediaAssets";
-import {
-  MediaAssetsLibraryHeader,
-  MediaAssetsLibrary,
-} from "./MediaAssetsLibrary";
+import { MediaAssetsLibraryHeader, MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
 import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
 import PlanComposeText from "./PlanComposeText";
@@ -20,14 +17,7 @@ import mockLessonPlan from "../../mocks/lessonPlan.json";
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
   tab: "details" | "outcomes" | "assets";
-  rightside:
-    | "contentH5p"
-    | "assetPreview"
-    | "assetEdit"
-    | "assetPreviewH5p"
-    | "uploadH5p"
-    | "planComposeGraphic"
-    | "planComposeText";
+  rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
 
 const useQuery = () => {
@@ -50,17 +40,9 @@ export default function ContentEdit() {
   const { assetId } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
-  const {
-    includeAsset,
-    includeH5p,
-    readonly,
-    includePlanComposeGraphic,
-    includePlanComposeText,
-  } = parseRightside(rightside);
+  const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const handleChangeLesson = (lesson: string) => {
-    const rightSide = `/rightside/${
-      lesson === "assets" ? "assetEdit" : "contentH5p"
-    }`;
+    const rightSide = `/rightside/${lesson === "assets" ? "assetEdit" : "contentH5p"}`;
     history.push(`${routeBasePath}/lesson/${lesson}/tab/details${rightSide}`);
   };
   const handleChangeTab = (tab: string) => {
@@ -93,35 +75,16 @@ export default function ContentEdit() {
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && <ContentH5p />}
-      {!includeH5p && includeAsset && (
-        <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />
-      )}
-      {includePlanComposeGraphic && (
-        <PlanComposeGraphic
-          plan={mockLessonPlan as Segment}
-          droppableType="condition"
-        />
-      )}
+      {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
+      {includePlanComposeGraphic && <PlanComposeGraphic plan={mockLessonPlan as Segment} droppableType="condition" />}
       {includePlanComposeText && <PlanComposeText />}
     </>
   );
-  const leftsideArea =
-    tab === "assetsLibrary"
-      ? assetsLibrary
-      : tab === "assetsDetail"
-      ? assetsCreate
-      : contentTabs;
+  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetsDetail" ? assetsCreate : contentTabs;
   return (
     <Fragment>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />
-      <LayoutPair
-        breakpoint="md"
-        leftWidth={703}
-        rightWidth={1105}
-        spacing={32}
-        basePadding={0}
-        padding={40}
-      >
+      <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}
         {rightsideArea}
       </LayoutPair>
@@ -130,7 +93,5 @@ export default function ContentEdit() {
 }
 
 ContentEdit.routeBasePath = "/content-edit";
-ContentEdit.routeMatchPath =
-  "/content-edit/lesson/:lesson/tab/:tab/rightside/:rightside";
-ContentEdit.routeRedirectDefault =
-  "/content-edit/lesson/material/tab/details/rightside/contentH5p";
+ContentEdit.routeMatchPath = "/content-edit/lesson/:lesson/tab/:tab/rightside/:rightside";
+ContentEdit.routeRedirectDefault = "/content-edit/lesson/material/tab/details/rightside/contentH5p";

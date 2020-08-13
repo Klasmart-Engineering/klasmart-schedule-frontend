@@ -1,11 +1,10 @@
 include:
-  - project: 'kidsloop-web/frontend-ci'
-    ref: 'dev'
-    file: 'gitlab-ci-template/gitlab-ci.yml'
+  - project: "kidsloop-web/frontend-ci"
+    ref: "dev"
+    file: "gitlab-ci-template/gitlab-ci.yml"
 
 variables:
-  deployDir: 'build/'
-  testBuildCommand: 'npm run build'
-  testDeployBucketName: 'kidsloop-frontend-launch-kidsloop-cn-prod-1301528871'
-  testDeployBucketPath: '/demo/cms-ui/'
-
+  deployDir: "build/"
+  testBuildCommand: "npm run build"
+  testDeployBucketName: "kidsloop-frontend-launch-kidsloop-cn-prod-1301528871"
+  testDeployBucketPath: "/demo/cms-ui/"

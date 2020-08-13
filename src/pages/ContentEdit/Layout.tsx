@@ -4,15 +4,11 @@ import React, { ReactNode, Children } from "react";
 import clsx from "clsx";
 
 const maxLeftWidth = (props: LayoutPairProps) => {
-  return `calc((100% - ${props.spacing}px) * ${
-    props.leftWidth / (props.leftWidth + props.rightWidth)
-  })`;
+  return `calc((100% - ${props.spacing}px) * ${props.leftWidth / (props.leftWidth + props.rightWidth)})`;
 };
 
 const maxRightWidth = (props: LayoutPairProps) => {
-  return `calc((100% - ${props.spacing}px) * ${
-    props.rightWidth / (props.leftWidth + props.rightWidth)
-  })`;
+  return `calc((100% - ${props.spacing}px) * ${props.rightWidth / (props.leftWidth + props.rightWidth)})`;
 };
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -61,16 +57,7 @@ interface LayoutPairProps extends BoxProps {
   children: ReactNode;
 }
 export default function LayoutPair(props: LayoutPairProps) {
-  const {
-    breakpoint,
-    spacing,
-    leftWidth,
-    rightWidth,
-    basePadding,
-    padding,
-    children,
-    ...restProps
-  } = props;
+  const { breakpoint, spacing, leftWidth, rightWidth, basePadding, padding, children, ...restProps } = props;
   const css = useStyles(props);
   let index = -1;
   const pairNodes = Children.map(props.children, (child) => {

@@ -148,65 +148,42 @@ function SecondaryMenu(props: ActionBarProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.createBtn}
-              >
+              <Button variant="contained" color="primary" className={classes.createBtn}>
                 Create +
               </Button>
             </Grid>
-            <Grid
-              container
-              direction="row"
-              justify="space-evenly"
-              alignItems="center"
-              item
-              md={9}
-              lg={7}
-              xl={5}
-            >
+            <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 href={`${path}&status=content`}
-                className={`${classes.nav} ${
-                  status === "content" ? classes.actives : ""
-                }`}
+                className={`${classes.nav} ${status === "content" ? classes.actives : ""}`}
                 startIcon={<DescriptionOutlined />}
               >
                 My Content
               </Button>
               <Button
                 href={`${path}&status=assets`}
-                className={`${classes.nav} ${
-                  status === "assets" ? classes.actives : ""
-                }`}
+                className={`${classes.nav} ${status === "assets" ? classes.actives : ""}`}
                 startIcon={<PermMediaOutlined />}
               >
                 Assets
               </Button>
               <Button
                 href={`${path}&status=published`}
-                className={`${classes.nav} ${
-                  status === "published" ? classes.actives : ""
-                }`}
+                className={`${classes.nav} ${status === "published" ? classes.actives : ""}`}
                 startIcon={<PublishOutlined />}
               >
                 Published
               </Button>
               <Button
                 href={`${path}&status=pending`}
-                className={`${classes.nav} ${
-                  status === "pending" ? classes.actives : ""
-                }`}
+                className={`${classes.nav} ${status === "pending" ? classes.actives : ""}`}
                 startIcon={<HourglassEmptyOutlined />}
               >
                 Pending
               </Button>
               <Button
                 href={`${path}&status=archived`}
-                className={`${classes.nav} ${
-                  status === "archived" ? classes.actives : ""
-                }`}
+                className={`${classes.nav} ${status === "archived" ? classes.actives : ""}`}
                 startIcon={<ArchiveOutlined />}
               >
                 Archived
@@ -301,10 +278,7 @@ function SelectTemplateMb(props: ActionBarLayout) {
   };
 
   const handleClose = (event: React.MouseEvent<EventTarget>) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
     setOpen(false);
@@ -326,11 +300,7 @@ function SelectTemplateMb(props: ActionBarLayout) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.createBtn}
-              >
+              <Button variant="contained" color="primary" className={classes.createBtn}>
                 Create +
               </Button>
             </Grid>
@@ -349,17 +319,12 @@ function SelectTemplateMb(props: ActionBarLayout) {
                   <Grow
                     {...TransitionProps}
                     style={{
-                      transformOrigin:
-                        placement === "bottom" ? "center top" : "center bottom",
+                      transformOrigin: placement === "bottom" ? "center top" : "center bottom",
                     }}
                   >
                     <Paper>
                       <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList
-                          autoFocusItem={open}
-                          id="menu-list-grow"
-                          onKeyDown={handleListKeyDown}
-                        >
+                        <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                           <MenuItem onClick={handleClose}>Profile</MenuItem>
                           <MenuItem onClick={handleClose}>My account</MenuItem>
                           <MenuItem onClick={handleClose}>Logout</MenuItem>
@@ -410,45 +375,20 @@ function SelectTemplate(props: ActionBarProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <BootstrapInput
-                id="filled-multiline-static"
-                className={classes.searchText}
-                placeholder={"Search"}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.searchBtn}
-              >
+              <BootstrapInput id="filled-multiline-static" className={classes.searchText} placeholder={"Search"} />
+              <Button variant="contained" color="primary" className={classes.searchBtn}>
                 <Search /> Search
               </Button>
               <FormControl variant="outlined" className={classes.formControl}>
-                <NativeSelect
-                  id="demo-customized-select-native"
-                  value={value}
-                  onChange={handleChange}
-                  input={<BootstrapInput />}
-                >
+                <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
                   <option value={10}>Remove</option>
                   <option value={20}>Share</option>
                   <option value={30}>Download</option>
                 </NativeSelect>
               </FormControl>
             </Grid>
-            <Grid
-              container
-              direction="row"
-              justify="flex-end"
-              alignItems="center"
-              item
-              md={2}
-              lg={4}
-              xl={4}
-            >
-              <ButtonGroup
-                aria-label="outlined primary button group"
-                className={classes.switch}
-              >
+            <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
+              <ButtonGroup aria-label="outlined primary button group" className={classes.switch}>
                 <Button
                   variant="contained"
                   style={{

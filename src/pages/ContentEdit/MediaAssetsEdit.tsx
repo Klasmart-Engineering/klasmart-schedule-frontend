@@ -49,11 +49,7 @@ function AssetPreview() {
   const css = useStyles();
   return (
     <Box display="flex" flexDirection="column">
-      <img
-        className={css.assetImg}
-        src="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
-        alt="assetImg"
-      />
+      <img className={css.assetImg} src="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" alt="assetImg" />
       <Typography variant="body1">Content type: jpg</Typography>
     </Box>
   );
@@ -105,13 +101,7 @@ function AssetEdit(props: AssetEditProps) {
   return (
     <Box className={css.uploadBox} boxShadow={3}>
       <p className={css.title}>Select a file or drop it here</p>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="center"
-        className={css.uploadTool}
-      >
+      <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
         <div className={css.uploadBtn}>
           <FileText fileFormat={fileFormat} fileType={fileType} />
           <Button variant="contained" color="primary" onClick={handleOpen}>

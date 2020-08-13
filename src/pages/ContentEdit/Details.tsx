@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  TextField,
-  Box,
-  makeStyles,
-  Button,
-  MenuItem,
-  useMediaQuery,
-  useTheme,
-  createMuiTheme,
-  ThemeProvider,
-} from "@material-ui/core";
+import { TextField, Box, makeStyles, Button, MenuItem, useMediaQuery, useTheme, createMuiTheme, ThemeProvider } from "@material-ui/core";
 import { CloudUploadOutlined, SettingsOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -49,30 +39,15 @@ export default function Details() {
       <Box p="7.8% 8.5%">
         <TextField label="Lesson Material"></TextField>
         <Box className={css.fieldset}>
-          <input
-            id="thumbnail-file-input"
-            type="file"
-            accept="image/*"
-            hidden
-          ></input>
+          <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
           <label htmlFor="thumbnail-file-input">
-            <Button
-              size={sm ? "medium" : "large"}
-              variant="contained"
-              component="span"
-              color="primary"
-              endIcon={<CloudUploadOutlined />}
-            >
+            <Button size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
               Thumbnail
             </Button>
           </label>
         </Box>
         <TextField className={css.fieldset} label="Material Name"></TextField>
-        <TextField
-          className={css.fieldset}
-          label="Program"
-          InputProps={{ endAdornment: <SettingsOutlined /> }}
-        ></TextField>
+        <TextField className={css.fieldset} label="Program" InputProps={{ endAdornment: <SettingsOutlined /> }}></TextField>
         <TextField className={css.fieldset} label="Subject"></TextField>
         <Box>
           <TextField

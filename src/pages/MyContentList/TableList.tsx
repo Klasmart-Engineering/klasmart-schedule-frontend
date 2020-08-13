@@ -60,19 +60,12 @@ type Order = "asc" | "desc";
 function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+  return order === "desc" ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
 function stableSort(array: Data[], comparator: (a: any, b: any) => number) {
-  const stabilizedThis = array.map(
-    (el, index) => [el, index] as [Data, number]
-  );
+  const stabilizedThis = array.map((el, index) => [el, index] as [Data, number]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
@@ -123,10 +116,7 @@ const headCells: HeadCell[] = [
 interface EnhancedTableProps {
   classes: ReturnType<typeof useStyles>;
   numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
@@ -215,10 +205,7 @@ export default function TableList(props: TableListProps) {
     rows: list,
   });
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -244,10 +231,7 @@ export default function TableList(props: TableListProps) {
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
 
     setSelected(newSelected);
@@ -257,9 +241,7 @@ export default function TableList(props: TableListProps) {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -395,12 +377,7 @@ export default function TableList(props: TableListProps) {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-            aria-label="enhanced table"
-          >
+          <Table className={classes.table} aria-labelledby="tableTitle" size={dense ? "small" : "medium"} aria-label="enhanced table">
             <EnhancedTableHead
               classes={classes}
               numSelected={selected.length}
@@ -417,14 +394,7 @@ export default function TableList(props: TableListProps) {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={index}
-                      selected={isItemSelected}
-                    >
+                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected}>
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
@@ -432,18 +402,10 @@ export default function TableList(props: TableListProps) {
                           onClick={(event) => handleClick(event, row.name)}
                         />
                       </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                        align="center"
-                      >
+                      <TableCell component="th" id={labelId} scope="row" padding="none" align="center">
                         {row.type}{" "}
                         <Tooltip title="Preview">
-                          <Visibility
-                            style={{ color: "#0E78D5", fontSize: "16px" }}
-                          />
+                          <Visibility style={{ color: "#0E78D5", fontSize: "16px" }} />
                         </Tooltip>
                       </TableCell>
                       <TableCell align="center">{row.name}</TableCell>

@@ -1,24 +1,6 @@
 import React, { ReactNode, Children, cloneElement, ReactElement } from "react";
-import {
-  makeStyles,
-  Box,
-  Typography,
-  Button,
-  useTheme,
-  ButtonGroup,
-  CardMedia,
-  Card,
-  CardContent,
-  BoxProps,
-} from "@material-ui/core";
-import {
-  Done,
-  DashboardOutlined,
-  SvgIconComponent,
-  Close,
-  Spellcheck,
-  FlagOutlined,
-} from "@material-ui/icons";
+import { makeStyles, Box, Typography, Button, useTheme, ButtonGroup, CardMedia, Card, CardContent, BoxProps } from "@material-ui/core";
+import { Done, DashboardOutlined, SvgIconComponent, Close, Spellcheck, FlagOutlined } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
@@ -101,20 +83,13 @@ const useStyles = makeStyles(({ palette, shape }) => ({
 
 const useSegmentComputedStyles = makeStyles({
   card: (props: SegmentProps) => ({
-    marginTop: props.condition
-      ? 40
-      : props.droppableType === "condition"
-      ? 40 + 59 + 34
-      : 40 + 59,
+    marginTop: props.condition ? 40 : props.droppableType === "condition" ? 40 + 59 + 34 : 40 + 59,
     width: 200,
   }),
 });
 
 // ts type gard helper
-function hasOwnProperty<X extends {}, Y extends PropertyKey>(
-  obj: X,
-  prop: Y
-): obj is X & Record<Y, unknown> {
+function hasOwnProperty<X extends {}, Y extends PropertyKey>(obj: X, prop: Y): obj is X & Record<Y, unknown> {
   return obj.hasOwnProperty(prop);
 }
 
@@ -123,12 +98,7 @@ interface ConditionBtnUIProps extends BoxProps {
   label: string;
   Icon: SvgIconComponent;
 }
-function ConditionBtnUI({
-  color,
-  Icon,
-  label,
-  ...boxProps
-}: ConditionBtnUIProps) {
+function ConditionBtnUI({ color, Icon, label, ...boxProps }: ConditionBtnUIProps) {
   const css = useStyles();
   const { palette } = useTheme();
   return (
@@ -156,50 +126,15 @@ interface ConditionBtnProps extends BoxProps {
 function ConditionBtn({ type, ...restConditionBtnUIProps }: ConditionBtnProps) {
   switch (type) {
     case "start":
-      return (
-        <ConditionBtnUI
-          Icon={FlagOutlined}
-          color="primary"
-          label="START"
-          {...restConditionBtnUIProps}
-        />
-      );
+      return <ConditionBtnUI Icon={FlagOutlined} color="primary" label="START" {...restConditionBtnUIProps} />;
     case "ifCorrect":
-      return (
-        <ConditionBtnUI
-          Icon={Done}
-          color="success"
-          label="If Correct"
-          {...restConditionBtnUIProps}
-        />
-      );
+      return <ConditionBtnUI Icon={Done} color="success" label="If Correct" {...restConditionBtnUIProps} />;
     case "ifWrong":
-      return (
-        <ConditionBtnUI
-          Icon={Close}
-          color="error"
-          label="If Wrong"
-          {...restConditionBtnUIProps}
-        />
-      );
+      return <ConditionBtnUI Icon={Close} color="error" label="If Wrong" {...restConditionBtnUIProps} />;
     case "ifScoreDown60":
-      return (
-        <ConditionBtnUI
-          Icon={Spellcheck}
-          color="secondary"
-          label="If Score < 60"
-          {...restConditionBtnUIProps}
-        />
-      );
+      return <ConditionBtnUI Icon={Spellcheck} color="secondary" label="If Score < 60" {...restConditionBtnUIProps} />;
     case "ifScoreUp60":
-      return (
-        <ConditionBtnUI
-          Icon={Spellcheck}
-          color="primary"
-          label="If Score >= 60"
-          {...restConditionBtnUIProps}
-        />
-      );
+      return <ConditionBtnUI Icon={Spellcheck} color="primary" label="If Score >= 60" {...restConditionBtnUIProps} />;
     default:
       return null;
   }
@@ -209,21 +144,12 @@ interface DrappableBoxProps extends BoxProps {
   enable?: boolean;
   children: ReactNode;
 }
-function DrappableBox({
-  enable,
-  children,
-  className,
-  ...boxProps
-}: DrappableBoxProps) {
+function DrappableBox({ enable, children, className, ...boxProps }: DrappableBoxProps) {
   const css = useStyles();
   if (!enable) {
-    if (Children.count(children) !== 1)
-      throw new Error("DroppableBox should not contain more than one child");
+    if (Children.count(children) !== 1) throw new Error("DroppableBox should not contain more than one child");
     const child = Children.toArray(children)[0];
-    const childProps =
-      child && hasOwnProperty(child, "props")
-        ? { className: clsx(child.props.className, className) }
-        : {};
+    const childProps = child && hasOwnProperty(child, "props") ? { className: clsx(child.props.className, className) } : {};
     return cloneElement(child as ReactElement, childProps);
   }
   return (
@@ -235,12 +161,7 @@ function DrappableBox({
 
 export interface Segment {
   segmentId?: string;
-  condition?:
-    | "ifCorrect"
-    | "ifWrong"
-    | "ifScoreUp60"
-    | "ifScoreDown60"
-    | "start";
+  condition?: "ifCorrect" | "ifWrong" | "ifScoreUp60" | "ifScoreDown60" | "start";
   material?: any;
   next?: Segment[];
 }
@@ -261,11 +182,7 @@ function Segment(props: SegmentProps) {
   const segmentNodes = (
     <Box className="segmentNext" display="flex" flexWrap="nowrap">
       {insertedNext.map((segmentItem) => (
-        <Segment
-          key={++segmentItemIdx}
-          {...segmentItem}
-          droppableType={droppableType}
-        />
+        <Segment key={++segmentItemIdx} {...segmentItem} droppableType={droppableType} />
       ))}
     </Box>
   );
@@ -281,19 +198,11 @@ function Segment(props: SegmentProps) {
   // 选 condition 但没选 material 的情况
   if (!material && condition)
     return (
-      <Box
-        className={css.segment}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      >
+      <Box className={css.segment} display="flex" flexDirection="column" alignItems="center">
         <DrappableBox enable={droppableType === "condition"}>
           <ConditionBtn type={condition} />
         </DrappableBox>
-        <DrappableBox
-          className={css.blankBox}
-          enable={droppableType !== "condition"}
-        >
+        <DrappableBox className={css.blankBox} enable={droppableType !== "condition"}>
           <Typography align="center" variant="body1" color="textSecondary">
             Drop a lesson material here
           </Typography>
@@ -303,31 +212,15 @@ function Segment(props: SegmentProps) {
   // 选 material 但没选 condition 的情况
   if (!condition)
     return (
-      <Box
-        className={css.segment}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      >
-        <DrappableBox
-          className={computedCss.card}
-          enable={droppableType === "material"}
-        >
+      <Box className={css.segment} display="flex" flexDirection="column" alignItems="center">
+        <DrappableBox className={computedCss.card} enable={droppableType === "material"}>
           <Card>
-            <CardMedia
-              className={css.cardMedia}
-              image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
-            />
+            <CardMedia className={css.cardMedia} image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
             <CardContent className={css.cardContent}>
               <Typography component="div" variant="caption" noWrap>
                 Badanamu Zoo: Snow Leopard
               </Typography>
-              <Typography
-                component="div"
-                variant="caption"
-                color="textSecondary"
-                noWrap
-              >
+              <Typography component="div" variant="caption" color="textSecondary" noWrap>
                 Elnora Jensen
               </Typography>
             </CardContent>
@@ -338,34 +231,18 @@ function Segment(props: SegmentProps) {
     );
   // 即选了 material 又选了 condition 的情况
   return (
-    <Box
-      className={css.segment}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
+    <Box className={css.segment} display="flex" flexDirection="column" alignItems="center">
       <DrappableBox enable={droppableType === "condition"}>
         <ConditionBtn type={condition} />
       </DrappableBox>
-      <DrappableBox
-        className={computedCss.card}
-        enable={droppableType === "material"}
-      >
+      <DrappableBox className={computedCss.card} enable={droppableType === "material"}>
         <Card>
-          <CardMedia
-            className={css.cardMedia}
-            image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
-          />
+          <CardMedia className={css.cardMedia} image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
           <CardContent className={css.cardContent}>
             <Typography component="div" variant="caption" noWrap>
               Badanamu Zoo: Snow Leopard
             </Typography>
-            <Typography
-              component="div"
-              variant="caption"
-              color="textSecondary"
-              noWrap
-            >
+            <Typography component="div" variant="caption" color="textSecondary" noWrap>
               Elnora Jensen
             </Typography>
           </CardContent>
@@ -384,14 +261,7 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const css = useStyles();
   return (
     <Box className={css.planComposeGraphic}>
-      <Box
-        position="relative"
-        display="flex"
-        alignItems="center"
-        px={3}
-        boxShadow={3}
-        bgcolor="white"
-      >
+      <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
         <ButtonGroup className={css.headerButtonGroup}>
           <Button
             component={NavLink}
@@ -416,10 +286,7 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
         <Box display="flex" flexWrap="wrap" pb={3.5}>
           <ConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
           <ConditionBtn className={css.headerConditionBtn} type="ifWrong" />
-          <ConditionBtn
-            className={css.headerConditionBtn}
-            type="ifScoreDown60"
-          />
+          <ConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
           <ConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
         </Box>
       </Box>

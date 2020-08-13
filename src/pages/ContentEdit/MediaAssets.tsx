@@ -1,16 +1,5 @@
 import React, { Fragment } from "react";
-import {
-  Table,
-  TableHead,
-  TableCell,
-  TableBody,
-  TableRow,
-  Box,
-  makeStyles,
-  TableContainer,
-  Typography,
-  Button,
-} from "@material-ui/core";
+import { Table, TableHead, TableCell, TableBody, TableRow, Box, makeStyles, TableContainer, Typography, Button } from "@material-ui/core";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -93,11 +82,7 @@ function Empty() {
   return (
     <Fragment>
       <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
-      <Typography
-        className={css.emptyDesc}
-        variant="body1"
-        color="textSecondary"
-      >
+      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
         Empty...
       </Typography>
     </Fragment>
@@ -145,19 +130,10 @@ export default function MediaAssets(props: MediaAssetsProps) {
     </TableContainer>
   );
   return (
-    <Box
-      className={css.mediaAssets}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
+    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {list.length > 0 ? table : <Empty />}
       {!library && (
-        <Button
-          className={css.assetLibraryButton}
-          variant="contained"
-          color="primary"
-        >
+        <Button className={css.assetLibraryButton} variant="contained" color="primary">
           View Assets Library
         </Button>
       )}
