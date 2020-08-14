@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { Table, TableHead, TableCell, TableBody, TableRow, Box, makeStyles, TableContainer, Typography, Button } from "@material-ui/core";
 import emptyIconUrl from "../../assets/icons/empty.svg";
+import { useDrag } from "react-dnd";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
@@ -89,6 +90,17 @@ function Empty() {
   );
 }
 
+interface DraggableItemProps {
+  type: string;
+  item: mockAsset;
+}
+function DraggableImage(props: DraggableItemProps) {
+  const { type, item } = props;
+  const css = useStyles();
+  const [, dragRef] = useDrag({ item: { type, data: item } });
+  return <img ref={dragRef} className={css.assetImage} alt="pic" src={item.img} />;
+}
+
 interface MediaAssetsProps {
   list: mockAsset[];
   library?: boolean;
@@ -99,7 +111,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   const rows = list.slice(-2).map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
-        <img className={css.assetImage} alt="pic" src={item.img} />
+        <DraggableImage type="LIBRARY_ITEM" item={item} />
       </TableCell>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.fileType}</TableCell>

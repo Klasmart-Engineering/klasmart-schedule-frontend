@@ -1,22 +1,12 @@
-import React, { ReactNode, Children, cloneElement, ReactElement, forwardRef, useRef, useEffect, useCallback } from "react";
-import {
-  makeStyles,
-  Box,
-  Typography,
-  Button,
-  useTheme,
-  ButtonGroup,
-  CardMedia,
-  Card,
-  CardContent,
-  BoxProps,
-  Theme,
-} from "@material-ui/core";
-import { Done, DashboardOutlined, SvgIconComponent, Close, Spellcheck, FlagOutlined, Translate } from "@material-ui/icons";
+import React, { forwardRef, useCallback, HTMLAttributes, useEffect, useMemo, useRef } from "react";
+import { makeStyles, Box, Typography, Button, useTheme, ButtonGroup, CardMedia, Card, CardContent, Theme } from "@material-ui/core";
+import { Done, DashboardOutlined, SvgIconComponent, Close, Spellcheck, FlagOutlined } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
+import cloneDeep from "lodash/cloneDeep";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
+import { useDrag, useDragLayer, useDrop, DropTargetMonitor } from "react-dnd";
 
 const useStyles = makeStyles(({ palette, shadows, shape }) => ({
   planComposeGraphic: {
@@ -109,7 +99,7 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
 const useSegmentComputedStyles = makeStyles({
   segment: (props: SegmentProps) => ({
     // debug
-    backgroundColor: "rgba(0,0,0,.05)",
+    // backgroundColor: "rgba(0,0,0,.05)",
     paddingTop: props.first ? 0 : 66,
     "&:not(:first-child)": {
       marginLeft: props.first ? 0 : 32,
@@ -131,7 +121,7 @@ const useGraphicComputedStyles = makeStyles({
   }),
 });
 
-interface ConditionBtnUIProps extends BoxProps {
+interface ConditionBtnUIProps extends HTMLAttributes<HTMLDivElement> {
   color: string;
   label: string;
   Icon: SvgIconComponent;
@@ -150,7 +140,7 @@ const ConditionBtnUI = forwardRef<HTMLDivElement, ConditionBtnUIProps>((props, r
   );
 });
 
-interface ConditionBtnProps extends BoxProps {
+interface ConditionBtnProps extends HTMLAttributes<HTMLDivElement> {
   type: Segment["condition"] | "start";
 }
 const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) => {
@@ -171,6 +161,11 @@ const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) 
   }
 });
 
+const DraggableConditionBtn = (props: ConditionBtnProps) => {
+  const [, dragRef] = useDrag({ item: { type: "condition", data: props.type } });
+  return <ConditionBtn ref={dragRef} {...props} />;
+};
+
 export interface Segment {
   segmentId?: string;
   condition?: "ifCorrect" | "ifWrong" | "ifScoreUp60" | "ifScoreDown60" | "start";
@@ -178,11 +173,11 @@ export interface Segment {
   next?: Segment[];
 }
 
-interface DrappableType {
-  droppableType?: "condition" | "material";
+interface DroppableType {
+  droppableType?: "condition" | "material" | null;
 }
 
-interface SegmentProps extends Segment, DrappableType {
+interface SegmentProps extends Segment, DroppableType {
   first?: boolean;
 }
 function Segment(props: SegmentProps) {
@@ -285,24 +280,41 @@ function Segment(props: SegmentProps) {
   );
 }
 
-const useScrollCenter = () => {
-  const ref = useCallback((node: HTMLElement | null) => {
-    if (!node) return;
-    node.scrollIntoView({ inline: "center", behavior: "smooth" });
-  }, []);
+const useScrollCenter = (enable?: boolean) => {
+  const ref = useCallback(
+    (node: HTMLElement | null) => {
+      if (!enable || !node) return;
+      node.scrollIntoView({ inline: "center", behavior: "smooth" });
+    },
+    [enable]
+  );
   return ref;
 };
 
-interface PlanComposeGraphicProps extends DrappableType {
+const useRepaintKey = (value: DroppableType["droppableType"]) => {
+  const count = useRef(0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => count.current++, [value]);
+};
+
+const mapDropProps = (monitor: DropTargetMonitor) => {
+  const type = monitor.getItemType();
+  return { droppableType: type === "LIBRARY_ITEM" ? "material" : type === "condition" ? "condition" : undefined } as DroppableType;
+};
+
+interface PlanComposeGraphicProps {
   plan: Segment;
 }
 export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
-  const { plan, droppableType } = props;
+  const { plan } = props;
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(props);
+  const form = useMemo(() => cloneDeep(plan), [plan]);
+  const [{ droppableType }] = useDrop({ accept: "NONE", collect: mapDropProps });
+  const repaintKey = useRepaintKey(droppableType);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
-  const startRef = useScrollCenter();
+  const startRef = useScrollCenter(repaintKey === 0);
   return (
     <Box className={css.planComposeGraphic}>
       <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
@@ -328,10 +340,10 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
         </ButtonGroup>
         <Typography className={css.headerTitle}>Condition Library</Typography>
         <Box display="flex" flexWrap="wrap" pb={3.5}>
-          <ConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
-          <ConditionBtn className={css.headerConditionBtn} type="ifWrong" />
-          <ConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
-          <ConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
         </Box>
       </Box>
       <Box className={computedCss.composeArea}>
@@ -342,11 +354,12 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
           arrowThickness={9}
           arrowLength={9}
           noCurves
+          key={repaintKey}
         >
           <Box display="flex" flexDirection="column" alignItems="center">
             <ArcherElement id="start" relations={startRelations}>
               <div>
-                <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" mb={-15.5} />
+                <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
               </div>
             </ArcherElement>
             <Box position="relative">
@@ -354,7 +367,7 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
                 <Box position="absolute" mt={5} width={0} />
               </ArcherElement>
             </Box>
-            <Segment {...plan} droppableType={droppableType} first />
+            <Segment {...form} droppableType={droppableType} first />
           </Box>
         </ArcherContainer>
       </Box>
