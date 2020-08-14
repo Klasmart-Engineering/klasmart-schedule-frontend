@@ -11,8 +11,8 @@ interface Segment {
 const context = createContext({});
 
 export function useModelLessonPlan() {
-  const { model } = useContext(context);
-  return { model };
+  // const { model } = useContext(context);
+  // return { model };
 }
 
 interface ContainerModelLessonPlanProps {
