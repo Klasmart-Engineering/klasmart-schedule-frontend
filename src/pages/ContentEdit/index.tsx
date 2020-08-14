@@ -57,7 +57,7 @@ export default function ContentEdit() {
   const assetsCreate = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
-      <Details />
+      <Details detailType={includeAsset ? "assets" : "default"} />
     </MediaAssetsLibrary>
   );
   const contentTabs = (
@@ -80,7 +80,7 @@ export default function ContentEdit() {
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
-  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetsDetail" ? assetsCreate : contentTabs;
+  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "details" ? assetsCreate : contentTabs;
   return (
     <Fragment>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />
