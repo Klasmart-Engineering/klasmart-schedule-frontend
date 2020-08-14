@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import ContentHeader from "./ContentHeader";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import ContentTabs from "./ContentTabs";
@@ -10,7 +12,7 @@ import MediaAssets from "./MediaAssets";
 import { MediaAssetsLibraryHeader, MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
 import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
-import PlanComposeText from "./PlanComposeText";
+import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import mockList from "../../mocks/contentList.json";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 
@@ -76,19 +78,19 @@ export default function ContentEdit() {
       )}
       {includeH5p && !includeAsset && <ContentH5p />}
       {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
-      {includePlanComposeGraphic && <PlanComposeGraphic plan={mockLessonPlan as Segment} droppableType="condition" />}
-      {includePlanComposeText && <PlanComposeText />}
+      {includePlanComposeGraphic && <PlanComposeGraphic plan={mockLessonPlan as Segment} />}
+      {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
   const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "details" ? assetsCreate : contentTabs;
   return (
-    <Fragment>
+    <DndProvider backend={HTML5Backend}>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}
         {rightsideArea}
       </LayoutPair>
-    </Fragment>
+    </DndProvider>
   );
 }
 

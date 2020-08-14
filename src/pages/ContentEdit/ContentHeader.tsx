@@ -118,16 +118,46 @@ function ContentHeader(props: HeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          <Button variant="outlined" endIcon={<PlayCircleOutline />} color="primary" className={css.headerButton} onClick={() => {stateSubmit("preview")}}>
+          <Button
+            variant="outlined"
+            endIcon={<PlayCircleOutline />}
+            color="primary"
+            className={css.headerButton}
+            onClick={() => {
+              stateSubmit("preview");
+            }}
+          >
             Preview
           </Button>
-          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={() => {stateSubmit("cancel")}}>
+          <Button
+            variant="contained"
+            endIcon={<Cancel />}
+            className={clsx(css.headerButton, css.redButton)}
+            onClick={() => {
+              stateSubmit("cancel");
+            }}
+          >
             Cancel
           </Button>
-          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={() => {stateSubmit("save")}}>
+          <Button
+            variant="contained"
+            endIcon={<Save />}
+            color="primary"
+            className={css.headerButton}
+            onClick={() => {
+              stateSubmit("save");
+            }}
+          >
             Save
           </Button>
-          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={() => {stateSubmit("publish")}}>
+          <Button
+            variant="contained"
+            endIcon={<Publish />}
+            className={clsx(css.headerButton, css.greenButton)}
+            onClick={() => {
+              stateSubmit("publish");
+            }}
+          >
             Publish
           </Button>
         </Hidden>
