@@ -10,7 +10,7 @@ import MediaAssets from "./MediaAssets";
 import { MediaAssetsLibraryHeader, MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
 import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
-import PlanComposeText from "./PlanComposeText";
+import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import mockList from "../../mocks/contentList.json";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 
@@ -77,7 +77,7 @@ export default function ContentEdit() {
       {includeH5p && !includeAsset && <ContentH5p />}
       {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
       {includePlanComposeGraphic && <PlanComposeGraphic plan={mockLessonPlan as Segment} droppableType="condition" />}
-      {includePlanComposeText && <PlanComposeText />}
+      {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
   const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetsDetail" ? assetsCreate : contentTabs;
