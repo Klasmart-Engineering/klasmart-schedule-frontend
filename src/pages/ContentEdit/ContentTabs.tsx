@@ -1,13 +1,6 @@
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Children, ReactNode } from "react";
-import {
-  Tab,
-  makeStyles,
-  Paper,
-  useMediaQuery,
-  useTheme,
-  Tabs,
-} from "@material-ui/core";
+import { Tab, makeStyles, Paper, useMediaQuery, useTheme, Tabs } from "@material-ui/core";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   tabs: {
@@ -61,11 +54,7 @@ export default function ContentTabs(props: ContentTabsProps) {
           onChange={(e, value) => onChangeTab(value)}
         >
           <Tab className={css.tab} label="Details" value={VALUES[0]} />
-          <Tab
-            className={css.tab}
-            label="Learning Outcomes"
-            value={VALUES[1]}
-          />
+          <Tab className={css.tab} label="Learning Outcomes" value={VALUES[1]} />
           <Tab className={css.tab} label="Media Assets" value={VALUES[2]} />
         </Tabs>
         {tabPanels}

@@ -30,8 +30,7 @@ import {
 } from "@material-ui/icons";
 import LayoutBox from "../../components/LayoutBox";
 
-const calcGridWidth = (n: number, p: number) =>
-  n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`;
+const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -156,10 +155,7 @@ function MyOperations() {
     <React.Fragment>
       <Tooltip title="Delete">
         <IconButton className={css.iconButtonBottom}>
-          <RemoveCircleOutline
-            className={css.remove}
-            fontSize="small"
-          ></RemoveCircleOutline>
+          <RemoveCircleOutline className={css.remove} fontSize="small"></RemoveCircleOutline>
         </IconButton>
       </Tooltip>
       <Tooltip title="Share">
@@ -204,18 +200,12 @@ function ArchivedOperations() {
     <React.Fragment>
       <Tooltip title="Publish">
         <IconButton className={css.iconButtonBottom}>
-          <UnarchiveOutlined
-            className={css.unarchive}
-            fontSize="small"
-          ></UnarchiveOutlined>
+          <UnarchiveOutlined className={css.unarchive} fontSize="small"></UnarchiveOutlined>
         </IconButton>
       </Tooltip>
       <Tooltip title="Delete">
         <IconButton className={css.iconButtonBottom}>
-          <DeleteOutlineOutlined
-            className={css.remove}
-            fontSize="small"
-          ></DeleteOutlineOutlined>
+          <DeleteOutlineOutlined className={css.remove} fontSize="small"></DeleteOutlineOutlined>
         </IconButton>
       </Tooltip>
     </React.Fragment>
@@ -243,9 +233,7 @@ function ContentCard(props: ContentCardProps) {
       <CardActionArea>
         <CardMedia className={css.cardMedia} image={props.img}>
           <Checkbox
-            icon={
-              <CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>
-            }
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
             checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
             size="small"
             className={css.checkbox}
@@ -256,10 +244,7 @@ function ContentCard(props: ContentCardProps) {
       <CardContent className={css.cardContent}>
         <Grid container>
           <Typography variant="subtitle1">{props.name}</Typography>
-          <ExpandBtn
-            className={css.iconButtonExpandMore}
-            {...expand.expandMore}
-          >
+          <ExpandBtn className={css.iconButtonExpandMore} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
           </ExpandBtn>
         </Grid>
@@ -273,16 +258,8 @@ function ContentCard(props: ContentCardProps) {
         </Typography>
       </CardContent>
       <CardActions className={css.cardActions}>
-        <Chip
-          className={css.previewChip}
-          clickable
-          label="Preview"
-          variant="outlined"
-          classes={{ label: css.ChipLabel }}
-        ></Chip>
-        {(status === "content" ||
-          status === "published" ||
-          status === "assets") && <MyOperations />}
+        <Chip className={css.previewChip} clickable label="Preview" variant="outlined" classes={{ label: css.ChipLabel }}></Chip>
+        {(status === "content" || status === "published" || status === "assets") && <MyOperations />}
         {status === "pending" && <PendingOperations />}
         {status === "archived" && <ArchivedOperations />}
       </CardActions>
@@ -309,12 +286,7 @@ export default function ContentCardList(props: ContentCardListProps) {
       <Grid className={css.gridContainer} container>
         {cardlist}
       </Grid>
-      <Pagination
-        className={css.pagination}
-        classes={{ ul: css.paginationUl }}
-        count={Math.ceil(total / amountPerPage)}
-        color="primary"
-      />
+      <Pagination className={css.pagination} classes={{ ul: css.paginationUl }} count={Math.ceil(total / amountPerPage)} color="primary" />
     </LayoutBox>
   );
 }

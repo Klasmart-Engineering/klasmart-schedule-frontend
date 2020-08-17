@@ -1,17 +1,7 @@
 import React, { Fragment } from "react";
-import {
-  Table,
-  TableHead,
-  TableCell,
-  TableBody,
-  TableRow,
-  Box,
-  makeStyles,
-  TableContainer,
-  Typography,
-  Button,
-} from "@material-ui/core";
+import { Table, TableHead, TableCell, TableBody, TableRow, Box, makeStyles, TableContainer, Typography, Button } from "@material-ui/core";
 import emptyIconUrl from "../../assets/icons/empty.svg";
+import { useDrag } from "react-dnd";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
@@ -93,15 +83,22 @@ function Empty() {
   return (
     <Fragment>
       <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
-      <Typography
-        className={css.emptyDesc}
-        variant="body1"
-        color="textSecondary"
-      >
+      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
         Empty...
       </Typography>
     </Fragment>
   );
+}
+
+interface DraggableItemProps {
+  type: string;
+  item: mockAsset;
+}
+function DraggableImage(props: DraggableItemProps) {
+  const { type, item } = props;
+  const css = useStyles();
+  const [, dragRef] = useDrag({ item: { type, data: item } });
+  return <img ref={dragRef} className={css.assetImage} alt="pic" src={item.img} />;
 }
 
 interface MediaAssetsProps {
@@ -114,7 +111,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   const rows = list.slice(-2).map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
-        <img className={css.assetImage} alt="pic" src={item.img} />
+        <DraggableImage type="LIBRARY_ITEM" item={item} />
       </TableCell>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.fileType}</TableCell>
@@ -145,19 +142,10 @@ export default function MediaAssets(props: MediaAssetsProps) {
     </TableContainer>
   );
   return (
-    <Box
-      className={css.mediaAssets}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
+    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {list.length > 0 ? table : <Empty />}
       {!library && (
-        <Button
-          className={css.assetLibraryButton}
-          variant="contained"
-          color="primary"
-        >
+        <Button className={css.assetLibraryButton} variant="contained" color="primary">
           View Assets Library
         </Button>
       )}

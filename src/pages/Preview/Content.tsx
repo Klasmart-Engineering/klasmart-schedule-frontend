@@ -42,11 +42,7 @@ function ButtonGroup(Props: ModelProps) {
       <Button variant="outlined" color="primary" className={css.previewButton}>
         OK
       </Button>
-      <Button
-        variant="outlined"
-        color="secondary"
-        className={css.previewButton}
-      >
+      <Button variant="outlined" color="secondary" className={css.previewButton}>
         Delete
       </Button>
       <Button variant="contained" color="primary" className={css.previewButton}>
@@ -79,12 +75,7 @@ function CloseButton() {
     history.goBack();
   };
   return (
-    <Button
-      color="default"
-      startIcon={<Close />}
-      className={css.closeButton}
-      onClick={close}
-    >
+    <Button color="default" startIcon={<Close />} className={css.closeButton} onClick={close}>
       Preview
     </Button>
   );
@@ -100,11 +91,7 @@ export default function Content(Props: ModelProps) {
     <div className={css.preview}>
       <CloseButton />
       <div className={css.content}>
-        <iframe
-          src="https://beta-hub.kidsloop.net/?component=library"
-          title="iframe example 1"
-          style={{ width: "100%", height: "100%" }}
-        >
+        <iframe src="https://beta-hub.kidsloop.net/?component=library" title="iframe example 1" style={{ width: "100%", height: "100%" }}>
           <p>Your browser does not support iframes.</p>
         </iframe>
       </div>

@@ -13,23 +13,13 @@ import {
   useMediaQuery,
   Hidden,
 } from "@material-ui/core";
-import {
-  ArrowBack,
-  PlayCircleOutline,
-  Cancel,
-  Save,
-  Publish,
-  RemoveCircleOutline,
-  CancelOutlined,
-} from "@material-ui/icons";
+import { ArrowBack, PlayCircleOutline, Cancel, Save, Publish, RemoveCircleOutline, CancelOutlined } from "@material-ui/icons";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import clsx from "clsx";
 import { PaletteColor, Palette } from "@material-ui/core/styles/createPalette";
+import { connect } from "react-redux";
 
-const createContainedColor = (
-  paletteColor: PaletteColor,
-  palette: Palette
-) => ({
+const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
   backgroundColor: paletteColor.main,
   "&:hover": {
@@ -97,33 +87,32 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
+  topicList: [];
 }
-export default function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson } = props;
+const mapStateToProps = (state: any) => {
+  return {
+    topicList: state.content.topicList,
+  };
+};
+
+function ContentHeader(props: HeaderProps) {
+  const { lesson, onChangeLesson, topicList } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const radioTypography = sm ? "subtitle2" : "h5";
+  const stateSubmit = (type: string) => {
+    console.log(topicList);
+  };
   return (
     <Fragment>
-      <Box
-        display="flex"
-        alignItems="center"
-        pl={sm ? 2 : 3}
-        pr={10}
-        height={72}
-        boxShadow={3}
-      >
+      <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
         <IconButton size="small" className={css.arrowBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
         <Hidden smDown>
-          <img
-            className={css.kidsloopLogo}
-            src={KidsloopLogo}
-            alt="kidsloop logo"
-          />
+          <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
           {sm ? "Create New Content" : "For Organizations"}
@@ -134,6 +123,9 @@ export default function ContentHeader(props: HeaderProps) {
             endIcon={<PlayCircleOutline />}
             color="primary"
             className={css.headerButton}
+            onClick={() => {
+              stateSubmit("preview");
+            }}
           >
             Preview
           </Button>
@@ -141,6 +133,9 @@ export default function ContentHeader(props: HeaderProps) {
             variant="contained"
             endIcon={<Cancel />}
             className={clsx(css.headerButton, css.redButton)}
+            onClick={() => {
+              stateSubmit("cancel");
+            }}
           >
             Cancel
           </Button>
@@ -149,6 +144,9 @@ export default function ContentHeader(props: HeaderProps) {
             endIcon={<Save />}
             color="primary"
             className={css.headerButton}
+            onClick={() => {
+              stateSubmit("save");
+            }}
           >
             Save
           </Button>
@@ -156,59 +154,39 @@ export default function ContentHeader(props: HeaderProps) {
             variant="contained"
             endIcon={<Publish />}
             className={clsx(css.headerButton, css.greenButton)}
+            onClick={() => {
+              stateSubmit("publish");
+            }}
           >
             Publish
           </Button>
         </Hidden>
       </Box>
       <Hidden smDown>
-        <Box
-          display="flex"
-          alignItems="center"
-          pl={5}
-          pr={10}
-          height={64}
-          boxShadow={2}
-        >
+        <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
           <Typography variant="h6" className={css.title}>
             Create New Content
           </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<RemoveCircleOutline />}
-            className={clsx(css.headerButton, css.redOutlinedButton)}
-          >
+          <Button variant="outlined" startIcon={<RemoveCircleOutline />} className={clsx(css.headerButton, css.redOutlinedButton)}>
             Remove to Archive
           </Button>
         </Box>
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          <IconButton
-            className={clsx(css.iconButton, css.redOutlinedButton)}
-            color="primary"
-          >
+          <IconButton className={clsx(css.iconButton, css.redOutlinedButton)} color="primary">
             <RemoveCircleOutline fontSize="small" />
           </IconButton>
           <IconButton className={css.iconButton} color="primary">
             <PlayCircleOutline fontSize="small" />
           </IconButton>
-          <IconButton
-            className={clsx(css.iconButton, css.redButton)}
-            color="primary"
-          >
+          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary">
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <IconButton
-            className={clsx(css.iconButton, css.primaryIconButton)}
-            color="primary"
-          >
+          <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary">
             <Save fontSize="small" />
           </IconButton>
-          <IconButton
-            className={clsx(css.iconButton, css.greenButton)}
-            color="primary"
-          >
+          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary">
             <Publish fontSize="small" />
           </IconButton>
         </Box>
@@ -231,20 +209,18 @@ export default function ContentHeader(props: HeaderProps) {
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="material" />}
-            label={
-              <Typography variant={radioTypography}>Lesson Material</Typography>
-            }
+            label={<Typography variant={radioTypography}>Lesson Material</Typography>}
           />
           <FormControlLabel
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="plan" />}
-            label={
-              <Typography variant={radioTypography}>Lesson Plan</Typography>
-            }
+            label={<Typography variant={radioTypography}>Lesson Plan</Typography>}
           />
         </RadioGroup>
       </Box>
     </Fragment>
   );
 }
+
+export default connect(mapStateToProps)(ContentHeader);

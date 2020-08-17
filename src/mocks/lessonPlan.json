@@ -1,0 +1,75 @@
+{
+  "segmentId": "1",
+  "material": {},
+  "next": [
+    {
+      "segmentId": "11",
+      "condition": "ifCorrect",
+      "material": {},
+      "next": [
+        {
+          "segmentId": "111",
+          "condition": "ifScoreUp60",
+          "material": {},
+          "next": [
+            {
+              "segmentId": "1111",
+              "condition": "ifCorrect",
+              "next": []
+            },
+            {
+              "segmentId": "1112",
+              "condition": "ifWrong",
+              "material": {},
+              "next": []
+            }
+          ]
+        },
+        {
+          "segmentId": "112",
+          "condition": "ifScoreDown60",
+          "material": {},
+          "next": [
+            {
+              "segmentId": "1121",
+              "condition": "ifCorrect",
+              "material": {},
+              "next": []
+            },
+            {
+              "segmentId": "1122",
+              "condition": "ifWrong",
+              "material": {},
+              "next": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "12",
+      "condition": "ifWrong",
+      "material": {},
+      "next": [
+        {
+          "segmentId": "121",
+          "material": {},
+          "next": [
+            {
+              "segmentId": "1211",
+              "condition": "ifCorrect",
+              "material": {},
+              "next": []
+            },
+            {
+              "segmentId": "1212",
+              "condition": "ifWrong",
+              "material": {},
+              "next": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

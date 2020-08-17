@@ -1,15 +1,5 @@
 import React, { ReactNode } from "react";
-import {
-  makeStyles,
-  Box,
-  Typography,
-  IconButton,
-  TextField,
-  MenuItem,
-  useTheme,
-  useMediaQuery,
-  Paper,
-} from "@material-ui/core";
+import { makeStyles, Box, Typography, IconButton, TextField, MenuItem, useTheme, useMediaQuery, Paper } from "@material-ui/core";
 import { ArrowBackIosOutlined, Search } from "@material-ui/icons";
 import clsx from "clsx";
 
@@ -53,23 +43,11 @@ export function MediaAssetsLibraryHeader() {
           placeholder="Search"
           InputProps={{ startAdornment: <Search className={css.searchIcon} /> }}
         />
-        <TextField
-          fullWidth
-          size="small"
-          className={css.fieldset}
-          select
-          label="Type"
-        >
+        <TextField fullWidth size="small" className={css.fieldset} select label="Type">
           <MenuItem>Organization</MenuItem>
           <MenuItem>School</MenuItem>
         </TextField>
-        <TextField
-          fullWidth
-          size="small"
-          className={css.fieldset}
-          select
-          label="Category"
-        >
+        <TextField fullWidth size="small" className={css.fieldset} select label="Category">
           <MenuItem>Organization</MenuItem>
           <MenuItem>School</MenuItem>
         </TextField>

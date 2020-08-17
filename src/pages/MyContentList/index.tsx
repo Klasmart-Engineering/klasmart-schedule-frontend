@@ -4,6 +4,7 @@ import CardList from "./CardList";
 import TableList from "./TableList";
 import ActionBar from "./ActionBar";
 import mockList from "../../mocks/contentList.json";
+import HeaderNavBar from "./HeaderNavBar";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -18,6 +19,7 @@ export default function MyContentList() {
   const total = mockList.length;
   return (
     <div>
+      <HeaderNavBar />
       <ActionBar layout={layout} status={status} />
       {layout === "card" ? (
         <CardList list={mockList} status={status} total={total} />
