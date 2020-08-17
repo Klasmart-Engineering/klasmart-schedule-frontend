@@ -1,8 +1,17 @@
 import React from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import { Hidden, Grid, Button } from "@material-ui/core";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+
+import clsx from "clsx";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import MailIcon from "@material-ui/icons/Mail";
 
 import imgUrl1 from "../../assets/icons/kidsloop-logo.svg";
 
@@ -36,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     display: "flex",
     boxSizing: "border-box",
+    borderBottom: "3px solid transparent",
     [theme.breakpoints.up("lg")]: {
       padding: "0 30px",
     },
@@ -52,6 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   currentSelect: {
     borderBottom: "3px solid #0e78d5",
+    transition: "0.2s",
   },
   imgIcon: {
     width: "45px",
@@ -66,19 +77,39 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: "50%",
     transform: "translateY(-50%)",
   },
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: "auto",
+  },
+  drwaer: {
+    zIndex: 666,
+  },
+  drawer1111111111: {
+    // "&>div" : {
+    //   top: '130px'
+    // }
+  },
+  smallCurrent: {
+    borderBottom: "2px solid #0e78d5",
+  },
 }));
-
-interface NavList {
-  label: string;
-  to: string;
-}
 
 function NavBarLarge() {
   const classes = useStyles();
   const [currentValue, setCurrentValue] = React.useState("library");
+  const history = useHistory();
 
   const handleChangeSelect = (value: string): void => {
     setCurrentValue(value);
+    if (value === "schedule") {
+      history.push("/schedule");
+    } else if (value === "library") {
+      history.push("/live");
+    } else {
+      history.push("/live");
+    }
   };
 
   return (
@@ -134,12 +165,80 @@ function NavBarLarge() {
           </Grid>
         </Grid>
       </Hidden>
-      <NavBarSmall />
+      <NavBarSmall currentValue={currentValue} />
     </>
   );
 }
 
-function NavBarSmall() {
+type Anchor = "right";
+
+function SwipeableTemporaryDrawer() {
+  const classes = useStyles();
+  const [state, setState] = React.useState({
+    right: false,
+  });
+  const [currentValue, setCurrentValue] = React.useState("Library");
+
+  const history = useHistory();
+
+  const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      ((event as React.KeyboardEvent).key === "Tab" || (event as React.KeyboardEvent).key === "Shift")
+    ) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+
+  const handleClick = (text: string) => {
+    setCurrentValue(text);
+    console.log(text, currentValue);
+    history.push(`/${text}`);
+  };
+
+  const list = (anchor: Anchor) => (
+    <div className={clsx(classes.list)} role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
+      <List>
+        {["Live", "Library", "Assesments", "Schedule", "Report"].map((text, index) => (
+          <ListItem button key={text} className={`${currentValue === text ? `${classes.smallCurrent}` : ""}`}>
+            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+            <ListItemText primary={text} onClick={() => handleClick(text)} />
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+
+  return (
+    <div>
+      {(["right"] as Anchor[]).map((anchor) => (
+        <React.Fragment key={anchor}>
+          <Button onClick={toggleDrawer(anchor, true)}>
+            <MenuIcon />
+          </Button>
+          <SwipeableDrawer
+            anchor={anchor}
+            open={state[anchor]}
+            onClose={toggleDrawer(anchor, false)}
+            onOpen={toggleDrawer(anchor, true)}
+            className={classes.drawer1111111111}
+          >
+            {list(anchor)}
+          </SwipeableDrawer>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+interface NavBarSmallProps {
+  currentValue: string;
+}
+
+function NavBarSmall(props: NavBarSmallProps) {
   const classes = useStyles();
 
   return (
@@ -160,7 +259,8 @@ function NavBarSmall() {
         </Grid>
         <Grid item lg={2} xl={2} md={2} className={classes.rightPart}>
           <div>
-            <MenuIcon />
+            {/* <MenuIcon /> */}
+            <SwipeableTemporaryDrawer />
           </div>
         </Grid>
       </Grid>
