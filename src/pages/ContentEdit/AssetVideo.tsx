@@ -70,9 +70,7 @@ export default function AssetVideo(props: video) {
   useEffect(() => {
     const video = document.getElementById("video") as HTMLVideoElement;
     const timer = setInterval(() => {
-      isplay
-        ? setValue((video.currentTime / video.duration) * 100)
-        : clearInterval(timer);
+      isplay ? setValue((video.currentTime / video.duration) * 100) : clearInterval(timer);
     }, 500);
   });
 
@@ -83,35 +81,19 @@ export default function AssetVideo(props: video) {
         ? <PauseCircleOutlineIcon className={classes.videoTool} />
         : <PlayCircleFilledIcon className={classes.videoTool} />
       } */}
-      <video
-        id="video"
-        className={classes.video}
-        src={props.videoUrl}
-        onClick={handlePlay}
-      ></video>
+      <video id="video" className={classes.video} src={props.videoUrl} onClick={handlePlay}></video>
       <div className={classes.controls}>
         <div className={classes.tools}>
           <FastRewindOutlinedIcon className={classes.itemTool} />
           {isplay ? (
-            <PauseCircleFilledIcon
-              className={classes.itemTool}
-              onClick={handlePlay}
-            />
+            <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
           ) : (
-            <PlayCircleFilledOutlinedIcon
-              className={classes.itemTool}
-              onClick={handlePlay}
-            />
+            <PlayCircleFilledOutlinedIcon className={classes.itemTool} onClick={handlePlay} />
           )}
 
           <FastForwardOutlinedIcon className={classes.itemTool} />
         </div>
-        <Slider
-          className={classes.progress}
-          value={value}
-          onChange={handleChange}
-          aria-labelledby="continuous-slider"
-        />
+        <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
       </div>
     </div>
   );
