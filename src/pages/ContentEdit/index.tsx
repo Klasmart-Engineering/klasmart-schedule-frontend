@@ -94,6 +94,6 @@ export default function ContentEdit() {
   );
 }
 
-ContentEdit.routeBasePath = "/content-edit";
-ContentEdit.routeMatchPath = "/content-edit/lesson/:lesson/tab/:tab/rightside/:rightside";
-ContentEdit.routeRedirectDefault = "/content-edit/lesson/material/tab/details/rightside/contentH5p";
+ContentEdit.routeBasePath = "/library/content-edit";
+ContentEdit.routeMatchPath = "/library/content-edit/lesson/:lesson/tab/:tab/rightside/:rightside";
+ContentEdit.routeRedirectDefault = "/library/content-edit/lesson/material/tab/details/rightside/contentH5p";

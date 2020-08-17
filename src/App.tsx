@@ -23,11 +23,11 @@ function App() {
             <Route path={ContentEdit.routeBasePath}>
               <Redirect to={ContentEdit.routeRedirectDefault} />
             </Route>
-            <Route path="/my-content-list">
+            <Route path="/library/my-content-list">
               <MyContentList />
             </Route>
             <Route path="/">
-              <Redirect to="/my-content-list?layout=card" />
+              <Redirect to="/library/my-content-list?layout=card" />
             </Route>
           </Switch>
         </Provider>
