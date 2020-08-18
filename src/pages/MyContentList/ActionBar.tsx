@@ -200,7 +200,7 @@ function SecondaryMenu(props: ActionBarProps) {
 function SecondaryMenuMb(props: ActionBarLayout) {
   const classes = useStyles();
   const { layout } = props;
-  const path = `/my-content-list?layout=${layout}`;
+  const path = `/library/my-content-list?layout=${layout}`;
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
