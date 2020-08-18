@@ -4,6 +4,7 @@ import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
 import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
+import Box from "@material-ui/core/Box";
 import Slider from "@material-ui/core/Slider";
 
 const useStyles = makeStyles({
@@ -75,15 +76,15 @@ export default function AssetVideo(props: video) {
   });
 
   return (
-    <div className={classes.wrap}>
+    <Box className={classes.wrap}>
       {/* {
         isplay
         ? <PauseCircleOutlineIcon className={classes.videoTool} />
         : <PlayCircleFilledIcon className={classes.videoTool} />
       } */}
       <video id="video" className={classes.video} src={props.videoUrl} onClick={handlePlay}></video>
-      <div className={classes.controls}>
-        <div className={classes.tools}>
+      <Box className={classes.controls}>
+        <Box className={classes.tools}>
           <FastRewindOutlinedIcon className={classes.itemTool} />
           {isplay ? (
             <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
@@ -92,9 +93,9 @@ export default function AssetVideo(props: video) {
           )}
 
           <FastForwardOutlinedIcon className={classes.itemTool} />
-        </div>
+        </Box>
         <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

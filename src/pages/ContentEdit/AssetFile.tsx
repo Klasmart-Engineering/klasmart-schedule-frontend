@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
+    minHeight: "554px",
     height: "67%",
     marginTop: "30px",
   },
@@ -14,10 +15,5 @@ interface file {
 
 export default function AssetFile(props: file) {
   const css = useStyles();
-  return (
-    <embed
-      className={css.assetsContent}
-      src={`https://view.officeapps.live.com/op/view.aspx?src=${props.fileUrl}`}
-    />
-  );
+  return <embed className={css.assetsContent} src={`https://view.officeapps.live.com/op/view.aspx?src=${props.fileUrl}`} />;
 }

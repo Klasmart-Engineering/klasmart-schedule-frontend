@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
 import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
 import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
@@ -71,41 +72,28 @@ export default function AssetAudio(props: Audio) {
     // const audio = document.getElementById('audio') as HTMLAudioElement
     const audio = document.getElementById("audio") as HTMLAudioElement;
     const timer = setInterval(() => {
-      isplay
-        ? setValue((audio.currentTime / audio.duration) * 100)
-        : clearInterval(timer);
+      isplay ? setValue((audio.currentTime / audio.duration) * 100) : clearInterval(timer);
     }, 500);
   });
   return (
-    <div className={classes.wrap}>
-      <div className={classes.audioCon}>
+    <Box className={classes.wrap}>
+      <Box className={classes.audioCon}>
         <MusicVideoOutlinedIcon className={classes.audioImg} />
-      </div>
-      <div className={classes.controls}>
-        <div className={classes.tools}>
+      </Box>
+      <Box className={classes.controls}>
+        <Box className={classes.tools}>
           <FastRewindOutlinedIcon className={classes.itemTool} />
           {isplay ? (
-            <PauseCircleFilledIcon
-              className={classes.itemTool}
-              onClick={handlePlay}
-            />
+            <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
           ) : (
-            <PlayCircleFilledOutlinedIcon
-              className={classes.itemTool}
-              onClick={handlePlay}
-            />
+            <PlayCircleFilledOutlinedIcon className={classes.itemTool} onClick={handlePlay} />
           )}
 
           <FastForwardOutlinedIcon className={classes.itemTool} />
-        </div>
-        <Slider
-          className={classes.progress}
-          value={value}
-          onChange={handleChange}
-          aria-labelledby="continuous-slider"
-        />
-      </div>
+        </Box>
+        <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
+      </Box>
       <audio id="audio" style={{ width: "100%" }} src={props.audioUrl}></audio>
-    </div>
+    </Box>
   );
 }
