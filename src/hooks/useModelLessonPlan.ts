@@ -9,12 +9,11 @@ interface Segment {
 }
 
 interface HashSegment {
-  [key: string]:
-    | ({
-        prevIdx?: number;
-        prev?: Segment;
-      } & Segment)
-    | undefined;
+  [key: string]: {
+    prevIdx?: number;
+    prev?: Segment;
+    current: Segment;
+  };
 }
 
 class ModelLessonPlan {
@@ -25,49 +24,78 @@ class ModelLessonPlan {
     this.value = plan;
     this.hash = this.genHash({}, plan);
   }
-
+  getPairCondition(condition: Segment["condition"]): [Segment["condition"], Segment["condition"]] {
+    switch (condition) {
+      case "ifCorrect":
+      case "ifWrong":
+        return ["ifCorrect", "ifWrong"];
+      case "ifScoreDown60":
+      case "ifScoreUp60":
+        return ["ifScoreUp60", "ifScoreDown60"];
+      default:
+        return ["ifCorrect", "ifWrong"];
+    }
+  }
   genHash(hash: HashSegment, plan?: Segment, prevIdx?: number, prev?: Segment): HashSegment {
     if (!plan?.segmentId) return hash;
-    hash[plan.segmentId] = { ...plan, prevIdx, prev };
+    hash[plan.segmentId] = { current: plan, prevIdx, prev };
     plan.next?.forEach((subPlan, idx) => this.genHash(hash, subPlan, idx, plan));
     return hash;
   }
   forEach(callback: (item: Segment, prevIdx: number | undefined, prev: Segment | undefined) => any) {
     Object.values(this.hash).forEach((subPlan) => {
       if (!subPlan) return;
-      const { prevIdx, prev, ...item } = subPlan;
-      callback(item, prevIdx, prev);
+      const { prevIdx, prev, current } = subPlan;
+      callback(current, prevIdx, prev);
     });
   }
-  // TODO: 替换成 segmentID
-  set(key: Segment, value: Partial<Segment>): this {
-    if (!key.segmentId) return this;
-    const { prev, prevIdx } = this.hash[key.segmentId] || {};
-    // 修改第一个的情况
-    if (!prev || !prevIdx) {
-      this.value = Object.assign(this.value, value);
-      return this;
-    }
-    if (!prev.next) return this;
-    prev.next[prevIdx] = Object.assign(prev.next[prevIdx], value);
+  set(segmentId: Segment["segmentId"], value: Partial<Segment>): this {
+    if (!segmentId) return this;
+    const { current } = this.hash[segmentId];
+    Object.assign(current, value);
     return this;
   }
-  // TODO: 替换成 segmentID
+  add(virtualSegmentId: Segment["segmentId"], value: Partial<Segment>, first: boolean): this {
+    debugger;
+    const segmentId = virtualSegmentId?.slice(7);
+    if (first) {
+      if (value.material) {
+        this.value.segmentId = `1`;
+        this.value.material = value.material;
+        this.value.next = [];
+      }
+    } else {
+      if (!segmentId) return this;
+      const { current } = this.hash[segmentId];
+      if (value.condition) {
+        const [firstCondition, secondCondition] = this.getPairCondition(value.condition);
+        current.next = [
+          { segmentId: `${segmentId}1`, condition: firstCondition, next: [] },
+          { segmentId: `${segmentId}2`, condition: secondCondition, next: [] },
+        ];
+      }
+      if (value.material) {
+        current.next = [{ segmentId: `${segmentId}1`, material: value.material, next: [] }];
+      }
+    }
+    this.hash = this.genHash({}, this.value);
+    return this;
+  }
   // 这里只考虑了单节点情况，如果将来有condition 分叉，需要修改实现
-  remove(key: Segment): this {
-    if (!key.segmentId || !this.value || !this.value.segmentId) return this;
-    const { prev, prevIdx } = this.hash[key.segmentId] || {};
+  remove(segmentId: Segment["segmentId"]): this {
+    if (!segmentId) return this;
+    const { prev, prevIdx, current } = this.hash[segmentId];
     // 修改第一个的情况
     if (!prev || !prevIdx) {
-      this.value = this.value.next ? this.value?.next[0] : {};
+      this.value = current.next ? current.next[0] : {};
       this.hash = this.genHash({}, this.value);
       return this;
     }
     if (!prev.next) return this;
-    if (!prev.next[0].next || !prev.next[0].next[0]) {
-      delete prev.next[prevIdx];
+    if (!current.next) {
+      delete prev.next[0];
     } else {
-      prev.next[0] = prev.next[0].next[0];
+      prev.next[0] = current.next[0];
     }
     this.hash = this.genHash({}, this.value);
     return this;
@@ -86,9 +114,8 @@ interface IGetValue<T> {
 type UseMemoWithSetReturn<T> = [T, (arg: T) => any];
 function useMemoWithSet<T>(initValue: any, transform: (arg: any) => T): UseMemoWithSetReturn<T> {
   const [, set] = useState();
-  const transformValue = useCallback(transform, []);
   const getValue = useMemo<IGetValue<T>>(() => {
-    const ref = { current: transformValue(initValue) };
+    const ref = { current: transform(initValue) };
     return function getValue(set) {
       const setValue = (value: any) => {
         ref.current = value;
@@ -96,14 +123,13 @@ function useMemoWithSet<T>(initValue: any, transform: (arg: any) => T): UseMemoW
       };
       return [ref, setValue];
     };
-  }, [initValue, transformValue]);
+  }, [initValue, transform]);
   const [{ current }, setValue] = getValue(set);
   return [current, setValue];
 }
 
-export function useModelLessonPlan() {
-  const { model, update } = useContext(context);
-  return { model, update };
+export function useModelLessonPlan(): ModelContext {
+  return useContext(context);
 }
 
 interface ContainerFormLessonPlanProps {

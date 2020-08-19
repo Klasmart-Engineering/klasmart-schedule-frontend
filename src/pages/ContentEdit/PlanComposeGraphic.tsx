@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, HTMLAttributes, useMemo, useRef } from "react";
+import React, { forwardRef, useCallback, HTMLAttributes, useMemo, useRef, useState } from "react";
 import { makeStyles, Box, Typography, Button, useTheme, ButtonGroup, CardMedia, Card, CardContent, Theme } from "@material-ui/core";
 import { Done, DashboardOutlined, SvgIconComponent, Close, CancelRounded, Spellcheck, FlagOutlined } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
@@ -82,9 +82,6 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
     borderStyle: "dashed",
     borderColor: palette.primary.main,
     borderRadius: shape.borderRadius,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
   },
   cardMedia: {
     width: "100%",
@@ -118,7 +115,7 @@ const useSegmentComputedStyles = makeStyles({
     },
   }),
   card: (props: SegmentProps) => ({
-    marginTop: props.first || props.condition ? 40 : props.droppableType === "condition" ? 40 + 59 + 34 : 40 + 59,
+    marginTop: props.first || props.condition ? 40 : props.canDropCondition ? 40 + 59 + 34 : 40 + 59,
     width: 200,
     position: "relative",
     "&:hover svg": {
@@ -177,10 +174,48 @@ const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) 
   }
 });
 
+interface DragItem {
+  type: string;
+  data: any;
+}
 const DraggableConditionBtn = (props: ConditionBtnProps) => {
-  const [, dragRef] = useDrag({ item: { type: "condition", data: props.type } });
+  const [, dragRef] = useDrag<DragItem, unknown, unknown>({ item: { type: "condition", data: props.type } });
   return <ConditionBtn ref={dragRef} {...props} />;
 };
+
+interface MaterialCardProps {
+  material: Segment["material"];
+}
+const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
+  const {
+    material: { img, author, name },
+  } = props;
+  const css = useStyles();
+  return (
+    <Card ref={ref}>
+      <CardMedia className={css.cardMedia} image={img || " "} />
+      <CardContent className={css.cardContent}>
+        <Typography component="div" variant="caption" noWrap>
+          {name}
+        </Typography>
+        <Typography component="div" variant="caption" color="textSecondary" noWrap>
+          {author}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+});
+
+interface mapDropSegmentPropsReturn {
+  canDrop: boolean;
+}
+const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
+  canDrop: monitor.canDrop(),
+});
+
+const mapDropSegmentProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
+  canDrop: monitor.canDrop(),
+});
 
 export interface Segment {
   segmentId?: string;
@@ -189,25 +224,35 @@ export interface Segment {
   next?: Segment[];
 }
 
-interface DroppableType {
-  droppableType?: "condition" | "material" | null;
-}
-
-const mapDropSegmentProps = (monitor: DropTargetMonitor) => ({
-  source: monitor.getItem(),
-});
-
-interface SegmentProps extends Segment, DroppableType {
+interface SegmentProps extends Segment {
   first?: boolean;
+  canDropMaterial?: boolean;
+  canDropCondition?: boolean;
 }
 function Segment(props: SegmentProps) {
-  const { material, condition, next, droppableType, segmentId } = props;
+  const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial } = props;
   const css = useStyles();
-  const computedCss = useSegmentComputedStyles(props);
-  const [planModel, update] = useModelLessonPlan();
-  const [{ source }, materialDropRef] = useDrop({ accept: "LIBRARY_ITEM", collect: mapDropSegmentProps });
-  const [, conditionDropRef] = useDrop({ accept: "condition" });
-  const insertedNext = next && next.length > 0 ? next : material ? [{}] : [];
+  const { model, update } = useModelLessonPlan();
+  const createHandleDrop = (method: "set" | "add") => (item: DragItem) => {
+    if (!model || !update) return;
+    const type = item.type === "LIBRARY_ITEM" ? "material" : item.type === "condition" ? "condition" : "";
+    model[method](segmentId, { [type]: item.data }, Boolean(first));
+    update();
+  };
+  const [, materialDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: "LIBRARY_ITEM",
+    drop: createHandleDrop("set"),
+  });
+  const [, conditionDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: "condition",
+    drop: createHandleDrop("set"),
+  });
+  const [, blankDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: first ? "LIBRARY_ITEM" : ["LIBRARY_ITEM", "condition"],
+    drop: createHandleDrop("add"),
+  });
+  const computedCss = useSegmentComputedStyles({ ...props });
+  const insertedNext = next && next.length > 0 ? next : material ? [{ segmentId: `virtual${segmentId}` }] : [];
   const segmentConditionId = `${segmentId}.condition`;
   const segmentMaterialId = `${segmentId}.material`;
   const hasNext = next && next.length > 0;
@@ -222,14 +267,14 @@ function Segment(props: SegmentProps) {
   const segmentNodes = (
     <Box className="segmentNext" display="flex" flexWrap="nowrap">
       {insertedNext.map((segmentItem) => (
-        <Segment key={++segmentItemIdx} {...segmentItem} droppableType={droppableType} />
+        <Segment key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
       ))}
     </Box>
   );
   // 既没选 material 也没选 condition 的情况
   if (!material && !condition)
     return (
-      <div className={clsx(css.blankBox, css.drappableBox)}>
+      <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary">
           Drop a condition or a lesson material here
         </Typography>
@@ -240,15 +285,17 @@ function Segment(props: SegmentProps) {
     return (
       <Box className={computedCss.segment} display="flex" flexDirection="column" alignItems="center">
         <ArcherElement id={segmentConditionId} relations={conditionRelations}>
-          <div className={clsx(css.arrowSourceCircle, { [css.drappableBox]: droppableType === "condition" })}>
-            <ConditionBtn type={condition} />
+          <div className={clsx(css.arrowSourceCircle, { [css.drappableBox]: canDropCondition })}>
+            <ConditionBtn ref={conditionDropRef} type={condition} />
           </div>
         </ArcherElement>
         <ArcherElement id={segmentMaterialId} relations={materialRelations}>
-          <div className={clsx(computedCss.card, { [css.drappableBox]: droppableType !== "condition" })}>
-            <Typography align="center" variant="body1" color="textSecondary">
-              Drop a lesson material here
-            </Typography>
+          <div className={clsx(computedCss.card, { [css.drappableBox]: !canDropCondition })}>
+            <div ref={materialDropRef}>
+              <Typography align="center" variant="body1" color="textSecondary">
+                Drop a lesson material here
+              </Typography>
+            </div>
           </div>
         </ArcherElement>
       </Box>
@@ -258,6 +305,7 @@ function Segment(props: SegmentProps) {
     return (
       <Box className={computedCss.segment} display="flex" flexDirection="column" alignItems="center">
         <ArcherElement id={segmentMaterialId} relations={materialRelations}>
+<<<<<<< HEAD
           <div className={clsx(computedCss.card, { [css.drappableBox]: droppableType === "material", [css.arrowSourceCircle]: hasNext })}>
             <Card>
               <CardMedia className={css.cardMedia} image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
@@ -272,6 +320,10 @@ function Segment(props: SegmentProps) {
               {/* <Box className={css.removeCard}><Close fontSize="small"></Close></Box> */}
               <CancelRounded viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
             </Card>
+=======
+          <div className={clsx(computedCss.card, { [css.drappableBox]: canDropMaterial, [css.arrowSourceCircle]: hasNext })}>
+            <MaterialCard material={material} ref={materialDropRef} />
+>>>>>>> refactor: plancomposeGraphic
           </div>
         </ArcherElement>
         {segmentNodes}
@@ -281,11 +333,12 @@ function Segment(props: SegmentProps) {
   return (
     <Box className={computedCss.segment} display="flex" flexDirection="column" alignItems="center">
       <ArcherElement id={segmentConditionId} relations={conditionRelations}>
-        <div className={clsx(css.arrowSourceCircle, { [css.drappableBox]: droppableType === "condition" })}>
-          <ConditionBtn type={condition} />
+        <div className={clsx(css.arrowSourceCircle, { [css.drappableBox]: canDropCondition })}>
+          <ConditionBtn ref={conditionDropRef} type={condition} />
         </div>
       </ArcherElement>
       <ArcherElement id={segmentMaterialId} relations={materialRelations}>
+<<<<<<< HEAD
         <div className={clsx(computedCss.card, { [css.drappableBox]: droppableType === "material", [css.arrowSourceCircle]: hasNext })}>
           <Card>
             <CardMedia className={css.cardMedia} image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
@@ -299,6 +352,10 @@ function Segment(props: SegmentProps) {
             </CardContent>
             <CancelRounded viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
           </Card>
+=======
+        <div className={clsx(computedCss.card, { [css.drappableBox]: canDropMaterial, [css.arrowSourceCircle]: hasNext })}>
+          <MaterialCard material={material} ref={materialDropRef} />
+>>>>>>> refactor: plancomposeGraphic
         </div>
       </ArcherElement>
       {segmentNodes}
@@ -306,10 +363,13 @@ function Segment(props: SegmentProps) {
   );
 }
 
-const useScrollCenter = (enable?: boolean) => {
+const useScrollCenter = (once?: boolean) => {
+  const countRef = useRef(0);
+  const enable = once ? countRef.current < 1 : true;
   const ref = useCallback(
     (node: HTMLElement | null) => {
       if (!enable || !node) return;
+      countRef.current += 1;
       node.scrollIntoView({ inline: "center", behavior: "smooth" });
     },
     [enable]
@@ -317,29 +377,31 @@ const useScrollCenter = (enable?: boolean) => {
   return ref;
 };
 
-const useRepaintKey = (value: DroppableType["droppableType"]) => {
+const useRepaintKey = (value: any) => {
   const count = useRef(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => count.current++, [value]);
 };
 
-const mapDropContainerProps = (monitor: DropTargetMonitor) => {
-  const type = monitor.getItemType();
-  return { droppableType: type === "LIBRARY_ITEM" ? "material" : type === "condition" ? "condition" : undefined } as DroppableType;
-};
-
 interface PlanComposeGraphicProps {
   plan: Segment;
 }
+
 export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const { plan } = props;
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(props);
-  const [{ droppableType }] = useDrop({ accept: "NONE", collect: mapDropContainerProps });
-  const repaintKey = useRepaintKey(droppableType);
+  const [{ canDrop: canDropMaterial }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: "LIBRARY_ITEM",
+    collect: mapDropContainerProps,
+  });
+  const [{ canDrop: canDropCondition }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: "condition",
+    collect: mapDropContainerProps,
+  });
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
-  const startRef = useScrollCenter(repaintKey === 0);
+  const startRef = useScrollCenter(true);
   return (
     <ContainerModelLessonPlan plan={plan}>
       {(form) => (
@@ -381,7 +443,7 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
               arrowThickness={9}
               arrowLength={9}
               noCurves
-              key={repaintKey}
+              key={`${canDropCondition}${canDropMaterial}`}
             >
               <Box display="flex" flexDirection="column" alignItems="center">
                 <ArcherElement id="start" relations={startRelations}>
@@ -394,7 +456,7 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
                     <Box position="absolute" mt={5} width={0} />
                   </ArcherElement>
                 </Box>
-                <Segment {...form} droppableType={droppableType} first />
+                <Segment {...{ ...form, canDropMaterial, canDropCondition }} first />
               </Box>
             </ArcherContainer>
           </Box>
