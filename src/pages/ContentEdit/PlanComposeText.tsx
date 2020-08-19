@@ -262,13 +262,13 @@ export interface SegmentText {
   material?: any;
   next?: SegmentText[];
 }
-interface SegmentProps extends SegmentText, DrappableType {}
-function Segment(props: SegmentProps) {}
+// interface SegmentProps extends SegmentText, DrappableType {}
+// function Segment(props: SegmentProps) {}
 interface PlanComposeTextProps extends DrappableType {
   plan: SegmentText;
 }
 export default function PlanComposeText(props: PlanComposeTextProps) {
-  const { plan, droppableType } = props;
+  const { droppableType } = props;
   const css = useStyles();
 
   return (
@@ -280,7 +280,7 @@ export default function PlanComposeText(props: PlanComposeTextProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/content-edit/lesson/plan/tab/details/rightside/planComposeText"
+            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeText"
           >
             <Typography variant="h6">A</Typography>
           </Button>
@@ -289,7 +289,7 @@ export default function PlanComposeText(props: PlanComposeTextProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
+            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
           >
             <DashboardOutlined />
           </Button>

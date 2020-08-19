@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, HTMLAttributes, useEffect, useMemo, useRef } from "react";
 import { makeStyles, Box, Typography, Button, useTheme, ButtonGroup, CardMedia, Card, CardContent, Theme } from "@material-ui/core";
-import { Done, DashboardOutlined, SvgIconComponent, Close, Spellcheck, FlagOutlined } from "@material-ui/icons";
+import { Done, DashboardOutlined, SvgIconComponent, Close, CancelRounded, Spellcheck, FlagOutlined } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 import cloneDeep from "lodash/cloneDeep";
@@ -54,13 +54,14 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
   },
   headerButton: {
     width: 60,
+    height: 40,
     backgroundColor: palette.common.white,
     "&.active": {
       color: palette.primary.contrastText,
       backgroundColor: palette.primary.main,
     },
     "&:hover": {
-      backgroundColor: palette.action.hover,
+      backgroundColor: palette.action.disabledOpacity,
     },
   },
   composeArea: {
@@ -94,6 +95,16 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
       padding: 6,
     },
   },
+  removeCardIcon: {
+    color: "#d32f2f",
+    fontSize: 20,
+    backgroundColor: palette.common.white,
+    borderRadius: "100%",
+    position: "absolute",
+    top: -10,
+    right: -10,
+    display: "none",
+  },
 }));
 
 const useSegmentComputedStyles = makeStyles({
@@ -108,6 +119,10 @@ const useSegmentComputedStyles = makeStyles({
   card: (props: SegmentProps) => ({
     marginTop: props.first || props.condition ? 40 : props.droppableType === "condition" ? 40 + 59 + 34 : 40 + 59,
     width: 200,
+    position: "relative",
+    "&:hover svg": {
+      display: "block",
+    },
   }),
 });
 
@@ -246,6 +261,8 @@ function Segment(props: SegmentProps) {
                   Elnora Jensen
                 </Typography>
               </CardContent>
+              {/* <Box className={css.removeCard}><Close fontSize="small"></Close></Box> */}
+              <CancelRounded viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
             </Card>
           </div>
         </ArcherElement>
@@ -272,6 +289,7 @@ function Segment(props: SegmentProps) {
                 Elnora Jensen
               </Typography>
             </CardContent>
+            <CancelRounded viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
           </Card>
         </div>
       </ArcherElement>
@@ -324,16 +342,16 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/content-edit/lesson/plan/tab/details/rightside/planComposeText"
+            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeText"
           >
-            A
+            <Typography variant="h6">A</Typography>
           </Button>
           <Button
             component={NavLink}
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
+            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
           >
             <DashboardOutlined />
           </Button>
