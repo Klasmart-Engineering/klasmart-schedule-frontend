@@ -1,4 +1,4 @@
-import { useMemo, createContext, ReactNode, createElement, useState, useContext, useCallback } from "react";
+import { useMemo, createContext, ReactNode, createElement, useState, useContext, useCallback, JSXElementConstructor } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
 interface Segment {
@@ -19,6 +19,12 @@ interface HashSegment {
 class ModelLessonPlan {
   hash: HashSegment;
   value: Segment;
+
+  static clone(model: ModelLessonPlan) {
+    const result = Object.create(ModelLessonPlan.prototype);
+    Object.assign(result, model);
+    return result;
+  }
 
   constructor(plan: Segment) {
     this.value = plan;
@@ -56,7 +62,6 @@ class ModelLessonPlan {
     return this;
   }
   add(virtualSegmentId: Segment["segmentId"], value: Partial<Segment>, first: boolean): this {
-    debugger;
     const segmentId = virtualSegmentId?.slice(7);
     if (first) {
       if (value.material) {
@@ -86,17 +91,18 @@ class ModelLessonPlan {
     if (!segmentId) return this;
     const { prev, prevIdx, current } = this.hash[segmentId];
     // 修改第一个的情况
-    if (!prev || !prevIdx) {
+    if (!prev || prevIdx == null) {
       this.value = current.next ? current.next[0] : {};
       this.hash = this.genHash({}, this.value);
       return this;
     }
     if (!prev.next) return this;
-    if (!current.next) {
-      delete prev.next[0];
+    if (!current.next || current.next.length === 0) {
+      prev.next.splice(prevIdx, 1);
     } else {
-      prev.next[0] = current.next[0];
+      prev.next[prevIdx] = current.next[0];
     }
+    this.value = Object.assign({}, this.value);
     this.hash = this.genHash({}, this.value);
     return this;
   }
@@ -134,13 +140,13 @@ export function useModelLessonPlan(): ModelContext {
 
 interface ContainerFormLessonPlanProps {
   plan: Segment;
-  children: (form: Segment) => ReactNode;
+  children: ReactNode;
 }
 export function ContainerModelLessonPlan(props: ContainerFormLessonPlanProps) {
   const { children, plan } = props;
   const [model, setModel] = useMemoWithSet<ModelLessonPlan>(plan, (plan: Segment) => {
     return new ModelLessonPlan(cloneDeep(plan));
   });
-  const update = () => setModel(Object.create(model));
-  return createElement(context.Provider, { value: { model, update } }, children(model.value));
+  const update = () => setModel(ModelLessonPlan.clone(model));
+  return createElement(context.Provider, { value: { model, update } }, children);
 }

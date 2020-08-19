@@ -1,1 +1,97 @@
-{}
+{
+  "segmentId": "1",
+  "material": {
+    "name": "Lesson Name 1",
+    "author": "Lesson Author 111",
+    "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+  },
+  "next": [
+    {
+      "segmentId": "11",
+      "material": {
+        "name": "Lesson Name 11",
+        "author": "Lesson Author 11",
+        "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+      },
+      "next": [
+        {
+          "segmentId": "111",
+          "condition": "ifScoreUp60",
+          "material": {
+            "name": "Lesson Name 111",
+            "author": "Lesson Author 111",
+            "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+          },
+          "next": [
+            {
+              "segmentId": "1111",
+              "condition": "ifCorrect",
+              "next": []
+            },
+            {
+              "segmentId": "1112",
+              "condition": "ifWrong",
+              "material": {
+                "name": "Lesson Name 1112",
+                "author": "Lesson Author 1112",
+                "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+              },
+              "next": []
+            }
+          ]
+        },
+        {
+          "segmentId": "112",
+          "condition": "ifScoreDown60",
+          "material": {
+            "name": "Lesson Name 112",
+            "author": "Lesson Author 112",
+            "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+          },
+          "next": [
+            {
+              "segmentId": "1121",
+              "condition": "ifCorrect",
+              "material": {
+                "name": "Lesson Name 111",
+                "author": "Lesson Author 111",
+                "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+              },
+              "next": []
+            },
+            {
+              "segmentId": "1122",
+              "condition": "ifWrong",
+              "material": {
+                "name": "Lesson Name 1122",
+                "author": "Lesson Author 1122",
+                "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+              },
+              "next": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "12",
+      "condition": "ifWrong",
+      "material": {
+        "name": "Lesson Name 12",
+        "author": "Lesson Author 12",
+        "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+      },
+      "next": [
+        {
+          "segmentId": "121",
+          "material": {
+            "name": "Lesson Name 121",
+            "author": "Lesson Author 121",
+            "img": "https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png"
+          },
+          "next": []
+        }
+      ]
+    }
+  ]
+}

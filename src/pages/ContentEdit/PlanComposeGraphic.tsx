@@ -1,5 +1,17 @@
 import React, { forwardRef, useCallback, HTMLAttributes, useMemo, useRef, useState } from "react";
-import { makeStyles, Box, Typography, Button, useTheme, ButtonGroup, CardMedia, Card, CardContent, Theme } from "@material-ui/core";
+import {
+  makeStyles,
+  Box,
+  Typography,
+  Button,
+  useTheme,
+  ButtonGroup,
+  CardMedia,
+  Card,
+  CardContent,
+  Theme,
+  SvgIconProps,
+} from "@material-ui/core";
 import { Done, DashboardOutlined, SvgIconComponent, Close, CancelRounded, Spellcheck, FlagOutlined } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
@@ -185,10 +197,12 @@ const DraggableConditionBtn = (props: ConditionBtnProps) => {
 
 interface MaterialCardProps {
   material: Segment["material"];
+  onRemove: SvgIconProps["onClick"];
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
   const {
     material: { img, author, name },
+    onRemove,
   } = props;
   const css = useStyles();
   return (
@@ -202,6 +216,7 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
           {author}
         </Typography>
       </CardContent>
+      <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
     </Card>
   );
 });
@@ -237,6 +252,11 @@ function Segment(props: SegmentProps) {
     if (!model || !update) return;
     const type = item.type === "LIBRARY_ITEM" ? "material" : item.type === "condition" ? "condition" : "";
     model[method](segmentId, { [type]: item.data }, Boolean(first));
+    update();
+  };
+  const handleRemove = () => {
+    if (!model || !update) return;
+    model.remove(segmentId);
     update();
   };
   const [, materialDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
@@ -305,25 +325,8 @@ function Segment(props: SegmentProps) {
     return (
       <Box className={computedCss.segment} display="flex" flexDirection="column" alignItems="center">
         <ArcherElement id={segmentMaterialId} relations={materialRelations}>
-<<<<<<< HEAD
-          <div className={clsx(computedCss.card, { [css.drappableBox]: droppableType === "material", [css.arrowSourceCircle]: hasNext })}>
-            <Card>
-              <CardMedia className={css.cardMedia} image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
-              <CardContent className={css.cardContent}>
-                <Typography component="div" variant="caption" noWrap>
-                  Badanamu Zoo: Snow Leopard
-                </Typography>
-                <Typography component="div" variant="caption" color="textSecondary" noWrap>
-                  Elnora Jensen
-                </Typography>
-              </CardContent>
-              {/* <Box className={css.removeCard}><Close fontSize="small"></Close></Box> */}
-              <CancelRounded viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
-            </Card>
-=======
           <div className={clsx(computedCss.card, { [css.drappableBox]: canDropMaterial, [css.arrowSourceCircle]: hasNext })}>
-            <MaterialCard material={material} ref={materialDropRef} />
->>>>>>> refactor: plancomposeGraphic
+            <MaterialCard onRemove={handleRemove} material={material} ref={materialDropRef} />
           </div>
         </ArcherElement>
         {segmentNodes}
@@ -338,24 +341,8 @@ function Segment(props: SegmentProps) {
         </div>
       </ArcherElement>
       <ArcherElement id={segmentMaterialId} relations={materialRelations}>
-<<<<<<< HEAD
-        <div className={clsx(computedCss.card, { [css.drappableBox]: droppableType === "material", [css.arrowSourceCircle]: hasNext })}>
-          <Card>
-            <CardMedia className={css.cardMedia} image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
-            <CardContent className={css.cardContent}>
-              <Typography component="div" variant="caption" noWrap>
-                Badanamu Zoo: Snow Leopard
-              </Typography>
-              <Typography component="div" variant="caption" color="textSecondary" noWrap>
-                Elnora Jensen
-              </Typography>
-            </CardContent>
-            <CancelRounded viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
-          </Card>
-=======
         <div className={clsx(computedCss.card, { [css.drappableBox]: canDropMaterial, [css.arrowSourceCircle]: hasNext })}>
-          <MaterialCard material={material} ref={materialDropRef} />
->>>>>>> refactor: plancomposeGraphic
+          <MaterialCard onRemove={handleRemove} material={material} ref={materialDropRef} />
         </div>
       </ArcherElement>
       {segmentNodes}
@@ -387,11 +374,11 @@ interface PlanComposeGraphicProps {
   plan: Segment;
 }
 
-export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
-  const { plan } = props;
+function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(props);
+  const { model } = useModelLessonPlan();
   const [{ canDrop: canDropMaterial }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: "LIBRARY_ITEM",
     collect: mapDropContainerProps,
@@ -400,68 +387,73 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
     accept: "condition",
     collect: mapDropContainerProps,
   });
+  const archerRepaintKey = useMemo(() => Date.now(), []);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
   const startRef = useScrollCenter(true);
   return (
-    <ContainerModelLessonPlan plan={plan}>
-      {(form) => (
-        <Box className={css.planComposeGraphic}>
-          <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
-            <ButtonGroup className={css.headerButtonGroup}>
-              <Button
-                component={NavLink}
-                activeClassName="active"
-                variant="contained"
-                className={css.headerButton}
-                to="/content-edit/lesson/plan/tab/details/rightside/planComposeText"
-              >
-                A
-              </Button>
-              <Button
-                component={NavLink}
-                activeClassName="active"
-                variant="contained"
-                className={css.headerButton}
-                to="/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
-              >
-                <DashboardOutlined />
-              </Button>
-            </ButtonGroup>
-            <Typography className={css.headerTitle}>Condition Library</Typography>
-            <Box display="flex" flexWrap="wrap" pb={3.5}>
-              <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
-              <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
-              <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
-              <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
-            </Box>
-          </Box>
-          <Box className={computedCss.composeArea}>
-            <ArcherContainer
-              svgContainerStyle={{ zIndex: -1 }}
-              strokeColor={palette.grey[700]}
-              strokeWidth={1}
-              arrowThickness={9}
-              arrowLength={9}
-              noCurves
-              key={`${canDropCondition}${canDropMaterial}`}
-            >
-              <Box display="flex" flexDirection="column" alignItems="center">
-                <ArcherElement id="start" relations={startRelations}>
-                  <div>
-                    <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
-                  </div>
-                </ArcherElement>
-                <Box position="relative">
-                  <ArcherElement id="startTarget">
-                    <Box position="absolute" mt={5} width={0} />
-                  </ArcherElement>
-                </Box>
-                <Segment {...{ ...form, canDropMaterial, canDropCondition }} first />
-              </Box>
-            </ArcherContainer>
-          </Box>
+    <Box className={css.planComposeGraphic}>
+      <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
+        <ButtonGroup className={css.headerButtonGroup}>
+          <Button
+            component={NavLink}
+            activeClassName="active"
+            variant="contained"
+            className={css.headerButton}
+            to="/library/content-edit/lesson/plan/tab/assetsLibrary/rightside/planComposeText"
+          >
+            A
+          </Button>
+          <Button
+            component={NavLink}
+            activeClassName="active"
+            variant="contained"
+            className={css.headerButton}
+            to="/library/content-edit/lesson/plan/tab/assetsLibrary/rightside/planComposeGraphic"
+          >
+            <DashboardOutlined />
+          </Button>
+        </ButtonGroup>
+        <Typography className={css.headerTitle}>Condition Library</Typography>
+        <Box display="flex" flexWrap="wrap" pb={3.5}>
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
+          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
         </Box>
-      )}
+      </Box>
+      <Box className={computedCss.composeArea}>
+        <ArcherContainer
+          svgContainerStyle={{ zIndex: -1 }}
+          strokeColor={palette.grey[700]}
+          strokeWidth={1}
+          arrowThickness={9}
+          arrowLength={9}
+          noCurves
+          key={archerRepaintKey}
+        >
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <ArcherElement id="start" relations={startRelations}>
+              <div>
+                <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
+              </div>
+            </ArcherElement>
+            <Box position="relative">
+              <ArcherElement id="startTarget">
+                <Box position="absolute" mt={5} width={0} />
+              </ArcherElement>
+            </Box>
+            <Segment {...{ ...model?.value, canDropMaterial, canDropCondition }} first />
+          </Box>
+        </ArcherContainer>
+      </Box>
+    </Box>
+  );
+}
+
+export default function WrapModelPlanComposeGraphic(props: PlanComposeGraphicProps) {
+  return (
+    <ContainerModelLessonPlan plan={props.plan}>
+      <PlanComposeGraphic {...props} />
     </ContainerModelLessonPlan>
   );
 }
