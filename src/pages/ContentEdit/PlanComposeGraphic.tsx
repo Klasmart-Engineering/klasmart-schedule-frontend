@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, HTMLAttributes, useEffect, useMemo, useRef } from "react";
+import React, { forwardRef, useCallback, HTMLAttributes, useMemo, useRef } from "react";
 import { makeStyles, Box, Typography, Button, useTheme, ButtonGroup, CardMedia, Card, CardContent, Theme } from "@material-ui/core";
 import { Done, DashboardOutlined, SvgIconComponent, Close, CancelRounded, Spellcheck, FlagOutlined } from "@material-ui/icons";
 import { NavLink } from "react-router-dom";
@@ -6,7 +6,8 @@ import clsx from "clsx";
 import cloneDeep from "lodash/cloneDeep";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
-import { useDrag, useDragLayer, useDrop, DropTargetMonitor } from "react-dnd";
+import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
+import { ContainerModelLessonPlan, useModelLessonPlan } from "../../hooks/useModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape }) => ({
   planComposeGraphic: {
@@ -192,6 +193,10 @@ interface DroppableType {
   droppableType?: "condition" | "material" | null;
 }
 
+const mapDropSegmentProps = (monitor: DropTargetMonitor) => ({
+  source: monitor.getItem(),
+});
+
 interface SegmentProps extends Segment, DroppableType {
   first?: boolean;
 }
@@ -199,6 +204,9 @@ function Segment(props: SegmentProps) {
   const { material, condition, next, droppableType, segmentId } = props;
   const css = useStyles();
   const computedCss = useSegmentComputedStyles(props);
+  const [planModel, update] = useModelLessonPlan();
+  const [{ source }, materialDropRef] = useDrop({ accept: "LIBRARY_ITEM", collect: mapDropSegmentProps });
+  const [, conditionDropRef] = useDrop({ accept: "condition" });
   const insertedNext = next && next.length > 0 ? next : material ? [{}] : [];
   const segmentConditionId = `${segmentId}.condition`;
   const segmentMaterialId = `${segmentId}.material`;
@@ -315,7 +323,7 @@ const useRepaintKey = (value: DroppableType["droppableType"]) => {
   return useMemo(() => count.current++, [value]);
 };
 
-const mapDropProps = (monitor: DropTargetMonitor) => {
+const mapDropContainerProps = (monitor: DropTargetMonitor) => {
   const type = monitor.getItemType();
   return { droppableType: type === "LIBRARY_ITEM" ? "material" : type === "condition" ? "condition" : undefined } as DroppableType;
 };
@@ -328,67 +336,70 @@ export default function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(props);
-  const form = useMemo(() => cloneDeep(plan), [plan]);
-  const [{ droppableType }] = useDrop({ accept: "NONE", collect: mapDropProps });
+  const [{ droppableType }] = useDrop({ accept: "NONE", collect: mapDropContainerProps });
   const repaintKey = useRepaintKey(droppableType);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
   const startRef = useScrollCenter(repaintKey === 0);
   return (
-    <Box className={css.planComposeGraphic}>
-      <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
-        <ButtonGroup className={css.headerButtonGroup}>
-          <Button
-            component={NavLink}
-            activeClassName="active"
-            variant="contained"
-            className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeText"
-          >
-            <Typography variant="h6">A</Typography>
-          </Button>
-          <Button
-            component={NavLink}
-            activeClassName="active"
-            variant="contained"
-            className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
-          >
-            <DashboardOutlined />
-          </Button>
-        </ButtonGroup>
-        <Typography className={css.headerTitle}>Condition Library</Typography>
-        <Box display="flex" flexWrap="wrap" pb={3.5}>
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
-        </Box>
-      </Box>
-      <Box className={computedCss.composeArea}>
-        <ArcherContainer
-          svgContainerStyle={{ zIndex: -1 }}
-          strokeColor={palette.grey[700]}
-          strokeWidth={1}
-          arrowThickness={9}
-          arrowLength={9}
-          noCurves
-          key={repaintKey}
-        >
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <ArcherElement id="start" relations={startRelations}>
-              <div>
-                <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
-              </div>
-            </ArcherElement>
-            <Box position="relative">
-              <ArcherElement id="startTarget">
-                <Box position="absolute" mt={5} width={0} />
-              </ArcherElement>
+    <ContainerModelLessonPlan plan={plan}>
+      {(form) => (
+        <Box className={css.planComposeGraphic}>
+          <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
+            <ButtonGroup className={css.headerButtonGroup}>
+              <Button
+                component={NavLink}
+                activeClassName="active"
+                variant="contained"
+                className={css.headerButton}
+                to="/content-edit/lesson/plan/tab/details/rightside/planComposeText"
+              >
+                A
+              </Button>
+              <Button
+                component={NavLink}
+                activeClassName="active"
+                variant="contained"
+                className={css.headerButton}
+                to="/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
+              >
+                <DashboardOutlined />
+              </Button>
+            </ButtonGroup>
+            <Typography className={css.headerTitle}>Condition Library</Typography>
+            <Box display="flex" flexWrap="wrap" pb={3.5}>
+              <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
+              <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
+              <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
+              <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
             </Box>
-            <Segment {...form} droppableType={droppableType} first />
           </Box>
-        </ArcherContainer>
-      </Box>
-    </Box>
+          <Box className={computedCss.composeArea}>
+            <ArcherContainer
+              svgContainerStyle={{ zIndex: -1 }}
+              strokeColor={palette.grey[700]}
+              strokeWidth={1}
+              arrowThickness={9}
+              arrowLength={9}
+              noCurves
+              key={repaintKey}
+            >
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <ArcherElement id="start" relations={startRelations}>
+                  <div>
+                    <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
+                  </div>
+                </ArcherElement>
+                <Box position="relative">
+                  <ArcherElement id="startTarget">
+                    <Box position="absolute" mt={5} width={0} />
+                  </ArcherElement>
+                </Box>
+                <Segment {...form} droppableType={droppableType} first />
+              </Box>
+            </ArcherContainer>
+          </Box>
+        </Box>
+      )}
+    </ContainerModelLessonPlan>
   );
 }
