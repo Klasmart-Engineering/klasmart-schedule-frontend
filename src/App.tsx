@@ -34,9 +34,9 @@ function App() {
               <MyContentList />
             </Route>
             <Route path="/schedule" component={Schedule} />
-            {/* <Route path="/">
+            <Route path="/">
               <Redirect to="/library/my-content-list?layout=card" />
-            </Route> */}
+            </Route>
           </Switch>
         </Provider>
       </HashRouter>

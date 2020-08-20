@@ -34,11 +34,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   emptyDesc: {
     marginBottom: "auto",
   },
-  assetLibraryButton: {
-    fontWeight: "bold",
-    borderRadius: 27,
-    margin: "48px 0",
-  },
 }));
 
 const multipleLine = (list: string[]) => {
@@ -103,11 +98,11 @@ function DraggableImage(props: DraggableItemProps) {
 
 interface MediaAssetsProps {
   list: mockAsset[];
-  library?: boolean;
+  comingsoon?: boolean;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const css = useStyles();
-  const { list, library } = props;
+  const { list } = props;
   const rows = list.slice(-2).map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
@@ -144,11 +139,6 @@ export default function MediaAssets(props: MediaAssetsProps) {
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {list.length > 0 ? table : <Empty />}
-      {!library && (
-        <Button className={css.assetLibraryButton} variant="contained" color="primary">
-          View Assets Library
-        </Button>
-      )}
     </Box>
   );
 }

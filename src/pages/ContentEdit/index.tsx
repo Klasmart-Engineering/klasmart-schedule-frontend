@@ -18,7 +18,7 @@ import mockLessonPlan from "../../mocks/lessonPlan.json";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
-  tab: "details" | "outcomes" | "assets";
+  tab: "details" | "outcomes" | "assets" | "assetCreate";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
 
@@ -53,7 +53,7 @@ export default function ContentEdit() {
   const assetsLibrary = (
     <MediaAssetsLibrary>
       <MediaAssetsLibraryHeader />
-      <MediaAssets list={mockList} library />
+      <MediaAssets list={mockList} />
     </MediaAssetsLibrary>
   );
   const assetsCreate = (
@@ -82,7 +82,7 @@ export default function ContentEdit() {
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
-  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "details" ? assetsCreate : contentTabs;
+  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetCreate" ? assetsCreate : contentTabs;
   return (
     <DndProvider backend={HTML5Backend}>
       <ContentHeader lesson={lesson} onChangeLesson={handleChangeLesson} />
