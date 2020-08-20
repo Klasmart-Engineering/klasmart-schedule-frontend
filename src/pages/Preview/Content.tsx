@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ButtonGroup(Props: ModelProps) {
-  const { model } = Props;
   const css = useStyles();
   return (
     <div className={css.butGroup}>
