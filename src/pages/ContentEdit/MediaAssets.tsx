@@ -1,7 +1,9 @@
 import React, { Fragment } from "react";
 import { Table, TableHead, TableCell, TableBody, TableRow, Box, makeStyles, TableContainer, Typography, Button } from "@material-ui/core";
 import emptyIconUrl from "../../assets/icons/empty.svg";
+import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import { useDrag } from "react-dnd";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
@@ -30,6 +32,12 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     marginBottom: 40,
     width: 200,
     height: 156,
+  },
+  comingsoonImage: {
+    marginTop: 200,
+    marginBottom: 40,
+    width: 130,
+    height: 133,
   },
   emptyDesc: {
     marginBottom: "auto",
@@ -73,13 +81,24 @@ interface mockAsset {
   action: string;
 }
 
-function Empty() {
+export function Empty() {
   const css = useStyles();
   return (
     <Fragment>
       <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
         Empty...
+      </Typography>
+    </Fragment>
+  );
+}
+export function Comingsoon() {
+  const css = useStyles();
+  return (
+    <Fragment>
+      <img className={css.comingsoonImage} alt="comingsoon" src={comingsoonIconUrl} />
+      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+        comingsoon...
       </Typography>
     </Fragment>
   );
@@ -101,8 +120,9 @@ interface MediaAssetsProps {
   comingsoon?: boolean;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
+  const { lesson } = useParams();
   const css = useStyles();
-  const { list } = props;
+  const { list, comingsoon } = props;
   const rows = list.slice(-2).map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
@@ -138,7 +158,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   );
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
-      {list.length > 0 ? table : <Empty />}
+      {comingsoon && lesson !== "plan" ? <Comingsoon /> : list.length > 0 ? table : <Empty />}
     </Box>
   );
 }

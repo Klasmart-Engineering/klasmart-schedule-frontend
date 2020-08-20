@@ -53,7 +53,7 @@ export default function ContentEdit() {
   const assetsLibrary = (
     <MediaAssetsLibrary>
       <MediaAssetsLibraryHeader />
-      <MediaAssets list={mockList} />
+      <MediaAssets list={mockList} comingsoon />
     </MediaAssetsLibrary>
   );
   const assetsCreate = (
@@ -65,8 +65,8 @@ export default function ContentEdit() {
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
       <Details />
-      <Outcomes />
-      <MediaAssets list={mockList} />
+      <Outcomes comingsoon />
+      <MediaAssets list={mockList} comingsoon />
     </ContentTabs>
   );
   const rightsideArea = (
