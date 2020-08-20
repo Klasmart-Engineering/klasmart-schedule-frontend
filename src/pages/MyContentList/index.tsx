@@ -19,7 +19,7 @@ export default function MyContentList() {
   const total = mockList.length;
   return (
     <div>
-      {/* <HeaderNavBar /> */}
+      <HeaderNavBar />
       <ActionBar layout={layout} status={status} />
       {layout === "card" ? (
         <CardList list={mockList} status={status} total={total} />
