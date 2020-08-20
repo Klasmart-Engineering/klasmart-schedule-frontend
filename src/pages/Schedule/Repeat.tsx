@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useImperativeHandle, forwardRef, useRef } from "react";
 import {
   Card,
   makeStyles,
@@ -12,74 +12,78 @@ import {
   FormControlLabel,
   Radio,
   TextField,
+  createStyles,
+  Theme,
 } from "@material-ui/core";
 
-const useStyles = makeStyles({
-  container: {
-    width: "350px",
-    padding: "0 20px 30px 20px",
-    boxSizing: "border-box",
-    "& .MuiInputBase-root": {
-      height: "40px",
-    },
-    fontSize: "14px",
-  },
-  formControl: {
-    width: "100%",
-  },
-  every: {
-    fontWeight: "bold",
-  },
-  repeatItem: {
-    marginBottom: "20px",
-  },
-  weeklyDayBox: {
-    paddingLeft: "20px",
-  },
-  weeklyDay: {
-    display: "inline-block",
-    width: "13.8%",
-    height: "32px",
-    border: "1px solid #979797",
-    borderRight: "none",
-    lineHeight: "30px",
-    textAlign: "center",
-    "&:last-of-type": {
-      borderRight: "1px solid #979797",
-      borderRadius: "0px 100px 100px 0px",
-    },
-    "&:first-of-type": {
-      borderRadius: "100px 0px 0px 100px",
-    },
-    cursor: "pointer",
-  },
-  currentSelected: {
-    backgroundColor: "#0e78d5",
-  },
-  positionText: {
-    position: "absolute",
-    right: "5px",
-    top: "10px",
-  },
-  positionInput: {
-    position: "relative",
-    height: "50%",
-  },
-  specialContainer: {
-    // height: '100%'
-    position: "absolute",
-    bottom: "20px",
-    right: 0,
-  },
-  specialFar: {
-    position: "relative",
-  },
-  datePicker: {
-    "& input": {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    container: {
+      width: "350px",
+      padding: "0 20px 30px 20px",
+      boxSizing: "border-box",
+      "& .MuiInputBase-root": {
+        height: "40px",
+      },
       fontSize: "14px",
     },
-  },
-});
+    formControl: {
+      width: "100%",
+    },
+    every: {
+      fontWeight: "bold",
+    },
+    repeatItem: {
+      marginBottom: "20px",
+    },
+    weeklyDayBox: {
+      paddingLeft: "20px",
+    },
+    weeklyDay: {
+      display: "inline-block",
+      width: "13.8%",
+      height: "32px",
+      border: "1px solid #979797",
+      borderRight: "none",
+      lineHeight: "30px",
+      textAlign: "center",
+      "&:last-of-type": {
+        borderRight: "1px solid #979797",
+        borderRadius: "0px 100px 100px 0px",
+      },
+      "&:first-of-type": {
+        borderRadius: "100px 0px 0px 100px",
+      },
+      cursor: "pointer",
+    },
+    currentSelected: {
+      backgroundColor: "#0e78d5",
+    },
+    positionText: {
+      position: "absolute",
+      right: "5px",
+      top: "10px",
+    },
+    positionInput: {
+      position: "relative",
+      height: "50%",
+    },
+    specialContainer: {
+      // height: '100%'
+      position: "absolute",
+      bottom: "20px",
+      right: 0,
+    },
+    specialFar: {
+      position: "relative",
+    },
+    datePicker: {
+      "& input": {
+        fontSize: "14px",
+      },
+    },
+  })
+);
 
 interface RepeatCycleProps {
   cycle: string;
@@ -287,10 +291,12 @@ function RepeatCycle(props: RepeatCycleProps) {
   );
 }
 
-function EndRepeat() {
+const EndRepeat = forwardRef((props: any, ref) => {
   const classes = useStyles();
   const [endRepeat, setEndRepeat] = React.useState("occurrence");
   const [occurrence, setOccurrence] = React.useState(1);
+
+  useImperativeHandle(ref, () => ({ endRepeat, occurrence }));
 
   const handelleEndRepeatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEndRepeat(event.target.value);
@@ -345,18 +351,27 @@ function EndRepeat() {
       </Grid>
     </div>
   );
-}
+});
 
 export default function RepeatSchedule() {
   const classes = useStyles();
   const [cycle, setCycle] = React.useState("monthly");
   const [cycleTime, setCycleTime] = React.useState(1);
+  const endRepeatRef = useRef();
 
   const handleChangeCycle = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCycle(event.target.value as string);
   };
   const handleChangeCycleTime = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCycleTime(event.target.value as number);
+  };
+
+  // React.useEffect(() => {
+  //   console.log(endRepeatRef.current)
+  // }, [endRepeatRef])
+
+  const handleOnClick = () => {
+    console.log(endRepeatRef.current);
   };
 
   return (
@@ -398,7 +413,8 @@ export default function RepeatSchedule() {
         </Grid>
       </Grid>
       <RepeatCycle cycle={cycle} />
-      <EndRepeat />
+      <EndRepeat ref={endRepeatRef} />
+      <button onClick={handleOnClick}>55555</button>
     </Card>
   );
 }
