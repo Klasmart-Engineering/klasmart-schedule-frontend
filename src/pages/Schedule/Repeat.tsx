@@ -16,6 +16,8 @@ import {
   Theme,
 } from "@material-ui/core";
 
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -86,11 +88,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface RepeatCycleProps {
-  cycle: string;
+  state: object;
+  dispatch: any;
 }
 
-function RepeatCycle(props: RepeatCycleProps) {
-  const { cycle } = props;
+function RepeatCycle(props: any) {
+  const { state, dispatch } = props;
   const classes = useStyles();
   const weekendList = [
     {
@@ -137,11 +140,7 @@ function RepeatCycle(props: RepeatCycleProps) {
     "December",
   ];
   const [weekends, setWeekends] = React.useState(weekendList);
-  const [onThe, setOnThe] = React.useState("on");
-  const [specificDayChange, setSpecificDayChange] = React.useState(1);
-  const [order, setOrder] = React.useState("first");
-  const [weekday, setWeekday] = React.useState("Saturday");
-  const [month, setMonth] = React.useState("January");
+  const { cycle, onThe, specificDayChange, order, weekday, month, weekdays } = state;
 
   const handleWeekdaySelect = (index: number) => {
     let temp = JSON.parse(JSON.stringify(weekends));
@@ -151,26 +150,36 @@ function RepeatCycle(props: RepeatCycleProps) {
       }
     });
     setWeekends(temp);
+    let selectedDays: any = weekdays;
+    let idx = selectedDays.indexOf(weekends[index].day);
+    if (idx > -1) {
+      selectedDays.splice(idx, 1);
+    } else {
+      selectedDays.push(weekends[index].day);
+    }
+
+    dispatch({ type: "handleWeekdaySelect", data: selectedDays });
   };
 
   const changeOnThe = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOnThe(event.target.value);
+    dispatch({ type: "changeOnThe", data: event.target.value });
   };
 
   const handelSpecificDayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSpecificDayChange(event.target.value as number);
+    dispatch({ type: "handelSpecificDayChange", data: event.target.value as number });
   };
 
   const handleOrderChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setOrder(event.target.value as string);
+    dispatch({ type: "handleOrderChange", data: event.target.value });
   };
 
   const handleWeekdayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setWeekday(event.target.value as string);
+    dispatch({ type: "handleWeekdayChange", data: event.target.value as string });
   };
 
   const handleMonthChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setMonth(event.target.value as string);
+    // setMonth(event.target.value as string);
+    dispatch({ type: "handleMonthChange", data: event.target.value as string });
   };
 
   return (
@@ -201,6 +210,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                 <FormControlLabel value="on" control={<Radio />} label="On" className={classes.repeatItem} />
                 <FormControlLabel value="the" control={<Radio />} label="The" />
               </RadioGroup>
+              {/* <input type="text" value={onThe} onChange={changeOnThe}/> */}
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
               <Grid container>
@@ -208,7 +218,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                   <FormControl variant="outlined" style={{ width: "100%" }}>
                     <OutlinedInput
                       id="outlined-adornment-weight"
-                      value={specificDayChange}
+                      // value={specificDayChange}
                       aria-describedby="outlined-weight-helper-text"
                       inputProps={{
                         "aria-label": "weight",
@@ -216,6 +226,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                       labelWidth={0}
                       disabled={onThe !== "on"}
                       onChange={handelSpecificDayChange}
+                      defaultValue={specificDayChange}
                     />
                   </FormControl>
                   <span className={classes.positionText}>of every month</span>
@@ -231,6 +242,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                           labelWidth={0}
                           disabled={onThe !== "the"}
                           onChange={handleOrderChange}
+                          // defaultValue={order}
                         >
                           <MenuItem value={"first"}>first</MenuItem>
                           <MenuItem value={"second"}>second</MenuItem>
@@ -291,19 +303,17 @@ function RepeatCycle(props: RepeatCycleProps) {
   );
 }
 
-const EndRepeat = forwardRef((props: any, ref) => {
+function EndRepeat(props: any) {
   const classes = useStyles();
-  const [endRepeat, setEndRepeat] = React.useState("occurrence");
-  const [occurrence, setOccurrence] = React.useState(1);
-
-  useImperativeHandle(ref, () => ({ endRepeat, occurrence }));
+  const { state, dispatch } = props;
+  const { endRepeat, occurrence } = state;
 
   const handelleEndRepeatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEndRepeat(event.target.value);
+    dispatch({ type: "handelleEndRepeatChange", data: event.target.value });
   };
 
   const handleOccurrenceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setOccurrence(event.target.value as number);
+    dispatch({ type: "handleOccurrenceChange", data: event.target.value as number });
   };
 
   return (
@@ -351,31 +361,22 @@ const EndRepeat = forwardRef((props: any, ref) => {
       </Grid>
     </div>
   );
-});
+}
 
-export default function RepeatSchedule() {
+function RepeatHeader(props: any) {
   const classes = useStyles();
-  const [cycle, setCycle] = React.useState("monthly");
-  const [cycleTime, setCycleTime] = React.useState(1);
-  const endRepeatRef = useRef();
+  const { state, dispatch } = props;
+  const { cycle, cycleTime } = state;
 
   const handleChangeCycle = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCycle(event.target.value as string);
+    dispatch({ type: "handleChangeCycle", data: event.target.value as string });
   };
   const handleChangeCycleTime = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCycleTime(event.target.value as number);
-  };
-
-  // React.useEffect(() => {
-  //   console.log(endRepeatRef.current)
-  // }, [endRepeatRef])
-
-  const handleOnClick = () => {
-    console.log(endRepeatRef.current);
+    dispatch({ type: "handleChangeCycleTime", data: event.target.value as number });
   };
 
   return (
-    <Card className={classes.container}>
+    <div>
       <h2>Repeat</h2>
       <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`}>
         <InputLabel id="demo-simple-select-outlined-label">{cycle}</InputLabel>
@@ -412,9 +413,19 @@ export default function RepeatSchedule() {
           </FormControl>
         </Grid>
       </Grid>
-      <RepeatCycle cycle={cycle} />
-      <EndRepeat ref={endRepeatRef} />
-      <button onClick={handleOnClick}>55555</button>
+    </div>
+  );
+}
+
+export default function RepeatSchedule() {
+  const classes = useStyles();
+  const [state, dispatch] = useRepeatSchedule();
+
+  return (
+    <Card className={classes.container}>
+      <RepeatHeader state={state} dispatch={dispatch} />
+      <RepeatCycle state={state} dispatch={dispatch} />
+      <EndRepeat state={state} dispatch={dispatch} />
     </Card>
   );
 }
