@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
+import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
 import MyContentList from "./pages/MyContentList/index";
 import Preview from "./pages/Preview";
 import Schedule from "./pages/Schedule";
@@ -15,6 +16,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <HashRouter>
         <Provider store={store}>
+          <HeaderNavBar />
           <Switch>
             <Route path={Preview.routeBasePath}>
               <Preview />

@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef, useRef } from "react";
+import React from "react";
 import {
   Card,
   makeStyles,
@@ -178,7 +178,6 @@ function RepeatCycle(props: any) {
   };
 
   const handleMonthChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    // setMonth(event.target.value as string);
     dispatch({ type: "handleMonthChange", data: event.target.value as string });
   };
 
@@ -210,7 +209,6 @@ function RepeatCycle(props: any) {
                 <FormControlLabel value="on" control={<Radio />} label="On" className={classes.repeatItem} />
                 <FormControlLabel value="the" control={<Radio />} label="The" />
               </RadioGroup>
-              {/* <input type="text" value={onThe} onChange={changeOnThe}/> */}
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
               <Grid container>

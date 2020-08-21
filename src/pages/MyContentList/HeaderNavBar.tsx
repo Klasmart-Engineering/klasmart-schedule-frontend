@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
-import { withRouter, useHistory } from "react-router-dom";
+import { withRouter, useHistory, useLocation } from "react-router-dom";
 import { Hidden, Grid, Button } from "@material-ui/core";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 
@@ -98,11 +98,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function NavBarLarge() {
   const classes = useStyles();
-  const [currentValue, setCurrentValue] = React.useState("library");
+  // const [currentValue, setCurrentValue] = React.useState("library");
   const history = useHistory();
+  const currentValue = useLocation().pathname.split("/")[1];
 
   const handleChangeSelect = (value: string): void => {
-    setCurrentValue(value);
+    // setCurrentValue(value);
     if (value === "schedule") {
       history.push("/schedule/calendar");
     } else if (value === "library") {

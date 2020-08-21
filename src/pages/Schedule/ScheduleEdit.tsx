@@ -1,19 +1,20 @@
-import React from "react";
-import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
-import { MuiPickersUtilsProvider, DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
-import theme from "../../theme";
-import { makeStyles } from "@material-ui/core/styles";
-import FormGroup from "@material-ui/core/FormGroup";
+import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox";
-import { CloudUploadOutlined, FileCopyOutlined, DeleteOutlineOutlined, Save, Close } from "@material-ui/icons";
-import ScheduleAttachment from "./ScheduleAttachment";
+import FormGroup from "@material-ui/core/FormGroup";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import React from "react";
+import ModalBox from "../../components/ModalBox";
 import mockList from "../../mocks/Autocomplete.json";
 import RepeatSchedule from "./Repeat";
 import { useHistory } from "react-router";
+import ScheduleAttachment from "./ScheduleAttachment";
+import theme from "../../theme";
 
 function SmallCalendar() {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
@@ -75,6 +76,14 @@ function EditBox() {
   const history = useHistory();
   // The first commit of Material-UI
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
+  const [openStatus, setOpenStatus] = React.useState(false);
+
+  const handleClose = () => {
+    setOpenStatus(false);
+  };
+  const handleDelete = () => {
+    setOpenStatus(true);
+  };
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -94,6 +103,25 @@ function EditBox() {
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
 
+  const modalDate: any = {
+    text: "Are you sure you want to delete this event?",
+    openStatus: openStatus,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+      {
+        label: "Delete",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+    ],
+    handleClose: handleClose,
+  };
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -114,6 +142,7 @@ function EditBox() {
                   color: "#D74040",
                 }}
                 className={css.toolset}
+                onClick={handleDelete}
               />
               <Save
                 style={{
@@ -261,6 +290,7 @@ function EditBox() {
           </Box>
         )}
       </Box>
+      <ModalBox modalDate={modalDate} />
     </ThemeProvider>
   );
 }
