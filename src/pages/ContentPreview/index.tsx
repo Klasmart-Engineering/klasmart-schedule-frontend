@@ -126,7 +126,7 @@ function DraftRejectBtn() {
   );
 }
 
-export default function ContentDetail() {
+export default function ContentPreview() {
   const css = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -202,4 +202,4 @@ export default function ContentDetail() {
     </Box>
   );
 }
-ContentDetail.routeBasePath = "/library/content-detail";
+ContentPreview.routeBasePath = "/library/content-preview";
