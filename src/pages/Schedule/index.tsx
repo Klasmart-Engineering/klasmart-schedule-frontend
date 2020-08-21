@@ -1,9 +1,9 @@
 import React from "react";
-import Calendar from "../../components/Calendar";
 import ScheduleTool from "./ScheduleTool";
 import ScheduleEdit from "./ScheduleEdit";
 import LayoutBox from "../../components/LayoutBox";
 import { Grid } from "@material-ui/core";
+import KidsCalendar from "../../components/Calendar";
 
 function ScheduleContent() {
   return (
@@ -16,7 +16,7 @@ function ScheduleContent() {
           <ScheduleEdit />
         </Grid>
         <Grid item xs={9}>
-          <Calendar />
+          <KidsCalendar />
         </Grid>
       </Grid>
     </LayoutBox>

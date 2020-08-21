@@ -7,6 +7,7 @@ import FormControl from "@material-ui/core/FormControl";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import InputBase from "@material-ui/core/InputBase";
 import Box from "@material-ui/core/Box";
+import { SearchOutlined } from "@material-ui/icons";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -47,7 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "20px",
       width: "160px",
       height: "40px",
-      margin: "0px 0px 0px 60px;",
     },
     modelSelect: {
       textAlign: "right",
@@ -62,17 +62,17 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function Tool() {
-  const classes = useStyles();
+  const css = useStyles();
   const [value, setSearchValue] = React.useState("");
   const [type, setModelType] = React.useState(20);
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSearchValue(event.target.value as string);
   };
   return (
-    <Box className={classes.toolBox}>
+    <Box className={css.toolBox}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <Button variant="contained" color="primary" className={classes.btnRadio}>
+          <Button variant="contained" color="primary" className={css.btnRadio}>
             Schedule Class
           </Button>
         </Grid>
@@ -81,15 +81,14 @@ function Tool() {
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
             <BootstrapInput id="demo-customized-textbox" />
           </FormControl>
-          <Button variant="contained" color="primary" className={classes.searchBtn}>
+          <Button variant="contained" color="primary" className={css.searchBtn} startIcon={<SearchOutlined />}>
             Search
           </Button>
         </Grid>
-        <Grid item xs={3} className={classes.modelSelect}>
+        <Grid item xs={3} className={css.modelSelect}>
           <FormControl>
             <InputLabel htmlFor="demo-customized-select-native">Model</InputLabel>
             <NativeSelect id="demo-customized-select-native" value={type} onChange={handleChange} input={<BootstrapInput />}>
-              <option aria-label="None" value="" />
               <option value={10}>Day</option>
               <option value={20}>Week</option>
               <option value={30}>Month</option>

@@ -17,7 +17,6 @@ import { ArrowBack, PlayCircleOutline, Cancel, Save, Publish, RemoveCircleOutlin
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import clsx from "clsx";
 import { PaletteColor, Palette } from "@material-ui/core/styles/createPalette";
-import { connect } from "react-redux";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -87,13 +86,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
-  topicList: [];
+  topicList: any;
 }
-const mapStateToProps = (state: any) => {
-  return {
-    topicList: state.content.topicList,
-  };
-};
 
 function ContentHeader(props: HeaderProps) {
   const { lesson, onChangeLesson, topicList } = props;
@@ -223,4 +217,4 @@ function ContentHeader(props: HeaderProps) {
   );
 }
 
-export default connect(mapStateToProps)(ContentHeader);
+export default ContentHeader;

@@ -7,7 +7,6 @@ import { ThemeProvider } from "@material-ui/core";
 import Preview from "./pages/Preview";
 import { store } from "./reducers";
 import { Provider } from "react-redux";
-import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
 import Schedule from "./pages/Schedule";
 import ContentPreview from "./pages/ContentPreview";
 
@@ -16,7 +15,6 @@ function App() {
     <ThemeProvider theme={theme}>
       <HashRouter>
         <Provider store={store}>
-          <HeaderNavBar />
           <Switch>
             <Route path={Preview.routeBasePath}>
               <Preview />

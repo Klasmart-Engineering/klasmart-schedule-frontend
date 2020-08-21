@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useImperativeHandle, forwardRef, useRef } from "react";
 import {
   Card,
   makeStyles,
@@ -12,81 +12,88 @@ import {
   FormControlLabel,
   Radio,
   TextField,
+  createStyles,
+  Theme,
 } from "@material-ui/core";
 
-const useStyles = makeStyles({
-  container: {
-    width: "350px",
-    padding: "0 20px 30px 20px",
-    boxSizing: "border-box",
-    "& .MuiInputBase-root": {
-      height: "40px",
-    },
-    fontSize: "14px",
-  },
-  formControl: {
-    width: "100%",
-  },
-  every: {
-    fontWeight: "bold",
-  },
-  repeatItem: {
-    marginBottom: "20px",
-  },
-  weeklyDayBox: {
-    paddingLeft: "20px",
-  },
-  weeklyDay: {
-    display: "inline-block",
-    width: "13.8%",
-    height: "32px",
-    border: "1px solid #979797",
-    borderRight: "none",
-    lineHeight: "30px",
-    textAlign: "center",
-    "&:last-of-type": {
-      borderRight: "1px solid #979797",
-      borderRadius: "0px 100px 100px 0px",
-    },
-    "&:first-of-type": {
-      borderRadius: "100px 0px 0px 100px",
-    },
-    cursor: "pointer",
-  },
-  currentSelected: {
-    backgroundColor: "#0e78d5",
-  },
-  positionText: {
-    position: "absolute",
-    right: "5px",
-    top: "10px",
-  },
-  positionInput: {
-    position: "relative",
-    height: "50%",
-  },
-  specialContainer: {
-    // height: '100%'
-    position: "absolute",
-    bottom: "20px",
-    right: 0,
-  },
-  specialFar: {
-    position: "relative",
-  },
-  datePicker: {
-    "& input": {
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    container: {
+      width: "350px",
+      padding: "0 20px 30px 20px",
+      boxSizing: "border-box",
+      "& .MuiInputBase-root": {
+        height: "40px",
+      },
       fontSize: "14px",
     },
-  },
-});
+    formControl: {
+      width: "100%",
+    },
+    every: {
+      fontWeight: "bold",
+    },
+    repeatItem: {
+      marginBottom: "20px",
+    },
+    weeklyDayBox: {
+      paddingLeft: "20px",
+    },
+    weeklyDay: {
+      display: "inline-block",
+      width: "13.8%",
+      height: "32px",
+      border: "1px solid #979797",
+      borderRight: "none",
+      lineHeight: "30px",
+      textAlign: "center",
+      "&:last-of-type": {
+        borderRight: "1px solid #979797",
+        borderRadius: "0px 100px 100px 0px",
+      },
+      "&:first-of-type": {
+        borderRadius: "100px 0px 0px 100px",
+      },
+      cursor: "pointer",
+    },
+    currentSelected: {
+      backgroundColor: "#0e78d5",
+    },
+    positionText: {
+      position: "absolute",
+      right: "5px",
+      top: "10px",
+    },
+    positionInput: {
+      position: "relative",
+      height: "50%",
+    },
+    specialContainer: {
+      // height: '100%'
+      position: "absolute",
+      bottom: "20px",
+      right: 0,
+    },
+    specialFar: {
+      position: "relative",
+    },
+    datePicker: {
+      "& input": {
+        fontSize: "14px",
+      },
+    },
+  })
+);
 
 interface RepeatCycleProps {
-  cycle: string;
+  state: object;
+  dispatch: any;
 }
 
-function RepeatCycle(props: RepeatCycleProps) {
-  const { cycle } = props;
+function RepeatCycle(props: any) {
+  const { state, dispatch } = props;
   const classes = useStyles();
   const weekendList = [
     {
@@ -133,11 +140,7 @@ function RepeatCycle(props: RepeatCycleProps) {
     "December",
   ];
   const [weekends, setWeekends] = React.useState(weekendList);
-  const [onThe, setOnThe] = React.useState("on");
-  const [specificDayChange, setSpecificDayChange] = React.useState(1);
-  const [order, setOrder] = React.useState("first");
-  const [weekday, setWeekday] = React.useState("Saturday");
-  const [month, setMonth] = React.useState("January");
+  const { cycle, onThe, specificDayChange, order, weekday, month, weekdays } = state;
 
   const handleWeekdaySelect = (index: number) => {
     let temp = JSON.parse(JSON.stringify(weekends));
@@ -147,26 +150,36 @@ function RepeatCycle(props: RepeatCycleProps) {
       }
     });
     setWeekends(temp);
+    let selectedDays: any = weekdays;
+    let idx = selectedDays.indexOf(weekends[index].day);
+    if (idx > -1) {
+      selectedDays.splice(idx, 1);
+    } else {
+      selectedDays.push(weekends[index].day);
+    }
+
+    dispatch({ type: "handleWeekdaySelect", data: selectedDays });
   };
 
   const changeOnThe = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOnThe(event.target.value);
+    dispatch({ type: "changeOnThe", data: event.target.value });
   };
 
   const handelSpecificDayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSpecificDayChange(event.target.value as number);
+    dispatch({ type: "handelSpecificDayChange", data: event.target.value as number });
   };
 
   const handleOrderChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setOrder(event.target.value as string);
+    dispatch({ type: "handleOrderChange", data: event.target.value });
   };
 
   const handleWeekdayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setWeekday(event.target.value as string);
+    dispatch({ type: "handleWeekdayChange", data: event.target.value as string });
   };
 
   const handleMonthChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setMonth(event.target.value as string);
+    // setMonth(event.target.value as string);
+    dispatch({ type: "handleMonthChange", data: event.target.value as string });
   };
 
   return (
@@ -197,6 +210,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                 <FormControlLabel value="on" control={<Radio />} label="On" className={classes.repeatItem} />
                 <FormControlLabel value="the" control={<Radio />} label="The" />
               </RadioGroup>
+              {/* <input type="text" value={onThe} onChange={changeOnThe}/> */}
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
               <Grid container>
@@ -204,7 +218,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                   <FormControl variant="outlined" style={{ width: "100%" }}>
                     <OutlinedInput
                       id="outlined-adornment-weight"
-                      value={specificDayChange}
+                      // value={specificDayChange}
                       aria-describedby="outlined-weight-helper-text"
                       inputProps={{
                         "aria-label": "weight",
@@ -212,6 +226,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                       labelWidth={0}
                       disabled={onThe !== "on"}
                       onChange={handelSpecificDayChange}
+                      defaultValue={specificDayChange}
                     />
                   </FormControl>
                   <span className={classes.positionText}>of every month</span>
@@ -227,6 +242,7 @@ function RepeatCycle(props: RepeatCycleProps) {
                           labelWidth={0}
                           disabled={onThe !== "the"}
                           onChange={handleOrderChange}
+                          // defaultValue={order}
                         >
                           <MenuItem value={"first"}>first</MenuItem>
                           <MenuItem value={"second"}>second</MenuItem>
@@ -287,17 +303,17 @@ function RepeatCycle(props: RepeatCycleProps) {
   );
 }
 
-function EndRepeat() {
+function EndRepeat(props: any) {
   const classes = useStyles();
-  const [endRepeat, setEndRepeat] = React.useState("occurrence");
-  const [occurrence, setOccurrence] = React.useState(1);
+  const { state, dispatch } = props;
+  const { endRepeat, occurrence } = state;
 
   const handelleEndRepeatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEndRepeat(event.target.value);
+    dispatch({ type: "handelleEndRepeatChange", data: event.target.value });
   };
 
   const handleOccurrenceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setOccurrence(event.target.value as number);
+    dispatch({ type: "handleOccurrenceChange", data: event.target.value as number });
   };
 
   return (
@@ -347,20 +363,20 @@ function EndRepeat() {
   );
 }
 
-export default function RepeatSchedule() {
+function RepeatHeader(props: any) {
   const classes = useStyles();
-  const [cycle, setCycle] = React.useState("monthly");
-  const [cycleTime, setCycleTime] = React.useState(1);
+  const { state, dispatch } = props;
+  const { cycle, cycleTime } = state;
 
   const handleChangeCycle = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCycle(event.target.value as string);
+    dispatch({ type: "handleChangeCycle", data: event.target.value as string });
   };
   const handleChangeCycleTime = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCycleTime(event.target.value as number);
+    dispatch({ type: "handleChangeCycleTime", data: event.target.value as number });
   };
 
   return (
-    <Card className={classes.container}>
+    <div>
       <h2>Repeat</h2>
       <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`}>
         <InputLabel id="demo-simple-select-outlined-label">{cycle}</InputLabel>
@@ -397,8 +413,19 @@ export default function RepeatSchedule() {
           </FormControl>
         </Grid>
       </Grid>
-      <RepeatCycle cycle={cycle} />
-      <EndRepeat />
+    </div>
+  );
+}
+
+export default function RepeatSchedule() {
+  const classes = useStyles();
+  const [state, dispatch] = useRepeatSchedule();
+
+  return (
+    <Card className={classes.container}>
+      <RepeatHeader state={state} dispatch={dispatch} />
+      <RepeatCycle state={state} dispatch={dispatch} />
+      <EndRepeat state={state} dispatch={dispatch} />
     </Card>
   );
 }

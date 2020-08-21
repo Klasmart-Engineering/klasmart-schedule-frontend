@@ -1,5 +1,10 @@
-import { createStore, combineReducers } from "redux";
-import { content } from "./content";
+import { configureStore } from "@reduxjs/toolkit";
+import content from "./content";
 
-const rootReducers = combineReducers({ content });
-export const store = createStore(rootReducers);
+export const store = configureStore({
+  reducer: {
+    content,
+  },
+});
+
+export type RootState = ReturnType<typeof store.getState>;
