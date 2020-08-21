@@ -31,7 +31,12 @@ function App() {
             <Route path="/library/my-content-list">
               <MyContentList />
             </Route>
-            <Route path="/schedule" component={Schedule} />
+            <Route path={Schedule.routeMatchPath}>
+              <Schedule />
+            </Route>
+            <Route path={Schedule.routeBasePath}>
+              <Redirect to={Schedule.routeRedirectDefault} />
+            </Route>
             <Route path="/">
               <Redirect to="/library/my-content-list?layout=card" />
             </Route>

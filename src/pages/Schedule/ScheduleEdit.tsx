@@ -208,6 +208,11 @@ function EditBox() {
   );
 }
 
-export default function ScheduleEdit() {
-  return <EditBox />;
+interface ScheduleEditProps {
+  includePreview: boolean;
+}
+export default function ScheduleEdit(props: ScheduleEditProps) {
+  const { includePreview } = props;
+  const template = includePreview ? <SmallCalendar /> : <EditBox />;
+  return template;
 }

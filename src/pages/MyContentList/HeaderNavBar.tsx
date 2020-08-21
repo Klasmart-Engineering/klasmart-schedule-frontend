@@ -104,7 +104,7 @@ function NavBarLarge() {
   const handleChangeSelect = (value: string): void => {
     setCurrentValue(value);
     if (value === "schedule") {
-      history.push("/schedule");
+      history.push("/schedule/calendar");
     } else if (value === "library") {
       history.push("/live");
     } else {
