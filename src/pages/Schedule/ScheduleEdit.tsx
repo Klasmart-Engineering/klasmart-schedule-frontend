@@ -1,17 +1,20 @@
-import React from "react";
-import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
-import { MuiPickersUtilsProvider, DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
-import theme from "../../theme";
-import { makeStyles } from "@material-ui/core/styles";
-import FormGroup from "@material-ui/core/FormGroup";
+import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox";
-import { CloudUploadOutlined, FileCopyOutlined, DeleteOutlineOutlined, Save, Close } from "@material-ui/icons";
-import ScheduleAttachment from "./ScheduleAttachment";
+import FormGroup from "@material-ui/core/FormGroup";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import React from "react";
+import { useHistory } from "react-router";
+import ModalBox from "../../components/ModalBox";
 import mockList from "../../mocks/Autocomplete.json";
+import theme from "../../theme";
+import RepeatSchedule from "./Repeat";
+import ScheduleAttachment from "./ScheduleAttachment";
 
 function SmallCalendar() {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
@@ -42,6 +45,7 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   formControset: {
     padding: "10px 10px 20px 10px",
     boxShadow: shadows[3],
+    position: "relative",
   },
   toolset: {
     fontSize: "20px",
@@ -58,15 +62,65 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   descFiled: {
     height: "100px",
   },
+  repeatBox: {
+    position: "absolute",
+    top: "0",
+    left: "101%",
+    boxShadow: shadows[3],
+    zIndex: 999,
+  },
 }));
 
 function EditBox() {
   const css = useStyles();
+  const history = useHistory();
   // The first commit of Material-UI
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
+  const [openStatus, setOpenStatus] = React.useState(false);
+
+  const handleClose = () => {
+    setOpenStatus(false);
+  };
+  const handleDelete = () => {
+    setOpenStatus(true);
+  };
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
+  };
+
+  const [checkedStatus, setStatus] = React.useState({
+    allDayCheck: false,
+    repeatCheck: false,
+    dueDateCheck: false,
+  });
+
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
+  };
+
+  const cancelEdit = () => {
+    history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+  };
+
+  const modalDate: any = {
+    text: "Are you sure you want to delete this event?",
+    openStatus: openStatus,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+      {
+        label: "Delete",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+    ],
+    handleClose: handleClose,
   };
   return (
     <ThemeProvider theme={theme}>
@@ -79,6 +133,7 @@ function EditBox() {
                   color: "#666666",
                 }}
                 className={css.toolset}
+                onClick={cancelEdit}
               />
             </Grid>
             <Grid item xs={6} style={{ textAlign: "right" }}>
@@ -87,6 +142,7 @@ function EditBox() {
                   color: "#D74040",
                 }}
                 className={css.toolset}
+                onClick={handleDelete}
               />
               <Save
                 style={{
@@ -164,8 +220,14 @@ function EditBox() {
         </Box>
         <Box>
           <FormGroup row>
-            <FormControlLabel control={<Checkbox name="ALL Day" color="primary" />} label="All Day" />
-            <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Repeat" />
+            <FormControlLabel
+              control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
+              label="All Day"
+            />
+            <FormControlLabel
+              control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
+              label="Repeat"
+            />
           </FormGroup>
         </Box>
         <Autocomplete
@@ -189,7 +251,10 @@ function EditBox() {
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
               <Grid item xs={4}>
-                <FormControlLabel control={<Checkbox name="ALL Day" color="primary" />} label="Due Date" />
+                <FormControlLabel
+                  control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
+                  label="Due Date"
+                />
               </Grid>
               <Grid item xs={6}>
                 <KeyboardDatePicker
@@ -219,7 +284,13 @@ function EditBox() {
             Go Live
           </Button>
         </Box>
+        {checkedStatus.repeatCheck && (
+          <Box className={css.repeatBox}>
+            <RepeatSchedule />
+          </Box>
+        )}
       </Box>
+      <ModalBox modalDate={modalDate} />
     </ThemeProvider>
   );
 }

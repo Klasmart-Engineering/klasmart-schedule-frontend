@@ -1,21 +1,20 @@
-import React, { useImperativeHandle, forwardRef, useRef } from "react";
 import {
   Card,
-  makeStyles,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
-  Grid,
-  OutlinedInput,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  TextField,
   createStyles,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
   Theme,
 } from "@material-ui/core";
-
+import React from "react";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -28,6 +27,8 @@ const useStyles = makeStyles((theme: Theme) =>
         height: "40px",
       },
       fontSize: "14px",
+      boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.16)",
+      zIndex: 999,
     },
     formControl: {
       width: "100%",
@@ -178,7 +179,6 @@ function RepeatCycle(props: any) {
   };
 
   const handleMonthChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    // setMonth(event.target.value as string);
     dispatch({ type: "handleMonthChange", data: event.target.value as string });
   };
 
@@ -210,7 +210,6 @@ function RepeatCycle(props: any) {
                 <FormControlLabel value="on" control={<Radio />} label="On" className={classes.repeatItem} />
                 <FormControlLabel value="the" control={<Radio />} label="The" />
               </RadioGroup>
-              {/* <input type="text" value={onThe} onChange={changeOnThe}/> */}
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
               <Grid container>
