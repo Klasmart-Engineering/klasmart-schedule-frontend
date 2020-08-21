@@ -51,7 +51,7 @@ export default function ContentEdit() {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/details${rightSide}`);
   };
   const handleChangeTab = (tab: string) => {
-    history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}`);
+    history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}`);
   };
   const assetsLibrary = (
     <MediaAssetsLibrary>
