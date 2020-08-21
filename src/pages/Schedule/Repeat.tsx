@@ -1,21 +1,20 @@
-import React from "react";
 import {
   Card,
-  makeStyles,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
-  Grid,
-  OutlinedInput,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  TextField,
   createStyles,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
   Theme,
 } from "@material-ui/core";
-
+import React from "react";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -28,6 +27,8 @@ const useStyles = makeStyles((theme: Theme) =>
         height: "40px",
       },
       fontSize: "14px",
+      boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.16)",
+      zIndex: 999,
     },
     formControl: {
       width: "100%",

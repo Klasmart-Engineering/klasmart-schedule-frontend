@@ -1,7 +1,7 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core";
-import { EditOutlined, DeleteOutlined } from "@material-ui/icons";
 import Button from "@material-ui/core/Button";
+import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
+import React from "react";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -45,10 +45,13 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PreviewSchedule() {
+export default function PreviewSchedule(props: any) {
   const classes = useStyles();
+  const { handleTemplate } = props;
 
-  const handleClick = () => {};
+  const handleClick = () => {
+    handleTemplate();
+  };
   return (
     <div className={classes.previewContainer}>
       <div>
