@@ -16,7 +16,7 @@ const useQuery = () => {
 
 export default function MyContentList() {
   const { layout, status } = useQuery();
-  const showMyOnly = status === "published";
+  const showMyOnly = status === "published" || status === "assets";
   const total = mockList.length;
   return (
     <div>

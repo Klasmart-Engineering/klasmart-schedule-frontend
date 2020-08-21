@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import {
@@ -28,8 +28,12 @@ import {
   UnarchiveOutlined,
   DeleteOutlineOutlined,
 } from "@material-ui/icons";
+import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
+import OndemandVideoOutlinedIcon from "@material-ui/icons/OndemandVideoOutlined";
+import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
+import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
+import BookOutlinedIcon from "@material-ui/icons/BookOutlined";
 import LayoutBox from "../../components/LayoutBox";
-
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -133,6 +137,19 @@ const useStyles = makeStyles((theme) =>
     paginationUl: {
       justifyContent: "center",
     },
+    cardBackground: {
+      width: "100%",
+      paddingTop: "47.6%",
+      position: "relative",
+    },
+    cardType: {
+      color: "#fff",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      fontSize: "58px",
+    },
   })
 );
 
@@ -211,27 +228,16 @@ function ArchivedOperations() {
     </React.Fragment>
   );
 }
-
-interface ContentCardProps {
-  status: string;
-  type: string;
-  name: string;
-  img: string;
-  developmental: string;
-  skills: string;
-  age: string;
-  settings: string;
-  created: string;
-  action: string;
+interface TypeProps {
+  content_type: number;
 }
-function ContentCard(props: ContentCardProps) {
+function DefaultBackground(props: TypeProps) {
   const css = useStyles();
-  const expand = useExpand();
-  const { status } = props;
-  return (
-    <Card className={css.card}>
-      <CardActionArea>
-        <CardMedia className={css.cardMedia} image={props.img}>
+  switch (props.content_type) {
+    case 1:
+      return (
+        <CardMedia className={css.cardBackground} style={{ background: "#ffc107" }}>
+          <ImageOutlinedIcon className={css.cardType} />
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
             checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
@@ -240,6 +246,97 @@ function ContentCard(props: ContentCardProps) {
             color="secondary"
           ></Checkbox>
         </CardMedia>
+      );
+    case 2:
+      return (
+        <CardMedia className={css.cardBackground} style={{ background: "#9c27b0" }}>
+          <OndemandVideoOutlinedIcon className={css.cardType} />
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+          ></Checkbox>
+        </CardMedia>
+      );
+    case 3:
+      return (
+        <CardMedia className={css.cardBackground} style={{ background: "#009688" }}>
+          <MusicVideoOutlinedIcon className={css.cardType} />
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+          ></Checkbox>
+        </CardMedia>
+      );
+    case 4:
+      return (
+        <CardMedia className={css.cardBackground} style={{ background: "#4054b2" }}>
+          <DescriptionOutlinedIcon className={css.cardType} />
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+          ></Checkbox>
+        </CardMedia>
+      );
+    case 5:
+      return (
+        <CardMedia className={css.cardBackground} style={{ background: "#0e78d5" }}>
+          <BookOutlinedIcon className={css.cardType} />
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+          ></Checkbox>
+        </CardMedia>
+      );
+    default:
+      return <Fragment></Fragment>;
+  }
+}
+
+interface ContentCardProps {
+  content_type: number;
+  publish_status: string;
+  name: string;
+  img: string;
+  developmental: string;
+  skills: string;
+  age: string;
+  settings: string;
+  created: string;
+  action: string;
+  thumbnail: string;
+}
+function ContentCard(props: ContentCardProps) {
+  const css = useStyles();
+  const expand = useExpand();
+  const status = props.publish_status;
+  return (
+    <Card className={css.card}>
+      <CardActionArea>
+        {props.thumbnail ? (
+          <CardMedia className={css.cardMedia} image={props.thumbnail}>
+            <Checkbox
+              icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+              checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+              size="small"
+              className={css.checkbox}
+              color="secondary"
+            ></Checkbox>
+          </CardMedia>
+        ) : (
+          <DefaultBackground content_type={props.content_type} />
+        )}
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container>

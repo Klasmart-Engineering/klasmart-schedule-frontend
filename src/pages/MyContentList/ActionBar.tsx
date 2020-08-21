@@ -10,7 +10,7 @@ import {
   HourglassEmptyOutlined,
   ArchiveOutlined,
   PublishOutlined,
-  DescriptionOutlined,
+  // DescriptionOutlined,
   Search,
   MoreHoriz,
 } from "@material-ui/icons";
@@ -29,8 +29,8 @@ import TextField from "@material-ui/core/TextField/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControl from "@material-ui/core/FormControl";
 import NativeSelect from "@material-ui/core/NativeSelect/NativeSelect";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import Tooltip from "@material-ui/core/Tooltip/Tooltip";
+// import ButtonGroup from "@material-ui/core/ButtonGroup";
+// import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
 import InputBase from "@material-ui/core/InputBase/InputBase";
 
@@ -375,11 +375,7 @@ function SelectTemplateMb(props: ActionBarLayout) {
 
 function SelectTemplate(props: ActionBarProps) {
   const classes = useStyles();
-  // const [value, setValue] = React.useState("");
   const { layout } = props;
-  // const handleChange = (event: any) => {
-  //   setValue(event.target.value);
-  // };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -390,13 +386,6 @@ function SelectTemplate(props: ActionBarProps) {
               <Button variant="contained" color="primary" className={classes.searchBtn}>
                 <Search /> Search
               </Button>
-              {/* <FormControl variant="outlined" className={classes.formControl}>
-                <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
-                  <option value={10}>Remove</option>
-                  <option value={20}>Share</option>
-                  <option value={30}>Download</option>
-                </NativeSelect>
-              </FormControl> */}
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
               {props.showMyOnly ? (
@@ -448,8 +437,12 @@ interface StatusProps {
 function ActionTemplate(props: StatusProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState("");
+  const [orderValue, setOrderValue] = React.useState("");
   const handleChange = (event: any) => {
     setValue(event.target.value);
+  };
+  const handleOrderChange = (event: any) => {
+    setOrderValue(event.target.value);
   };
   const [tabValue, setTabValue] = React.useState(0);
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -466,8 +459,8 @@ function ActionTemplate(props: StatusProps) {
             <FormControl variant="outlined">
               <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
                 <option value={10}>Bulk Actions</option>
-                <option value={20}>Share</option>
-                <option value={30}>Download</option>
+                <option value={20}>Remove</option>
+                <option value={30}>Bulk Remove</option>
               </NativeSelect>
             </FormControl>
           </Grid>
@@ -493,11 +486,12 @@ function ActionTemplate(props: StatusProps) {
           )}
           <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
             <FormControl>
-              <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
+              <NativeSelect id="demo-customized-select-native" value={orderValue} onChange={handleOrderChange} input={<BootstrapInput />}>
                 <option value="">Display By </option>
-                <option value={10}>Create On</option>
-                <option value={20}>Share</option>
-                <option value={30}>Download</option>
+                <option value={10}>Material Name(A-Z)</option>
+                <option value={20}>Material Name(Z-A)</option>
+                <option value={30}>Created On(New-Old)</option>
+                <option value={30}>Created On(Old-New)</option>
               </NativeSelect>
             </FormControl>
           </Grid>
