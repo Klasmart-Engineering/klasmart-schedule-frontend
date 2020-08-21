@@ -1,24 +1,22 @@
-import React, { forwardRef, useCallback, HTMLAttributes, useMemo, useRef, useState } from "react";
 import {
-  makeStyles,
   Box,
-  Typography,
   Button,
-  useTheme,
   ButtonGroup,
-  CardMedia,
   Card,
   CardContent,
-  Theme,
+  CardMedia,
+  makeStyles,
   SvgIconProps,
+  Theme,
+  Typography,
+  useTheme,
 } from "@material-ui/core";
-import { Done, DashboardOutlined, SvgIconComponent, Close, CancelRounded, Spellcheck, FlagOutlined } from "@material-ui/icons";
-import { NavLink } from "react-router-dom";
+import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
-import cloneDeep from "lodash/cloneDeep";
+import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
-import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
-import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
+import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
+import { NavLink } from "react-router-dom";
 import { ContainerModelLessonPlan, useModelLessonPlan } from "../../hooks/useModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape }) => ({

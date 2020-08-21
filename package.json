@@ -44,6 +44,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "syncapi": "sta -p https://swagger-ui.kidsloop.net/config/api.swagger.json -o ./src/api -n api.ts",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -80,8 +81,10 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.1.5",
     "eslint": "^6.6.0",
+    "http-proxy-middleware": "^1.0.5",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "swagger-typescript-api": "^1.12.0"
   }
 }

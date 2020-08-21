@@ -1,15 +1,15 @@
-import React from "react";
-import MyContentList from "./pages/MyContentList/index";
-import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
-import theme from "./theme";
-import ContentEdit from "./pages/ContentEdit";
 import { ThemeProvider } from "@material-ui/core";
-import Preview from "./pages/Preview";
-import { store } from "./reducers";
+import React from "react";
 import { Provider } from "react-redux";
-import Schedule from "./pages/Schedule";
+import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
 import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
+import MyContentList from "./pages/MyContentList/index";
+import Preview from "./pages/Preview";
+import Schedule from "./pages/Schedule";
+import { store } from "./reducers";
+import theme from "./theme";
 
 function App() {
   return (

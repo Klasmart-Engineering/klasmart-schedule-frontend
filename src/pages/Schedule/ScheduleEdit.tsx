@@ -1,15 +1,19 @@
-import React from "react";
-import Grid from "@material-ui/core/Grid";
 import DateFnsUtils from "@date-io/date-fns";
-import { MuiPickersUtilsProvider, DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
-import theme from "../../theme";
-import { makeStyles } from "@material-ui/core/styles";
-import FormGroup from "@material-ui/core/FormGroup";
+import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox";
-import { CloudUploadOutlined, FileCopyOutlined, DeleteOutlineOutlined, Save, Close } from "@material-ui/icons";
+import FormGroup from "@material-ui/core/FormGroup";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import React from "react";
 import ModalBox from "../../components/ModalBox";
+import mockList from "../../mocks/Autocomplete.json";
+import theme from "../../theme";
+import ScheduleAttachment from "./ScheduleAttachment";
+
 function SmallCalendar() {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
   const handleDateChange = (date: Date | null) => {
@@ -127,13 +131,27 @@ function EditBox() {
           <TextField className={css.fieldset} label="Class Name"></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
-        <TextField className={css.fieldset} label="Add Class" select>
-          <MenuItem value={1}>3-4</MenuItem>
-          <MenuItem value={2}>4-2</MenuItem>
-          <MenuItem value={3}>5-6</MenuItem>
-        </TextField>
-        <TextField className={css.fieldset} label="Lesson Plan"></TextField>
-        <TextField className={css.fieldset} label="Teacher"></TextField>
+        <Autocomplete
+          id="combo-box-demo"
+          options={mockList}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Add Class" variant="outlined" />}
+        />
+        <Autocomplete
+          id="combo-box-demo"
+          freeSolo
+          options={mockList}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Lesson Plan" variant="outlined" />}
+        />
+        <Autocomplete
+          id="combo-box-demo"
+          freeSolo
+          multiple
+          options={mockList}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Teacher" variant="outlined" />}
+        />
         <Box>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
@@ -179,16 +197,18 @@ function EditBox() {
             <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Repeat" />
           </FormGroup>
         </Box>
-        <TextField className={css.fieldset} label="Subject" select>
-          <MenuItem value={1}>3-4</MenuItem>
-          <MenuItem value={2}>4-2</MenuItem>
-          <MenuItem value={3}>5-6</MenuItem>
-        </TextField>
-        <TextField className={css.fieldset} label="Program" select>
-          <MenuItem value={1}>3-4</MenuItem>
-          <MenuItem value={2}>4-2</MenuItem>
-          <MenuItem value={3}>5-6</MenuItem>
-        </TextField>
+        <Autocomplete
+          id="combo-box-demo"
+          options={mockList}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Subject" variant="outlined" />}
+        />
+        <Autocomplete
+          id="combo-box-demo"
+          options={mockList}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Program" variant="outlined" />}
+        />
         <TextField className={css.fieldset} label="Class Type" select>
           <MenuItem value={1}>3-4</MenuItem>
           <MenuItem value={2}>4-2</MenuItem>
@@ -219,10 +239,7 @@ function EditBox() {
           </MuiPickersUtilsProvider>
         </Box>
         <TextField id="outlined-multiline-static" className={css.fieldset} label="Description" multiline rows={4} variant="outlined" />
-        <Box className={css.fieldBox}>
-          <TextField className={css.fieldset} label="Attachment"></TextField>
-          <CloudUploadOutlined className={css.iconField} />
-        </Box>
+        <ScheduleAttachment />
         <Box className={css.fieldset}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live
