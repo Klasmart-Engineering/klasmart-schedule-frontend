@@ -1,9 +1,23 @@
 import React, { Fragment } from "react";
-import { Table, TableHead, TableCell, TableBody, TableRow, Box, makeStyles, TableContainer, Typography } from "@material-ui/core";
+import {
+  Table,
+  TableHead,
+  TableCell,
+  TableBody,
+  TableRow,
+  Box,
+  makeStyles,
+  TableContainer,
+  Typography,
+  TextField,
+  Button,
+} from "@material-ui/core";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import { useDrag } from "react-dnd";
 import { useParams } from "react-router-dom";
+import clsx from "clsx";
+import { Search } from "@material-ui/icons";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
@@ -41,6 +55,18 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
   emptyDesc: {
     marginBottom: "auto",
+  },
+  searchField: {
+    flexGrow: 2,
+    flexShrink: 0.5,
+    marginLeft: 40,
+  },
+  fieldset: {
+    minWidth: 110,
+    "&:not(:first-child)": {
+      marginLeft: 16,
+      marginRight: 221,
+    },
   },
 }));
 
@@ -156,9 +182,25 @@ export default function MediaAssets(props: MediaAssetsProps) {
       </Table>
     </TableContainer>
   );
+  const library = (
+    <Box width="100%">
+      <Box display="flex" pt={2.5}>
+        <TextField
+          // fullWidth
+          size="small"
+          className={clsx(css.fieldset, css.searchField)}
+          placeholder="Search"
+        />
+        <Button color="primary" variant="contained" size="small" className={css.fieldset} startIcon={<Search />}>
+          Search
+        </Button>
+      </Box>
+      {table}
+    </Box>
+  );
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
-      {comingsoon && lesson !== "plan" ? <Comingsoon /> : list.length > 0 ? table : <Empty />}
+      {comingsoon && lesson !== "plan" ? <Comingsoon /> : list.length > 0 ? library : <Empty />}
     </Box>
   );
 }

@@ -16,11 +16,12 @@ const useQuery = () => {
 
 export default function MyContentList() {
   const { layout, status } = useQuery();
+  const showMyOnly = status === "published";
   const total = mockList.length;
   return (
     <div>
       <HeaderNavBar />
-      <ActionBar layout={layout} status={status} />
+      <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} />
       {layout === "card" ? (
         <CardList list={mockList} status={status} total={total} />
       ) : (

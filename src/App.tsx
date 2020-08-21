@@ -8,7 +8,7 @@ import Preview from "./pages/Preview";
 import { store } from "./reducers";
 import { Provider } from "react-redux";
 import Schedule from "./pages/Schedule";
-import ContentDetail from "./pages/ContentDetail";
+import ContentPreview from "./pages/ContentPreview";
 
 function App() {
   return (
@@ -25,8 +25,8 @@ function App() {
             <Route path={ContentEdit.routeBasePath}>
               <Redirect to={ContentEdit.routeRedirectDefault} />
             </Route>
-            <Route path={ContentDetail.routeBasePath}>
-              <ContentDetail />
+            <Route path={ContentPreview.routeBasePath}>
+              <ContentPreview />
             </Route>
             <Route path="/library/my-content-list">
               <MyContentList />
