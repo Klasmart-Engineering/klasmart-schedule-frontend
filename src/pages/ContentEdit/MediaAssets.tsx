@@ -1,7 +1,23 @@
 import React, { Fragment } from "react";
-import { Table, TableHead, TableCell, TableBody, TableRow, Box, makeStyles, TableContainer, Typography, Button } from "@material-ui/core";
+import {
+  Table,
+  TableHead,
+  TableCell,
+  TableBody,
+  TableRow,
+  Box,
+  makeStyles,
+  TableContainer,
+  Typography,
+  TextField,
+  Button,
+} from "@material-ui/core";
 import emptyIconUrl from "../../assets/icons/empty.svg";
+import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import { useDrag } from "react-dnd";
+import { useParams } from "react-router-dom";
+import clsx from "clsx";
+import { Search } from "@material-ui/icons";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
@@ -31,8 +47,26 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     width: 200,
     height: 156,
   },
+  comingsoonImage: {
+    marginTop: 200,
+    marginBottom: 40,
+    width: 130,
+    height: 133,
+  },
   emptyDesc: {
     marginBottom: "auto",
+  },
+  searchField: {
+    flexGrow: 2,
+    flexShrink: 0.5,
+    marginLeft: 40,
+  },
+  fieldset: {
+    minWidth: 110,
+    "&:not(:first-child)": {
+      marginLeft: 16,
+      marginRight: 221,
+    },
   },
 }));
 
@@ -73,13 +107,24 @@ interface mockAsset {
   action: string;
 }
 
-function Empty() {
+export function Empty() {
   const css = useStyles();
   return (
     <Fragment>
       <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
         Empty...
+      </Typography>
+    </Fragment>
+  );
+}
+export function Comingsoon() {
+  const css = useStyles();
+  return (
+    <Fragment>
+      <img className={css.comingsoonImage} alt="comingsoon" src={comingsoonIconUrl} />
+      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+        comingsoon...
       </Typography>
     </Fragment>
   );
@@ -101,8 +146,9 @@ interface MediaAssetsProps {
   comingsoon?: boolean;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
+  const { lesson } = useParams();
   const css = useStyles();
-  const { list } = props;
+  const { list, comingsoon } = props;
   const rows = list.slice(-2).map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
@@ -136,9 +182,25 @@ export default function MediaAssets(props: MediaAssetsProps) {
       </Table>
     </TableContainer>
   );
+  const library = (
+    <Box width="100%">
+      <Box display="flex" pt={2.5}>
+        <TextField
+          // fullWidth
+          size="small"
+          className={clsx(css.fieldset, css.searchField)}
+          placeholder="Search"
+        />
+        <Button color="primary" variant="contained" size="small" className={css.fieldset} startIcon={<Search />}>
+          Search
+        </Button>
+      </Box>
+      {table}
+    </Box>
+  );
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
-      {list.length > 0 ? table : <Empty />}
+      {comingsoon && lesson !== "plan" ? <Comingsoon /> : list.length > 0 ? library : <Empty />}
     </Box>
   );
 }

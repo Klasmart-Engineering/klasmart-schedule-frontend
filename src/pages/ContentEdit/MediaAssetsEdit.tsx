@@ -3,17 +3,6 @@ import { DropzoneDialog } from "material-ui-dropzone";
 
 import React from "react";
 import Button from "@material-ui/core/Button";
-import { connect } from "react-redux";
-
-interface Props extends MediaAssetsEditProps {
-  topicList: [];
-}
-
-const mapStateToProps = (state: any) => {
-  return {
-    topicList: state.content.topicList,
-  };
-};
 
 const useStyles = makeStyles((theme) => ({
   assetImg: {
@@ -80,7 +69,7 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [files, setFiles] = React.useState([]);
+  const [, setFiles] = React.useState([]);
   const { topicList } = props;
   const handleClose = () => {
     setOpen(false);
@@ -135,7 +124,7 @@ interface MediaAssetsEditProps extends AssetEditProps {
   overlay: boolean;
 }
 
-class MediaAssetsEdit extends React.PureComponent<Props> {
+export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
     const { topicList, readonly, overlay, asset } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
@@ -143,5 +132,3 @@ class MediaAssetsEdit extends React.PureComponent<Props> {
     return <AssetEdit asset={asset} topicList={topicList} />;
   }
 }
-
-export default connect(mapStateToProps)(MediaAssetsEdit);

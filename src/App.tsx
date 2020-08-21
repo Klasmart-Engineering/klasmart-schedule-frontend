@@ -7,16 +7,14 @@ import { ThemeProvider } from "@material-ui/core";
 import Preview from "./pages/Preview";
 import { store } from "./reducers";
 import { Provider } from "react-redux";
-import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
 import Schedule from "./pages/Schedule";
-import ContentDetail from "./pages/ContentDetail";
+import ContentPreview from "./pages/ContentPreview";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <HashRouter>
         <Provider store={store}>
-          <HeaderNavBar />
           <Switch>
             <Route path={Preview.routeBasePath}>
               <Preview />
@@ -27,13 +25,18 @@ function App() {
             <Route path={ContentEdit.routeBasePath}>
               <Redirect to={ContentEdit.routeRedirectDefault} />
             </Route>
-            <Route path={ContentDetail.routeBasePath}>
-              <ContentDetail />
+            <Route path={ContentPreview.routeBasePath}>
+              <ContentPreview />
             </Route>
             <Route path="/library/my-content-list">
               <MyContentList />
             </Route>
-            <Route path="/schedule" component={Schedule} />
+            <Route path={Schedule.routeMatchPath}>
+              <Schedule />
+            </Route>
+            <Route path={Schedule.routeBasePath}>
+              <Redirect to={Schedule.routeRedirectDefault} />
+            </Route>
             <Route path="/">
               <Redirect to="/library/my-content-list?layout=card" />
             </Route>

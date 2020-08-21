@@ -1,16 +1,20 @@
-export const CONTENT_ASSETS_CREATE = "create";
-export const CONTENT_ASSETS_EDIT = "edit";
-export const CONTENT_ASSETS_PREVIEW = "preview";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const updateTypeCreateAction = { type: CONTENT_ASSETS_CREATE };
-
-export interface ReduxState {
-  type: string;
-  topicList: any;
+interface IContentState {
+  topicList: {
+    fileType: string;
+    assetsName: string;
+    program: string;
+    subject: string;
+    developmental: string;
+    skills: string;
+    age: number[];
+    description: string;
+    keywords: string;
+  };
 }
 
-const defaultState = {
-  type: "save",
+const initialState: IContentState = {
   topicList: {
     fileType: "images",
     assetsName: "",
@@ -18,19 +22,21 @@ const defaultState = {
     subject: "",
     developmental: "",
     skills: "",
-    age: 1,
+    age: [1],
     description: "",
     keywords: "",
   },
 };
 
-const content = (state: ReduxState = defaultState, action: ReduxState) => {
-  switch (action.type) {
-    case "save":
-      return action;
-    default:
-      return state;
-  }
-};
+const { actions, reducer } = createSlice({
+  name: "content",
+  initialState,
+  reducers: {
+    save(state, { payload }: PayloadAction<IContentState["topicList"]>) {
+      state.topicList = payload;
+    },
+  },
+});
 
-export { content };
+export const { save } = actions;
+export default reducer;

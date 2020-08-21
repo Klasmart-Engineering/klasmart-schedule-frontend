@@ -1,6 +1,6 @@
 import LayoutBox from "../../components/LayoutBox";
 import Hidden from "@material-ui/core/Hidden";
-import { Grid, withStyles } from "@material-ui/core";
+import { Grid, withStyles, FormControlLabel, Checkbox, InputLabel } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { Link, Redirect } from "react-router-dom";
 import {
@@ -125,6 +125,10 @@ const useStyles = makeStyles((theme) => ({
   capitalize: {
     textTransform: "capitalize",
   },
+  tabs: {
+    minHeight: "42px",
+    height: "42px",
+  },
 }));
 
 interface TabPanelProps {
@@ -141,7 +145,7 @@ function TabPanel(props: TabPanelProps) {
 function SecondaryMenu(props: ActionBarProps) {
   const classes = useStyles();
   const { layout, status } = props;
-  const path = `#/my-content-list?layout=${layout}`;
+  const path = `#/library/my-content-list?layout=${layout}`;
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -153,20 +157,13 @@ function SecondaryMenu(props: ActionBarProps) {
               </Button>
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
-              <Button
+              {/* <Button
                 href={`${path}&status=content`}
                 className={`${classes.nav} ${status === "content" ? classes.actives : ""}`}
                 startIcon={<DescriptionOutlined />}
               >
                 My Content
-              </Button>
-              <Button
-                href={`${path}&status=assets`}
-                className={`${classes.nav} ${status === "assets" ? classes.actives : ""}`}
-                startIcon={<PermMediaOutlined />}
-              >
-                Assets
-              </Button>
+              </Button> */}
               <Button
                 href={`${path}&status=published`}
                 className={`${classes.nav} ${status === "published" ? classes.actives : ""}`}
@@ -182,11 +179,25 @@ function SecondaryMenu(props: ActionBarProps) {
                 Pending
               </Button>
               <Button
+                href={`${path}&status=unpublished`}
+                className={`${classes.nav} ${status === "unpublished" ? classes.actives : ""}`}
+                startIcon={<PublishOutlined />}
+              >
+                Unpublished
+              </Button>
+              <Button
                 href={`${path}&status=archived`}
                 className={`${classes.nav} ${status === "archived" ? classes.actives : ""}`}
                 startIcon={<ArchiveOutlined />}
               >
                 Archived
+              </Button>
+              <Button
+                href={`${path}&status=assets`}
+                className={`${classes.nav} ${status === "assets" ? classes.actives : ""}`}
+                startIcon={<PermMediaOutlined />}
+              >
+                Assets
               </Button>
             </Grid>
           </Grid>
@@ -364,11 +375,11 @@ function SelectTemplateMb(props: ActionBarLayout) {
 
 function SelectTemplate(props: ActionBarProps) {
   const classes = useStyles();
-  const [value, setValue] = React.useState("");
+  // const [value, setValue] = React.useState("");
   const { layout } = props;
-  const handleChange = (event: any) => {
-    setValue(event.target.value);
-  };
+  // const handleChange = (event: any) => {
+  //   setValue(event.target.value);
+  // };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -379,16 +390,22 @@ function SelectTemplate(props: ActionBarProps) {
               <Button variant="contained" color="primary" className={classes.searchBtn}>
                 <Search /> Search
               </Button>
-              <FormControl variant="outlined" className={classes.formControl}>
+              {/* <FormControl variant="outlined" className={classes.formControl}>
                 <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
                   <option value={10}>Remove</option>
                   <option value={20}>Share</option>
                   <option value={30}>Download</option>
                 </NativeSelect>
-              </FormControl>
+              </FormControl> */}
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              <ButtonGroup aria-label="outlined primary button group" className={classes.switch}>
+              {props.showMyOnly ? (
+                <FormControlLabel value="end" control={<Checkbox color="primary" />} label="My Only" labelPlacement="end" />
+              ) : (
+                ""
+              )}
+
+              {/* <ButtonGroup aria-label="outlined primary button group" className={classes.switch}>
                 <Button
                   variant="contained"
                   style={{
@@ -415,7 +432,7 @@ function SelectTemplate(props: ActionBarProps) {
                     <ViewQuiltOutlined />
                   </Tooltip>
                 </Button>
-              </ButtonGroup>
+              </ButtonGroup> */}
             </Grid>
           </Grid>
         </Hidden>
@@ -425,17 +442,84 @@ function SelectTemplate(props: ActionBarProps) {
   );
 }
 
+interface StatusProps {
+  status: string;
+}
+function ActionTemplate(props: StatusProps) {
+  const classes = useStyles();
+  const [value, setValue] = React.useState("");
+  const handleChange = (event: any) => {
+    setValue(event.target.value);
+  };
+  const [tabValue, setTabValue] = React.useState(0);
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setTabValue(newValue);
+  };
+  console.log(props.status);
+  const { status } = props;
+  return (
+    <div className={classes.root}>
+      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+        <hr style={{ borderColor: "#e0e0e0" }} />
+        <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
+          <Grid item sm={6} xs={6} md={3}>
+            <FormControl variant="outlined">
+              <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
+                <option value={10}>Bulk Actions</option>
+                <option value={20}>Share</option>
+                <option value={30}>Download</option>
+              </NativeSelect>
+            </FormControl>
+          </Grid>
+          {status === "unpublished" ? (
+            <Grid item md={6}>
+              <Tabs
+                className={classes.tabs}
+                value={tabValue}
+                onChange={handleTabChange}
+                indicatorColor="primary"
+                textColor="primary"
+                centered
+              >
+                <Tab label="Draft" />
+                <Tab label="Waiting for Approval" />
+                <Tab label="Rejected" />
+              </Tabs>
+            </Grid>
+          ) : (
+            <Hidden only={["xs", "sm"]}>
+              <Grid item md={6}></Grid>
+            </Hidden>
+          )}
+          <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
+            <FormControl>
+              <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
+                <option value="">Display By </option>
+                <option value={10}>Create On</option>
+                <option value={20}>Share</option>
+                <option value={30}>Download</option>
+              </NativeSelect>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </LayoutBox>
+    </div>
+  );
+}
+
 interface ActionBarProps {
   layout: string;
   status: string;
+  showMyOnly: boolean;
 }
 export default function ActionBar(props: ActionBarProps) {
-  const { layout, status } = props;
+  const { layout, status, showMyOnly } = props;
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
-      <SecondaryMenu layout={layout} status={status} />
-      <SelectTemplate layout={layout} status={status} />
+      <SecondaryMenu layout={layout} status={status} showMyOnly={showMyOnly} />
+      <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} />
+      <ActionTemplate status={status} />
     </div>
   );
 }
