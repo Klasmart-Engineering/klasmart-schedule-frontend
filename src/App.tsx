@@ -9,12 +9,14 @@ import { store } from "./reducers";
 import { Provider } from "react-redux";
 import Schedule from "./pages/Schedule";
 import ContentPreview from "./pages/ContentPreview";
+import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <HashRouter>
         <Provider store={store}>
+          <HeaderNavBar />
           <Switch>
             <Route path={Preview.routeBasePath}>
               <Preview />

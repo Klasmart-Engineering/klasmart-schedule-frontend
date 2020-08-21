@@ -30,7 +30,7 @@ function ScheduleContent() {
 
   return (
     <>
-      <HeaderNavBar />
+      {/* <HeaderNavBar /> */}
       <LayoutBox holderMin={40} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>

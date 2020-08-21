@@ -9,7 +9,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox";
 import { CloudUploadOutlined, FileCopyOutlined, DeleteOutlineOutlined, Save, Close } from "@material-ui/icons";
-
+import ModalBox from "../../components/ModalBox";
 function SmallCalendar() {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
   const handleDateChange = (date: Date | null) => {
@@ -61,9 +61,36 @@ function EditBox() {
   const css = useStyles();
   // The first commit of Material-UI
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
+  const [openStatus, setOpenStatus] = React.useState(false);
+
+  const handleClose = () => {
+    setOpenStatus(false);
+  };
+  const handleDelete = () => {
+    setOpenStatus(true);
+  };
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
+  };
+  const modalDate: any = {
+    text: "Are you sure you want to delete this event?",
+    openStatus: openStatus,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+      {
+        label: "Delete",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+    ],
+    handleClose: handleClose,
   };
   return (
     <ThemeProvider theme={theme}>
@@ -84,6 +111,7 @@ function EditBox() {
                   color: "#D74040",
                 }}
                 className={css.toolset}
+                onClick={handleDelete}
               />
               <Save
                 style={{
@@ -204,6 +232,7 @@ function EditBox() {
           </Button>
         </Box>
       </Box>
+      <ModalBox modalDate={modalDate} />
     </ThemeProvider>
   );
 }

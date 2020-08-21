@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Card, Theme, makeStyles, createStyles, Grid } from "@material-ui/core";
 import { AccessTime, PeopleOutlineOutlined } from "@material-ui/icons";
-import { isBefore } from "date-fns";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: "20px",
     },
     partItem: {
-      marginBottom: "40px",
+      marginBottom: "30px",
     },
   })
 );
@@ -58,7 +58,7 @@ function timeFormat(time: number, type: string = "time") {
     return;
   }
   const date = new Date(time);
-  const dateNumFun = (num: any) => (num < 10 ? `0${num}` : num);
+  const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
   const [Y, M, D, h, m, s] = [
     // es6 解构赋值
     date.getFullYear(),
@@ -86,41 +86,24 @@ export default function SearchList() {
       id: Math.floor(1000),
       title: "Zoo Animals",
       theme: "STEAM - Bada Genius",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
+        id: Math.floor(1000),
+        name: "Big Lesson Plan",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
+    },
+    {
+      id: Math.floor(1000),
+      title: "Zoo Animals",
+      theme: "STEAM - Bada Genius",
       start_at: 1597812763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-    {
-      id: Math.floor(1000),
-      title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1597912763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-    {
-      id: Math.floor(1000),
-      title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1597912763,
       end_at: 1597916363,
       lesson_plan: {
         id: Math.floor(1000),
@@ -151,29 +134,7 @@ export default function SearchList() {
       ],
     },
   ];
-
-  let middleList: any = [];
-
-  middleList = searchList.map((item) => {
-    return {
-      titleDate: timeFormat(item.start_at, "dateDay"),
-      schedules: [item],
-      start_at: item.start_at,
-    };
-  });
-  let result: any;
-  let some: any = [];
-  middleList.forEach((item: any) => {
-    result = middleList.filter((item1: any) => item1.titleDate === item.titleDate);
-    some = middleList.filter((item1: any) => item1.titleDate !== item.titleDate);
-  });
-  result.forEach((item: any, index: number) => {
-    if (index > 0) {
-      result[0].schedules.push(item.schedules[0]);
-      result.length = 1;
-    }
-  });
-  result = [...result, ...some];
+  const history = useHistory();
 
   function compare(property: string) {
     return function (a: any, b: any) {
@@ -184,14 +145,37 @@ export default function SearchList() {
   }
   searchList.sort(compare("start_at"));
 
+  let someone: any;
+
+  function another(date: any, number: number) {
+    if (number === 0) {
+      someone = true;
+    } else {
+      searchList.forEach((item: any, index: number) => {
+        if (index < number) {
+          if (timeFormat(item.start_at, "dateDay") === timeFormat(date.start_at, "dateDay")) {
+            someone = false;
+            return;
+          } else {
+            someone = true;
+            return;
+          }
+        }
+      });
+    }
+    if (someone) return true;
+    return false;
+  }
+  const previewSchedule = (index: number) => {
+    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/id/${index}`);
+  };
+
   return (
     <Box className={classes.listContainer}>
       {searchList.map((item: any, index: number) => (
         <div key={index} className={classes.partItem}>
-          <h2 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h2>
-          {/* {
-              item.schedules.map((child: any, index: number) => ( */}
-          <Card key={index} className={classes.cardItem}>
+          {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
+          <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
             <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
             <Grid container alignItems="center" className={classes.firstLine}>
               <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
@@ -218,8 +202,6 @@ export default function SearchList() {
               </Grid>
             </Grid>
           </Card>
-          {/* ))
-            } */}
         </div>
       ))}
     </Box>
