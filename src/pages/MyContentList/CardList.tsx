@@ -1,38 +1,39 @@
-import React, { useState, Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 import {
-  Grid,
   Card,
-  CardMedia,
+  CardActionArea,
   CardActions,
   CardContent,
-  Typography,
-  IconButton,
+  CardMedia,
+  Checkbox,
+  Chip,
   Collapse,
   createStyles,
+  Grid,
+  IconButton,
   styled,
-  Chip,
-  Checkbox,
-  CardActionArea,
   Tooltip,
+  Typography,
 } from "@material-ui/core";
-import { Pagination } from "@material-ui/lab";
+import { makeStyles } from "@material-ui/core/styles";
 import {
-  ExpandMore,
-  RemoveCircleOutline,
-  Share,
-  GetApp,
   CheckBox,
   CheckBoxOutlineBlank,
-  UnarchiveOutlined,
   DeleteOutlineOutlined,
+  ExpandMore,
+  GetApp,
+  RemoveCircleOutline,
+  Share,
+  UnarchiveOutlined,
 } from "@material-ui/icons";
-import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
-import OndemandVideoOutlinedIcon from "@material-ui/icons/OndemandVideoOutlined";
-import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
-import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 import BookOutlinedIcon from "@material-ui/icons/BookOutlined";
+import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
+import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
+import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
+import OndemandVideoOutlinedIcon from "@material-ui/icons/OndemandVideoOutlined";
+import { Pagination } from "@material-ui/lab";
+import clsx from "clsx";
+import React, { Fragment, useState } from "react";
+import { Content } from "../../api/api";
 import LayoutBox from "../../components/LayoutBox";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
@@ -228,10 +229,10 @@ function ArchivedOperations() {
     </React.Fragment>
   );
 }
-interface TypeProps {
-  content_type: number;
+interface ContentTypeProps {
+  content_type?: number;
 }
-function DefaultBackground(props: TypeProps) {
+function DefaultBackground(props: ContentTypeProps) {
   const css = useStyles();
   switch (props.content_type) {
     case 1:
@@ -304,20 +305,7 @@ function DefaultBackground(props: TypeProps) {
   }
 }
 
-interface ContentCardProps {
-  content_type: number;
-  publish_status: string;
-  name: string;
-  img: string;
-  developmental: string;
-  skills: string;
-  age: string;
-  settings: string;
-  created: string;
-  action: string;
-  thumbnail: string;
-}
-function ContentCard(props: ContentCardProps) {
+function ContentCard(props: Content) {
   const css = useStyles();
   const expand = useExpand();
   const status = props.publish_status;
@@ -367,15 +355,16 @@ function ContentCard(props: ContentCardProps) {
 interface ContentCardListProps {
   total: number;
   amountPerPage?: number;
-  status: string;
-  list: ContentCardProps[];
+  publish_status: string;
+  list: Content[];
 }
 export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
-  const { status, list, total, amountPerPage = 16 } = props;
+  const status = props.publish_status;
+  const { list, total, amountPerPage = 16 } = props;
   const cardlist = list.map((item, idx) => (
     <Grid key={idx} item xs={12} sm={6} md={4} lg={3} xl={3}>
-      <ContentCard {...item} status={status}></ContentCard>
+      <ContentCard {...item} publish_status={status}></ContentCard>
     </Grid>
   ));
   return (

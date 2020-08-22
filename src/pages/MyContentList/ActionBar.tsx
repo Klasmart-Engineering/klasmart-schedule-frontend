@@ -1,38 +1,38 @@
-import LayoutBox from "../../components/LayoutBox";
-import Hidden from "@material-ui/core/Hidden";
-import { Grid, withStyles, FormControlLabel, Checkbox, InputLabel } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import { Link, Redirect } from "react-router-dom";
-import {
-  ViewQuiltOutlined,
-  ViewListOutlined,
-  PermMediaOutlined,
-  HourglassEmptyOutlined,
-  ArchiveOutlined,
-  PublishOutlined,
-  // DescriptionOutlined,
-  Search,
-  MoreHoriz,
-} from "@material-ui/icons";
-import React from "react";
+import { Checkbox, FormControlLabel, Grid, withStyles } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Popper from "@material-ui/core/Popper/Popper";
-import Grow from "@material-ui/core/Grow/Grow";
-import Paper from "@material-ui/core/Paper/Paper";
+import Button from "@material-ui/core/Button";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
-import MenuList from "@material-ui/core/MenuList/MenuList";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControl from "@material-ui/core/FormControl";
+import Grow from "@material-ui/core/Grow/Grow";
+import Hidden from "@material-ui/core/Hidden";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import InputBase from "@material-ui/core/InputBase/InputBase";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList/MenuList";
 import NativeSelect from "@material-ui/core/NativeSelect/NativeSelect";
+import Paper from "@material-ui/core/Paper/Paper";
+import Popper from "@material-ui/core/Popper/Popper";
 // import ButtonGroup from "@material-ui/core/ButtonGroup";
 // import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
-import InputBase from "@material-ui/core/InputBase/InputBase";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+import TextField from "@material-ui/core/TextField/TextField";
+import Typography from "@material-ui/core/Typography";
+import {
+  ArchiveOutlined,
+  HourglassEmptyOutlined,
+  MoreHoriz,
+  PermMediaOutlined,
+  PublishOutlined,
+  // DescriptionOutlined,
+  Search,
+  ViewListOutlined,
+  ViewQuiltOutlined,
+} from "@material-ui/icons";
+import React from "react";
+import { Link, Redirect } from "react-router-dom";
+import LayoutBox from "../../components/LayoutBox";
 
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
