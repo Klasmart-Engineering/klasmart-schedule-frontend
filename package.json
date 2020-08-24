@@ -89,6 +89,7 @@
     "msw": "^0.20.5",
     "openapi-backend": "^3.5.1",
     "prettier": "^2.0.5",
+    "react-hook-form": "^6.5.0",
     "swagger-typescript-api": "^1.12.0"
   }
 }
