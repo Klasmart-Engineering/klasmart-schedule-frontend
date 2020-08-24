@@ -12,18 +12,23 @@ const useQuery = () => {
   const layout = query.get("layout") || "card";
   const status = query.get("status") || "content";
   const subStatus = query.get("subStatus") || "";
-  return { layout, status, subStatus };
+  const name = query.get("name") || "";
+  const sortBy = query.get("sourtBy") || "";
+  return { layout, status, subStatus, name, sortBy };
 };
 
 export default function MyContentList() {
   const { layout, status, subStatus } = useQuery();
-  const showMyOnly = status === "published" || status === "assets";
+  const showMyOnly = status === "published";
   const total = mockList.length;
+  // useEffect(() => {
+  //   console.log(layout, status, subStatus, name)
+  // })
   return (
     <div>
-      <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} />
+      <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} subStatus={subStatus} />
       {layout === "card" ? (
-        <CardList list={mockContentList} publish_status={status} total={total} subStatus={subStatus} />
+        <CardList list={mockContentList} publish_status={status} total={total} />
       ) : (
         <TableList list={mockList} status={status} total={total} />
       )}
