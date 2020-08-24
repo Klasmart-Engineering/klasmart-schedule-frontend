@@ -57,8 +57,10 @@ export type ContentCondition = {
 export type Content = {
   id?: string;
   content_type?: number;
+  suggest_time?: number;
   name?: string;
   program?: string;
+  grade?: string;
   subject?: string;
   developmental?: string;
   skills?: string;

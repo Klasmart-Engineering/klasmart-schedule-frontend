@@ -88,18 +88,18 @@ interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
   contentDetial?: Content;
+  onCancel: Function;
+  onSave: Function;
+  onPublish: Function;
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetial } = props;
+  const { lesson, onChangeLesson, contentDetial, onCancel, onPublish, onSave } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const radioTypography = sm ? "subtitle2" : "h5";
-  const stateSubmit = (type: string) => {
-    console.log(contentDetial);
-  };
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -113,35 +113,13 @@ function ContentHeader(props: HeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          <Button
-            variant="contained"
-            endIcon={<Cancel />}
-            className={clsx(css.headerButton, css.redButton)}
-            onClick={() => {
-              stateSubmit("cancel");
-            }}
-          >
+          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel as any}>
             Cancel
           </Button>
-          <Button
-            variant="contained"
-            endIcon={<Save />}
-            color="primary"
-            className={css.headerButton}
-            onClick={() => {
-              stateSubmit("save");
-            }}
-          >
+          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
             Save
           </Button>
-          <Button
-            variant="contained"
-            endIcon={<Publish />}
-            className={clsx(css.headerButton, css.greenButton)}
-            onClick={() => {
-              stateSubmit("publish");
-            }}
-          >
+          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={onPublish as any}>
             Publish
           </Button>
         </Hidden>
@@ -155,13 +133,13 @@ function ContentHeader(props: HeaderProps) {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary">
+          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel as any}>
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary">
+          <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave as any}>
             <Save fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary">
+          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
             <Publish fontSize="small" />
           </IconButton>
         </Box>
