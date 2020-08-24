@@ -14,7 +14,7 @@ import PreviewSchedule from "../../pages/Schedule/PreviewSchedule";
 const useStyles = makeStyles({
   dialogContainer: {
     "& .MuiPaper-root": {
-      width: "25%",
+      // width: "25%",
       padding: "30px 0 20px 40px",
       position: "relative",
     },
