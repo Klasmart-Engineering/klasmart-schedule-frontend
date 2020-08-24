@@ -390,8 +390,6 @@ function SelectTemplateMb(props: ActionBarLayout) {
 }
 
 function SelectTemplate(props: ActionBarProps) {
-  const history = useHistory();
-  console.log(history);
   const classes = useStyles();
   const { layout } = props;
   const handleSearch = (event: any) => {};
@@ -450,12 +448,30 @@ function SelectTemplate(props: ActionBarProps) {
   );
 }
 
+function SubUnpublished() {
+  const classes = useStyles();
+  const history = useHistory();
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+    newValue === 0 && history.push(`/library/my-content-list?layout=card&status=unpublished&subStatus=draft`);
+    newValue === 1 && history.push(`/library/my-content-list?layout=card&status=unpublished&subStatus=pending`);
+    newValue === 2 && history.push(`/library/my-content-list?layout=card&status=unpublished&subStatus=rejected`);
+  };
+  return (
+    <Tabs className={classes.tabs} value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+      <Tab value={0} label="Draft" />
+      <Tab value={1} label="Waiting for Approval" />
+      <Tab value={2} label="Rejected" />
+    </Tabs>
+  );
+}
 interface StatusProps {
   status: string;
 }
 function ActionTemplate(props: StatusProps) {
-  const history = useHistory();
   const classes = useStyles();
+  const { status } = props;
   const [value, setValue] = React.useState("");
   const [orderValue, setOrderValue] = React.useState("");
   const handleChange = (event: any) => {
@@ -464,11 +480,33 @@ function ActionTemplate(props: StatusProps) {
   const handleOrderChange = (event: any) => {
     setOrderValue(event.target.value);
   };
-  const [tabValue, setTabValue] = React.useState(0);
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setTabValue(newValue);
-  };
-  const { status } = props;
+
+  function setBulkAction() {
+    let actions: string[];
+    switch (status) {
+      case "published":
+        actions = ["moveToArchived"];
+        break;
+      case "pending":
+        actions = [];
+        break;
+      case "unpublished":
+        actions = ["delete"];
+        break;
+      case "archived":
+        actions = ["republished", "delete"];
+        break;
+      default:
+        actions = [];
+    }
+    return actions;
+  }
+  const actions = setBulkAction();
+  const options = actions.map((item, index) => (
+    <option key={item + index} value={index}>
+      {item}
+    </option>
+  ));
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -476,28 +514,18 @@ function ActionTemplate(props: StatusProps) {
           <hr style={{ borderColor: "#e0e0e0" }} />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={6} xs={6} md={3}>
-              <FormControl variant="outlined">
-                <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
-                  <option value={10}>Bulk Actions</option>
-                  <option value={20}>Remove</option>
-                  <option value={30}>Bulk Remove</option>
-                </NativeSelect>
-              </FormControl>
+              {actions.length > 0 && (
+                <FormControl variant="outlined">
+                  <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
+                    <option value={10}>Bulk Actions</option>
+                    {options}
+                  </NativeSelect>
+                </FormControl>
+              )}
             </Grid>
             {status === "unpublished" ? (
               <Grid item md={6}>
-                <Tabs
-                  className={classes.tabs}
-                  value={tabValue}
-                  onChange={handleTabChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  centered
-                >
-                  <Tab href={``} label="Draft" />
-                  <Tab label="Waiting for Approval" />
-                  <Tab label="Rejected" />
-                </Tabs>
+                <SubUnpublished />
               </Grid>
             ) : (
               <Hidden only={["xs", "sm"]}>
@@ -523,7 +551,6 @@ function ActionTemplate(props: StatusProps) {
   );
 }
 function ActionTemplateMb(props: StatusProps) {
-  const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = React.useState("");
   const [orderValue, setOrderValue] = React.useState("");
@@ -532,10 +559,6 @@ function ActionTemplateMb(props: StatusProps) {
   };
   const handleOrderChange = (event: any) => {
     setOrderValue(event.target.value);
-  };
-  const [tabValue, setTabValue] = React.useState(0);
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setTabValue(newValue);
   };
   const { status } = props;
   return (
@@ -567,18 +590,7 @@ function ActionTemplateMb(props: StatusProps) {
           </Grid>
           {status === "unpublished" ? (
             <Grid item md={12}>
-              <Tabs
-                className={classes.tabs}
-                value={tabValue}
-                onChange={handleTabChange}
-                indicatorColor="primary"
-                textColor="primary"
-                centered
-              >
-                <Tab href={``} label="Draft" />
-                <Tab label="Waiting for Approval" />
-                <Tab label="Rejected" />
-              </Tabs>
+              <SubUnpublished />
             </Grid>
           ) : (
             <Hidden only={["xs", "sm"]}>
