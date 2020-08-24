@@ -1,9 +1,24 @@
-import React from "react";
-// import LayoutPair from "../ContentEdit/Layout";
-import { Theme, makeStyles } from "@material-ui/core/styles";
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { Box, Typography, Chip, CardMedia, Tabs, Tab, TextField, Grid, Button } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Chip,
+  FormControl,
+  Grid,
+  Input,
+  MenuItem,
+  Select,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+// import LayoutPair from "../ContentEdit/Layout";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
+import React from "react";
+import { Content } from "../../api/api";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -62,6 +77,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   right: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: 2,
   },
 }));
 
@@ -126,12 +153,26 @@ function DraftRejectBtn() {
   );
 }
 
-export default function ContentPreview() {
+export default function ContentPreview(props: Content) {
   const css = useStyles();
   const [value, setValue] = React.useState(0);
-
+  const [personName, setPersonName] = React.useState<string[]>([]);
+  const names = ["11111", "22222", "33333"];
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
+  };
+  const handleMutipleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setPersonName(event.target.value as string[]);
   };
   return (
     <Box className={css.container}>
@@ -195,7 +236,40 @@ export default function ContentPreview() {
             <TextField label="Grade" fullWidth variant="outlined" value={"Grade"} />
           </Grid>
         </Grid>
-        <TextField margin="normal" fullWidth label="Keywords" variant="outlined" />
+        <FormControl className={css.formControl}>
+          {/* <InputLabel id="demo-mutiple-chip-label">Keywords</InputLabel> */}
+          <Select
+            labelId="demo-mutiple-chip-label"
+            id="demo-mutiple-chip"
+            multiple
+            value={personName}
+            onChange={handleMutipleChange}
+            input={<Input id="select-multiple-chip" />}
+            renderValue={(selected) => (
+              <div className={css.chips}>
+                {(selected as string[]).map((value) => (
+                  <Chip key={value} label={value} className={css.chip} />
+                ))}
+              </div>
+            )}
+            MenuProps={MenuProps}
+          >
+            {names.map((name) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          margin="normal"
+          fullWidth
+          label="Keywords"
+          variant="outlined"
+          value={(names as string[]).map((value) => (
+            <Chip key={value} label={value} className={css.chip} />
+          ))}
+        ></TextField>
         <PublishedBtn />
       </Box>
       <Box className={css.right}>right</Box>

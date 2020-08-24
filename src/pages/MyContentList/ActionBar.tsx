@@ -31,9 +31,8 @@ import {
   ViewQuiltOutlined,
 } from "@material-ui/icons";
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
-
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -374,8 +373,11 @@ function SelectTemplateMb(props: ActionBarLayout) {
 }
 
 function SelectTemplate(props: ActionBarProps) {
+  const history = useHistory();
+  console.log(history);
   const classes = useStyles();
   const { layout } = props;
+  const handleSearch = (event: any) => {};
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -383,7 +385,7 @@ function SelectTemplate(props: ActionBarProps) {
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
               <BootstrapInput id="filled-multiline-static" className={classes.searchText} placeholder={"Search"} />
-              <Button variant="contained" color="primary" className={classes.searchBtn}>
+              <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleSearch}>
                 <Search /> Search
               </Button>
             </Grid>
@@ -435,6 +437,7 @@ interface StatusProps {
   status: string;
 }
 function ActionTemplate(props: StatusProps) {
+  const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = React.useState("");
   const [orderValue, setOrderValue] = React.useState("");
@@ -448,7 +451,6 @@ function ActionTemplate(props: StatusProps) {
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue);
   };
-  console.log(props.status);
   const { status } = props;
   return (
     <div className={classes.root}>
@@ -474,7 +476,7 @@ function ActionTemplate(props: StatusProps) {
                 textColor="primary"
                 centered
               >
-                <Tab label="Draft" />
+                <Tab href={``} label="Draft" />
                 <Tab label="Waiting for Approval" />
                 <Tab label="Rejected" />
               </Tabs>
