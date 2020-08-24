@@ -397,7 +397,7 @@ function PlanComposeGraphic(props: PlanComposeGraphicProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/assetsLibrary/rightside/planComposeText"
+            to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeText"
           >
             A
           </Button>
@@ -406,7 +406,7 @@ function PlanComposeGraphic(props: PlanComposeGraphicProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/assetsLibrary/rightside/planComposeGraphic"
+            to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeGraphic"
           >
             <DashboardOutlined />
           </Button>

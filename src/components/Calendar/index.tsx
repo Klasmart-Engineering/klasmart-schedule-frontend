@@ -1,11 +1,10 @@
-import React from "react";
-import { Calendar, momentLocalizer, Views } from "react-big-calendar";
-import moment from "moment";
-import events from "../../mocks/events";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
-import ModalBox from "../../components/ModalBox";
+import { makeStyles } from "@material-ui/core/styles";
+import moment from "moment";
+import React from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import events from "../../mocks/events";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   calendarBox: {

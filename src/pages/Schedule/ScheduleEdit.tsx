@@ -104,6 +104,7 @@ function EditBox() {
   };
 
   const modalDate: any = {
+    title: "",
     text: "Are you sure you want to delete this event?",
     openStatus: openStatus,
     buttons: [

@@ -1,26 +1,27 @@
 import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import ContentHeader from "./ContentHeader";
-import { useParams, useHistory, useLocation } from "react-router-dom";
-import ContentTabs from "./ContentTabs";
-import ContentH5p from "./ContentH5p";
-import LayoutPair from "./Layout";
-import Details from "./Details";
-import Outcomes from "./Outcomes";
-import MediaAssets from "./MediaAssets";
-import { MediaAssetsLibraryHeader, MediaAssetsLibrary } from "./MediaAssetsLibrary";
-import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
-import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
-import PlanComposeText, { SegmentText } from "./PlanComposeText";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import mockList from "../../mocks/contentList.json";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
-import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
+import AssetDetails from "./AssetDetails";
+import ContentH5p from "./ContentH5p";
+import ContentHeader from "./ContentHeader";
+import ContentTabs from "./ContentTabs";
+import Details from "./Details";
+import LayoutPair from "./Layout";
+import MediaAssets from "./MediaAssets";
+import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
+import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
+import Outcomes from "./Outcomes";
+import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
+import PlanComposeText, { SegmentText } from "./PlanComposeText";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
-  tab: "details" | "outcomes" | "assets" | "assetCreate";
+  tab: "details" | "outcomes" | "media" | "assetDetails";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
 
@@ -40,29 +41,28 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 });
 
 export default function ContentEdit() {
+  const dispatch = useDispatch();
+  (window as any).dispatch = dispatch;
   const { lesson, tab, rightside } = useParams();
   const { assetId } = useQuery();
   const history = useHistory();
-  const { topicList } = useSelector<RootState, Partial<RootState["content"]>>((state) => ({ topicList: state.content.topicList }));
+  const { contentDetial } = useSelector<RootState, Partial<RootState["content"]>>((state) => ({
+    contentDetial: state.content.contentDetial,
+  }));
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const handleChangeLesson = (lesson: string) => {
-    const rightSide = `/rightside/${lesson === "assets" ? "assetEdit" : "contentH5p"}`;
-    history.push(`${routeBasePath}/lesson/${lesson}/tab/details${rightSide}`);
+    const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
+    const tab = lesson === "assets" ? "assetDetails" : "details";
+    history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
   };
   const handleChangeTab = (tab: string) => {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}`);
   };
-  const assetsLibrary = (
-    <MediaAssetsLibrary>
-      <MediaAssetsLibraryHeader />
-      <MediaAssets list={mockList} comingsoon />
-    </MediaAssetsLibrary>
-  );
-  const assetsCreate = (
+  const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
-      <Details detailType={includeAsset ? "assets" : "default"} />
+      <AssetDetails />
     </MediaAssetsLibrary>
   );
   const contentTabs = (
@@ -76,19 +76,19 @@ export default function ContentEdit() {
     <>
       {includeH5p && includeAsset && (
         <ContentH5p>
-          <MediaAssetsEdit topicList={topicList} readonly={readonly} overlay />
+          <MediaAssetsEdit readonly={readonly} overlay />
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && <ContentH5p />}
-      {!includeH5p && includeAsset && <MediaAssetsEdit topicList={topicList} readonly={readonly} overlay={includeH5p} />}
+      {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
       {includePlanComposeGraphic && <PlanComposeGraphic plan={mockLessonPlan as Segment} />}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
-  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetCreate" ? assetsCreate : contentTabs;
+  const leftsideArea = tab === "assetDetails" ? assetDetails : contentTabs;
   return (
     <DndProvider backend={HTML5Backend}>
-      <ContentHeader topicList={topicList} lesson={lesson} onChangeLesson={handleChangeLesson} />
+      <ContentHeader contentDetial={contentDetial} lesson={lesson} onChangeLesson={handleChangeLesson} />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}
         {rightsideArea}

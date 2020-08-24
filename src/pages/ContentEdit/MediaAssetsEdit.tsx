@@ -1,8 +1,7 @@
-import { makeStyles, Typography, Box } from "@material-ui/core";
-import { DropzoneDialog } from "material-ui-dropzone";
-
-import React from "react";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import { DropzoneDialog } from "material-ui-dropzone";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   assetImg: {
@@ -126,9 +125,10 @@ interface MediaAssetsEditProps extends AssetEditProps {
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
-    const { topicList, readonly, overlay, asset } = this.props;
+    const { readonly, overlay, asset, topicList } = this.props;
+    if (!topicList) return null;
     if (overlay) return <AssetPreviewOverlay />;
     if (readonly) return <AssetPreview />;
-    return <AssetEdit asset={asset} topicList={topicList} />;
+    return <AssetEdit asset={asset} />;
   }
 }
