@@ -1,3 +1,6 @@
+/* tslint:disable */
+/* eslint-disable */
+
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -531,11 +534,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   contents = {
     /**
      * @tags content
-     * @name contentsList
+     * @name searchContents
      * @request GET:/contents
      * @description Search content with condition
      */
-    contentsList: (
+    searchContents: (
       query?: {
         name?: string | null;
         content_type?: string | null;
@@ -550,83 +553,104 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
-     * @name contentsCreate
+     * @name createContent
      * @request POST:/contents
      * @description Create content
      */
-    contentsCreate: (data: CreateContentRequest, params?: RequestParams) =>
-      this.request<{ total?: string }, any>(`/contents`, "POST", params, data),
+    createContent: (data: CreateContentRequest, params?: RequestParams) =>
+      this.request<{ id?: string }, any>(`/contents`, "POST", params, data),
 
     /**
      * @tags content
-     * @name publishUpdate
+     * @name publishContent
      * @request PUT:/contents/{content_id}/publish
      * @description Publish content
      */
-    publishUpdate: (content_id: string, data: PublishContentRequest, params?: RequestParams) =>
+    publishContent: (content_id: string, data: PublishContentRequest, params?: RequestParams) =>
       this.request<any, any>(`/contents/${content_id}/publish`, "PUT", params, data),
 
     /**
      * @tags content
-     * @name lockUpdate
+     * @name lockContent
      * @request PUT:/contents/{content_id}/lock
      * @description Lock a content by content_id
      */
-    lockUpdate: (content_id: string, params?: RequestParams) =>
+    lockContent: (content_id: string, params?: RequestParams) =>
       this.request<LockContentResponse, any>(`/contents/${content_id}/lock`, "PUT", params),
 
     /**
      * @tags content
-     * @name contentsDetail
+     * @name getContentById
      * @request GET:/contents/{content_id}
      * @description Get content by content_id
      */
-    contentsDetail: (content_id: string, params?: RequestParams) => this.request<Content, any>(`/contents/${content_id}`, "GET", params),
+    getContentById: (content_id: string, params?: RequestParams) => this.request<Content, any>(`/contents/${content_id}`, "GET", params),
 
     /**
      * @tags content
-     * @name contentsUpdate
+     * @name updateContent
      * @request PUT:/contents/{content_id}
      * @description Update content by content_id
      */
-    contentsUpdate: (content_id: string, data: CreateContentRequest, params?: RequestParams) =>
+    updateContent: (content_id: string, data: CreateContentRequest, params?: RequestParams) =>
       this.request<any, any>(`/contents/${content_id}`, "PUT", params, data),
 
     /**
      * @tags content
-     * @name contentsDelete
+     * @name deleteContent
      * @request DELETE:/contents/{content_id}
      * @description Delete content by content_id
      */
-    contentsDelete: (content_id: string, params?: RequestParams) => this.request<any, any>(`/contents/${content_id}`, "DELETE", params),
+    deleteContent: (content_id: string, params?: RequestParams) => this.request<any, any>(`/contents/${content_id}`, "DELETE", params),
   };
   contentsReview = {
     /**
      * @tags content
-     * @name approveUpdate
+     * @name approveContentReview
      * @request PUT:/contents_review/{content_id}/approve
      * @description Approve a content review by content_id
      */
-    approveUpdate: (content_id: string, params?: RequestParams) =>
+    approveContentReview: (content_id: string, params?: RequestParams) =>
       this.request<any, any>(`/contents_review/${content_id}/approve`, "PUT", params),
 
     /**
      * @tags content
-     * @name rejectUpdate
+     * @name rejectContentReview
      * @request PUT:/contents_review/{content_id}/reject
      * @description Reject a content review by content_id
      */
-    rejectUpdate: (content_id: string, data: RejectReasonRequest, params?: RequestParams) =>
+    rejectContentReview: (content_id: string, data: RejectReasonRequest, params?: RequestParams) =>
       this.request<any, any>(`/contents_review/${content_id}/reject`, "PUT", params, data),
+  };
+  contentsDynamo = {
+    /**
+     * @tags content
+     * @name contentsDynamoList
+     * @request GET:/contents_dynamo
+     * @description Search user's private content with condition
+     */
+    contentsDynamoList: (
+      query?: {
+        name?: string | null;
+        content_type?: string | null;
+        publish_status?: string | null;
+        author?: string | null;
+        description?: string | null;
+        keywords?: string | null;
+        org?: string | null;
+        key?: string | null;
+      },
+      params?: RequestParams
+    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_dynamo${this.addQueryParams(query)}`, "GET", params),
   };
   contentsPrivate = {
     /**
      * @tags content
-     * @name contentsPrivateList
+     * @name searchPrivateContents
      * @request GET:/contents_private
      * @description Search user's private content with condition
      */
-    contentsPrivateList: (
+    searchPrivateContents: (
       query?: {
         name?: string | null;
         content_type?: string | null;
@@ -642,11 +666,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   contentsPending = {
     /**
      * @tags content
-     * @name contentsPendingList
+     * @name searchPendingContents
      * @request GET:/contents_pending
      * @description Search pending content
      */
-    contentsPendingList: (
+    searchPendingContents: (
       query?: {
         name?: string | null;
         content_type?: string | null;

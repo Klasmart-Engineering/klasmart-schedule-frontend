@@ -415,18 +415,6 @@
       },
       "delete": {
         "tags": ["content"],
-        "parameters": [
-          {
-            "name": "content_id",
-            "in": "path",
-            "description": "content id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "allowEmptyValue": false
-          }
-        ],
         "description": "Delete content by content_id",
         "operationId": "deleteContent",
         "responses": {
@@ -1594,6 +1582,7 @@
               "application/json": {
                 "schema": {
                   "type": "string",
+                  "format": "string",
                   "description": "tag id"
                 }
               }
@@ -1797,6 +1786,7 @@
             "description": "The key value of the last record",
             "schema": {
               "type": "string",
+              "format": "string",
               "nullable": true,
               "default": ""
             },
@@ -1884,6 +1874,7 @@
               "application/json": {
                 "schema": {
                   "type": "string",
+                  "format": "string",
                   "description": "schedule id"
                 }
               }
@@ -1997,6 +1988,7 @@
               "application/json": {
                 "schema": {
                   "type": "string",
+                  "format": "string",
                   "description": "schedule id"
                 }
               }
@@ -2467,6 +2459,7 @@
               },
               "uploader": {
                 "type": "string",
+                "format": "int64",
                 "description": "asset uploader",
                 "example": "ede1995ebdb440ebb9526c53e07a9ff3"
               },

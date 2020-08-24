@@ -1,22 +1,23 @@
-import React, { Fragment } from "react";
 import {
   Box,
+  Button,
+  fade,
+  FormControlLabel,
+  Hidden,
   IconButton,
   makeStyles,
-  Typography,
-  Button,
-  FormControlLabel,
   Radio,
   RadioGroup,
-  fade,
-  useTheme,
+  Typography,
   useMediaQuery,
-  Hidden,
+  useTheme,
 } from "@material-ui/core";
-import { ArrowBack, PlayCircleOutline, Cancel, Save, Publish, RemoveCircleOutline, CancelOutlined } from "@material-ui/icons";
-import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
+import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
+import { ArrowBack, Cancel, CancelOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
-import { PaletteColor, Palette } from "@material-ui/core/styles/createPalette";
+import React, { Fragment } from "react";
+import { Content } from "../../api/api";
+import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -86,18 +87,18 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
-  topicList: any;
+  contentDetial?: Content;
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, topicList } = props;
+  const { lesson, onChangeLesson, contentDetial } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const radioTypography = sm ? "subtitle2" : "h5";
   const stateSubmit = (type: string) => {
-    console.log(topicList);
+    console.log(contentDetial);
   };
   return (
     <Fragment>
@@ -112,17 +113,6 @@ function ContentHeader(props: HeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          <Button
-            variant="outlined"
-            endIcon={<PlayCircleOutline />}
-            color="primary"
-            className={css.headerButton}
-            onClick={() => {
-              stateSubmit("preview");
-            }}
-          >
-            Preview
-          </Button>
           <Button
             variant="contained"
             endIcon={<Cancel />}
@@ -161,19 +151,10 @@ function ContentHeader(props: HeaderProps) {
           <Typography variant="h6" className={css.title}>
             Create New Content
           </Typography>
-          <Button variant="outlined" startIcon={<RemoveCircleOutline />} className={clsx(css.headerButton, css.redOutlinedButton)}>
-            Remove to Archive
-          </Button>
         </Box>
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          <IconButton className={clsx(css.iconButton, css.redOutlinedButton)} color="primary">
-            <RemoveCircleOutline fontSize="small" />
-          </IconButton>
-          <IconButton className={css.iconButton} color="primary">
-            <PlayCircleOutline fontSize="small" />
-          </IconButton>
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary">
             <CancelOutlined fontSize="small" />
           </IconButton>
