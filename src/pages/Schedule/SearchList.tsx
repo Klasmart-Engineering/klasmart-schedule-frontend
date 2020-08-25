@@ -1,7 +1,9 @@
-import React from "react";
-import { Box, Card, Theme, makeStyles, createStyles, Grid } from "@material-ui/core";
+import { Box, Card, createStyles, Grid, makeStyles, Theme } from "@material-ui/core";
 import { AccessTime, PeopleOutlineOutlined } from "@material-ui/icons";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { RootState } from "../../reducers";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -134,7 +136,16 @@ export default function SearchList() {
       ],
     },
   ];
+
+  const dispatch = useDispatch();
+  (window as any).dispatch = dispatch;
+
   const history = useHistory();
+
+  const res: any = useSelector<any>((state: RootState) => (
+    state.schedule.lists
+  ))
+  console.log(dispatch)
 
   function compare(property: string) {
     return function (a: any, b: any) {
@@ -172,7 +183,7 @@ export default function SearchList() {
 
   return (
     <Box className={classes.listContainer}>
-      {searchList.map((item: any, index: number) => (
+      {res.map((item: any, index: number) => (
         <div key={index} className={classes.partItem}>
           {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
           <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
