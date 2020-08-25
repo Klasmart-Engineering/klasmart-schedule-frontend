@@ -1,24 +1,11 @@
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import {
-  Box,
-  Button,
-  CardMedia,
-  Chip,
-  FormControl,
-  Grid,
-  Input,
-  MenuItem,
-  Select,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Box, Button, CardMedia, Chip, Grid, InputAdornment, Tab, Tabs, TextField, Typography } from "@material-ui/core";
 // import LayoutPair from "../ContentEdit/Layout";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
 import { Content } from "../../api/api";
+import mockData from "../../mocks/content.json";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -154,25 +141,12 @@ function DraftRejectBtn() {
 }
 
 export default function ContentPreview(props: Content) {
+  const data = mockData[0];
   const css = useStyles();
   const [value, setValue] = React.useState(0);
-  const [personName, setPersonName] = React.useState<string[]>([]);
   const names = ["11111", "22222", "33333"];
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
-  };
-  const handleMutipleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setPersonName(event.target.value as string[]);
   };
   return (
     <Box className={css.container}>
@@ -182,10 +156,10 @@ export default function ContentPreview(props: Content) {
         </Box>
         <Typography className={css.text}>Title</Typography>
         <Box className={css.nameCon}>
-          <Typography className={css.text}>Bada Rhyme 1</Typography>
-          <Chip size="small" color="primary" label="Lesson Material" />
+          <Typography className={css.text}>{data.name}</Typography>
+          <Chip size="small" color="primary" label={data.content_type_name} />
         </Box>
-        <CardMedia className={css.img} component="img" image="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" />
+        <CardMedia className={css.img} component="img" image={data.img} />
         <Tabs
           className={css.tab}
           value={value}
@@ -195,8 +169,8 @@ export default function ContentPreview(props: Content) {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label="Item One" />
-          <Tab label="Item Two" />
+          <Tab label="Details" />
+          <Tab label="Assessments" />
         </Tabs>
         <TextField
           className={css.textFiled}
@@ -206,69 +180,48 @@ export default function ContentPreview(props: Content) {
           rows={2}
           label="Description"
           variant="outlined"
-          value={
-            "descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription"
-          }
+          value={data.description}
         />
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <TextField label="Program" fullWidth variant="outlined" value={"program"} />
+            <TextField label="Program" fullWidth variant="outlined" value={data.program_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Subject" fullWidth variant="outlined" value={"Subject"} />
+            <TextField label="Subject" fullWidth variant="outlined" value={data.subject_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Development" fullWidth variant="outlined" value={"Development"} />
+            <TextField label="Development" fullWidth variant="outlined" value={data.developmental_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Skills" fullWidth variant="outlined" value={"Skills"} />
+            <TextField label="Skills" fullWidth variant="outlined" value={data.skills} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Visibility Settings" fullWidth variant="outlined" value={"Visibility Settings"} />
+            <TextField label="Visibility Settings" fullWidth variant="outlined" value={data.settings} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Duration" fullWidth variant="outlined" value={"Duration"} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Suitable Age" fullWidth variant="outlined" value={"Suitable Age"} />
+            <TextField label="Suitable Age" fullWidth variant="outlined" value={data.age_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Grade" fullWidth variant="outlined" value={"Grade"} />
           </Grid>
         </Grid>
-        <FormControl className={css.formControl}>
-          {/* <InputLabel id="demo-mutiple-chip-label">Keywords</InputLabel> */}
-          <Select
-            labelId="demo-mutiple-chip-label"
-            id="demo-mutiple-chip"
-            multiple
-            value={personName}
-            onChange={handleMutipleChange}
-            input={<Input id="select-multiple-chip" />}
-            renderValue={(selected) => (
-              <div className={css.chips}>
-                {(selected as string[]).map((value) => (
-                  <Chip key={value} label={value} className={css.chip} />
-                ))}
-              </div>
-            )}
-            MenuProps={MenuProps}
-          >
-            {names.map((name) => (
-              <MenuItem key={name} value={name}>
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <TextField
           margin="normal"
           fullWidth
           label="Keywords"
           variant="outlined"
-          value={(names as string[]).map((value) => (
-            <Chip key={value} label={value} className={css.chip} />
-          ))}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                {data.keywords.map((value) => (
+                  <Chip key={value} label={value} className={css.chip} />
+                ))}
+              </InputAdornment>
+            ),
+          }}
         ></TextField>
         <PublishedBtn />
       </Box>
