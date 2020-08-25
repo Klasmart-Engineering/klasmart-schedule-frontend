@@ -26,10 +26,13 @@ import {
   UnarchiveOutlined,
 } from "@material-ui/icons";
 import BookOutlinedIcon from "@material-ui/icons/BookOutlined";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
 import OndemandVideoOutlinedIcon from "@material-ui/icons/OndemandVideoOutlined";
+import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
+import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
@@ -84,6 +87,8 @@ const useStyles = makeStyles((theme) =>
     },
     cardActions: {
       flexWrap: "wrap",
+      justifyContent: "space-between",
+      height: "40px",
     },
     iconButtonExpandMore: {
       marginLeft: "auto",
@@ -150,6 +155,14 @@ const useStyles = makeStyles((theme) =>
       left: "50%",
       transform: "translate(-50%, -50%)",
       fontSize: "58px",
+    },
+    iconColor: {
+      color: "#D32F2F",
+      cursor: "pointer",
+    },
+    rePublishColor: {
+      color: "#0E78D5",
+      cursor: "pointer",
     },
   })
 );
@@ -229,6 +242,35 @@ function ArchivedOperations() {
     </React.Fragment>
   );
 }
+
+function PublishedAction() {
+  const css = useStyles();
+  return (
+    <React.Fragment>
+      <RemoveCircleOutlineIcon className={css.iconColor} />
+    </React.Fragment>
+  );
+}
+
+function UnpublishedAction() {
+  const css = useStyles();
+  return (
+    <React.Fragment>
+      <DeleteOutlineIcon className={css.iconColor} />
+    </React.Fragment>
+  );
+}
+
+function ArchivedAction() {
+  const css = useStyles();
+  return (
+    <div>
+      <PublishOutlinedIcon className={css.rePublishColor} />
+      <DeleteOutlineIcon className={css.iconColor} />
+    </div>
+  );
+}
+
 interface ContentTypeProps {
   content_type?: number;
 }
@@ -338,15 +380,19 @@ function ContentCard(props: Content) {
             {props.age}
           </Typography>
         </Collapse>
-        <Typography className={css.body2} variant="body2">
+        {/* <Typography className={css.body2} variant="body2">
           {props.developmental}
-        </Typography>
+        </Typography> */}
       </CardContent>
       <CardActions className={css.cardActions}>
-        <Chip className={css.previewChip} clickable label="Preview" variant="outlined" classes={{ label: css.ChipLabel }}></Chip>
-        {(status === "content" || status === "published" || status === "assets") && <MyOperations />}
-        {status === "pending" && <PendingOperations />}
-        {status === "archived" && <ArchivedOperations />}
+        <Typography className={css.body2} variant="body2">
+          {props.author_name}
+        </Typography>
+        {/* <Chip className={css.previewChip} clickable label="Preview" variant="outlined" classes={{ label: css.ChipLabel }}></Chip> */}
+        {/* {(status === "content" || status === "published" || status === "assets") && <MyOperations />} */}
+        {status === "published" && <PublishedAction />}
+        {status === "unpublished" && <UnpublishedAction />}
+        {status === "archived" && <ArchivedAction />}
       </CardActions>
     </Card>
   );

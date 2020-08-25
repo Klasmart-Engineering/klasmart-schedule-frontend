@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import useSubscribe from "../../hooks/useSubscribe";
 import mockList from "../../mocks/contentList.json";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { RootState } from "../../reducers";
+import { onLoadContentEdit, publish } from "../../reducers/content";
+import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
 import ContentTabs from "./ContentTabs";
@@ -13,22 +16,22 @@ import Details from "./Details";
 import LayoutPair from "./Layout";
 import MediaAssets from "./MediaAssets";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
-import { MediaAssetsLibrary, MediaAssetsLibraryHeader } from "./MediaAssetsLibrary";
+import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import Outcomes from "./Outcomes";
 import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
-  tab: "details" | "outcomes" | "assets" | "assetCreate";
+  tab: "details" | "outcomes" | "media" | "assetDetails";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
 
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const assetId = query.get("assetId");
-  return { assetId };
+  const id = query.get("id");
+  return { id };
 };
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
@@ -41,37 +44,40 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 
 export default function ContentEdit() {
   const dispatch = useDispatch();
-  (window as any).dispatch = dispatch;
-  const { lesson, tab, rightside } = useParams();
-  const { assetId } = useQuery();
-  const history = useHistory();
   const { contentDetial } = useSelector<RootState, Partial<RootState["content"]>>((state) => ({
     contentDetial: state.content.contentDetial,
   }));
+  const { trigger: triggerCancel, subscribe: subscribeCancel } = useSubscribe();
+  const { trigger: triggerSave, subscribe: subscribeSave } = useSubscribe();
+  const { lesson, tab, rightside } = useParams();
+  const { id } = useQuery();
+  const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const handleChangeLesson = (lesson: string) => {
-    const rightSide = `/rightside/${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
-    history.push(`${routeBasePath}/lesson/${lesson}/tab/details${rightSide}`);
+    const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
+    const tab = lesson === "assets" ? "assetDetails" : "details";
+    history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
   };
   const handleChangeTab = (tab: string) => {
     history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}`);
   };
-  const assetsLibrary = (
-    <MediaAssetsLibrary>
-      <MediaAssetsLibraryHeader />
-      <MediaAssets list={mockList} comingsoon />
-    </MediaAssetsLibrary>
-  );
-  const assetsCreate = (
+  const handlePublish = () => {
+    if (!id) return;
+    dispatch(publish(id));
+  };
+  useEffect(() => {
+    dispatch(onLoadContentEdit({ id, type: lesson }));
+  }, [id, lesson, dispatch]);
+  const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
-      <Details detailType={includeAsset ? "assets" : "default"} />
+      <AssetDetails />
     </MediaAssetsLibrary>
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
-      <Details />
+      <Details contentDetail={contentDetial} subscribeCancel={subscribeCancel} subscribeSave={subscribeSave} />
       <Outcomes comingsoon />
       <MediaAssets list={mockList} comingsoon />
     </ContentTabs>
@@ -89,10 +95,17 @@ export default function ContentEdit() {
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
-  const leftsideArea = tab === "assetsLibrary" ? assetsLibrary : tab === "assetCreate" ? assetsCreate : contentTabs;
+  const leftsideArea = tab === "assetDetails" ? assetDetails : contentTabs;
   return (
     <DndProvider backend={HTML5Backend}>
-      <ContentHeader contentDetial={contentDetial} lesson={lesson} onChangeLesson={handleChangeLesson} />
+      <ContentHeader
+        contentDetial={contentDetial}
+        lesson={lesson}
+        onChangeLesson={handleChangeLesson}
+        onCancel={triggerCancel}
+        onSave={triggerSave}
+        onPublish={handlePublish}
+      />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}
         {rightsideArea}

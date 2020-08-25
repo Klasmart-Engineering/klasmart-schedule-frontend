@@ -1,7 +1,10 @@
-import React, { FormEvent } from "react";
-import { TextField, Box, makeStyles, Button, MenuItem, useMediaQuery, useTheme, createMuiTheme, ThemeProvider } from "@material-ui/core";
-import { CloudUploadOutlined, SettingsOutlined } from "@material-ui/icons";
+import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
+import { CloudUploadOutlined } from "@material-ui/icons";
+import React, { useEffect, useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { Content } from "../../api/api";
+import { save } from "../../reducers/content";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -16,15 +19,31 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   },
 }));
 
-interface DetailProps extends DetailTypeProps {
-  sm: any;
-  theme: Object;
+interface DetailsProps {
+  contentDetail?: Content;
+  uploadThumnail?: Function;
+  subscribeCancel: (listener: Function) => void;
+  subscribeSave: (listener: Function) => void;
 }
-function DefaultDetails(props: DetailProps) {
+export default function Details(props: DetailsProps) {
+  const { contentDetail, subscribeCancel, subscribeSave } = props;
   const css = useStyles();
   const defaultTheme = useTheme();
+  const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
+  const { register, handleSubmit, control, reset, errors, setValue } = useForm();
+  console.log("errors = ", errors);
+  const handleSave = useMemo(() => (form: Partial<Content>) => dispatch(save(form)), [dispatch]);
+  useEffect(() => subscribeCancel(reset), [reset, subscribeCancel]);
+  useEffect(() => {
+    subscribeSave(handleSubmit(handleSave as any));
+  }, [handleSubmit, subscribeSave, handleSave]);
+  useEffect(() => {
+    register("thumbnail");
+    register("data");
+  });
+  if (!contentDetail) return null;
   const theme = createMuiTheme(defaultTheme, {
     props: {
       MuiTextField: {
@@ -41,8 +60,8 @@ function DefaultDetails(props: DetailProps) {
   });
   return (
     <ThemeProvider theme={theme}>
-      <Box p="7.8% 8.5%">
-        <TextField label="Lesson Material"></TextField>
+      <Box component="form" p="7.8% 8.5%">
+        <Controller as={TextField} control={control} name="name" label="Material Name" defaultValue={contentDetail.name}></Controller>
         <Box className={css.fieldset}>
           <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
           <label htmlFor="thumbnail-file-input">
@@ -51,170 +70,129 @@ function DefaultDetails(props: DetailProps) {
             </Button>
           </label>
         </Box>
-        <TextField className={css.fieldset} label="Material Name"></TextField>
-        <TextField className={css.fieldset} label="Program" InputProps={{ endAdornment: <SettingsOutlined /> }}></TextField>
-        <TextField className={css.fieldset} label="Subject"></TextField>
-        <Box>
-          <TextField
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label="Developmental"
-            InputProps={{ endAdornment: <SettingsOutlined /> }}
-          ></TextField>
-          <TextField
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label="Skills"
-            InputProps={{ endAdornment: <SettingsOutlined /> }}
-          ></TextField>
-        </Box>
-        <TextField className={css.fieldset} label="Visibility Settings" select>
-          <MenuItem>Organization</MenuItem>
-          <MenuItem>School</MenuItem>
-        </TextField>
-        <TextField className={css.fieldset} label="Description"></TextField>
-        <TextField className={css.fieldset} label="Keywords"></TextField>
-      </Box>
-    </ThemeProvider>
-  );
-}
-
-function AssetsDetails(props: DetailProps) {
-  const css = useStyles();
-  const { sm, theme } = props;
-  const dispatch = useDispatch();
-
-  interface InitData {
-    fileType: string;
-    assetsName: string;
-    program: string;
-    subject: string;
-    developmental: string;
-    skills: string;
-    age: number;
-    description: string;
-    keywords: string;
-  }
-
-  const [topicList, setTopicList] = React.useState({
-    fileType: "images",
-    assetsName: "",
-    program: "",
-    subject: "",
-    developmental: "",
-    skills: "",
-    age: 1,
-    description: "",
-    keywords: "",
-  });
-
-  const handleTopicListChange = (event: React.ChangeEvent<{ value: String }>, name: string) => {
-    const newTopocList = {
-      ...topicList,
-      [name]: event.target.value as string,
-    };
-    setTopicList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
-    dispatch({ type: "save", topicList: newTopocList });
-  };
-  return (
-    <ThemeProvider theme={theme}>
-      <Box p="7.8% 8.5%">
-        <TextField label="Lesson Material" value={topicList.fileType} onChange={(e) => handleTopicListChange(e, "fileType")} select>
-          <MenuItem value="images">Image</MenuItem>
-          <MenuItem value="video">Video</MenuItem>
-          <MenuItem value="audio">Audio</MenuItem>
-          <MenuItem value="document">Document</MenuItem>
-        </TextField>
-        <Box className={css.fieldset}>
-          <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
-          <label htmlFor="thumbnail-file-input">
-            <Button size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
-              Thumbnail
-            </Button>
-          </label>
-        </Box>
-        <TextField
+        <Controller
+          as={TextField}
+          control={control}
+          name="suggest_time"
           className={css.fieldset}
-          label="Assets Name"
-          value={topicList.assetsName}
-          onChange={(e) => handleTopicListChange(e, "assetsName")}
-        ></TextField>
-        <TextField
+          label="Suggested Duration (min)"
+          defaultValue={contentDetail.name}
+        ></Controller>
+        <Controller
+          as={TextField}
+          select
+          SelectProps={{ multiple: true }}
           className={css.fieldset}
           label="Program"
-          value={topicList.program}
-          onChange={(e) => handleTopicListChange(e, "program")}
-          InputProps={{ endAdornment: <SettingsOutlined /> }}
-        ></TextField>
-        <TextField
+          name="program"
+          defaultValue={contentDetail.program}
+          control={control}
+        >
+          <MenuItem value="program1">program one</MenuItem>
+          <MenuItem value="program2">program two</MenuItem>
+        </Controller>
+        <Controller
+          as={TextField}
+          select
+          SelectProps={{ multiple: true }}
           className={css.fieldset}
           label="Subject"
-          value={topicList.subject}
-          onChange={(e) => handleTopicListChange(e, "subject")}
-        ></TextField>
+          name="subject"
+          defaultValue={contentDetail.subject}
+          control={control}
+        >
+          <MenuItem value="subject1">subject1</MenuItem>
+          <MenuItem value="subject2">subject2</MenuItem>
+        </Controller>
         <Box>
-          <TextField
+          <Controller
+            as={TextField}
+            name="developmental"
+            defaultValue={contentDetail.developmental}
+            control={control}
+            select
+            SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Developmental"
-            value={topicList.developmental}
-            onChange={(e) => handleTopicListChange(e, "developmental")}
-            InputProps={{ endAdornment: <SettingsOutlined /> }}
-          ></TextField>
-          <TextField
+          >
+            <MenuItem value="developmental1">developmental1</MenuItem>
+            <MenuItem value="developmental2">developmental2</MenuItem>
+          </Controller>
+          <Controller
+            as={TextField}
+            name="skills"
+            defaultValue={contentDetail.skills}
+            control={control}
+            select
+            SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Skills"
-            value={topicList.skills}
-            onChange={(e) => handleTopicListChange(e, "skills")}
-            InputProps={{ endAdornment: <SettingsOutlined /> }}
-          ></TextField>
+          >
+            <MenuItem value="skills1">skills1</MenuItem>
+            <MenuItem value="skills2">skills2</MenuItem>
+          </Controller>
         </Box>
-        <TextField className={css.fieldset} label="age" value={topicList.age} onChange={(e) => handleTopicListChange(e, "age")} select>
-          <MenuItem value={1}>3-4</MenuItem>
-          <MenuItem value={2}>4-2</MenuItem>
-          <MenuItem value={3}>5-6</MenuItem>
-        </TextField>
-        <TextField
+        <Box>
+          <Controller
+            as={TextField}
+            name="age"
+            defaultValue={contentDetail.age}
+            control={control}
+            select
+            SelectProps={{ multiple: true }}
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Age"
+          >
+            <MenuItem value="age1">age1</MenuItem>
+            <MenuItem value="age2">age2</MenuItem>
+          </Controller>
+          <Controller
+            as={TextField}
+            name="grade"
+            defaultValue={contentDetail.grade}
+            control={control}
+            select
+            SelectProps={{ multiple: true }}
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Grade"
+          >
+            <MenuItem value="grade1">grade1</MenuItem>
+            <MenuItem value="grade2">grade2</MenuItem>
+          </Controller>
+        </Box>
+        <Controller
+          as={TextField}
+          select
+          className={css.fieldset}
+          label="Visibility Settings"
+          name="publish_scope"
+          defaultValue={contentDetail.publish_scope}
+          control={control}
+        >
+          <MenuItem value="publish_scope1">publish_scope1</MenuItem>
+          <MenuItem value="publish_scope2">publish_scope2</MenuItem>
+        </Controller>
+        <Controller
+          as={TextField}
+          control={control}
+          name="description"
+          defaultValue={contentDetail.description}
           className={css.fieldset}
           label="Description"
-          value={topicList.description}
-          onChange={(e) => handleTopicListChange(e, "description")}
-        ></TextField>
-        <TextField
+        ></Controller>
+        <Controller
+          as={TextField}
+          control={control}
+          name="keywords"
+          defaultValue={contentDetail.keywords}
           className={css.fieldset}
           label="Keywords"
-          value={topicList.keywords}
-          onChange={(e) => handleTopicListChange(e, "keywords")}
-        ></TextField>
+        ></Controller>
       </Box>
     </ThemeProvider>
   );
-}
-
-interface DetailTypeProps {
-  detailType?: any;
-}
-
-export default function Details(props: DetailTypeProps) {
-  const defaultTheme = useTheme();
-  const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-  const size = sm ? "small" : "medium";
-  const { detailType } = props;
-  const theme = createMuiTheme(defaultTheme, {
-    props: {
-      MuiTextField: {
-        size,
-        fullWidth: true,
-      },
-      MuiButton: {
-        size,
-      },
-      MuiSvgIcon: {
-        fontSize: sm ? "small" : "default",
-      },
-    },
-  });
-  if (detailType === "assets") return <AssetsDetails theme={theme} sm={sm} />;
-  return <DefaultDetails theme={theme} sm={sm} />;
 }

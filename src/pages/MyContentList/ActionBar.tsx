@@ -27,8 +27,8 @@ import {
   ViewListOutlined,
   ViewQuiltOutlined,
 } from "@material-ui/icons";
-import React from "react";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, Redirect, useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
@@ -139,10 +139,23 @@ function TabPanel(props: TabPanelProps) {
   return <div>{value === index && <Typography>{children}</Typography>}</div>;
 }
 
-function SecondaryMenu(props: ActionBarProps) {
+interface SecondaryMenuProps {
+  layout: string;
+  status: string;
+  showMyOnly: boolean;
+}
+function SecondaryMenu(props: SecondaryMenuProps) {
   const classes = useStyles();
   const { layout, status } = props;
+  // const history = useHistory()
+  // const { pathname, search } = useLocation();
   const path = `#/library/my-content-list?layout=${layout}`;
+  // const secondaryMenus = ['published', 'pending', 'unpublished', 'archived', 'assets']
+  // const handleRouter = (event: any) => {
+  //   console.log(event.target)
+  //   const newUrl = setUrl(search, "status", 'published');
+  //   history.push(`${pathname}?${newUrl}`)
+  // }
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -205,33 +218,37 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
   const classes = useStyles();
   const { layout, status } = props;
   const path = `/library/my-content-list?layout=${layout}`;
-  const [value, setValue] = React.useState(getStatus());
+  const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-  function getStatus() {
-    let value = 0;
-    switch (status) {
-      case "published":
-        value = 0;
-        break;
-      case "pending":
-        value = 1;
-        break;
-      case "unpublished":
-        value = 2;
-        break;
-      case "archived":
-        value = 3;
-        break;
-      case "assets":
-        value = 4;
-        break;
-      default:
-        value = 0;
+
+  useEffect(() => {
+    function getStatus() {
+      let value = 0;
+      switch (status) {
+        case "published":
+          value = 0;
+          break;
+        case "pending":
+          value = 1;
+          break;
+        case "unpublished":
+          value = 2;
+          break;
+        case "archived":
+          value = 3;
+          break;
+        case "assets":
+          value = 4;
+          break;
+        default:
+          value = 0;
+      }
+      return value;
     }
-    return value;
-  }
+    setValue(getStatus());
+  }, [status]);
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
@@ -389,19 +406,20 @@ function SelectTemplateMb(props: ActionBarLayout) {
   );
 }
 
-function SelectTemplate(props: ActionBarProps) {
-  const history = useHistory();
-  console.log(history);
+function SelectTemplate(props: SecondaryMenuProps) {
   const classes = useStyles();
+  const [searchInput, setSearchInput] = React.useState<string>();
   const { layout } = props;
-  const handleSearch = (event: any) => {};
+  const handleSearch = (event: any) => {
+    console.log(searchInput);
+  };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <BootstrapInput id="filled-multiline-static" className={classes.searchText} placeholder={"Search"} />
+              <BootstrapInput id="filled-multiline-static" className={classes.searchText} placeholder={"Search"} value={searchInput} />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleSearch}>
                 <Search /> Search
               </Button>
@@ -450,25 +468,110 @@ function SelectTemplate(props: ActionBarProps) {
   );
 }
 
+interface SubUnpublishedProps {
+  subStatus: string;
+}
+function SubUnpublished(props: SubUnpublishedProps) {
+  const classes = useStyles();
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const { subStatus } = props;
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+    let value: string = "";
+    if (newValue === 0) {
+      value = "draft";
+    }
+    if (newValue === 1) {
+      value = "pending";
+    }
+    if (newValue === 2) {
+      value = "rejected";
+    }
+    const newUrl = setUrl(search, "subStatus", value);
+    history.push(`${pathname}?${newUrl}`);
+  };
+
+  useEffect(() => {
+    function getDefaultValue() {
+      let defaultValue = 0;
+      if (subStatus === "draft") defaultValue = 0;
+      if (subStatus === "pending") defaultValue = 1;
+      if (subStatus === "rejected") defaultValue = 2;
+      return defaultValue;
+    }
+    setValue(getDefaultValue());
+  }, [subStatus]);
+  return (
+    <Tabs className={classes.tabs} value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+      <Tab value={0} label="Draft" />
+      <Tab value={1} label="Waiting for Approval" />
+      <Tab value={2} label="Rejected" />
+    </Tabs>
+  );
+}
+
+function setUrl(search: string, param: string, value: string) {
+  const query = new URLSearchParams(search);
+  let newUrl: any;
+  if (query.get(param)) {
+    query.set(param, value);
+    newUrl = query.toString();
+  } else {
+    newUrl = `${search}&${param}=${value}`;
+  }
+  return newUrl;
+}
 interface StatusProps {
   status: string;
+  subStatus: string;
 }
 function ActionTemplate(props: StatusProps) {
   const history = useHistory();
+  const { pathname, search } = useLocation();
   const classes = useStyles();
-  const [value, setValue] = React.useState("");
-  const [orderValue, setOrderValue] = React.useState("");
+  const { status, subStatus } = props;
+  const [value, setValue] = React.useState(0);
+  const [orderValue, setOrderValue] = React.useState(0);
   const handleChange = (event: any) => {
     setValue(event.target.value);
   };
   const handleOrderChange = (event: any) => {
     setOrderValue(event.target.value);
+    const newUrl = setUrl(search, "sortBy", event.target.value);
+    history.push(`${pathname}?${newUrl}`);
   };
-  const [tabValue, setTabValue] = React.useState(0);
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setTabValue(newValue);
-  };
-  const { status } = props;
+  useEffect(() => {
+    setValue(0);
+    setOrderValue(0);
+  }, [status]);
+  function setBulkAction() {
+    let actions: string[];
+    switch (status) {
+      case "published":
+        actions = ["moveToArchived"];
+        break;
+      case "pending":
+        actions = [];
+        break;
+      case "unpublished":
+        actions = ["delete"];
+        break;
+      case "archived":
+        actions = ["republished", "delete"];
+        break;
+      default:
+        actions = [];
+    }
+    return actions;
+  }
+  const actions = setBulkAction();
+  const options = actions.map((item, index) => (
+    <option key={item + index} value={index + 1}>
+      {item}
+    </option>
+  ));
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -476,28 +579,18 @@ function ActionTemplate(props: StatusProps) {
           <hr style={{ borderColor: "#e0e0e0" }} />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={6} xs={6} md={3}>
-              <FormControl variant="outlined">
-                <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
-                  <option value={10}>Bulk Actions</option>
-                  <option value={20}>Remove</option>
-                  <option value={30}>Bulk Remove</option>
-                </NativeSelect>
-              </FormControl>
+              {actions.length > 0 && (
+                <FormControl variant="outlined">
+                  <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
+                    <option value={0}>Bulk Actions</option>
+                    {options}
+                  </NativeSelect>
+                </FormControl>
+              )}
             </Grid>
             {status === "unpublished" ? (
               <Grid item md={6}>
-                <Tabs
-                  className={classes.tabs}
-                  value={tabValue}
-                  onChange={handleTabChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  centered
-                >
-                  <Tab href={``} label="Draft" />
-                  <Tab label="Waiting for Approval" />
-                  <Tab label="Rejected" />
-                </Tabs>
+                <SubUnpublished subStatus={subStatus} />
               </Grid>
             ) : (
               <Hidden only={["xs", "sm"]}>
@@ -507,23 +600,22 @@ function ActionTemplate(props: StatusProps) {
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <FormControl>
                 <NativeSelect id="demo-customized-select-native" value={orderValue} onChange={handleOrderChange} input={<BootstrapInput />}>
-                  <option value="">Display By </option>
+                  <option value={0}>Display By </option>
                   <option value={10}>Material Name(A-Z)</option>
                   <option value={20}>Material Name(Z-A)</option>
                   <option value={30}>Created On(New-Old)</option>
-                  <option value={30}>Created On(Old-New)</option>
+                  <option value={40}>Created On(Old-New)</option>
                 </NativeSelect>
               </FormControl>
             </Grid>
           </Grid>
         </Hidden>
       </LayoutBox>
-      <ActionTemplateMb status={status} />
+      <ActionTemplateMb status={status} subStatus={subStatus} />
     </div>
   );
 }
 function ActionTemplateMb(props: StatusProps) {
-  const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = React.useState("");
   const [orderValue, setOrderValue] = React.useState("");
@@ -533,11 +625,7 @@ function ActionTemplateMb(props: StatusProps) {
   const handleOrderChange = (event: any) => {
     setOrderValue(event.target.value);
   };
-  const [tabValue, setTabValue] = React.useState(0);
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setTabValue(newValue);
-  };
-  const { status } = props;
+  const { status, subStatus } = props;
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -567,18 +655,7 @@ function ActionTemplateMb(props: StatusProps) {
           </Grid>
           {status === "unpublished" ? (
             <Grid item md={12}>
-              <Tabs
-                className={classes.tabs}
-                value={tabValue}
-                onChange={handleTabChange}
-                indicatorColor="primary"
-                textColor="primary"
-                centered
-              >
-                <Tab href={``} label="Draft" />
-                <Tab label="Waiting for Approval" />
-                <Tab label="Rejected" />
-              </Tabs>
+              <SubUnpublished subStatus={subStatus} />
             </Grid>
           ) : (
             <Hidden only={["xs", "sm"]}>
@@ -594,15 +671,16 @@ interface ActionBarProps {
   layout: string;
   status: string;
   showMyOnly: boolean;
+  subStatus: string;
 }
 export default function ActionBar(props: ActionBarProps) {
-  const { layout, status, showMyOnly } = props;
+  const { layout, status, showMyOnly, subStatus } = props;
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
       <SecondaryMenu layout={layout} status={status} showMyOnly={showMyOnly} />
       <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} />
-      <ActionTemplate status={status} />
+      <ActionTemplate status={status} subStatus={subStatus} />
     </div>
   );
 }

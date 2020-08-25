@@ -1,6 +1,6 @@
+import { makeStyles, Paper, Tab, Tabs, useMediaQuery, useTheme } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Children, ReactNode } from "react";
-import { Tab, makeStyles, Paper, useMediaQuery, useTheme, Tabs } from "@material-ui/core";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   tabs: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   },
 }));
 
-const VALUES = ["details", "outcomes", "assets"];
+const VALUES = ["details", "outcomes", "media"];
 
 interface ContentTabsProps {
   tab: string;

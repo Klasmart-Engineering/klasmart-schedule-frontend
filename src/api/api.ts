@@ -25,12 +25,12 @@ export interface AssetCreateRequest {
 export type CreateContentRequest = {
   content_type?: number;
   name?: string;
-  program?: string;
-  subject?: string;
-  developmental?: string;
-  skills?: string;
-  age?: string;
-  suggest_time?: number;
+  program?: string[];
+  subject?: string[];
+  grade?: string[];
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
   keywords?: string[];
   description?: string;
   thumbnail?: string;
@@ -58,13 +58,14 @@ export type ContentCondition = {
 export type Content = {
   id?: string;
   content_type?: number;
-  name?: string;
-  program?: string;
-  subject?: string;
   suggest_time?: number;
-  developmental?: string;
-  skills?: string;
-  age?: string;
+  name?: string;
+  program?: string[];
+  grade?: string[];
+  subject?: string[];
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
   keywords?: string[];
   description?: string;
   thumbnail?: string;

@@ -1,10 +1,10 @@
-import React, { ReactNode } from "react";
-import { Button, Box, ButtonGroup, makeStyles, Typography, FormControl, InputLabel, Select } from "@material-ui/core";
-import { NavLink } from "react-router-dom";
-import { DashboardOutlined, BookOutlined } from "@material-ui/icons";
+import { Box, Button, ButtonGroup, FormControl, InputLabel, makeStyles, Select, Typography } from "@material-ui/core";
+import { BookOutlined, DashboardOutlined } from "@material-ui/icons";
 import AddIcon from "@material-ui/icons/Add";
-import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import clsx from "clsx";
+import React, { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
+import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 
 const useStyles = makeStyles(({ palette, shadows }) => ({
   planComposeText: {
@@ -280,7 +280,7 @@ export default function PlanComposeText(props: PlanComposeTextProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeText"
+            to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeText"
           >
             <Typography variant="h6">A</Typography>
           </Button>
@@ -289,7 +289,7 @@ export default function PlanComposeText(props: PlanComposeTextProps) {
             activeClassName="active"
             variant="contained"
             className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic"
+            to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeGraphic"
           >
             <DashboardOutlined />
           </Button>
