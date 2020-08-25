@@ -3,7 +3,7 @@ import { useReducer } from "react";
 const initialState: any = {
   cycle: "monthly",
   cycleTime: 1,
-  weekdays: [],
+  weekdays: ['Monday'],
   onThe: "the",
   specificDayChange: 2,
   order: "second",
@@ -55,6 +55,8 @@ function reducer(state: stateProps, action: actionProps) {
       return { ...state, cycleTime: action.data };
     case "handleWeekdaySelect":
       return { ...state, weekdays: action.data };
+    case "handleTimeChange":
+      return { ...state, time: action.data };
     default:
       return state;
   }

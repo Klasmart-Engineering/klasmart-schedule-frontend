@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
     positionText: {
       position: "absolute",
       right: "5px",
-      top: "10px",
+      top: "15px",
     },
     positionInput: {
       position: "relative",
@@ -142,6 +142,16 @@ function RepeatCycle(props: any) {
   ];
   const [weekends, setWeekends] = React.useState(weekendList);
   const { cycle, onThe, specificDayChange, order, weekday, month, weekdays } = state;
+
+  weekends.forEach((item, index) => {
+    if(weekdays.length > 0) {
+      weekdays.forEach((item1: any, index1:any) => {
+        if(item.day === item1) {
+          item.selected = true
+        }
+      })
+    }
+  })
 
   const handleWeekdaySelect = (index: number) => {
     let temp = JSON.parse(JSON.stringify(weekends));
@@ -305,7 +315,7 @@ function RepeatCycle(props: any) {
 function EndRepeat(props: any) {
   const classes = useStyles();
   const { state, dispatch } = props;
-  const { endRepeat, occurrence } = state;
+  const { endRepeat, occurrence, time } = state;
 
   const handelleEndRepeatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: "handelleEndRepeatChange", data: event.target.value });
@@ -313,6 +323,10 @@ function EndRepeat(props: any) {
 
   const handleOccurrenceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     dispatch({ type: "handleOccurrenceChange", data: event.target.value as number });
+  };
+
+  const handleTimeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    dispatch({ type: "handleTimeChange", data: event.target.value });
   };
 
   return (
@@ -352,6 +366,8 @@ function EndRepeat(props: any) {
                   type="datetime-local"
                   disabled={endRepeat !== "date"}
                   className={classes.datePicker}
+                  value={time}
+                  onChange={handleTimeChange}
                 />
               </FormControl>
             </Grid>
@@ -419,7 +435,6 @@ function RepeatHeader(props: any) {
 export default function RepeatSchedule() {
   const classes = useStyles();
   const [state, dispatch] = useRepeatSchedule();
-
   return (
     <Card className={classes.container}>
       <RepeatHeader state={state} dispatch={dispatch} />
