@@ -30,6 +30,7 @@ export type CreateContentRequest = {
   developmental?: string;
   skills?: string;
   age?: string;
+  suggest_time?: number;
   keywords?: string[];
   description?: string;
   thumbnail?: string;
@@ -60,6 +61,7 @@ export type Content = {
   name?: string;
   program?: string;
   subject?: string;
+  suggest_time?: number;
   developmental?: string;
   skills?: string;
   age?: string;
@@ -464,7 +466,9 @@ class HttpClient<SecurityDataType> {
   };
 
   private addQueryParam(query: RequestQueryParamsType, key: string) {
-    return encodeURIComponent(key) + "=" + encodeURIComponent(Array.isArray(query[key]) ? query[key].join(",") : query[key]);
+    return (
+      encodeURIComponent(key) + "=" + encodeURIComponent(Array.isArray(query[key]) ? query[key].join(",") : query[key])
+    );
   }
 
   protected addQueryParams(rawQuery?: RequestQueryParamsType): string {
@@ -475,7 +479,7 @@ class HttpClient<SecurityDataType> {
           .map((key) =>
             typeof query[key] === "object" && !Array.isArray(query[key])
               ? this.addQueryParams(query[key] as object).substring(1)
-              : this.addQueryParam(query, key)
+              : this.addQueryParam(query, key),
           )
           .join("&")}`
       : "";
@@ -510,7 +514,7 @@ class HttpClient<SecurityDataType> {
     { secure, ...params }: RequestParams = {},
     body?: any,
     bodyType?: BodyType,
-    secureByDefault?: boolean
+    secureByDefault?: boolean,
   ): Promise<T> =>
     fetch(`${this.baseUrl}${path}`, {
       // @ts-ignore
@@ -548,7 +552,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         org?: string | null;
         key?: string | null;
       },
-      params?: RequestParams
+      params?: RequestParams,
     ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents${this.addQueryParams(query)}`, "GET", params),
 
     /**
@@ -584,7 +588,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents/{content_id}
      * @description Get content by content_id
      */
-    getContentById: (content_id: string, params?: RequestParams) => this.request<Content, any>(`/contents/${content_id}`, "GET", params),
+    getContentById: (content_id: string, params?: RequestParams) =>
+      this.request<Content, any>(`/contents/${content_id}`, "GET", params),
 
     /**
      * @tags content
@@ -601,7 +606,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request DELETE:/contents/{content_id}
      * @description Delete content by content_id
      */
-    deleteContent: (content_id: string, params?: RequestParams) => this.request<any, any>(`/contents/${content_id}`, "DELETE", params),
+    deleteContent: (content_id: string, params?: RequestParams) =>
+      this.request<any, any>(`/contents/${content_id}`, "DELETE", params),
   };
   contentsReview = {
     /**
@@ -632,16 +638,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     contentsDynamoList: (
       query?: {
         name?: string | null;
-        content_type?: string | null;
         publish_status?: string | null;
         author?: string | null;
+        content_type?: string | null;
         description?: string | null;
         keywords?: string | null;
         org?: string | null;
         key?: string | null;
       },
-      params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_dynamo${this.addQueryParams(query)}`, "GET", params),
+      params?: RequestParams,
+    ) =>
+      this.request<{ key?: string; list?: Content[] }, any>(
+        `/contents_dynamo${this.addQueryParams(query)}`,
+        "GET",
+        params,
+      ),
   };
   contentsPrivate = {
     /**
@@ -660,8 +671,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         org?: string | null;
         key?: string | null;
       },
-      params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_private${this.addQueryParams(query)}`, "GET", params),
+      params?: RequestParams,
+    ) =>
+      this.request<{ key?: string; list?: Content[] }, any>(
+        `/contents_private${this.addQueryParams(query)}`,
+        "GET",
+        params,
+      ),
   };
   contentsPending = {
     /**
@@ -680,8 +696,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         org?: string | null;
         key?: string | null;
       },
-      params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_pending${this.addQueryParams(query)}`, "GET", params),
+      params?: RequestParams,
+    ) =>
+      this.request<{ key?: string; list?: Content[] }, any>(
+        `/contents_pending${this.addQueryParams(query)}`,
+        "GET",
+        params,
+      ),
   };
   assets = {
     /**
@@ -704,7 +725,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number | null;
         order_by?: "name" | "-name" | "create_at" | "-create_at" | "last_update_at" | "-last_update_at";
       },
-      params?: RequestParams
+      params?: RequestParams,
     ) =>
       this.request<{ total?: number; list?: Asset[] }, any>(
         `/assets${this.addQueryParams(query)}`,
@@ -712,7 +733,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         null,
         BodyType.Json,
-        true
+        true,
       ),
 
     /**
@@ -787,7 +808,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number | null;
         order_by?: "name" | "-name" | "create_at" | "-create_at" | "last_update_at" | "last_update_at";
       },
-      params?: RequestParams
+      params?: RequestParams,
     ) =>
       this.request<{ total?: number; list?: Category[] }, any>(
         `/categories${this.addQueryParams(query)}`,
@@ -795,7 +816,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         null,
         BodyType.Json,
-        true
+        true,
       ),
 
     /**
@@ -858,8 +879,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number | null;
         order_by?: "name" | "-name" | "create_at" | "-create_at";
       },
-      params?: RequestParams
-    ) => this.request<{ total?: number; list?: Tag[] }, any>(`/tag${this.addQueryParams(query)}`, "GET", params, null, BodyType.Json, true),
+      params?: RequestParams,
+    ) =>
+      this.request<{ total?: number; list?: Tag[] }, any>(
+        `/tag${this.addQueryParams(query)}`,
+        "GET",
+        params,
+        null,
+        BodyType.Json,
+        true,
+      ),
 
     /**
      * @tags tag
@@ -869,7 +898,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description Create Tag
      */
-    createTag: (data: TagCreate, params?: RequestParams) => this.request<string, any>(`/tag`, "POST", params, data, BodyType.Json, true),
+    createTag: (data: TagCreate, params?: RequestParams) =>
+      this.request<string, any>(`/tag`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags tag
@@ -913,14 +943,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description query schedules
      */
-    queryschedules: (query?: { teacher_id?: string | null; last_key?: string | null; page_size?: number | null }, params?: RequestParams) =>
+    queryschedules: (
+      query?: { teacher_id?: string | null; last_key?: string | null; page_size?: number | null },
+      params?: RequestParams,
+    ) =>
       this.request<{ total?: number; data?: Schedule[] }, any>(
         `/schedules${this.addQueryParams(query)}`,
         "GET",
         params,
         null,
         BodyType.Json,
-        true
+        true,
       ),
 
     /**
@@ -964,7 +997,18 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description delete schedule
      */
-    deleteSchedule: (schedule_id: string, query?: { repeat_edit_options?: "only_current" | "with_following" }, params?: RequestParams) =>
-      this.request<any, any>(`/schedules/${schedule_id}${this.addQueryParams(query)}`, "DELETE", params, null, BodyType.Json, true),
+    deleteSchedule: (
+      schedule_id: string,
+      query?: { repeat_edit_options?: "only_current" | "with_following" },
+      params?: RequestParams,
+    ) =>
+      this.request<any, any>(
+        `/schedules/${schedule_id}${this.addQueryParams(query)}`,
+        "DELETE",
+        params,
+        null,
+        BodyType.Json,
+        true,
+      ),
   };
 }

@@ -12,7 +12,7 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Theme,
+  Theme
 } from "@material-ui/core";
 import React from "react";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";

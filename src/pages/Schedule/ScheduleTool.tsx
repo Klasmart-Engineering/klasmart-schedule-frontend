@@ -1,13 +1,13 @@
-import React from "react";
 import { Grid } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import { createStyles, makeStyles, withStyles, Theme } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import NativeSelect from "@material-ui/core/NativeSelect";
-import InputBase from "@material-ui/core/InputBase";
 import Box from "@material-ui/core/Box";
-import { SearchOutlined, ArrowBackIosOutlined } from "@material-ui/icons";
+import Button from "@material-ui/core/Button";
+import FormControl from "@material-ui/core/FormControl";
+import InputBase from "@material-ui/core/InputBase";
+import InputLabel from "@material-ui/core/InputLabel";
+import NativeSelect from "@material-ui/core/NativeSelect";
+import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
+import React from "react";
 import { useHistory } from "react-router";
 
 const BootstrapInput = withStyles((theme: Theme) =>
@@ -70,6 +70,7 @@ function Tool(props: ToolProps) {
   const css = useStyles();
   const [value, setSearchValue] = React.useState("");
   const [type, setModelType] = React.useState(20);
+  const [teacherName, setTeacherName] = React.useState('');
   const history = useHistory();
   const { includeList } = props;
 
@@ -99,7 +100,7 @@ function Tool(props: ToolProps) {
           {includeList && <ArrowBackIosOutlined className={css.arrowsrt} onClick={backChange} />}
           <FormControl>
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
-            <BootstrapInput id="demo-customized-textbox" />
+            <BootstrapInput id="demo-customized-textbox" value={teacherName} onChange={(event) => (setTeacherName(event.target.value))} />
           </FormControl>
           <Button variant="contained" color="primary" className={css.searchBtn} startIcon={<SearchOutlined />} onClick={searchChange}>
             Search
