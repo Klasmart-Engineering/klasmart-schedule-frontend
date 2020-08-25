@@ -25,11 +25,12 @@ export interface AssetCreateRequest {
 export type CreateContentRequest = {
   content_type?: number;
   name?: string;
-  program?: string;
-  subject?: string;
-  developmental?: string;
-  skills?: string;
-  age?: string;
+  program?: string[];
+  subject?: string[];
+  grade?: string[];
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
   keywords?: string[];
   description?: string;
   thumbnail?: string;
@@ -59,12 +60,12 @@ export type Content = {
   content_type?: number;
   suggest_time?: number;
   name?: string;
-  program?: string;
-  grade?: string;
-  subject?: string;
-  developmental?: string;
-  skills?: string;
-  age?: string;
+  program?: string[];
+  grade?: string[];
+  subject?: string[];
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
   keywords?: string[];
   description?: string;
   thumbnail?: string;

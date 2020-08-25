@@ -81,6 +81,7 @@ export default function Details(props: DetailsProps) {
         <Controller
           as={TextField}
           select
+          SelectProps={{ multiple: true }}
           className={css.fieldset}
           label="Program"
           name="program"
@@ -93,6 +94,7 @@ export default function Details(props: DetailsProps) {
         <Controller
           as={TextField}
           select
+          SelectProps={{ multiple: true }}
           className={css.fieldset}
           label="Subject"
           name="subject"
@@ -109,6 +111,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.developmental}
             control={control}
             select
+            SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Developmental"
@@ -122,6 +125,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.skills}
             control={control}
             select
+            SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Skills"
@@ -137,6 +141,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.age}
             control={control}
             select
+            SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Age"
@@ -150,6 +155,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.grade}
             control={control}
             select
+            SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Grade"
