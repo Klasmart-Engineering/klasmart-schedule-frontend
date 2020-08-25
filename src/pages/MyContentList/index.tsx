@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import mockContentList from "../../mocks/content.json";
 import mockList from "../../mocks/contentList.json";
@@ -13,17 +13,17 @@ const useQuery = () => {
   const status = query.get("status") || "content";
   const subStatus = query.get("subStatus") || "";
   const name = query.get("name") || "";
-  const sortBy = query.get("sourtBy") || "";
+  const sortBy = query.get("sortBy") || "";
   return { layout, status, subStatus, name, sortBy };
 };
 
 export default function MyContentList() {
-  const { layout, status, subStatus } = useQuery();
+  const { layout, status, subStatus, name, sortBy } = useQuery();
   const showMyOnly = status === "published";
   const total = mockList.length;
-  // useEffect(() => {
-  //   console.log(layout, status, subStatus, name)
-  // })
+  useEffect(() => {
+    console.log(layout, status, subStatus, name, sortBy);
+  });
   return (
     <div>
       <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} subStatus={subStatus} />
