@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
 import React from "react";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -45,13 +46,22 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PreviewSchedule(props: any) {
-  const classes = useStyles();
-  const { handleTemplate } = props;
+interface InfoProps {
+  scheduleId: number;
+  handleDelete: () => void;
+  handleClose: () => void;
+}
 
-  const handleClick = () => {
-    handleTemplate();
+export default function CustomizeTempalte(props: InfoProps) {
+  const classes = useStyles();
+  const history = useHistory();
+  const { scheduleId, handleDelete, handleClose } = props;
+
+  const handleEditSchedule = (e: any) => {
+    handleClose();
+    history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
   };
+
   return (
     <div className={classes.previewContainer}>
       <div>
@@ -60,8 +70,8 @@ export default function PreviewSchedule(props: any) {
         <p className={classes.time}>{"12:00PM - 13:00PM"}</p>
       </div>
       <div className={classes.iconPart}>
-        <EditOutlined className={classes.firstIcon} />
-        <DeleteOutlined className={classes.lastIcon} onClick={handleClick} />
+        <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />
+        <DeleteOutlined className={classes.lastIcon} onClick={handleDelete} />
       </div>
       <div className={classes.buttonPart}>
         <Button color="primary" variant="contained">

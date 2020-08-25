@@ -10,7 +10,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import React from "react";
-import PreviewSchedule from "../../pages/Schedule/PreviewSchedule";
+import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 const useStyles = makeStyles({
   dialogContainer: {
     "& .MuiPaper-root": {
@@ -39,7 +39,8 @@ interface AlertDialogProps {
   handleClose: (text: string) => any;
   handleChange: (value: number) => any;
   radioValue?: number;
-  template?: any;
+  customizeTemplate?: any;
+  enableCustomization?: boolean;
 }
 
 interface dateProps {
@@ -48,8 +49,18 @@ interface dateProps {
 
 export default function AlertDialog(props: dateProps) {
   const classes = useStyles();
-  const { openStatus, handleClose, template, handleChange, radioValue, title, text, radios, buttons } = props.modalDate;
-  console.log(template);
+  const {
+    openStatus,
+    handleClose,
+    customizeTemplate,
+    handleChange,
+    radioValue,
+    title,
+    text,
+    radios,
+    buttons,
+    enableCustomization,
+  } = props.modalDate;
   return (
     <div>
       <Dialog
@@ -59,7 +70,7 @@ export default function AlertDialog(props: dateProps) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogContainer}
       >
-        {!template ? (
+        {!enableCustomization ? (
           <>
             {title && (
               <DialogTitle className={classes.header} id="alert-dialog-title">
@@ -93,9 +104,7 @@ export default function AlertDialog(props: dateProps) {
             </DialogActions>
           </>
         ) : (
-          <DialogContent className={classes.content}>
-            <PreviewSchedule handleTemplate={template} />
-          </DialogContent>
+          <DialogContent className={classes.content}>{customizeTemplate}</DialogContent>
         )}
       </Dialog>
     </div>

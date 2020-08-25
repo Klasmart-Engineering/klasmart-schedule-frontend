@@ -5,6 +5,9 @@ import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import events from "../../mocks/events";
+import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
+import ModalBox from "../../components/ModalBox";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   calendarBox: {
@@ -18,30 +21,84 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar() {
   const css = useStyles();
-  const selected = (event: Object) => {
-    console.log(event);
+  const history = useHistory();
+  const [openStatus, setOpenStatus] = React.useState(false);
+
+  /**
+   * click current schedule
+   * @param event
+   */
+  const scheduleSelected = (event: Object) => {
+    setEnableCustomization(true);
+    setOpenStatus(true);
   };
 
-  const handleSelect = (e: any) => {
-    console.log(e);
+  /**
+   * crete schedule
+   * @param e
+   */
+  const creteSchedule = (e: any) => {
+    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
+  };
+
+  /**
+   * close popup box
+   */
+  const handleClose = () => {
+    setOpenStatus(false);
+  };
+
+  /**
+   * close Customization template && show delete template
+   */
+  const handleDelete = () => {
+    setEnableCustomization(false);
+  };
+
+  const [enableCustomization, setEnableCustomization] = React.useState(true);
+
+  const modalDate: any = {
+    title: "",
+    text: "Are you sure you want to delete this event?",
+    openStatus: openStatus,
+    enableCustomization: enableCustomization,
+    customizeTemplate: <CustomizeTempalte handleDelete={handleDelete} scheduleId={1} handleClose={handleClose} />,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+      {
+        label: "Delete",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+    ],
+    handleClose: handleClose,
   };
 
   return (
-    <Box className={css.calendarBox}>
-      <Calendar
-        selectable={true}
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        toolbar={true}
-        onSelectEvent={selected}
-        onSelectSlot={(e) => {
-          handleSelect(e);
-        }}
-        style={{ height: "100vh" }}
-      />
-    </Box>
+    <>
+      <Box className={css.calendarBox}>
+        <Calendar
+          selectable={true}
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          toolbar={true}
+          onSelectEvent={scheduleSelected}
+          onSelectSlot={(e) => {
+            creteSchedule(e);
+          }}
+          style={{ height: "100vh" }}
+        />
+        <ModalBox modalDate={modalDate} />
+      </Box>
+    </>
   );
 }
 

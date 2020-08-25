@@ -30,7 +30,7 @@ function SmallCalendar() {
   );
 }
 
-const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
+const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
     marginTop: 20,
     width: "100%",
@@ -81,9 +81,6 @@ function EditBox() {
   const handleClose = () => {
     setOpenStatus(false);
   };
-  const handleDelete = () => {
-    setOpenStatus(true);
-  };
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
@@ -99,15 +96,29 @@ function EditBox() {
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
   };
 
-  const cancelEdit = () => {
-    history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
-  };
+  /**
+   * modal text useState
+   */
+  const [modalText, setModalText] = React.useState<string>("");
+
+  /**
+   * modal buttons useState
+   */
+  const [buttons, setButtons] = React.useState<object>([]);
 
   const modalDate: any = {
     title: "",
-    text: "Are you sure you want to delete this event?",
+    text: modalText,
     openStatus: openStatus,
-    buttons: [
+    buttons: buttons,
+    handleClose: handleClose,
+  };
+
+  /**
+   * modal type delete
+   */
+  const handleDelete = () => {
+    const button = [
       {
         label: "Cancel",
         event: () => {
@@ -120,9 +131,35 @@ function EditBox() {
           setOpenStatus(false);
         },
       },
-    ],
-    handleClose: handleClose,
+    ];
+    setOpenStatus(true);
+    setModalText("Are you sure you want to delete this event?");
+    setButtons(button);
   };
+
+  /**
+   * modal type confirm close
+   */
+  const closeEdit = () => {
+    const button = [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+      {
+        label: "Discard",
+        event: () => {
+          history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+        },
+      },
+    ];
+    setOpenStatus(true);
+    setModalText("Discard unsave changes?");
+    setButtons(button);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -134,7 +171,7 @@ function EditBox() {
                   color: "#666666",
                 }}
                 className={css.toolset}
-                onClick={cancelEdit}
+                onClick={closeEdit}
               />
             </Grid>
             <Grid item xs={6} style={{ textAlign: "right" }}>
