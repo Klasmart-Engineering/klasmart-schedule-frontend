@@ -1,6 +1,18 @@
-import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  createMuiTheme,
+  FormControl,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  OutlinedInput,
+  TextField,
+  ThemeProvider,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
-import clsx from "clsx";
 import React, { useEffect } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -10,9 +22,8 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
     marginTop: 20,
   },
-  fieldsetDisabled: {
-    color: "red",
-    borderColor: "red",
+  fieldsetReject: {
+    color: palette.error.main,
   },
   halfFieldset: {
     marginTop: 20,
@@ -48,6 +59,10 @@ export default function Details(props: DetailsProps) {
         size,
         fullWidth: true,
       },
+      MuiFormControl: {
+        size,
+        fullWidth: true,
+      },
       MuiButton: {
         size,
       },
@@ -60,14 +75,19 @@ export default function Details(props: DetailsProps) {
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
         {contentDetail.publish_status === "regected" && (
-          <TextField
-            label="Reject Resson"
-            error
-            disabled
-            color="secondary"
-            className={clsx(css.fieldset, css.fieldsetDisabled)}
-            defaultValue={contentDetail.reject_reason}
-          ></TextField>
+          <FormControl variant="outlined">
+            <InputLabel error variant="outlined" htmlFor="rejectReason">
+              Reject Reason
+            </InputLabel>
+            <OutlinedInput
+              readOnly
+              className={css.fieldsetReject}
+              error
+              id="rejectReason"
+              value={contentDetail.reject_reason}
+              label="Reject Reason"
+            ></OutlinedInput>
+          </FormControl>
         )}
         <Controller
           as={TextField}

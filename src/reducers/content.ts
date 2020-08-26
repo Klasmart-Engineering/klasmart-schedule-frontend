@@ -75,10 +75,10 @@ export const save = createAsyncThunk<Content, Content, { state: RootState }>("co
     },
   } = getState();
   if (!id) {
-    debugger;
+    // debugger;
     id = (await api.contents.createContent(payload)).id;
   } else {
-    debugger;
+    // debugger;
     await api.contents.updateContent(id, payload);
   }
   return await api.contents.getContentById(id as string);
@@ -90,11 +90,11 @@ export const publish = createAsyncThunk<Content, Required<Content>["id"], { stat
       contentDetial: { publish_scope },
     },
   } = getState();
-  debugger;
+  // debugger;
   return api.contents.publishContent(id, { scope: publish_scope });
 });
 export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryContentParams>("content/contentsList", (query) => {
-  debugger;
+  // debugger;
   return api.contentsDynamo.contentsDynamoList(query);
 });
 
@@ -103,7 +103,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
   async ({ id, type, searchText }) => {
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
-    debugger;
+    // debugger;
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetial;
     const mediaList = await api.contents.searchContents({ content_type: type, name: searchText });
     return { contentDetail, mediaList };
@@ -118,16 +118,16 @@ const { actions, reducer } = createSlice({
     // todo: PayloadAction<Content>  应该从 save 中获取类型
     [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
       state.contentDetial = payload;
-      alert("success");
+      // alert("success");
     },
     [save.rejected.type]: (state, { error }: any) => {
-      alert(JSON.stringify(error));
+      // alert(JSON.stringify(error));
     },
     [publish.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof publish>>) => {
-      alert("success");
+      // alert("success");
     },
     [publish.rejected.type]: (state, { error }: any) => {
-      alert(JSON.stringify(error));
+      // alert(JSON.stringify(error));
     },
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
       if (payload.contentDetial) {
@@ -138,13 +138,13 @@ const { actions, reducer } = createSlice({
       }
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
-      alert(JSON.stringify(error));
+      // alert(JSON.stringify(error));
     },
     [contentsDynamoList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentsDynamoList>>) => {
-      alert("success");
+      // alert("success");
     },
     [contentsDynamoList.rejected.type]: (state, { error }: any) => {
-      alert(JSON.stringify(error));
+      // alert(JSON.stringify(error));
     },
   },
 });
