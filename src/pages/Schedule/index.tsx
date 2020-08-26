@@ -28,19 +28,26 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includeEdit, includePreview } = parseModel(model);
 
+  /**
+   * calendar model view change
+   */
+  const [modelView, setModelView] = React.useState<string>("month");
+  const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setModelView(event.target.value as string);
+  };
+
   return (
     <>
-      {/* <HeaderNavBar /> */}
       <LayoutBox holderMin={40} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <ScheduleTool includeList={includeList} />
+            <ScheduleTool includeList={includeList} changeModelView={changeModelView} modelView={modelView} />
           </Grid>
           <Grid item xs={3}>
             <ScheduleEdit includePreview={includePreview} />
           </Grid>
           <Grid item xs={9}>
-            {includeTable && <KidsCalendar />}
+            {includeTable && <KidsCalendar modelView={modelView} />}
             {includeList && <SearchList />}
           </Grid>
         </Grid>

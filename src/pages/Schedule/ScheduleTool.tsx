@@ -69,12 +69,15 @@ const useStyles = makeStyles((theme: Theme) =>
 function Tool(props: ToolProps) {
   const css = useStyles();
   const [value, setSearchValue] = React.useState("");
-  const [type, setModelType] = React.useState(20);
   const history = useHistory();
-  const { includeList } = props;
+  const { includeList, changeModelView, modelView } = props;
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSearchValue(event.target.value as string);
+  };
+
+  const selectToday = () => {
+    console.log(123213);
   };
 
   const searchChange = (): void => {
@@ -107,17 +110,18 @@ function Tool(props: ToolProps) {
         </Grid>
         <Grid item xs={3} className={css.modelSelect}>
           {!includeList && (
-            <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }}>
+            <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }} onClick={selectToday}>
               Today
             </Button>
           )}
           {!includeList && (
             <FormControl>
               <InputLabel htmlFor="demo-customized-select-native">Model</InputLabel>
-              <NativeSelect id="demo-customized-select-native" value={type} onChange={handleChange} input={<BootstrapInput />}>
-                <option value={10}>Day</option>
-                <option value={20}>Week</option>
-                <option value={30}>Month</option>
+              <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
+                <option value="agenda">Work Week</option>
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
               </NativeSelect>
             </FormControl>
           )}
@@ -129,8 +133,10 @@ function Tool(props: ToolProps) {
 
 interface ToolProps {
   includeList: boolean;
+  modelView: string;
+  changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 export default function ScheduleTool(props: ToolProps) {
-  const { includeList } = props;
-  return <Tool includeList={includeList} />;
+  const { includeList, changeModelView, modelView } = props;
+  return <Tool includeList={includeList} changeModelView={changeModelView} modelView={modelView} />;
 }
