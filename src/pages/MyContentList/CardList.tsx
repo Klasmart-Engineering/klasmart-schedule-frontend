@@ -173,11 +173,6 @@ const useExpand = () => {
   return { collapse: { in: open }, expandMore: { open, onClick: toggle } };
 };
 
-const handleChecked = (event: React.ChangeEvent<HTMLInputElement>, id?: string) => {
-  // setState({ ...state, [event.target.name]: event.target.checked });
-  console.log(event.target.checked, id);
-};
-
 interface ExpandBtnProps {
   open: boolean;
 }
@@ -275,18 +270,61 @@ function ArchivedAction() {
     </div>
   );
 }
-
 interface ContentTypeProps {
-  content_type?: number;
+  content_type_name?: string;
   id?: string;
+  thumbnail?: string;
 }
-function DefaultBackground(props: ContentTypeProps) {
+function Background(props: ContentTypeProps) {
   const css = useStyles();
-  switch (props.content_type) {
-    case 1:
-      return (
-        <CardMedia className={css.cardBackground} style={{ background: "#ffc107" }}>
-          <ImageOutlinedIcon className={css.cardType} />
+  const [checkedArr, setCheckedArr] = React.useState<string[]>([""]);
+
+  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>, id?: string) => {
+    console.log(event.target.checked, id);
+    console.log(checkedArr);
+    checkedArr.push(id || "");
+    setCheckedArr(checkedArr);
+  };
+  const color = () => {
+    if (props.content_type_name === "img") {
+      return {
+        color: "#ffc107",
+        icon: <ImageOutlinedIcon className={css.cardType} />,
+      };
+    }
+    if (props.content_type_name === "video") {
+      return {
+        color: "#9c27b0",
+        icon: <OndemandVideoOutlinedIcon className={css.cardType} />,
+      };
+    }
+    if (props.content_type_name === "audio") {
+      return {
+        color: "#009688",
+        icon: <MusicVideoOutlinedIcon className={css.cardType} />,
+      };
+    }
+    if (props.content_type_name === "document") {
+      return {
+        color: "#4054b2",
+        icon: <DescriptionOutlinedIcon className={css.cardType} />,
+      };
+    }
+    if (props.content_type_name === "lesson") {
+      return {
+        color: "#0e78d5",
+        icon: <BookOutlinedIcon className={css.cardType} />,
+      };
+    }
+    return {
+      color: "#ffc107",
+      icon: <ImageOutlinedIcon className={css.cardType} />,
+    };
+  };
+  return (
+    <Fragment>
+      {props.thumbnail ? (
+        <CardMedia className={css.cardMedia} image={props.thumbnail}>
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
             checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
@@ -298,11 +336,9 @@ function DefaultBackground(props: ContentTypeProps) {
             }}
           ></Checkbox>
         </CardMedia>
-      );
-    case 2:
-      return (
-        <CardMedia className={css.cardBackground} style={{ background: "#9c27b0" }}>
-          <OndemandVideoOutlinedIcon className={css.cardType} />
+      ) : (
+        <CardMedia className={css.cardBackground} style={{ backgroundColor: color().color }}>
+          {color().icon}
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
             checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
@@ -314,85 +350,19 @@ function DefaultBackground(props: ContentTypeProps) {
             }}
           ></Checkbox>
         </CardMedia>
-      );
-    case 3:
-      return (
-        <CardMedia className={css.cardBackground} style={{ background: "#009688" }}>
-          <MusicVideoOutlinedIcon className={css.cardType} />
-          <Checkbox
-            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-            size="small"
-            className={css.checkbox}
-            color="secondary"
-            onChange={(e) => {
-              handleChecked(e, props.id);
-            }}
-          ></Checkbox>
-        </CardMedia>
-      );
-    case 4:
-      return (
-        <CardMedia className={css.cardBackground} style={{ background: "#4054b2" }}>
-          <DescriptionOutlinedIcon className={css.cardType} />
-          <Checkbox
-            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-            size="small"
-            className={css.checkbox}
-            color="secondary"
-            onChange={(e) => {
-              handleChecked(e, props.id);
-            }}
-          ></Checkbox>
-        </CardMedia>
-      );
-    case 5:
-      return (
-        <CardMedia className={css.cardBackground} style={{ background: "#0e78d5" }}>
-          <BookOutlinedIcon className={css.cardType} />
-          <Checkbox
-            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-            size="small"
-            className={css.checkbox}
-            color="secondary"
-            onChange={(e) => {
-              handleChecked(e, props.id);
-            }}
-          ></Checkbox>
-        </CardMedia>
-      );
-    default:
-      return <Fragment></Fragment>;
-  }
+      )}
+    </Fragment>
+  );
 }
 
 function ContentCard(props: Content) {
   const css = useStyles();
   const expand = useExpand();
   const status = props.publish_status;
-
   return (
     <Card className={css.card}>
       <CardActionArea>
-        {props.thumbnail ? (
-          <CardMedia className={css.cardMedia} image={props.thumbnail}>
-            <Checkbox
-              icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-              checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-              size="small"
-              className={css.checkbox}
-              color="secondary"
-              onChange={(e) => {
-                handleChecked(e, props.id);
-              }}
-              // onChange={(e, props.id) => {handleChecked(e, id)}}
-            ></Checkbox>
-          </CardMedia>
-        ) : (
-          <DefaultBackground content_type={props.content_type} id={props.id} />
-        )}
+        <Background content_type_name={props.content_type_name} thumbnail={props.thumbnail} id={props.id} />
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container>

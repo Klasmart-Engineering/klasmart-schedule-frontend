@@ -1,172 +1,285 @@
-export default [
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597912763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
-    },
-    teachers: [
-      {
+export default {
+  total: 10,
+  data: [
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597912763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1590912763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597912763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1599912763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1580912763,
-    end_at: 1592916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597992763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597992763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597992763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-  {
-    id: "Math.floor(1000)",
-    title: "Zoo Animals",
-    theme: "STEAM - Bada Genius",
-    start_at: 1597992763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: Math.floor(1000),
-      name: "Big Lesson Plan",
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
     },
-    teachers: [
-      {
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      start_at: 1597912763,
+      end_at: 1597916363,
+      lesson_plan: {
         id: Math.floor(1000),
-        name: "handsome teacher",
+        name: "Big Lesson Plan",
       },
-    ],
-  },
-];
+      program: {
+        id: 11,
+        name: "someProgram",
+      },
+      subject: {
+        id: 111,
+        name: "someSubject",
+      },
+      class: {
+        id: 22,
+        name: "someClass",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
+    },
+  ],
+};
