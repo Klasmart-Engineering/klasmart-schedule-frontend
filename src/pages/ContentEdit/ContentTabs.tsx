@@ -1,6 +1,7 @@
 import { makeStyles, Paper, Tab, Tabs, useMediaQuery, useTheme } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import React, { Children, ReactNode } from "react";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   tabs: {
@@ -30,6 +31,7 @@ interface ContentTabsProps {
 export default function ContentTabs(props: ContentTabsProps) {
   const { tab, children, onChangeTab } = props;
   const css = useStyles();
+  const { lesson } = useParams();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   let idx = -1;
@@ -55,7 +57,7 @@ export default function ContentTabs(props: ContentTabsProps) {
         >
           <Tab className={css.tab} label="Details" value={VALUES[0]} />
           <Tab className={css.tab} label="Learning Outcomes" value={VALUES[1]} />
-          <Tab className={css.tab} label="Media Assets" value={VALUES[2]} />
+          <Tab className={css.tab} label={lesson === "material" ? "Media Assets" : "Media Material"} value={VALUES[2]} />
         </Tabs>
         {tabPanels}
       </TabContext>

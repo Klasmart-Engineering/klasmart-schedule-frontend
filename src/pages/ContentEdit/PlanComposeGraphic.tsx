@@ -17,6 +17,7 @@ import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from 
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
+// import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape }) => ({
@@ -50,13 +51,14 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
     alignItems: "center",
     borderRadius: 3,
     boxShadow: shadows[3],
+    backgroundColor: palette.common.white,
   },
   conditionBtnLabel: {
     whiteSpace: "nowrap",
   },
   headerButtonGroup: {
     position: "absolute",
-    top: -50,
+    top: -46,
     right: 0,
   },
   headerConditionBtn: {
@@ -406,7 +408,7 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
             className={css.headerButton}
             to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeText"
           >
-            A
+            <Typography variant="h6">A</Typography>
           </Button>
           <Button
             component={NavLink}

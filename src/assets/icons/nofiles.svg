@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="135px" height="125px" viewBox="0 0 135 125" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>没有结果</title>
+    <g id="home-没有list" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="create-lesson-plan-没有搜索结果" transform="translate(-324.000000, -604.000000)">
+            <g id="没有结果" transform="translate(324.000000, 604.000000)">
+                <circle id="椭圆形" fill="#F8F8F8" cx="56" cy="56" r="56"></circle>
+                <path d="M93.8356798,122 L41,122 C37.1340068,122 34,118.865993 34,115 L34,20 C34,16.1340068 37.1340068,13 41,13 L100.365455,13 L125,38.2266695 L125,55.5395396" id="路径" stroke="#DDDDDD" stroke-width="5" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="round"></path>
+                <rect id="矩形" fill="#DDDDDD" x="48" y="35" width="39" height="5" rx="2.5"></rect>
+                <rect id="矩形备份-3" fill="#DDDDDD" x="48" y="51" width="27" height="5" rx="2.5"></rect>
+                <circle id="椭圆形" stroke="#DDDDDD" stroke-width="5" fill="#FFFFFF" cx="97" cy="84" r="26"></circle>
+                <circle id="椭圆形" fill="#F8F8F8" cx="105" cy="92" r="18"></circle>
+                <circle id="椭圆形" stroke="#DDDDDD" stroke-width="5" cx="97" cy="84" r="26"></circle>
+                <rect id="矩形" fill="#DDDDDD" transform="translate(123.000000, 110.500000) rotate(-40.000000) translate(-123.000000, -110.500000) " x="119" y="98" width="8" height="25" rx="4"></rect>
+                <path d="M125.062836,38 L125.062836,38 L107,38 C103.134007,38 100,34.8659932 100,31 L100,13.2140127 L100,13.2140127" id="路径" stroke="#DDDDDD" stroke-width="5"></path>
+            </g>
+        </g>
+    </g>
+</svg>

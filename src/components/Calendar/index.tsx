@@ -85,6 +85,7 @@ function MyCalendar(props: CalendarProps) {
     <>
       <Box className={css.calendarBox}>
         <Calendar
+          onView={() => {}}
           view={modelView}
           selectable={true}
           localizer={localizer}

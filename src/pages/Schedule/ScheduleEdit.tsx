@@ -74,16 +74,130 @@ const useStyles = makeStyles(({ shadows }) => ({
 function EditBox() {
   const css = useStyles();
   const history = useHistory();
-  // The first commit of Material-UI
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
+  const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
 
-  const handleClose = () => {
-    setOpenStatus(false);
+  const [scheduleList, setScheduleList] = React.useState<InitData>({
+    repeat: {},
+    is_all_day: false,
+    is_repeat: false,
+    attachment_id: 0,
+    class_id: 0,
+    class_type: "",
+    description: "",
+    due_at: 0,
+    end_at: new Date().getTime() / 1000,
+    is_force: false,
+    lesson_plan_id: 0,
+    program_id: 0,
+    start_at: new Date().getTime() / 1000,
+    subject_id: 0,
+    teacher_ids: [],
+    title: "",
+  });
+
+  const timestampInt = (timestamp: number) => Math.floor(timestamp);
+
+  const timeToTimestamp = (time: string) => {
+    const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
+    return timestampInt(new Date(currentTime).getTime() / 1000);
   };
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
+  const timestampToTime = (timestamp: Number | null) => {
+    const date = new Date(Number(timestamp) * 1000);
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const [Y, M, D, h, m, s] = [
+      date.getFullYear(),
+      dateNumFun(date.getMonth() + 1),
+      dateNumFun(date.getDate()),
+      dateNumFun(date.getHours()),
+      dateNumFun(date.getMinutes()),
+      dateNumFun(date.getSeconds()),
+    ];
+    return `${Y}-${M}-${D}T${h}:${m}:${s}`;
+  };
+
+  /**
+   * autocomplete input change
+   * @param value
+   * @param name
+   */
+  const autocompleteChange = (value: any | null, name: string) => {
+    let ids: any[] = [];
+    if (name === "teacher_ids") {
+      value.map((val: any, key: number) => {
+        ids.push(val.year.toString());
+      });
+    } else {
+      ids = value ? value["year"] : "";
+    }
+    const newTopocList = {
+      ...scheduleList,
+      [name]: ids as string | number | object | null,
+    };
+    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+  };
+
+  /**
+   * Normal input box change
+   * @param event
+   * @param name
+   */
+  const handleTopicListChange = (event: React.ChangeEvent<{ value: String | Number }>, name: string) => {
+    const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
+    const newTopocList = {
+      ...scheduleList,
+      [name]: value,
+    };
+    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+  };
+
+  /**
+   * form input validator
+   */
+  const isValidator = {
+    title: false,
+    class_id: false,
+    lesson_plan_id: false,
+    teacher_ids: false,
+    start_at: false,
+    end_at: false,
+    subject_id: false,
+    program_id: false,
+    class_type: false,
+  };
+  const [validator, setValidator] = React.useState(isValidator);
+
+  const validatorFun = () => {
+    let verificaPath = true;
+    for (let name in scheduleList) {
+      if (isValidator.hasOwnProperty(name)) {
+        // @ts-ignore
+        const result = scheduleList[name].length > 0;
+        // @ts-ignore
+        isValidator[name] = !result;
+        if (result) {
+          verificaPath = false;
+        }
+      }
+    }
+    setValidator({ ...isValidator });
+  };
+
+  /**
+   * save schedule data
+   */
+  const saveSchedule = () => {
+    // @ts-ignore
+    validatorFun();
+    const addData: any = {};
+    if (checkedStatus.dueDateCheck) {
+      // @ts-ignore
+      addData["due_at"] = timestampInt(selectedDueDate.getTime() / 1000);
+    }
+    addData["is_all_day"] = checkedStatus.allDayCheck;
+    addData["is_repeat"] = checkedStatus.repeatCheck;
+    const result = { ...scheduleList, ...addData };
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -94,6 +208,14 @@ function EditBox() {
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
+  };
+
+  const handleDueDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+
+  const handleClose = () => {
+    setOpenStatus(false);
   };
 
   /**
@@ -188,26 +310,50 @@ function EditBox() {
                   marginLeft: "10px",
                 }}
                 className={css.toolset}
+                onClick={saveSchedule}
               />
             </Grid>
           </Grid>
         </Box>
         <Box className={css.fieldBox}>
-          <TextField className={css.fieldset} label="Class Name"></TextField>
+          <TextField
+            error={validator.title}
+            className={css.fieldset}
+            label="Class Name"
+            value={scheduleList.title}
+            onChange={(e) => handleTopicListChange(e, "title")}
+          ></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
         <Autocomplete
           id="combo-box-demo"
           options={mockList}
           getOptionLabel={(option) => option.title}
-          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Add Class" variant="outlined" />}
+          onChange={(e: any, newValue) => {
+            autocompleteChange(newValue, "class_id");
+          }}
+          renderInput={(params) => (
+            <TextField {...params} error={validator.class_id} className={css.fieldset} label="Add Class" variant="outlined" />
+          )}
         />
         <Autocomplete
           id="combo-box-demo"
           freeSolo
           options={mockList}
           getOptionLabel={(option) => option.title}
-          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Lesson Plan" variant="outlined" />}
+          onChange={(e: any, newValue) => {
+            autocompleteChange(newValue, "lesson_plan_id");
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Lesson Plan"
+              error={validator.lesson_plan_id}
+              value={scheduleList.lesson_plan_id}
+              variant="outlined"
+            />
+          )}
         />
         <Autocomplete
           id="combo-box-demo"
@@ -215,42 +361,49 @@ function EditBox() {
           multiple
           options={mockList}
           getOptionLabel={(option) => option.title}
-          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Teacher" variant="outlined" />}
+          onChange={(e: any, newValue) => {
+            autocompleteChange(newValue, "teacher_ids");
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Teacher"
+              error={validator.teacher_ids}
+              value={scheduleList.teacher_ids}
+              variant="outlined"
+            />
+          )}
         />
         <Box>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={5}>
+              <Grid item xs={12}>
                 <TextField
-                  id="time"
-                  label="Time"
-                  type="time"
-                  defaultValue="07:30"
+                  id="datetime-local"
+                  label="Start Time"
+                  type="datetime-local"
+                  className={css.fieldset}
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  className={css.fieldset}
-                  inputProps={{
-                    step: 300, // 5 min
-                  }}
+                  error={validator.start_at}
+                  value={timestampToTime(scheduleList.start_at)}
+                  onChange={(e) => handleTopicListChange(e, "start_at")}
                 />
               </Grid>
-              <Grid item xs={2} style={{ textAlign: "center" }}>
-                <span>—</span>
-              </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={12}>
                 <TextField
-                  id="time"
-                  label="Time"
-                  type="time"
-                  defaultValue="07:30"
+                  id="datetime-local"
+                  label="End Time"
+                  type="datetime-local"
                   className={css.fieldset}
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  inputProps={{
-                    step: 300, // 5 min
-                  }}
+                  error={validator.end_at}
+                  value={timestampToTime(scheduleList.end_at)}
+                  onChange={(e) => handleTopicListChange(e, "end_at")}
                 />
               </Grid>
             </Grid>
@@ -272,18 +425,50 @@ function EditBox() {
           id="combo-box-demo"
           options={mockList}
           getOptionLabel={(option) => option.title}
-          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Subject" variant="outlined" />}
+          onChange={(e: any, newValue) => {
+            autocompleteChange(newValue, "subject_id");
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Subject"
+              error={validator.subject_id}
+              variant="outlined"
+              value={scheduleList.subject_id}
+            />
+          )}
         />
         <Autocomplete
           id="combo-box-demo"
           options={mockList}
           getOptionLabel={(option) => option.title}
-          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Program" variant="outlined" />}
+          onChange={(e: any, newValue) => {
+            autocompleteChange(newValue, "program_id");
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Program"
+              variant="outlined"
+              error={validator.program_id}
+              value={scheduleList.program_id}
+            />
+          )}
         />
-        <TextField className={css.fieldset} label="Class Type" select>
-          <MenuItem value={1}>3-4</MenuItem>
-          <MenuItem value={2}>4-2</MenuItem>
-          <MenuItem value={3}>5-6</MenuItem>
+        <TextField
+          className={css.fieldset}
+          label="Class Type"
+          value={scheduleList.class_type}
+          onChange={(e) => handleTopicListChange(e, "class_type")}
+          error={validator.class_type}
+          select
+        >
+          <MenuItem value="onlineClass">online class</MenuItem>
+          <MenuItem value="offlineClass">offline class</MenuItem>
+          <MenuItem value="task">task</MenuItem>
+          <MenuItem value="homework">homework</MenuItem>
         </TextField>
         <Box>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -302,17 +487,26 @@ function EditBox() {
                   margin="normal"
                   id="date-picker-inline"
                   label="Pick Time"
-                  value={selectedDate}
-                  onChange={handleDateChange}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
+                  value={selectedDueDate}
+                  onChange={handleDueDateChange}
                 />
               </Grid>
             </Grid>
           </MuiPickersUtilsProvider>
         </Box>
-        <TextField id="outlined-multiline-static" className={css.fieldset} label="Description" multiline rows={4} variant="outlined" />
+        <TextField
+          id="outlined-multiline-static"
+          className={css.fieldset}
+          label="Description"
+          multiline
+          rows={4}
+          variant="outlined"
+          value={scheduleList.description}
+          onChange={(e) => handleTopicListChange(e, "description")}
+        />
         <ScheduleAttachment />
         <Box className={css.fieldset}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
@@ -333,9 +527,29 @@ function EditBox() {
   );
 }
 
+interface InitData {
+  title: string;
+  class_id: number;
+  lesson_plan_id: number;
+  teacher_ids: [];
+  start_at: number;
+  end_at: number;
+  subject_id: number;
+  program_id: number;
+  class_type: string;
+  due_at: number;
+  description: string;
+  attachment_id: number;
+  is_force: boolean;
+  is_repeat: boolean;
+  is_all_day: boolean;
+  repeat: object;
+}
+
 interface ScheduleEditProps {
   includePreview: boolean;
 }
+
 export default function ScheduleEdit(props: ScheduleEditProps) {
   const { includePreview } = props;
   const template = includePreview ? <SmallCalendar /> : <EditBox />;

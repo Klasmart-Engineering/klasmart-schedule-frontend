@@ -1,12 +1,29 @@
-import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  createMuiTheme,
+  FormControl,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  OutlinedInput,
+  TextField,
+  ThemeProvider,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React, { useEffect } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { Content, CreateContentRequest } from "../../api/api";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
     marginTop: 20,
+  },
+  fieldsetReject: {
+    color: palette.error.main,
   },
   halfFieldset: {
     marginTop: 20,
@@ -28,6 +45,7 @@ export default function Details(props: DetailsProps) {
     formMethods: { register, control, errors },
   } = props;
   const css = useStyles();
+  const { lesson } = useParams();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
@@ -38,6 +56,10 @@ export default function Details(props: DetailsProps) {
   const theme = createMuiTheme(defaultTheme, {
     props: {
       MuiTextField: {
+        size,
+        fullWidth: true,
+      },
+      MuiFormControl: {
         size,
         fullWidth: true,
       },
@@ -52,7 +74,29 @@ export default function Details(props: DetailsProps) {
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
-        <Controller as={TextField} control={control} name="name" label="Material Name" defaultValue={contentDetail.name}></Controller>
+        {contentDetail.publish_status === "regected" && (
+          <FormControl variant="outlined">
+            <InputLabel error variant="outlined" htmlFor="rejectReason">
+              Reject Reason
+            </InputLabel>
+            <OutlinedInput
+              readOnly
+              className={css.fieldsetReject}
+              error
+              id="rejectReason"
+              value={contentDetail.reject_reason}
+              label="Reject Reason"
+            ></OutlinedInput>
+          </FormControl>
+        )}
+        <Controller
+          as={TextField}
+          control={control}
+          className={css.fieldset}
+          name="name"
+          label={lesson === "material" ? "Material Name" : "Plan Name"}
+          defaultValue={contentDetail.name}
+        ></Controller>
         <Box className={css.fieldset}>
           <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
           <label htmlFor="thumbnail-file-input">

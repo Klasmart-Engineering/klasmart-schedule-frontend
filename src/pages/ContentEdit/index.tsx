@@ -87,8 +87,8 @@ export default function ContentEdit() {
     [history]
   );
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson }));
-  }, [id, lesson, dispatch]);
+    dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
+  }, [id, lesson, dispatch, searchText]);
 
   const assetDetails = (
     <MediaAssetsLibrary>
