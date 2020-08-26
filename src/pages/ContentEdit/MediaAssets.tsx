@@ -20,7 +20,7 @@ import { useParams } from "react-router-dom";
 import { Content } from "../../api/api";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
-
+import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
     minHeight: 722,
@@ -54,6 +54,12 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     marginBottom: 40,
     width: 130,
     height: 133,
+  },
+  noFilesImage: {
+    marginTop: 200,
+    marginBottom: 40,
+    width: 135,
+    height: 125,
   },
   emptyDesc: {
     marginBottom: "auto",
@@ -108,7 +114,6 @@ interface mockAsset {
   author: string;
   action: string;
 }
-
 export function Empty() {
   const css = useStyles();
   return (
@@ -120,13 +125,25 @@ export function Empty() {
     </Fragment>
   );
 }
+
 export function Comingsoon() {
   const css = useStyles();
   return (
     <Fragment>
       <img className={css.comingsoonImage} alt="comingsoon" src={comingsoonIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        comingsoon...
+        Comingsoon...
+      </Typography>
+    </Fragment>
+  );
+}
+export function NoFiles() {
+  const css = useStyles();
+  return (
+    <Fragment>
+      <img className={css.noFilesImage} alt="noFiles" src={noFilesIconUrl} />
+      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+        No file was found
       </Typography>
     </Fragment>
   );
@@ -173,6 +190,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
       {/* <TableCell>{multipleLine(item.created.split(" "))}</TableCell> */}
     </TableRow>
   ));
+  const empty = (
+    <Box width="100%" height={575} display="flex" flexDirection="column" alignItems="center">
+      <NoFiles />
+    </Box>
+  );
   const table = (
     <TableContainer className={css.tableContainer}>
       <Table className={css.table}>
@@ -192,35 +214,33 @@ export default function MediaAssets(props: MediaAssetsProps) {
       </Table>
     </TableContainer>
   );
-  const library = (
-    <Box width="100%">
-      <Box display="flex" pt={2.5}>
-        <Controller
-          as={TextField}
-          control={control}
-          name="searchText"
-          defaultValue={searchText}
-          size="small"
-          className={clsx(css.fieldset, css.searchField)}
-          placeholder="Search"
-        />
-        <Button
-          color="primary"
-          variant="contained"
-          size="small"
-          className={css.fieldset}
-          startIcon={<Search />}
-          onClick={handleClickSearch}
-        >
-          Search
-        </Button>
-      </Box>
-      {table}
+  const search = (
+    <Box display="flex" pt={2.5}>
+      <Controller
+        as={TextField}
+        control={control}
+        name="searchText"
+        defaultValue={searchText}
+        size="small"
+        className={clsx(css.fieldset, css.searchField)}
+        placeholder="Search"
+      />
+      <Button color="primary" variant="contained" size="small" className={css.fieldset} startIcon={<Search />} onClick={handleClickSearch}>
+        Search
+      </Button>
     </Box>
   );
+
   return (
-    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
-      {comingsoon && lesson !== "plan" ? <Comingsoon /> : list.length > 0 ? library : <Empty />}
+    <Box className={css.mediaAssets} width="100%" display="flex" flexDirection="column" alignItems="center">
+      {comingsoon && lesson !== "plan" ? (
+        <Comingsoon />
+      ) : (
+        <>
+          {search}
+          {list.length > 0 ? table : <NoFiles />}
+        </>
+      )}
     </Box>
   );
 }

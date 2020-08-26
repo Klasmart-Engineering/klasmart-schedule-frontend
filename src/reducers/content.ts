@@ -60,6 +60,7 @@ type IQueryContentResult = ReturnType<typeof api.contentsDynamo.contentsDynamoLi
 interface onLoadContentEditPayload {
   id: Content["id"] | null;
   type: "assets" | "material" | "plan";
+  searchText?: string;
 }
 
 interface onLoadContentEditResult {
@@ -99,12 +100,12 @@ export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryCo
 
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type }) => {
+  async ({ id, type, searchText }) => {
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
     debugger;
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetial;
-    const mediaList = await api.contentsDynamo.contentsDynamoList({ content_type: type });
+    const mediaList = await api.contents.searchContents({ content_type: type, name: searchText });
     return { contentDetail, mediaList };
   }
 );
