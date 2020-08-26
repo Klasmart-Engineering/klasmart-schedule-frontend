@@ -77,6 +77,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   chip: {
     margin: 2,
   },
+  rejectBtn: {
+    backgroundColor: "#d32f2f",
+    color: "#fff",
+    marginRight: "10px",
+  },
+  approveBtn: {
+    backgroundColor: "#4caf50",
+    color: "#fff",
+  },
 }));
 
 function PublishedBtn() {
@@ -108,10 +117,12 @@ function PendingBtn() {
   const css = useStyles();
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="contained">
+      <Button className={css.rejectBtn} variant="contained">
         Reject
       </Button>
-      <Button>Approve</Button>
+      <Button className={css.approveBtn} variant="contained">
+        Approve
+      </Button>
     </Box>
   );
 }
@@ -123,7 +134,9 @@ function ArchiveBtn() {
       <Button className={css.publistedBtn} variant="outlined">
         Delete
       </Button>
-      <Button>Republish</Button>
+      <Button className={css.approveBtn} variant="contained">
+        Republish
+      </Button>
     </Box>
   );
 }
@@ -135,7 +148,9 @@ function DraftRejectBtn() {
       <Button className={css.publistedBtn} variant="outlined">
         Delete
       </Button>
-      <Button>Edit</Button>
+      <Button color="primary" variant="contained">
+        Edit
+      </Button>
     </Box>
   );
 }
@@ -228,11 +243,11 @@ export default function ContentPreview(props: Content) {
         {data.publish_status === "pending" && <PendingBtn />}
         {data.publish_status === "waiting" && <WaitingBtn />}
         {data.publish_status === "archived" && <ArchiveBtn />}
-        <PublishedBtn />
+        {/* <PublishedBtn />
         <DraftRejectBtn />
         <PendingBtn />
         <WaitingBtn />
-        <ArchiveBtn />
+        <ArchiveBtn /> */}
       </Box>
       <Box className={css.right}>right</Box>
     </Box>

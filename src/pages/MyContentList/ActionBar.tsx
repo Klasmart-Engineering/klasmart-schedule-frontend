@@ -26,6 +26,8 @@ import {
   ViewListOutlined,
   ViewQuiltOutlined,
 } from "@material-ui/icons";
+import ImportExportIcon from "@material-ui/icons/ImportExport";
+import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import React, { useEffect } from "react";
 import { Link, Redirect, useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
@@ -345,7 +347,10 @@ function SelectTemplateMb(props: ActionBarLayout) {
                 Create +
               </Button>
             </Grid>
-            <Grid item xs={4} sm={4} className={classes.tabMb}>
+            <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
+              <LocalBarOutlinedIcon />
+            </Grid>
+            <Grid style={{ display: "none" }} item xs={4} sm={4} className={classes.tabMb}>
               {renderUserMessage()}
               <MoreHoriz style={{ fontSize: "40px" }} onClick={handleToggle} />
               <Popper
@@ -376,7 +381,7 @@ function SelectTemplateMb(props: ActionBarLayout) {
                 )}
               </Popper>
             </Grid>
-            <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
+            <Grid item xs={12} sm={12} style={{ textAlign: "center", display: "none" }}>
               <TextField
                 id="outlined-basic"
                 style={{ width: "100%", height: "100%" }}
@@ -620,7 +625,7 @@ function ActionTemplate(props: StatusProps) {
             </Grid>
             {status === "unpublished" ? (
               <Grid item md={6}>
-                <SubUnpublished subStatus={subStatus} />
+                <SubUnpublished subStatus={status} />
               </Grid>
             ) : (
               <Hidden only={["xs", "sm"]}>
@@ -684,8 +689,13 @@ function ActionTemplateMb(props: StatusProps) {
             </Grid>
           </Grid>
           {status === "unpublished" ? (
-            <Grid item md={12}>
-              <SubUnpublished subStatus={subStatus} />
+            <Grid container alignItems="center" style={{ marginTop: "6px" }}>
+              <Grid item sm={8} xs={8}>
+                <SubUnpublished subStatus={subStatus} />
+              </Grid>
+              <Grid container justify="flex-end" alignItems="center" item sm={4} xs={4}>
+                <ImportExportIcon />
+              </Grid>
             </Grid>
           ) : (
             <Hidden only={["xs", "sm"]}>

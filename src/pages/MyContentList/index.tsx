@@ -1,7 +1,6 @@
 import { Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Content } from "../../api/api";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import mockContentList from "../../mocks/content.json";
 import mockList from "../../mocks/contentList.json";
@@ -13,32 +12,45 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const layout = query.get("layout") || "card";
-  const status = query.get("status") || "content";
+  const status = query.get("status") || "published";
   const subStatus = query.get("subStatus") || "";
   const name = query.get("name") || "";
   const sortBy = query.get("sortBy") || "";
-  return { layout, status, subStatus, name, sortBy };
+  const myOnly = query.get("myOnly");
+  return { layout, status, subStatus, name, sortBy, myOnly };
 };
 
 export default function MyContentList() {
   // const dispatch = useDispatch();
-  const { layout, status, subStatus, name, sortBy } = useQuery();
+  const { layout, status, subStatus, name, sortBy, myOnly } = useQuery();
   const showMyOnly = status === "published";
   const total = mockList.length;
-  function mapQuery(name: string, status: string) {
+  function mapQuery(name: string, status: string, subStatus: string, sortBy: string) {
     const query: any = {};
-    if (status) query["publish_status"] = status;
+    if (status && status !== "unpublished") {
+      query["publish_status"] = status;
+    } else if (status === "unpublished" && !subStatus) {
+      query["publish_status"] = "draft";
+    } else if (status === "unpublished" && subStatus) {
+      query["publish_status"] = subStatus;
+    }
     if (name) query["name"] = name;
+    if (sortBy) {
+      if (sortBy === "10") query["order_by"] = "content_name";
+      if (sortBy === "20") query["order_by"] = "-content_name";
+      if (sortBy === "30") query["order_by"] = "created_at";
+      if (sortBy === "40") query["order_by"] = "-created_at";
+    }
+    if (myOnly) {
+      query["author"] = "{self}";
+    }
     return query;
   }
-
-  // useEffect(() => {
-  //   console.log(mapQuery(name, status));
-  //   // 掉接口更新数据
-  //   // dispatch(contentList(mapQuery(name, status)))
-  //   // resList.push(lists[0]);
-  //   setResList(resList);
-  // }, [status, name, resList, lists]);
+  useEffect(() => {
+    console.log(mapQuery(name, status, subStatus, sortBy));
+    // dispatch(contentList(mapQuery(name, status)))
+    console.log("status变了");
+  }, [status, subStatus, name, sortBy, myOnly, mapQuery]);
   return (
     <div>
       <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} subStatus={subStatus} />
