@@ -94,6 +94,12 @@ export const onLoadContentEdit = createAsyncThunk<Content | undefined, onLoadCon
   }
 );
 
+type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
+type IQueryContentsResult = ReturnType<typeof api.contents.searchContents>;
+export const contentList = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("contents/contents", (query) => {
+  return api.contents.searchContents(query);
+});
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -124,6 +130,12 @@ const { actions, reducer } = createSlice({
       alert("success");
     },
     [contentsDynamoList.rejected.type]: (state, { error }: any) => {
+      alert(JSON.stringify(error));
+    },
+    [contentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("success");
+    },
+    [contentList.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
   },

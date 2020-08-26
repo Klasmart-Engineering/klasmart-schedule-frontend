@@ -416,6 +416,12 @@ function SelectTemplate(props: SecondaryMenuProps) {
   const handleChange = (event: any) => {
     setSearchInput(event.target.value);
   };
+  const handleIsMyOnly = (event: any) => {
+    console.log(event.target.checked);
+    const myOnly = event.target.checked;
+    const newUrl = setUrl(search, "myOnly", myOnly);
+    history.push(`${pathname}${newUrl}`);
+  };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -435,7 +441,12 @@ function SelectTemplate(props: SecondaryMenuProps) {
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
               {props.showMyOnly ? (
-                <FormControlLabel value="end" control={<Checkbox color="primary" />} label="My Only" labelPlacement="end" />
+                <FormControlLabel
+                  value="end"
+                  control={<Checkbox color="primary" onChange={handleIsMyOnly} />}
+                  label="My Only"
+                  labelPlacement="end"
+                />
               ) : (
                 ""
               )}
@@ -553,6 +564,8 @@ function ActionTemplate(props: StatusProps) {
   const [orderValue, setOrderValue] = React.useState(0);
   const handleChange = (event: any) => {
     setValue(event.target.value);
+    // 掉接口
+    console.log(event.target.value);
   };
   const handleOrderChange = (event: any) => {
     setOrderValue(event.target.value);

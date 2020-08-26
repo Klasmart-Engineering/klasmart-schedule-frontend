@@ -223,7 +223,16 @@ export default function ContentPreview(props: Content) {
             ),
           }}
         ></TextField>
+        {data.publish_status === "published" && <PublishedBtn />}
+        {data.publish_status === "rejected" && <DraftRejectBtn />}
+        {data.publish_status === "pending" && <PendingBtn />}
+        {data.publish_status === "waiting" && <WaitingBtn />}
+        {data.publish_status === "archived" && <ArchiveBtn />}
         <PublishedBtn />
+        <DraftRejectBtn />
+        <PendingBtn />
+        <WaitingBtn />
+        <ArchiveBtn />
       </Box>
       <Box className={css.right}>right</Box>
     </Box>
