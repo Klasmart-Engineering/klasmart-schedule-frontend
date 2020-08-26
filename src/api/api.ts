@@ -59,6 +59,7 @@ export type Content = {
   id?: string;
   content_type?: number;
   suggest_time?: number;
+  reject_reason?: string;
   name?: string;
   program?: string[];
   grade?: string[];

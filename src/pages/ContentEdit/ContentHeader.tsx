@@ -119,9 +119,16 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
             Save
           </Button>
-          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={onPublish as any}>
-            Publish
-          </Button>
+          {contentDetial?.publish_status === "draft" && (
+            <Button
+              variant="contained"
+              endIcon={<Publish />}
+              className={clsx(css.headerButton, css.greenButton)}
+              onClick={onPublish as any}
+            >
+              Publish
+            </Button>
+          )}
         </Hidden>
       </Box>
       <Hidden smDown>
@@ -139,9 +146,11 @@ function ContentHeader(props: HeaderProps) {
           <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave as any}>
             <Save fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
-            <Publish fontSize="small" />
-          </IconButton>
+          {contentDetial?.publish_status === "draft" && (
+            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
+              <Publish fontSize="small" />
+            </IconButton>
+          )}
         </Box>
       </Hidden>
       <Box display="flex" justifyContent="center">
