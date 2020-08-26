@@ -1,3 +1,4 @@
+import DateFnsUtils from "@date-io/date-fns";
 import {
   Card,
   createStyles,
@@ -11,9 +12,9 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField,
   Theme
 } from "@material-ui/core";
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import React from "react";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 
@@ -65,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
     positionText: {
       position: "absolute",
       right: "5px",
-      top: "15px",
+      top: "10px",
     },
     positionInput: {
       position: "relative",
@@ -85,6 +86,9 @@ const useStyles = makeStyles((theme: Theme) =>
         fontSize: "14px",
       },
     },
+    lastRepeat: {
+      marginBottom: '10px'
+    }
   })
 );
 
@@ -224,7 +228,7 @@ function RepeatCycle(props: any) {
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
               <Grid container>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.repeatItem}>
-                  <FormControl variant="outlined" style={{ width: "100%" }}>
+                  <FormControl variant="outlined" style={{ width: "100%" }} size="small">
                     <OutlinedInput
                       id="outlined-adornment-weight"
                       // value={specificDayChange}
@@ -243,7 +247,7 @@ function RepeatCycle(props: any) {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Grid container justify="space-between" className={classes.positionInput}>
                     <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
-                      <FormControl variant="outlined">
+                      <FormControl variant="outlined" size="small">
                         <Select
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
@@ -262,7 +266,7 @@ function RepeatCycle(props: any) {
                       </FormControl>
                     </Grid>
                     <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                      <FormControl variant="outlined">
+                      <FormControl variant="outlined" size="small">
                         <Select
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
@@ -287,7 +291,7 @@ function RepeatCycle(props: any) {
           {cycle === "yearly" && (
             <Grid container className={classes.repeatItem} justify="flex-end">
               <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
-                <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`}>
+                <FormControl variant="outlined" className={`${classes.formControl}`} size="small">
                   <Select
                     labelId="demo-simple-select-outlined-label"
                     id="demo-simple-select-outlined"
@@ -325,8 +329,8 @@ function EndRepeat(props: any) {
     dispatch({ type: "handleOccurrenceChange", data: event.target.value as number });
   };
 
-  const handleTimeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleTimeChange", data: event.target.value });
+  const handleTimeChange = (date:any) => {
+    dispatch({ type: "handleTimeChange", data: date });
   };
 
   return (
@@ -342,8 +346,8 @@ function EndRepeat(props: any) {
         </Grid>
         <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={`${classes.positionInput} ${classes.specialContainer}`}>
           <Grid container alignItems="flex-end">
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.repeatItem}>
-              <FormControl variant="outlined" style={{ width: "100%" }}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
+              <FormControl variant="outlined" style={{ width: "100%" }} size="small">
                 <OutlinedInput
                   id="outlined-adornment-weight"
                   value={occurrence}
@@ -358,18 +362,24 @@ function EndRepeat(props: any) {
               </FormControl>
               <span className={classes.positionText}>occurrence(s)</span>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.repeatItem}>
-              <FormControl variant="outlined" fullWidth>
-                <TextField
-                  id="datetime-local"
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  disableToolbar
+                  variant="inline"
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  id="date-picker-inline"
                   label={null}
-                  type="datetime-local"
-                  disabled={endRepeat !== "date"}
-                  className={classes.datePicker}
                   value={time}
                   onChange={handleTimeChange}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  size="small"
+                  disabled={endRepeat !== 'date'}
                 />
-              </FormControl>
+              </MuiPickersUtilsProvider>
             </Grid>
           </Grid>
         </Grid>
@@ -393,7 +403,7 @@ function RepeatHeader(props: any) {
   return (
     <div>
       <h2>Repeat</h2>
-      <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`}>
+      <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`} size="small">
         <InputLabel id="demo-simple-select-outlined-label">{cycle}</InputLabel>
         <Select
           labelId="demo-simple-select-outlined-label"
@@ -413,7 +423,7 @@ function RepeatHeader(props: any) {
           <div className={classes.every}>Repeat every </div>
         </Grid>
         <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
-          <FormControl variant="outlined" style={{ width: "100%" }}>
+          <FormControl variant="outlined" style={{ width: "100%" }} size="small">
             <OutlinedInput
               id="outlined-adornment-weight"
               value={cycleTime}

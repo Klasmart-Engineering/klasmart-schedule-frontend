@@ -89,7 +89,7 @@ function timeFormat(time: number, type: string = "time") {
 export default function SearchList() {
   const classes = useStyles();
 
-  const[scheduleList, setScheduleList] = React.useState(searchList)
+  const[scheduleList, setScheduleList] = React.useState(searchList.data)
 
   const history = useHistory();
 
@@ -131,12 +131,23 @@ export default function SearchList() {
     {
       id: "Math.floor(1000)",
       title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1599912763,
+      start_at: 1597912763,
       end_at: 1597916363,
       lesson_plan: {
         id: Math.floor(1000),
         name: "Big Lesson Plan",
+      },
+      program: {
+        id: 11,
+        name: 'someProgram'
+      },
+      subject: {
+        id: 111,
+        name: 'someSubject'
+      },
+      class: {
+        id: 22,
+        name: 'someClass'
       },
       teachers: [
         {
@@ -144,15 +155,26 @@ export default function SearchList() {
           name: "handsome teacher",
         },
       ],
-    },  {
+    },    {
       id: "Math.floor(1000)",
       title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1599912763,
+      start_at: 1597912763,
       end_at: 1597916363,
       lesson_plan: {
         id: Math.floor(1000),
         name: "Big Lesson Plan",
+      },
+      program: {
+        id: 11,
+        name: 'someProgram'
+      },
+      subject: {
+        id: 111,
+        name: 'someSubject'
+      },
+      class: {
+        id: 22,
+        name: 'someClass'
       },
       teachers: [
         {
@@ -160,15 +182,26 @@ export default function SearchList() {
           name: "handsome teacher",
         },
       ],
-    },  {
+    },    {
       id: "Math.floor(1000)",
       title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1599912763,
+      start_at: 1597912763,
       end_at: 1597916363,
       lesson_plan: {
         id: Math.floor(1000),
         name: "Big Lesson Plan",
+      },
+      program: {
+        id: 11,
+        name: 'someProgram'
+      },
+      subject: {
+        id: 111,
+        name: 'someSubject'
+      },
+      class: {
+        id: 22,
+        name: 'someClass'
       },
       teachers: [
         {
@@ -181,12 +214,12 @@ export default function SearchList() {
 
   const getBottom = (value: any) => {
     if(value) {
-      setScheduleList([...scheduleList, ...listssss])
+      // setScheduleList([...scheduleList, ...listssss])
     }
   }
 
   return (
-    <Box className={classes.listContainer} id="sss-container">
+    <Box className={classes.listContainer}>
       {scheduleList.map((item: any, index: number) => (
         <div key={index} className={classes.partItem}>
           {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
@@ -213,7 +246,7 @@ export default function SearchList() {
                 <span className={classes.timeItem}>{item.teachers[0].name}</span>
               </Grid>
               <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
-                <span className={classes.timeItem}>{item.theme}</span>
+                <span className={classes.timeItem}>{item.program.name}</span>
               </Grid>
             </Grid>
           </Card>
