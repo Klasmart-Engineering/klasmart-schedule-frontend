@@ -1,9 +1,10 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { Content } from "../api/api";
 
 interface IContentState {
   contentDetial: Content;
+  mediaList: Content[];
 }
 
 interface RootState {
@@ -43,7 +44,15 @@ const initialState: IContentState = {
     age_name: "",
     org_name: "",
   },
+  mediaList: [],
 };
+
+type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
+type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
+  ? U
+  : T extends (...args: any) => infer U
+  ? U
+  : any;
 
 type IQueryContentParams = Parameters<typeof api.contentsDynamo.contentsDynamoList>[0];
 type IQueryContentResult = ReturnType<typeof api.contentsDynamo.contentsDynamoList>;
@@ -51,6 +60,11 @@ type IQueryContentResult = ReturnType<typeof api.contentsDynamo.contentsDynamoLi
 interface onLoadContentEditPayload {
   id: Content["id"] | null;
   type: "assets" | "material" | "plan";
+}
+
+interface onLoadContentEditResult {
+  contentDetial?: AsyncReturnType<typeof api.contents.getContentById>;
+  mediaList?: AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
 }
 
 export const save = createAsyncThunk<Content, Content, { state: RootState }>("content/save", async (payload, { getState }) => {
@@ -83,14 +97,15 @@ export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryCo
   return api.contentsDynamo.contentsDynamoList(query);
 });
 
-export const onLoadContentEdit = createAsyncThunk<Content | undefined, onLoadContentEditPayload>(
-  "content/getContentById",
+export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
+  "content/onLoadContentEdit",
   async ({ id, type }) => {
     // 将来做 assets 补全剩下逻辑
-    if (type === "assets") return;
-    if (!id) return initialState.contentDetial;
+    if (type === "assets") return {};
     debugger;
-    return api.contents.getContentById(id);
+    const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetial;
+    const mediaList = await api.contentsDynamo.contentsDynamoList({ content_type: type });
+    return { contentDetail, mediaList };
   }
 );
 
@@ -106,27 +121,31 @@ const { actions, reducer } = createSlice({
   reducers: {},
   extraReducers: {
     // todo: PayloadAction<Content>  应该从 save 中获取类型
-    [save.fulfilled.type]: (state, { payload }: PayloadAction<Content>) => {
+    [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
       state.contentDetial = payload;
       alert("success");
     },
     [save.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
-    [publish.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [publish.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof publish>>) => {
       alert("success");
     },
     [publish.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
-    [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<Content | undefined>) => {
-      if (!payload) return;
-      state.contentDetial = payload;
+    [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
+      if (payload.contentDetial) {
+        state.contentDetial = payload.contentDetial;
+      }
+      if (payload.mediaList?.list) {
+        state.mediaList = payload.mediaList.list;
+      }
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
-    [contentsDynamoList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [contentsDynamoList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentsDynamoList>>) => {
       alert("success");
     },
     [contentsDynamoList.rejected.type]: (state, { error }: any) => {

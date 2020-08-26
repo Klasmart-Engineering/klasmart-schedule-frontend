@@ -3,7 +3,7 @@ import { useReducer } from "react";
 const initialState: any = {
   cycle: "monthly",
   cycleTime: 1,
-  weekdays: ['Monday'],
+  weekdays: ["Monday"],
   onThe: "the",
   specificDayChange: 2,
   order: "second",

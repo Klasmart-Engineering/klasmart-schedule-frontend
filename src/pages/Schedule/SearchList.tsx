@@ -6,7 +6,6 @@ import { useHistory } from "react-router-dom";
 import VisibilitySensor from "react-visibility-sensor";
 import searchList from "../../mocks/scheduleList";
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listContainer: {
@@ -48,8 +47,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: "30px",
     },
     circle: {
-      textAlign: 'center'
-    }
+      textAlign: "center",
+    },
   })
 );
 
@@ -89,7 +88,7 @@ function timeFormat(time: number, type: string = "time") {
 export default function SearchList() {
   const classes = useStyles();
 
-  const[scheduleList, setScheduleList] = React.useState(searchList)
+  const [scheduleList, setScheduleList] = React.useState(searchList);
 
   const history = useHistory();
 
@@ -144,23 +143,8 @@ export default function SearchList() {
           name: "handsome teacher",
         },
       ],
-    },  {
-      id: "Math.floor(1000)",
-      title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1599912763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },  {
+    },
+    {
       id: "Math.floor(1000)",
       title: "Zoo Animals",
       theme: "STEAM - Bada Genius",
@@ -177,13 +161,30 @@ export default function SearchList() {
         },
       ],
     },
-  ]
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      theme: "STEAM - Bada Genius",
+      start_at: 1599912763,
+      end_at: 1597916363,
+      lesson_plan: {
+        id: Math.floor(1000),
+        name: "Big Lesson Plan",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
+    },
+  ];
 
   const getBottom = (value: any) => {
-    if(value) {
-      setScheduleList([...scheduleList, ...listssss])
+    if (value) {
+      setScheduleList([...scheduleList, ...listssss]);
     }
-  }
+  };
 
   return (
     <Box className={classes.listContainer} id="sss-container">
@@ -219,17 +220,15 @@ export default function SearchList() {
           </Card>
         </div>
       ))}
-      {
-        scheduleList.length % 10 === 0 ? (
+      {scheduleList.length % 10 === 0 ? (
         <VisibilitySensor onChange={getBottom}>
           <div className={classes.circle}>
             <CircularProgress />
           </div>
         </VisibilitySensor>
-        ) : (
-        <div className={classes.circle}>{'No More Data'}</div>
-        )
-      }
+      ) : (
+        <div className={classes.circle}>{"No More Data"}</div>
+      )}
     </Box>
   );
 }

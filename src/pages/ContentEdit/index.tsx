@@ -1,24 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import useSubscribe from "../../hooks/useSubscribe";
-import mockList from "../../mocks/contentList.json";
+import { CreateContentRequest } from "../../api/api";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { RootState } from "../../reducers";
-import { onLoadContentEdit, publish } from "../../reducers/content";
+import { onLoadContentEdit, publish, save } from "../../reducers/content";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
 import ContentTabs from "./ContentTabs";
 import Details from "./Details";
 import LayoutPair from "./Layout";
-import MediaAssets from "./MediaAssets";
+import MediaAssets, { MediaAssetsProps } from "./MediaAssets";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
 import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import Outcomes from "./Outcomes";
-import PlanComposeGraphic, { Segment } from "./PlanComposeGraphic";
+import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 
 interface RouteParams {
@@ -31,7 +31,14 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id");
-  return { id };
+  const searchText = query.get("searchText") || "";
+  return { id, searchText };
+};
+
+const setQuery = (search: string, hash: Record<string, string>): string => {
+  const query = new URLSearchParams(search);
+  Object.keys(hash).forEach((key) => query.set(key, hash[key]));
+  return query.toString();
 };
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
@@ -44,31 +51,45 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 
 export default function ContentEdit() {
   const dispatch = useDispatch();
-  const { contentDetial } = useSelector<RootState, Partial<RootState["content"]>>((state) => ({
-    contentDetial: state.content.contentDetial,
-  }));
-  const { trigger: triggerCancel, subscribe: subscribeCancel } = useSubscribe();
-  const { trigger: triggerSave, subscribe: subscribeSave } = useSubscribe();
+  const formMethods = useForm<CreateContentRequest>();
+  const { reset, handleSubmit, control } = formMethods;
+  const { contentDetial, mediaList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
-  const { id } = useQuery();
+  const { id, searchText } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
-  const handleChangeLesson = (lesson: string) => {
-    const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
-    const tab = lesson === "assets" ? "assetDetails" : "details";
-    history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
-  };
-  const handleChangeTab = (tab: string) => {
-    history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}`);
-  };
-  const handlePublish = () => {
+  const handleChangeLesson = useMemo(
+    () => (lesson: string) => {
+      const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
+      const tab = lesson === "assets" ? "assetDetails" : "details";
+      history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
+    },
+    [history, routeBasePath]
+  );
+  const handleChangeTab = useMemo(
+    () => (tab: string) => {
+      history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}`);
+    },
+    [history, routeBasePath, lesson, rightside]
+  );
+  const handlePublish = useCallback(() => {
     if (!id) return;
     dispatch(publish(id));
-  };
+  }, [dispatch, id]);
+  const handleSave = useMemo(() => handleSubmit((value: CreateContentRequest) => dispatch(save(value)) as any), [handleSubmit, dispatch]);
+  const handleSearch = useMemo<MediaAssetsProps["onSearch"]>(
+    () => (searchText = "") => {
+      history.push({
+        search: setQuery(history.location.search, { searchText }),
+      });
+    },
+    [history]
+  );
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson }));
   }, [id, lesson, dispatch]);
+
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
@@ -77,9 +98,9 @@ export default function ContentEdit() {
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
-      <Details contentDetail={contentDetial} subscribeCancel={subscribeCancel} subscribeSave={subscribeSave} />
+      <Details contentDetail={contentDetial} formMethods={formMethods} />
       <Outcomes comingsoon />
-      <MediaAssets list={mockList} comingsoon />
+      <MediaAssets list={mediaList} comingsoon onSearch={handleSearch} searchText={searchText} />
     </ContentTabs>
   );
   const rightsideArea = (
@@ -91,7 +112,7 @@ export default function ContentEdit() {
       )}
       {includeH5p && !includeAsset && <ContentH5p />}
       {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
-      {includePlanComposeGraphic && <PlanComposeGraphic plan={mockLessonPlan as Segment} />}
+      {includePlanComposeGraphic && <Controller name="data" as={PlanComposeGraphic} defaultValue={contentDetial} control={control} />}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
@@ -102,8 +123,8 @@ export default function ContentEdit() {
         contentDetial={contentDetial}
         lesson={lesson}
         onChangeLesson={handleChangeLesson}
-        onCancel={triggerCancel}
-        onSave={triggerSave}
+        onCancel={reset}
+        onSave={handleSave}
         onPublish={handlePublish}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>

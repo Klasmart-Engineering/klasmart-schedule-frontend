@@ -1,10 +1,8 @@
 import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
-import React, { useEffect, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { Content } from "../../api/api";
-import { save } from "../../reducers/content";
+import React, { useEffect } from "react";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { Content, CreateContentRequest } from "../../api/api";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -22,26 +20,19 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
 interface DetailsProps {
   contentDetail?: Content;
   uploadThumnail?: Function;
-  subscribeCancel: (listener: Function) => void;
-  subscribeSave: (listener: Function) => void;
+  formMethods: UseFormMethods<CreateContentRequest>;
 }
 export default function Details(props: DetailsProps) {
-  const { contentDetail, subscribeCancel, subscribeSave } = props;
+  const {
+    contentDetail,
+    formMethods: { register, control, errors },
+  } = props;
   const css = useStyles();
   const defaultTheme = useTheme();
-  const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
-  const { register, handleSubmit, control, reset, errors, setValue } = useForm();
-  console.log("errors = ", errors);
-  const handleSave = useMemo(() => (form: Partial<Content>) => dispatch(save(form)), [dispatch]);
-  useEffect(() => subscribeCancel(reset), [reset, subscribeCancel]);
-  useEffect(() => {
-    subscribeSave(handleSubmit(handleSave as any));
-  }, [handleSubmit, subscribeSave, handleSave]);
   useEffect(() => {
     register("thumbnail");
-    register("data");
   });
   if (!contentDetail) return null;
   const theme = createMuiTheme(defaultTheme, {

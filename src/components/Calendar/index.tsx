@@ -19,8 +19,9 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
 // to the correct localizer.
 const localizer = momentLocalizer(moment);
 
-function MyCalendar() {
+function MyCalendar(props: CalendarProps) {
   const css = useStyles();
+  const { modelView } = props;
   const history = useHistory();
   const [openStatus, setOpenStatus] = React.useState(false);
 
@@ -84,12 +85,13 @@ function MyCalendar() {
     <>
       <Box className={css.calendarBox}>
         <Calendar
+          view={modelView}
           selectable={true}
           localizer={localizer}
           events={events}
           startAccessor="start"
           endAccessor="end"
-          toolbar={true}
+          toolbar={false}
           onSelectEvent={scheduleSelected}
           onSelectSlot={(e) => {
             creteSchedule(e);
@@ -102,6 +104,10 @@ function MyCalendar() {
   );
 }
 
-export default function KidsCalendar() {
-  return <MyCalendar />;
+interface CalendarProps {
+  modelView: any;
+}
+export default function KidsCalendar(props: CalendarProps) {
+  const { modelView } = props;
+  return <MyCalendar modelView={modelView} />;
 }

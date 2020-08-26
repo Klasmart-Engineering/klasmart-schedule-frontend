@@ -12,7 +12,7 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Theme
+  Theme,
 } from "@material-ui/core";
 import React from "react";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
@@ -144,14 +144,14 @@ function RepeatCycle(props: any) {
   const { cycle, onThe, specificDayChange, order, weekday, month, weekdays } = state;
 
   weekends.forEach((item, index) => {
-    if(weekdays.length > 0) {
-      weekdays.forEach((item1: any, index1:any) => {
-        if(item.day === item1) {
-          item.selected = true
+    if (weekdays.length > 0) {
+      weekdays.forEach((item1: any, index1: any) => {
+        if (item.day === item1) {
+          item.selected = true;
         }
-      })
+      });
     }
-  })
+  });
 
   const handleWeekdaySelect = (index: number) => {
     let temp = JSON.parse(JSON.stringify(weekends));

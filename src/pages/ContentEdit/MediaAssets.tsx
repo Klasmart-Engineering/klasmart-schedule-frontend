@@ -13,9 +13,11 @@ import {
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback } from "react";
 import { useDrag } from "react-dnd";
+import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { Content } from "../../api/api";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 
@@ -132,35 +134,43 @@ export function Comingsoon() {
 
 interface DraggableItemProps {
   type: string;
-  item: mockAsset;
+  item: Content;
 }
 function DraggableImage(props: DraggableItemProps) {
   const { type, item } = props;
   const css = useStyles();
   const [, dragRef] = useDrag({ item: { type, data: item } });
-  return <img ref={dragRef} className={css.assetImage} alt="pic" src={item.img} />;
+  return <img ref={dragRef} className={css.assetImage} alt="pic" src={item.thumbnail} />;
 }
 
-interface MediaAssetsProps {
-  list: mockAsset[];
+export interface MediaAssetsProps {
+  list: Content[];
   comingsoon?: boolean;
+  searchText?: string;
+  onSearch: (searchText: MediaAssetsProps["searchText"]) => any;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
+  const { getValues, control } = useForm<Pick<MediaAssetsProps, "searchText">>();
   const css = useStyles();
-  const { list, comingsoon } = props;
+  const { list, comingsoon, searchText, onSearch } = props;
+  const handleClickSearch = useCallback(() => {
+    const { searchText } = getValues();
+    onSearch(searchText);
+  }, [getValues, onSearch]);
   const rows = list.slice(-2).map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
         <DraggableImage type="LIBRARY_ITEM" item={item} />
       </TableCell>
       <TableCell>{item.name}</TableCell>
-      <TableCell>{item.fileType}</TableCell>
+      <TableCell>{item.author}</TableCell>
       <TableCell>{item.developmental}</TableCell>
       <TableCell>{item.skills}</TableCell>
       <TableCell>{item.age}</TableCell>
-      <TableCell>{multipleLine(item.created.split(" "))}</TableCell>
-      <TableCell>Michael Flores</TableCell>
+      <TableCell>{item.grade}</TableCell>
+      <TableCell>{item.publish_scope}</TableCell>
+      {/* <TableCell>{multipleLine(item.created.split(" "))}</TableCell> */}
     </TableRow>
   ));
   const table = (
@@ -170,12 +180,12 @@ export default function MediaAssets(props: MediaAssetsProps) {
           <TableRow>
             <TableCell>Content Thumbnail</TableCell>
             <TableCell>Content Name</TableCell>
-            <TableCell>Content Type</TableCell>
-            <TableCell>Category - Subcategory</TableCell>
-            <TableCell>Skills Category</TableCell>
-            <TableCell>Age</TableCell>
-            <TableCell>Created On</TableCell>
             <TableCell>Author</TableCell>
+            <TableCell>Developmental</TableCell>
+            <TableCell>Skills</TableCell>
+            <TableCell>Age</TableCell>
+            <TableCell>Grade</TableCell>
+            {/* <TableCell>Created On</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>{rows}</TableBody>
@@ -185,13 +195,23 @@ export default function MediaAssets(props: MediaAssetsProps) {
   const library = (
     <Box width="100%">
       <Box display="flex" pt={2.5}>
-        <TextField
-          // fullWidth
+        <Controller
+          as={TextField}
+          control={control}
+          name="searchText"
+          defaultValue={searchText}
           size="small"
           className={clsx(css.fieldset, css.searchField)}
           placeholder="Search"
         />
-        <Button color="primary" variant="contained" size="small" className={css.fieldset} startIcon={<Search />}>
+        <Button
+          color="primary"
+          variant="contained"
+          size="small"
+          className={css.fieldset}
+          startIcon={<Search />}
+          onClick={handleClickSearch}
+        >
           Search
         </Button>
       </Box>
