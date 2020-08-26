@@ -1,7 +1,10 @@
-import React from "react";
-import { Box, Card, Theme, makeStyles, createStyles, Grid } from "@material-ui/core";
+import { Box, Card, createStyles, Grid, makeStyles, Theme } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { AccessTime, PeopleOutlineOutlined } from "@material-ui/icons";
+import React from "react";
 import { useHistory } from "react-router-dom";
+import VisibilitySensor from "react-visibility-sensor";
+import searchList from "../../mocks/scheduleList";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,6 +46,9 @@ const useStyles = makeStyles((theme: Theme) =>
     partItem: {
       marginBottom: "30px",
     },
+    circle: {
+      textAlign: "center",
+    },
   })
 );
 
@@ -81,59 +87,9 @@ function timeFormat(time: number, type: string = "time") {
 
 export default function SearchList() {
   const classes = useStyles();
-  const searchList = [
-    {
-      id: Math.floor(1000),
-      title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1597912763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-    {
-      id: Math.floor(1000),
-      title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1597812763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-    {
-      id: Math.floor(1000),
-      title: "Zoo Animals",
-      theme: "STEAM - Bada Genius",
-      start_at: 1597812763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-  ];
+
+  const [scheduleList, setScheduleList] = React.useState(searchList);
+
   const history = useHistory();
 
   function compare(property: string) {
@@ -143,7 +99,7 @@ export default function SearchList() {
       return value1 - value2;
     };
   }
-  searchList.sort(compare("start_at"));
+  scheduleList.sort(compare("start_at"));
 
   let someone: any;
 
@@ -151,7 +107,7 @@ export default function SearchList() {
     if (number === 0) {
       someone = true;
     } else {
-      searchList.forEach((item: any, index: number) => {
+      scheduleList.forEach((item: any, index: number) => {
         if (index < number) {
           if (timeFormat(item.start_at, "dateDay") === timeFormat(date.start_at, "dateDay")) {
             someone = false;
@@ -170,9 +126,69 @@ export default function SearchList() {
     history.push(`/schedule/calendar/rightside/scheduleList/model/edit/id/${index}`);
   };
 
+  let listssss = [
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      theme: "STEAM - Bada Genius",
+      start_at: 1599912763,
+      end_at: 1597916363,
+      lesson_plan: {
+        id: Math.floor(1000),
+        name: "Big Lesson Plan",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
+    },
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      theme: "STEAM - Bada Genius",
+      start_at: 1599912763,
+      end_at: 1597916363,
+      lesson_plan: {
+        id: Math.floor(1000),
+        name: "Big Lesson Plan",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
+    },
+    {
+      id: "Math.floor(1000)",
+      title: "Zoo Animals",
+      theme: "STEAM - Bada Genius",
+      start_at: 1599912763,
+      end_at: 1597916363,
+      lesson_plan: {
+        id: Math.floor(1000),
+        name: "Big Lesson Plan",
+      },
+      teachers: [
+        {
+          id: Math.floor(1000),
+          name: "handsome teacher",
+        },
+      ],
+    },
+  ];
+
+  const getBottom = (value: any) => {
+    if (value) {
+      setScheduleList([...scheduleList, ...listssss]);
+    }
+  };
+
   return (
-    <Box className={classes.listContainer}>
-      {searchList.map((item: any, index: number) => (
+    <Box className={classes.listContainer} id="sss-container">
+      {scheduleList.map((item: any, index: number) => (
         <div key={index} className={classes.partItem}>
           {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
           <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
@@ -204,6 +220,15 @@ export default function SearchList() {
           </Card>
         </div>
       ))}
+      {scheduleList.length % 10 === 0 ? (
+        <VisibilitySensor onChange={getBottom}>
+          <div className={classes.circle}>
+            <CircularProgress />
+          </div>
+        </VisibilitySensor>
+      ) : (
+        <div className={classes.circle}>{"No More Data"}</div>
+      )}
     </Box>
   );
 }

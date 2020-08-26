@@ -635,9 +635,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     contentsDynamoList: (
       query?: {
         name?: string | null;
-        content_type?: string | null;
         publish_status?: string | null;
         author?: string | null;
+        content_type?: string | null;
         description?: string | null;
         keywords?: string | null;
         org?: string | null;

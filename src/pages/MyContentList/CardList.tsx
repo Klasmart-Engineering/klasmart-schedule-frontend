@@ -173,6 +173,11 @@ const useExpand = () => {
   return { collapse: { in: open }, expandMore: { open, onClick: toggle } };
 };
 
+const handleChecked = (event: React.ChangeEvent<HTMLInputElement>, id?: string) => {
+  // setState({ ...state, [event.target.name]: event.target.checked });
+  console.log(event.target.checked, id);
+};
+
 interface ExpandBtnProps {
   open: boolean;
 }
@@ -273,6 +278,7 @@ function ArchivedAction() {
 
 interface ContentTypeProps {
   content_type?: number;
+  id?: string;
 }
 function DefaultBackground(props: ContentTypeProps) {
   const css = useStyles();
@@ -287,6 +293,9 @@ function DefaultBackground(props: ContentTypeProps) {
             size="small"
             className={css.checkbox}
             color="secondary"
+            onChange={(e) => {
+              handleChecked(e, props.id);
+            }}
           ></Checkbox>
         </CardMedia>
       );
@@ -300,6 +309,9 @@ function DefaultBackground(props: ContentTypeProps) {
             size="small"
             className={css.checkbox}
             color="secondary"
+            onChange={(e) => {
+              handleChecked(e, props.id);
+            }}
           ></Checkbox>
         </CardMedia>
       );
@@ -313,6 +325,9 @@ function DefaultBackground(props: ContentTypeProps) {
             size="small"
             className={css.checkbox}
             color="secondary"
+            onChange={(e) => {
+              handleChecked(e, props.id);
+            }}
           ></Checkbox>
         </CardMedia>
       );
@@ -326,6 +341,9 @@ function DefaultBackground(props: ContentTypeProps) {
             size="small"
             className={css.checkbox}
             color="secondary"
+            onChange={(e) => {
+              handleChecked(e, props.id);
+            }}
           ></Checkbox>
         </CardMedia>
       );
@@ -339,6 +357,9 @@ function DefaultBackground(props: ContentTypeProps) {
             size="small"
             className={css.checkbox}
             color="secondary"
+            onChange={(e) => {
+              handleChecked(e, props.id);
+            }}
           ></Checkbox>
         </CardMedia>
       );
@@ -351,6 +372,7 @@ function ContentCard(props: Content) {
   const css = useStyles();
   const expand = useExpand();
   const status = props.publish_status;
+
   return (
     <Card className={css.card}>
       <CardActionArea>
@@ -362,10 +384,14 @@ function ContentCard(props: Content) {
               size="small"
               className={css.checkbox}
               color="secondary"
+              onChange={(e) => {
+                handleChecked(e, props.id);
+              }}
+              // onChange={(e, props.id) => {handleChecked(e, id)}}
             ></Checkbox>
           </CardMedia>
         ) : (
-          <DefaultBackground content_type={props.content_type} />
+          <DefaultBackground content_type={props.content_type} id={props.id} />
         )}
       </CardActionArea>
       <CardContent className={css.cardContent}>

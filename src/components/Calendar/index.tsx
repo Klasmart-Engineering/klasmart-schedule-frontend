@@ -4,10 +4,10 @@ import moment from "moment";
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useHistory } from "react-router";
+import ModalBox from "../../components/ModalBox";
 import events from "../../mocks/events";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
-import ModalBox from "../../components/ModalBox";
-import { useHistory } from "react-router";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   calendarBox: {

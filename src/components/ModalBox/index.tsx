@@ -10,7 +10,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import React from "react";
-import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 const useStyles = makeStyles({
   dialogContainer: {
     "& .MuiPaper-root": {

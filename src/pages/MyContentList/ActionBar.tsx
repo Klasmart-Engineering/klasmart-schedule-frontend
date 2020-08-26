@@ -1,11 +1,10 @@
-import { ButtonGroup, Checkbox, FormControlLabel, Grid, Tooltip, withStyles } from "@material-ui/core";
+import { ButtonGroup, Checkbox, FormControlLabel, Grid, InputAdornment, Tooltip, withStyles } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
 import FormControl from "@material-ui/core/FormControl";
 import Grow from "@material-ui/core/Grow/Grow";
 import Hidden from "@material-ui/core/Hidden";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import InputBase from "@material-ui/core/InputBase/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList/MenuList";
@@ -147,15 +146,7 @@ interface SecondaryMenuProps {
 function SecondaryMenu(props: SecondaryMenuProps) {
   const classes = useStyles();
   const { layout, status } = props;
-  // const history = useHistory()
-  // const { pathname, search } = useLocation();
   const path = `#/library/my-content-list?layout=${layout}`;
-  // const secondaryMenus = ['published', 'pending', 'unpublished', 'archived', 'assets']
-  // const handleRouter = (event: any) => {
-  //   console.log(event.target)
-  //   const newUrl = setUrl(search, "status", 'published');
-  //   history.push(`${pathname}?${newUrl}`)
-  // }
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -302,8 +293,15 @@ function SelectTemplateMb(props: ActionBarLayout) {
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const [value, setValue] = React.useState("");
   const { layout } = props;
+  const history = useHistory();
+  const { pathname, search } = useLocation();
   const handleChange = (event: any) => {
     setValue(event.target.value);
+  };
+  const handleSearch = () => {
+    const name = value;
+    const newUrl = setUrl(search, "name", name);
+    history.push(`${pathname}${newUrl}`);
   };
   const renderUserMessage = () => {
     if (layout === "card") {
@@ -334,7 +332,6 @@ function SelectTemplateMb(props: ActionBarLayout) {
       setOpen(false);
     }
   }
-
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -381,19 +378,18 @@ function SelectTemplateMb(props: ActionBarLayout) {
             </Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <TextField
-                id="outlined-multiline-flexible"
-                style={{ width: "100%" }}
-                label="Search"
-                multiline
-                rowsMax={4}
+                id="outlined-basic"
+                style={{ width: "100%", height: "100%" }}
                 value={value}
                 onChange={handleChange}
+                onBlur={handleSearch}
+                label="Search"
                 variant="outlined"
                 size="small"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search />
+                      <Search style={{ cursor: "pointer" }} onClick={handleSearch} />
                     </InputAdornment>
                   ),
                 }}
@@ -408,10 +404,17 @@ function SelectTemplateMb(props: ActionBarLayout) {
 
 function SelectTemplate(props: SecondaryMenuProps) {
   const classes = useStyles();
-  const [searchInput, setSearchInput] = React.useState<string>();
   const { layout } = props;
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const [searchInput, setSearchInput] = React.useState("");
   const handleSearch = (event: any) => {
-    console.log(searchInput);
+    const name = searchInput;
+    const newUrl = setUrl(search, "name", name);
+    history.push(`${pathname}${newUrl}`);
+  };
+  const handleChange = (event: any) => {
+    setSearchInput(event.target.value);
   };
   return (
     <div className={classes.root}>
@@ -419,7 +422,13 @@ function SelectTemplate(props: SecondaryMenuProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <BootstrapInput id="filled-multiline-static" className={classes.searchText} placeholder={"Search"} value={searchInput} />
+              <BootstrapInput
+                id="filled-multiline-static"
+                className={classes.searchText}
+                onChange={handleChange}
+                placeholder={"Search"}
+                value={searchInput}
+              />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleSearch}>
                 <Search /> Search
               </Button>
@@ -490,7 +499,7 @@ function SubUnpublished(props: SubUnpublishedProps) {
       value = "rejected";
     }
     const newUrl = setUrl(search, "subStatus", value);
-    history.push(`${pathname}?${newUrl}`);
+    history.push(`${pathname}${newUrl}`);
   };
 
   useEffect(() => {
@@ -516,10 +525,18 @@ function setUrl(search: string, param: string, value: string) {
   const query = new URLSearchParams(search);
   let newUrl: any;
   if (query.get(param)) {
-    query.set(param, value);
-    newUrl = query.toString();
+    if (!value) {
+      query.delete(param);
+    } else {
+      query.set(param, value);
+    }
+    newUrl = "?" + query.toString();
   } else {
-    newUrl = `${search}&${param}=${value}`;
+    if (value) {
+      newUrl = `${search}&${param}=${value}`;
+    } else {
+      newUrl = search;
+    }
   }
   return newUrl;
 }
@@ -540,7 +557,7 @@ function ActionTemplate(props: StatusProps) {
   const handleOrderChange = (event: any) => {
     setOrderValue(event.target.value);
     const newUrl = setUrl(search, "sortBy", event.target.value);
-    history.push(`${pathname}?${newUrl}`);
+    history.push(`${pathname}${newUrl}`);
   };
   useEffect(() => {
     setValue(0);

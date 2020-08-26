@@ -17,7 +17,7 @@ import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from 
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
-import { ContainerModelLessonPlan, useModelLessonPlan } from "../../hooks/useModelLessonPlan";
+import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape }) => ({
   planComposeGraphic: {
@@ -140,7 +140,7 @@ const useGraphicComputedStyles = makeStyles({
     width: "100%",
     overflowX: "scroll",
     paddingTop: 40,
-    justifyContent: props.plan.material ? "start" : "center",
+    justifyContent: props.value?.material ? "start" : "center",
   }),
 });
 
@@ -241,33 +241,44 @@ interface SegmentProps extends Segment {
   first?: boolean;
   canDropMaterial?: boolean;
   canDropCondition?: boolean;
+  plan: Segment;
+  onChange: (plan: Segment) => any;
 }
 function Segment(props: SegmentProps) {
-  const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial } = props;
+  const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
-  const { model, update } = useModelLessonPlan();
-  const createHandleDrop = (method: "set" | "add") => (item: DragItem) => {
-    if (!model || !update) return;
-    const type = item.type === "LIBRARY_ITEM" ? "material" : item.type === "condition" ? "condition" : "";
-    model[method](segmentId, { [type]: item.data }, Boolean(first));
-    update();
-  };
-  const handleRemove = () => {
-    if (!model || !update) return;
-    model.remove(segmentId);
-    update();
-  };
+  const addPlan = useMemo(
+    () => (item: DragItem) => {
+      const type = item.type === "condition" ? "condition" : "material";
+      const newPlan = ModelLessonPlan.add(plan, segmentId, { [type]: item.data }, Boolean(first));
+      if (plan !== newPlan) onChange(newPlan);
+    },
+    [segmentId, plan, first, onChange]
+  );
+  const setPlan = useMemo(
+    () => (item: DragItem) => {
+      const type = item.type === "condition" ? "condition" : "material";
+      const newPlan = ModelLessonPlan.set(plan, segmentId, { [type]: item.data });
+      if (plan !== newPlan) onChange(newPlan);
+    },
+    [segmentId, plan, onChange]
+  );
+
+  const handleRemove = useCallback(() => {
+    const newPlan = ModelLessonPlan.remove(plan, segmentId);
+    if (plan !== newPlan) onChange(newPlan);
+  }, [plan, onChange, segmentId]);
   const [, materialDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: "LIBRARY_ITEM",
-    drop: createHandleDrop("set"),
+    drop: setPlan,
   });
   const [, conditionDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: "condition",
-    drop: createHandleDrop("set"),
+    drop: setPlan,
   });
   const [, blankDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: first ? "LIBRARY_ITEM" : ["LIBRARY_ITEM", "condition"],
-    drop: createHandleDrop("add"),
+    drop: addPlan,
   });
   const computedCss = useSegmentComputedStyles({ ...props });
   const insertedNext = next && next.length > 0 ? next : material ? [{ segmentId: `virtual${segmentId}` }] : [];
@@ -285,7 +296,7 @@ function Segment(props: SegmentProps) {
   const segmentNodes = (
     <Box className="segmentNext" display="flex" flexWrap="nowrap">
       {insertedNext.map((segmentItem) => (
-        <Segment key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
+        <Segment plan={plan} onChange={onChange} key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
       ))}
     </Box>
   );
@@ -362,21 +373,17 @@ const useScrollCenter = (once?: boolean) => {
   return ref;
 };
 
-const useRepaintKey = (value: any) => {
-  const count = useRef(0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => count.current++, [value]);
-};
+const doNothing = (arg: any): any => {};
 
 interface PlanComposeGraphicProps {
-  plan: Segment;
+  value?: Segment;
+  onChange?: (plan: Segment) => any;
 }
-
-function PlanComposeGraphic(props: PlanComposeGraphicProps) {
+export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
+  const { value: plan = {}, onChange = doNothing } = props;
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(props);
-  const { model } = useModelLessonPlan();
   const [{ canDrop: canDropMaterial }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: "LIBRARY_ITEM",
     collect: mapDropContainerProps,
@@ -440,7 +447,7 @@ function PlanComposeGraphic(props: PlanComposeGraphicProps) {
                 <Box position="absolute" mt={5} width={0} />
               </ArcherElement>
             </Box>
-            <Segment {...{ ...model?.value, canDropMaterial, canDropCondition }} first />
+            <Segment {...{ ...plan, canDropMaterial, canDropCondition }} first plan={plan} onChange={onChange} />
           </Box>
         </ArcherContainer>
       </Box>
@@ -448,10 +455,16 @@ function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   );
 }
 
-export default function WrapModelPlanComposeGraphic(props: PlanComposeGraphicProps) {
-  return (
-    <ContainerModelLessonPlan plan={props.plan}>
-      <PlanComposeGraphic {...props} />
-    </ContainerModelLessonPlan>
-  );
-}
+// interface PlanComposeGraphicInputProps {
+//   defaultValue: Segment;
+//   control: Control<CreateContentRequest>;
+//   name: string;
+// }
+// export function PlanComposeGraphicInput(props: PlanComposeGraphicInputProps) {
+//   const { name, defaultValue, control: { register, getValues, setValue } } = props;
+//   const { data = defaultValue } = getValues();
+//   const handleChange = useMemo<PlanComposeGraphicProps["onChange"]>(() => (plan) => setValue(name, plan), [setValue, name]);
+//   useEffect(() => register(name), [register, name]);
+//   return <PlanComposeGraphic plan={data} onChange={handleChange} />
+
+// }

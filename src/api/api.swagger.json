@@ -159,7 +159,7 @@
                   "type": "object",
                   "description": "content info",
                   "properties": {
-                    "total": {
+                    "id": {
                       "type": "string",
                       "description": "content id",
                       "example": "1"
@@ -457,6 +457,15 @@
             "name": "author",
             "in": "query",
             "description": "Search content by author",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "content_type",
+            "in": "query",
+            "description": "Search content by content type",
             "schema": {
               "type": "string",
               "nullable": true
@@ -1758,7 +1767,6 @@
         }
       }
     },
-
     "/schedules": {
       "get": {
         "tags": ["schedule"],
@@ -2146,6 +2154,11 @@
                 "description": "age id",
                 "example": "ede1995ebdb440ebb9526c53e07a9ff3"
               },
+              "suggest_time": {
+                "type": "integer",
+                "description": "suggest time",
+                "example": 1
+              },
               "keywords": {
                 "type": "array",
                 "description": "keywords id",
@@ -2316,6 +2329,11 @@
                 "description": "subject id",
                 "example": "ede1995ebdb440ebb9526c53e07a9ff3"
               },
+              "suggest_time": {
+                "type": "integer",
+                "description": "suggest time",
+                "example": 1
+              },
               "developmental": {
                 "type": "string",
                 "description": "developmental id",
@@ -2443,6 +2461,7 @@
           }
         ]
       },
+
       "Asset": {
         "allOf": [
           {

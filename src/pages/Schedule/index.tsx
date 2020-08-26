@@ -1,12 +1,11 @@
-import React from "react";
-import ScheduleTool from "./ScheduleTool";
-import ScheduleEdit from "./ScheduleEdit";
-import LayoutBox from "../../components/LayoutBox";
 import { Grid } from "@material-ui/core";
+import React from "react";
+import { useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
-import { useHistory, useParams } from "react-router";
+import LayoutBox from "../../components/LayoutBox";
+import ScheduleEdit from "./ScheduleEdit";
+import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import HeaderNavBar from "../MyContentList/HeaderNavBar";
 
 interface RouteParams {
   rightside: "scheduleTable" | "scheduleList";
