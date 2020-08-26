@@ -129,7 +129,7 @@ function EditBox() {
         ids.push(val.year.toString());
       });
     } else {
-      ids = value["year"];
+      ids = value ? value["year"] : "";
     }
     const newTopocList = {
       ...scheduleList,
@@ -153,9 +153,43 @@ function EditBox() {
   };
 
   /**
+   * form input validator
+   */
+  const isValidator = {
+    title: false,
+    class_id: false,
+    lesson_plan_id: false,
+    teacher_ids: false,
+    start_at: false,
+    end_at: false,
+    subject_id: false,
+    program_id: false,
+    class_type: false,
+  };
+  const [validator, setValidator] = React.useState(isValidator);
+
+  const validatorFun = () => {
+    let verificaPath = true;
+    for (let name in scheduleList) {
+      if (isValidator.hasOwnProperty(name)) {
+        // @ts-ignore
+        const result = scheduleList[name].length > 0;
+        // @ts-ignore
+        isValidator[name] = !result;
+        if (result) {
+          verificaPath = false;
+        }
+      }
+    }
+    setValidator({ ...isValidator });
+  };
+
+  /**
    * save schedule data
    */
   const saveSchedule = () => {
+    // @ts-ignore
+    validatorFun();
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
@@ -163,7 +197,7 @@ function EditBox() {
     }
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
-    console.log({ ...scheduleList, ...addData });
+    const result = { ...scheduleList, ...addData };
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -283,6 +317,7 @@ function EditBox() {
         </Box>
         <Box className={css.fieldBox}>
           <TextField
+            error={validator.title}
             className={css.fieldset}
             label="Class Name"
             value={scheduleList.title}
@@ -297,7 +332,9 @@ function EditBox() {
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
           }}
-          renderInput={(params) => <TextField {...params} className={css.fieldset} label="Add Class" variant="outlined" />}
+          renderInput={(params) => (
+            <TextField {...params} error={validator.class_id} className={css.fieldset} label="Add Class" variant="outlined" />
+          )}
         />
         <Autocomplete
           id="combo-box-demo"
@@ -308,7 +345,14 @@ function EditBox() {
             autocompleteChange(newValue, "lesson_plan_id");
           }}
           renderInput={(params) => (
-            <TextField {...params} className={css.fieldset} label="Lesson Plan" value={scheduleList.lesson_plan_id} variant="outlined" />
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Lesson Plan"
+              error={validator.lesson_plan_id}
+              value={scheduleList.lesson_plan_id}
+              variant="outlined"
+            />
           )}
         />
         <Autocomplete
@@ -321,7 +365,14 @@ function EditBox() {
             autocompleteChange(newValue, "teacher_ids");
           }}
           renderInput={(params) => (
-            <TextField {...params} className={css.fieldset} label="Teacher" value={scheduleList.teacher_ids} variant="outlined" />
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Teacher"
+              error={validator.teacher_ids}
+              value={scheduleList.teacher_ids}
+              variant="outlined"
+            />
           )}
         />
         <Box>
@@ -336,6 +387,7 @@ function EditBox() {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  error={validator.start_at}
                   value={timestampToTime(scheduleList.start_at)}
                   onChange={(e) => handleTopicListChange(e, "start_at")}
                 />
@@ -349,6 +401,7 @@ function EditBox() {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  error={validator.end_at}
                   value={timestampToTime(scheduleList.end_at)}
                   onChange={(e) => handleTopicListChange(e, "end_at")}
                 />
@@ -376,7 +429,14 @@ function EditBox() {
             autocompleteChange(newValue, "subject_id");
           }}
           renderInput={(params) => (
-            <TextField {...params} className={css.fieldset} label="Subject" variant="outlined" value={scheduleList.subject_id} />
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Subject"
+              error={validator.subject_id}
+              variant="outlined"
+              value={scheduleList.subject_id}
+            />
           )}
         />
         <Autocomplete
@@ -387,7 +447,14 @@ function EditBox() {
             autocompleteChange(newValue, "program_id");
           }}
           renderInput={(params) => (
-            <TextField {...params} className={css.fieldset} label="Program" variant="outlined" value={scheduleList.program_id} />
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Program"
+              variant="outlined"
+              error={validator.program_id}
+              value={scheduleList.program_id}
+            />
           )}
         />
         <TextField
@@ -395,6 +462,7 @@ function EditBox() {
           label="Class Type"
           value={scheduleList.class_type}
           onChange={(e) => handleTopicListChange(e, "class_type")}
+          error={validator.class_type}
           select
         >
           <MenuItem value="onlineClass">online class</MenuItem>
