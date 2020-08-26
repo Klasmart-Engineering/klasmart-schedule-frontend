@@ -10,13 +10,14 @@ import {
   TextField,
   ThemeProvider,
   useMediaQuery,
-  useTheme,
+  useTheme
 } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React, { useEffect } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Content, CreateContentRequest } from "../../api/api";
+import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -96,15 +97,14 @@ export default function Details(props: DetailsProps) {
           name="name"
           label={lesson === "material" ? "Material Name" : "Plan Name"}
           defaultValue={contentDetail.name}
-        ></Controller>
-        <Box className={css.fieldset}>
-          <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
-          <label htmlFor="thumbnail-file-input">
-            <Button size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
+        />
+        <SingleUploader render={({ uploady, item, btnRef }) => (
+          <Box className={css.fieldset}>
+            <Button ref={btnRef} size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
               Thumbnail
             </Button>
-          </label>
-        </Box>
+          </Box>
+        )}/>
         <Controller
           as={TextField}
           control={control}
@@ -112,7 +112,7 @@ export default function Details(props: DetailsProps) {
           className={css.fieldset}
           label="Suggested Duration (min)"
           defaultValue={contentDetail.name}
-        ></Controller>
+        />
         <Controller
           as={TextField}
           select
@@ -218,7 +218,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.description}
           className={css.fieldset}
           label="Description"
-        ></Controller>
+        />
         <Controller
           as={TextField}
           control={control}
@@ -226,7 +226,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.keywords}
           className={css.fieldset}
           label="Keywords"
-        ></Controller>
+        />
       </Box>
     </ThemeProvider>
   );
