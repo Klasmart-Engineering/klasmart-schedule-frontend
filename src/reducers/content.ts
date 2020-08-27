@@ -1,10 +1,12 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { Content } from "../api/api";
+import { apiGetMockOptions, MockOptions } from "../api/extra";
 
 interface IContentState {
   contentDetial: Content;
   mediaList: Content[];
+  mockOptions: MockOptions;
 }
 
 interface RootState {
@@ -45,6 +47,15 @@ const initialState: IContentState = {
     org_name: "",
   },
   mediaList: [],
+  mockOptions: {
+    program: [],
+    subject: [],
+    skills: [],
+    age: [],
+    grade: [],
+    developmental: [],
+    visibility_settings: [],
+  },
 };
 
 type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -66,6 +77,7 @@ interface onLoadContentEditPayload {
 interface onLoadContentEditResult {
   contentDetial?: AsyncReturnType<typeof api.contents.getContentById>;
   mediaList?: AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
+  mockOptions?: MockOptions;
 }
 
 export const save = createAsyncThunk<Content, Content, { state: RootState }>("content/save", async (payload, { getState }) => {
@@ -106,7 +118,8 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     // debugger;
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetial;
     const mediaList = await api.contents.searchContents({ content_type: type, name: searchText });
-    return { contentDetail, mediaList };
+    const mockOptions = await apiGetMockOptions();
+    return { contentDetail, mediaList, mockOptions };
   }
 );
 
@@ -141,6 +154,9 @@ const { actions, reducer } = createSlice({
       }
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;
+      }
+      if (payload.mockOptions) {
+        state.mockOptions = payload.mockOptions;
       }
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {

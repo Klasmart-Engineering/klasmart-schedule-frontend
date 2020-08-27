@@ -76,7 +76,7 @@ export type Content = {
   version?: number;
   source_id?: string;
   locked_by?: string;
-  data?: object;
+  data?: any;
   extra?: string;
   author?: string;
   author_name?: string;

@@ -10,13 +10,14 @@ import {
   TextField,
   ThemeProvider,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React, { useEffect } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Content, CreateContentRequest } from "../../api/api";
+import { MockOptions, MockOptionsItem } from "../../api/extra";
 import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -33,22 +34,33 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
       marginLeft: 20,
     },
   },
+  asterisk: {
+    color: palette.error.main,
+  },
 }));
-
 interface DetailsProps {
   contentDetail?: Content;
   uploadThumnail?: Function;
   formMethods: UseFormMethods<CreateContentRequest>;
+  mockOptions: MockOptions;
 }
+
 export default function Details(props: DetailsProps) {
   const {
     contentDetail,
     formMethods: { register, control, errors },
+    mockOptions,
   } = props;
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
+  const menuItemList = (list: MockOptionsItem[]) =>
+    list.map((item) => (
+      <MenuItem key={item.id} value={item.id}>
+        {item.name}
+      </MenuItem>
+    ));
   const size = sm ? "small" : "medium";
   useEffect(() => {
     register("thumbnail");
@@ -96,15 +108,25 @@ export default function Details(props: DetailsProps) {
           className={css.fieldset}
           name="name"
           label={lesson === "material" ? "Material Name" : "Plan Name"}
+          required
           defaultValue={contentDetail.name}
         />
-        <SingleUploader render={({ uploady, item, btnRef }) => (
-          <Box className={css.fieldset}>
-            <Button ref={btnRef} size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
-              Thumbnail
-            </Button>
-          </Box>
-        )}/>
+        <SingleUploader
+          render={({ uploady, item, btnRef }) => (
+            <Box className={css.fieldset}>
+              <Button
+                ref={btnRef}
+                size={sm ? "medium" : "large"}
+                variant="contained"
+                component="span"
+                color="primary"
+                endIcon={<CloudUploadOutlined />}
+              >
+                Thumbnail
+              </Button>
+            </Box>
+          )}
+        />
         <Controller
           as={TextField}
           control={control}
@@ -123,8 +145,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.program}
           control={control}
         >
-          <MenuItem value="program1">program one</MenuItem>
-          <MenuItem value="program2">program two</MenuItem>
+          {menuItemList(mockOptions.program)}
         </Controller>
         <Controller
           as={TextField}
@@ -136,8 +157,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.subject}
           control={control}
         >
-          <MenuItem value="subject1">subject1</MenuItem>
-          <MenuItem value="subject2">subject2</MenuItem>
+          {menuItemList(mockOptions.subject)}
         </Controller>
         <Box>
           <Controller
@@ -151,8 +171,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Developmental"
           >
-            <MenuItem value="developmental1">developmental1</MenuItem>
-            <MenuItem value="developmental2">developmental2</MenuItem>
+            {menuItemList(mockOptions.developmental)}
           </Controller>
           <Controller
             as={TextField}
@@ -165,8 +184,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Skills"
           >
-            <MenuItem value="skills1">skills1</MenuItem>
-            <MenuItem value="skills2">skills2</MenuItem>
+            {menuItemList(mockOptions.skills)}
           </Controller>
         </Box>
         <Box>
@@ -181,8 +199,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Age"
           >
-            <MenuItem value="age1">age1</MenuItem>
-            <MenuItem value="age2">age2</MenuItem>
+            {menuItemList(mockOptions.age)}
           </Controller>
           <Controller
             as={TextField}
@@ -195,8 +212,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Grade"
           >
-            <MenuItem value="grade1">grade1</MenuItem>
-            <MenuItem value="grade2">grade2</MenuItem>
+            {menuItemList(mockOptions.grade)}
           </Controller>
         </Box>
         <Controller
@@ -205,11 +221,11 @@ export default function Details(props: DetailsProps) {
           className={css.fieldset}
           label="Visibility Settings"
           name="publish_scope"
+          required
           defaultValue={contentDetail.publish_scope}
           control={control}
         >
-          <MenuItem value="publish_scope1">publish_scope1</MenuItem>
-          <MenuItem value="publish_scope2">publish_scope2</MenuItem>
+          {menuItemList(mockOptions.visibility_settings)}
         </Controller>
         <Controller
           as={TextField}
