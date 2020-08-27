@@ -25,17 +25,12 @@ import {
   Share,
   UnarchiveOutlined,
 } from "@material-ui/icons";
-import BookOutlinedIcon from "@material-ui/icons/BookOutlined";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
-import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
-import OndemandVideoOutlinedIcon from "@material-ui/icons/OndemandVideoOutlined";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { Content } from "../../api/api";
 import LayoutBox from "../../components/LayoutBox";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
@@ -270,60 +265,21 @@ function ArchivedAction() {
     </div>
   );
 }
-interface ContentTypeProps {
-  content_type_name?: string;
-  id?: string;
-  thumbnail?: string;
-}
-function Background(props: ContentTypeProps) {
-  const css = useStyles();
-  const [checkedArr, setCheckedArr] = React.useState<string[]>([""]);
 
+function ContentCard(props: Content) {
+  const css = useStyles();
+  const expand = useExpand();
+  const status = props.publish_status;
+  const [checkedArr, setCheckedArr] = React.useState<string[]>([""]);
   const handleChecked = (event: React.ChangeEvent<HTMLInputElement>, id?: string) => {
     console.log(event.target.checked, id);
     console.log(checkedArr);
     checkedArr.push(id || "");
     setCheckedArr(checkedArr);
   };
-  const color = () => {
-    if (props.content_type_name === "img") {
-      return {
-        color: "#ffc107",
-        icon: <ImageOutlinedIcon className={css.cardType} />,
-      };
-    }
-    if (props.content_type_name === "video") {
-      return {
-        color: "#9c27b0",
-        icon: <OndemandVideoOutlinedIcon className={css.cardType} />,
-      };
-    }
-    if (props.content_type_name === "audio") {
-      return {
-        color: "#009688",
-        icon: <MusicVideoOutlinedIcon className={css.cardType} />,
-      };
-    }
-    if (props.content_type_name === "document") {
-      return {
-        color: "#4054b2",
-        icon: <DescriptionOutlinedIcon className={css.cardType} />,
-      };
-    }
-    if (props.content_type_name === "lesson") {
-      return {
-        color: "#0e78d5",
-        icon: <BookOutlinedIcon className={css.cardType} />,
-      };
-    }
-    return {
-      color: "#ffc107",
-      icon: <ImageOutlinedIcon className={css.cardType} />,
-    };
-  };
   return (
-    <Fragment>
-      {props.thumbnail ? (
+    <Card className={css.card}>
+      <CardActionArea>
         <CardMedia className={css.cardMedia} image={props.thumbnail}>
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
@@ -336,33 +292,6 @@ function Background(props: ContentTypeProps) {
             }}
           ></Checkbox>
         </CardMedia>
-      ) : (
-        <CardMedia className={css.cardBackground} style={{ backgroundColor: color().color }}>
-          {color().icon}
-          <Checkbox
-            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-            size="small"
-            className={css.checkbox}
-            color="secondary"
-            onChange={(e) => {
-              handleChecked(e, props.id);
-            }}
-          ></Checkbox>
-        </CardMedia>
-      )}
-    </Fragment>
-  );
-}
-
-function ContentCard(props: Content) {
-  const css = useStyles();
-  const expand = useExpand();
-  const status = props.publish_status;
-  return (
-    <Card className={css.card}>
-      <CardActionArea>
-        <Background content_type_name={props.content_type_name} thumbnail={props.thumbnail} id={props.id} />
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container>
