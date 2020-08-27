@@ -28,4 +28,11 @@ export default createMuiTheme({
       variant: "outlined",
     },
   },
+  overrides: {
+    MuiFormLabel: {
+      asterisk: {
+        color: "#D32F2F",
+      },
+    },
+  },
 });

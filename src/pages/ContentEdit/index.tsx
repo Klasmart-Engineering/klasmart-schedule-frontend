@@ -52,9 +52,13 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<CreateContentRequest>();
-  const { reset, handleSubmit, control, formState } = formMethods;
-  const { isDirty } = formState;
-  const { contentDetial, mediaList } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { isDirty },
+  } = formMethods;
+  const { contentDetial, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
   const { id, searchText } = useQuery();
   const history = useHistory();
@@ -99,7 +103,7 @@ export default function ContentEdit() {
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
-      <Details contentDetail={contentDetial} formMethods={formMethods} />
+      <Details contentDetail={contentDetial} formMethods={formMethods} mockOptions={mockOptions} />
       <Outcomes comingsoon />
       <MediaAssets list={mediaList} comingsoon onSearch={handleSearch} searchText={searchText} />
     </ContentTabs>
@@ -111,7 +115,7 @@ export default function ContentEdit() {
           <MediaAssetsEdit readonly={readonly} overlay />
         </ContentH5p>
       )}
-      {includeH5p && !includeAsset && <ContentH5p />}
+      {includeH5p && !includeAsset && <Controller name="data" as={ContentH5p} defaultValue={contentDetial.data} control={control} />}
       {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
       {includePlanComposeGraphic && <Controller name="data" as={PlanComposeGraphic} defaultValue={contentDetial} control={control} />}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
