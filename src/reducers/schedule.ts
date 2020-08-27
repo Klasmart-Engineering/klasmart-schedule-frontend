@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api";
 import { Schedule } from "../api/api";
 
-interface ScheduleState {
-  scheduleDetail: Schedule;
+export interface ScheduleState {
+  total: number;
   scheduleList: Schedule[];
 }
 
@@ -12,34 +12,7 @@ interface Rootstate {
 }
 
 const initialState: ScheduleState = {
-  scheduleDetail: {
-    id: `${Math.floor(1000)}`,
-    title: "Zoo Animals",
-    start_at: 1597912763,
-    end_at: 1597916363,
-    lesson_plan: {
-      id: `${Math.floor(1000)}`,
-      name: "Big Lesson Plan",
-    },
-    program: {
-      id: `11`,
-      name: "someProgram",
-    },
-    subject: {
-      id: `111`,
-      name: "someSubject",
-    },
-    class: {
-      id: `22`,
-      name: "someClass",
-    },
-    teachers: [
-      {
-        id: `${Math.floor(1000)}`,
-        name: "handsome teacher",
-      },
-    ],
-  },
+  total: 0,
   scheduleList: [],
 };
 
@@ -57,6 +30,7 @@ const { reducer } = createSlice({
   extraReducers: {
     [getScheduleList.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleList = payload.scheduleList;
+      state.total = payload.total;
     },
   },
 });
