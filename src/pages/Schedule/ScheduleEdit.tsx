@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
 import mockList from "../../mocks/Autocomplete.json";
@@ -16,15 +16,17 @@ import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 
-function SmallCalendar() {
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date("2014-08-18T21:11:54"));
+function SmallCalendar(props: CalendarStateProps) {
+  const { timesTamp, changeTimesTamp } = props;
+  // @ts-ignore
+  const getTimestamp = (date: Date | null) => new Date(date).getTime() / 1000;
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
+    changeTimesTamp({ start: getTimestamp(date), end: getTimestamp(date) });
   };
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Grid container justify="space-around">
-        <DatePicker autoOk variant="static" openTo="date" value={selectedDate} onChange={handleDateChange} />
+        <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
       </Grid>
     </MuiPickersUtilsProvider>
   );
@@ -71,11 +73,21 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
 }));
 
-function EditBox() {
+function EditBox(props: CalendarStateProps) {
   const css = useStyles();
   const history = useHistory();
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
+  const { timesTamp } = props;
+
+  useEffect(() => {
+    const newTopocList = {
+      ...scheduleList,
+      start_at: timesTamp.start,
+      end_at: timesTamp.end,
+    };
+    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+  }, [scheduleList, timesTamp]);
 
   const [scheduleList, setScheduleList] = React.useState<InitData>({
     repeat: {},
@@ -131,11 +143,7 @@ function EditBox() {
     } else {
       ids = value ? value["year"] : "";
     }
-    const newTopocList = {
-      ...scheduleList,
-      [name]: ids as string | number | object | null,
-    };
-    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+    setScheduleData(name, ids);
   };
 
   /**
@@ -145,9 +153,13 @@ function EditBox() {
    */
   const handleTopicListChange = (event: React.ChangeEvent<{ value: String | Number }>, name: string) => {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
+    setScheduleData(name, value);
+  };
+
+  const setScheduleData = (name: string, value: string | number | object | null) => {
     const newTopocList = {
       ...scheduleList,
-      [name]: value,
+      [name]: value as string | number | object | null,
     };
     setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
   };
@@ -546,12 +558,26 @@ interface InitData {
   repeat: object;
 }
 
-interface ScheduleEditProps {
+interface timesTampType {
+  start: number;
+  end: number;
+}
+
+interface CalendarStateProps {
+  timesTamp: timesTampType;
+  changeTimesTamp: (value: object) => void;
+}
+
+interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
 }
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
-  const { includePreview } = props;
-  const template = includePreview ? <SmallCalendar /> : <EditBox />;
+  const { includePreview, timesTamp, changeTimesTamp } = props;
+  const template = includePreview ? (
+    <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} />
+  ) : (
+    <EditBox changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} />
+  );
   return template;
 }
