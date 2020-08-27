@@ -16,7 +16,7 @@ const useQuery = () => {
   const subStatus = query.get("subStatus") || "";
   const name = query.get("name") || "";
   const sortBy = query.get("sortBy") || "";
-  const myOnly = query.get("myOnly");
+  const myOnly = query.get("myOnly") || "";
   return { layout, status, subStatus, name, sortBy, myOnly };
 };
 
@@ -25,32 +25,33 @@ export default function MyContentList() {
   const { layout, status, subStatus, name, sortBy, myOnly } = useQuery();
   const showMyOnly = status === "published";
   const total = mockList.length;
-  function mapQuery(name: string, status: string, subStatus: string, sortBy: string) {
-    const query: any = {};
-    if (status && status !== "unpublished") {
-      query["publish_status"] = status;
-    } else if (status === "unpublished" && !subStatus) {
-      query["publish_status"] = "draft";
-    } else if (status === "unpublished" && subStatus) {
-      query["publish_status"] = subStatus;
-    }
-    if (name) query["name"] = name;
-    if (sortBy) {
-      if (sortBy === "10") query["order_by"] = "content_name";
-      if (sortBy === "20") query["order_by"] = "-content_name";
-      if (sortBy === "30") query["order_by"] = "created_at";
-      if (sortBy === "40") query["order_by"] = "-created_at";
-    }
-    if (myOnly) {
-      query["author"] = "{self}";
-    }
-    return query;
-  }
+
   useEffect(() => {
-    console.log(mapQuery(name, status, subStatus, sortBy));
+    function mapQuery(name: string, status: string, subStatus: string, sortBy: string, myOnly: string) {
+      const query: any = {};
+      if (status && status !== "unpublished") {
+        query["publish_status"] = status;
+      } else if (status === "unpublished" && !subStatus) {
+        query["publish_status"] = "draft";
+      } else if (status === "unpublished" && subStatus) {
+        query["publish_status"] = subStatus;
+      }
+      if (name) query["name"] = name;
+      if (sortBy) {
+        if (sortBy === "10") query["order_by"] = "content_name";
+        if (sortBy === "20") query["order_by"] = "-content_name";
+        if (sortBy === "30") query["order_by"] = "created_at";
+        if (sortBy === "40") query["order_by"] = "-created_at";
+      }
+      if (myOnly) {
+        query["author"] = "{self}";
+      }
+      return query;
+    }
+    console.log(mapQuery(name, status, subStatus, sortBy, myOnly));
     // dispatch(contentList(mapQuery(name, status)))
     console.log("status变了");
-  }, [status, subStatus, name, sortBy, myOnly, mapQuery]);
+  }, [status, subStatus, name, sortBy, myOnly]);
   return (
     <div>
       <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} subStatus={subStatus} />
