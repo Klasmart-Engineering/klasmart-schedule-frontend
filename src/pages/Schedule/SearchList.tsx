@@ -91,14 +91,13 @@ function timeFormat(time: number, type: string = "time") {
 
 export default function SearchList() {
   const dispatch = useDispatch();
-  const { scheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  console.log(scheduleList);
-  // let name =
   let name: string | string[] = useLocation().pathname.split("/");
   const _name = name[name.length - 1];
-  React.useCallback(() => {
+  React.useEffect(() => {
     dispatch(getScheduleList({ teacher_name: _name, page: 1 }));
-  }, [_name, dispatch]);
+  }, [_name, dispatch, name]);
+  const { scheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  // console.log(schedule1.scheduleList);
   const classes = useStyles();
 
   // const [scheduleList, setScheduleList] = React.useState(searchList.data);
@@ -229,12 +228,14 @@ export default function SearchList() {
   const getBottom = (value: any) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
+      let page: number = parseInt(`${listssss.length / 10}`) + 1;
+      dispatch(getScheduleList({ teacher_name: _name, page }));
     }
   };
 
   return (
     <Box className={classes.listContainer}>
-      {scheduleList.length > 0 ? (
+      {scheduleList && scheduleList.length > 0 ? (
         <>
           {scheduleList.map((item: any, index: number) => (
             <div key={index} className={classes.partItem}>
