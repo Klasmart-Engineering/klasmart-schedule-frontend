@@ -1,5 +1,4 @@
-import { withStyles } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
+import { Grid, withStyles } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import Hidden from "@material-ui/core/Hidden";
 import InputBase from "@material-ui/core/InputBase/InputBase";
@@ -136,9 +135,7 @@ function SubUnpublished(props: SubUnpublishedProps) {
   const history = useHistory();
   const { pathname, search } = useLocation();
   const { subStatus } = props;
-  const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
     let value: string = "";
     if (newValue === 0) {
       value = "draft";
@@ -152,19 +149,15 @@ function SubUnpublished(props: SubUnpublishedProps) {
     const newUrl = setUrl(search, "subStatus", value);
     history.push(`${pathname}${newUrl}`);
   };
-
-  useEffect(() => {
-    function getDefaultValue() {
-      let defaultValue = 0;
-      if (subStatus === "draft") defaultValue = 0;
-      if (subStatus === "pending") defaultValue = 1;
-      if (subStatus === "rejected") defaultValue = 2;
-      return defaultValue;
-    }
-    setValue(getDefaultValue());
-  }, [subStatus]);
+  function getDefaultValue() {
+    let defaultValue = 0;
+    if (subStatus === "draft") defaultValue = 0;
+    if (subStatus === "pending") defaultValue = 1;
+    if (subStatus === "rejected") defaultValue = 2;
+    return defaultValue;
+  }
   return (
-    <Tabs className={classes.tabs} value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+    <Tabs className={classes.tabs} value={getDefaultValue()} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
       <Tab value={0} label="Draft" />
       <Tab value={1} label="Waiting for Approval" />
       <Tab value={2} label="Rejected" />
@@ -175,14 +168,14 @@ function SubUnpublished(props: SubUnpublishedProps) {
 interface StatusProps {
   status: string;
   subStatus: string;
+  sortBy: string;
 }
 export default function SortTemplate(props: StatusProps) {
   const history = useHistory();
   const { pathname, search } = useLocation();
   const classes = useStyles();
-  const { status, subStatus } = props;
+  const { status, subStatus, sortBy } = props;
   const [value, setValue] = React.useState(0);
-  const [orderValue, setOrderValue] = React.useState(0);
   const handleChange = (event: any) => {
     setValue(event.target.value);
     // 掉接口
@@ -190,13 +183,11 @@ export default function SortTemplate(props: StatusProps) {
     console.log(event.target.value);
   };
   const handleOrderChange = (event: any) => {
-    setOrderValue(event.target.value);
     const newUrl = setUrl(search, "sortBy", event.target.value);
     history.push(`${pathname}${newUrl}`);
   };
   useEffect(() => {
     setValue(0);
-    setOrderValue(0);
   }, [status]);
   function setBulkAction() {
     let actions: string[];
@@ -242,7 +233,7 @@ export default function SortTemplate(props: StatusProps) {
             </Grid>
             {status === "unpublished" ? (
               <Grid item md={6}>
-                <SubUnpublished subStatus={status} />
+                <SubUnpublished subStatus={subStatus} />
               </Grid>
             ) : (
               <Hidden only={["xs", "sm"]}>
@@ -251,7 +242,7 @@ export default function SortTemplate(props: StatusProps) {
             )}
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <FormControl>
-                <NativeSelect id="demo-customized-select-native" value={orderValue} onChange={handleOrderChange} input={<BootstrapInput />}>
+                <NativeSelect id="demo-customized-select-native" value={sortBy} onChange={handleOrderChange} input={<BootstrapInput />}>
                   <option value={0}>Display By </option>
                   <option value={10}>Material Name(A-Z)</option>
                   <option value={20}>Material Name(Z-A)</option>
@@ -263,21 +254,23 @@ export default function SortTemplate(props: StatusProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SortTemplateMb status={status} subStatus={subStatus} />
+      <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} />
     </div>
   );
 }
 function SortTemplateMb(props: StatusProps) {
+  const history = useHistory();
   const classes = useStyles();
+  const { pathname, search } = useLocation();
+  const { status, subStatus, sortBy } = props;
   const [value, setValue] = React.useState("");
-  const [orderValue, setOrderValue] = React.useState("");
   const handleChange = (event: any) => {
     setValue(event.target.value);
   };
   const handleOrderChange = (event: any) => {
-    setOrderValue(event.target.value);
+    const newUrl = setUrl(search, "sortBy", event.target.value);
+    history.push(`${pathname}${newUrl}`);
   };
-  const { status, subStatus } = props;
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -295,7 +288,7 @@ function SortTemplateMb(props: StatusProps) {
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <FormControl>
-                <NativeSelect id="demo-customized-select-native" value={orderValue} onChange={handleOrderChange} input={<BootstrapInput />}>
+                <NativeSelect id="demo-customized-select-native" value={sortBy} onChange={handleOrderChange} input={<BootstrapInput />}>
                   <option value="">Display By </option>
                   <option value={10}>Material Name(A-Z)</option>
                   <option value={20}>Material Name(Z-A)</option>
