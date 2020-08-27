@@ -52,7 +52,8 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<CreateContentRequest>();
-  const { reset, handleSubmit, control } = formMethods;
+  const { reset, handleSubmit, control, formState } = formMethods;
+  const { isDirty } = formState;
   const { contentDetial, mediaList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
   const { id, searchText } = useQuery();
@@ -87,7 +88,7 @@ export default function ContentEdit() {
     [history]
   );
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
+    dispatch(onLoadContentEdit({ id, type: lesson === "plan" ? "material" : "assets", searchText }));
   }, [id, lesson, dispatch, searchText]);
 
   const assetDetails = (
@@ -126,6 +127,7 @@ export default function ContentEdit() {
         onCancel={reset}
         onSave={handleSave}
         onPublish={handlePublish}
+        isDirty={isDirty}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}

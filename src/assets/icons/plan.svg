@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="339px" height="162px" viewBox="0 0 339 162" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>plan</title>
+    <g id="home-没有list" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="thumbnail-默认" transform="translate(-185.000000, -1035.000000)">
+            <g id="plan" transform="translate(185.000000, 1035.000000)">
+                <g id="编组-10" transform="translate(0.000000, 1.000000)">
+                    <rect id="矩形备份-15" fill="#0E78D5" x="0" y="0" width="338" height="161"></rect>
+                    <rect id="矩形" x="129" y="41" width="80" height="80"></rect>
+                </g>
+                <g id="book-24px" transform="translate(130.000000, 41.000000)">
+                    <polygon id="路径" points="0 0 80 0 80 80 0 80"></polygon>
+                    <path d="M60,6.66666667 L20,6.66666667 C16.3333333,6.66666667 13.3333333,9.66666667 13.3333333,13.3333333 L13.3333333,66.6666667 C13.3333333,70.3333333 16.3333333,73.3333333 20,73.3333333 L60,73.3333333 C63.6666667,73.3333333 66.6666667,70.3333333 66.6666667,66.6666667 L66.6666667,13.3333333 C66.6666667,9.66666667 63.6666667,6.66666667 60,6.66666667 Z M30,13.3333333 L36.6666667,13.3333333 L36.6666667,28.1594112 L33.3333333,25.6594112 L30,28.1594112 L30,13.3333333 Z M60,66.6666667 L20,66.6666667 L20,13.3333333 L23.3333333,13.3333333 L23.3333333,38.9113229 L33.3333333,31.4113229 L43.3333333,38.9113229 L43.3333333,13.3333333 L60,13.3333333 L60,66.6666667 Z" id="形状" fill="#FFFFFF" fill-rule="nonzero"></path>
+                    <rect id="矩形" fill="#FFFFFF" x="40" y="52" width="16" height="7" rx="2.5"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

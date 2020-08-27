@@ -91,10 +91,11 @@ interface HeaderProps {
   onCancel: Function;
   onSave: Function;
   onPublish: Function;
+  isDirty: boolean;
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetial, onCancel, onPublish, onSave } = props;
+  const { lesson, onChangeLesson, contentDetial, onCancel, onPublish, onSave, isDirty } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -119,7 +120,7 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
             Save
           </Button>
-          {contentDetial?.publish_status === "draft" && (
+          {contentDetial?.publish_status === "draft" && !isDirty && (
             <Button
               variant="contained"
               endIcon={<Publish />}
@@ -146,7 +147,7 @@ function ContentHeader(props: HeaderProps) {
           <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave as any}>
             <Save fontSize="small" />
           </IconButton>
-          {contentDetial?.publish_status === "draft" && (
+          {contentDetial?.publish_status === "draft" && !isDirty && (
             <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
               <Publish fontSize="small" />
             </IconButton>

@@ -50,14 +50,13 @@ export default function MyContentList() {
     }
     console.log(mapQuery(name, status, subStatus, sortBy, myOnly));
     // dispatch(contentList(mapQuery(name, status)))
-    console.log("status变了");
   }, [status, subStatus, name, sortBy, myOnly]);
   return (
     <div>
       <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} subStatus={subStatus} />
       {layout === "card" ? (
         mockContentList.length > 0 ? (
-          <CardList list={mockContentList} publish_status={status} total={total} />
+          <CardList list={mockContentList} total={total} />
         ) : (
           <div style={{ margin: "0 auto", textAlign: "center" }}>
             <img src={emptyIconUrl} alt="" />

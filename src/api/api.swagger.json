@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "KidsLoop 2.0 Asset REST API",
-    "description": "Kidsloop 2.0 Asset backend rest api",
+    "description": "KidsLoop 2.0 Asset backend rest api",
     "version": "1.0.0",
     "contact": {
       "email": "peter.yang@badanamu.com.cn"
@@ -10,12 +10,12 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:12345/1.0",
-      "description": "local dev"
+      "url": "http://127.0.0.1:12345/v1",
+      "description": "dev"
     },
     {
-      "url": "http://192.168.1.234:12345/1.0",
-      "description": "local test"
+      "url": "https://cp03fzjc58.execute-api.ap-northeast-2.amazonaws.com/v1",
+      "description": "test"
     }
   ],
   "tags": [
@@ -98,11 +98,30 @@
             }
           },
           {
-            "name": "key",
+            "name": "page",
             "in": "query",
-            "description": "Search key",
+            "description": "Search page",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Search page size",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Search order by, default with content_name",
             "schema": {
               "type": "string",
+              "enum": ["id", "-id", "created_at", "-created_at", "updated_at", "-updated_at", "content_name", "-content_name"],
               "nullable": true
             }
           }
@@ -116,8 +135,8 @@
                   "type": "object",
                   "description": "content list",
                   "properties": {
-                    "key": {
-                      "type": "string",
+                    "total": {
+                      "type": "integer",
                       "description": "search key"
                     },
                     "list": {
@@ -209,11 +228,11 @@
           "200": {
             "description": "OK"
           },
-          "406": {
-            "description": "Content status invalid"
-          },
           "400": {
             "description": "Bad request"
+          },
+          "406": {
+            "description": "Content status invalid"
           },
           "500": {
             "description": "Internal Server Error"
@@ -450,6 +469,7 @@
             "description": "Search content by publish status",
             "schema": {
               "type": "string",
+              "enum": ["draft", "pending", "published", "rejected", "archive"],
               "nullable": true
             }
           },
@@ -538,6 +558,63 @@
         }
       }
     },
+
+    "/contents_bulk/publish": {
+      "put": {
+        "tags": ["content"],
+        "description": "Publish content bulk",
+        "operationId": "publishContentBulk",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentIDListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/contents_bulk": {
+      "delete": {
+        "tags": ["content"],
+        "description": "Delete content bulk",
+        "operationId": "deleteContentBulk",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentIDListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/contents_private": {
       "get": {
         "tags": ["content"],
@@ -568,6 +645,7 @@
             "description": "Search content by publish status",
             "schema": {
               "type": "string",
+              "enum": ["draft", "pending", "published", "rejected", "archive"],
               "nullable": true
             }
           },
@@ -599,11 +677,30 @@
             }
           },
           {
-            "name": "key",
+            "name": "page",
             "in": "query",
-            "description": "Search key",
+            "description": "Search page",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Search page size",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Search order by",
             "schema": {
               "type": "string",
+              "enum": ["id", "-id", "created_at", "-created_at", "updated_at", "-updated_at", "content_name", "-content_name"],
               "nullable": true
             }
           }
@@ -668,6 +765,7 @@
             "description": "Search content by publish status",
             "schema": {
               "type": "string",
+              "enum": ["draft", "pending", "published", "rejected", "archive"],
               "nullable": true
             }
           },
@@ -699,11 +797,30 @@
             }
           },
           {
-            "name": "key",
+            "name": "page",
             "in": "query",
-            "description": "Search key",
+            "description": "Search page",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Search page size",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Search order by",
             "schema": {
               "type": "string",
+              "enum": ["id", "-id", "created_at", "-created_at", "updated_at", "-updated_at", "content_name", "-content_name"],
               "nullable": true
             }
           }
@@ -1772,7 +1889,7 @@
         "tags": ["schedule"],
         "summary": "query schedules",
         "description": "query schedules",
-        "operationId": "queryschedules",
+        "operationId": "querySchedules",
         "security": [
           {
             "bearerAuth": []
@@ -1780,23 +1897,44 @@
         ],
         "parameters": [
           {
-            "name": "teacher_id",
+            "name": "teacher_name",
             "in": "query",
-            "description": "Search schedules by teacher_id",
+            "description": "Search schedules by teacher_name",
             "schema": {
               "type": "string",
               "nullable": true
             }
           },
           {
-            "name": "last_key",
+            "name": "start_at",
             "in": "query",
-            "description": "The key value of the last record",
+            "description": "Search schedules by start_at",
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "default": "datetime now"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "order by enum",
             "schema": {
               "type": "string",
-              "format": "string",
+              "enum": ["create_at", "-create_at", "start_at", "-start_at"],
               "nullable": true,
-              "default": ""
+              "default": "start_at"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page index, not paging if page <=0",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true,
+              "default": 1
             },
             "required": false,
             "allowEmptyValue": true
@@ -1804,7 +1942,7 @@
           {
             "name": "page_size",
             "in": "query",
-            "description": "records per page, not paging if pageSize <= 0",
+            "description": "records per page, not paging if page_size <= 0",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -1906,6 +2044,76 @@
         }
       }
     },
+    "/schedules_time_view": {
+      "get": {
+        "tags": ["schedule"],
+        "summary": "query schedules time view",
+        "description": "query schedules",
+        "operationId": "schedules_time_view",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "view_type",
+            "in": "query",
+            "description": "Search schedules by view_type",
+            "schema": {
+              "type": "string",
+              "nullable": false
+            }
+          },
+          {
+            "name": "time_at",
+            "in": "query",
+            "description": "Search schedules by time_at",
+            "schema": {
+              "type": "string",
+              "format": "string",
+              "nullable": true,
+              "default": ""
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "schedule list",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ScheduleTimeView"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "User not login"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
     "/schedules/{schedule_id}": {
       "get": {
         "tags": ["schedule"],
@@ -1995,9 +2203,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "string",
-                  "description": "schedule id"
+                  "type": "object",
+                  "description": "new schedule id",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "string",
+                      "description": "new schedule id"
+                    }
+                  }
                 }
               }
             }
@@ -2073,6 +2287,63 @@
           }
         }
       }
+    },
+    "/schedule_attachment_upload/{ext}": {
+      "get": {
+        "tags": ["schedule"],
+        "summary": "get schedules attachment upload path",
+        "description": "get schedules attachment upload path",
+        "operationId": "getAttachmentUploadPath",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ext",
+            "in": "path",
+            "description": "attachment ext",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "new schedule id",
+                  "properties": {
+                    "attachment_url": {
+                      "type": "string",
+                      "format": "string",
+                      "description": "attachment upload url"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "User not login"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2130,29 +2401,57 @@
                 "example": "Content title"
               },
               "program": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "program id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "subject": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "subject id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
+              },
+              "reject_reason": {
+                "type": "string",
+                "description": "reject reason",
+                "example": "reject reason"
               },
               "developmental": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "developmental id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "skills": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "skills id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "age": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "age id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
+              },
+              "grade": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "grade id",
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "suggest_time": {
                 "type": "integer",
@@ -2176,11 +2475,6 @@
                 "type": "string",
                 "description": "content thumbnail",
                 "example": "Content thumbnail"
-              },
-              "do_publish": {
-                "type": "boolean",
-                "description": "content create & publish",
-                "example": false
               },
               "data": {
                 "type": "object",
@@ -2214,6 +2508,24 @@
               "scope": {
                 "type": "string",
                 "description": "content published scope list",
+                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+              }
+            }
+          }
+        ]
+      },
+      "ContentIDListRequest": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Company",
+            "properties": {
+              "id": {
+                "type": "array",
+                "description": "content id list",
+                "items": {
+                  "type": "string"
+                },
                 "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               }
             }
@@ -2255,28 +2567,20 @@
             "description": "Company",
             "properties": {
               "content_type": {
-                "type": "array",
+                "type": "string",
                 "description": "content type list",
-                "items": {
-                  "type": "string"
-                },
-                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
+                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
               },
               "scope": {
-                "type": "array",
+                "type": "string",
                 "description": "content published scope list",
-                "items": {
-                  "type": "string"
-                },
-                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
+                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
               },
               "publish_status": {
-                "type": "array",
+                "type": "string",
+                "enum": ["draft", "pending", "published", "rejected", "archive"],
                 "description": "content published status list",
-                "items": {
-                  "type": "string"
-                },
-                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
+                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
               },
               "author": {
                 "type": "string",
@@ -2320,34 +2624,62 @@
                 "example": "Content title"
               },
               "program": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "program id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "subject": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "subject id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "suggest_time": {
                 "type": "integer",
                 "description": "suggest time",
                 "example": 1
               },
-              "developmental": {
+              "reject_reason": {
                 "type": "string",
+                "description": "reject reason",
+                "example": "reject reason"
+              },
+              "developmental": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "developmental id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "skills": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "skills id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "age": {
-                "type": "string",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "description": "age id",
-                "example": "ede1995ebdb440ebb9526c53e07a9ff3"
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
+              },
+              "grade": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "grade id",
+                "example": ["ede1995ebdb440ebb9526c53e07a9ff3"]
               },
               "keywords": {
                 "type": "array",
@@ -2420,6 +2752,7 @@
               "publish_status": {
                 "type": "string",
                 "description": "content publish status",
+                "enum": ["draft", "pending", "published", "rejected", "archive"],
                 "example": "published"
               },
               "content_type_name": {
@@ -2461,7 +2794,6 @@
           }
         ]
       },
-
       "Asset": {
         "allOf": [
           {
@@ -2605,11 +2937,42 @@
           "lesson_plan": {
             "$ref": "#/components/schemas/CommonShort"
           },
+          "program": {
+            "$ref": "#/components/schemas/CommonShort"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/CommonShort"
+          },
+          "class": {
+            "$ref": "#/components/schemas/CommonShort"
+          },
           "teachers": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CommonShort"
             }
+          }
+        }
+      },
+      "ScheduleTimeView": {
+        "type": "object",
+        "description": "schedule home short info",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "schedule id"
+          },
+          "title": {
+            "type": "string",
+            "description": "schedule title"
+          },
+          "start_at": {
+            "type": "integer",
+            "description": "schedule start time, timestamp"
+          },
+          "end_at": {
+            "type": "integer",
+            "description": "schedule end time, timestamp"
           }
         }
       },
@@ -2644,11 +3007,6 @@
             "type": "integer",
             "description": "schedule end time, timestamp"
           },
-          "mode_type": {
-            "type": "string",
-            "enum": ["AllDay", "Repeat"],
-            "description": "\n * AllDay - this class will last for 24 hours for the whole day \n * Repeat - repeat it daily/weekly/monthly/yearly \n"
-          },
           "repeat": {
             "type": "object",
             "description": "repeat options, only work when mode_type equal Repeat,",
@@ -2680,9 +3038,12 @@
                     "description": "interval days"
                   },
                   "on": {
-                    "type": "string",
-                    "enum": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
-                    "description": "on week"
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+                    },
+                    "description": "on weekdays"
                   },
                   "end": {
                     "$ref": "#/components/schemas/RepeatEnd"
@@ -2791,6 +3152,14 @@
           "is_force": {
             "type": "boolean",
             "description": "If true, skip the conflict detection"
+          },
+          "is_repeat": {
+            "type": "boolean",
+            "description": "If true, schedule will repeat"
+          },
+          "is_all_day": {
+            "type": "boolean",
+            "description": "all_day flag"
           }
         }
       },
@@ -2866,9 +3235,12 @@
                     "description": "interval days"
                   },
                   "on": {
-                    "type": "string",
-                    "enum": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
-                    "description": "on week"
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+                    },
+                    "description": "on weekdays"
                   },
                   "end": {
                     "$ref": "#/components/schemas/RepeatEnd"
@@ -2977,6 +3349,14 @@
           "is_force": {
             "type": "boolean",
             "description": "If true, skip the conflict detection"
+          },
+          "is_repeat": {
+            "type": "boolean",
+            "description": "If true, schedule will repeat"
+          },
+          "is_all_day": {
+            "type": "boolean",
+            "description": "all_day flag"
           }
         }
       },
@@ -3048,9 +3428,12 @@
                     "description": "interval days"
                   },
                   "on": {
-                    "type": "string",
-                    "enum": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
-                    "description": "on week"
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+                    },
+                    "description": "on weekdays"
                   },
                   "end": {
                     "$ref": "#/components/schemas/RepeatEnd"
@@ -3152,6 +3535,10 @@
           },
           "attachment": {
             "$ref": "#/components/schemas/CommonShort"
+          },
+          "is_all_day": {
+            "type": "boolean",
+            "description": "all_day flag"
           }
         }
       },

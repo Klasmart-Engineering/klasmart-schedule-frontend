@@ -27,14 +27,15 @@ export type CreateContentRequest = {
   name?: string;
   program?: string[];
   subject?: string[];
-  grade?: string[];
+  reject_reason?: string;
   developmental?: string[];
   skills?: string[];
   age?: string[];
+  grade?: string[];
+  suggest_time?: number;
   keywords?: string[];
   description?: string;
   thumbnail?: string;
-  do_publish?: boolean;
   data?: object;
   extra?: string;
   publish_scope?: string;
@@ -42,14 +43,16 @@ export type CreateContentRequest = {
 
 export type PublishContentRequest = { scope?: string };
 
+export type ContentIDListRequest = { id?: string[] };
+
 export type RejectReasonRequest = { reject_reason?: string };
 
 export type LockContentResponse = { content_id?: string };
 
 export type ContentCondition = {
-  content_type?: string[];
-  scope?: string[];
-  publish_status?: string[];
+  content_type?: string;
+  scope?: string;
+  publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
   author?: string;
   org?: string;
   bookmark?: string;
@@ -58,15 +61,15 @@ export type ContentCondition = {
 export type Content = {
   id?: string;
   content_type?: number;
-  suggest_time?: number;
-  reject_reason?: string;
   name?: string;
   program?: string[];
-  grade?: string[];
   subject?: string[];
+  suggest_time?: number;
+  reject_reason?: string;
   developmental?: string[];
   skills?: string[];
   age?: string[];
+  grade?: string[];
   keywords?: string[];
   description?: string;
   thumbnail?: string;
@@ -79,7 +82,7 @@ export type Content = {
   author_name?: string;
   org?: string;
   publish_scope?: string;
-  publish_status?: string;
+  publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
   content_type_name?: string;
   program_name?: string;
   subject_name?: string;
@@ -178,7 +181,27 @@ export interface Schedule {
   /** schedule end time, timestamp */
   end_at?: number;
   lesson_plan?: CommonShort;
+  program?: CommonShort;
+  subject?: CommonShort;
+  class?: CommonShort;
   teachers?: CommonShort[];
+}
+
+/**
+ * schedule home short info
+ */
+export interface ScheduleTimeView {
+  /** schedule id */
+  id?: string;
+
+  /** schedule title */
+  title?: string;
+
+  /** schedule start time, timestamp */
+  start_at?: number;
+
+  /** schedule end time, timestamp */
+  end_at?: number;
 }
 
 /**
@@ -203,19 +226,11 @@ export interface ScheduleCreate {
   /** schedule end time, timestamp */
   end_at?: number;
 
-  /**
-   *
-   *  * AllDay - this class will last for 24 hours for the whole day
-   *  * Repeat - repeat it daily/weekly/monthly/yearly
-   *
-   */
-  mode_type?: "AllDay" | "Repeat";
-
   /** repeat options, only work when mode_type equal Repeat, */
   repeat?: {
     type?: "never" | "after_count" | "after_time";
     daily?: { interval?: number; end?: RepeatEnd };
-    weekly?: { interval?: number; on?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat"; end?: RepeatEnd };
+    weekly?: { interval?: number; on?: ("sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat")[]; end?: RepeatEnd };
     monthly?: {
       interval?: number;
       on_type?: "date" | "week";
@@ -256,6 +271,12 @@ export interface ScheduleCreate {
 
   /** If true, skip the conflict detection */
   is_force?: boolean;
+
+  /** If true, schedule will repeat */
+  is_repeat?: boolean;
+
+  /** all_day flag */
+  is_all_day?: boolean;
 }
 
 /**
@@ -295,7 +316,7 @@ export interface ScheduleUpdate {
   repeat?: {
     type?: "never" | "after_count" | "after_time";
     daily?: { interval?: number; end?: RepeatEnd };
-    weekly?: { interval?: number; on?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat"; end?: RepeatEnd };
+    weekly?: { interval?: number; on?: ("sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat")[]; end?: RepeatEnd };
     monthly?: {
       interval?: number;
       on_type?: "date" | "week";
@@ -336,6 +357,12 @@ export interface ScheduleUpdate {
 
   /** If true, skip the conflict detection */
   is_force?: boolean;
+
+  /** If true, schedule will repeat */
+  is_repeat?: boolean;
+
+  /** all_day flag */
+  is_all_day?: boolean;
 }
 
 /**
@@ -369,7 +396,7 @@ export interface ScheduleDetailed {
   repeat?: {
     type?: "never" | "after_count" | "after_time";
     daily?: { interval?: number; end?: RepeatEnd };
-    weekly?: { interval?: number; on?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat"; end?: RepeatEnd };
+    weekly?: { interval?: number; on?: ("sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat")[]; end?: RepeatEnd };
     monthly?: {
       interval?: number;
       on_type?: "date" | "week";
@@ -401,6 +428,9 @@ export interface ScheduleDetailed {
   /** schedule description */
   description?: string;
   attachment?: CommonShort;
+
+  /** all_day flag */
+  is_all_day?: boolean;
 }
 
 /**
@@ -444,7 +474,7 @@ enum BodyType {
 }
 
 class HttpClient<SecurityDataType> {
-  public baseUrl: string = "http://127.0.0.1:12345/1.0";
+  public baseUrl: string = "http://127.0.0.1:12345/v1";
   private securityData: SecurityDataType = null as any;
   private securityWorker: ApiConfig<SecurityDataType>["securityWorker"] = (() => {}) as any;
 
@@ -531,8 +561,8 @@ class HttpClient<SecurityDataType> {
 /**
  * @title KidsLoop 2.0 Asset REST API
  * @version 1.0.0
- * @baseUrl http://127.0.0.1:12345/1.0
- * Kidsloop 2.0 Asset backend rest api
+ * @baseUrl http://127.0.0.1:12345/v1
+ * KidsLoop 2.0 Asset backend rest api
  */
 export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   contents = {
@@ -550,10 +580,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         scope?: string | null;
         author?: string | null;
         org?: string | null;
-        key?: string | null;
+        page?: number | null;
+        page_size?: number | null;
+        order_by?: "id" | "-id" | "created_at" | "-created_at" | "updated_at" | "-updated_at" | "content_name" | "-content_name";
       },
       params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents${this.addQueryParams(query)}`, "GET", params),
+    ) => this.request<{ total?: number; list?: Content[] }, any>(`/contents${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags content
@@ -636,7 +668,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     contentsDynamoList: (
       query?: {
         name?: string | null;
-        publish_status?: string | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         author?: string | null;
         content_type?: string | null;
         description?: string | null;
@@ -646,6 +678,25 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_dynamo${this.addQueryParams(query)}`, "GET", params),
+  };
+  contentsBulk = {
+    /**
+     * @tags content
+     * @name publishContentBulk
+     * @request PUT:/contents_bulk/publish
+     * @description Publish content bulk
+     */
+    publishContentBulk: (data: ContentIDListRequest, params?: RequestParams) =>
+      this.request<any, any>(`/contents_bulk/publish`, "PUT", params, data),
+
+    /**
+     * @tags content
+     * @name deleteContentBulk
+     * @request DELETE:/contents_bulk
+     * @description Delete content bulk
+     */
+    deleteContentBulk: (data: ContentIDListRequest, params?: RequestParams) =>
+      this.request<any, any>(`/contents_bulk`, "DELETE", params, data),
   };
   contentsPrivate = {
     /**
@@ -658,11 +709,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         name?: string | null;
         content_type?: string | null;
-        publish_status?: string | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         scope?: string | null;
         author?: string | null;
         org?: string | null;
-        key?: string | null;
+        page?: number | null;
+        page_size?: number | null;
+        order_by?: "id" | "-id" | "created_at" | "-created_at" | "updated_at" | "-updated_at" | "content_name" | "-content_name";
       },
       params?: RequestParams
     ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_private${this.addQueryParams(query)}`, "GET", params),
@@ -678,11 +731,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         name?: string | null;
         content_type?: string | null;
-        publish_status?: string | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         scope?: string | null;
         author?: string | null;
         org?: string | null;
-        key?: string | null;
+        page?: number | null;
+        page_size?: number | null;
+        order_by?: "id" | "-id" | "created_at" | "-created_at" | "updated_at" | "-updated_at" | "content_name" | "-content_name";
       },
       params?: RequestParams
     ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_pending${this.addQueryParams(query)}`, "GET", params),
@@ -911,13 +966,22 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   schedules = {
     /**
      * @tags schedule
-     * @name queryschedules
+     * @name querySchedules
      * @summary query schedules
      * @request GET:/schedules
      * @secure
      * @description query schedules
      */
-    queryschedules: (query?: { teacher_id?: string | null; last_key?: string | null; page_size?: number | null }, params?: RequestParams) =>
+    querySchedules: (
+      query?: {
+        teacher_name?: string | null;
+        start_at?: number | null;
+        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at";
+        page?: number | null;
+        page_size?: number | null;
+      },
+      params?: RequestParams
+    ) =>
       this.request<{ total?: number; data?: Schedule[] }, any>(
         `/schedules${this.addQueryParams(query)}`,
         "GET",
@@ -958,7 +1022,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update schedule
      */
     updateSchedule: (schedule_id: string, data: ScheduleUpdate, params?: RequestParams) =>
-      this.request<string, any>(`/schedules/${schedule_id}`, "PUT", params, data, BodyType.Json, true),
+      this.request<{ id?: string }, any>(`/schedules/${schedule_id}`, "PUT", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule
@@ -970,5 +1034,36 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteSchedule: (schedule_id: string, query?: { repeat_edit_options?: "only_current" | "with_following" }, params?: RequestParams) =>
       this.request<any, any>(`/schedules/${schedule_id}${this.addQueryParams(query)}`, "DELETE", params, null, BodyType.Json, true),
+  };
+  schedulesTimeView = {
+    /**
+     * @tags schedule
+     * @name schedules_time_view
+     * @summary query schedules time view
+     * @request GET:/schedules_time_view
+     * @secure
+     * @description query schedules
+     */
+    schedulesTimeView: (query: { view_type?: string; time_at: string | null }, params?: RequestParams) =>
+      this.request<{ list?: ScheduleTimeView[] }, any>(
+        `/schedules_time_view${this.addQueryParams(query)}`,
+        "GET",
+        params,
+        null,
+        BodyType.Json,
+        true
+      ),
+  };
+  scheduleAttachmentUpload = {
+    /**
+     * @tags schedule
+     * @name getAttachmentUploadPath
+     * @summary get schedules attachment upload path
+     * @request GET:/schedule_attachment_upload/{ext}
+     * @secure
+     * @description get schedules attachment upload path
+     */
+    getAttachmentUploadPath: (ext: string, params?: RequestParams) =>
+      this.request<{ attachment_url?: string }, any>(`/schedule_attachment_upload/${ext}`, "GET", params, null, BodyType.Json, true),
   };
 }
