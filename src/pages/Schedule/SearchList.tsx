@@ -2,9 +2,11 @@ import { Box, Card, createStyles, Grid, makeStyles, Theme } from "@material-ui/c
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { AccessTime, PeopleOutlineOutlined } from "@material-ui/icons";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
 import VisibilitySensor from "react-visibility-sensor";
 import searchList from "../../mocks/scheduleList";
+import { getScheduleList } from "../../reducers/schedule";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,6 +88,13 @@ function timeFormat(time: number, type: string = "time") {
 }
 
 export default function SearchList() {
+  const dispatch = useDispatch();
+  // let name =
+  let name: string | string[] = useLocation().pathname.split("/");
+  const _name = name[name.length - 1];
+  React.useEffect(() => {
+    dispatch(getScheduleList({ teacher_name: _name }));
+  }, [_name, dispatch, name]);
   const classes = useStyles();
 
   const [scheduleList, setScheduleList] = React.useState(searchList.data);
