@@ -21,7 +21,6 @@ const useQuery = () => {
 };
 
 export default function MyContentList() {
-  // const dispatch = useDispatch();
   const { layout, status, subStatus, name, sortBy, myOnly } = useQuery();
   const showMyOnly = status === "published";
   const total = mockList.length;
@@ -49,7 +48,7 @@ export default function MyContentList() {
       return query;
     }
     console.log(mapQuery(name, status, subStatus, sortBy, myOnly));
-    // dispatch(contentList(mapQuery(name, status)))
+    // dispatch(contentList(mapQuery(name, status, subStatus, sortBy, myOnly)))
   }, [status, subStatus, name, sortBy, myOnly]);
   return (
     <div>

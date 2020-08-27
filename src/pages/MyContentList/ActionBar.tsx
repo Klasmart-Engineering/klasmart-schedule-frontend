@@ -1,36 +1,22 @@
 import { ButtonGroup, Checkbox, FormControlLabel, Grid, InputAdornment, Tooltip, withStyles } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
-import FormControl from "@material-ui/core/FormControl";
 import Grow from "@material-ui/core/Grow/Grow";
 import Hidden from "@material-ui/core/Hidden";
 import InputBase from "@material-ui/core/InputBase/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList/MenuList";
-import NativeSelect from "@material-ui/core/NativeSelect/NativeSelect";
 import Paper from "@material-ui/core/Paper/Paper";
 import Popper from "@material-ui/core/Popper/Popper";
 import { makeStyles } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import TextField from "@material-ui/core/TextField/TextField";
-import Typography from "@material-ui/core/Typography";
-import {
-  ArchiveOutlined,
-  HourglassEmptyOutlined,
-  MoreHoriz,
-  PermMediaOutlined,
-  PublishOutlined,
-  Search,
-  ViewListOutlined,
-  ViewQuiltOutlined,
-} from "@material-ui/icons";
-import ImportExportIcon from "@material-ui/icons/ImportExport";
+import { MoreHoriz, Search, ViewListOutlined, ViewQuiltOutlined } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
-import React, { useEffect } from "react";
-import { Link, Redirect, useHistory, useLocation } from "react-router-dom";
+import React from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
+import SecondaryMenu from "./secondaryMenu";
+import SortTemplate from "./SortTemplate";
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -128,163 +114,6 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: any;
-  value: any;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index } = props;
-  return <div>{value === index && <Typography>{children}</Typography>}</div>;
-}
-
-interface SecondaryMenuProps {
-  layout: string;
-  status: string;
-  showMyOnly: boolean;
-}
-function SecondaryMenu(props: SecondaryMenuProps) {
-  const classes = useStyles();
-  const { layout, status } = props;
-  const path = `#/library/my-content-list?layout=${layout}`;
-  return (
-    <div className={classes.root}>
-      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-        <Hidden only={["xs", "sm"]}>
-          <Grid container spacing={3}>
-            <Grid item md={3} lg={5} xl={7}>
-              <Button variant="contained" color="primary" className={classes.createBtn}>
-                Create +
-              </Button>
-            </Grid>
-            <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
-              <Button
-                href={`${path}&status=published`}
-                className={`${classes.nav} ${status === "published" ? classes.actives : ""}`}
-                startIcon={<PublishOutlined />}
-              >
-                Published
-              </Button>
-              <Button
-                href={`${path}&status=pending`}
-                className={`${classes.nav} ${status === "pending" ? classes.actives : ""}`}
-                startIcon={<HourglassEmptyOutlined />}
-              >
-                Pending
-              </Button>
-              <Button
-                href={`${path}&status=unpublished`}
-                className={`${classes.nav} ${status === "unpublished" ? classes.actives : ""}`}
-                startIcon={<PublishOutlined />}
-              >
-                Unpublished
-              </Button>
-              <Button
-                href={`${path}&status=archived`}
-                className={`${classes.nav} ${status === "archived" ? classes.actives : ""}`}
-                startIcon={<ArchiveOutlined />}
-              >
-                Archived
-              </Button>
-              <Button
-                href={`${path}&status=assets`}
-                className={`${classes.nav} ${status === "assets" ? classes.actives : ""}`}
-                startIcon={<PermMediaOutlined />}
-              >
-                Assets
-              </Button>
-            </Grid>
-          </Grid>
-        </Hidden>
-      </LayoutBox>
-      <SecondaryMenuMb layout={layout} status={status} />
-    </div>
-  );
-}
-interface SecondaryMenuMbProps {
-  layout: string;
-  status: string;
-}
-function SecondaryMenuMb(props: SecondaryMenuMbProps) {
-  const classes = useStyles();
-  const { layout, status } = props;
-  const path = `/library/my-content-list?layout=${layout}`;
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-  };
-
-  useEffect(() => {
-    function getStatus() {
-      let value = 0;
-      switch (status) {
-        case "published":
-          value = 0;
-          break;
-        case "pending":
-          value = 1;
-          break;
-        case "unpublished":
-          value = 2;
-          break;
-        case "archived":
-          value = 3;
-          break;
-        case "assets":
-          value = 4;
-          break;
-        default:
-          value = 0;
-      }
-      return value;
-    }
-    setValue(getStatus());
-  }, [status]);
-  return (
-    <div className={classes.root}>
-      <Hidden only={["md", "lg", "xl"]}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
-            <AppBar position="static" color="inherit">
-              <Tabs
-                value={value}
-                onChange={handleChange}
-                variant="scrollable"
-                scrollButtons="on"
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="scrollable force tabs example"
-              >
-                <Tab label="Published" className={classes.capitalize} />
-                <Tab label="Pending" className={classes.capitalize} />
-                <Tab label="Unpublished" className={classes.capitalize} />
-                <Tab label="Archived" className={classes.capitalize} />
-                <Tab label="Assets" className={classes.capitalize} />
-              </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-              <Redirect to={`${path}&status=published`} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              <Redirect to={`${path}&status=pending`} />
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-              <Redirect to={`${path}&status=unpublished`} />
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-              <Redirect to={`${path}&status=archived`} />
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-              <Redirect to={`${path}&status=assets`} />
-            </TabPanel>
-          </Grid>
-        </Grid>
-      </Hidden>
-    </div>
-  );
-}
 
 interface ActionBarLayout {
   layout: string;
@@ -406,7 +235,11 @@ function SelectTemplateMb(props: ActionBarLayout) {
     </div>
   );
 }
-
+interface SecondaryMenuProps {
+  layout: string;
+  status: string;
+  showMyOnly: boolean;
+}
 function SelectTemplate(props: SecondaryMenuProps) {
   const classes = useStyles();
   const { layout } = props;
@@ -422,7 +255,6 @@ function SelectTemplate(props: SecondaryMenuProps) {
     setSearchInput(event.target.value);
   };
   const handleIsMyOnly = (event: any) => {
-    console.log(event.target.checked);
     const myOnly = event.target.checked;
     const newUrl = setUrl(search, "myOnly", myOnly);
     history.push(`${pathname}${newUrl}`);
@@ -493,50 +325,6 @@ function SelectTemplate(props: SecondaryMenuProps) {
   );
 }
 
-interface SubUnpublishedProps {
-  subStatus: string;
-}
-function SubUnpublished(props: SubUnpublishedProps) {
-  const classes = useStyles();
-  const history = useHistory();
-  const { pathname, search } = useLocation();
-  const { subStatus } = props;
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-    let value: string = "";
-    if (newValue === 0) {
-      value = "draft";
-    }
-    if (newValue === 1) {
-      value = "pending";
-    }
-    if (newValue === 2) {
-      value = "rejected";
-    }
-    const newUrl = setUrl(search, "subStatus", value);
-    history.push(`${pathname}${newUrl}`);
-  };
-
-  useEffect(() => {
-    function getDefaultValue() {
-      let defaultValue = 0;
-      if (subStatus === "draft") defaultValue = 0;
-      if (subStatus === "pending") defaultValue = 1;
-      if (subStatus === "rejected") defaultValue = 2;
-      return defaultValue;
-    }
-    setValue(getDefaultValue());
-  }, [subStatus]);
-  return (
-    <Tabs className={classes.tabs} value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
-      <Tab value={0} label="Draft" />
-      <Tab value={1} label="Waiting for Approval" />
-      <Tab value={2} label="Rejected" />
-    </Tabs>
-  );
-}
-
 function setUrl(search: string, param: string, value: string) {
   const query = new URLSearchParams(search);
   let newUrl: any;
@@ -556,157 +344,7 @@ function setUrl(search: string, param: string, value: string) {
   }
   return newUrl;
 }
-interface StatusProps {
-  status: string;
-  subStatus: string;
-}
-function ActionTemplate(props: StatusProps) {
-  const history = useHistory();
-  const { pathname, search } = useLocation();
-  const classes = useStyles();
-  const { status, subStatus } = props;
-  const [value, setValue] = React.useState(0);
-  const [orderValue, setOrderValue] = React.useState(0);
-  const handleChange = (event: any) => {
-    setValue(event.target.value);
-    // 掉接口
-    console.log(event.target.value);
-  };
-  const handleOrderChange = (event: any) => {
-    setOrderValue(event.target.value);
-    const newUrl = setUrl(search, "sortBy", event.target.value);
-    history.push(`${pathname}${newUrl}`);
-  };
-  useEffect(() => {
-    setValue(0);
-    setOrderValue(0);
-  }, [status]);
-  function setBulkAction() {
-    let actions: string[];
-    switch (status) {
-      case "published":
-        actions = ["moveToArchived"];
-        break;
-      case "pending":
-        actions = [];
-        break;
-      case "unpublished":
-        actions = ["delete"];
-        break;
-      case "archived":
-        actions = ["republished", "delete"];
-        break;
-      default:
-        actions = [];
-    }
-    return actions;
-  }
-  const actions = setBulkAction();
-  const options = actions.map((item, index) => (
-    <option key={item + index} value={index + 1}>
-      {item}
-    </option>
-  ));
-  return (
-    <div className={classes.root}>
-      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-        <Hidden only={["xs", "sm"]}>
-          <hr style={{ borderColor: "#e0e0e0" }} />
-          <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
-            <Grid item sm={6} xs={6} md={3}>
-              {actions.length > 0 && (
-                <FormControl variant="outlined">
-                  <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
-                    <option value={0}>Bulk Actions</option>
-                    {options}
-                  </NativeSelect>
-                </FormControl>
-              )}
-            </Grid>
-            {status === "unpublished" ? (
-              <Grid item md={6}>
-                <SubUnpublished subStatus={status} />
-              </Grid>
-            ) : (
-              <Hidden only={["xs", "sm"]}>
-                <Grid item md={6}></Grid>
-              </Hidden>
-            )}
-            <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
-              <FormControl>
-                <NativeSelect id="demo-customized-select-native" value={orderValue} onChange={handleOrderChange} input={<BootstrapInput />}>
-                  <option value={0}>Display By </option>
-                  <option value={10}>Material Name(A-Z)</option>
-                  <option value={20}>Material Name(Z-A)</option>
-                  <option value={30}>Created On(New-Old)</option>
-                  <option value={40}>Created On(Old-New)</option>
-                </NativeSelect>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Hidden>
-      </LayoutBox>
-      <ActionTemplateMb status={status} subStatus={subStatus} />
-    </div>
-  );
-}
-function ActionTemplateMb(props: StatusProps) {
-  const classes = useStyles();
-  const [value, setValue] = React.useState("");
-  const [orderValue, setOrderValue] = React.useState("");
-  const handleChange = (event: any) => {
-    setValue(event.target.value);
-  };
-  const handleOrderChange = (event: any) => {
-    setOrderValue(event.target.value);
-  };
-  const { status, subStatus } = props;
-  return (
-    <div className={classes.root}>
-      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-        <Hidden only={["md", "lg", "xl"]}>
-          <hr style={{ borderColor: "#e0e0e0" }} />
-          <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
-            <Grid item sm={6} xs={6} md={6}>
-              <FormControl variant="outlined">
-                <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
-                  <option value={10}>Bulk Actions</option>
-                  <option value={20}>Remove</option>
-                  <option value={30}>Bulk Remove</option>
-                </NativeSelect>
-              </FormControl>
-            </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
-              <FormControl>
-                <NativeSelect id="demo-customized-select-native" value={orderValue} onChange={handleOrderChange} input={<BootstrapInput />}>
-                  <option value="">Display By </option>
-                  <option value={10}>Material Name(A-Z)</option>
-                  <option value={20}>Material Name(Z-A)</option>
-                  <option value={30}>Created On(New-Old)</option>
-                  <option value={30}>Created On(Old-New)</option>
-                </NativeSelect>
-              </FormControl>
-            </Grid>
-          </Grid>
-          {status === "unpublished" ? (
-            <Grid container alignItems="center" style={{ marginTop: "6px" }}>
-              <Grid item sm={8} xs={8}>
-                <SubUnpublished subStatus={subStatus} />
-              </Grid>
-              <Grid container justify="flex-end" alignItems="center" item sm={4} xs={4}>
-                <ImportExportIcon />
-              </Grid>
-            </Grid>
-          ) : (
-            <Hidden only={["xs", "sm"]}>
-              <Grid item md={6}></Grid>
-            </Hidden>
-          )}
-        </Hidden>
-      </LayoutBox>
-    </div>
-  );
-}
+
 interface ActionBarProps {
   layout: string;
   status: string;
@@ -720,7 +358,7 @@ export default function ActionBar(props: ActionBarProps) {
     <div className={classes.navigation}>
       <SecondaryMenu layout={layout} status={status} showMyOnly={showMyOnly} />
       <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} />
-      <ActionTemplate status={status} subStatus={subStatus} />
+      <SortTemplate status={status} subStatus={subStatus} />
     </div>
   );
 }

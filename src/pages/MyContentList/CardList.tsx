@@ -27,6 +27,7 @@ import PicIconUrl from "../../assets/icons/pic.svg";
 import PlanIconUrl from "../../assets/icons/plan.svg";
 import VideoIconUrl from "../../assets/icons/video.svg";
 import LayoutBox from "../../components/LayoutBox";
+
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -252,8 +253,8 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         {content?.publish_status === "published" && <PublishedAction />}
-        {content?.publish_status === "unpublished" && <UnpublishedAction />}
-        {content?.publish_status === "archived" && <ArchivedAction />}
+        {(content?.publish_status === "draft" || content?.publish_status === "rejected") && <UnpublishedAction />}
+        {content?.publish_status === "archive" && <ArchivedAction />}
       </CardActions>
     </Card>
   );
