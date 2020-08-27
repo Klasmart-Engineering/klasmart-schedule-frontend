@@ -190,11 +190,6 @@ export default function MediaAssets(props: MediaAssetsProps) {
       {/* <TableCell>{multipleLine(item.created.split(" "))}</TableCell> */}
     </TableRow>
   ));
-  const empty = (
-    <Box width="100%" height={575} display="flex" flexDirection="column" alignItems="center">
-      <NoFiles />
-    </Box>
-  );
   const table = (
     <TableContainer className={css.tableContainer}>
       <Table className={css.table}>
