@@ -1036,7 +1036,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create schedule
      */
     createSchedule: (data: ScheduleCreate, params?: RequestParams) =>
-      this.request<string, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
+      this.request<{ id?: string }, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule

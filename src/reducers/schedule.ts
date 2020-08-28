@@ -69,7 +69,8 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
     } else {
       await api.schedules.updateSchedule(id, payload);
     }
-    return await api.schedules.getSchedulesById(id as string);
+    // @ts-ignore
+    return await api.schedulesTimeView.schedulesTimeView({ view_type: "month", time_at: payload.start_at });
   }
 );
 
@@ -85,7 +86,7 @@ export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, vie
 type deleteSchedulesParams = Parameters<typeof api.schedules.deleteSchedule>[0];
 type deleteSchedulesResult = ReturnType<typeof api.schedules.deleteSchedule>;
 export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>("schedule/delete", (schedule_id, query) => {
-  return api.schedules.deleteSchedule(schedule_id);
+  return api.schedules.deleteSchedule(schedule_id, { repeat_edit_options: "only_current" });
 });
 
 type infoSchedulesParams = Parameters<typeof api.schedules.getSchedulesById>[0];
@@ -93,6 +94,18 @@ type infoSchedulesResult = ReturnType<typeof api.schedules.getSchedulesById>;
 export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedulesParams>("schedule/info", (schedule_id, query) => {
   return api.schedules.getSchedulesById(schedule_id);
 });
+
+const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
+  const newViewData: any = [];
+  if (data.length > 0) {
+    data.forEach((item: ScheduleTimeView) => {
+      const start_at = new Date(Number(item.start_at) * 1000);
+      const end_at = new Date(Number(item.end_at) * 1000);
+      newViewData.push({ end: start_at, id: item.id, start: end_at, title: item.title });
+    });
+  }
+  return newViewData;
+};
 
 const { reducer } = createSlice({
   name: "schedule",
@@ -103,27 +116,14 @@ const { reducer } = createSlice({
       state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.total = payload.total;
     },
-    [saveScheduleData.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>) => {
-      state.scheduleDetial = payload;
+    [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
+      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       console.log(JSON.stringify(error));
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      const newViewData: any = [];
-      if (payload.length > 0) {
-        payload.forEach((item: ScheduleTimeView) => {
-          const start_at = new Date(Number(item.start_at) * 1000);
-          const end_at = new Date(Number(item.end_at) * 1000);
-          newViewData.push({
-            end: start_at,
-            id: item.id,
-            start: end_at,
-            title: item.title,
-          });
-        });
-      }
-      state.scheduleTimeViewData = newViewData;
+      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
       console.log(payload);

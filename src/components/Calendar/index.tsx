@@ -6,7 +6,6 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
-import events from "../../mocks/events";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { removeSchedule } from "../../reducers/schedule";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,7 +77,7 @@ function MyCalendar(props: CalendarProps) {
   };
 
   const deleteScheduleByid = () => {
-    dispatch(removeSchedule("1"));
+    dispatch(removeSchedule(scheduleInfo.id));
     setOpenStatus(false);
   };
 
