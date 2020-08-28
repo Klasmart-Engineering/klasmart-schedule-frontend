@@ -362,15 +362,16 @@ interface ActionBarProps {
   myOnly: boolean;
   sortBy: string;
   name: string;
+  checkedContents: string[];
 }
 export default function ActionBar(props: ActionBarProps) {
-  const { layout, status, showMyOnly, subStatus, myOnly, sortBy, name } = props;
+  const { layout, status, showMyOnly, subStatus, myOnly, sortBy, name, checkedContents } = props;
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
       <SecondaryMenu layout={layout} status={status} showMyOnly={showMyOnly} />
       <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} myOnly={myOnly} name={name} />
-      <SortTemplate status={status} subStatus={subStatus} sortBy={sortBy} />
+      <SortTemplate status={status} subStatus={subStatus} sortBy={sortBy} checkedContents={checkedContents} />
     </div>
   );
 }

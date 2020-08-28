@@ -80,15 +80,6 @@ function EditBox(props: CalendarStateProps) {
   const [openStatus, setOpenStatus] = React.useState(false);
   const { timesTamp } = props;
 
-  useEffect(() => {
-    const newTopocList = {
-      ...scheduleList,
-      start_at: timesTamp.start,
-      end_at: timesTamp.end,
-    };
-    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
-  }, [scheduleList, timesTamp]);
-
   const [scheduleList, setScheduleList] = React.useState<InitData>({
     repeat: {},
     is_all_day: false,
@@ -107,7 +98,14 @@ function EditBox(props: CalendarStateProps) {
     teacher_ids: [],
     title: "",
   });
-
+  useEffect(() => {
+    const newTopocList = {
+      ...scheduleList,
+      start_at: timesTamp.start,
+      end_at: timesTamp.end,
+    };
+    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+  }, [scheduleList, timesTamp]);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
   const timeToTimestamp = (time: string) => {

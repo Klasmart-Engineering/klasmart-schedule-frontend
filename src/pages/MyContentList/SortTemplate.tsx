@@ -169,18 +169,21 @@ interface StatusProps {
   status: string;
   subStatus: string;
   sortBy: string;
+  checkedContents: string[];
 }
 export default function SortTemplate(props: StatusProps) {
   const history = useHistory();
   const { pathname, search } = useLocation();
   const classes = useStyles();
-  const { status, subStatus, sortBy } = props;
+  const { status, subStatus, sortBy, checkedContents } = props;
   const [value, setValue] = React.useState(0);
   const handleChange = (event: any) => {
     setValue(event.target.value);
     // 掉接口
     // 拿到选择后的content进行批量操作
     console.log(event.target.value);
+    console.log(checkedContents);
+    console.log(history);
   };
   const handleOrderChange = (event: any) => {
     const newUrl = setUrl(search, "sortBy", event.target.value);
@@ -254,7 +257,7 @@ export default function SortTemplate(props: StatusProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} />
+      {/* <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} /> */}
     </div>
   );
 }
