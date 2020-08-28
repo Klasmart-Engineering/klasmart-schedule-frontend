@@ -7,7 +7,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import VisibilitySensor from "react-visibility-sensor";
 import emptyBox from "../../../src/assets/icons/empty.svg";
 import { RootState } from "../../reducers";
-import { getScheduleList } from "../../reducers/schedule";
+import { getSearchScheduleList } from "../../reducers/schedule";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -94,7 +94,7 @@ export default function SearchList() {
   let name: string | string[] = useLocation().pathname.split("/");
   const _name = name[name.length - 1];
   React.useEffect(() => {
-    dispatch(getScheduleList({ teacher_name: _name, page: 1 }));
+    dispatch(getSearchScheduleList({ teacher_name: _name, page: 1 }));
   }, [_name, dispatch]);
   const { searchScheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   // console.log(schedule1.scheduleList);
@@ -229,7 +229,7 @@ export default function SearchList() {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
       let page: number = parseInt(`${listssss.length / 10}`) + 1;
-      dispatch(getScheduleList({ teacher_name: _name, page }));
+      dispatch(getSearchScheduleList({ teacher_name: _name, page }));
     }
   };
 
