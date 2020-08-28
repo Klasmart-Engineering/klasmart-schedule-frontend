@@ -120,6 +120,9 @@ export default function Details(props: DetailsProps) {
           helperText=""
         />
         <SingleUploader
+          fetchUploadUrl={(file) => {
+            return Promise.reject("/abc");
+          }}
           render={({ uploady, item, btnRef }) => (
             <Box className={css.fieldset}>
               <Button

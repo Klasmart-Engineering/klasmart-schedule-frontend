@@ -11,6 +11,7 @@
     "@reduxjs/toolkit": "^1.4.0",
     "@rpldy/shared": "^0.4.1",
     "@rpldy/shared-ui": "^0.4.1",
+    "@rpldy/uploader": "^0.4.1",
     "@rpldy/uploady": "^0.4.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
