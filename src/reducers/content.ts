@@ -42,11 +42,11 @@ const initialState: IContentState = {
     publish_scope: "",
     publish_status: "published",
     content_type_name: "",
-    program_name: "",
-    subject_name: "",
-    developmental_name: "",
-    skills_name: "",
-    age_name: "",
+    program_name: [],
+    subject_name: [],
+    developmental_name: [],
+    skills_name: [],
+    age_name: [],
     org_name: "",
   },
   mediaList: [],
@@ -122,6 +122,22 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     const mediaList = await api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText });
     const mockOptions = await apiGetMockOptions();
     return { contentDetail, mediaList, mockOptions };
+  }
+);
+type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
+type IGetContentsResourseResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
+export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
+  "content/getContentResourceUploadPath",
+  (query) => {
+    return api.contentsResources.getContentResourceUploadPath(query);
+  }
+);
+
+type IgetContentResourcePathResult = ReturnType<typeof api.contentsResources.getContentResourcePath>;
+export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathResult, string>(
+  "content/getContentResourcePath",
+  (resourse_id: string) => {
+    return api.contentsResources.getContentResourcePath(resourse_id);
   }
 );
 

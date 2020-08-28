@@ -85,11 +85,9 @@ export default function ContentEdit() {
   const handleSave = useMemo(
     () =>
       handleSubmit((value: CreateContentRequest) => {
-        // const keywords=value.keywords.split(",");
-        const suggest_time = Number(value.suggest_time);
-        return dispatch(save({ ...value, suggest_time, content_type: 1, data: JSON.stringify(value.data) })) as any;
+        return dispatch(save({ ...value, content_type: lesson === "material" ? 1 : 2, data: value.data })) as any;
       }),
-    [handleSubmit, dispatch]
+    [handleSubmit, dispatch, lesson]
   );
   const handleSearch = useMemo<MediaAssetsProps["onSearch"]>(
     () => (searchText = "") => {
