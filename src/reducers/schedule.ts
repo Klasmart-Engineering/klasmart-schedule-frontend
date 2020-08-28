@@ -17,6 +17,8 @@ export interface ScheduleState {
   saveResult: number;
   scheduleDetial: ScheduleDetailed;
   scheduleTimeViewData: scheduleViewData[];
+  attachement_id: string;
+  attachment_path: string;
 }
 
 interface Rootstate {
@@ -48,6 +50,8 @@ const initialState: ScheduleState = {
     is_force: false,
   },
   scheduleTimeViewData: [],
+  attachement_id: "",
+  attachment_path: "",
 };
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
@@ -94,6 +98,18 @@ export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedul
   return api.schedules.getSchedulesById(schedule_id);
 });
 
+type attachmentParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
+type attachmentResult = Parameters<typeof api.contentsResources.getContentResourceUploadPath>;
+
+type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
+type IGetContentsResourseResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
+export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
+  "content/getContentResourceUploadPath",
+  (query) => {
+    return api.contentsResources.getContentResourceUploadPath(query);
+  }
+);
+
 const { reducer } = createSlice({
   name: "schedule",
   initialState,
@@ -130,6 +146,11 @@ const { reducer } = createSlice({
     },
     [getScheduleInfo.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
+    },
+    [getContentResourceUploadPath.fulfilled.type]: (state, { payload }: any) => {
+      console.log(payload);
+      state.attachment_path = payload.path;
+      state.attachement_id = payload.resource_id;
     },
   },
 });

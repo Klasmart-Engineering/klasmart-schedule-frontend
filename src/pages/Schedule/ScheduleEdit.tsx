@@ -92,7 +92,7 @@ function EditBox(props: CalendarStateProps) {
     };
     setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
   }, [scheduleList, timesTamp]);*/
-  const [state] = useRepeatSchedule();
+  const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
   const repeatData = {
     type,
@@ -308,6 +308,10 @@ function EditBox(props: CalendarStateProps) {
     setOpenStatus(true);
     setModalText("Discard unsave changes?");
     setButtons(button);
+  };
+
+  const handleRepeatData = (data: any) => {
+    dispatchRepeat({ type: "changeData", data });
   };
 
   return (
@@ -546,7 +550,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         {checkedStatus.repeatCheck && (
           <Box className={css.repeatBox}>
-            <RepeatSchedule />
+            <RepeatSchedule handleRepeatData={handleRepeatData} />
           </Box>
         )}
       </Box>

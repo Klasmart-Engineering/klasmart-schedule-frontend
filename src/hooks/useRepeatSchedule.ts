@@ -36,7 +36,7 @@ const initialState: any = {
     on_type: "date",
     on_date_month: 0,
     on_date_day: 0,
-    on_week_month: "November",
+    on_week_month: 1,
     on_week_seq: "first",
     on_week: "Sunday",
     end: {
@@ -50,7 +50,7 @@ const initialState: any = {
 interface stateProps {
   type: string;
   daily: {
-    interval: string;
+    interval: number;
     end: {
       type: string;
       after_count: number;
@@ -109,6 +109,6 @@ function reducer(state: stateProps, action: actionProps) {
 }
 
 export function useRepeatSchedule() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  return [state, dispatch];
+  const [state, dispatchRepeat] = useReducer(reducer, initialState);
+  return [state, dispatchRepeat];
 }
