@@ -1,7 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api from "../api";
-import { Content } from "../api/api";
+import { Content, ContentIDListRequest } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 
 interface IContentState {
@@ -9,6 +9,8 @@ interface IContentState {
   contentDetial: Content;
   mediaList: Content[];
   mockOptions: MockOptions;
+  total: number;
+  contentsList: Content[];
 }
 
 interface RootState {
@@ -59,6 +61,8 @@ const initialState: IContentState = {
     developmental: [],
     visibility_settings: [],
   },
+  total: 0,
+  contentsList: [],
 };
 
 type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -126,9 +130,31 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
 type IQueryContentsResult = ReturnType<typeof api.contents.searchContents>;
-export const contentList = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("contents/contents", (query) => {
-  return api.contents.searchContents(query);
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("contents/contents", async (query) => {
+  const { list, total } = await api.contents.searchContents(query);
+  return { list, total };
 });
+
+export const deleteContent = createAsyncThunk<Content, Required<Content>["id"]>("content/deleteContent", (id) => {
+  return api.contents.deleteContent(id);
+});
+export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publish", (id) => {
+  return api.contents.publishContent(id, { scope: "" });
+});
+
+// type BulkActionIds = Parameters<typeof>
+export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
+  "contents_bulk/deleteContentBulk",
+  (id) => {
+    return api.contentsBulk.deleteContentBulk(id);
+  }
+);
+export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
+  "contents_bulk/publishContentBulk",
+  (id) => {
+    return api.contentsBulk.publishContentBulk(id);
+  }
+);
 
 const { actions, reducer } = createSlice({
   name: "content",
@@ -173,12 +199,20 @@ const { actions, reducer } = createSlice({
     [contentsDynamoList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [contentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      alert("success");
+    [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentsList = payload.list;
+      state.total = payload.total;
     },
-    [contentList.rejected.type]: (state, { error }: any) => {
+    [contentLists.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
+    [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [deleteContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {},
+    [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [publishContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {},
+    [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [bulkPublishContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {},
   },
 });
 

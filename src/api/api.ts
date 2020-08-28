@@ -76,7 +76,7 @@ export type Content = {
   version?: number;
   source_id?: string;
   locked_by?: string;
-  data?: any;
+  data?: object;
   extra?: string;
   author?: string;
   author_name?: string;
@@ -559,10 +559,10 @@ class HttpClient<SecurityDataType> {
 }
 
 /**
- * @title KidsLoop 2.0 Asset REST API
+ * @title KidsLoop 2.0 REST API
  * @version 1.0.0
  * @baseUrl http://127.0.0.1:12345/v1
- * KidsLoop 2.0 Asset backend rest api
+ * KidsLoop 2.0 backend rest api
  */
 export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   contents = {
@@ -718,7 +718,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         order_by?: "id" | "-id" | "created_at" | "-created_at" | "updated_at" | "-updated_at" | "content_name" | "-content_name";
       },
       params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_private${this.addQueryParams(query)}`, "GET", params),
+    ) => this.request<{ total?: number; list?: Content[] }, any>(`/contents_private${this.addQueryParams(query)}`, "GET", params),
   };
   contentsPending = {
     /**
@@ -740,7 +740,26 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         order_by?: "id" | "-id" | "created_at" | "-created_at" | "updated_at" | "-updated_at" | "content_name" | "-content_name";
       },
       params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_pending${this.addQueryParams(query)}`, "GET", params),
+    ) => this.request<{ total?: number; list?: Content[] }, any>(`/contents_pending${this.addQueryParams(query)}`, "GET", params),
+  };
+  contentsResources = {
+    /**
+     * @tags content
+     * @name getContentResourcePath
+     * @request GET:/contents_resources/{resource_id}
+     * @description Get content resource path
+     */
+    getContentResourcePath: (resource_id: string, params?: RequestParams) =>
+      this.request<any, any>(`/contents_resources/${resource_id}`, "GET", params),
+
+    /**
+     * @tags content
+     * @name getContentResourceUploadPath
+     * @request GET:/contents_resources
+     * @description Get content resource upload path
+     */
+    getContentResourceUploadPath: (query?: { partition?: "assets" | "thumbnail"; extension?: string }, params?: RequestParams) =>
+      this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
   };
   assets = {
     /**

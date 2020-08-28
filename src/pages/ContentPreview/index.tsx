@@ -243,14 +243,10 @@ export default function ContentPreview(props: Content) {
         {data.publish_status === "pending" && <PendingBtn />}
         {data.publish_status === "waiting" && <WaitingBtn />}
         {data.publish_status === "archived" && <ArchiveBtn />}
-        {/* <PublishedBtn />
-        <DraftRejectBtn />
-        <PendingBtn />
-        <WaitingBtn />
-        <ArchiveBtn /> */}
       </Box>
       <Box className={css.right}>right</Box>
     </Box>
   );
 }
 ContentPreview.routeBasePath = "/library/content-preview";
+ContentPreview.routeMatchPath = "/library/content-preview/id/:id";
