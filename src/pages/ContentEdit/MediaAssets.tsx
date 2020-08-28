@@ -175,7 +175,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     const { searchText } = getValues();
     onSearch(searchText);
   }, [getValues, onSearch]);
-  const rows = list.slice(-2).map((item, idx) => (
+  const rows = list.map((item, idx) => (
     <TableRow key={idx}>
       <TableCell>
         <DraggableImage type="LIBRARY_ITEM" item={item} />
@@ -202,6 +202,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
             <TableCell>Skills</TableCell>
             <TableCell>Age</TableCell>
             <TableCell>Grade</TableCell>
+            <TableCell>visibility settings</TableCell>
             {/* <TableCell>Created On</TableCell> */}
           </TableRow>
         </TableHead>

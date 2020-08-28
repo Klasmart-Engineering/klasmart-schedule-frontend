@@ -53,8 +53,8 @@ export default function Details(props: DetailsProps) {
     mockOptions,
   } = props;
 
-  watch();
-  console.log("values = ", getValues());
+  // watch();
+  // console.log("values = ", getValues());
 
   const css = useStyles();
   const { lesson } = useParams();
@@ -115,6 +115,9 @@ export default function Details(props: DetailsProps) {
           label={lesson === "material" ? "Material Name" : "Plan Name"}
           required
           defaultValue={contentDetail.name}
+          rules={{ required: true }}
+          error={errors.name ? true : false}
+          helperText=""
         />
         <SingleUploader
           render={({ uploady, item, btnRef }) => (
@@ -230,6 +233,9 @@ export default function Details(props: DetailsProps) {
           required
           defaultValue={contentDetail.publish_scope}
           control={control}
+          rules={{ required: true }}
+          error={errors.publish_scope ? true : false}
+          helperText=""
         >
           {menuItemList(mockOptions.visibility_settings)}
         </Controller>
@@ -249,6 +255,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.keywords}
           className={css.fieldset}
           label="Keywords"
+          helperText=""
         />
       </Box>
     </ThemeProvider>
