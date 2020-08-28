@@ -18,6 +18,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Content, CreateContentRequest } from "../../api/api";
 import { MockOptions, MockOptionsItem } from "../../api/extra";
+import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -48,9 +49,13 @@ interface DetailsProps {
 export default function Details(props: DetailsProps) {
   const {
     contentDetail,
-    formMethods: { register, control, errors },
+    formMethods: { register, control, errors, watch, getValues },
     mockOptions,
   } = props;
+
+  watch();
+  console.log("values = ", getValues());
+
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
@@ -128,12 +133,13 @@ export default function Details(props: DetailsProps) {
           )}
         />
         <Controller
-          as={TextField}
+          as={FormattedTextField}
           control={control}
           name="suggest_time"
+          decode={Number}
           className={css.fieldset}
           label="Suggested Duration (min)"
-          defaultValue={contentDetail.name}
+          defaultValue={contentDetail.suggest_time}
         />
         <Controller
           as={TextField}
@@ -236,9 +242,10 @@ export default function Details(props: DetailsProps) {
           label="Description"
         />
         <Controller
-          as={TextField}
+          as={FormattedTextField}
           control={control}
           name="keywords"
+          decode={decodeArray}
           defaultValue={contentDetail.keywords}
           className={css.fieldset}
           label="Keywords"
