@@ -21,9 +21,10 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
-  const { modelView } = props;
+  const { modelView, timesTamp, changeTimesTamp } = props;
   const history = useHistory();
   const [openStatus, setOpenStatus] = React.useState(false);
+  const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
 
   /**
    * click current schedule
@@ -39,6 +40,8 @@ function MyCalendar(props: CalendarProps) {
    * @param e
    */
   const creteSchedule = (e: any) => {
+    console.log(new Date(timesTamp.start * 1000));
+    changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
 
@@ -85,7 +88,9 @@ function MyCalendar(props: CalendarProps) {
     <>
       <Box className={css.calendarBox}>
         <Calendar
+          date={new Date(timesTamp.start * 1000)}
           onView={() => {}}
+          onNavigate={() => {}}
           view={modelView}
           selectable={true}
           localizer={localizer}
@@ -105,10 +110,17 @@ function MyCalendar(props: CalendarProps) {
   );
 }
 
+interface timesTampType {
+  start: number;
+  end: number;
+}
+
 interface CalendarProps {
   modelView: any;
+  timesTamp: timesTampType;
+  changeTimesTamp: (value: object) => void;
 }
 export default function KidsCalendar(props: CalendarProps) {
-  const { modelView } = props;
-  return <MyCalendar modelView={modelView} />;
+  const { modelView, timesTamp, changeTimesTamp } = props;
+  return <MyCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} />;
 }

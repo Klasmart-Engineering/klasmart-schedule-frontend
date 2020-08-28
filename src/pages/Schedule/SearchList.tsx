@@ -5,9 +5,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import VisibilitySensor from "react-visibility-sensor";
-import searchList from "../../mocks/scheduleList";
+import emptyBox from "../../../src/assets/icons/empty.svg";
 import { RootState } from "../../reducers";
-import { getScheduleList } from "../../reducers/schedule";
+import { getSearchScheduleList } from "../../reducers/schedule";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: "20px 30px 30px",
       boxSizing: "border-box",
       marginBottom: "30px",
+      cursor: "pointer",
     },
     titleDate: {
       marginTop: 0,
@@ -90,17 +91,16 @@ function timeFormat(time: number, type: string = "time") {
 
 export default function SearchList() {
   const dispatch = useDispatch();
-  const schedule1 = useSelector<RootState>((state) => state.schedule);
-  console.log(schedule1);
-  // let name =
   let name: string | string[] = useLocation().pathname.split("/");
   const _name = name[name.length - 1];
   React.useEffect(() => {
-    dispatch(getScheduleList({ teacher_name: _name }));
-  }, [_name, dispatch, name]);
+    dispatch(getSearchScheduleList({ teacher_name: _name, page: 1 }));
+  }, [_name, dispatch]);
+  const { searchScheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  // console.log(schedule1.scheduleList);
   const classes = useStyles();
 
-  const [scheduleList, setScheduleList] = React.useState(searchList.data);
+  // const [scheduleList, setScheduleList] = React.useState(searchList.data);
 
   const history = useHistory();
 
@@ -111,7 +111,7 @@ export default function SearchList() {
       return value1 - value2;
     };
   }
-  scheduleList.sort(compare("start_at"));
+  // scheduleList.sort(compare("start_at"));
 
   let someone: any;
 
@@ -119,7 +119,7 @@ export default function SearchList() {
     if (number === 0) {
       someone = true;
     } else {
-      scheduleList.forEach((item: any, index: number) => {
+      searchScheduleList.forEach((item: any, index: number) => {
         if (index < number) {
           if (timeFormat(item.start_at, "dateDay") === timeFormat(date.start_at, "dateDay")) {
             someone = false;
@@ -227,52 +227,63 @@ export default function SearchList() {
 
   const getBottom = (value: any) => {
     if (value) {
-      setScheduleList([...scheduleList, ...listssss]);
+      // setScheduleList([...scheduleList, ...listssss]);
+      let page: number = parseInt(`${listssss.length / 10}`) + 1;
+      dispatch(getSearchScheduleList({ teacher_name: _name, page }));
     }
   };
 
   return (
     <Box className={classes.listContainer}>
-      {scheduleList.map((item: any, index: number) => (
-        <div key={index} className={classes.partItem}>
-          {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
-          <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
-            <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
-            <Grid container alignItems="center" className={classes.firstLine}>
-              <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
-                <span className={classes.timeItem}>
-                  <AccessTime className={classes.clockIcon} />
-                </span>
-                <span className={classes.timeItem}>
-                  {timeFormat(item.start_at, "timeOnly")} - {timeFormat(item.end_at, "timeOnly")}
-                </span>
-              </Grid>
-              <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
-                <span className={classes.timeItem}>{item.lesson_plan.name}</span>
-              </Grid>
-            </Grid>
-            <Grid container alignItems="center">
-              <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
-                <span className={classes.timeItem}>
-                  <PeopleOutlineOutlined className={classes.clockIcon} />
-                </span>
-                <span className={classes.timeItem}>{item.teachers[0].name}</span>
-              </Grid>
-              <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
-                <span className={classes.timeItem}>{item.program.name}</span>
-              </Grid>
-            </Grid>
-          </Card>
-        </div>
-      ))}
-      {scheduleList.length % 10 === 0 ? (
-        <VisibilitySensor onChange={getBottom}>
-          <div className={classes.circle}>
-            <CircularProgress />
-          </div>
-        </VisibilitySensor>
+      {searchScheduleList && searchScheduleList.length > 0 ? (
+        <>
+          {searchScheduleList.map((item: any, index: number) => (
+            <div key={index} className={classes.partItem}>
+              {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
+              <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
+                <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
+                <Grid container alignItems="center" className={classes.firstLine}>
+                  <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
+                    <span className={classes.timeItem}>
+                      <AccessTime className={classes.clockIcon} />
+                    </span>
+                    <span className={classes.timeItem}>
+                      {timeFormat(item.start_at, "timeOnly")} - {timeFormat(item.end_at, "timeOnly")}
+                    </span>
+                  </Grid>
+                  <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
+                    <span className={classes.timeItem}>{item.lesson_plan.name}</span>
+                  </Grid>
+                </Grid>
+                <Grid container alignItems="center">
+                  <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
+                    <span className={classes.timeItem}>
+                      <PeopleOutlineOutlined className={classes.clockIcon} />
+                    </span>
+                    <span className={classes.timeItem}>{item.teachers[0].name}</span>
+                  </Grid>
+                  <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
+                    <span className={classes.timeItem}>{item.program.name}</span>
+                  </Grid>
+                </Grid>
+              </Card>
+            </div>
+          ))}
+          {searchScheduleList.length % 10 === 0 ? (
+            <VisibilitySensor onChange={getBottom}>
+              <div className={classes.circle}>
+                <CircularProgress />
+              </div>
+            </VisibilitySensor>
+          ) : (
+            <div className={classes.circle}>{"No More Data"}</div>
+          )}
+        </>
       ) : (
-        <div className={classes.circle}>{"No More Data"}</div>
+        <div style={{ textAlign: "center" }}>
+          <img src={emptyBox} alt="" />
+          <p>No Data</p>
+        </div>
       )}
     </Box>
   );

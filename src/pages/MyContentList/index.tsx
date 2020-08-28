@@ -1,18 +1,19 @@
 import { Typography } from "@material-ui/core";
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import mockContentList from "../../mocks/content.json";
 import mockList from "../../mocks/contentList.json";
+import { contentList } from "../../reducers/content";
 import ActionBar from "./ActionBar";
 import CardList from "./CardList";
 import TableList from "./TableList";
-
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const layout = query.get("layout") || "card";
-  const status = query.get("status") || "published";
+  const status = query.get("status") || "";
   const subStatus = query.get("subStatus") || "";
   const name = query.get("name") || "";
   const sortBy = query.get("sortBy") || "";
@@ -21,11 +22,16 @@ const useQuery = () => {
 };
 
 export default function MyContentList() {
-  // const dispatch = useDispatch();
   const { layout, status, subStatus, name, sortBy, myOnly } = useQuery();
   const showMyOnly = status === "published";
   const total = mockList.length;
+  const [checkedContents, setCheckedContent] = React.useState<string[]>([]);
 
+  const onChangeCheckedContents = (checkedContentsArr: string[]) => {
+    setCheckedContent(checkedContentsArr);
+    console.log(checkedContents);
+  };
+  const dispatch = useDispatch();
   useEffect(() => {
     function mapQuery(name: string, status: string, subStatus: string, sortBy: string, myOnly: string) {
       const query: any = {};
@@ -49,14 +55,23 @@ export default function MyContentList() {
       return query;
     }
     console.log(mapQuery(name, status, subStatus, sortBy, myOnly));
-    // dispatch(contentList(mapQuery(name, status)))
-  }, [status, subStatus, name, sortBy, myOnly]);
+    dispatch(contentList(mapQuery(name, status, subStatus, sortBy, myOnly)));
+  }, [status, subStatus, name, sortBy, myOnly, dispatch]);
   return (
     <div>
-      <ActionBar layout={layout} status={status} showMyOnly={showMyOnly} subStatus={subStatus} />
+      <ActionBar
+        layout={layout}
+        status={status}
+        showMyOnly={showMyOnly}
+        subStatus={subStatus}
+        myOnly={myOnly ? true : false}
+        sortBy={sortBy}
+        name={name}
+        checkedContents={checkedContents}
+      />
       {layout === "card" ? (
         mockContentList.length > 0 ? (
-          <CardList list={mockContentList} total={total} />
+          <CardList list={mockContentList} total={total} onChangeCheckedContents={onChangeCheckedContents} />
         ) : (
           <div style={{ margin: "0 auto", textAlign: "center" }}>
             <img src={emptyIconUrl} alt="" />

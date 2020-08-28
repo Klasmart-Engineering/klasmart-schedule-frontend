@@ -72,14 +72,17 @@ function Tool(props: ToolProps) {
   const [type, setModelType] = React.useState(20);
   const [teacherName, setTeacherName] = React.useState("");
   const history = useHistory();
-  const { includeList, changeModelView, modelView } = props;
+  const { includeList, changeTimesTamp, changeModelView, modelView } = props;
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSearchValue(event.target.value as string);
   };
 
   const selectToday = () => {
-    console.log(123213);
+    changeTimesTamp({
+      start: Math.floor(new Date().getTime() / 1000),
+      end: Math.floor(new Date().getTime() / 1000),
+    });
   };
 
   const searchChange = (): void => {
@@ -133,12 +136,30 @@ function Tool(props: ToolProps) {
   );
 }
 
-interface ToolProps {
+interface timesTampType {
+  start: number;
+  end: number;
+}
+
+interface CalendarStateProps {
+  timesTamp: timesTampType;
+  changeTimesTamp: (value: object) => void;
+}
+
+interface ToolProps extends CalendarStateProps {
   includeList: boolean;
   modelView: string;
   changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 export default function ScheduleTool(props: ToolProps) {
-  const { includeList, changeModelView, modelView } = props;
-  return <Tool includeList={includeList} changeModelView={changeModelView} modelView={modelView} />;
+  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView } = props;
+  return (
+    <Tool
+      includeList={includeList}
+      changeTimesTamp={changeTimesTamp}
+      timesTamp={timesTamp}
+      changeModelView={changeModelView}
+      modelView={modelView}
+    />
+  );
 }
