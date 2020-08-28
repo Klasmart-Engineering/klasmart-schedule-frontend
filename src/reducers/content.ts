@@ -6,7 +6,7 @@ import { apiGetMockOptions, MockOptions } from "../api/extra";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
-  contentDetial: Content;
+  contentDetail: Content;
   mediaList: Content[];
   mockOptions: MockOptions;
 }
@@ -17,7 +17,7 @@ interface RootState {
 
 const initialState: IContentState = {
   history: undefined,
-  contentDetial: {
+  contentDetail: {
     id: "",
     content_type: 0,
     suggest_time: 0,
@@ -78,7 +78,7 @@ interface onLoadContentEditPayload {
 }
 
 interface onLoadContentEditResult {
-  contentDetial?: AsyncReturnType<typeof api.contents.getContentById>;
+  contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
   mediaList?: AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
   mockOptions?: MockOptions;
 }
@@ -86,9 +86,10 @@ interface onLoadContentEditResult {
 export const save = createAsyncThunk<Content, Content, { state: RootState }>("content/save", async (payload, { getState }) => {
   let {
     content: {
-      contentDetial: { id },
+      contentDetail: { id },
     },
   } = getState();
+  // debugger
   if (!id) {
     id = (await api.contents.createContent(payload)).id;
   } else {
@@ -100,7 +101,7 @@ export const save = createAsyncThunk<Content, Content, { state: RootState }>("co
 export const publish = createAsyncThunk<Content, Required<Content>["id"], { state: RootState }>("content/publish", (id, { getState }) => {
   const {
     content: {
-      contentDetial: { publish_scope },
+      contentDetail: { publish_scope },
     },
   } = getState();
   // debugger;
@@ -117,8 +118,8 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
     // debugger;
-    const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetial;
-    const mediaList = await api.contents.searchContents({ content_type: type === "material" ? "assets" : "material", name: searchText });
+    const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
+    const mediaList = await api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText });
     const mockOptions = await apiGetMockOptions();
     return { contentDetail, mediaList, mockOptions };
   }
@@ -141,7 +142,7 @@ const { actions, reducer } = createSlice({
   extraReducers: {
     // todo: PayloadAction<Content>  应该从 save 中获取类型
     [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
-      state.contentDetial = payload;
+      state.contentDetail = payload;
       // alert("success");
     },
     [save.rejected.type]: (state, { error }: any) => {
@@ -154,8 +155,9 @@ const { actions, reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
-      if (payload.contentDetial) {
-        state.contentDetial = payload.contentDetial;
+      // debugger
+      if (payload.contentDetail) {
+        state.contentDetail = payload.contentDetail;
       }
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;

@@ -58,7 +58,7 @@ export default function ContentEdit() {
     control,
     formState: { isDirty },
   } = formMethods;
-  const { contentDetial, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentDetail, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
   const { id, searchText } = useQuery();
   const history = useHistory();
@@ -82,27 +82,12 @@ export default function ContentEdit() {
     if (!id) return;
     dispatch(publish(id));
   }, [dispatch, id]);
-  (window as any).publish = publish;
-  (window as any).dispatch = dispatch;
-
   const handleSave = useMemo(
     () =>
       handleSubmit((value: CreateContentRequest) => {
         // const keywords=value.keywords.split(",");
         const suggest_time = Number(value.suggest_time);
-        return (
-          // async ()=> {
-          //     try {
-          //       const resultAction = await dispatch(save({...value,suggest_time,content_type:1,data:JSON.stringify(value.data)})) as any
-
-          //       const user = unwrapResult(resultAction)
-
-          //     } catch (err) {
-          //     }
-          //   }
-
-          dispatch(save({ ...value, suggest_time, content_type: 1, data: JSON.stringify(value.data) })) as any
-        );
+        return dispatch(save({ ...value, suggest_time, content_type: 1, data: JSON.stringify(value.data) })) as any;
       }),
     [handleSubmit, dispatch]
   );
@@ -126,7 +111,7 @@ export default function ContentEdit() {
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
-      <Details contentDetail={contentDetial} formMethods={formMethods} mockOptions={mockOptions} />
+      <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
       <Outcomes comingsoon />
       <MediaAssets list={mediaList} comingsoon onSearch={handleSearch} searchText={searchText} />
     </ContentTabs>
@@ -138,9 +123,9 @@ export default function ContentEdit() {
           <MediaAssetsEdit readonly={readonly} overlay />
         </ContentH5p>
       )}
-      {includeH5p && !includeAsset && <Controller name="data" as={ContentH5p} defaultValue={contentDetial.data} control={control} />}
+      {includeH5p && !includeAsset && <Controller name="data" as={ContentH5p} defaultValue={contentDetail.data} control={control} />}
       {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
-      {includePlanComposeGraphic && <Controller name="data" as={PlanComposeGraphic} defaultValue={contentDetial} control={control} />}
+      {includePlanComposeGraphic && <Controller name="data" as={PlanComposeGraphic} defaultValue={contentDetail} control={control} />}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );
@@ -148,7 +133,7 @@ export default function ContentEdit() {
   return (
     <DndProvider backend={HTML5Backend}>
       <ContentHeader
-        contentDetial={contentDetial}
+        contentDetail={contentDetail}
         lesson={lesson}
         onChangeLesson={handleChangeLesson}
         onCancel={reset}
