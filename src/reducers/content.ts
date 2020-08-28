@@ -11,6 +11,7 @@ interface IContentState {
   mockOptions: MockOptions;
   total: number;
   contentsList: Content[];
+  contentPreview: Content;
 }
 
 interface RootState {
@@ -63,6 +64,38 @@ const initialState: IContentState = {
   },
   total: 0,
   contentsList: [],
+  contentPreview: {
+    id: "",
+    content_type: 0,
+    suggest_time: 0,
+    grade: [],
+    name: "",
+    program: [],
+    subject: [],
+    developmental: [],
+    skills: [],
+    age: [],
+    keywords: [],
+    description: "",
+    thumbnail: "",
+    version: 0,
+    source_id: "",
+    locked_by: "",
+    data: {},
+    extra: "",
+    author: "",
+    author_name: "",
+    org: "",
+    publish_scope: "",
+    publish_status: "published",
+    content_type_name: "",
+    program_name: [],
+    subject_name: [],
+    developmental_name: [],
+    skills_name: [],
+    age_name: [],
+    org_name: "",
+  },
 };
 
 type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -147,10 +180,14 @@ export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathRe
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
 type IQueryContentsResult = ReturnType<typeof api.contents.searchContents>;
-export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("contents/contents", async (query) => {
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contents", async (query) => {
   const { list, total } = await api.contents.searchContents(query);
   return { list, total };
 });
+
+export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentById", (id) =>
+  api.contents.getContentById(id)
+);
 
 export const deleteContent = createAsyncThunk<Content, Required<Content>["id"]>("content/deleteContent", (id) => {
   return api.contents.deleteContent(id);
@@ -172,6 +209,12 @@ export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDLi
     return api.contentsBulk.publishContentBulk(id);
   }
 );
+export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
+  return api.contentsReview.approveContentReview(id);
+});
+export const rejectContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
+  return api.contentsReview.rejectContentReview(id, {});
+});
 
 const { actions, reducer } = createSlice({
   name: "content",
@@ -225,12 +268,23 @@ const { actions, reducer } = createSlice({
     [contentLists.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
+    [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentPreview = payload;
+    },
+    [getContentDetailById.rejected.type]: (state, { error }: any) => {
+      alert(JSON.stringify(error));
+    },
     [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [deleteContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {},
+    [deleteContent.rejected.type]: (state, { error }: any) => {},
     [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [publishContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {},
+    [publishContent.rejected.type]: (state, { error }: any) => {},
     [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [bulkPublishContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {},
+    [bulkPublishContent.rejected.type]: (state, { error }: any) => {},
+    [approveContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [approveContent.rejected.type]: (state, { error }: any) => {},
+    [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [rejectContent.rejected.type]: (state, { error }: any) => {},
   },
 });
 

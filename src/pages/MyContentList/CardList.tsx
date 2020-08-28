@@ -20,7 +20,7 @@ import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
 import DocIconUrl from "../../assets/icons/doc.svg";
 import MaterialIconUrl from "../../assets/icons/material.svg";
@@ -176,13 +176,13 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 }));
 
 interface ActionProps {
-  id: string;
+  id?: string;
 }
 function PublishedAction(props: ActionProps) {
   const dispatch = useDispatch();
   const css = useStyles();
   const handleRemovePublished = (e: any) => {
-    dispatch(deleteContent(props.id));
+    dispatch(deleteContent(props.id || ""));
   };
   return (
     <React.Fragment>
@@ -195,7 +195,7 @@ function UnpublishedAction(props: ActionProps) {
   const dispatch = useDispatch();
   const css = useStyles();
   const handleDeleteUnpublished = (e: any) => {
-    dispatch(deleteContent(props.id));
+    dispatch(deleteContent(props.id || ""));
   };
   return (
     <React.Fragment>
@@ -208,10 +208,10 @@ function ArchivedAction(props: ActionProps) {
   const dispatch = useDispatch();
   const css = useStyles();
   const handlePublish = (e: any) => {
-    dispatch(publishContent(props.id));
+    dispatch(publishContent(props.id || ""));
   };
   const handleDeleteArchived = (e: any) => {
-    dispatch(deleteContent(props.id));
+    dispatch(deleteContent(props.id || ""));
   };
   return (
     <div>
@@ -236,15 +236,14 @@ function ContentCard(props: ContentProps) {
     onCheckedChange(event.target.checked, id || "");
   };
   const handleGoPreview = (event: any, id?: string) => {
-    console.log(id);
-    history.push(`/library/content-preview/${id}`);
+    history.push(`/library/content-preview?id=${id}`);
   };
   const setThumbnail = () => {
     if (!content?.thumbnail && content?.content_type_name === "document") return DocIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "lesson") return PlanIconUrl;
+    if (!content?.thumbnail && content?.content_type_name === "LESSON") return PlanIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "MATERIAL") return MaterialIconUrl;
     if (content?.thumbnail) return content?.thumbnail;
   };

@@ -45,8 +45,8 @@ export default function MyContentList() {
       if (sortBy) {
         if (sortBy === "10") query["order_by"] = "content_name";
         if (sortBy === "20") query["order_by"] = "-content_name";
-        if (sortBy === "30") query["order_by"] = "created_at";
-        if (sortBy === "40") query["order_by"] = "-created_at";
+        if (sortBy === "30") query["order_by"] = "create_at";
+        if (sortBy === "40") query["order_by"] = "-create_at";
       }
       if (myOnly) {
         query["author"] = "{self}";

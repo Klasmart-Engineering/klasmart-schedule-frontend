@@ -36,7 +36,7 @@ export type CreateContentRequest = {
   keywords?: string[];
   description?: string;
   thumbnail?: string;
-  data?: object;
+  data?: string;
   extra?: string;
   publish_scope?: string;
 };
@@ -85,6 +85,7 @@ export type Content = {
   publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
   content_type_name?: string;
   program_name?: string[];
+  grade_name?: string[];
   subject_name?: string[];
   developmental_name?: string[];
   skills_name?: string[];
@@ -228,15 +229,19 @@ export interface ScheduleCreate {
 
   /** repeat options, only work when mode_type equal Repeat, */
   repeat?: {
-    type?: "never" | "after_count" | "after_time";
+    type?: "daily" | "weekly" | "monthly" | "yearly";
     daily?: { interval?: number; end?: RepeatEnd };
-    weekly?: { interval?: number; on?: ("sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat")[]; end?: RepeatEnd };
+    weekly?: {
+      interval?: number;
+      on?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
+      end?: RepeatEnd;
+    };
     monthly?: {
       interval?: number;
       on_type?: "date" | "week";
       on_date_day?: number;
       on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
-      on_week?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+      on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
       end?: RepeatEnd;
     };
     yearly?: {
@@ -246,7 +251,7 @@ export interface ScheduleCreate {
       on_date_day?: number;
       on_week_month?: number;
       on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
-      on_week?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+      on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
       end?: RepeatEnd;
     };
   };
@@ -314,15 +319,19 @@ export interface ScheduleUpdate {
 
   /** repeat options, only work when mode_type equal Repeat, */
   repeat?: {
-    type?: "never" | "after_count" | "after_time";
+    type?: "daily" | "weekly" | "monthly" | "yearly";
     daily?: { interval?: number; end?: RepeatEnd };
-    weekly?: { interval?: number; on?: ("sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat")[]; end?: RepeatEnd };
+    weekly?: {
+      interval?: number;
+      on?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
+      end?: RepeatEnd;
+    };
     monthly?: {
       interval?: number;
       on_type?: "date" | "week";
       on_date_day?: number;
       on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
-      on_week?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+      on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
       end?: RepeatEnd;
     };
     yearly?: {
@@ -332,7 +341,7 @@ export interface ScheduleUpdate {
       on_date_day?: number;
       on_week_month?: number;
       on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
-      on_week?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+      on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
       end?: RepeatEnd;
     };
   };
@@ -394,15 +403,19 @@ export interface ScheduleDetailed {
 
   /** repeat options, only work when mode_type equal Repeat, */
   repeat?: {
-    type?: "never" | "after_count" | "after_time";
+    type?: "daily" | "weekly" | "monthly" | "yearly";
     daily?: { interval?: number; end?: RepeatEnd };
-    weekly?: { interval?: number; on?: ("sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat")[]; end?: RepeatEnd };
+    weekly?: {
+      interval?: number;
+      on?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
+      end?: RepeatEnd;
+    };
     monthly?: {
       interval?: number;
       on_type?: "date" | "week";
       on_date_day?: number;
       on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
-      on_week?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+      on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
       end?: RepeatEnd;
     };
     yearly?: {
@@ -412,7 +425,7 @@ export interface ScheduleDetailed {
       on_date_day?: number;
       on_week_month?: number;
       on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
-      on_week?: "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
+      on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
       end?: RepeatEnd;
     };
   };
@@ -1019,7 +1032,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create schedule
      */
     createSchedule: (data: ScheduleCreate, params?: RequestParams) =>
-      this.request<{ id?: string }, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
+      this.request<string, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule
@@ -1063,7 +1076,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description query schedules
      */
-    schedulesTimeView: (query: { view_type?: string; time_at: string | null }, params?: RequestParams) =>
+    schedulesTimeView: (query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null }, params?: RequestParams) =>
       this.request<{ list?: ScheduleTimeView[] }, any>(
         `/schedules_time_view${this.addQueryParams(query)}`,
         "GET",

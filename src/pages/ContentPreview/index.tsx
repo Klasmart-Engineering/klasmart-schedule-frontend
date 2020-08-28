@@ -3,9 +3,18 @@ import { Box, Button, CardMedia, Chip, Grid, InputAdornment, Tab, Tabs, TextFiel
 // import LayoutPair from "../ContentEdit/Layout";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
-import mockData from "../../mocks/content.json";
+import DocIconUrl from "../../assets/icons/doc.svg";
+import MaterialIconUrl from "../../assets/icons/material.svg";
+import MusicIconUrl from "../../assets/icons/music.svg";
+import PicIconUrl from "../../assets/icons/pic.svg";
+import PlanIconUrl from "../../assets/icons/plan.svg";
+import VideoIconUrl from "../../assets/icons/video.svg";
+import { RootState } from "../../reducers";
+import { approveContent, deleteContent, getContentDetailById, publishContent, rejectContent } from "../../reducers/content";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -88,11 +97,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function PublishedBtn() {
+interface ActionProps {
+  id: string;
+}
+function PublishedBtn(props: ActionProps) {
   const css = useStyles();
+  const dispatch = useDispatch();
+  const deleteContetn = () => {
+    dispatch(deleteContent(props.id));
+  };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined">
+      <Button className={css.publistedBtn} variant="outlined" onClick={deleteContetn}>
         Remove
       </Button>
       <Button color="primary" variant="contained">
@@ -101,51 +117,78 @@ function PublishedBtn() {
     </Box>
   );
 }
-
-function WaitingBtn() {
+interface ActionProps {
+  id: string;
+}
+function WaitingBtn(props: ActionProps) {
   const css = useStyles();
+  const dispatch = useDispatch();
+  const deleteContetn = () => {
+    dispatch(deleteContent(props.id));
+  };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined">
+      <Button className={css.publistedBtn} variant="outlined" onClick={deleteContetn}>
         Delete
       </Button>
     </Box>
   );
 }
 
-function PendingBtn() {
+interface CheckProps {
+  id: string;
+}
+function PendingBtn(props: CheckProps) {
   const css = useStyles();
+  const dispatch = useDispatch();
+  const handelApproveContent = () => {
+    dispatch(approveContent(props.id));
+  };
+  const handleRejectContent = () => {
+    dispatch(rejectContent(props.id));
+  };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.rejectBtn} variant="contained">
+      <Button className={css.rejectBtn} variant="contained" onClick={handleRejectContent}>
         Reject
       </Button>
-      <Button className={css.approveBtn} variant="contained">
+      <Button className={css.approveBtn} variant="contained" onClick={handelApproveContent}>
         Approve
       </Button>
     </Box>
   );
 }
 
-function ArchiveBtn() {
+function ArchiveBtn(props: ActionProps) {
   const css = useStyles();
+  const dispatch = useDispatch();
+  const handleDeleteContent = () => {
+    dispatch(deleteContent(props.id));
+  };
+  const handleRepublishContent = () => {
+    dispatch(publishContent(props.id));
+  };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined">
+      <Button className={css.publistedBtn} variant="outlined" onClick={handleDeleteContent}>
         Delete
       </Button>
-      <Button className={css.approveBtn} variant="contained">
+      <Button className={css.approveBtn} variant="contained" onClick={handleRepublishContent}>
         Republish
       </Button>
     </Box>
   );
 }
 
-function DraftRejectBtn() {
+function DraftRejectBtn(props: ActionProps) {
   const css = useStyles();
+  const dispatch = useDispatch();
+  const deleteContetn = () => {
+    dispatch(deleteContent(props.id));
+  };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined">
+      <Button className={css.publistedBtn} variant="outlined" onClick={deleteContetn}>
         Delete
       </Button>
       <Button color="primary" variant="contained">
@@ -156,12 +199,29 @@ function DraftRejectBtn() {
 }
 
 export default function ContentPreview(props: Content) {
-  const data = mockData[0];
+  const dispatch = useDispatch();
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const id = query.get("id") || "";
+  // const data = mockData[0];
   const css = useStyles();
   const [value, setValue] = React.useState(0);
-  const names = ["11111", "22222", "33333"];
+  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
+  };
+  useEffect(() => {
+    console.log(id);
+    dispatch(getContentDetailById(id));
+  }, [dispatch, id]);
+  const setThumbnail = () => {
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "document") return DocIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "audio") return MusicIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "img") return PicIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "video") return VideoIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "LESSON") return PlanIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "MATERIAL") return MaterialIconUrl;
+    if (contentPreview?.thumbnail) return contentPreview?.thumbnail;
   };
   return (
     <Box className={css.container}>
@@ -171,10 +231,10 @@ export default function ContentPreview(props: Content) {
         </Box>
         <Typography className={css.text}>Title</Typography>
         <Box className={css.nameCon}>
-          <Typography className={css.text}>{data.name}</Typography>
-          <Chip size="small" color="primary" label={data.content_type_name} />
+          <Typography className={css.text}>{contentPreview.name}</Typography>
+          <Chip size="small" color="primary" label={contentPreview.content_type_name} />
         </Box>
-        <CardMedia className={css.img} component="img" image={data.img} />
+        <CardMedia className={css.img} component="img" image={setThumbnail()} />
         <Tabs
           className={css.tab}
           value={value}
@@ -195,32 +255,32 @@ export default function ContentPreview(props: Content) {
           rows={2}
           label="Description"
           variant="outlined"
-          value={data.description}
+          value={contentPreview.description}
         />
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <TextField label="Program" fullWidth variant="outlined" value={data.program_name} />
+            <TextField label="Program" fullWidth variant="outlined" value={contentPreview.program_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Subject" fullWidth variant="outlined" value={data.subject_name} />
+            <TextField label="Subject" fullWidth variant="outlined" value={contentPreview.subject_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Development" fullWidth variant="outlined" value={data.developmental_name} />
+            <TextField label="Development" fullWidth variant="outlined" value={contentPreview.developmental_name?.join(",")} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Skills" fullWidth variant="outlined" value={data.skills} />
+            <TextField label="Skills" fullWidth variant="outlined" value={contentPreview.skills} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Visibility Settings" fullWidth variant="outlined" value={data.settings} />
+            <TextField label="Visibility Settings" fullWidth variant="outlined" value={contentPreview.publish_scope} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Duration" fullWidth variant="outlined" value={"Duration"} />
+            <TextField label="Duration" fullWidth variant="outlined" value={contentPreview.suggest_time} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Suitable Age" fullWidth variant="outlined" value={data.age_name} />
+            <TextField label="Suitable Age" fullWidth variant="outlined" value={contentPreview.age_name?.join(",")} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Grade" fullWidth variant="outlined" value={"Grade"} />
+            <TextField label="Grade" fullWidth variant="outlined" />
           </Grid>
         </Grid>
         <TextField
@@ -231,22 +291,22 @@ export default function ContentPreview(props: Content) {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                {data.keywords.map((value) => (
+                {contentPreview.keywords?.map((value) => (
                   <Chip key={value} label={value} className={css.chip} />
                 ))}
               </InputAdornment>
             ),
           }}
         ></TextField>
-        {data.publish_status === "published" && <PublishedBtn />}
-        {data.publish_status === "rejected" && <DraftRejectBtn />}
-        {data.publish_status === "pending" && <PendingBtn />}
-        {data.publish_status === "waiting" && <WaitingBtn />}
-        {data.publish_status === "archived" && <ArchiveBtn />}
+        {contentPreview.publish_status === "published" && <PublishedBtn id={id} />}
+        {(contentPreview.publish_status === "draft" || contentPreview.publish_status === "rejected") && <DraftRejectBtn id={id} />}
+        {contentPreview.publish_status === "pending" && <PendingBtn id={id} />}
+        {/* {contentPreview.publish_status === "pending" && <WaitingBtn onDeleteContent={onDeleteContent} id={id} />} */}
+        {contentPreview.publish_status === "archive" && <ArchiveBtn id={id} />}
       </Box>
       <Box className={css.right}>right</Box>
     </Box>
   );
 }
 ContentPreview.routeBasePath = "/library/content-preview";
-ContentPreview.routeMatchPath = "/library/content-preview/id/:id";
+// ContentPreview.routeMatchPath = "/library/content-preview/id/:id";
