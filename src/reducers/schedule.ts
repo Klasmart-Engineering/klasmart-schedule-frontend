@@ -4,7 +4,7 @@ import { Schedule } from "../api/api";
 
 export interface ScheduleState {
   total: number;
-  scheduleList: Schedule[];
+  searchScheduleList: Schedule[];
 }
 
 interface Rootstate {
@@ -13,7 +13,7 @@ interface Rootstate {
 
 const initialState: ScheduleState = {
   total: 0,
-  scheduleList: [],
+  searchScheduleList: [],
 };
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
@@ -29,7 +29,7 @@ const { reducer } = createSlice({
   reducers: {},
   extraReducers: {
     [getScheduleList.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleList = payload.scheduleList;
+      state.searchScheduleList = payload.data;
       state.total = payload.total;
     },
   },

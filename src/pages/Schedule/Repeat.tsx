@@ -173,27 +173,33 @@ function RepeatCycle(props: any) {
       selectedDays.push(weekends[index].day);
     }
 
-    dispatch({ type: "handleWeekdaySelect", data: selectedDays });
+    // dispatch({ type: "handleWeekdaySelect", data: selectedDays });
+    dispatch({ type: "changeData", data: { ...state, weekdays: selectedDays } });
   };
 
   const changeOnThe = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "changeOnThe", data: event.target.value });
+    // dispatch({ type: "changeData", data: event.target.value });
+    dispatch({ type: "changeData", data: { ...state, onThe: event.target.value } });
   };
 
   const handelSpecificDayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handelSpecificDayChange", data: event.target.value as number });
+    // dispatch({ type: "handelSpecificDayChange", data: event.target.value as number });
+    dispatch({ type: "changeData", data: { ...state, specificDayChange: event.target.value as number } });
   };
 
   const handleOrderChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleOrderChange", data: event.target.value });
+    // dispatch({ type: "handleOrderChange", data: event.target.value });
+    dispatch({ type: "changeData", data: { ...state, order: event.target.value } });
   };
 
   const handleWeekdayChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleWeekdayChange", data: event.target.value as string });
+    // dispatch({ type: "handleWeekdayChange", data: event.target.value as string });
+    dispatch({ type: "changeData", data: { ...state, weekday: event.target.value as string } });
   };
 
   const handleMonthChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleMonthChange", data: event.target.value as string });
+    // dispatch({ type: "handleMonthChange", data: event.target.value as string });
+    dispatch({ type: "changeData", data: { ...state, month: event.target.value as string } });
   };
 
   return (
@@ -322,15 +328,18 @@ function EndRepeat(props: any) {
   const { endRepeat, occurrence, time } = state;
 
   const handelleEndRepeatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "handelleEndRepeatChange", data: event.target.value });
+    // dispatch({ type: "handelleEndRepeatChange", data: event.target.value });
+    dispatch({ type: "changeData", data: { ...state, endRepeat: event.target.value } });
   };
 
   const handleOccurrenceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleOccurrenceChange", data: event.target.value as number });
+    // dispatch({ type: "handleOccurrenceChange", data: event.target.value as number });
+    dispatch({ type: "changeData", data: { ...state, occurrence: event.target.value as number } });
   };
 
   const handleTimeChange = (date: any) => {
-    dispatch({ type: "handleTimeChange", data: date });
+    // dispatch({ type: "handleTimeChange", data: date });
+    dispatch({ type: "changeData", data: { ...state, time: date } });
   };
 
   return (
@@ -394,11 +403,15 @@ function RepeatHeader(props: any) {
   const { cycle, cycleTime } = state;
 
   const handleChangeCycle = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleChangeCycle", data: event.target.value as string });
+    // dispatch({ type: "handleChangeCycle", data: event.target.value as string });
+    dispatch({ type: "changeData", data: { ...state, cycle: event.target.value as string } });
   };
   const handleChangeCycleTime = (event: React.ChangeEvent<{ value: unknown }>) => {
-    dispatch({ type: "handleChangeCycleTime", data: event.target.value as number });
+    // dispatch({ type: "handleChangeCycleTime", data: event.target.value as number });
+    dispatch({ type: "changeData", data: { ...state, cycleTime: event.target.value as number } });
   };
+
+  const endAdornment = cycle === "daily" ? "day(s)" : cycle === "weekly" ? "week(s)" : "month(s)";
 
   return (
     <div>
@@ -413,6 +426,7 @@ function RepeatHeader(props: any) {
           label={cycle}
           required
         >
+          <MenuItem value={"daily"}>Daily</MenuItem>
           <MenuItem value={"weekly"}>Weekly</MenuItem>
           <MenuItem value={"monthly"}>Monthly</MenuItem>
           <MenuItem value={"yearly"}>Yearly</MenuItem>
@@ -428,7 +442,7 @@ function RepeatHeader(props: any) {
               id="outlined-adornment-weight"
               value={cycleTime}
               onChange={handleChangeCycleTime}
-              endAdornment={cycle === "weekly" ? "week(s)" : "month(s)"}
+              endAdornment={endAdornment}
               aria-describedby="outlined-weight-helper-text"
               inputProps={{
                 "aria-label": "weight",
@@ -445,6 +459,7 @@ function RepeatHeader(props: any) {
 export default function RepeatSchedule() {
   const classes = useStyles();
   const [state, dispatch] = useRepeatSchedule();
+  // console.log(state)
   return (
     <Card className={classes.container}>
       <RepeatHeader state={state} dispatch={dispatch} />

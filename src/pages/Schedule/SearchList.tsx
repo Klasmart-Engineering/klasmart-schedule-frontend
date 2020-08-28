@@ -95,8 +95,8 @@ export default function SearchList() {
   const _name = name[name.length - 1];
   React.useEffect(() => {
     dispatch(getScheduleList({ teacher_name: _name, page: 1 }));
-  }, [_name, dispatch, name]);
-  const { scheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  }, [_name, dispatch]);
+  const { searchScheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   // console.log(schedule1.scheduleList);
   const classes = useStyles();
 
@@ -119,7 +119,7 @@ export default function SearchList() {
     if (number === 0) {
       someone = true;
     } else {
-      scheduleList.forEach((item: any, index: number) => {
+      searchScheduleList.forEach((item: any, index: number) => {
         if (index < number) {
           if (timeFormat(item.start_at, "dateDay") === timeFormat(date.start_at, "dateDay")) {
             someone = false;
@@ -235,9 +235,9 @@ export default function SearchList() {
 
   return (
     <Box className={classes.listContainer}>
-      {scheduleList && scheduleList.length > 0 ? (
+      {searchScheduleList && searchScheduleList.length > 0 ? (
         <>
-          {scheduleList.map((item: any, index: number) => (
+          {searchScheduleList.map((item: any, index: number) => (
             <div key={index} className={classes.partItem}>
               {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
               <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
@@ -269,7 +269,7 @@ export default function SearchList() {
               </Card>
             </div>
           ))}
-          {scheduleList.length % 10 === 0 ? (
+          {searchScheduleList.length % 10 === 0 ? (
             <VisibilitySensor onChange={getBottom}>
               <div className={classes.circle}>
                 <CircularProgress />
