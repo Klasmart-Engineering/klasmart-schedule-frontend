@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "200px",
       backgroundColor: "#009688",
       borderRadius: "16px",
-      padding: "20px 30px 30px",
+      padding: "20px 30px 30px 40px",
       boxSizing: "border-box",
       marginBottom: "30px",
       cursor: "pointer",
@@ -260,7 +260,12 @@ export default function SearchList() {
                     <span className={classes.timeItem}>
                       <PeopleOutlineOutlined className={classes.clockIcon} />
                     </span>
-                    <span className={classes.timeItem}>{item.teachers[0].name}</span>
+                    <span className={classes.timeItem}>
+                      {
+                        // item.teachers[0].name
+                        item.teachers.map((item: any) => `${item.name} `)
+                      }
+                    </span>
                   </Grid>
                   <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
                     <span className={classes.timeItem}>{item.program.name}</span>

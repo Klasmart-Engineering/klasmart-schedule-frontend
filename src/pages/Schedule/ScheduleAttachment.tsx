@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
 import { Box, TextField } from "@material-ui/core";
-import { CloudUploadOutlined, CloudDownloadOutlined, InfoOutlined } from "@material-ui/icons";
-import { withStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
+import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
+import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import React, { useRef } from "react";
 
 const useStyles = makeStyles(() => ({
   fieldset: {
