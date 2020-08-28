@@ -15,6 +15,8 @@ import mockList from "../../mocks/Autocomplete.json";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import { useDispatch } from "react-redux";
+import { saveScheduleData, removeSchedule } from "../../reducers/schedule";
 
 function SmallCalendar(props: CalendarStateProps) {
   const { timesTamp, changeTimesTamp } = props;
@@ -79,6 +81,7 @@ function EditBox(props: CalendarStateProps) {
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
   const { timesTamp } = props;
+  const dispatch = useDispatch();
 
   /*  useEffect(() => {
     const newTopocList = {
@@ -90,20 +93,20 @@ function EditBox(props: CalendarStateProps) {
   }, [scheduleList, timesTamp]);*/
 
   const [scheduleList, setScheduleList] = React.useState<InitData>({
-    repeat: {},
-    is_all_day: false,
-    is_repeat: false,
-    attachment_id: 0,
-    class_id: 0,
+    attachment_id: "",
+    class_id: "",
     class_type: "",
     description: "",
-    due_at: 0,
+    due_at: new Date().getTime() / 1000,
     end_at: new Date().getTime() / 1000,
+    is_all_day: false,
     is_force: false,
-    lesson_plan_id: 0,
-    program_id: 0,
+    is_repeat: false,
+    lesson_plan_id: "",
+    program_id: "",
+    repeat: {},
     start_at: new Date().getTime() / 1000,
-    subject_id: 0,
+    subject_id: "",
     teacher_ids: [],
     title: "",
   });
@@ -200,7 +203,7 @@ function EditBox(props: CalendarStateProps) {
    */
   const saveSchedule = () => {
     // @ts-ignore
-    validatorFun();
+    // validatorFun();
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
@@ -209,6 +212,7 @@ function EditBox(props: CalendarStateProps) {
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     const result = { ...scheduleList, ...addData };
+    dispatch(saveScheduleData({ ...result }));
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -226,6 +230,11 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const handleClose = () => {
+    setOpenStatus(false);
+  };
+
+  const deleteScheduleByid = () => {
+    dispatch(removeSchedule("1"));
     setOpenStatus(false);
   };
 
@@ -261,7 +270,7 @@ function EditBox(props: CalendarStateProps) {
       {
         label: "Delete",
         event: () => {
-          setOpenStatus(false);
+          deleteScheduleByid();
         },
       },
     ];
@@ -540,21 +549,21 @@ function EditBox(props: CalendarStateProps) {
 
 interface InitData {
   title: string;
-  class_id: number;
-  lesson_plan_id: number;
+  class_id: string;
+  lesson_plan_id: string;
   teacher_ids: [];
   start_at: number;
   end_at: number;
-  subject_id: number;
-  program_id: number;
+  repeat: {};
+  subject_id: string;
+  program_id: string;
   class_type: string;
   due_at: number;
   description: string;
-  attachment_id: number;
+  attachment_id: string;
   is_force: boolean;
   is_repeat: boolean;
   is_all_day: boolean;
-  repeat: object;
 }
 
 interface timesTampType {

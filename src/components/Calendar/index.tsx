@@ -8,6 +8,8 @@ import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
 import events from "../../mocks/events";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
+import { removeSchedule } from "../../reducers/schedule";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   calendarBox: {
@@ -25,6 +27,7 @@ function MyCalendar(props: CalendarProps) {
   const history = useHistory();
   const [openStatus, setOpenStatus] = React.useState(false);
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
+  const dispatch = useDispatch();
 
   /**
    * click current schedule
@@ -59,6 +62,11 @@ function MyCalendar(props: CalendarProps) {
     setEnableCustomization(false);
   };
 
+  const deleteScheduleByid = () => {
+    dispatch(removeSchedule("1"));
+    setOpenStatus(false);
+  };
+
   const [enableCustomization, setEnableCustomization] = React.useState(true);
 
   const modalDate: any = {
@@ -77,7 +85,7 @@ function MyCalendar(props: CalendarProps) {
       {
         label: "Delete",
         event: () => {
-          setOpenStatus(false);
+          deleteScheduleByid();
         },
       },
     ],
