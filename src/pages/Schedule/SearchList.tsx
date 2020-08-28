@@ -94,7 +94,7 @@ export default function SearchList() {
   let name: string | string[] = useLocation().pathname.split("/");
   const _name = name[name.length - 1];
   React.useEffect(() => {
-    dispatch(getSearchScheduleList({ teacher_name: _name, page: 1 }));
+    dispatch(getSearchScheduleList({ page: 1, page_size: 10 }));
   }, [_name, dispatch]);
   const { searchScheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   // console.log(schedule1.scheduleList);
@@ -228,8 +228,8 @@ export default function SearchList() {
   const getBottom = (value: any) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
-      let page: number = parseInt(`${listssss.length / 10}`) + 1;
-      dispatch(getSearchScheduleList({ teacher_name: _name, page }));
+      let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
+      dispatch(getSearchScheduleList({ page, page_size: 10 }));
     }
   };
 
