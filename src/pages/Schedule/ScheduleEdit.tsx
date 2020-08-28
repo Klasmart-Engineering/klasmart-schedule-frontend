@@ -18,6 +18,7 @@ import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import { RootState } from "../../reducers";
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 
 function SmallCalendar(props: CalendarStateProps) {
   const { timesTamp, changeTimesTamp } = props;
@@ -81,7 +82,7 @@ function EditBox(props: CalendarStateProps) {
   const history = useHistory();
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
-  const { timesTamp, repeatData } = props;
+  const { timesTamp } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const [classItem, setClassItem] = React.useState<any>({});
