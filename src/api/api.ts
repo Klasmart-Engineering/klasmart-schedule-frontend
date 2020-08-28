@@ -84,11 +84,11 @@ export type Content = {
   publish_scope?: string;
   publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
   content_type_name?: string;
-  program_name?: string;
-  subject_name?: string;
-  developmental_name?: string;
-  skills_name?: string;
-  age_name?: string;
+  program_name?: string[];
+  subject_name?: string[];
+  developmental_name?: string[];
+  skills_name?: string[];
+  age_name?: string[];
   org_name?: string;
 };
 
@@ -1019,7 +1019,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create schedule
      */
     createSchedule: (data: ScheduleCreate, params?: RequestParams) =>
-      this.request<string, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
+      this.request<{ id?: string }, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule

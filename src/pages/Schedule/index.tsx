@@ -6,6 +6,8 @@ import LayoutBox from "../../components/LayoutBox";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import { useDispatch } from "react-redux";
+import { getScheduleTimeViewData } from "../../reducers/schedule";
 
 interface RouteParams {
   rightside: "scheduleTable" | "scheduleList";
@@ -27,6 +29,7 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includeEdit, includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
+  const dispatch = useDispatch();
 
   /**
    * calendar model view change
@@ -46,6 +49,10 @@ function ScheduleContent() {
   const changeTimesTamp = (times: object) => {
     setTimesTamp(times);
   };
+
+  React.useEffect(() => {
+    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
+  }, [modelView, timesTamp, dispatch]);
 
   return (
     <>

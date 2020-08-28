@@ -87,7 +87,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
-  contentDetial?: Content;
+  contentDetail?: Content;
   onCancel: Function;
   onSave: Function;
   onPublish: Function;
@@ -95,7 +95,10 @@ interface HeaderProps {
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetial, onCancel, onPublish, onSave, isDirty } = props;
+  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty } = props;
+  console.log("published_status=", contentDetail?.publish_status);
+  console.log("isDirty=", isDirty);
+
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -120,7 +123,7 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
             Save
           </Button>
-          {contentDetial?.publish_status === "draft" && !isDirty && (
+          {contentDetail?.publish_status === "draft" && (
             <Button
               variant="contained"
               endIcon={<Publish />}
@@ -147,7 +150,7 @@ function ContentHeader(props: HeaderProps) {
           <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave as any}>
             <Save fontSize="small" />
           </IconButton>
-          {contentDetial?.publish_status === "draft" && !isDirty && (
+          {contentDetail?.publish_status === "draft" && (
             <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
               <Publish fontSize="small" />
             </IconButton>
