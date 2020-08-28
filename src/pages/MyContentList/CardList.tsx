@@ -264,6 +264,7 @@ interface ContentCardListProps {
   total: number;
   amountPerPage?: number;
   list: Content[];
+  onChangeCheckedContents: (arr: string[]) => any;
 }
 export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
@@ -272,7 +273,7 @@ export default function ContentCardList(props: ContentCardListProps) {
   const onCheckedArrChange = (isChecked: boolean, id: string) => {
     isChecked ? checkedArr.push(id) : checkedArr.splice(checkedArr.indexOf(id), 1);
     setCheckedArr(checkedArr);
-    console.log(checkedArr);
+    props.onChangeCheckedContents(checkedArr);
   };
 
   const cardlist = list.map((item, idx) => (

@@ -12,7 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField/TextField";
 import { MoreHoriz, Search, ViewListOutlined, ViewQuiltOutlined } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
 import SecondaryMenu from "./secondaryMenu";
@@ -117,20 +117,21 @@ const useStyles = makeStyles((theme) => ({
 
 interface ActionBarLayout {
   layout: string;
+  name: string;
 }
 function SelectTemplateMb(props: ActionBarLayout) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const [value, setValue] = React.useState("");
-  const { layout } = props;
+  const { layout, name } = props;
   const history = useHistory();
   const { pathname, search } = useLocation();
   const handleChange = (event: any) => {
     setValue(event.target.value);
   };
-  const handleSearch = () => {
-    const name = value;
+  const handleSearch = (event: any) => {
+    const name = event.target.value;
     const newUrl = setUrl(search, "name", name);
     history.push(`${pathname}${newUrl}`);
   };
@@ -166,6 +167,9 @@ function SelectTemplateMb(props: ActionBarLayout) {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+  useEffect(() => {
+    setValue(name);
+  }, [name]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -210,7 +214,7 @@ function SelectTemplateMb(props: ActionBarLayout) {
                 )}
               </Popper>
             </Grid>
-            <Grid item xs={12} sm={12} style={{ textAlign: "center", display: "none" }}>
+            <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <TextField
                 id="outlined-basic"
                 style={{ width: "100%", height: "100%" }}
@@ -238,11 +242,13 @@ function SelectTemplateMb(props: ActionBarLayout) {
 interface SecondaryMenuProps {
   layout: string;
   status: string;
-  showMyOnly: boolean;
+  showMyOnly: boolean; //是否显示myOnly按钮
+  myOnly: boolean; // myonly按钮选中状态
+  name: string;
 }
 function SelectTemplate(props: SecondaryMenuProps) {
   const classes = useStyles();
-  const { layout } = props;
+  const { layout, myOnly, name } = props;
   const history = useHistory();
   const { pathname, search } = useLocation();
   const [searchInput, setSearchInput] = React.useState("");
@@ -259,6 +265,9 @@ function SelectTemplate(props: SecondaryMenuProps) {
     const newUrl = setUrl(search, "myOnly", myOnly);
     history.push(`${pathname}${newUrl}`);
   };
+  useEffect(() => {
+    setSearchInput(name);
+  }, [name]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -280,7 +289,7 @@ function SelectTemplate(props: SecondaryMenuProps) {
               {props.showMyOnly ? (
                 <FormControlLabel
                   value="end"
-                  control={<Checkbox color="primary" onChange={handleIsMyOnly} />}
+                  control={<Checkbox color="primary" checked={myOnly} onChange={handleIsMyOnly} />}
                   label="My Only"
                   labelPlacement="end"
                 />
@@ -320,7 +329,7 @@ function SelectTemplate(props: SecondaryMenuProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SelectTemplateMb layout={layout} />
+      <SelectTemplateMb layout={layout} name={name} />
     </div>
   );
 }
@@ -350,15 +359,19 @@ interface ActionBarProps {
   status: string;
   showMyOnly: boolean;
   subStatus: string;
+  myOnly: boolean;
+  sortBy: string;
+  name: string;
+  checkedContents: string[];
 }
 export default function ActionBar(props: ActionBarProps) {
-  const { layout, status, showMyOnly, subStatus } = props;
+  const { layout, status, showMyOnly, subStatus, myOnly, sortBy, name, checkedContents } = props;
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
       <SecondaryMenu layout={layout} status={status} showMyOnly={showMyOnly} />
-      <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} />
-      <SortTemplate status={status} subStatus={subStatus} />
+      <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} myOnly={myOnly} name={name} />
+      <SortTemplate status={status} subStatus={subStatus} sortBy={sortBy} checkedContents={checkedContents} />
     </div>
   );
 }

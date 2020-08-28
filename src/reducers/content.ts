@@ -37,7 +37,7 @@ const initialState: IContentState = {
     author_name: "",
     org: "",
     publish_scope: "",
-    publish_status: "",
+    publish_status: undefined,
     content_type_name: "",
     program_name: "",
     subject_name: "",
