@@ -1,9 +1,11 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { useHistory } from "react-router-dom";
 import api from "../api";
 import { Content } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 
 interface IContentState {
+  history?: ReturnType<typeof useHistory>;
   contentDetial: Content;
   mediaList: Content[];
   mockOptions: MockOptions;
@@ -14,6 +16,7 @@ interface RootState {
 }
 
 const initialState: IContentState = {
+  history: undefined,
   contentDetial: {
     id: "",
     content_type: 0,
@@ -37,7 +40,7 @@ const initialState: IContentState = {
     author_name: "",
     org: "",
     publish_scope: "",
-    publish_status: "",
+    publish_status: "published",
     content_type_name: "",
     program_name: "",
     subject_name: "",
@@ -87,10 +90,8 @@ export const save = createAsyncThunk<Content, Content, { state: RootState }>("co
     },
   } = getState();
   if (!id) {
-    // debugger;
     id = (await api.contents.createContent(payload)).id;
   } else {
-    // debugger;
     await api.contents.updateContent(id, payload);
   }
   return await api.contents.getContentById(id as string);
@@ -117,7 +118,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     if (type === "assets") return {};
     // debugger;
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetial;
-    const mediaList = await api.contents.searchContents({ content_type: type, name: searchText });
+    const mediaList = await api.contents.searchContents({ content_type: type === "material" ? "assets" : "material", name: searchText });
     const mockOptions = await apiGetMockOptions();
     return { contentDetail, mediaList, mockOptions };
   }
@@ -132,7 +133,11 @@ export const contentList = createAsyncThunk<IQueryContentsResult, IQueryContents
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
-  reducers: {},
+  reducers: {
+    syncHistory: (state, { payload }: PayloadAction<IContentState["history"]>) => {
+      state.history = payload;
+    },
+  },
   extraReducers: {
     // todo: PayloadAction<Content>  应该从 save 中获取类型
     [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
@@ -177,5 +182,5 @@ const { actions, reducer } = createSlice({
   },
 });
 
-// export const {  } = actions;
+export const { syncHistory } = actions;
 export default reducer;

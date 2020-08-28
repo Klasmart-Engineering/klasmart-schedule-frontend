@@ -87,7 +87,7 @@ export default function Details(props: DetailsProps) {
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
-        {contentDetail.publish_status === "regected" && (
+        {contentDetail.publish_status === "rejected" && (
           <FormControl variant="outlined">
             <InputLabel error variant="outlined" htmlFor="rejectReason">
               Reject Reason
