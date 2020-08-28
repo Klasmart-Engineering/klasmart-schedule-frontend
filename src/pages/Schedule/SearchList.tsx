@@ -94,24 +94,13 @@ export default function SearchList() {
   let name: string | string[] = useLocation().pathname.split("/");
   const _name = name[name.length - 1];
   React.useEffect(() => {
-    dispatch(getSearchScheduleList({ page: 1, page_size: 10 }));
+    dispatch(getSearchScheduleList({ teacher_name: _name, page: 1, page_size: 10 }));
   }, [_name, dispatch]);
-  const { searchScheduleList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  // console.log(schedule1.scheduleList);
+  const { searchScheduleList, total } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+
   const classes = useStyles();
 
-  // const [scheduleList, setScheduleList] = React.useState(searchList.data);
-
   const history = useHistory();
-
-  function compare(property: string) {
-    return function (a: any, b: any) {
-      var value1 = a[property];
-      var value2 = b[property];
-      return value1 - value2;
-    };
-  }
-  // scheduleList.sort(compare("start_at"));
 
   let someone: any;
 
@@ -138,97 +127,12 @@ export default function SearchList() {
     history.push(`/schedule/calendar/rightside/scheduleList/model/edit/id/${index}`);
   };
 
-  let listssss = [
-    {
-      id: "Math.floor(1000)",
-      title: "Zoo Animals",
-      start_at: 1597912763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      program: {
-        id: 11,
-        name: "someProgram",
-      },
-      subject: {
-        id: 111,
-        name: "someSubject",
-      },
-      class: {
-        id: 22,
-        name: "someClass",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-    {
-      id: "Math.floor(1000)",
-      title: "Zoo Animals",
-      start_at: 1597912763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      program: {
-        id: 11,
-        name: "someProgram",
-      },
-      subject: {
-        id: 111,
-        name: "someSubject",
-      },
-      class: {
-        id: 22,
-        name: "someClass",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-    {
-      id: "Math.floor(1000)",
-      title: "Zoo Animals",
-      start_at: 1597912763,
-      end_at: 1597916363,
-      lesson_plan: {
-        id: Math.floor(1000),
-        name: "Big Lesson Plan",
-      },
-      program: {
-        id: 11,
-        name: "someProgram",
-      },
-      subject: {
-        id: 111,
-        name: "someSubject",
-      },
-      class: {
-        id: 22,
-        name: "someClass",
-      },
-      teachers: [
-        {
-          id: Math.floor(1000),
-          name: "handsome teacher",
-        },
-      ],
-    },
-  ];
-
+  let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
+  let isMore = Math.ceil(total / 10);
+  console.log(isMore);
   const getBottom = (value: any) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
-      let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
       dispatch(getSearchScheduleList({ page, page_size: 10 }));
     }
   };
@@ -274,7 +178,7 @@ export default function SearchList() {
               </Card>
             </div>
           ))}
-          {searchScheduleList.length % 10 === 0 ? (
+          {searchScheduleList.length % 10 === 0 && isMore >= page ? (
             <VisibilitySensor onChange={getBottom}>
               <div className={classes.circle}>
                 <CircularProgress />

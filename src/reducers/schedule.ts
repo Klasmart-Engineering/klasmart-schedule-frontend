@@ -100,7 +100,7 @@ const { reducer } = createSlice({
   reducers: {},
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
-      state.searchScheduleList = payload.data;
+      state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.total = payload.total;
     },
     [saveScheduleData.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>) => {
