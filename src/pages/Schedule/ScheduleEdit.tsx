@@ -8,15 +8,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import React, { useEffect } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import mockList from "../../mocks/Autocomplete.json";
+import { removeSchedule, saveScheduleData } from "../../reducers/schedule";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { useDispatch } from "react-redux";
-import { saveScheduleData, removeSchedule } from "../../reducers/schedule";
 
 function SmallCalendar(props: CalendarStateProps) {
   const { timesTamp, changeTimesTamp } = props;
@@ -91,6 +92,12 @@ function EditBox(props: CalendarStateProps) {
     };
     setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
   }, [scheduleList, timesTamp]);*/
+  const [state] = useRepeatSchedule();
+  const { type } = state;
+  const repeatData = {
+    type,
+    [type]: state[type],
+  };
 
   const [scheduleList, setScheduleList] = React.useState<InitData>({
     attachment_id: "",
@@ -211,6 +218,7 @@ function EditBox(props: CalendarStateProps) {
     }
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
+    addData["repeat"] = repeatData;
     const result = { ...scheduleList, ...addData };
     dispatch(saveScheduleData({ ...result }));
   };

@@ -1,13 +1,13 @@
 import { Grid } from "@material-ui/core";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
+import { getScheduleTimeViewData } from "../../reducers/schedule";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { useDispatch } from "react-redux";
-import { getScheduleTimeViewData } from "../../reducers/schedule";
 
 interface RouteParams {
   rightside: "scheduleTable" | "scheduleList";

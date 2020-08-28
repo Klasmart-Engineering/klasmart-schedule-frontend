@@ -21,7 +21,8 @@ const useStyles = makeStyles({
     color: "#666",
   },
   time: {
-    fontSize: "22px",
+    fontSize: "18px",
+    color: "black",
   },
   iconPart: {
     position: "absolute",
@@ -46,28 +47,59 @@ const useStyles = makeStyles({
   },
 });
 
+interface scheduleInfoProps {
+  end: Date;
+  id: string;
+  start: Date;
+  title: string;
+}
+
 interface InfoProps {
   scheduleId: number;
   handleDelete: () => void;
   handleClose: () => void;
+  scheduleInfo: scheduleInfoProps;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
-  const { scheduleId, handleDelete, handleClose } = props;
+  const { scheduleId, handleDelete, handleClose, scheduleInfo } = props;
+  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const weekArr = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  const timestampToTime = (timestamp: any | null) => {
+    const date = timestamp;
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const [Y, M, D, W, h, m] = [
+      date.getFullYear(),
+      timestamp.getMonth() + 1,
+      timestamp.getDate(),
+      timestamp.getDay(),
+      dateNumFun(timestamp.getHours()),
+      dateNumFun(timestamp.getMinutes()),
+    ];
+
+    return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m} ${h > 12 ? "PM" : "AM"}`;
+  };
 
   const handleEditSchedule = (e: any) => {
     handleClose();
-    history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
+    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit/${scheduleInfo.id}`);
   };
 
   return (
     <div className={classes.previewContainer}>
       <div>
-        <p className={classes.title}>{"Upgrade Server Hardware"}</p>
-        <p className={classes.date}>{"Thursday, Aug 13, 2020"}</p>
-        <p className={classes.time}>{"12:00PM - 13:00PM"}</p>
+        <p className={classes.title}>{scheduleInfo.title}</p>
+        <p className={classes.date}>
+          <span className={classes.time}>Start Time: </span>
+          {timestampToTime(scheduleInfo.start)}
+        </p>
+        <p className={classes.date}>
+          <span className={classes.time}>End Time: </span>
+          {timestampToTime(scheduleInfo.end)}
+        </p>
       </div>
       <div className={classes.iconPart}>
         <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />

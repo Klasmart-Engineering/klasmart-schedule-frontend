@@ -9,7 +9,15 @@ import ModalBox from "../../components/ModalBox";
 import events from "../../mocks/events";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { removeSchedule } from "../../reducers/schedule";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../reducers";
+
+interface scheduleInfoProps {
+  end: Date;
+  id: string;
+  start: Date;
+  title: string;
+}
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   calendarBox: {
@@ -26,14 +34,22 @@ function MyCalendar(props: CalendarProps) {
   const { modelView, timesTamp, changeTimesTamp } = props;
   const history = useHistory();
   const [openStatus, setOpenStatus] = React.useState(false);
+  const [scheduleInfo, setscheduleInfo] = React.useState<scheduleInfoProps>({
+    end: new Date(new Date().getTime()),
+    id: "",
+    start: new Date(new Date().getTime()),
+    title: "",
+  });
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
+  const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
 
   /**
    * click current schedule
    * @param event
    */
-  const scheduleSelected = (event: Object) => {
+  const scheduleSelected = (event: scheduleInfoProps) => {
+    setscheduleInfo(event);
     setEnableCustomization(true);
     setOpenStatus(true);
   };
@@ -43,7 +59,6 @@ function MyCalendar(props: CalendarProps) {
    * @param e
    */
   const creteSchedule = (e: any) => {
-    console.log(new Date(timesTamp.start * 1000));
     changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
@@ -74,7 +89,9 @@ function MyCalendar(props: CalendarProps) {
     text: "Are you sure you want to delete this event?",
     openStatus: openStatus,
     enableCustomization: enableCustomization,
-    customizeTemplate: <CustomizeTempalte handleDelete={handleDelete} scheduleId={1} handleClose={handleClose} />,
+    customizeTemplate: (
+      <CustomizeTempalte handleDelete={handleDelete} scheduleId={1} handleClose={handleClose} scheduleInfo={scheduleInfo} />
+    ),
     buttons: [
       {
         label: "Cancel",
@@ -102,7 +119,7 @@ function MyCalendar(props: CalendarProps) {
           view={modelView}
           selectable={true}
           localizer={localizer}
-          events={events}
+          events={scheduleTimeViewData}
           startAccessor="start"
           endAccessor="end"
           toolbar={false}

@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  CircularProgress,
+  CircularProgressProps,
   createMuiTheme,
   FormControl,
   InputLabel,
@@ -9,36 +11,66 @@ import {
   OutlinedInput,
   TextField,
   ThemeProvider,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Content, CreateContentRequest } from "../../api/api";
-import { MockOptions, MockOptionsItem } from "../../api/extra";
+import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
 import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
-    marginTop: 20,
+    marginTop: 32,
   },
   fieldsetReject: {
     color: palette.error.main,
   },
   halfFieldset: {
-    marginTop: 20,
+    marginTop: 32,
     width: "calc(50% - 10px)",
     "&:not(:first-child)": {
       marginLeft: 20,
     },
   },
-  asterisk: {
-    color: palette.error.main,
+  thumbnailImg: {
+    width: 260,
+    height: 132,
+  },
+  thumbnailButton: {
+    height: 56,
+    marginRight: "auto",
+  },
+  thumbnailProgressText: {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
+
+function ProgressWithText(props: CircularProgressProps) {
+  const css = useStyles();
+  return (
+    <Box position="relative" display="inline-flex" alignItems="center">
+      <CircularProgress className={css.thumbnailImg} variant="static" {...props} />
+      <Box className={css.thumbnailProgressText}>
+        <Typography variant="caption" component="div" color="textSecondary">
+          {`${Math.round(props.value || 0)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
 interface DetailsProps {
   contentDetail?: Content;
   uploadThumnail?: Function;
@@ -49,12 +81,9 @@ interface DetailsProps {
 export default function Details(props: DetailsProps) {
   const {
     contentDetail,
-    formMethods: { register, control, errors, watch, getValues },
+    formMethods: { control, errors },
     mockOptions,
   } = props;
-
-  // watch();
-  // console.log("values = ", getValues());
 
   const css = useStyles();
   const { lesson } = useParams();
@@ -67,9 +96,6 @@ export default function Details(props: DetailsProps) {
       </MenuItem>
     ));
   const size = sm ? "small" : "medium";
-  useEffect(() => {
-    register("thumbnail");
-  });
   if (!contentDetail) return null;
   const theme = createMuiTheme(defaultTheme, {
     props: {
@@ -119,20 +145,32 @@ export default function Details(props: DetailsProps) {
           error={errors.name ? true : false}
           helperText=""
         />
-        <SingleUploader
-          render={({ uploady, item, btnRef }) => (
-            <Box className={css.fieldset}>
-              <Button
-                ref={btnRef}
-                size={sm ? "medium" : "large"}
-                variant="contained"
-                component="span"
-                color="primary"
-                endIcon={<CloudUploadOutlined />}
-              >
-                Thumbnail
-              </Button>
-            </Box>
+        <Controller
+          name="thumbnail"
+          defaultValue={contentDetail.thumbnail}
+          control={control}
+          render={(props) => (
+            <SingleUploader
+              partition="thumbnail"
+              {...props}
+              render={({ uploady, item, btnRef, value, isUploading }) => (
+                <Box className={css.fieldset} display="flex">
+                  <Button
+                    className={css.thumbnailButton}
+                    ref={btnRef}
+                    size={sm ? "medium" : "large"}
+                    variant="contained"
+                    component="span"
+                    color="primary"
+                    endIcon={<CloudUploadOutlined />}
+                  >
+                    Thumbnail
+                  </Button>
+                  {isUploading && <ProgressWithText value={item?.completed} />}
+                  {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
+                </Box>
+              )}
+            />
           )}
         />
         <Controller
