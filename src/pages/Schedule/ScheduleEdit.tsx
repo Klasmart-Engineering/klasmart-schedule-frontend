@@ -120,6 +120,20 @@ function EditBox(props: CalendarStateProps) {
       setProgramItem(scheduleDetial.program);
     }
   }, [scheduleDetial]);
+  /*  useEffect(() => {
+    const newTopocList = {
+      ...scheduleList,
+      start_at: timesTamp.start,
+      end_at: timesTamp.end,
+    };
+    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+  }, [scheduleList, timesTamp]);*/
+  const [state, dispatchRepeat] = useRepeatSchedule();
+  const { type } = state;
+  const repeatData = {
+    type,
+    [type]: state[type],
+  };
 
   const [scheduleList, setScheduleList] = React.useState<InitData>({
     attachment_id: "",
@@ -330,6 +344,10 @@ function EditBox(props: CalendarStateProps) {
     setOpenStatus(true);
     setModalText("Discard unsave changes?");
     setButtons(button);
+  };
+
+  const handleRepeatData = (data: any) => {
+    dispatchRepeat({ type: "changeData", data });
   };
 
   return (

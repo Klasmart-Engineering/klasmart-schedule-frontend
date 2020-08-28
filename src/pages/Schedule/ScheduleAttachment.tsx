@@ -3,6 +3,7 @@ import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React, { useRef } from "react";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles(() => ({
   fieldset: {
@@ -47,6 +48,7 @@ const tipsText = (
 );
 
 export default function ScheduleAttachment() {
+  const dispatch = useDispatch();
   const css = useStyles();
   const [fileName, setFileName] = React.useState("");
   const fileInputRef = useRef(null);
@@ -57,6 +59,10 @@ export default function ScheduleAttachment() {
   const onGetFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileObj: any = e.target.files;
     setFileName(fileObj[0].name);
+    let extend = fileObj[0].name.split(".");
+    extend = extend[extend.length - 1];
+    // console.log(extend)
+    // dispatch(getContentResourceUploadPath({partition: 'attachment', extension: extend}))
   };
   const downloadFile = () => {
     console.log("download");
