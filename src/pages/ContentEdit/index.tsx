@@ -82,7 +82,30 @@ export default function ContentEdit() {
     if (!id) return;
     dispatch(publish(id));
   }, [dispatch, id]);
-  const handleSave = useMemo(() => handleSubmit((value: CreateContentRequest) => dispatch(save(value)) as any), [handleSubmit, dispatch]);
+  (window as any).publish = publish;
+  (window as any).dispatch = dispatch;
+
+  const handleSave = useMemo(
+    () =>
+      handleSubmit((value: CreateContentRequest) => {
+        // const keywords=value.keywords.split(",");
+        const suggest_time = Number(value.suggest_time);
+        return (
+          // async ()=> {
+          //     try {
+          //       const resultAction = await dispatch(save({...value,suggest_time,content_type:1,data:JSON.stringify(value.data)})) as any
+
+          //       const user = unwrapResult(resultAction)
+
+          //     } catch (err) {
+          //     }
+          //   }
+
+          dispatch(save({ ...value, suggest_time, content_type: 1, data: JSON.stringify(value.data) })) as any
+        );
+      }),
+    [handleSubmit, dispatch]
+  );
   const handleSearch = useMemo<MediaAssetsProps["onSearch"]>(
     () => (searchText = "") => {
       history.push({
@@ -92,9 +115,9 @@ export default function ContentEdit() {
     [history]
   );
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson === "plan" ? "material" : "assets", searchText }));
-  }, [id, lesson, dispatch, searchText]);
-
+    dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
+  }, [id, lesson, dispatch, searchText, history]);
+  // useEffect(() => dispatch(syncHistory(history)), [history, dispatch]);
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
