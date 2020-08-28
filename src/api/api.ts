@@ -384,6 +384,10 @@ export interface ScheduleDetailed {
   /** schedule end time, timestamp */
   end_at?: number;
 
+  is_repeat?: boolean;
+
+  is_force?: boolean;
+
   /**
    *
    *  * AllDay - this class will last for 24 hours for the whole day

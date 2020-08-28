@@ -20,7 +20,7 @@ export interface ScheduleState {
 }
 
 interface Rootstate {
-  schedules: ScheduleState;
+  schedule: ScheduleState;
 }
 
 const initialState: ScheduleState = {
@@ -44,6 +44,8 @@ const initialState: ScheduleState = {
     description: "",
     attachment: {},
     is_all_day: true,
+    is_repeat: false,
+    is_force: false,
   },
   scheduleTimeViewData: [],
 };
@@ -58,7 +60,7 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
   "schedule/save",
   async (payload, { getState }) => {
     let {
-      schedules: {
+      schedule: {
         scheduleDetial: { id },
       },
     } = getState();
