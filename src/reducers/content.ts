@@ -69,6 +69,7 @@ const initialState: IContentState = {
     content_type: 0,
     suggest_time: 0,
     grade: [],
+    grade_name: [],
     name: "",
     program: [],
     subject: [],

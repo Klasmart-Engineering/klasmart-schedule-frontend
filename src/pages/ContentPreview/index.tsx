@@ -221,12 +221,25 @@ export default function ContentPreview(props: Content) {
     setValue(newValue);
   };
   const handleAction = (type: string) => {
-    type === "del" && dispatch(deleteContent(id));
-    type === "approve" && dispatch(approveContent(id));
-    type === "reject" && dispatch(rejectContent(id));
-    type === "publish" && dispatch(publishContent(id));
-    type === "edit" && history.push(`/library/content-edit?id=${id}`);
-    history.go(-1);
+    if (type === "del") {
+      dispatch(deleteContent(id));
+      history.go(-1);
+    }
+    if (type === "approve") {
+      dispatch(approveContent(id));
+      history.go(-1);
+    }
+    if (type === "reject") {
+      dispatch(rejectContent(id));
+      history.go(-1);
+    }
+    if (type === "publish") {
+      dispatch(publishContent(id));
+      history.go(-1);
+    }
+    if (type === "edit") {
+      history.push(`/library/content-edit?id=${id}`);
+    }
   };
   useEffect(() => {
     dispatch(getContentDetailById(id));
@@ -297,7 +310,7 @@ export default function ContentPreview(props: Content) {
             <TextField label="Suitable Age" fullWidth variant="outlined" value={contentPreview.age_name?.join(",")} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Grade" fullWidth variant="outlined" />
+            <TextField label="Grade" fullWidth variant="outlined" value={contentPreview.grade_name?.join(",")} />
           </Grid>
         </Grid>
         <TextField
