@@ -3,7 +3,7 @@ import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { apiResourcePathById } from "../../api/extra";
 import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(() => ({
@@ -54,15 +54,20 @@ interface ScheduleAttachmentProps {
 }
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const dispatch = useDispatch();
   const { setAttachmentId, attachmentId } = props;
   const css = useStyles();
   const downloadFile = () => {
-    console.log("download");
+    const url: any = apiResourcePathById(attachmentId);
+    console.log(url, 111);
+    setDownloadUrl(url);
   };
   const handleOnChange = (value: any) => {
     setAttachmentId(value);
+    const url: any = apiResourcePathById(value);
+    setDownloadUrl(url);
   };
+
+  const [downloadUrl, setDownloadUrl] = React.useState("");
 
   return (
     <SingleUploader
@@ -79,7 +84,9 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             // @ts-ignore
             <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef} />
           }
-          {item && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} onClick={downloadFile} />}
+          <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
+            {attachmentId && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
+          </a>
         </Box>
       )}
     />
