@@ -182,11 +182,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
       </TableCell>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.author}</TableCell>
-      <TableCell>{item.developmental}</TableCell>
-      <TableCell>{item.skills}</TableCell>
-      <TableCell>{item.age}</TableCell>
-      <TableCell>{item.grade}</TableCell>
-      <TableCell>{item.publish_scope}</TableCell>
+      {/* <TableCell>{item.developmental}</TableCell> */}
+      {/* <TableCell>{item.skills}</TableCell> */}
+      {/* <TableCell>{item.age}</TableCell> */}
+      {/* <TableCell>{item.grade}</TableCell> */}
+      {/* <TableCell>{item.publish_scope}</TableCell> */}
       {/* <TableCell>{multipleLine(item.created.split(" "))}</TableCell> */}
     </TableRow>
   ));
@@ -198,11 +198,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
             <TableCell>Content Thumbnail</TableCell>
             <TableCell>Content Name</TableCell>
             <TableCell>Author</TableCell>
-            <TableCell>Developmental</TableCell>
-            <TableCell>Skills</TableCell>
-            <TableCell>Age</TableCell>
-            <TableCell>Grade</TableCell>
-            <TableCell>visibility settings</TableCell>
+            {/* <TableCell>Developmental</TableCell> */}
+            {/* <TableCell>Skills</TableCell> */}
+            {/* <TableCell>Age</TableCell> */}
+            {/* <TableCell>Grade</TableCell> */}
+            {/* <TableCell>visibility settings</TableCell> */}
             {/* <TableCell>Created On</TableCell> */}
           </TableRow>
         </TableHead>
@@ -228,7 +228,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   );
 
   return (
-    <Box className={css.mediaAssets} width="100%" display="flex" flexDirection="column" alignItems="center">
+    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
         <Comingsoon />
       ) : (

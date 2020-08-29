@@ -13,7 +13,7 @@ import {
   ThemeProvider,
   Typography,
   useMediaQuery,
-  useTheme,
+  useTheme
 } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
@@ -72,7 +72,7 @@ function ProgressWithText(props: CircularProgressProps) {
   );
 }
 interface DetailsProps {
-  contentDetail?: Content;
+  contentDetail: Content;
   uploadThumnail?: Function;
   formMethods: UseFormMethods<CreateContentRequest>;
   mockOptions: MockOptions;
@@ -84,7 +84,6 @@ export default function Details(props: DetailsProps) {
     formMethods: { control, errors },
     mockOptions,
   } = props;
-
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
@@ -96,7 +95,6 @@ export default function Details(props: DetailsProps) {
       </MenuItem>
     ));
   const size = sm ? "small" : "medium";
-  if (!contentDetail) return null;
   const theme = createMuiTheme(defaultTheme, {
     props: {
       MuiTextField: {

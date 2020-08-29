@@ -37,7 +37,7 @@ const initialState: IContentState = {
     version: 0,
     source_id: "",
     locked_by: "",
-    data: {},
+    data: "",
     extra: "",
     author: "",
     author_name: "",
@@ -121,18 +121,16 @@ interface onLoadContentEditResult {
 }
 
 export const save = createAsyncThunk<Content, Content, { state: RootState }>("content/save", async (payload, { getState }) => {
-  let {
+  const {
     content: {
       contentDetail: { id },
     },
   } = getState();
-  // debugger
   if (!id) {
-    id = (await api.contents.createContent(payload)).id;
+    return (await api.contents.createContent(payload)).id;
   } else {
-    await api.contents.updateContent(id, payload);
+    return (await api.contents.updateContent(id, payload)).id;
   }
-  return await api.contents.getContentById(id as string);
 });
 
 export const publish = createAsyncThunk<Content, Required<Content>["id"], { state: RootState }>("content/publish", (id, { getState }) => {
