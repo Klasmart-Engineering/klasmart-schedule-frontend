@@ -101,7 +101,7 @@ function Tool(props: ToolProps) {
             </Button>
           )}
         </Grid>
-        <Grid item xs={6} style={{ display: "flex", alignItems: "center" }}>
+        <Grid item xs={5} style={{ display: "flex", alignItems: "center" }}>
           {includeList && <ArrowBackIosOutlined className={css.arrowsrt} onClick={backChange} />}
           <FormControl>
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
@@ -111,7 +111,7 @@ function Tool(props: ToolProps) {
             Search
           </Button>
         </Grid>
-        <Grid item xs={3} className={css.modelSelect}>
+        <Grid item xs={4} className={css.modelSelect}>
           {!includeList && (
             <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }} onClick={selectToday}>
               Today
