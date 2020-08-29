@@ -108,7 +108,37 @@ function EditBox(props: CalendarStateProps) {
   }, [contentsList]);
 
   React.useEffect(() => {
-    console.log(timesTamp);
+    const timesTampDada = {
+      start_at: timesTamp.start,
+      end_at: timesTamp.end,
+    };
+    setStatus({
+      allDayCheck: false,
+      repeatCheck: false,
+      dueDateCheck: false,
+    });
+    setClassItem({});
+    setLessonPlan({});
+    setSubjectItem({});
+    setProgramItem({});
+    setTeacherItem({});
+    setScheduleList({
+      attachment_id: "",
+      class_id: "",
+      class_type: "",
+      description: "",
+      due_at: new Date().getTime() / 1000,
+      is_all_day: false,
+      is_force: true,
+      is_repeat: false,
+      lesson_plan_id: "",
+      program_id: "",
+      repeat: {},
+      subject_id: "",
+      teacher_ids: [],
+      title: "",
+      ...timesTampDada,
+    });
   }, [timesTamp]);
 
   React.useEffect(() => {
