@@ -128,7 +128,7 @@ export default function MyContentList() {
         onHandleBulkAction={onHandleBulkAction}
       />
       {layout === "card" ? (
-        contentsList.length > 0 ? (
+        contentsList && contentsList.length > 0 ? (
           <CardList
             list={contentsList}
             total={total}
