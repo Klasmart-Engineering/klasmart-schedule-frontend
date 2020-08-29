@@ -70,7 +70,9 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(contentLists({ org: "1" }));
-    dispatch(getScheduleInfo(scheduleId));
+    if (scheduleId) {
+      dispatch(getScheduleInfo(scheduleId));
+    }
   }, [scheduleId, dispatch]);
 
   return (

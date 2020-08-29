@@ -206,7 +206,6 @@ function RepeatCycle(props: any) {
   };
 
   const handleOnWeekMonth = (event: React.ChangeEvent<{ value: unknown }>) => {
-    console.log(event.target.value);
     _state[type].on_week_month = event.target.value;
     dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
@@ -346,14 +345,12 @@ function EndRepeat(props: any) {
   };
 
   const handleAfterCount = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(+event.target.value);
     _state[type].end.after_count = +event.target.value;
     dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleAfterTime = (date: any) => {
-    // console.log(new Date(date).getTime())
     let _date = new Date(date).getTime() / 1000;
     _state[type].end.after_time = _date;
     dispatch({ type: "changeData", data: _state });
@@ -480,7 +477,6 @@ function RepeatHeader(props: any) {
 export default function RepeatSchedule(props: any) {
   const classes = useStyles();
   const [state, dispatchRepeat] = useRepeatSchedule();
-  console.log(state, 333);
   const { handleRepeatData } = props;
   return (
     <Card className={classes.container}>

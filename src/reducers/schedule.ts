@@ -71,7 +71,7 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
       },
     } = getState();
     if (!id) {
-      await api.schedules.createSchedule(payload);
+      id = (await api.schedules.createSchedule(payload)).id;
     } else {
       id = (await api.schedules.updateSchedule(id, payload)).id;
     }
