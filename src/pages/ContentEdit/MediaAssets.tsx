@@ -22,6 +22,7 @@ import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 import { Thumbnail } from "../../components/Thumbnail";
+
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
     minHeight: 722,
@@ -224,7 +225,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     </TableContainer>
   );
   const search = (
-    <Box display="flex" pt={2.5}>
+    <Box display="flex" pt={3} pb={1}>
       <Controller
         as={TextField}
         control={control}

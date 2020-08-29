@@ -6,7 +6,7 @@ import React, { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 
-const useStyles = makeStyles(({ palette, shadows }) => ({
+const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   planComposeText: {
     background: `url(${lessonPlanBgUrl}) center repeat`,
     width: "100%",

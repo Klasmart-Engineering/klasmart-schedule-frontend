@@ -11,7 +11,6 @@ interface ContentH5pProps {
 }
 export default function ContentH5p(props: ContentH5pProps) {
   const { value, onChange } = props;
-  if (!value?.source) return null;
   return (
     <>
       {props.children}
