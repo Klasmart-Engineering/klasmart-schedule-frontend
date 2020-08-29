@@ -81,7 +81,7 @@ const initialState: IContentState = {
     version: 0,
     source_id: "",
     locked_by: "",
-    data: {},
+    data: "",
     extra: "",
     author: "",
     author_name: "",
@@ -98,7 +98,7 @@ const initialState: IContentState = {
   },
 };
 
-type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
+export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
   ? U
   : T extends (...args: any) => infer U
@@ -106,7 +106,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 type IQueryContentParams = Parameters<typeof api.contentsDynamo.contentsDynamoList>[0];
-type IQueryContentResult = ReturnType<typeof api.contentsDynamo.contentsDynamoList>;
+type IQueryContentResult = AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
 
 interface onLoadContentEditPayload {
   id: Content["id"] | null;
@@ -160,7 +160,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
   }
 );
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
-type IGetContentsResourseResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
+type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
   "content/getContentResourceUploadPath",
   (query) => {
@@ -168,7 +168,7 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   }
 );
 
-type IgetContentResourcePathResult = ReturnType<typeof api.contentsResources.getContentResourcePath>;
+type IgetContentResourcePathResult = AsyncReturnType<typeof api.contentsResources.getContentResourcePath>;
 export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathResult, string>(
   "content/getContentResourcePath",
   (resourse_id: string) => {
@@ -177,7 +177,7 @@ export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathRe
 );
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
-type IQueryContentsResult = ReturnType<typeof api.contents.searchContents>;
+type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
 export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contents", async (query) => {
   const { list, total } = await api.contents.searchContents(query);
   return { list, total };
@@ -197,14 +197,14 @@ export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>
 // type BulkActionIds = Parameters<typeof>
 export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
   "contents_bulk/deleteContentBulk",
-  (id) => {
-    return api.contentsBulk.deleteContentBulk(id);
+  (idList) => {
+    return api.contentsBulk.deleteContentBulk({ id: idList });
   }
 );
 export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
   "contents_bulk/publishContentBulk",
-  (id) => {
-    return api.contentsBulk.publishContentBulk(id);
+  (idList) => {
+    return api.contentsBulk.publishContentBulk({ id: idList });
   }
 );
 export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {

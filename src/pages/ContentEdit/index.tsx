@@ -57,8 +57,6 @@ export default function ContentEdit() {
     handleSubmit,
     control,
     formState: { isDirty },
-    getValues,
-    watch,
   } = formMethods;
   const { contentDetail, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
