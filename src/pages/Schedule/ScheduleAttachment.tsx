@@ -62,9 +62,14 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     setDownloadUrl(url);
   };
   const handleOnChange = (value: any) => {
-    setAttachmentId(value);
-    const url: any = apiResourcePathById(value);
-    setDownloadUrl(url);
+    if (value) {
+      setAttachmentId(value);
+      const url: any = apiResourcePathById(value);
+      setDownloadUrl(url);
+    } else {
+      setDownloadUrl("");
+      setAttachmentId("");
+    }
   };
 
   const [downloadUrl, setDownloadUrl] = React.useState("");
@@ -80,12 +85,9 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             <InfoOutlined className={css.iconField} style={{ left: "110px", display: item ? "none" : "block" }} />
           </HtmlTooltip>
           <input type="file" style={{ display: "none" }} />
-          {
-            // @ts-ignore
-            <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef} />
-          }
+          <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
           <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-            {attachmentId && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
+            {downloadUrl && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
           </a>
         </Box>
       )}

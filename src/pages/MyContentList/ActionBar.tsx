@@ -117,7 +117,7 @@ interface ActionBarLayout {
 function SelectTemplateMb(props: ActionBarLayout) {
   const classes = useStyles();
   const [value, setValue] = React.useState("");
-  const { layout, name, myOnly } = props;
+  const { name, myOnly } = props;
   const history = useHistory();
   const { pathname, search } = useLocation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

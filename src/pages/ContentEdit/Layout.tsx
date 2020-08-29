@@ -1,7 +1,7 @@
-import { Box, makeStyles, BoxProps } from "@material-ui/core";
+import { Box, BoxProps, makeStyles } from "@material-ui/core";
 import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import React, { ReactNode, Children } from "react";
 import clsx from "clsx";
+import React, { Children, ReactNode } from "react";
 
 const maxLeftWidth = (props: LayoutPairProps) => {
   return `calc((100% - ${props.spacing}px) * ${props.leftWidth / (props.leftWidth + props.rightWidth)})`;
@@ -43,6 +43,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     [breakpoints.down(props.breakpoint)]: {
       marginBottom: 40,
       flexBasis: "100%",
+      maxWidth: "none",
     },
   }),
 }));

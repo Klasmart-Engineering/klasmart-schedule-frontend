@@ -1,17 +1,40 @@
-import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Card,
+  CardContent,
+  Hidden,
+  makeStyles,
+  SvgIconProps,
+  Theme,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
+import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import { Thumbnail } from "../../components/Thumbnail";
-// import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 
-const useStyles = makeStyles(({ palette, shadows, shape }) => ({
+const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
   planComposeGraphic: {
-    // background: `url(${lessonPlanBgUrl}) center repeat`,
+    minHeight: "100%",
+    display: "flex",
+    flexDirection: "column",
+  },
+  bgImage: {
+    background: `url(${lessonPlanBgUrl}) center repeat`,
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: -2,
   },
   arrowSourceCircle: {
     position: "relative",
@@ -65,12 +88,6 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
     "&:hover": {
       backgroundColor: palette.action.disabledOpacity,
     },
-  },
-  composeArea: {
-    display: "flex",
-    width: "100%",
-    overflowX: "scroll",
-    paddingTop: 40,
   },
   blankBox: {
     width: 240,
@@ -131,7 +148,12 @@ const useGraphicComputedStyles = makeStyles({
     width: "100%",
     overflowX: "scroll",
     paddingTop: 40,
-    justifyContent: props.material ? "start" : "center",
+    paddingBottom: 80,
+    // todo: 将来加入了条件，会出现需要左右滚动当场景，需要 justifycontent: start
+    // justifyContent: props.material ? "start" : "center",
+    justifyContent: "center",
+    position: "relative",
+    flexGrow: 1,
   }),
 });
 
@@ -379,36 +401,39 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const startRef = useScrollCenter(true);
   return (
     <Box className={css.planComposeGraphic}>
-      <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3} bgcolor="white">
-        <ButtonGroup className={css.headerButtonGroup}>
-          <Button
-            component={NavLink}
-            activeClassName="active"
-            variant="contained"
-            className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeText"
-          >
-            <Typography variant="h6">A</Typography>
-          </Button>
-          <Button
-            component={NavLink}
-            activeClassName="active"
-            variant="contained"
-            className={css.headerButton}
-            to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeGraphic"
-          >
-            <DashboardOutlined />
-          </Button>
-        </ButtonGroup>
-        <Typography className={css.headerTitle}>Condition Library</Typography>
-        <Box display="flex" flexWrap="wrap" pb={3.5}>
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
-          <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
+      <Hidden mdDown>
+        <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3}>
+          <ButtonGroup className={css.headerButtonGroup}>
+            <Button
+              component={NavLink}
+              activeClassName="active"
+              variant="contained"
+              className={css.headerButton}
+              to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeText"
+            >
+              <Typography variant="h6">A</Typography>
+            </Button>
+            <Button
+              component={NavLink}
+              activeClassName="active"
+              variant="contained"
+              className={css.headerButton}
+              to="/library/content-edit/lesson/plan/tab/media/rightside/planComposeGraphic"
+            >
+              <DashboardOutlined />
+            </Button>
+          </ButtonGroup>
+          <Typography className={css.headerTitle}>Condition Library</Typography>
+          <Box display="flex" flexWrap="wrap" pb={3.5}>
+            <DraggableConditionBtn className={css.headerConditionBtn} type="ifCorrect" />
+            <DraggableConditionBtn className={css.headerConditionBtn} type="ifWrong" />
+            <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreDown60" />
+            <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
+          </Box>
         </Box>
-      </Box>
+      </Hidden>
       <Box className={computedCss.composeArea}>
+        <div className={css.bgImage} />
         <ArcherContainer
           svgContainerStyle={{ zIndex: -1 }}
           strokeColor={palette.grey[700]}

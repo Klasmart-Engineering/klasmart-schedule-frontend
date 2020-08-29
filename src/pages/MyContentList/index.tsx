@@ -1,5 +1,5 @@
 import { Typography } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import emptyIconUrl from "../../assets/icons/empty.svg";
@@ -57,13 +57,10 @@ export default function MyContentList() {
   };
   const [refresh, setRefresh] = React.useState<number>(0);
   const dispatch = useDispatch();
-  const query = mapQuery(name, status, subStatus, sortBy, myOnly, page);
+  const query = useMemo(() => mapQuery(name, status, subStatus, sortBy, myOnly, page), [name, status, subStatus, sortBy, myOnly, page]);
   useEffect(() => {
     dispatch(contentLists(query));
   }, [status, subStatus, name, sortBy, myOnly, page, refresh, dispatch, query]);
-  // useEffect(() => {
-  //   dispatch(contentLists(query));
-  // }, []);
   const onHandelAction = (type: string, id?: string) => {
     if (!id) return;
     switch (type) {

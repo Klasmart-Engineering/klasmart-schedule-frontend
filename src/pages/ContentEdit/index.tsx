@@ -60,6 +60,7 @@ export default function ContentEdit() {
     control,
     formState: { isDirty },
   } = formMethods;
+  (window as any).reset = reset;
   const { contentDetail, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
   const { id, searchText } = useQuery();
