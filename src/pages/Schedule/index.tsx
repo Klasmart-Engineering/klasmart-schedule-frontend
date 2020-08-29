@@ -92,6 +92,7 @@ function ScheduleContent() {
               timesTamp={timesTamp}
               changeTimesTamp={changeTimesTamp}
               repeatData={{ type, [type]: state[type] }}
+              modelView={modelView}
             />
           </Grid>
           <Grid item xs={9}>

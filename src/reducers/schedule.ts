@@ -71,12 +71,12 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.createSchedule(payload)).id;
+      await api.schedules.createSchedule(payload);
     } else {
-      await api.schedules.updateSchedule(id, payload);
+      id = (await api.schedules.updateSchedule(id, payload)).id;
     }
     // @ts-ignore
-    return await api.schedulesTimeView.schedulesTimeView({ view_type: "month", time_at: payload.start_at });
+    return await api.schedules.getSchedulesById(id);
   }
 );
 
@@ -139,7 +139,7 @@ const { reducer } = createSlice({
       state.searchFlag = false;
     },
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
+      state.scheduleDetial = payload;
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       console.log(JSON.stringify(error));

@@ -19,7 +19,7 @@ import mockProgram from "../../mocks/backendMock/program.json";
 import mockSubject from "../../mocks/backendMock/subject.json";
 import mockTeacher from "../../mocks/backendMock/teacher.json";
 import { RootState } from "../../reducers";
-import { removeSchedule, saveScheduleData } from "../../reducers/schedule";
+import { getScheduleTimeViewData, removeSchedule, saveScheduleData } from "../../reducers/schedule";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
@@ -85,17 +85,18 @@ function EditBox(props: CalendarStateProps) {
   const history = useHistory();
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
-  const { timesTamp } = props;
+  const { timesTamp, modelView } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
-  const [classItem, setClassItem] = React.useState<any>({});
-  const [lessonPlan, setLessonPlan] = React.useState<any>({});
-  const [subjectItem, setSubjectItem] = React.useState<any>({});
-  const [programItem, setProgramItem] = React.useState<any>({});
-  const [teacherItem, setTeacherItem] = React.useState<any>({});
+  const defaults: CommonShort = { id: "", name: "" };
+  const [classItem, setClassItem] = React.useState<any>(defaults);
+  const [lessonPlan, setLessonPlan] = React.useState<any>(defaults);
+  const [subjectItem, setSubjectItem] = React.useState<any>(defaults);
+  const [programItem, setProgramItem] = React.useState<any>(defaults);
+  const [teacherItem, setTeacherItem] = React.useState<any>([]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
-  const [contentsListSelect, setContentsListSelect] = React.useState<any>({});
+  const [contentsListSelect, setContentsListSelect] = React.useState<any>([defaults]);
 
   React.useEffect(() => {
     const newContentsData: any = [];
@@ -117,11 +118,11 @@ function EditBox(props: CalendarStateProps) {
       repeatCheck: false,
       dueDateCheck: false,
     });
-    setClassItem({});
-    setLessonPlan({});
-    setSubjectItem({});
-    setProgramItem({});
-    setTeacherItem({});
+    setClassItem(defaults);
+    setLessonPlan(defaults);
+    setSubjectItem(defaults);
+    setProgramItem(defaults);
+    setTeacherItem([]);
     setScheduleList({
       attachment_id: "",
       class_id: "",
@@ -139,7 +140,7 @@ function EditBox(props: CalendarStateProps) {
       title: "",
       ...timesTampDada,
     });
-  }, [timesTamp]);
+  }, [defaults, timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: any[] = [];
@@ -312,7 +313,7 @@ function EditBox(props: CalendarStateProps) {
   /**
    * save schedule data
    */
-  const saveSchedule = () => {
+  const saveSchedule = async () => {
     // validatorFun();
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
@@ -325,7 +326,11 @@ function EditBox(props: CalendarStateProps) {
     addData["attachment_id"] = attachmentId;
     addData["repeat_edit_options"] = "only_current";
     const result = { ...scheduleList, ...addData };
-    dispatch(saveScheduleData({ ...result }));
+    // @ts-ignore
+    const id = (await dispatch(saveScheduleData({ ...result }))).payload.id;
+    // @ts-ignore
+    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
+    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${id}`);
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -466,7 +471,7 @@ function EditBox(props: CalendarStateProps) {
         <Autocomplete
           id="combo-box-demo"
           options={mockClass}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
           }}
@@ -479,7 +484,7 @@ function EditBox(props: CalendarStateProps) {
           id="combo-box-demo"
           freeSolo
           options={contentsListSelect}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "lesson_plan_id");
           }}
@@ -500,7 +505,7 @@ function EditBox(props: CalendarStateProps) {
           freeSolo
           multiple
           options={mockTeacher}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "teacher_ids");
           }}
@@ -565,7 +570,7 @@ function EditBox(props: CalendarStateProps) {
         <Autocomplete
           id="combo-box-demo"
           options={mockSubject}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "subject_id");
           }}
@@ -584,7 +589,7 @@ function EditBox(props: CalendarStateProps) {
         <Autocomplete
           id="combo-box-demo"
           options={mockProgram}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "program_id");
           }}
@@ -698,6 +703,7 @@ interface CalendarStateProps {
   timesTamp: timesTampType;
   changeTimesTamp: (value: object) => void;
   repeatData: object;
+  modelView: string;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -705,11 +711,11 @@ interface ScheduleEditProps extends CalendarStateProps {
 }
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
-  const { includePreview, timesTamp, changeTimesTamp, repeatData } = props;
+  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView } = props;
   const template = includePreview ? (
-    <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} />
+    <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
   ) : (
-    <EditBox changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} />
+    <EditBox changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
   );
   return template;
 }
