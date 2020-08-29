@@ -8,22 +8,21 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { CommonShort } from "../../api/api";
 import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import mockList from "../../mocks/Autocomplete.json";
+import mockClass from "../../mocks/backendMock/class.json";
+import mockProgram from "../../mocks/backendMock/program.json";
+import mockSubject from "../../mocks/backendMock/subject.json";
+import mockTeacher from "../../mocks/backendMock/teacher.json";
 import { RootState } from "../../reducers";
 import { removeSchedule, saveScheduleData } from "../../reducers/schedule";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { CommonShort } from "../../api/api";
-import mockClass from "../../mocks/backendMock/class.json";
-import mockProgram from "../../mocks/backendMock/program.json";
-import mockSubject from "../../mocks/backendMock/subject.json";
-import mockTeacher from "../../mocks/backendMock/teacher.json";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -617,7 +616,7 @@ function EditBox(props: CalendarStateProps) {
           value={scheduleList.description}
           onChange={(e) => handleTopicListChange(e, "description")}
         />
-        <ScheduleAttachment />
+        <ScheduleAttachment setAttachmentId={setAttachmentId} />
         <Box className={css.fieldset}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live

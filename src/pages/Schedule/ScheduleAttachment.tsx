@@ -49,7 +49,7 @@ const tipsText = (
 );
 
 interface ScheduleAttachmentProps {
-  setAttachmentId?: (id: string) => void;
+  setAttachmentId: (id: string) => void;
 }
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
@@ -61,7 +61,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   };
 
   const handleOnChange = (value: any) => {
-    console.log(value);
+    setAttachmentId(value);
   };
 
   return (
