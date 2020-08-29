@@ -2,8 +2,9 @@ import { Box, TextField } from "@material-ui/core";
 import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
-import React, { useRef } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
+import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(() => ({
   fieldset: {
@@ -47,43 +48,40 @@ const tipsText = (
   </div>
 );
 
-export default function ScheduleAttachment() {
+interface ScheduleAttachmentProps {
+  setAttachmentId?: (id: string) => void;
+}
+
+export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const dispatch = useDispatch();
+  const { setAttachmentId } = props;
   const css = useStyles();
-  const [fileName, setFileName] = React.useState("");
-  const fileInputRef = useRef(null);
-  const getFileObj = () => {
-    // @ts-ignore
-    fileInputRef.current.click();
-  };
-  const onGetFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileObj: any = e.target.files;
-    setFileName(fileObj[0].name);
-    let extend = fileObj[0].name.split(".");
-    extend = extend[extend.length - 1];
-    // console.log(extend)
-    // dispatch(getContentResourceUploadPath({partition: 'attachment', extension: extend}))
-  };
   const downloadFile = () => {
     console.log("download");
   };
 
+  const handleOnChange = (value: any) => {
+    console.log(value);
+  };
+
   return (
-    <Box className={css.fieldBox}>
-      <TextField disabled className={css.fieldset} label="Attachment" value={fileName}></TextField>
-      <HtmlTooltip title={tipsText}>
-        <InfoOutlined className={css.iconField} style={{ left: "110px", display: fileName ? "none" : "block" }} />
-      </HtmlTooltip>
-      <input
-        type="file"
-        onChange={(e) => {
-          onGetFile(e);
-        }}
-        ref={fileInputRef}
-        style={{ display: "none" }}
-      />
-      {!fileName && <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} onClick={getFileObj} />}
-      {fileName && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} onClick={downloadFile} />}
-    </Box>
+    <SingleUploader
+      partition="attachment"
+      onChange={handleOnChange}
+      render={({ uploady, item, btnRef, value, isUploading }) => (
+        <Box className={css.fieldBox}>
+          <TextField disabled className={css.fieldset} placeholder="Attachment" value={item ? item.file.name : ""}></TextField>
+          <HtmlTooltip title={tipsText}>
+            <InfoOutlined className={css.iconField} style={{ left: "110px", display: item ? "none" : "block" }} />
+          </HtmlTooltip>
+          <input type="file" style={{ display: "none" }} />
+          {
+            // @ts-ignore
+            <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef} />
+          }
+          {item && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} onClick={downloadFile} />}
+        </Box>
+      )}
+    />
   );
 }

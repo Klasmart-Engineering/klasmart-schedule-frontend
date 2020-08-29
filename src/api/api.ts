@@ -775,8 +775,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents_resources
      * @description Get content resource upload path
      */
-    getContentResourceUploadPath: (query?: { partition?: "assets" | "thumbnail"; extension?: string }, params?: RequestParams) =>
-      this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
+    getContentResourceUploadPath: (
+      query?: { partition?: "assets" | "thumbnail" | "attachment"; extension?: string },
+      params?: RequestParams
+    ) => this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
   };
   assets = {
     /**
