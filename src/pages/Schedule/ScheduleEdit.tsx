@@ -109,6 +109,7 @@ function EditBox(props: CalendarStateProps) {
   }, [contentsList]);
 
   React.useEffect(() => {
+    const defaults: CommonShort = { id: "", name: "" };
     const timesTampDada = {
       start_at: timesTamp.start,
       end_at: timesTamp.end,
@@ -140,7 +141,7 @@ function EditBox(props: CalendarStateProps) {
       title: "",
       ...timesTampDada,
     });
-  }, [defaults, timesTamp]);
+  }, [timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: any[] = [];
