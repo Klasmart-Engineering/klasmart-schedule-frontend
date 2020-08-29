@@ -4,11 +4,11 @@ import { useDispatch } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
-import { getScheduleTimeViewData, getScheduleInfo } from "../../reducers/schedule";
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedule";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 
 const useQuery = () => {
   const { search } = useLocation();

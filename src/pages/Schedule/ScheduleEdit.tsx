@@ -12,13 +12,13 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import mockList from "../../mocks/Autocomplete.json";
+import { RootState } from "../../reducers";
 import { removeSchedule, saveScheduleData } from "../../reducers/schedule";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { RootState } from "../../reducers";
-import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 
 function SmallCalendar(props: CalendarStateProps) {
   const { timesTamp, changeTimesTamp } = props;
