@@ -86,7 +86,7 @@ function Tool(props: ToolProps) {
   };
 
   const searchChange = (): void => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/preview/${teacherName}`);
+    history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
   };
 
   const backChange = (): void => {

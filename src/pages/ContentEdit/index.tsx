@@ -1,13 +1,15 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { CreateContentRequest } from "../../api/api";
+import { ContentType } from "../../api/api.d";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
+import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { onLoadContentEdit, publish, save } from "../../reducers/content";
+import { AsyncTrunkReturned, onLoadContentEdit, publish, save } from "../../reducers/content";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
@@ -51,7 +53,7 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 
 export default function ContentEdit() {
   const dispatch = useDispatch();
-  const formMethods = useForm<CreateContentRequest>();
+  const formMethods = useForm<ContentDetailForm>();
   const {
     reset,
     handleSubmit,
@@ -64,6 +66,7 @@ export default function ContentEdit() {
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
+  const content_type = lesson === "material" ? ContentType.material : ContentType.plan;
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -78,16 +81,24 @@ export default function ContentEdit() {
     },
     [history, routeBasePath, lesson, rightside]
   );
-  const handlePublish = useCallback(() => {
+  const handlePublish = useCallback(async () => {
     if (!id) return;
-    dispatch(publish(id));
-  }, [dispatch, id]);
+    await dispatch(publish(id));
+    history.push("/");
+  }, [dispatch, id, history]);
   const handleSave = useMemo(
     () =>
-      handleSubmit((value: CreateContentRequest) => {
-        return dispatch(save({ ...value, content_type: lesson === "material" ? 1 : 2, data: value.data })) as any;
+      handleSubmit(async (value: ContentDetailForm) => {
+        const contentDetail = ModelContentDetailForm.encode({ ...value, content_type });
+        const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
+        debugger;
+        if (id) {
+          history.push({
+            search: setQuery(history.location.search, { id }),
+          });
+        }
       }),
-    [handleSubmit, dispatch, lesson]
+    [handleSubmit, dispatch, content_type, history]
   );
   const handleSearch = useMemo<MediaAssetsProps["onSearch"]>(
     () => (searchText = "") => {
@@ -100,7 +111,10 @@ export default function ContentEdit() {
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
   }, [id, lesson, dispatch, searchText, history]);
-  // useEffect(() => dispatch(syncHistory(history)), [history, dispatch]);
+  useEffect(() => {
+    reset(ModelContentDetailForm.decode(contentDetail));
+  }, [contentDetail, reset]);
+  // useEffect(()=>{dispatch(syncHistory(history))}, [history, dispatch]);
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
@@ -121,9 +135,13 @@ export default function ContentEdit() {
           <MediaAssetsEdit readonly={readonly} overlay />
         </ContentH5p>
       )}
-      {includeH5p && !includeAsset && <Controller name="data" as={ContentH5p} defaultValue={contentDetail.data} control={control} />}
+      {includeH5p && !includeAsset && (
+        <Controller name="data" as={ContentH5p} defaultValue={contentDetail.data} control={control} rules={{ required: true }} />
+      )}
       {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
-      {includePlanComposeGraphic && <Controller name="data" as={PlanComposeGraphic} defaultValue={contentDetail} control={control} />}
+      {includePlanComposeGraphic && (
+        <Controller name="data" as={PlanComposeGraphic} defaultValue={JSON.parse(contentDetail.data || "{}")} control={control} />
+      )}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
   );

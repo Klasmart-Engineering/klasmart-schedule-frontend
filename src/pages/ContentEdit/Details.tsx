@@ -19,10 +19,11 @@ import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { Content, CreateContentRequest } from "../../api/api";
+import { Content } from "../../api/api";
 import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
 import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -72,9 +73,9 @@ function ProgressWithText(props: CircularProgressProps) {
   );
 }
 interface DetailsProps {
-  contentDetail?: Content;
+  contentDetail: Content;
   uploadThumnail?: Function;
-  formMethods: UseFormMethods<CreateContentRequest>;
+  formMethods: UseFormMethods<ContentDetailForm>;
   mockOptions: MockOptions;
 }
 
@@ -84,7 +85,6 @@ export default function Details(props: DetailsProps) {
     formMethods: { control, errors },
     mockOptions,
   } = props;
-
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
@@ -96,7 +96,6 @@ export default function Details(props: DetailsProps) {
       </MenuItem>
     ));
   const size = sm ? "small" : "medium";
-  if (!contentDetail) return null;
   const theme = createMuiTheme(defaultTheme, {
     props: {
       MuiTextField: {

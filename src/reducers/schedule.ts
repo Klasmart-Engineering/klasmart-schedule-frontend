@@ -1,4 +1,4 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AsyncThunk, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api";
 import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
 
@@ -17,6 +17,9 @@ export interface ScheduleState {
   saveResult: number;
   scheduleDetial: ScheduleDetailed;
   scheduleTimeViewData: scheduleViewData[];
+  attachement_id: string;
+  attachment_path: string;
+  searchFlag: boolean;
 }
 
 interface Rootstate {
@@ -48,6 +51,9 @@ const initialState: ScheduleState = {
     is_force: false,
   },
   scheduleTimeViewData: [],
+  attachement_id: "",
+  attachment_path: "",
+  searchFlag: false,
 };
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
@@ -65,11 +71,12 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.createSchedule(payload)).id;
+      await api.schedules.createSchedule(payload);
     } else {
-      await api.schedules.updateSchedule(id, payload);
+      id = (await api.schedules.updateSchedule(id, payload)).id;
     }
-    return await api.schedules.getSchedulesById(id as string);
+    // @ts-ignore
+    return await api.schedules.getSchedulesById(id);
   }
 );
 
@@ -85,7 +92,7 @@ export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, vie
 type deleteSchedulesParams = Parameters<typeof api.schedules.deleteSchedule>[0];
 type deleteSchedulesResult = ReturnType<typeof api.schedules.deleteSchedule>;
 export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>("schedule/delete", (schedule_id, query) => {
-  return api.schedules.deleteSchedule(schedule_id);
+  return api.schedules.deleteSchedule(schedule_id, { repeat_edit_options: "only_current" });
 });
 
 type infoSchedulesParams = Parameters<typeof api.schedules.getSchedulesById>[0];
@@ -93,6 +100,30 @@ type infoSchedulesResult = ReturnType<typeof api.schedules.getSchedulesById>;
 export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedulesParams>("schedule/info", (schedule_id, query) => {
   return api.schedules.getSchedulesById(schedule_id);
 });
+
+type attachmentParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
+type attachmentResult = Parameters<typeof api.contentsResources.getContentResourceUploadPath>;
+
+type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
+type IGetContentsResourseResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
+export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
+  "content/getContentResourceUploadPath",
+  (query) => {
+    return api.contentsResources.getContentResourceUploadPath(query);
+  }
+);
+
+const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
+  const newViewData: any = [];
+  if (data.length > 0) {
+    data.forEach((item: ScheduleTimeView) => {
+      const start_at = new Date(Number(item.start_at) * 1000);
+      const end_at = new Date(Number(item.end_at) * 1000);
+      newViewData.push({ end: start_at, id: item.id, start: end_at, title: item.title });
+    });
+  }
+  return newViewData;
+};
 
 const { reducer } = createSlice({
   name: "schedule",
@@ -102,34 +133,30 @@ const { reducer } = createSlice({
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
       state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.total = payload.total;
+      state.searchFlag = true;
     },
-    [saveScheduleData.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>) => {
+    [getSearchScheduleList.rejected.type]: (state, { error }: any) => {
+      state.searchFlag = false;
+    },
+    [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       console.log(JSON.stringify(error));
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      const newViewData: any = [];
-      if (payload.length > 0) {
-        payload.forEach((item: ScheduleTimeView) => {
-          const start_at = new Date(Number(item.start_at) * 1000);
-          const end_at = new Date(Number(item.end_at) * 1000);
-          newViewData.push({
-            end: start_at,
-            id: item.id,
-            start: end_at,
-            title: item.title,
-          });
-        });
-      }
-      state.scheduleTimeViewData = newViewData;
+      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
       console.log(payload);
     },
     [getScheduleInfo.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
+    },
+    [getContentResourceUploadPath.fulfilled.type]: (state, { payload }: any) => {
+      console.log(payload);
+      state.attachment_path = payload.path;
+      state.attachement_id = payload.resource_id;
     },
   },
 });

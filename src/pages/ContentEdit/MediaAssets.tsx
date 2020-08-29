@@ -21,6 +21,7 @@ import { Content } from "../../api/api";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
+import { Thumbnail } from "../../components/Thumbnail";
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
     minHeight: 722,
@@ -34,10 +35,16 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     overflowX: "scroll",
   },
   table: {
-    minWidth: 1200,
+    minWidth: 700,
   },
   tableHead: {
     backgroundColor: "#F2F5F7",
+  },
+  cellThumnbnail: {
+    width: 135,
+  },
+  cellAction: {
+    width: 162,
   },
   assetImage: {
     width: 104,
@@ -157,7 +164,7 @@ function DraggableImage(props: DraggableItemProps) {
   const { type, item } = props;
   const css = useStyles();
   const [, dragRef] = useDrag({ item: { type, data: item } });
-  return <img ref={dragRef} className={css.assetImage} alt="pic" src={item.thumbnail} />;
+  return <Thumbnail ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={item.content_type} />;
 }
 
 export interface MediaAssetsProps {
@@ -177,16 +184,21 @@ export default function MediaAssets(props: MediaAssetsProps) {
   }, [getValues, onSearch]);
   const rows = list.map((item, idx) => (
     <TableRow key={idx}>
-      <TableCell>
+      <TableCell className={css.cellThumnbnail}>
         <DraggableImage type="LIBRARY_ITEM" item={item} />
       </TableCell>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.author}</TableCell>
-      <TableCell>{item.developmental}</TableCell>
-      <TableCell>{item.skills}</TableCell>
-      <TableCell>{item.age}</TableCell>
-      <TableCell>{item.grade}</TableCell>
-      <TableCell>{item.publish_scope}</TableCell>
+      <TableCell className={css.cellAction}>
+        <Button color="primary" variant="contained">
+          Select
+        </Button>
+      </TableCell>
+      {/* <TableCell>{item.developmental}</TableCell> */}
+      {/* <TableCell>{item.skills}</TableCell> */}
+      {/* <TableCell>{item.age}</TableCell> */}
+      {/* <TableCell>{item.grade}</TableCell> */}
+      {/* <TableCell>{item.publish_scope}</TableCell> */}
       {/* <TableCell>{multipleLine(item.created.split(" "))}</TableCell> */}
     </TableRow>
   ));
@@ -195,14 +207,15 @@ export default function MediaAssets(props: MediaAssetsProps) {
       <Table className={css.table}>
         <TableHead className={css.tableHead}>
           <TableRow>
-            <TableCell>Content Thumbnail</TableCell>
-            <TableCell>Content Name</TableCell>
+            <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>
+            <TableCell>{lesson === "plan" ? "Material" : "Plan"} Name</TableCell>
             <TableCell>Author</TableCell>
-            <TableCell>Developmental</TableCell>
-            <TableCell>Skills</TableCell>
-            <TableCell>Age</TableCell>
-            <TableCell>Grade</TableCell>
-            <TableCell>visibility settings</TableCell>
+            <TableCell className={css.cellAction}>Action</TableCell>
+            {/* <TableCell>Developmental</TableCell> */}
+            {/* <TableCell>Skills</TableCell> */}
+            {/* <TableCell>Age</TableCell> */}
+            {/* <TableCell>Grade</TableCell> */}
+            {/* <TableCell>visibility settings</TableCell> */}
             {/* <TableCell>Created On</TableCell> */}
           </TableRow>
         </TableHead>
@@ -228,7 +241,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   );
 
   return (
-    <Box className={css.mediaAssets} width="100%" display="flex" flexDirection="column" alignItems="center">
+    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
         <Comingsoon />
       ) : (

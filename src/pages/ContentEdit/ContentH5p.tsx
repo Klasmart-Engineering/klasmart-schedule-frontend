@@ -1,7 +1,8 @@
-import React, { ReactNode, useEffect } from "react";
+import { TextField } from "@material-ui/core";
+import React, { ReactNode } from "react";
 
 interface DataH5p {
-  source: string;
+  source?: string;
 }
 interface ContentH5pProps {
   children?: ReactNode;
@@ -10,11 +11,11 @@ interface ContentH5pProps {
 }
 export default function ContentH5p(props: ContentH5pProps) {
   const { value, onChange } = props;
-  useEffect(() => {
-    if (!value?.source && onChange)
-      setTimeout(() => {
-        onChange({ source: "source1" });
-      }, 1000);
-  }, [value, onChange]);
-  return <>{props.children}h5p content</>;
+  if (!value?.source) return null;
+  return (
+    <>
+      {props.children}
+      <TextField onChange={(e) => onChange && onChange({ source: e.target.value })} defaultValue={value} label="h5p mock id" required />
+    </>
+  );
 }

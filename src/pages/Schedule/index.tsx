@@ -1,13 +1,23 @@
 import { Grid } from "@material-ui/core";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
-import { getScheduleTimeViewData } from "../../reducers/schedule";
+import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedule";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import { contentLists } from "../../reducers/content";
+
+const useQuery = () => {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const scheduleId = query.get("schedule_id") || "";
+  const teacherName = query.get("teacher_name") || "";
+  return { scheduleId, teacherName };
+};
 
 interface RouteParams {
   rightside: "scheduleTable" | "scheduleList";
@@ -30,6 +40,9 @@ function ScheduleContent() {
   const { includeEdit, includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const dispatch = useDispatch();
+  const { scheduleId, teacherName } = useQuery();
+  const [state] = useRepeatSchedule();
+  const { type } = state;
 
   /**
    * calendar model view change
@@ -51,8 +64,14 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
+    // @ts-ignore
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
   }, [modelView, timesTamp, dispatch]);
+
+  React.useEffect(() => {
+    dispatch(contentLists({ org: "1" }));
+    dispatch(getScheduleInfo(scheduleId));
+  }, [scheduleId, dispatch]);
 
   return (
     <>
@@ -68,7 +87,13 @@ function ScheduleContent() {
             />
           </Grid>
           <Grid item xs={3}>
-            <ScheduleEdit includePreview={includePreview} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} />
+            <ScheduleEdit
+              includePreview={includePreview}
+              timesTamp={timesTamp}
+              changeTimesTamp={changeTimesTamp}
+              repeatData={{ type, [type]: state[type] }}
+              modelView={modelView}
+            />
           </Grid>
           <Grid item xs={9}>
             {includeTable && <KidsCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} />}

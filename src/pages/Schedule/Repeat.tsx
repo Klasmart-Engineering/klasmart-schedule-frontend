@@ -98,7 +98,7 @@ interface RepeatCycleProps {
 }
 
 function RepeatCycle(props: any) {
-  const { state, dispatch } = props;
+  const { state, dispatch, handleRepeatData } = props;
   const classes = useStyles();
   const weekendList = [
     {
@@ -178,31 +178,38 @@ function RepeatCycle(props: any) {
     }
     _state[type].on = selectedDays;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   const changeOnType = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].on_type = event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
-  const handleOnDateDay = (event: React.ChangeEvent<{ value: unknown }>) => {
-    _state[type].on_date_day = event.target.value as number;
+  const handleOnDateDay = (event: React.ChangeEvent<HTMLInputElement>) => {
+    _state[type].on_date_day = +event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   const handleOnWeekSeq = (event: React.ChangeEvent<{ value: unknown }>) => {
     _state[type].on_week_seq = event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   const handleOnWeek = (event: React.ChangeEvent<{ value: unknown }>) => {
     _state[type].on_week = event.target.value as string;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   const handleOnWeekMonth = (event: React.ChangeEvent<{ value: unknown }>) => {
-    _state[type].on_week_month = event.target.value as string;
+    console.log(event.target.value);
+    _state[type].on_week_month = event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   return (
@@ -310,7 +317,7 @@ function RepeatCycle(props: any) {
                     disabled={on_type !== "month"}
                   >
                     {monthList.map((item, index) => (
-                      <MenuItem key={index} value={item}>
+                      <MenuItem key={index} value={index}>
                         of {item}
                       </MenuItem>
                     ))}
@@ -327,7 +334,7 @@ function RepeatCycle(props: any) {
 
 function EndRepeat(props: any) {
   const classes = useStyles();
-  const { state, dispatch } = props;
+  const { state, dispatch, handleRepeatData } = props;
   const { type } = state;
   const { end } = state[type];
   let _state = JSON.parse(JSON.stringify(state));
@@ -335,16 +342,22 @@ function EndRepeat(props: any) {
   const handleEndType = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].end.type = event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
-  const handleAfterCount = (event: React.ChangeEvent<{ value: unknown }>) => {
-    _state[type].end.after_count = event.target.value as number;
+  const handleAfterCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(+event.target.value);
+    _state[type].end.after_count = +event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   const handleAfterTime = (date: any) => {
-    _state[type].end.after_time = date;
+    // console.log(new Date(date).getTime())
+    let _date = new Date(date).getTime() / 1000;
+    _state[type].end.after_time = _date;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   return (
@@ -404,17 +417,19 @@ function EndRepeat(props: any) {
 
 function RepeatHeader(props: any) {
   const classes = useStyles();
-  const { state, dispatch } = props;
+  const { state, dispatch, handleRepeatData } = props;
   const { interval } = state[state.type];
   const { type } = state;
   let _state = JSON.parse(JSON.stringify(state));
 
   const handleChangeType = (event: React.ChangeEvent<{ value: unknown }>) => {
     dispatch({ type: "changeData", data: { ...state, type: event.target.value as string } });
+    handleRepeatData({ ...state, type: event.target.value as string });
   };
-  const handleChangeInterval = (event: React.ChangeEvent<{ value: unknown }>) => {
-    _state[type].interval = event.target.value as number;
+  const handleChangeInterval = (event: React.ChangeEvent<HTMLInputElement>) => {
+    _state[type].interval = +event.target.value;
     dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
   };
 
   const endAdornment = type === "daily" ? "day(s)" : type === "weekly" ? "week(s)" : "month(s)";
@@ -462,15 +477,16 @@ function RepeatHeader(props: any) {
   );
 }
 
-export default function RepeatSchedule() {
+export default function RepeatSchedule(props: any) {
   const classes = useStyles();
-  const [state, dispatch] = useRepeatSchedule();
-  // console.log(state, 333)
+  const [state, dispatchRepeat] = useRepeatSchedule();
+  console.log(state, 333);
+  const { handleRepeatData } = props;
   return (
     <Card className={classes.container}>
-      <RepeatHeader state={state} dispatch={dispatch} />
-      <RepeatCycle state={state} dispatch={dispatch} />
-      <EndRepeat state={state} dispatch={dispatch} />
+      <RepeatHeader state={state} dispatch={dispatchRepeat} handleRepeatData={handleRepeatData} />
+      <RepeatCycle state={state} dispatch={dispatchRepeat} handleRepeatData={handleRepeatData} />
+      <EndRepeat state={state} dispatch={dispatchRepeat} handleRepeatData={handleRepeatData} />
     </Card>
   );
 }

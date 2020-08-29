@@ -96,7 +96,6 @@ interface HeaderProps {
 
 function ContentHeader(props: HeaderProps) {
   const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty } = props;
-  console.log("published_status=", contentDetail?.publish_status);
   console.log("isDirty=", isDirty);
 
   const css = useStyles();
@@ -123,7 +122,7 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
             Save
           </Button>
-          {contentDetail?.publish_status === "draft" && (
+          {contentDetail?.publish_status === "draft" && !isDirty && (
             <Button
               variant="contained"
               endIcon={<Publish />}
@@ -150,7 +149,7 @@ function ContentHeader(props: HeaderProps) {
           <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave as any}>
             <Save fontSize="small" />
           </IconButton>
-          {contentDetail?.publish_status === "draft" && (
+          {contentDetail?.publish_status === "draft" && !isDirty && (
             <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
               <Publish fontSize="small" />
             </IconButton>

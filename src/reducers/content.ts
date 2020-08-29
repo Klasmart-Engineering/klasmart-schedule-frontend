@@ -37,7 +37,7 @@ const initialState: IContentState = {
     version: 0,
     source_id: "",
     locked_by: "",
-    data: {},
+    data: "",
     extra: "",
     author: "",
     author_name: "",
@@ -81,7 +81,7 @@ const initialState: IContentState = {
     version: 0,
     source_id: "",
     locked_by: "",
-    data: {},
+    data: "",
     extra: "",
     author: "",
     author_name: "",
@@ -98,7 +98,7 @@ const initialState: IContentState = {
   },
 };
 
-type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
+export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
   ? U
   : T extends (...args: any) => infer U
@@ -106,7 +106,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 type IQueryContentParams = Parameters<typeof api.contentsDynamo.contentsDynamoList>[0];
-type IQueryContentResult = ReturnType<typeof api.contentsDynamo.contentsDynamoList>;
+type IQueryContentResult = AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
 
 interface onLoadContentEditPayload {
   id: Content["id"] | null;
@@ -120,19 +120,18 @@ interface onLoadContentEditResult {
   mockOptions?: MockOptions;
 }
 
-export const save = createAsyncThunk<Content, Content, { state: RootState }>("content/save", async (payload, { getState }) => {
-  let {
+export const save = createAsyncThunk<Content["id"], Content, { state: RootState }>("content/save", async (payload, { getState }) => {
+  const {
     content: {
       contentDetail: { id },
     },
   } = getState();
-  // debugger
   if (!id) {
-    id = (await api.contents.createContent(payload)).id;
+    return (await api.contents.createContent(payload)).id;
   } else {
     await api.contents.updateContent(id, payload);
+    return id;
   }
-  return await api.contents.getContentById(id as string);
 });
 
 export const publish = createAsyncThunk<Content, Required<Content>["id"], { state: RootState }>("content/publish", (id, { getState }) => {
@@ -155,14 +154,16 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
     // debugger;
-    const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
-    const mediaList = await api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText });
-    const mockOptions = await apiGetMockOptions();
+    const [contentDetail, mediaList, mockOptions] = await Promise.all([
+      id ? api.contents.getContentById(id) : initialState.contentDetail,
+      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText }),
+      apiGetMockOptions(),
+    ]);
     return { contentDetail, mediaList, mockOptions };
   }
 );
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
-type IGetContentsResourseResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
+type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
   "content/getContentResourceUploadPath",
   (query) => {
@@ -170,7 +171,7 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   }
 );
 
-type IgetContentResourcePathResult = ReturnType<typeof api.contentsResources.getContentResourcePath>;
+type IgetContentResourcePathResult = AsyncReturnType<typeof api.contentsResources.getContentResourcePath>;
 export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathResult, string>(
   "content/getContentResourcePath",
   (resourse_id: string) => {
@@ -179,7 +180,7 @@ export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathRe
 );
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
-type IQueryContentsResult = ReturnType<typeof api.contents.searchContents>;
+type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
 export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contents", async (query) => {
   const { list, total } = await api.contents.searchContents(query);
   return { list, total };
@@ -227,7 +228,6 @@ const { actions, reducer } = createSlice({
   extraReducers: {
     // todo: PayloadAction<Content>  应该从 save 中获取类型
     [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
-      state.contentDetail = payload;
       // alert("success");
     },
     [save.rejected.type]: (state, { error }: any) => {

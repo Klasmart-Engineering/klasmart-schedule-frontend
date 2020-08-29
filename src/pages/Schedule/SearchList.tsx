@@ -89,42 +89,48 @@ function timeFormat(time: number, type: string = "time") {
   }
 }
 
+const useQuery = () => {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const name = query.get("name");
+  return { name };
+};
+
 export default function SearchList() {
   const dispatch = useDispatch();
-  let name: string | string[] = useLocation().pathname.split("/");
-  const _name = name[name.length - 1];
+  const { name } = useQuery();
   React.useEffect(() => {
-    dispatch(getSearchScheduleList({ teacher_name: _name, page: 1, page_size: 10 }));
-  }, [_name, dispatch]);
-  const { searchScheduleList, total } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+    dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10 }));
+  }, [dispatch, name]);
+  const { searchScheduleList, total, searchFlag } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
   const classes = useStyles();
 
   const history = useHistory();
 
-  let someone: any;
+  let flag: any;
 
-  function another(date: any, number: number) {
+  function isTitleSame(date: any, number: number) {
     if (number === 0) {
-      someone = true;
+      flag = true;
     } else {
       searchScheduleList.forEach((item: any, index: number) => {
         if (index < number) {
           if (timeFormat(item.start_at, "dateDay") === timeFormat(date.start_at, "dateDay")) {
-            someone = false;
+            flag = false;
             return;
           } else {
-            someone = true;
+            flag = true;
             return;
           }
         }
       });
     }
-    if (someone) return true;
+    if (flag) return true;
     return false;
   }
-  const previewSchedule = (index: number) => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/id/${index}`);
+  const previewSchedule = (id: number) => {
+    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/schedule_id=${id}`);
   };
 
   let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
@@ -133,7 +139,7 @@ export default function SearchList() {
   const getBottom = (value: any) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
-      dispatch(getSearchScheduleList({ page, page_size: 10 }));
+      dispatch(getSearchScheduleList({ teacher_name: name, page, page_size: 10 }));
     }
   };
 
@@ -142,9 +148,9 @@ export default function SearchList() {
       {searchScheduleList && searchScheduleList.length > 0 ? (
         <>
           {searchScheduleList.map((item: any, index: number) => (
-            <div key={index} className={classes.partItem}>
-              {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
-              <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
+            <div key={item.id} className={classes.partItem}>
+              {isTitleSame(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
+              <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(item.id)}>
                 <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
                 <Grid container alignItems="center" className={classes.firstLine}>
                   <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
@@ -190,8 +196,14 @@ export default function SearchList() {
         </>
       ) : (
         <div style={{ textAlign: "center" }}>
-          <img src={emptyBox} alt="" />
-          <p>No Data</p>
+          {searchFlag ? (
+            <>
+              <img src={emptyBox} alt="" />
+              <p>No results found.</p>
+            </>
+          ) : (
+            <CircularProgress />
+          )}
         </div>
       )}
     </Box>
