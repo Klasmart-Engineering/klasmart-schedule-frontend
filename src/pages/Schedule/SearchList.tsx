@@ -130,7 +130,7 @@ export default function SearchList() {
     return false;
   }
   const previewSchedule = (id: number) => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/schedule_id=${id}`);
+    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/?schedule_id=${id}`);
   };
 
   let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
