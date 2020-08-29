@@ -118,6 +118,7 @@ function MyCalendar(props: CalendarProps) {
           onView={() => {}}
           onNavigate={() => {}}
           view={modelView}
+          popup={true}
           selectable={true}
           localizer={localizer}
           events={scheduleTimeViewData}
