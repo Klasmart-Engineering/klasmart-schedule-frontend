@@ -1,10 +1,10 @@
 [
   {
-    "ID": "Program-1",
-    "Name": "Program1"
+    "id": "Program-1",
+    "name": "Program1"
   },
   {
-    "ID": "Program-2",
-    "Name": "Program2"
+    "id": "Program-2",
+    "name": "Program2"
   }
 ]

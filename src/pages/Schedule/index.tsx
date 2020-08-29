@@ -9,6 +9,7 @@ import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { contentLists } from "../../reducers/content";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -68,6 +69,7 @@ function ScheduleContent() {
   }, [modelView, timesTamp, dispatch]);
 
   React.useEffect(() => {
+    dispatch(contentLists({ org: "1" }));
     dispatch(getScheduleInfo(scheduleId));
   }, [scheduleId, dispatch]);
 

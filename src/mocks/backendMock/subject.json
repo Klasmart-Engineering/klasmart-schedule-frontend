@@ -1,10 +1,10 @@
 [
   {
-    "ID": "Subject-1",
-    "Name": "Subject1"
+    "id": "Subject-1",
+    "name": "Subject1"
   },
   {
-    "ID": "Subject-2",
-    "Name": "Subject2"
+    "id": "Subject-2",
+    "name": "Subject2"
   }
 ]

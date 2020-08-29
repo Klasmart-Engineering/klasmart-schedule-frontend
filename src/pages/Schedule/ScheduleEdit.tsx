@@ -12,29 +12,17 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
-import mockList from "../../mocks/Autocomplete.json";
 import { removeSchedule, saveScheduleData } from "../../reducers/schedule";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import { RootState } from "../../reducers";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-
-function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp } = props;
-  // @ts-ignore
-  const getTimestamp = (date: Date | null) => new Date(date).getTime() / 1000;
-  const handleDateChange = (date: Date | null) => {
-    changeTimesTamp({ start: getTimestamp(date), end: getTimestamp(date) });
-  };
-  return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <Grid container justify="space-around">
-        <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
-      </Grid>
-    </MuiPickersUtilsProvider>
-  );
-}
+import { CommonShort } from "../../api/api";
+import mockClass from "../../mocks/backendMock/class.json";
+import mockProgram from "../../mocks/backendMock/program.json";
+import mockSubject from "../../mocks/backendMock/subject.json";
+import mockTeacher from "../../mocks/backendMock/teacher.json";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -77,6 +65,21 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
 }));
 
+function SmallCalendar(props: CalendarStateProps) {
+  const { timesTamp, changeTimesTamp } = props;
+  const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
+  const handleDateChange = (date: Date | null) => {
+    changeTimesTamp({ start: getTimestamp(date), end: getTimestamp(date) });
+  };
+  return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <Grid container justify="space-around">
+        <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
+      </Grid>
+    </MuiPickersUtilsProvider>
+  );
+}
+
 function EditBox(props: CalendarStateProps) {
   const css = useStyles();
   const history = useHistory();
@@ -84,17 +87,31 @@ function EditBox(props: CalendarStateProps) {
   const [openStatus, setOpenStatus] = React.useState(false);
   const { timesTamp } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
   const [classItem, setClassItem] = React.useState<any>({});
   const [lessonPlan, setLessonPlan] = React.useState<any>({});
   const [subjectItem, setSubjectItem] = React.useState<any>({});
   const [programItem, setProgramItem] = React.useState<any>({});
+  const [teacherItem, setTeacherItem] = React.useState<any>({});
+  const [attachmentId, setAttachmentId] = React.useState<string>("");
+  const [contentsListSelect, setContentsListSelect] = React.useState<any>({});
 
-  useEffect(() => {
+  React.useEffect(() => {
+    const newContentsData: any = [];
+    if (contentsList.length > 0) {
+      contentsList.forEach((item: CommonShort) => {
+        newContentsData.push({ id: item.id, name: item.name });
+      });
+    }
+    setContentsListSelect(newContentsData);
+  }, [contentsList]);
+
+  React.useEffect(() => {
     console.log(timesTamp);
   }, [timesTamp]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (scheduleDetial.id) {
       const newData: any = {
         attachment_id: scheduleDetial.attachment,
@@ -104,8 +121,8 @@ function EditBox(props: CalendarStateProps) {
         due_at: scheduleDetial.due_at,
         end_at: scheduleDetial.end_at,
         is_all_day: scheduleDetial.is_all_day,
-        is_force: scheduleDetial.is_force,
-        is_repeat: scheduleDetial.is_repeat,
+        is_force: true,
+        is_repeat: true,
         lesson_plan_id: scheduleDetial.lesson_plan!.id,
         program_id: scheduleDetial.program!.id,
         repeat: scheduleDetial.subject,
@@ -114,21 +131,24 @@ function EditBox(props: CalendarStateProps) {
         teacher_ids: scheduleDetial.teachers,
         title: scheduleDetial.title,
       };
-      setScheduleList(newData);
+      setStatus({
+        allDayCheck: newData.is_all_day,
+        repeatCheck: false,
+        dueDateCheck: newData.due_at ? true : false,
+      });
       setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
       setSubjectItem(scheduleDetial.subject);
       setProgramItem(scheduleDetial.program);
+      setTeacherItem(scheduleDetial.teachers);
+      setScheduleList(newData);
     }
   }, [scheduleDetial]);
-  /*  useEffect(() => {
-    const newTopocList = {
-      ...scheduleList,
-      start_at: timesTamp.start,
-      end_at: timesTamp.end,
-    };
-    setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
-  }, [scheduleList, timesTamp]);*/
+
+  React.useEffect(() => {
+    console.log(timesTamp);
+  }, [timesTamp]);
+
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
   const repeatData = {
@@ -186,8 +206,21 @@ function EditBox(props: CalendarStateProps) {
       value.map((val: any, key: number) => {
         ids.push(val.id.toString());
       });
+      setTeacherItem(value);
     } else {
       ids = value ? value["id"] : "";
+    }
+    if (name === "class_id") {
+      setClassItem(value);
+    }
+    if (name === "lesson_plan_id") {
+      setLessonPlan(value);
+    }
+    if (name === "subject_id") {
+      setSubjectItem(value);
+    }
+    if (name === "program_id") {
+      setProgramItem(value);
     }
     setScheduleData(name, ids);
   };
@@ -256,6 +289,7 @@ function EditBox(props: CalendarStateProps) {
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = repeatData;
+    addData["attachment_id"] = attachmentId;
     const result = { ...scheduleList, ...addData };
     dispatch(saveScheduleData({ ...result }));
   };
@@ -369,6 +403,7 @@ function EditBox(props: CalendarStateProps) {
               <DeleteOutlineOutlined
                 style={{
                   color: "#D74040",
+                  visibility: scheduleDetial.id ? "visible" : "hidden",
                 }}
                 className={css.toolset}
                 onClick={handleDelete}
@@ -396,7 +431,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={mockList}
+          options={mockClass}
           getOptionLabel={(option) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
@@ -409,7 +444,7 @@ function EditBox(props: CalendarStateProps) {
         <Autocomplete
           id="combo-box-demo"
           freeSolo
-          options={mockList}
+          options={contentsListSelect}
           getOptionLabel={(option) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "lesson_plan_id");
@@ -430,11 +465,12 @@ function EditBox(props: CalendarStateProps) {
           id="combo-box-demo"
           freeSolo
           multiple
-          options={mockList}
+          options={mockTeacher}
           getOptionLabel={(option) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "teacher_ids");
           }}
+          value={teacherItem}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -494,7 +530,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={mockList}
+          options={mockSubject}
           getOptionLabel={(option) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "subject_id");
@@ -513,7 +549,7 @@ function EditBox(props: CalendarStateProps) {
         />
         <Autocomplete
           id="combo-box-demo"
-          options={mockList}
+          options={mockProgram}
           getOptionLabel={(option) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "program_id");
@@ -591,7 +627,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         {checkedStatus.repeatCheck && (
           <Box className={css.repeatBox}>
-            <RepeatSchedule />
+            <RepeatSchedule handleRepeatData={handleRepeatData} />
           </Box>
         )}
       </Box>
