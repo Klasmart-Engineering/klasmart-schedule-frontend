@@ -50,16 +50,16 @@ const tipsText = (
 
 interface ScheduleAttachmentProps {
   setAttachmentId: (id: string) => void;
+  attachmentId: string;
 }
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const dispatch = useDispatch();
-  const { setAttachmentId } = props;
+  const { setAttachmentId, attachmentId } = props;
   const css = useStyles();
   const downloadFile = () => {
     console.log("download");
   };
-
   const handleOnChange = (value: any) => {
     setAttachmentId(value);
   };
@@ -70,7 +70,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
       onChange={handleOnChange}
       render={({ uploady, item, btnRef, value, isUploading }) => (
         <Box className={css.fieldBox}>
-          <TextField disabled className={css.fieldset} placeholder="Attachment" value={item ? item.file.name : ""}></TextField>
+          <TextField disabled className={css.fieldset} placeholder="Attachment" value={item ? item.file.name : attachmentId}></TextField>
           <HtmlTooltip title={tipsText}>
             <InfoOutlined className={css.iconField} style={{ left: "110px", display: item ? "none" : "block" }} />
           </HtmlTooltip>

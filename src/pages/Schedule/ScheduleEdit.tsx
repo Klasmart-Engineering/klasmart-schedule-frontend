@@ -646,7 +646,7 @@ function EditBox(props: CalendarStateProps) {
           value={scheduleList.description}
           onChange={(e) => handleTopicListChange(e, "description")}
         />
-        <ScheduleAttachment setAttachmentId={setAttachmentId} />
+        <ScheduleAttachment setAttachmentId={setAttachmentId} attachmentId={attachmentId} />
         <Box className={css.fieldset}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live
