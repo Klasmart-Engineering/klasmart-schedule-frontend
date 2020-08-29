@@ -8,7 +8,7 @@ variables:
   devGlobalBuildCommand: "npm run build"
   testGlobalBuildCommand: "npm run build"
   releaseGlobalBuildCommand: "npm run build"
-  devGlobalDeployBucketName: 'krklcudev.frontend'
+  devGlobalDeployBucketName: 'cdk-kl2-s3-frontend-cms-dev'
   testGlobalDeployBucketName: 'krklcutest.frontend'
   releaseGlobalDeployBucketName: 'krklcuprod.frontend'
   devGlobalDeployBucketPath: "/"
