@@ -123,20 +123,20 @@ function PublishedBtn(props: ActionProps) {
 interface ActionProps {
   handleAction: (type: string) => any;
 }
-function WaitingBtn(props: ActionProps) {
-  const css = useStyles();
-  const { handleAction } = props;
-  const handleDelete = () => {
-    handleAction("del");
-  };
-  return (
-    <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined" onClick={handleDelete}>
-        Delete
-      </Button>
-    </Box>
-  );
-}
+// function WaitingBtn(props: ActionProps) {
+//   const css = useStyles();
+//   const { handleAction } = props;
+//   const handleDelete = () => {
+//     handleAction("del");
+//   };
+//   return (
+//     <Box display="flex" justifyContent="flex-end">
+//       <Button className={css.publistedBtn} variant="outlined" onClick={handleDelete}>
+//         Delete
+//       </Button>
+//     </Box>
+//   );
+// }
 
 interface ActionProps {
   handleAction: (type: string) => any;
@@ -152,10 +152,10 @@ function PendingBtn(props: ActionProps) {
   };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.rejectBtn} variant="contained" onClick={handelApprove}>
+      <Button className={css.rejectBtn} variant="contained" onClick={handleReject}>
         Reject
       </Button>
-      <Button className={css.approveBtn} variant="contained" onClick={handleReject}>
+      <Button className={css.approveBtn} variant="contained" onClick={handelApprove}>
         Approve
       </Button>
     </Box>
@@ -338,7 +338,7 @@ export default function ContentPreview(props: Content) {
           <DraftRejectBtn handleAction={handleAction} />
         )}
         {contentPreview.publish_status === "pending" && <PendingBtn handleAction={handleAction} />}
-        {contentPreview.publish_status === "pending" && <WaitingBtn handleAction={handleAction} />}
+        {/* {contentPreview.publish_status === "pending" && <WaitingBtn handleAction={handleAction} />} */}
         {contentPreview.publish_status === "archive" && <ArchiveBtn handleAction={handleAction} />}
       </Box>
       <Box className={css.right}>right</Box>
