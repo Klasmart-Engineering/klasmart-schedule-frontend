@@ -68,15 +68,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function Tool(props: ToolProps) {
   const css = useStyles();
-  const [value, setSearchValue] = React.useState("");
-  const [type, setModelType] = React.useState(20);
   const [teacherName, setTeacherName] = React.useState("");
   const history = useHistory();
   const { includeList, changeTimesTamp, changeModelView, modelView } = props;
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSearchValue(event.target.value as string);
-  };
+  // const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  //   setSearchValue(event.target.value as string);
+  // };
 
   const selectToday = () => {
     changeTimesTamp({

@@ -237,10 +237,6 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
   canDrop: monitor.canDrop(),
 });
 
-const mapDropSegmentProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
-  canDrop: monitor.canDrop(),
-});
-
 interface SegmentBoxProps extends Segment {
   first?: boolean;
   canDropMaterial?: boolean;

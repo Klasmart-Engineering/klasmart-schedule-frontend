@@ -1,6 +1,6 @@
-import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
-import { Empty, Comingsoon } from "./MediaAssets";
+import React from "react";
+import { Comingsoon } from "./MediaAssets";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {

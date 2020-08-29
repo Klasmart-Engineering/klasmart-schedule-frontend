@@ -1,4 +1,6 @@
-import React from "react";
+import Checkbox from "@material-ui/core/Checkbox";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -6,21 +8,19 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
 import Tooltip from "@material-ui/core/Tooltip";
-import PropTypes from "prop-types";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
 import {
-  Share,
+  CloseOutlined,
+  DeleteOutlineOutlined,
+  DoneOutlined,
+  PublishOutlined,
   RemoveCircle,
   SaveAlt,
+  Share,
   Visibility,
-  DoneOutlined,
-  CloseOutlined,
-  PublishOutlined,
-  DeleteOutlineOutlined,
 } from "@material-ui/icons";
+import PropTypes from "prop-types";
+import React from "react";
 
 interface Data {
   type: string;
@@ -201,7 +201,7 @@ export default function TableList(props: TableListProps) {
   const [page, setPage] = React.useState(0);
   const [dense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(8);
-  const [state, setState] = React.useState({
+  const [state] = React.useState({
     rows: list,
   });
 

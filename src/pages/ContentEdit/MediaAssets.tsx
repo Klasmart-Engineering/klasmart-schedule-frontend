@@ -86,14 +86,14 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-const multipleLine = (list: string[]) => {
-  const spanList = list.map((item, idx) => <span key={idx}>{item}</span>);
-  return (
-    <Box display="flex" flexDirection="column" alignItems="center">
-      {spanList}
-    </Box>
-  );
-};
+// const multipleLine = (list: string[]) => {
+//   const spanList = list.map((item, idx) => <span key={idx}>{item}</span>);
+//   return (
+//     <Box display="flex" flexDirection="column" alignItems="center">
+//       {spanList}
+//     </Box>
+//   );
+// };
 
 interface Asset {
   status: string;

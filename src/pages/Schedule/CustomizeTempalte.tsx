@@ -64,7 +64,7 @@ interface InfoProps {
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
-  const { scheduleId, handleDelete, handleClose, scheduleInfo } = props;
+  const { handleDelete, handleClose, scheduleInfo } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 

@@ -5,11 +5,11 @@ import { useLocation, useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { contentLists } from "../../reducers/content";
 import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedule";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { contentLists } from "../../reducers/content";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -37,10 +37,10 @@ const parseModel = (model: RouteParams["model"]) => ({
 function ScheduleContent() {
   const { model, rightside } = useParams();
   const { includeTable, includeList } = parseRightside(rightside);
-  const { includeEdit, includePreview } = parseModel(model);
+  const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const dispatch = useDispatch();
-  const { scheduleId, teacherName } = useQuery();
+  const { scheduleId } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
 
