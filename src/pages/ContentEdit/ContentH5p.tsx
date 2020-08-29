@@ -2,7 +2,7 @@ import { TextField } from "@material-ui/core";
 import React, { ReactNode } from "react";
 
 interface DataH5p {
-  source: string;
+  source?: string;
 }
 interface ContentH5pProps {
   children?: ReactNode;
@@ -11,10 +11,11 @@ interface ContentH5pProps {
 }
 export default function ContentH5p(props: ContentH5pProps) {
   const { value, onChange } = props;
+  if (!value?.source) return null;
   return (
     <>
       {props.children}
-      <TextField onChange={(e) => onChange && onChange({ source: e.target.value })} label="h5p mock id" required />
+      <TextField onChange={(e) => onChange && onChange({ source: e.target.value })} defaultValue={value} label="h5p mock id" required />
     </>
   );
 }
