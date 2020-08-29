@@ -125,7 +125,7 @@ function EditBox(props: CalendarStateProps) {
     setProgramItem(defaults);
     setTeacherItem([]);
     setScheduleList({
-      attachment_id: "",
+      attachment_path: "",
       class_id: "",
       class_type: "",
       description: "",
@@ -154,7 +154,7 @@ function EditBox(props: CalendarStateProps) {
   React.useEffect(() => {
     if (scheduleDetial.id) {
       const newData: any = {
-        attachment_id: scheduleDetial.attachment,
+        attachment_path: scheduleDetial.attachment,
         class_id: scheduleDetial.class!.id,
         class_type: scheduleDetial.class_type,
         description: scheduleDetial.description,
@@ -193,7 +193,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const [scheduleList, setScheduleList] = React.useState<InitData>({
-    attachment_id: "",
+    attachment_path: "",
     class_id: "",
     class_type: "",
     description: "",
@@ -690,7 +690,7 @@ interface InitData {
   class_type: string;
   due_at: number;
   description: string;
-  attachment_id: string;
+  attachment_path: string;
   is_force: boolean;
   is_repeat: boolean;
   is_all_day: boolean;
