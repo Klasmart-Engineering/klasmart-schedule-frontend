@@ -97,6 +97,8 @@ function EditBox(props: CalendarStateProps) {
   const [teacherItem, setTeacherItem] = React.useState<any>([]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [contentsListSelect, setContentsListSelect] = React.useState<any>([defaults]);
+  const timestampInt = (timestamp: number) => Math.floor(timestamp);
+  const currentTime = timestampInt(new Date().getTime() / 1000);
 
   React.useEffect(() => {
     const newContentsData: any = [];
@@ -129,7 +131,7 @@ function EditBox(props: CalendarStateProps) {
       class_id: "",
       class_type: "",
       description: "",
-      due_at: new Date().getTime() / 1000,
+      due_at: currentTime,
       is_all_day: false,
       is_force: true,
       is_repeat: false,
@@ -141,7 +143,7 @@ function EditBox(props: CalendarStateProps) {
       title: "",
       ...timesTampDada,
     });
-  }, [timesTamp]);
+  }, [currentTime, timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: any[] = [];
@@ -197,20 +199,19 @@ function EditBox(props: CalendarStateProps) {
     class_id: "",
     class_type: "",
     description: "",
-    due_at: new Date().getTime() / 1000,
-    end_at: new Date().getTime() / 1000,
+    due_at: currentTime,
+    end_at: currentTime,
     is_all_day: false,
     is_force: true,
     is_repeat: false,
     lesson_plan_id: "",
     program_id: "",
     repeat: {},
-    start_at: new Date().getTime() / 1000,
+    start_at: currentTime,
     subject_id: "",
     teacher_ids: [],
     title: "",
   });
-  const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
