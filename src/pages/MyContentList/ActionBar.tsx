@@ -1,22 +1,16 @@
-import { ButtonGroup, Checkbox, FormControlLabel, Grid, InputAdornment, Tooltip, withStyles } from "@material-ui/core";
+import { ButtonGroup, Checkbox, FormControlLabel, Grid, InputAdornment, Menu, MenuItem, Tooltip, withStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
-import Grow from "@material-ui/core/Grow/Grow";
 import Hidden from "@material-ui/core/Hidden";
 import InputBase from "@material-ui/core/InputBase/InputBase";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList/MenuList";
-import Paper from "@material-ui/core/Paper/Paper";
-import Popper from "@material-ui/core/Popper/Popper";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField/TextField";
-import { MoreHoriz, Search, ViewListOutlined, ViewQuiltOutlined } from "@material-ui/icons";
+import { Search, ViewListOutlined, ViewQuiltOutlined } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import React, { useEffect } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
 import SecondaryMenu from "./secondaryMenu";
-import SortTemplate from "./SortTemplate";
+import { SortTemplate, SortTemplateMb } from "./SortTemplate";
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -118,15 +112,16 @@ const useStyles = makeStyles((theme) => ({
 interface ActionBarLayout {
   layout: string;
   name: string;
+  myOnly: boolean;
 }
 function SelectTemplateMb(props: ActionBarLayout) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef<HTMLButtonElement>(null);
   const [value, setValue] = React.useState("");
-  const { layout, name } = props;
+  const { layout, name, myOnly } = props;
   const history = useHistory();
   const { pathname, search } = useLocation();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selected, setSelected] = React.useState<boolean>(false);
   const handleChange = (event: any) => {
     setValue(event.target.value);
   };
@@ -135,41 +130,23 @@ function SelectTemplateMb(props: ActionBarLayout) {
     const newUrl = setUrl(search, "name", name);
     history.push(`${pathname}${newUrl}`);
   };
-  const renderUserMessage = () => {
-    if (layout === "card") {
-      return (
-        <Link to="/my-content-list?layout=list" style={{ color: "black" }}>
-          <ViewListOutlined style={{ fontSize: "40px", marginTop: "8px" }} />
-        </Link>
-      );
-    } else {
-      return (
-        <Link to="/my-content-list?layout=card" style={{ color: "black" }}>
-          <ViewQuiltOutlined style={{ fontSize: "40px", marginTop: "8px" }} />
-        </Link>
-      );
-    }
+  const handleClose = () => {
+    setAnchorEl(null);
   };
-
-  const handleClose = (event: React.MouseEvent<EventTarget>) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
-      return;
-    }
-    setOpen(false);
+  const handleShowMyOnluy = (event: any) => {
+    setAnchorEl(event.currentTarget);
   };
-
-  function handleListKeyDown(event: React.KeyboardEvent) {
-    if (event.key === "Tab") {
-      event.preventDefault();
-      setOpen(false);
-    }
-  }
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+  const handleItemClick = (event: any) => {
+    setSelected(!selected);
+    setAnchorEl(null);
+    const myOnly: any = !selected;
+    const newUrl = setUrl(search, "myOnly", myOnly);
+    history.push(`${pathname}${newUrl}`);
   };
   useEffect(() => {
     setValue(name);
-  }, [name]);
+    setSelected(myOnly);
+  }, [name, myOnly]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -181,38 +158,12 @@ function SelectTemplateMb(props: ActionBarLayout) {
               </Button>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
-              <LocalBarOutlinedIcon />
-            </Grid>
-            <Grid style={{ display: "none" }} item xs={4} sm={4} className={classes.tabMb}>
-              {renderUserMessage()}
-              <MoreHoriz style={{ fontSize: "40px" }} onClick={handleToggle} />
-              <Popper
-                open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-                style={{ position: "absolute", top: 30, right: 0, zIndex: 999 }}
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin: placement === "bottom" ? "center top" : "center bottom",
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                          <MenuItem onClick={handleClose}>Profile</MenuItem>
-                          <MenuItem onClick={handleClose}>My account</MenuItem>
-                          <MenuItem onClick={handleClose}>Logout</MenuItem>
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
+              <LocalBarOutlinedIcon onClick={handleShowMyOnluy} />
+              <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+                <MenuItem selected={selected} onClick={(event) => handleItemClick(event)}>
+                  My Only
+                </MenuItem>
+              </Menu>
             </Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <TextField
@@ -262,6 +213,7 @@ function SelectTemplate(props: SecondaryMenuProps) {
   };
   const handleIsMyOnly = (event: any) => {
     const myOnly = event.target.checked;
+    console.log(typeof myOnly);
     const newUrl = setUrl(search, "myOnly", myOnly);
     history.push(`${pathname}${newUrl}`);
   };
@@ -329,7 +281,7 @@ function SelectTemplate(props: SecondaryMenuProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SelectTemplateMb layout={layout} name={name} />
+      <SelectTemplateMb layout={layout} name={name} myOnly={myOnly} />
     </div>
   );
 }
@@ -362,16 +314,17 @@ interface ActionBarProps {
   myOnly: boolean;
   sortBy: string;
   name: string;
-  checkedContents: string[];
+  onHandleBulkAction: (act: string) => void;
 }
 export default function ActionBar(props: ActionBarProps) {
-  const { layout, status, showMyOnly, subStatus, myOnly, sortBy, name, checkedContents } = props;
+  const { layout, status, showMyOnly, subStatus, myOnly, sortBy, name } = props;
   const classes = useStyles();
   return (
     <div className={classes.navigation}>
       <SecondaryMenu layout={layout} status={status} showMyOnly={showMyOnly} />
       <SelectTemplate layout={layout} status={status} showMyOnly={showMyOnly} myOnly={myOnly} name={name} />
-      <SortTemplate status={status} subStatus={subStatus} sortBy={sortBy} checkedContents={checkedContents} />
+      <SortTemplate status={status} subStatus={subStatus} sortBy={sortBy} onHandleBulkAction={props.onHandleBulkAction} />
+      <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} onHandleBulkAction={props.onHandleBulkAction} />
     </div>
   );
 }

@@ -19,8 +19,7 @@ import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Content } from "../../api/api";
 import DocIconUrl from "../../assets/icons/doc.svg";
 import MaterialIconUrl from "../../assets/icons/material.svg";
@@ -29,7 +28,6 @@ import PicIconUrl from "../../assets/icons/pic.svg";
 import PlanIconUrl from "../../assets/icons/plan.svg";
 import VideoIconUrl from "../../assets/icons/video.svg";
 import LayoutBox from "../../components/LayoutBox";
-import { deleteContent, publishContent } from "../../reducers/content";
 
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
@@ -177,12 +175,13 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 
 interface ActionProps {
   id?: string;
+  onHandelAction: (type: string, id?: string) => void;
 }
 function PublishedAction(props: ActionProps) {
-  const dispatch = useDispatch();
   const css = useStyles();
+  const { id, onHandelAction } = props;
   const handleRemovePublished = (e: any) => {
-    dispatch(deleteContent(props.id || ""));
+    onHandelAction("delete", id);
   };
   return (
     <React.Fragment>
@@ -192,10 +191,10 @@ function PublishedAction(props: ActionProps) {
 }
 
 function UnpublishedAction(props: ActionProps) {
-  const dispatch = useDispatch();
   const css = useStyles();
+  const { id, onHandelAction } = props;
   const handleDeleteUnpublished = (e: any) => {
-    dispatch(deleteContent(props.id || ""));
+    onHandelAction("delete", id);
   };
   return (
     <React.Fragment>
@@ -205,13 +204,13 @@ function UnpublishedAction(props: ActionProps) {
 }
 
 function ArchivedAction(props: ActionProps) {
-  const dispatch = useDispatch();
   const css = useStyles();
+  const { id, onHandelAction } = props;
   const handlePublish = (e: any) => {
-    dispatch(publishContent(props.id || ""));
+    onHandelAction("publish", id);
   };
   const handleDeleteArchived = (e: any) => {
-    dispatch(deleteContent(props.id || ""));
+    onHandelAction("delete", id);
   };
   return (
     <div>
@@ -223,16 +222,15 @@ function ArchivedAction(props: ActionProps) {
 interface ContentProps {
   content: Content;
   onCheckedChange: (isChecked: boolean, id: string) => any;
+  onHandelAction: (type: string, id?: string) => void;
 }
 function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
-  const { content, onCheckedChange } = props;
+  const { content, onCheckedChange, onHandelAction } = props;
   const history = useHistory();
 
   const handleChecked = (event: any, id?: string) => {
-    event.stopPropagation();
-    console.log(event.target.checked, id);
     onCheckedChange(event.target.checked, id || "");
   };
   const handleGoPreview = (event: any, id?: string) => {
@@ -279,9 +277,11 @@ function ContentCard(props: ContentProps) {
         <Typography className={css.body2} variant="body2">
           {content?.author_name}
         </Typography>
-        {content?.publish_status === "published" && <PublishedAction id={content.id} />}
-        {(content?.publish_status === "draft" || content?.publish_status === "rejected") && <UnpublishedAction id={content.id} />}
-        {content?.publish_status === "archive" && <ArchivedAction id={content.id} />}
+        {content?.publish_status === "published" && <PublishedAction id={content?.id} onHandelAction={onHandelAction} />}
+        {(content?.publish_status === "draft" || content?.publish_status === "rejected") && (
+          <UnpublishedAction id={content.id} onHandelAction={onHandelAction} />
+        )}
+        {content?.publish_status === "archive" && <ArchivedAction id={content?.id} onHandelAction={onHandelAction} />}
       </CardActions>
     </Card>
   );
@@ -292,20 +292,25 @@ interface ContentCardListProps {
   amountPerPage?: number;
   list: Content[];
   onChangeCheckedContents: (arr: string[]) => any;
+  onChangePage: (page: number) => void;
+  onHandelAction: (type: string, id?: string) => void;
 }
 export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
   const { list, total, amountPerPage = 16 } = props;
   const [checkedArr, setCheckedArr] = React.useState<string[]>([]);
+  const { onChangeCheckedContents, onChangePage, onHandelAction } = props;
   const onCheckedArrChange = (isChecked: boolean, id: string) => {
     isChecked ? checkedArr.push(id) : checkedArr.splice(checkedArr.indexOf(id), 1);
     setCheckedArr(checkedArr);
-    props.onChangeCheckedContents(checkedArr);
+    onChangeCheckedContents(checkedArr);
   };
-
+  const changePage = (event: object, page: number) => {
+    onChangePage(page);
+  };
   const cardlist = list.map((item, idx) => (
-    <Grid key={idx} item xs={12} sm={6} md={4} lg={3} xl={3}>
-      <ContentCard content={item} onCheckedChange={onCheckedArrChange}></ContentCard>
+    <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
+      <ContentCard content={item} onCheckedChange={onCheckedArrChange} onHandelAction={onHandelAction}></ContentCard>
     </Grid>
   ));
   return (
@@ -313,7 +318,13 @@ export default function ContentCardList(props: ContentCardListProps) {
       <Grid className={css.gridContainer} container>
         {cardlist}
       </Grid>
-      <Pagination className={css.pagination} classes={{ ul: css.paginationUl }} count={Math.ceil(total / amountPerPage)} color="primary" />
+      <Pagination
+        className={css.pagination}
+        classes={{ ul: css.paginationUl }}
+        onChange={changePage}
+        count={Math.ceil(total / amountPerPage)}
+        color="primary"
+      />
     </LayoutBox>
   );
 }

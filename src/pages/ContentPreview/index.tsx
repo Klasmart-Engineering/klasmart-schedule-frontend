@@ -5,7 +5,7 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
 import DocIconUrl from "../../assets/icons/doc.svg";
 import MaterialIconUrl from "../../assets/icons/material.svg";
@@ -98,100 +98,110 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface ActionProps {
-  id: string;
+  handleAction: (type: string) => any;
 }
 function PublishedBtn(props: ActionProps) {
   const css = useStyles();
-  const dispatch = useDispatch();
-  const deleteContetn = () => {
-    dispatch(deleteContent(props.id));
+  const { handleAction } = props;
+  const handleClick = () => {
+    handleAction("del");
+  };
+  const handleEdit = () => {
+    handleAction("edit");
   };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined" onClick={deleteContetn}>
+      <Button className={css.publistedBtn} variant="outlined" onClick={handleClick}>
         Remove
       </Button>
-      <Button color="primary" variant="contained">
+      <Button color="primary" variant="contained" onClick={handleEdit}>
         Edit
       </Button>
     </Box>
   );
 }
 interface ActionProps {
-  id: string;
+  handleAction: (type: string) => any;
 }
 function WaitingBtn(props: ActionProps) {
   const css = useStyles();
-  const dispatch = useDispatch();
-  const deleteContetn = () => {
-    dispatch(deleteContent(props.id));
+  const { handleAction } = props;
+  const handleDelete = () => {
+    handleAction("del");
   };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined" onClick={deleteContetn}>
+      <Button className={css.publistedBtn} variant="outlined" onClick={handleDelete}>
         Delete
       </Button>
     </Box>
   );
 }
 
-interface CheckProps {
-  id: string;
+interface ActionProps {
+  handleAction: (type: string) => any;
 }
-function PendingBtn(props: CheckProps) {
+function PendingBtn(props: ActionProps) {
   const css = useStyles();
-  const dispatch = useDispatch();
-  const handelApproveContent = () => {
-    dispatch(approveContent(props.id));
+  const { handleAction } = props;
+  const handelApprove = () => {
+    handleAction("approve");
   };
-  const handleRejectContent = () => {
-    dispatch(rejectContent(props.id));
+  const handleReject = () => {
+    handleAction("reject");
   };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.rejectBtn} variant="contained" onClick={handleRejectContent}>
+      <Button className={css.rejectBtn} variant="contained" onClick={handelApprove}>
         Reject
       </Button>
-      <Button className={css.approveBtn} variant="contained" onClick={handelApproveContent}>
+      <Button className={css.approveBtn} variant="contained" onClick={handleReject}>
         Approve
       </Button>
     </Box>
   );
 }
-
+interface ActionProps {
+  handleAction: (type: string) => any;
+}
 function ArchiveBtn(props: ActionProps) {
   const css = useStyles();
-  const dispatch = useDispatch();
-  const handleDeleteContent = () => {
-    dispatch(deleteContent(props.id));
+  const { handleAction } = props;
+  const handleDelete = () => {
+    handleAction("del");
   };
-  const handleRepublishContent = () => {
-    dispatch(publishContent(props.id));
+  const handleRepublish = () => {
+    handleAction("publish");
   };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined" onClick={handleDeleteContent}>
+      <Button className={css.publistedBtn} variant="outlined" onClick={handleDelete}>
         Delete
       </Button>
-      <Button className={css.approveBtn} variant="contained" onClick={handleRepublishContent}>
+      <Button className={css.approveBtn} variant="contained" onClick={handleRepublish}>
         Republish
       </Button>
     </Box>
   );
 }
-
+interface ActionProps {
+  handleAction: (type: string) => any;
+}
 function DraftRejectBtn(props: ActionProps) {
   const css = useStyles();
-  const dispatch = useDispatch();
-  const deleteContetn = () => {
-    dispatch(deleteContent(props.id));
+  const { handleAction } = props;
+  const handleDelete = () => {
+    handleAction("del");
+  };
+  const handleEdit = () => {
+    handleAction("edit");
   };
   return (
     <Box display="flex" justifyContent="flex-end">
-      <Button className={css.publistedBtn} variant="outlined" onClick={deleteContetn}>
+      <Button className={css.publistedBtn} variant="outlined" onClick={handleDelete}>
         Delete
       </Button>
-      <Button color="primary" variant="contained">
+      <Button color="primary" variant="contained" onClick={handleEdit}>
         Edit
       </Button>
     </Box>
@@ -199,19 +209,26 @@ function DraftRejectBtn(props: ActionProps) {
 }
 
 export default function ContentPreview(props: Content) {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id") || "";
-  // const data = mockData[0];
   const css = useStyles();
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+  const handleAction = (type: string) => {
+    type === "del" && dispatch(deleteContent(id));
+    type === "approve" && dispatch(approveContent(id));
+    type === "reject" && dispatch(rejectContent(id));
+    type === "publish" && dispatch(publishContent(id));
+    type === "edit" && history.push(`/library/content-edit?id=${id}`);
+    history.go(-1);
+  };
   useEffect(() => {
-    console.log(id);
     dispatch(getContentDetailById(id));
   }, [dispatch, id]);
   const setThumbnail = () => {
@@ -298,15 +315,16 @@ export default function ContentPreview(props: Content) {
             ),
           }}
         ></TextField>
-        {contentPreview.publish_status === "published" && <PublishedBtn id={id} />}
-        {(contentPreview.publish_status === "draft" || contentPreview.publish_status === "rejected") && <DraftRejectBtn id={id} />}
-        {contentPreview.publish_status === "pending" && <PendingBtn id={id} />}
-        {/* {contentPreview.publish_status === "pending" && <WaitingBtn onDeleteContent={onDeleteContent} id={id} />} */}
-        {contentPreview.publish_status === "archive" && <ArchiveBtn id={id} />}
+        {contentPreview.publish_status === "published" && <PublishedBtn handleAction={handleAction} />}
+        {(contentPreview.publish_status === "draft" || contentPreview.publish_status === "rejected") && (
+          <DraftRejectBtn handleAction={handleAction} />
+        )}
+        {contentPreview.publish_status === "pending" && <PendingBtn handleAction={handleAction} />}
+        {contentPreview.publish_status === "pending" && <WaitingBtn handleAction={handleAction} />}
+        {contentPreview.publish_status === "archive" && <ArchiveBtn handleAction={handleAction} />}
       </Box>
       <Box className={css.right}>right</Box>
     </Box>
   );
 }
 ContentPreview.routeBasePath = "/library/content-preview";
-// ContentPreview.routeMatchPath = "/library/content-preview/id/:id";

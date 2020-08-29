@@ -1,4 +1,4 @@
-import { Grid, withStyles } from "@material-ui/core";
+import { Grid, Menu, MenuItem, withStyles } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import Hidden from "@material-ui/core/Hidden";
 import InputBase from "@material-ui/core/InputBase/InputBase";
@@ -6,12 +6,11 @@ import NativeSelect from "@material-ui/core/NativeSelect/NativeSelect";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
+import { MoreHoriz } from "@material-ui/icons";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
-import { bulkDeleteContent, bulkPublishContent } from "../../reducers/content";
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -112,8 +111,9 @@ const useStyles = makeStyles((theme) => ({
 function setUrl(search: string, param: string, value: string) {
   const query = new URLSearchParams(search);
   let newUrl: any;
+  console.log(typeof value);
   if (query.get(param)) {
-    if (!value) {
+    if (!value || value === "0") {
       query.delete(param);
     } else {
       query.set(param, value);
@@ -137,72 +137,73 @@ function SubUnpublished(props: SubUnpublishedProps) {
   const history = useHistory();
   const { pathname, search } = useLocation();
   const { subStatus } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    let value: string = "";
-    if (newValue === 0) {
-      value = "draft";
-    }
-    if (newValue === 1) {
-      value = "pending";
-    }
-    if (newValue === 2) {
-      value = "rejected";
-    }
-    const newUrl = setUrl(search, "subStatus", value);
+  const [value, setValue] = React.useState<string>("draft");
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+    setValue(newValue);
+    const newUrl = setUrl(search, "subStatus", newValue);
     history.push(`${pathname}${newUrl}`);
   };
-  function getDefaultValue() {
-    let defaultValue = 0;
-    if (subStatus === "draft") defaultValue = 0;
-    if (subStatus === "pending") defaultValue = 1;
-    if (subStatus === "rejected") defaultValue = 2;
-    return defaultValue;
-  }
+  useEffect(() => {
+    setValue(subStatus || "draft");
+  }, [subStatus]);
   return (
-    <Tabs className={classes.tabs} value={getDefaultValue()} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
-      <Tab value={0} label="Draft" />
-      <Tab value={1} label="Waiting for Approval" />
-      <Tab value={2} label="Rejected" />
+    <Tabs className={classes.tabs} value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+      <Tab value={"draft"} label="Draft" />
+      <Tab value={"pending"} label="Waiting for Approval" />
+      <Tab value={"rejected"} label="Rejected" />
     </Tabs>
   );
 }
-
+function setBulkAction(status: string) {
+  let actions: string[];
+  switch (status) {
+    case "published":
+      actions = ["moveToArchived"];
+      break;
+    case "pending":
+      actions = [];
+      break;
+    case "unpublished":
+      actions = ["delete"];
+      break;
+    case "archive":
+      actions = ["republish", "delete"];
+      break;
+    case "sort":
+      actions = ["Material Name(A-Z)", "Material Name(Z-A)", "Created On(New-Old)", "Created On(Old-New)"];
+      break;
+    default:
+      actions = [];
+  }
+  return actions;
+}
 interface StatusProps {
   status: string;
   subStatus: string;
   sortBy: string;
-  checkedContents: string[];
+  onHandleBulkAction: (act: string) => void;
 }
-export default function SortTemplate(props: StatusProps) {
+export function SortTemplate(props: StatusProps) {
   const history = useHistory();
-  const dispatch = useDispatch();
   const { pathname, search } = useLocation();
   const classes = useStyles();
-  const { status, subStatus, sortBy, checkedContents } = props;
+  const { status, subStatus, sortBy } = props;
   const [value, setValue] = React.useState(0);
   const handleChange = (event: any) => {
     setValue(event.target.value);
     // 掉接口
     // 拿到选择后的content进行批量操作
-    console.log(event.target.value);
-    console.log(checkedContents);
-    console.log(history);
-    if (checkedContents?.length === 0) {
-      setValue(0);
-      alert("请先选择");
-    }
-
     if (status === "published" || status === "unpublished") {
       if (event.target.value === "1") {
-        dispatch(bulkDeleteContent(checkedContents));
+        props.onHandleBulkAction("delete");
       }
     }
     if (status === "archive") {
       if (event.target.value === "1") {
-        dispatch(bulkPublishContent(checkedContents));
+        props.onHandleBulkAction("publish");
       }
       if (event.target.value === "2") {
-        dispatch(bulkDeleteContent(checkedContents));
+        props.onHandleBulkAction("delete");
       }
     }
   };
@@ -212,28 +213,8 @@ export default function SortTemplate(props: StatusProps) {
   };
   useEffect(() => {
     setValue(0);
-  }, [status]);
-  function setBulkAction() {
-    let actions: string[];
-    switch (status) {
-      case "published":
-        actions = ["moveToArchived"];
-        break;
-      case "pending":
-        actions = [];
-        break;
-      case "unpublished":
-        actions = ["delete"];
-        break;
-      case "archive":
-        actions = ["republish", "delete"];
-        break;
-      default:
-        actions = [];
-    }
-    return actions;
-  }
-  const actions = setBulkAction();
+  }, []);
+  const actions = setBulkAction(status);
   const options = actions.map((item, index) => (
     <option key={item + index} value={index + 1}>
       {item}
@@ -278,64 +259,86 @@ export default function SortTemplate(props: StatusProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} checkedContents={checkedContents} />
     </div>
   );
 }
-function SortTemplateMb(props: StatusProps) {
+const sortOptions = ["Material Name(A-Z)", "Material Name(Z-A)", "Created On(New-Old)", "Created On(Old-New)"];
+
+export function SortTemplateMb(props: StatusProps) {
   const history = useHistory();
   const classes = useStyles();
   const { pathname, search } = useLocation();
   const { status, subStatus, sortBy } = props;
-  const [value, setValue] = React.useState("");
-  const handleChange = (event: any) => {
-    setValue(event.target.value);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
+  const [selectedIndex, setSelectedIndex] = React.useState<number>();
+  const { onHandleBulkAction } = props;
+  const showActions = (event: any) => {
+    setAnchorElLeft(event.currentTarget);
   };
-  const handleOrderChange = (event: any) => {
-    const newUrl = setUrl(search, "sortBy", event.target.value);
+  const handleActionItemClick = (event: any, index: number) => {
+    setAnchorElLeft(null);
+    if (status === "archive" && index === 0) {
+      onHandleBulkAction("publish");
+    } else {
+      onHandleBulkAction("delete");
+    }
+  };
+  const handleClose = () => {
+    setAnchorElLeft(null);
+  };
+  const showSort = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuItemClick = (event: any, index: number) => {
+    selectedIndex === index ? setSelectedIndex(undefined) : setSelectedIndex(index);
+    setAnchorEl(null);
+    console.log(index, selectedIndex);
+    let newUrl: string;
+    if (index === selectedIndex) {
+      newUrl = setUrl(search, "sortBy", "");
+    } else {
+      newUrl = setUrl(search, "sortBy", String((index + 1) * 10));
+    }
     history.push(`${pathname}${newUrl}`);
   };
+  const handleSortClose = () => {
+    setAnchorEl(null);
+  };
+  const actions = setBulkAction(status);
+  useEffect(() => {
+    if (sortBy) {
+      setSelectedIndex(Number(sortBy) / 10 - 1);
+    }
+  }, [sortBy]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["md", "lg", "xl"]}>
           <hr style={{ borderColor: "#e0e0e0" }} />
-          <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
-            <Grid item sm={6} xs={6} md={6}>
-              <FormControl variant="outlined">
-                <NativeSelect id="demo-customized-select-native" value={value} onChange={handleChange} input={<BootstrapInput />}>
-                  <option value={10}>Bulk Actions</option>
-                  <option value={20}>Remove</option>
-                  <option value={30}>Bulk Remove</option>
-                </NativeSelect>
-              </FormControl>
+          <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
+            <Grid item sm={10} xs={10}>
+              {status === "unpublished" && <SubUnpublished subStatus={subStatus} />}
             </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
-              <FormControl>
-                <NativeSelect id="demo-customized-select-native" value={sortBy} onChange={handleOrderChange} input={<BootstrapInput />}>
-                  <option value="">Display By </option>
-                  <option value={10}>Material Name(A-Z)</option>
-                  <option value={20}>Material Name(Z-A)</option>
-                  <option value={30}>Created On(New-Old)</option>
-                  <option value={30}>Created On(Old-New)</option>
-                </NativeSelect>
-              </FormControl>
+            <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
+              {actions.length > 0 && <MoreHoriz onClick={showActions} />}
+              <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
+                {actions.map((item, index) => (
+                  <MenuItem key={item} onClick={(event) => handleActionItemClick(event, index)}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Menu>
+              <ImportExportIcon onClick={showSort} />
+              <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleSortClose}>
+                {sortOptions.map((item, index) => (
+                  <MenuItem key={item} selected={index === selectedIndex} onClick={(event) => handleMenuItemClick(event, index)}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Menu>
             </Grid>
           </Grid>
-          {status === "unpublished" ? (
-            <Grid container alignItems="center" style={{ marginTop: "6px" }}>
-              <Grid item sm={8} xs={8}>
-                <SubUnpublished subStatus={subStatus} />
-              </Grid>
-              <Grid container justify="flex-end" alignItems="center" item sm={4} xs={4}>
-                <ImportExportIcon />
-              </Grid>
-            </Grid>
-          ) : (
-            <Hidden only={["xs", "sm"]}>
-              <Grid item md={6}></Grid>
-            </Hidden>
-          )}
         </Hidden>
       </LayoutBox>
     </div>

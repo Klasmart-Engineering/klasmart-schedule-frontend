@@ -199,14 +199,14 @@ export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>
 // type BulkActionIds = Parameters<typeof>
 export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
   "contents_bulk/deleteContentBulk",
-  (id) => {
-    return api.contentsBulk.deleteContentBulk(id);
+  (idList) => {
+    return api.contentsBulk.deleteContentBulk({ id: idList });
   }
 );
 export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
   "contents_bulk/publishContentBulk",
-  (id) => {
-    return api.contentsBulk.publishContentBulk(id);
+  (idList) => {
+    return api.contentsBulk.publishContentBulk({ id: idList });
   }
 );
 export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
@@ -275,16 +275,42 @@ const { actions, reducer } = createSlice({
     [getContentDetailById.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
-    [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [deleteContent.rejected.type]: (state, { error }: any) => {},
-    [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [publishContent.rejected.type]: (state, { error }: any) => {},
-    [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [bulkPublishContent.rejected.type]: (state, { error }: any) => {},
-    [approveContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [approveContent.rejected.type]: (state, { error }: any) => {},
-    [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [rejectContent.rejected.type]: (state, { error }: any) => {},
+    [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("delete success");
+    },
+    [deleteContent.rejected.type]: (state, { error }: any) => {
+      alert("delete failed");
+    },
+    [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("publish success");
+    },
+    [publishContent.rejected.type]: (state, { error }: any) => {
+      alert("publish failed");
+    },
+    [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("bulk delete success");
+    },
+    [bulkDeleteContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("bulk delete failed");
+    },
+    [bulkPublishContent.fulfilled.type]: (state, { error }: any) => {
+      alert("bulk publish success");
+    },
+    [bulkPublishContent.rejected.type]: (state, { error }: any) => {
+      alert("bulk publish failed");
+    },
+    [approveContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("approve success");
+    },
+    [approveContent.rejected.type]: (state, { error }: any) => {
+      alert("approve failed");
+    },
+    [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("reject success");
+    },
+    [rejectContent.rejected.type]: (state, { error }: any) => {
+      alert("reject failed");
+    },
   },
 });
 
