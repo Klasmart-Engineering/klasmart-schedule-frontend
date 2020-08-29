@@ -141,6 +141,14 @@ function EditBox(props: CalendarStateProps) {
     });
   }, [timesTamp]);
 
+  const formatTeahcerId = (teacherIds: any) => {
+    let ids: any[] = [];
+    teacherIds.map((val: any) => {
+      ids.push(val.id.toString());
+    });
+    return ids;
+  };
+
   React.useEffect(() => {
     if (scheduleDetial.id) {
       const newData: any = {
@@ -158,7 +166,7 @@ function EditBox(props: CalendarStateProps) {
         repeat: scheduleDetial.subject,
         start_at: scheduleDetial.start_at,
         subject_id: scheduleDetial.subject!.id,
-        teacher_ids: scheduleDetial.teachers,
+        teacher_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title,
       };
       setStatus({
@@ -174,10 +182,6 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newData);
     }
   }, [scheduleDetial]);
-
-  React.useEffect(() => {
-    console.log(timesTamp);
-  }, [timesTamp]);
 
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
@@ -309,7 +313,6 @@ function EditBox(props: CalendarStateProps) {
    * save schedule data
    */
   const saveSchedule = () => {
-    // @ts-ignore
     // validatorFun();
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
@@ -318,8 +321,9 @@ function EditBox(props: CalendarStateProps) {
     }
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
-    addData["repeat"] = repeatData;
+    addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment_id"] = attachmentId;
+    addData["repeat_edit_options"] = "only_current";
     const result = { ...scheduleList, ...addData };
     dispatch(saveScheduleData({ ...result }));
   };
