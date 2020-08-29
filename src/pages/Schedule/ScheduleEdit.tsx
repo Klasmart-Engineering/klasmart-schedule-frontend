@@ -300,22 +300,23 @@ function EditBox(props: CalendarStateProps) {
     for (let name in scheduleList) {
       if (isValidator.hasOwnProperty(name)) {
         // @ts-ignore
-        const result = scheduleList[name].length > 0;
+        const result = scheduleList[name].toString().length > 0;
         // @ts-ignore
         isValidator[name] = !result;
-        if (result) {
+        if (!result) {
           verificaPath = false;
         }
       }
     }
     setValidator({ ...isValidator });
+    return verificaPath;
   };
 
   /**
    * save schedule data
    */
   const saveSchedule = async () => {
-    // validatorFun();
+    if (!validatorFun()) return;
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
@@ -324,7 +325,7 @@ function EditBox(props: CalendarStateProps) {
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
-    addData["attachment_id"] = attachmentId;
+    addData["attachment_path"] = attachmentId;
     addData["repeat_edit_options"] = "only_current";
     const result = { ...scheduleList, ...addData };
     // @ts-ignore
