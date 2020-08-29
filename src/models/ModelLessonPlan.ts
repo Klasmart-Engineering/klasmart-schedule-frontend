@@ -6,6 +6,7 @@ export interface Segment {
   segmentId?: string;
   condition?: "ifCorrect" | "ifWrong" | "ifScoreUp60" | "ifScoreDown60" | "start";
   material?: Content;
+  materialId?: string;
   next?: Segment[];
 }
 
@@ -52,7 +53,10 @@ export class ModelLessonPlan {
   static toString(plan: Segment): string {
     const result = produce(plan, (draft) => {
       ModelLessonPlan.forEach(draft, (item) => {
-        if (item.material) item.material = item.material.id as any;
+        if (item.material) {
+          item.materialId = item.material.id;
+          delete item.material;
+        }
       });
     });
     return JSON.stringify(result);

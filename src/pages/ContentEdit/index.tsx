@@ -92,7 +92,6 @@ export default function ContentEdit() {
       handleSubmit(async (value: ContentDetailForm) => {
         const contentDetail = ModelContentDetailForm.encode({ ...value, content_type });
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
-        debugger;
         if (id) {
           history.push({
             search: setQuery(history.location.search, { id }),
@@ -109,6 +108,9 @@ export default function ContentEdit() {
     },
     [history]
   );
+  const handleGoBack = useCallback(() => {
+    history.goBack();
+  }, [history]);
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
   }, [id, lesson, dispatch, searchText, history]);
@@ -157,6 +159,7 @@ export default function ContentEdit() {
         onSave={handleSave}
         onPublish={handlePublish}
         isDirty={isDirty}
+        goBack={handleGoBack}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}

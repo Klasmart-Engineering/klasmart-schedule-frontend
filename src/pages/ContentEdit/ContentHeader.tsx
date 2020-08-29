@@ -92,12 +92,11 @@ interface HeaderProps {
   onSave: Function;
   onPublish: Function;
   isDirty: boolean;
+  goBack: Function;
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty } = props;
-  console.log("isDirty=", isDirty);
-
+  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, goBack } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -106,7 +105,7 @@ function ContentHeader(props: HeaderProps) {
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
-        <IconButton size="small" className={css.arrowBack}>
+        <IconButton size="small" className={css.arrowBack} onClick={goBack as any}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
         <Hidden smDown>

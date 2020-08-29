@@ -14,7 +14,12 @@ export default function ContentH5p(props: ContentH5pProps) {
   return (
     <>
       {props.children}
-      <TextField onChange={(e) => onChange && onChange({ source: e.target.value })} defaultValue={value} label="h5p mock id" required />
+      <TextField
+        onChange={(e) => onChange && onChange({ source: e.target.value })}
+        defaultValue={value?.source}
+        label="h5p mock id"
+        required
+      />
     </>
   );
 }
