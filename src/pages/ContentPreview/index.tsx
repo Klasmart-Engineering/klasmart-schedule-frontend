@@ -238,7 +238,12 @@ export default function ContentPreview(props: Content) {
       history.go(-1);
     }
     if (type === "edit") {
-      history.push(`/library/content-edit?id=${id}`);
+      if (contentPreview.content_type_name === "MATERIAL") {
+        history.push(`/library/content-edit/lesson/material/tab/details/rightside/contentH5p?id=${id}`);
+      }
+      if (contentPreview.content_type_name === "PLAN") {
+        history.push(`/library/content-edit/lesson/plan/tab/details/rightside/contentH5p?id=${id}`);
+      }
     }
   };
   useEffect(() => {

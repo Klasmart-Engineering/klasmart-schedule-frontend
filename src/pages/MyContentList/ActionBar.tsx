@@ -143,6 +143,9 @@ function SelectTemplateMb(props: ActionBarLayout) {
     const newUrl = setUrl(search, "myOnly", myOnly);
     history.push(`${pathname}${newUrl}`);
   };
+  const handleCreate = () => {
+    history.push(`/library/content-edit/lesson/material/tab/details/rightside/contentH5p`);
+  };
   useEffect(() => {
     setValue(name);
     setSelected(myOnly);
@@ -153,7 +156,7 @@ function SelectTemplateMb(props: ActionBarLayout) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Button variant="contained" color="primary" className={classes.createBtn}>
+              <Button variant="contained" color="primary" className={classes.createBtn} onClick={handleCreate}>
                 Create +
               </Button>
             </Grid>

@@ -98,7 +98,12 @@ export default function SecondaryMenu(props: SecondaryMenuProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
-              <Button variant="contained" color="primary" className={classes.createBtn}>
+              <Button
+                href={`/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}
+                variant="contained"
+                color="primary"
+                className={classes.createBtn}
+              >
                 Create +
               </Button>
             </Grid>
