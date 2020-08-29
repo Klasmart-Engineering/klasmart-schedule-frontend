@@ -131,7 +131,7 @@ function EditBox(props: CalendarStateProps) {
       class_id: "",
       class_type: "",
       description: "",
-      due_at: currentTime,
+      due_at: Math.floor(new Date().getTime() / 1000),
       is_all_day: false,
       is_force: true,
       is_repeat: false,
@@ -143,7 +143,7 @@ function EditBox(props: CalendarStateProps) {
       title: "",
       ...timesTampDada,
     });
-  }, [currentTime, timesTamp]);
+  }, [timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: any[] = [];
