@@ -1,10 +1,11 @@
 import produce from "immer";
 import cloneDeep from "lodash/cloneDeep";
+import { Content } from "../api/api";
 
-interface Segment {
+export interface Segment {
   segmentId?: string;
   condition?: "ifCorrect" | "ifWrong" | "ifScoreUp60" | "ifScoreDown60" | "start";
-  material?: any;
+  material?: Content;
   next?: Segment[];
 }
 
@@ -46,6 +47,15 @@ export class ModelLessonPlan {
       const { prevIdx, prev, current } = subPlan;
       callback(current, prevIdx, prev);
     });
+  }
+
+  static toString(plan: Segment): string {
+    const result = produce(plan, (draft) => {
+      ModelLessonPlan.forEach(draft, (item) => {
+        if (item.material) item.material = item.material.id as any;
+      });
+    });
+    return JSON.stringify(result);
   }
 
   static set(plan: Segment, segmentId: Segment["segmentId"], value: Partial<Segment>): Segment {

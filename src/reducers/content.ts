@@ -120,7 +120,7 @@ interface onLoadContentEditResult {
   mockOptions?: MockOptions;
 }
 
-export const save = createAsyncThunk<Content, Content, { state: RootState }>("content/save", async (payload, { getState }) => {
+export const save = createAsyncThunk<Content["id"], Content, { state: RootState }>("content/save", async (payload, { getState }) => {
   const {
     content: {
       contentDetail: { id },
@@ -129,7 +129,8 @@ export const save = createAsyncThunk<Content, Content, { state: RootState }>("co
   if (!id) {
     return (await api.contents.createContent(payload)).id;
   } else {
-    return (await api.contents.updateContent(id, payload)).id;
+    await api.contents.updateContent(id, payload);
+    return id;
   }
 });
 
@@ -153,9 +154,11 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
     // debugger;
-    const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
-    const mediaList = await api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText });
-    const mockOptions = await apiGetMockOptions();
+    const [contentDetail, mediaList, mockOptions] = await Promise.all([
+      id ? api.contents.getContentById(id) : initialState.contentDetail,
+      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText }),
+      apiGetMockOptions(),
+    ]);
     return { contentDetail, mediaList, mockOptions };
   }
 );
@@ -225,7 +228,6 @@ const { actions, reducer } = createSlice({
   extraReducers: {
     // todo: PayloadAction<Content>  应该从 save 中获取类型
     [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
-      state.contentDetail = payload;
       // alert("success");
     },
     [save.rejected.type]: (state, { error }: any) => {

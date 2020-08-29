@@ -1,24 +1,13 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Card,
-  CardContent,
-  CardMedia,
-  makeStyles,
-  SvgIconProps,
-  Theme,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
+import { Thumbnail } from "../../components/Thumbnail";
 // import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
-import { ModelLessonPlan } from "../../models/ModelLessonPlan";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape }) => ({
   planComposeGraphic: {
@@ -118,7 +107,7 @@ const useStyles = makeStyles(({ palette, shadows, shape }) => ({
 }));
 
 const useSegmentComputedStyles = makeStyles({
-  segment: (props: SegmentProps) => ({
+  segment: (props: SegmentBoxProps) => ({
     // debug
     // backgroundColor: "rgba(0,0,0,.05)",
     paddingTop: props.first ? 0 : 66,
@@ -126,7 +115,7 @@ const useSegmentComputedStyles = makeStyles({
       marginLeft: props.first ? 0 : 32,
     },
   }),
-  card: (props: SegmentProps) => ({
+  card: (props: SegmentBoxProps) => ({
     marginTop: props.first || props.condition ? 40 : props.canDropCondition ? 40 + 59 + 34 : 40 + 59,
     width: 200,
     position: "relative",
@@ -137,12 +126,12 @@ const useSegmentComputedStyles = makeStyles({
 });
 
 const useGraphicComputedStyles = makeStyles({
-  composeArea: (props: PlanComposeGraphicProps) => ({
+  composeArea: (props: Segment) => ({
     display: "flex",
     width: "100%",
     overflowX: "scroll",
     paddingTop: 40,
-    justifyContent: props.value?.material ? "start" : "center",
+    justifyContent: props.material ? "start" : "center",
   }),
 });
 
@@ -200,14 +189,12 @@ interface MaterialCardProps {
   onRemove: SvgIconProps["onClick"];
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
-  const {
-    material: { img, author, name },
-    onRemove,
-  } = props;
+  const { material = {}, onRemove } = props;
+  const { thumbnail, author, name, content_type } = material;
   const css = useStyles();
   return (
     <Card ref={ref}>
-      <CardMedia className={css.cardMedia} image={img || " "} />
+      <Thumbnail className={css.cardMedia} type={content_type} id={thumbnail} />
       <CardContent className={css.cardContent}>
         <Typography component="div" variant="caption" noWrap>
           {name}
@@ -232,21 +219,14 @@ const mapDropSegmentProps = (monitor: DropTargetMonitor): mapDropSegmentPropsRet
   canDrop: monitor.canDrop(),
 });
 
-export interface Segment {
-  segmentId?: string;
-  condition?: "ifCorrect" | "ifWrong" | "ifScoreUp60" | "ifScoreDown60" | "start";
-  material?: any;
-  next?: Segment[];
-}
-
-interface SegmentProps extends Segment {
+interface SegmentBoxProps extends Segment {
   first?: boolean;
   canDropMaterial?: boolean;
   canDropCondition?: boolean;
   plan: Segment;
-  onChange: (plan: Segment) => any;
+  onChange: (value: Segment) => any;
 }
-function Segment(props: SegmentProps) {
+function SegmentBox(props: SegmentBoxProps) {
   const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
   const addPlan = useMemo(
@@ -255,7 +235,7 @@ function Segment(props: SegmentProps) {
       const newPlan = ModelLessonPlan.add(plan, segmentId, { [type]: item.data }, Boolean(first));
       if (plan !== newPlan) onChange(newPlan);
     },
-    [segmentId, plan, first, onChange]
+    [plan, segmentId, first, onChange]
   );
   const setPlan = useMemo(
     () => (item: DragItem) => {
@@ -298,7 +278,7 @@ function Segment(props: SegmentProps) {
   const segmentNodes = (
     <Box className="segmentNext" display="flex" flexWrap="nowrap">
       {insertedNext.map((segmentItem) => (
-        <Segment plan={plan} onChange={onChange} key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
+        <SegmentBox plan={plan} onChange={onChange} key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
       ))}
     </Box>
   );
@@ -379,13 +359,13 @@ const doNothing = (arg: any): any => {};
 
 interface PlanComposeGraphicProps {
   value?: Segment;
-  onChange?: (plan: Segment) => any;
+  onChange?: (value: Segment) => any;
 }
 export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const { value: plan = {}, onChange = doNothing } = props;
   const { palette } = useTheme<Theme>();
   const css = useStyles();
-  const computedCss = useGraphicComputedStyles(props);
+  const computedCss = useGraphicComputedStyles(plan);
   const [{ canDrop: canDropMaterial }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: "LIBRARY_ITEM",
     collect: mapDropContainerProps,
@@ -449,7 +429,7 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
                 <Box position="absolute" mt={5} width={0} />
               </ArcherElement>
             </Box>
-            <Segment {...{ ...plan, canDropMaterial, canDropCondition }} first plan={plan} onChange={onChange} />
+            <SegmentBox {...{ ...plan, canDropMaterial, canDropCondition }} first plan={plan} onChange={onChange} />
           </Box>
         </ArcherContainer>
       </Box>
