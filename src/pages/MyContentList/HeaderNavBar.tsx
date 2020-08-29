@@ -1,18 +1,16 @@
-import React from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
-import { withRouter, useHistory, useLocation } from "react-router-dom";
-import { Hidden, Grid, Button } from "@material-ui/core";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-
-import clsx from "clsx";
+import { Button, Grid, Hidden } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import MailIcon from "@material-ui/icons/Mail";
-
+import MenuIcon from "@material-ui/icons/Menu";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import clsx from "clsx";
+import React from "react";
+import { useHistory, useLocation, withRouter } from "react-router-dom";
 import imgUrl1 from "../../assets/icons/kidsloop-logo.svg";
 
 // import './headerNav.css'
@@ -271,12 +269,9 @@ function NavBarSmall(props: NavBarSmallProps) {
 
 function HeaderNavBar(props: any) {
   const classes = useStyles();
+  const isContentEdit = props.location.pathname.includes("content-edit");
 
-  return (
-    <div className={classes.root}>
-      <NavBarLarge />
-    </div>
-  );
+  return <div className={classes.root}>{!isContentEdit ? <NavBarLarge /> : ""}</div>;
 }
 
 export default withRouter(HeaderNavBar);
