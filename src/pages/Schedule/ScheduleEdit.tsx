@@ -145,7 +145,7 @@ function EditBox(props: CalendarStateProps) {
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: any[] = [];
-    teacherIds.map((val: any) => {
+    teacherIds.forEach((val: any) => {
       ids.push(val.id.toString());
     });
     return ids;
@@ -239,7 +239,7 @@ function EditBox(props: CalendarStateProps) {
   const autocompleteChange = (value: any | null, name: string) => {
     let ids: any[] = [];
     if (name === "teacher_ids") {
-      value.map((val: any, key: number) => {
+      value.forEach((val: any, key: number) => {
         ids.push(val.id.toString());
       });
       setTeacherItem(value);
