@@ -1,4 +1,4 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AsyncThunk, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api";
 import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
 
@@ -19,6 +19,7 @@ export interface ScheduleState {
   scheduleTimeViewData: scheduleViewData[];
   attachement_id: string;
   attachment_path: string;
+  searchFlag: boolean;
 }
 
 interface Rootstate {
@@ -52,6 +53,7 @@ const initialState: ScheduleState = {
   scheduleTimeViewData: [],
   attachement_id: "",
   attachment_path: "",
+  searchFlag: false,
 };
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
@@ -131,6 +133,10 @@ const { reducer } = createSlice({
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
       state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.total = payload.total;
+      state.searchFlag = true;
+    },
+    [getSearchScheduleList.rejected.type]: (state, { error }: any) => {
+      state.searchFlag = false;
     },
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);

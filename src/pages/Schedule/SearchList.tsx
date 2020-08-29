@@ -102,7 +102,7 @@ export default function SearchList() {
   React.useEffect(() => {
     dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10 }));
   }, [dispatch, name]);
-  const { searchScheduleList, total } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { searchScheduleList, total, searchFlag } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
   const classes = useStyles();
 
@@ -129,8 +129,8 @@ export default function SearchList() {
     if (flag) return true;
     return false;
   }
-  const previewSchedule = (index: number) => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/id/${index}`);
+  const previewSchedule = (id: number) => {
+    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/schedule_id=${id}`);
   };
 
   let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
@@ -148,9 +148,9 @@ export default function SearchList() {
       {searchScheduleList && searchScheduleList.length > 0 ? (
         <>
           {searchScheduleList.map((item: any, index: number) => (
-            <div key={index} className={classes.partItem}>
+            <div key={item.id} className={classes.partItem}>
               {isTitleSame(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
-              <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
+              <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(item.id)}>
                 <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
                 <Grid container alignItems="center" className={classes.firstLine}>
                   <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
@@ -196,8 +196,14 @@ export default function SearchList() {
         </>
       ) : (
         <div style={{ textAlign: "center" }}>
-          <img src={emptyBox} alt="" />
-          <p>No Data</p>
+          {searchFlag ? (
+            <>
+              <img src={emptyBox} alt="" />
+              <p>No results found.</p>
+            </>
+          ) : (
+            <CircularProgress />
+          )}
         </div>
       )}
     </Box>
