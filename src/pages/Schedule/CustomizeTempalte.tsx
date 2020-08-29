@@ -85,7 +85,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleEditSchedule = (e: any) => {
     handleClose();
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit/${scheduleInfo.id}`);
+    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
   };
 
   return (

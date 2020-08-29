@@ -1,7 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api from "../api";
-import { Content } from "../api/api";
+import { Content, ContentIDListRequest } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 
 interface IContentState {
@@ -9,6 +9,9 @@ interface IContentState {
   contentDetail: Content;
   mediaList: Content[];
   mockOptions: MockOptions;
+  total: number;
+  contentsList: Content[];
+  contentPreview: Content;
 }
 
 interface RootState {
@@ -58,6 +61,40 @@ const initialState: IContentState = {
     grade: [],
     developmental: [],
     visibility_settings: [],
+  },
+  total: 0,
+  contentsList: [],
+  contentPreview: {
+    id: "",
+    content_type: 0,
+    suggest_time: 0,
+    grade: [],
+    name: "",
+    program: [],
+    subject: [],
+    developmental: [],
+    skills: [],
+    age: [],
+    keywords: [],
+    description: "",
+    thumbnail: "",
+    version: 0,
+    source_id: "",
+    locked_by: "",
+    data: {},
+    extra: "",
+    author: "",
+    author_name: "",
+    org: "",
+    publish_scope: "",
+    publish_status: "published",
+    content_type_name: "",
+    program_name: [],
+    subject_name: [],
+    developmental_name: [],
+    skills_name: [],
+    age_name: [],
+    org_name: "",
   },
 };
 
@@ -143,8 +180,40 @@ export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathRe
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
 type IQueryContentsResult = ReturnType<typeof api.contents.searchContents>;
-export const contentList = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("contents/contents", (query) => {
-  return api.contents.searchContents(query);
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contents", async (query) => {
+  const { list, total } = await api.contents.searchContents(query);
+  return { list, total };
+});
+
+export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentById", (id) =>
+  api.contents.getContentById(id)
+);
+
+export const deleteContent = createAsyncThunk<Content, Required<Content>["id"]>("content/deleteContent", (id) => {
+  return api.contents.deleteContent(id);
+});
+export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publish", (id) => {
+  return api.contents.publishContent(id, { scope: "" });
+});
+
+// type BulkActionIds = Parameters<typeof>
+export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
+  "contents_bulk/deleteContentBulk",
+  (id) => {
+    return api.contentsBulk.deleteContentBulk(id);
+  }
+);
+export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
+  "contents_bulk/publishContentBulk",
+  (id) => {
+    return api.contentsBulk.publishContentBulk(id);
+  }
+);
+export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
+  return api.contentsReview.approveContentReview(id);
+});
+export const rejectContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
+  return api.contentsReview.rejectContentReview(id, {});
 });
 
 const { actions, reducer } = createSlice({
@@ -191,12 +260,31 @@ const { actions, reducer } = createSlice({
     [contentsDynamoList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [contentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      alert("success");
+    [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentsList = payload.list;
+      state.total = payload.total;
     },
-    [contentList.rejected.type]: (state, { error }: any) => {
+    [contentLists.rejected.type]: (state, { error }: any) => {
       alert(JSON.stringify(error));
     },
+    [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentPreview = payload;
+    },
+    [getContentDetailById.rejected.type]: (state, { error }: any) => {
+      alert(JSON.stringify(error));
+    },
+    [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [deleteContent.rejected.type]: (state, { error }: any) => {},
+    [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [publishContent.rejected.type]: (state, { error }: any) => {},
+    [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [bulkPublishContent.rejected.type]: (state, { error }: any) => {},
+    [approveContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [approveContent.rejected.type]: (state, { error }: any) => {},
+    [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [rejectContent.rejected.type]: (state, { error }: any) => {},
   },
 });
 

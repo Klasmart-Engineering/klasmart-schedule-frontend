@@ -125,8 +125,8 @@ export default function SecondaryMenu(props: SecondaryMenuProps) {
                 Unpublished
               </Button>
               <Button
-                href={`${path}&status=archived`}
-                className={`${classes.nav} ${status === "archived" ? classes.actives : ""}`}
+                href={`${path}&status=archive`}
+                className={`${classes.nav} ${status === "archive" ? classes.actives : ""}`}
                 startIcon={<ArchiveOutlined />}
               >
                 Archived
@@ -172,7 +172,7 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
         case "unpublished":
           value = 2;
           break;
-        case "archived":
+        case "archive":
           value = 3;
           break;
         case "assets":
@@ -203,7 +203,7 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
                 <Tab label="Published" className={classes.capitalize} />
                 <Tab label="Pending" className={classes.capitalize} />
                 <Tab label="Unpublished" className={classes.capitalize} />
-                <Tab label="Archived" className={classes.capitalize} />
+                <Tab label="Archive" className={classes.capitalize} />
                 <Tab label="Assets" className={classes.capitalize} />
               </Tabs>
             </AppBar>
@@ -217,7 +217,7 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
               <Redirect to={`${path}&status=unpublished`} />
             </TabPanel>
             <TabPanel value={value} index={3}>
-              <Redirect to={`${path}&status=archived`} />
+              <Redirect to={`${path}&status=archive`} />
             </TabPanel>
             <TabPanel value={value} index={4}>
               <Redirect to={`${path}&status=assets`} />

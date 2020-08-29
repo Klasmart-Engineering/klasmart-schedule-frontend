@@ -89,38 +89,44 @@ function timeFormat(time: number, type: string = "time") {
   }
 }
 
+const useQuery = () => {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const name = query.get("name");
+  return { name };
+};
+
 export default function SearchList() {
   const dispatch = useDispatch();
-  let name: string | string[] = useLocation().pathname.split("/");
-  const _name = name[name.length - 1];
+  const { name } = useQuery();
   React.useEffect(() => {
-    dispatch(getSearchScheduleList({ teacher_name: _name, page: 1, page_size: 10 }));
-  }, [_name, dispatch]);
+    dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10 }));
+  }, [dispatch, name]);
   const { searchScheduleList, total } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
   const classes = useStyles();
 
   const history = useHistory();
 
-  let someone: any;
+  let flag: any;
 
-  function another(date: any, number: number) {
+  function isTitleSame(date: any, number: number) {
     if (number === 0) {
-      someone = true;
+      flag = true;
     } else {
       searchScheduleList.forEach((item: any, index: number) => {
         if (index < number) {
           if (timeFormat(item.start_at, "dateDay") === timeFormat(date.start_at, "dateDay")) {
-            someone = false;
+            flag = false;
             return;
           } else {
-            someone = true;
+            flag = true;
             return;
           }
         }
       });
     }
-    if (someone) return true;
+    if (flag) return true;
     return false;
   }
   const previewSchedule = (index: number) => {
@@ -133,7 +139,7 @@ export default function SearchList() {
   const getBottom = (value: any) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
-      dispatch(getSearchScheduleList({ page, page_size: 10 }));
+      dispatch(getSearchScheduleList({ teacher_name: name, page, page_size: 10 }));
     }
   };
 
@@ -143,7 +149,7 @@ export default function SearchList() {
         <>
           {searchScheduleList.map((item: any, index: number) => (
             <div key={index} className={classes.partItem}>
-              {another(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
+              {isTitleSame(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at, "dateDay")}</h1>}
               <Card key={index} className={classes.cardItem} onClick={() => previewSchedule(index)}>
                 <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
                 <Grid container alignItems="center" className={classes.firstLine}>

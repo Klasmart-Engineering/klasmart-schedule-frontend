@@ -1,11 +1,11 @@
 import { Typography } from "@material-ui/core";
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import emptyIconUrl from "../../assets/icons/empty.svg";
-import mockContentList from "../../mocks/content.json";
 import mockList from "../../mocks/contentList.json";
-import { contentList } from "../../reducers/content";
+import { RootState } from "../../reducers";
+import { contentLists } from "../../reducers/content";
 import ActionBar from "./ActionBar";
 import CardList from "./CardList";
 import TableList from "./TableList";
@@ -26,10 +26,9 @@ export default function MyContentList() {
   const showMyOnly = status === "published";
   const total = mockList.length;
   const [checkedContents, setCheckedContent] = React.useState<string[]>([]);
-
-  const onChangeCheckedContents = (checkedContentsArr: string[]) => {
-    setCheckedContent(checkedContentsArr);
-    console.log(checkedContents);
+  const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const onChangeCheckedContents = (checkedContentsArr?: string[]) => {
+    setCheckedContent(checkedContentsArr || [""]);
   };
   const dispatch = useDispatch();
   useEffect(() => {
@@ -46,16 +45,16 @@ export default function MyContentList() {
       if (sortBy) {
         if (sortBy === "10") query["order_by"] = "content_name";
         if (sortBy === "20") query["order_by"] = "-content_name";
-        if (sortBy === "30") query["order_by"] = "created_at";
-        if (sortBy === "40") query["order_by"] = "-created_at";
+        if (sortBy === "30") query["order_by"] = "create_at";
+        if (sortBy === "40") query["order_by"] = "-create_at";
       }
       if (myOnly) {
         query["author"] = "{self}";
       }
       return query;
     }
-    console.log(mapQuery(name, status, subStatus, sortBy, myOnly));
-    dispatch(contentList(mapQuery(name, status, subStatus, sortBy, myOnly)));
+    const query = mapQuery(name, status, subStatus, sortBy, myOnly);
+    dispatch(contentLists(query));
   }, [status, subStatus, name, sortBy, myOnly, dispatch]);
   return (
     <div>
@@ -70,8 +69,8 @@ export default function MyContentList() {
         checkedContents={checkedContents}
       />
       {layout === "card" ? (
-        mockContentList.length > 0 ? (
-          <CardList list={mockContentList} total={total} onChangeCheckedContents={onChangeCheckedContents} />
+        contentsList.length > 0 ? (
+          <CardList list={contentsList} total={total} onChangeCheckedContents={onChangeCheckedContents} />
         ) : (
           <div style={{ margin: "0 auto", textAlign: "center" }}>
             <img src={emptyIconUrl} alt="" />

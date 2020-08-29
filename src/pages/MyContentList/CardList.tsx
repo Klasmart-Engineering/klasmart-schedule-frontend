@@ -19,6 +19,8 @@ import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
 import DocIconUrl from "../../assets/icons/doc.svg";
 import MaterialIconUrl from "../../assets/icons/material.svg";
@@ -27,6 +29,7 @@ import PicIconUrl from "../../assets/icons/pic.svg";
 import PlanIconUrl from "../../assets/icons/plan.svg";
 import VideoIconUrl from "../../assets/icons/video.svg";
 import LayoutBox from "../../components/LayoutBox";
+import { deleteContent, publishContent } from "../../reducers/content";
 
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
@@ -58,6 +61,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.only("xs")]: {
         width: "100%",
       },
+      position: "relative",
     },
     cardContent: {
       padding: "10px 8px 4px 10px",
@@ -74,6 +78,7 @@ const useStyles = makeStyles((theme) =>
       top: 10,
       left: 12,
       backgroundColor: "white",
+      zIndex: 10,
     },
     cardActions: {
       flexWrap: "wrap",
@@ -170,30 +175,48 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   transform: props.open ? "rotate(180deg)" : "none",
 }));
 
-function PublishedAction() {
+interface ActionProps {
+  id?: string;
+}
+function PublishedAction(props: ActionProps) {
+  const dispatch = useDispatch();
   const css = useStyles();
+  const handleRemovePublished = (e: any) => {
+    dispatch(deleteContent(props.id || ""));
+  };
   return (
     <React.Fragment>
-      <RemoveCircleOutlineIcon className={css.iconColor} />
+      <RemoveCircleOutlineIcon className={css.iconColor} onClick={handleRemovePublished} />
     </React.Fragment>
   );
 }
 
-function UnpublishedAction() {
+function UnpublishedAction(props: ActionProps) {
+  const dispatch = useDispatch();
   const css = useStyles();
+  const handleDeleteUnpublished = (e: any) => {
+    dispatch(deleteContent(props.id || ""));
+  };
   return (
     <React.Fragment>
-      <DeleteOutlineIcon className={css.iconColor} />
+      <DeleteOutlineIcon className={css.iconColor} onClick={handleDeleteUnpublished} />
     </React.Fragment>
   );
 }
 
-function ArchivedAction() {
+function ArchivedAction(props: ActionProps) {
+  const dispatch = useDispatch();
   const css = useStyles();
+  const handlePublish = (e: any) => {
+    dispatch(publishContent(props.id || ""));
+  };
+  const handleDeleteArchived = (e: any) => {
+    dispatch(deleteContent(props.id || ""));
+  };
   return (
     <div>
-      <PublishOutlinedIcon className={css.rePublishColor} />
-      <DeleteOutlineIcon className={css.iconColor} />
+      <PublishOutlinedIcon className={css.rePublishColor} onClick={handlePublish} />
+      <DeleteOutlineIcon className={css.iconColor} onClick={handleDeleteArchived} />
     </div>
   );
 }
@@ -205,35 +228,39 @@ function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
   const { content, onCheckedChange } = props;
+  const history = useHistory();
 
-  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>, id?: string) => {
+  const handleChecked = (event: any, id?: string) => {
+    event.stopPropagation();
     console.log(event.target.checked, id);
     onCheckedChange(event.target.checked, id || "");
+  };
+  const handleGoPreview = (event: any, id?: string) => {
+    history.push(`/library/content-preview?id=${id}`);
   };
   const setThumbnail = () => {
     if (!content?.thumbnail && content?.content_type_name === "document") return DocIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "lesson") return PlanIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "material") return MaterialIconUrl;
+    if (!content?.thumbnail && content?.content_type_name === "LESSON") return PlanIconUrl;
+    if (!content?.thumbnail && content?.content_type_name === "MATERIAL") return MaterialIconUrl;
     if (content?.thumbnail) return content?.thumbnail;
   };
   return (
     <Card className={css.card}>
-      <CardActionArea>
-        <CardMedia className={css.cardMedia} image={setThumbnail()}>
-          <Checkbox
-            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-            size="small"
-            className={css.checkbox}
-            color="secondary"
-            onChange={(e) => {
-              handleChecked(e, content?.id);
-            }}
-          ></Checkbox>
-        </CardMedia>
+      <Checkbox
+        icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+        checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+        size="small"
+        className={css.checkbox}
+        color="secondary"
+        onChange={(e) => {
+          handleChecked(e, content?.id);
+        }}
+      ></Checkbox>
+      <CardActionArea onClick={(e) => handleGoPreview(e, content?.id)}>
+        <CardMedia className={css.cardMedia} image={setThumbnail()}></CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container>
@@ -252,9 +279,9 @@ function ContentCard(props: ContentProps) {
         <Typography className={css.body2} variant="body2">
           {content?.author_name}
         </Typography>
-        {content?.publish_status === "published" && <PublishedAction />}
-        {(content?.publish_status === "draft" || content?.publish_status === "rejected") && <UnpublishedAction />}
-        {content?.publish_status === "archive" && <ArchivedAction />}
+        {content?.publish_status === "published" && <PublishedAction id={content.id} />}
+        {(content?.publish_status === "draft" || content?.publish_status === "rejected") && <UnpublishedAction id={content.id} />}
+        {content?.publish_status === "archive" && <ArchivedAction id={content.id} />}
       </CardActions>
     </Card>
   );

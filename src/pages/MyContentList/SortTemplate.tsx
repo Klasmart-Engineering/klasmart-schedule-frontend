@@ -8,8 +8,10 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
+import { bulkDeleteContent, bulkPublishContent } from "../../reducers/content";
 // @ts-ignore
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -173,6 +175,7 @@ interface StatusProps {
 }
 export default function SortTemplate(props: StatusProps) {
   const history = useHistory();
+  const dispatch = useDispatch();
   const { pathname, search } = useLocation();
   const classes = useStyles();
   const { status, subStatus, sortBy, checkedContents } = props;
@@ -184,6 +187,24 @@ export default function SortTemplate(props: StatusProps) {
     console.log(event.target.value);
     console.log(checkedContents);
     console.log(history);
+    if (checkedContents?.length === 0) {
+      setValue(0);
+      alert("请先选择");
+    }
+
+    if (status === "published" || status === "unpublished") {
+      if (event.target.value === "1") {
+        dispatch(bulkDeleteContent(checkedContents));
+      }
+    }
+    if (status === "archive") {
+      if (event.target.value === "1") {
+        dispatch(bulkPublishContent(checkedContents));
+      }
+      if (event.target.value === "2") {
+        dispatch(bulkDeleteContent(checkedContents));
+      }
+    }
   };
   const handleOrderChange = (event: any) => {
     const newUrl = setUrl(search, "sortBy", event.target.value);
@@ -204,8 +225,8 @@ export default function SortTemplate(props: StatusProps) {
       case "unpublished":
         actions = ["delete"];
         break;
-      case "archived":
-        actions = ["republished", "delete"];
+      case "archive":
+        actions = ["republish", "delete"];
         break;
       default:
         actions = [];
@@ -257,7 +278,7 @@ export default function SortTemplate(props: StatusProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      {/* <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} /> */}
+      <SortTemplateMb status={status} subStatus={subStatus} sortBy={sortBy} checkedContents={checkedContents} />
     </div>
   );
 }
