@@ -32,8 +32,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
   tableContainer: {
     marginTop: 5,
-    marginBottom: "auto",
-    overflowX: "scroll",
+    maxHeight: 700,
   },
   table: {
     minWidth: 700,
@@ -205,7 +204,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   ));
   const table = (
     <TableContainer className={css.tableContainer}>
-      <Table className={css.table}>
+      <Table className={css.table} stickyHeader>
         <TableHead className={css.tableHead}>
           <TableRow>
             <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>

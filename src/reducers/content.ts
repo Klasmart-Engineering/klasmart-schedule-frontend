@@ -133,6 +133,7 @@ export const save = createAsyncThunk<Content["id"], Content, { state: RootState 
     return (await api.contents.createContent(payload)).id;
   } else {
     await api.contents.updateContent(id, payload);
+    api.contents.getContentById(id);
     return id;
   }
 });
@@ -159,7 +160,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     // debugger;
     const [contentDetail, mediaList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
-      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", name: searchText }),
+      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchText }),
       apiGetMockOptions(),
     ]);
     return { contentDetail, mediaList, mockOptions };
