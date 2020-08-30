@@ -13,8 +13,6 @@ import React from "react";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
 import imgUrl1 from "../../assets/icons/kidsloop-logo.svg";
 
-// import './headerNav.css'
-
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: "flex",
@@ -94,21 +92,36 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const navigation = [
+  {
+    name: "Live",
+    path: "/live",
+  },
+  {
+    name: "Library",
+    path: "/",
+  },
+  {
+    name: "Assesments",
+    path: "/assesments",
+  },
+  {
+    name: "Schedule",
+    path: "/schedule/calendar",
+  },
+  {
+    name: "Report",
+    path: "/report",
+  },
+];
+
 function NavBarLarge() {
   const classes = useStyles();
-  // const [currentValue, setCurrentValue] = React.useState("library");
   const history = useHistory();
   const currentValue = useLocation().pathname.split("/")[1];
 
-  const handleChangeSelect = (value: string): void => {
-    // setCurrentValue(value);
-    if (value === "schedule") {
-      history.push("/schedule/calendar");
-    } else if (value === "library") {
-      history.push("/live");
-    } else {
-      history.push("/live");
-    }
+  const handleChangeSelect = (item: any): void => {
+    history.push(item.path);
   };
 
   return (
@@ -130,31 +143,17 @@ function NavBarLarge() {
           </Grid>
           <Grid item lg={8} xl={8} md={8} style={{ height: "100%" }} className={classes.centerPart}>
             <Grid container style={{ height: "100%" }}>
-              <Grid item className={`${classes.rightItem} ${currentValue === "live" ? `${classes.currentSelect}` : ""}`}>
-                <Button onClick={() => handleChangeSelect("live")} className={classes.rightButton}>
-                  Live
-                </Button>
-              </Grid>
-              <Grid item className={`${classes.rightItem} ${currentValue === "library" ? `${classes.currentSelect}` : ""}`}>
-                <Button onClick={() => handleChangeSelect("library")} className={classes.rightButton}>
-                  Library
-                </Button>
-              </Grid>
-              <Grid item className={`${classes.rightItem} ${currentValue === "assesments" ? `${classes.currentSelect}` : ""}`}>
-                <Button onClick={() => handleChangeSelect("assesments")} className={classes.rightButton}>
-                  Assessments
-                </Button>
-              </Grid>
-              <Grid item className={`${classes.rightItem} ${currentValue === "schedule" ? `${classes.currentSelect}` : ""}`}>
-                <Button onClick={() => handleChangeSelect("schedule")} className={classes.rightButton}>
-                  Schedule
-                </Button>
-              </Grid>
-              <Grid item className={`${classes.rightItem} ${currentValue === "report" ? `${classes.currentSelect}` : ""}`}>
-                <Button onClick={() => handleChangeSelect("report")} className={classes.rightButton}>
-                  Report
-                </Button>
-              </Grid>
+              {navigation.map((item) => (
+                <Grid
+                  key={item.name}
+                  item
+                  className={`${classes.rightItem} ${currentValue === item.name.toLowerCase() ? `${classes.currentSelect}` : ""}`}
+                >
+                  <Button onClick={() => handleChangeSelect(item)} className={classes.rightButton}>
+                    {item.name}
+                  </Button>
+                </Grid>
+              ))}
             </Grid>
           </Grid>
           <Grid item lg={2} xl={2} md={2} className={classes.rightPart}>
@@ -176,7 +175,7 @@ function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
     right: false,
   });
-  const [currentValue, setCurrentValue] = React.useState("Library");
+  const currentValue = useLocation().pathname.split("/")[1];
 
   const history = useHistory();
 
@@ -192,19 +191,17 @@ function SwipeableTemporaryDrawer() {
     setState({ ...state, [anchor]: open });
   };
 
-  const handleClick = (text: string) => {
-    setCurrentValue(text);
-    console.log(text, currentValue);
-    history.push(`/${text}`);
+  const handleClick = (text: any) => {
+    history.push(`${text.path}`);
   };
 
   const list = (anchor: Anchor) => (
     <div className={clsx(classes.list)} role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
       <List>
-        {["Live", "Library", "Assesments", "Schedule", "Report"].map((text, index) => (
-          <ListItem button key={text} className={`${currentValue === text ? `${classes.smallCurrent}` : ""}`}>
+        {navigation.map((item, index) => (
+          <ListItem button key={index} className={`${currentValue === item.name.toLowerCase() ? `${classes.smallCurrent}` : ""}`}>
             <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} onClick={() => handleClick(text)} />
+            <ListItemText primary={item.name} onClick={() => handleClick(item)} />
           </ListItem>
         ))}
       </List>
