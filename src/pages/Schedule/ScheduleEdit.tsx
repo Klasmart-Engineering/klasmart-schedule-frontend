@@ -194,6 +194,13 @@ function EditBox(props: CalendarStateProps) {
     [type]: state[type],
   };
 
+  React.useEffect(() => {
+    if (scheduleDetial?.repeat?.type) {
+      const data = scheduleDetial.repeat;
+      dispatchRepeat({ type: "changeData", data });
+    }
+  }, [dispatchRepeat, scheduleDetial]);
+
   const [scheduleList, setScheduleList] = React.useState<InitData>({
     attachment_path: "",
     class_id: "",
@@ -669,7 +676,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         {checkedStatus.repeatCheck && (
           <Box className={css.repeatBox}>
-            <RepeatSchedule handleRepeatData={handleRepeatData} />
+            <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
           </Box>
         )}
       </Box>

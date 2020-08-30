@@ -7,7 +7,7 @@ const initialState: any = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: 0,
+      after_time: Date.now(),
     },
   },
   weekly: {
@@ -16,7 +16,7 @@ const initialState: any = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: 0,
+      after_time: Date.now(),
     },
   },
   monthly: {
@@ -28,7 +28,7 @@ const initialState: any = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: 0,
+      after_time: Date.now(),
     },
   },
   yearly: {
@@ -42,7 +42,7 @@ const initialState: any = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: 0,
+      after_time: Date.now(),
     },
   },
 };
