@@ -263,6 +263,14 @@ export default function ContentPreview(props: Content) {
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "MATERIAL") return MaterialIconUrl;
     if (contentPreview?.thumbnail) return apiResourcePathById(contentPreview?.thumbnail);
   };
+  const time = (time?: number) => {
+    const year = new Date((time || 0) * 1000).getFullYear();
+    let mouth: string = String(new Date((time || 0) * 1000).getMonth() + 1);
+    mouth = mouth.padStart(2, 0);
+    let day = String(new Date((time || 0) * 1000).getDay() + 1);
+    day = day.padStart(2, 0);
+    return `${year}-${mouth}-${day}`;
+  };
   return (
     <Box className={css.container}>
       <Box className={css.left}>
@@ -299,19 +307,19 @@ export default function ContentPreview(props: Content) {
         />
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <TextField label="Created On" fullWidth variant="outlined" />
+            <TextField label="Created On" fullWidth variant="outlined" value={time(contentPreview.created_at)} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Author" fullWidth variant="outlined" value={contentPreview.author_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Program" fullWidth variant="outlined" value={contentPreview.program_name} />
+            <TextField label="Program" fullWidth variant="outlined" value={contentPreview.program?.join(",")} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Subject" fullWidth variant="outlined" value={contentPreview.subject_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Development" fullWidth variant="outlined" value={contentPreview.developmental_name?.join(",")} />
+            <TextField label="Development" fullWidth variant="outlined" value={contentPreview.developmental?.join(",")} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Skills" fullWidth variant="outlined" value={contentPreview.skills} />
@@ -323,10 +331,10 @@ export default function ContentPreview(props: Content) {
             <TextField label="Duration" fullWidth variant="outlined" value={contentPreview.suggest_time} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Suitable Age" fullWidth variant="outlined" value={contentPreview.age_name?.join(",")} />
+            <TextField label="Suitable Age" fullWidth variant="outlined" value={contentPreview.age?.join(",")} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Grade" fullWidth variant="outlined" value={contentPreview.grade_name?.join(",")} />
+            <TextField label="Grade" fullWidth variant="outlined" value={contentPreview.grade?.join(",")} />
           </Grid>
         </Grid>
         <TextField

@@ -76,7 +76,7 @@ export type Content = {
   version?: number;
   source_id?: string;
   locked_by?: string;
-  data?: string;
+  data?: object;
   extra?: string;
   author?: string;
   author_name?: string;
@@ -91,6 +91,7 @@ export type Content = {
   skills_name?: string[];
   age_name?: string[];
   org_name?: string;
+  created_at?: number;
 };
 
 export type Asset = AssetCreateRequest & { id?: string; uploader?: string; created_at?: number; updated_at?: number };
@@ -392,10 +393,6 @@ export interface ScheduleDetailed {
 
   /** schedule end time, timestamp */
   end_at?: number;
-
-  is_repeat?: boolean;
-
-  is_force?: boolean;
 
   /**
    *
@@ -775,10 +772,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents_resources
      * @description Get content resource upload path
      */
-    getContentResourceUploadPath: (
-      query?: { partition?: "assets" | "thumbnail" | "attachment"; extension?: string },
-      params?: RequestParams
-    ) => this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
+    getContentResourceUploadPath: (query?: { partition?: "assets" | "thumbnail"; extension?: string }, params?: RequestParams) =>
+      this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
   };
   assets = {
     /**
@@ -1038,7 +1033,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create schedule
      */
     createSchedule: (data: ScheduleCreate, params?: RequestParams) =>
-      this.request<{ id?: string }, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
+      this.request<string, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule

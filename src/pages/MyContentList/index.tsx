@@ -52,39 +52,52 @@ export default function MyContentList() {
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { total } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { refresh } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const [openStatus, setOpenStatus] = React.useState(false);
+  const [openBulkDelete, setOpenBulkDelete] = React.useState(false);
+  const [openBulkPublish, setopenBulkPublish] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [openPublish, setOpenPublish] = React.useState(false);
+  const [id, setId] = React.useState<string>();
   const onChangeCheckedContents = (checkedContentsArr?: string[]) => {
-    setCheckedContent(checkedContentsArr || [""]);
+    setCheckedContent(checkedContentsArr || []);
   };
   const dispatch = useDispatch();
   const query = useMemo(() => mapQuery(name, status, subStatus, sortBy, myOnly, page), [name, status, subStatus, sortBy, myOnly, page]);
   useEffect(() => {
     dispatch(contentLists(query));
+    setCheckedContent([]);
+    onChangeCheckedContents([]);
   }, [status, subStatus, name, sortBy, myOnly, page, refresh, dispatch, query]);
   const onHandelAction = (type: string, id?: string) => {
     if (!id) return;
     switch (type) {
       case "delete":
-        dispatch(deleteContent(id));
+        setId(id);
+        setOpenDelete(true);
+        // dispatch(deleteContent(id));
         break;
       case "publish":
-        dispatch(publishContent(id));
+        setId(id);
+        setOpenPublish(true);
+        // dispatch(publishContent(id));
         break;
       default:
         return;
     }
   };
   const onHandleBulkAction = (type: string) => {
+    console.log(checkedContents);
     if (checkedContents.length === 0) {
       alert("please select first");
       return;
     }
     switch (type) {
       case "delete":
-        dispatch(bulkDeleteContent(checkedContents));
+        setOpenBulkDelete(true);
+        // dispatch(bulkDeleteContent(checkedContents));
         break;
       case "publish":
-        dispatch(bulkPublishContent(checkedContents));
+        setopenBulkPublish(true);
+        // dispatch(bulkPublishContent(checkedContents));
         break;
       default:
         return;
@@ -93,27 +106,88 @@ export default function MyContentList() {
   const changePage = (page: number) => {
     setPage(page);
   };
-  const modalDate: any = {
+  const DeleteModalDate: any = {
     text: "Are you sure you want to delete this content?",
-    openStatus: openStatus,
+    openStatus: openDelete,
     buttons: [
       {
         label: "Cancel",
         event: () => {
-          setOpenStatus(false);
+          setOpenDelete(false);
         },
       },
       {
         label: "Delete",
         event: () => {
-          setOpenStatus(false);
+          dispatch(deleteContent(id));
+          setOpenDelete(false);
+        },
+      },
+    ],
+  };
+  const PublishedModalDate: any = {
+    text: "Are you sure you want to publish this content?",
+    openStatus: openPublish,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenPublish(false);
+        },
+      },
+      {
+        label: "Confirm",
+        event: () => {
+          dispatch(publishContent(id));
+          setOpenPublish(false);
+        },
+      },
+    ],
+  };
+  const BulkDeleteModalDate: any = {
+    text: "Are you sure you want to delete this content?",
+    openStatus: openBulkDelete,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setOpenBulkDelete(false);
+        },
+      },
+      {
+        label: "Delete",
+        event: () => {
+          dispatch(bulkDeleteContent(checkedContents));
+          setOpenBulkDelete(false);
+        },
+      },
+    ],
+  };
+  const BulkPublishedModalDate: any = {
+    text: "Are you sure you want to publish this content?",
+    openStatus: openBulkPublish,
+    buttons: [
+      {
+        label: "Cancel",
+        event: () => {
+          setopenBulkPublish(false);
+        },
+      },
+      {
+        label: "Confirm",
+        event: () => {
+          dispatch(bulkPublishContent(checkedContents));
+          setopenBulkPublish(false);
         },
       },
     ],
   };
   return (
     <div>
-      <ModalBox modalDate={modalDate} />
+      <ModalBox modalDate={BulkDeleteModalDate} />
+      <ModalBox modalDate={BulkPublishedModalDate} />
+      <ModalBox modalDate={DeleteModalDate} />
+      <ModalBox modalDate={PublishedModalDate} />
       <ActionBar
         layout={layout}
         status={status}

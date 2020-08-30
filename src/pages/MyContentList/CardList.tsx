@@ -18,7 +18,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Content } from "../../api/api";
 import { apiResourcePathById } from "../../api/extra";
@@ -319,6 +319,12 @@ export default function ContentCardList(props: ContentCardListProps) {
   const changePage = (event: object, page: number) => {
     onChangePage(page);
   };
+  useEffect(() => {
+    onChangeCheckedContents([]);
+    return () => {
+      console.log("组件销毁");
+    };
+  }, [onChangeCheckedContents]);
   const cardlist = list.map((item, idx) => (
     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
       <ContentCard content={item} onCheckedChange={onCheckedArrChange} onHandelAction={onHandelAction} status={status}></ContentCard>
