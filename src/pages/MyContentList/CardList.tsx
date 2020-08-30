@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme) =>
       height: "40px",
     },
     iconButtonExpandMore: {
+      width: "24px",
       marginLeft: "auto",
       padding: 2,
       transition: theme.transitions.create("transform"),
@@ -262,18 +263,23 @@ function ContentCard(props: ContentProps) {
         <CardMedia className={css.cardMedia} image={setThumbnail()}></CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
-        <Grid container>
-          <Typography variant="subtitle1">{content?.name}</Typography>
+        <Grid container alignContent="space-between">
+          <Typography variant="h6" style={{ flex: 1 }} noWrap={true}>
+            {content?.name}
+          </Typography>
           <ExpandBtn className={css.iconButtonExpandMore} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
           </ExpandBtn>
         </Grid>
         <Collapse {...expand.collapse} unmountOnExit>
           <Typography className={css.body2} variant="body2">
-            {content?.age}
+            {content?.name}
           </Typography>
         </Collapse>
       </CardContent>
+      <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
+        {content?.content_type_name}
+      </Typography>
       <CardActions className={css.cardActions}>
         <Typography className={css.body2} variant="body2">
           {content?.author_name}
