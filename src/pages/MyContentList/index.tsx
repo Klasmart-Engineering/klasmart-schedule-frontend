@@ -14,7 +14,7 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const layout = query.get("layout") || "card";
-  const status = query.get("status") || "";
+  const status = query.get("status") || "published";
   const subStatus = query.get("subStatus") || "";
   const name = query.get("name") || "";
   const sortBy = query.get("sortBy") || "";
@@ -51,11 +51,11 @@ export default function MyContentList() {
   const [checkedContents, setCheckedContent] = React.useState<string[]>([]);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { total } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { refresh } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [openStatus, setOpenStatus] = React.useState(false);
   const onChangeCheckedContents = (checkedContentsArr?: string[]) => {
     setCheckedContent(checkedContentsArr || [""]);
   };
-  const [refresh, setRefresh] = React.useState<number>(0);
   const dispatch = useDispatch();
   const query = useMemo(() => mapQuery(name, status, subStatus, sortBy, myOnly, page), [name, status, subStatus, sortBy, myOnly, page]);
   useEffect(() => {
@@ -65,11 +65,9 @@ export default function MyContentList() {
     if (!id) return;
     switch (type) {
       case "delete":
-        setRefresh(refresh + 1);
         dispatch(deleteContent(id));
         break;
       case "publish":
-        setRefresh(refresh + 1);
         dispatch(publishContent(id));
         break;
       default:
@@ -87,7 +85,6 @@ export default function MyContentList() {
         break;
       case "publish":
         dispatch(bulkPublishContent(checkedContents));
-        setRefresh(refresh + 1);
         break;
       default:
         return;

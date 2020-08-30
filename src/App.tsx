@@ -40,7 +40,7 @@ function App() {
               <Redirect to={Schedule.routeRedirectDefault} />
             </Route>
             <Route path="/">
-              <Redirect to="/library/my-content-list?layout=card" />
+              <Redirect to="/library/my-content-list?layout=card&status=published" />
             </Route>
           </Switch>
         </Provider>

@@ -206,6 +206,7 @@ export function SortTemplate(props: StatusProps) {
         props.onHandleBulkAction("delete");
       }
     }
+    setValue(0);
   };
   const handleOrderChange = (event: any) => {
     const newUrl = setUrl(search, "sortBy", event.target.value);

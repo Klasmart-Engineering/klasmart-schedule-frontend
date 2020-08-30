@@ -12,6 +12,7 @@ interface IContentState {
   total: number;
   contentsList: Content[];
   contentPreview: Content;
+  refresh: number;
 }
 
 interface RootState {
@@ -97,6 +98,7 @@ const initialState: IContentState = {
     age_name: [],
     org_name: "",
   },
+  refresh: 0,
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -277,24 +279,28 @@ const { actions, reducer } = createSlice({
       alert(JSON.stringify(error));
     },
     [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.refresh = state.refresh + 1;
       alert("delete success");
     },
     [deleteContent.rejected.type]: (state, { error }: any) => {
       alert("delete failed");
     },
     [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.refresh = state.refresh + 1;
       alert("publish success");
     },
     [publishContent.rejected.type]: (state, { error }: any) => {
       alert("publish failed");
     },
     [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.refresh = state.refresh + 1;
       alert("bulk delete success");
     },
     [bulkDeleteContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {
       alert("bulk delete failed");
     },
     [bulkPublishContent.fulfilled.type]: (state, { error }: any) => {
+      state.refresh = state.refresh + 1;
       alert("bulk publish success");
     },
     [bulkPublishContent.rejected.type]: (state, { error }: any) => {

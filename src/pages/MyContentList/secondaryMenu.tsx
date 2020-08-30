@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import LayoutBox from "../../components/LayoutBox";
 
@@ -159,37 +159,9 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
   const classes = useStyles();
   const { status } = props;
   const { pathname } = useLocation();
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    let value: string = "";
-    if (newValue === 0) {
-      value = "published";
-    }
-    if (newValue === 1) {
-      value = "pending";
-    }
-    if (newValue === 2) {
-      value = "unpublished";
-    }
-    if (newValue === 3) {
-      value = "archive";
-    }
-    if (newValue === 4) {
-      value = "assets";
-    }
-    history.push(`${pathname}?layout=card&status=${value}`);
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+    history.push(`${pathname}?layout=card&status=${newValue}`);
   };
-  function getDefaultValue() {
-    let defaultValue = 0;
-    if (status === "published") defaultValue = 0;
-    if (status === "pending") defaultValue = 1;
-    if (status === "unpublished") defaultValue = 2;
-    if (status === "archive") defaultValue = 3;
-    if (status === "assets") defaultValue = 4;
-    return defaultValue;
-  }
-  useEffect(() => {
-    getDefaultValue();
-  });
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
@@ -197,7 +169,7 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={getDefaultValue()}
+                value={status}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
@@ -205,11 +177,11 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab value={0} label="Published" className={classes.capitalize} />
-                <Tab value={1} label="Pending" className={classes.capitalize} />
-                <Tab value={2} label="Unpublished" className={classes.capitalize} />
-                <Tab value={3} label="Archive" className={classes.capitalize} />
-                <Tab value={4} label="Assets" className={classes.capitalize} />
+                <Tab value={"Published"} label="Published" className={classes.capitalize} />
+                <Tab value={"Pending"} label="Pending" className={classes.capitalize} />
+                <Tab value={"Unpublished"} label="Unpublished" className={classes.capitalize} />
+                <Tab value={"Archive"} label="Archive" className={classes.capitalize} />
+                <Tab value={"Assets"} label="Assets" className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>
