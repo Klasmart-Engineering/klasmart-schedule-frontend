@@ -216,7 +216,7 @@ export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDLi
 export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
   return api.contentsReview.approveContentReview(id);
 });
-export const rejectContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
+export const rejectContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/rejectContentReview", (id) => {
   return api.contentsReview.rejectContentReview(id, {});
 });
 
@@ -307,12 +307,14 @@ const { actions, reducer } = createSlice({
       alert("bulk publish failed");
     },
     [approveContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.refresh = state.refresh + 1;
       alert("approve success");
     },
     [approveContent.rejected.type]: (state, { error }: any) => {
       alert("approve failed");
     },
     [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.refresh = state.refresh + 1;
       alert("reject success");
     },
     [rejectContent.rejected.type]: (state, { error }: any) => {
