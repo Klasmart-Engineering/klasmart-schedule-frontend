@@ -177,11 +177,11 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab value={"Published"} label="Published" className={classes.capitalize} />
-                <Tab value={"Pending"} label="Pending" className={classes.capitalize} />
-                <Tab value={"Unpublished"} label="Unpublished" className={classes.capitalize} />
-                <Tab value={"Archive"} label="Archive" className={classes.capitalize} />
-                <Tab value={"Assets"} label="Assets" className={classes.capitalize} />
+                <Tab value={"published"} label="Published" className={classes.capitalize} />
+                <Tab value={"pending"} label="Pending" className={classes.capitalize} />
+                <Tab value={"unpublished"} label="Unpublished" className={classes.capitalize} />
+                <Tab value={"archive"} label="Archive" className={classes.capitalize} />
+                <Tab value={"assets"} label="Assets" className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>
