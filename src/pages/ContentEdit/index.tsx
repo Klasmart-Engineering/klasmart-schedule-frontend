@@ -34,7 +34,7 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id");
   const searchText = query.get("searchText") || "";
-  return { id, searchText };
+  return { id, searchText, search };
 };
 
 const setQuery = (search: string, hash: Record<string, string>): string => {
@@ -63,7 +63,7 @@ export default function ContentEdit() {
   (window as any).reset = reset;
   const { contentDetail, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
-  const { id, searchText } = useQuery();
+  const { id, searchText, search } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
@@ -73,14 +73,15 @@ export default function ContentEdit() {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
       const tab = lesson === "assets" ? "assetDetails" : "details";
       history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
+      reset();
     },
-    [history, routeBasePath]
+    [history, reset, routeBasePath]
   );
   const handleChangeTab = useMemo(
     () => (tab: string) => {
-      history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}`);
+      history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}${search}`);
     },
-    [history, routeBasePath, lesson, rightside]
+    [history, routeBasePath, lesson, rightside, search]
   );
   const handlePublish = useCallback(async () => {
     if (!id) return;
@@ -155,7 +156,7 @@ export default function ContentEdit() {
         contentDetail={contentDetail}
         lesson={lesson}
         onChangeLesson={handleChangeLesson}
-        onCancel={reset}
+        onCancel={handleGoBack}
         onSave={handleSave}
         onPublish={handlePublish}
         isDirty={isDirty}
