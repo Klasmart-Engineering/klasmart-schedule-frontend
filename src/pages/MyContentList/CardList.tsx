@@ -319,17 +319,14 @@ export default function ContentCardList(props: ContentCardListProps) {
   const changePage = (event: object, page: number) => {
     onChangePage(page);
   };
-  useEffect(() => {
-    onChangeCheckedContents([]);
-    return () => {
-      console.log("组件销毁");
-    };
-  }, [onChangeCheckedContents]);
   const cardlist = list.map((item, idx) => (
     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
       <ContentCard content={item} onCheckedChange={onCheckedArrChange} onHandelAction={onHandelAction} status={status}></ContentCard>
     </Grid>
   ));
+  useEffect(() => {
+    setCheckedArr([]);
+  }, [list]);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Grid className={css.gridContainer} container>

@@ -85,7 +85,6 @@ export default function MyContentList() {
     }
   };
   const onHandleBulkAction = (type: string) => {
-    console.log(checkedContents);
     if (checkedContents.length === 0) {
       alert("please select first");
       return;
@@ -207,6 +206,7 @@ export default function MyContentList() {
             onChangeCheckedContents={onChangeCheckedContents}
             onChangePage={changePage}
             onHandelAction={onHandelAction}
+            refresh={refresh}
           />
         ) : (
           <div style={{ margin: "0 auto", textAlign: "center" }}>
