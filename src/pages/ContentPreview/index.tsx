@@ -218,6 +218,7 @@ export default function ContentPreview(props: Content) {
   const css = useStyles();
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const colors = ["#009688", "#9c27b0", "#ffc107"];
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
@@ -330,8 +331,8 @@ export default function ContentPreview(props: Content) {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                {contentPreview.keywords?.map((value) => (
-                  <Chip key={value} label={value} className={css.chip} />
+                {contentPreview.keywords?.map((value, index) => (
+                  <Chip key={value} label={value} className={css.chip} style={{ color: "#fff", backgroundColor: colors[index % 3] }} />
                 ))}
               </InputAdornment>
             ),
