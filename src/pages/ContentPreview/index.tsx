@@ -246,6 +246,9 @@ export default function ContentPreview(props: Content) {
       }
     }
   };
+  const handleClose = () => {
+    history.go(-1);
+  };
   useEffect(() => {
     dispatch(getContentDetailById(id));
   }, [dispatch, id]);
@@ -262,7 +265,7 @@ export default function ContentPreview(props: Content) {
     <Box className={css.container}>
       <Box className={css.left}>
         <Box className={css.closeIconCon}>
-          <CloseIcon />
+          <CloseIcon style={{ cursor: "pointer" }} onClick={handleClose} />
         </Box>
         <Typography className={css.text}>Title</Typography>
         <Box className={css.nameCon}>
