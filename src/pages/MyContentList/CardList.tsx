@@ -21,6 +21,7 @@ import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Content } from "../../api/api";
+import { apiResourcePathById } from "../../api/extra";
 import DocIconUrl from "../../assets/icons/doc.svg";
 import MaterialIconUrl from "../../assets/icons/material.svg";
 import MusicIconUrl from "../../assets/icons/music.svg";
@@ -28,7 +29,6 @@ import PicIconUrl from "../../assets/icons/pic.svg";
 import PlanIconUrl from "../../assets/icons/plan.svg";
 import VideoIconUrl from "../../assets/icons/video.svg";
 import LayoutBox from "../../components/LayoutBox";
-
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -223,11 +223,12 @@ interface ContentProps {
   content: Content;
   onCheckedChange: (isChecked: boolean, id: string) => any;
   onHandelAction: (type: string, id?: string) => void;
+  status: string;
 }
 function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
-  const { content, onCheckedChange, onHandelAction } = props;
+  const { content, onCheckedChange, onHandelAction, status } = props;
   const history = useHistory();
 
   const handleChecked = (event: any, id?: string) => {
@@ -243,7 +244,7 @@ function ContentCard(props: ContentProps) {
     if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "LESSON") return PlanIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "MATERIAL") return MaterialIconUrl;
-    if (content?.thumbnail) return content?.thumbnail;
+    if (content?.thumbnail) return apiResourcePathById(content?.thumbnail);
   };
   return (
     <Card className={css.card}>
@@ -281,6 +282,9 @@ function ContentCard(props: ContentProps) {
         {(content?.publish_status === "draft" || content?.publish_status === "rejected") && (
           <UnpublishedAction id={content.id} onHandelAction={onHandelAction} />
         )}
+        {content?.publish_status === "pending" && status === "unpublished" && (
+          <UnpublishedAction id={content.id} onHandelAction={onHandelAction} />
+        )}
         {content?.publish_status === "archive" && <ArchivedAction id={content?.id} onHandelAction={onHandelAction} />}
       </CardActions>
     </Card>
@@ -294,10 +298,11 @@ interface ContentCardListProps {
   onChangeCheckedContents: (arr: string[]) => any;
   onChangePage: (page: number) => void;
   onHandelAction: (type: string, id?: string) => void;
+  status: string;
 }
 export default function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
-  const { list, total, amountPerPage = 16 } = props;
+  const { list, total, amountPerPage = 16, status } = props;
   const [checkedArr, setCheckedArr] = React.useState<string[]>([]);
   const { onChangeCheckedContents, onChangePage, onHandelAction } = props;
   const onCheckedArrChange = (isChecked: boolean, id: string) => {
@@ -310,7 +315,7 @@ export default function ContentCardList(props: ContentCardListProps) {
   };
   const cardlist = list.map((item, idx) => (
     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
-      <ContentCard content={item} onCheckedChange={onCheckedArrChange} onHandelAction={onHandelAction}></ContentCard>
+      <ContentCard content={item} onCheckedChange={onCheckedArrChange} onHandelAction={onHandelAction} status={status}></ContentCard>
     </Grid>
   ));
   return (

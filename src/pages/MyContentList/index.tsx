@@ -41,7 +41,7 @@ const mapQuery = (name: string, status: string, subStatus: string, sortBy: strin
     query["author"] = "{self}";
   }
   query["page"] = page;
-  query["page_size"] = 10;
+  query["page_size"] = 16;
   return query;
 };
 export default function MyContentList() {
@@ -94,7 +94,7 @@ export default function MyContentList() {
     setPage(page);
   };
   const modalDate: any = {
-    text: "Are you sure you want to delete ?",
+    text: "Are you sure you want to delete this content?",
     openStatus: openStatus,
     buttons: [
       {
@@ -129,6 +129,7 @@ export default function MyContentList() {
           <CardList
             list={contentsList}
             total={total}
+            status={status}
             onChangeCheckedContents={onChangeCheckedContents}
             onChangePage={changePage}
             onHandelAction={onHandelAction}

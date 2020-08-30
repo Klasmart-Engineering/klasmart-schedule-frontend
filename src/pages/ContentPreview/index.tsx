@@ -7,6 +7,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
+import { apiResourcePathById } from "../../api/extra";
 import DocIconUrl from "../../assets/icons/doc.svg";
 import MaterialIconUrl from "../../assets/icons/material.svg";
 import MusicIconUrl from "../../assets/icons/music.svg";
@@ -259,7 +260,7 @@ export default function ContentPreview(props: Content) {
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "video") return VideoIconUrl;
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "LESSON") return PlanIconUrl;
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "MATERIAL") return MaterialIconUrl;
-    if (contentPreview?.thumbnail) return contentPreview?.thumbnail;
+    if (contentPreview?.thumbnail) return apiResourcePathById(contentPreview?.thumbnail);
   };
   return (
     <Box className={css.container}>
