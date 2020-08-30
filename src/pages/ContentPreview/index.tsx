@@ -299,6 +299,12 @@ export default function ContentPreview(props: Content) {
         />
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
+            <TextField label="Created On" fullWidth variant="outlined" />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField label="Author" fullWidth variant="outlined" value={contentPreview.author_name} />
+          </Grid>
+          <Grid item xs={12} sm={6}>
             <TextField label="Program" fullWidth variant="outlined" value={contentPreview.program_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
