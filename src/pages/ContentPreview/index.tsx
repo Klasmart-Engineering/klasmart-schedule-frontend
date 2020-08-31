@@ -19,7 +19,7 @@ import {
 // import LayoutPair from "../ContentEdit/Layout";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
@@ -68,7 +68,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   img: {
     margin: "10px 0 20px 0",
-    height: "196px",
   },
   tab: {
     width: "calc(100% + 24px)",
@@ -234,7 +233,7 @@ interface DialogProps {
   handleDialogEvent: () => void;
   onSetReason: (reason: string) => void;
 }
-function ActionDialog(props: DialogProps) {
+export function ActionDialog(props: DialogProps) {
   const { open, title, showReason, handleCloseDialog, handleDialogEvent, onSetReason } = props;
   const setReason = (event: any) => {
     console.log(event.target.value);
@@ -283,25 +282,31 @@ export default function ContentPreview(props: Content) {
     setValue(newValue);
   };
   const handleCloseDialog = () => {
-    console.log("close");
     setOpenDialog(false);
   };
+  const handleDispatch = useCallback(
+    async (type: string) => {
+      switch (type) {
+        case "delete":
+          await dispatch(deleteContent(id));
+          break;
+        case "approve":
+          await dispatch(approveContent(id));
+          break;
+        case "reject":
+          await dispatch(rejectContent({ id: id, reason: reason }));
+          break;
+        case "publish":
+          await dispatch(publishContent(id));
+          break;
+      }
+      history.go(-1);
+    },
+    [dispatch, history, id, reason]
+  );
   const handleDialogEvent = () => {
-    if (actionType === "delete") {
-      dispatch(deleteContent(id));
-    }
-    if (actionType === "approve") {
-      dispatch(approveContent(id));
-    }
-    if (actionType === "reject") {
-      console.log(reason);
-      dispatch(rejectContent({ id: id, reason: reason }));
-    }
-    if (actionType === "publish") {
-      dispatch(publishContent(id));
-    }
     setOpenDialog(false);
-    history.go(-1);
+    handleDispatch(actionType);
   };
   const handleAction = (type: string) => {
     if (type === "edit") {
@@ -312,14 +317,13 @@ export default function ContentPreview(props: Content) {
         history.push(`/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?id=${id}`);
       }
     } else {
+      setTitleDialog(`Are you sure you want to ${type} this content?`);
       if (type !== "reject") {
         setActionType(type);
-        setTitleDialog(`Are you sure you want to ${type} this content?`);
         setOpenDialog(true);
       } else {
         setShowReason(true);
         setActionType(type);
-        setTitleDialog(`Are you sure you want to ${type} this content?`);
         setOpenDialog(true);
       }
     }
