@@ -83,6 +83,11 @@ function Tool(props: ToolProps) {
     });
   };
 
+  const createSchedule = () => {
+    selectToday();
+    history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
+  };
+
   const searchChange = (): void => {
     history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
   };
@@ -96,7 +101,7 @@ function Tool(props: ToolProps) {
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={3}>
           {!includeList && (
-            <Button variant="contained" color="primary" className={css.btnRadio}>
+            <Button variant="contained" color="primary" className={css.btnRadio} onClick={createSchedule}>
               Schedule Class
             </Button>
           )}
@@ -121,7 +126,7 @@ function Tool(props: ToolProps) {
             <FormControl>
               <InputLabel htmlFor="demo-customized-select-native">Model</InputLabel>
               <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
-                <option value="agenda">Work Week</option>
+                {/*<option value="work_week">Work Week</option>*/}
                 <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>
