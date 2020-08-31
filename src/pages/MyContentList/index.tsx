@@ -1,12 +1,12 @@
 import { Typography } from "@material-ui/core";
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import emptyIconUrl from "../../assets/icons/empty.svg";
-import ModalBox from "../../components/ModalBox";
 import mockList from "../../mocks/contentList.json";
 import { RootState } from "../../reducers";
-import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
+import { bulkDeleteContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
+import { ActionDialog } from "../ContentPreview";
 import ActionBar from "./ActionBar";
 import CardList from "./CardList";
 import TableList from "./TableList";
@@ -52,11 +52,11 @@ export default function MyContentList() {
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { total } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { refresh } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const [openBulkDelete, setOpenBulkDelete] = React.useState(false);
-  const [openBulkPublish, setopenBulkPublish] = React.useState(false);
-  const [openDelete, setOpenDelete] = React.useState(false);
-  const [openPublish, setOpenPublish] = React.useState(false);
-  const [id, setId] = React.useState<string>();
+  const [id, setId] = React.useState<string>("");
+  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+  const [titleDialog, setTitleDialog] = React.useState<string>("");
+  const [actionType, setActionType] = React.useState<string>("");
+  const [showReason] = React.useState<boolean>(false);
   const onChangeCheckedContents = (checkedContentsArr?: string[]) => {
     setCheckedContent(checkedContentsArr || []);
   };
@@ -67,126 +67,73 @@ export default function MyContentList() {
     setCheckedContent([]);
     onChangeCheckedContents([]);
   }, [status, subStatus, name, sortBy, myOnly, page, refresh, dispatch, query]);
+
+  const changePage = (page: number) => {
+    setPage(page);
+  };
   const onHandelAction = (type: string, id?: string) => {
     if (!id) return;
-    switch (type) {
-      case "delete":
-        setId(id);
-        setOpenDelete(true);
-        // dispatch(deleteContent(id));
-        break;
-      case "publish":
-        setId(id);
-        setOpenPublish(true);
-        // dispatch(publishContent(id));
-        break;
-      default:
-        return;
-    }
+    setTitleDialog(`Are you sure you want to ${type} this content?`);
+    setId(id);
+    setActionType(type);
+    setOpenDialog(true);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+  const handleDispatch = useCallback(
+    async (type: string, id: string) => {
+      setOpenDialog(false);
+      switch (type) {
+        case "delete":
+          await dispatch(deleteContent(id));
+          break;
+        case "publish":
+          await dispatch(publishContent(id));
+          break;
+        case "bulkdelete":
+          await dispatch(bulkDeleteContent(checkedContents));
+          break;
+        case "bulkpublish":
+          await dispatch(bulkDeleteContent(checkedContents));
+          break;
+        default:
+          return;
+      }
+    },
+    [checkedContents, dispatch]
+  );
+  const handleDialogEvent = () => {
+    handleDispatch(actionType, id);
   };
   const onHandleBulkAction = (type: string) => {
     if (checkedContents.length === 0) {
       alert("please select first");
       return;
     }
+    setTitleDialog(`Are you sure you want to ${type} this content?`);
     switch (type) {
       case "delete":
-        setOpenBulkDelete(true);
-        // dispatch(bulkDeleteContent(checkedContents));
+        setActionType("bulkdelete");
         break;
       case "publish":
-        setopenBulkPublish(true);
-        // dispatch(bulkPublishContent(checkedContents));
+        setActionType("bulkpublish");
         break;
       default:
         return;
     }
-  };
-  const changePage = (page: number) => {
-    setPage(page);
-  };
-  const DeleteModalDate: any = {
-    text: "Are you sure you want to delete this content?",
-    openStatus: openDelete,
-    buttons: [
-      {
-        label: "Cancel",
-        event: () => {
-          setOpenDelete(false);
-        },
-      },
-      {
-        label: "Delete",
-        event: () => {
-          dispatch(deleteContent(id || ""));
-          setOpenDelete(false);
-        },
-      },
-    ],
-  };
-  const PublishedModalDate: any = {
-    text: "Are you sure you want to publish this content?",
-    openStatus: openPublish,
-    buttons: [
-      {
-        label: "Cancel",
-        event: () => {
-          setOpenPublish(false);
-        },
-      },
-      {
-        label: "Confirm",
-        event: () => {
-          dispatch(publishContent(id || ""));
-          setOpenPublish(false);
-        },
-      },
-    ],
-  };
-  const BulkDeleteModalDate: any = {
-    text: "Are you sure you want to delete this content?",
-    openStatus: openBulkDelete,
-    buttons: [
-      {
-        label: "Cancel",
-        event: () => {
-          setOpenBulkDelete(false);
-        },
-      },
-      {
-        label: "Delete",
-        event: () => {
-          dispatch(bulkDeleteContent(checkedContents));
-          setOpenBulkDelete(false);
-        },
-      },
-    ],
-  };
-  const BulkPublishedModalDate: any = {
-    text: "Are you sure you want to publish this content?",
-    openStatus: openBulkPublish,
-    buttons: [
-      {
-        label: "Cancel",
-        event: () => {
-          setopenBulkPublish(false);
-        },
-      },
-      {
-        label: "Confirm",
-        event: () => {
-          dispatch(bulkPublishContent(checkedContents));
-          setopenBulkPublish(false);
-        },
-      },
-    ],
+    setOpenDialog(true);
   };
   return (
     <div>
-      <ModalBox modalDate={BulkDeleteModalDate} />
-      <ModalBox modalDate={BulkPublishedModalDate} />
-      <ModalBox modalDate={DeleteModalDate} />
-      <ModalBox modalDate={PublishedModalDate} />
+      <ActionDialog
+        open={openDialog}
+        title={titleDialog}
+        showReason={showReason}
+        handleCloseDialog={handleCloseDialog}
+        handleDialogEvent={handleDialogEvent}
+        onSetReason={() => {}}
+      ></ActionDialog>
       <ActionBar
         layout={layout}
         status={status}

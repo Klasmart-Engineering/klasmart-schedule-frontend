@@ -159,7 +159,7 @@ export default function ContentEdit() {
         onSave={handleSave}
         onPublish={handlePublish}
         isDirty={isDirty}
-        goBack={handleGoBack}
+        onBack={handleGoBack}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}

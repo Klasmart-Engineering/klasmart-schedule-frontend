@@ -23,6 +23,7 @@ import { getScheduleTimeViewData, removeSchedule, saveScheduleData } from "../..
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import { timestampType } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -758,7 +759,7 @@ interface timesTampType {
 
 interface CalendarStateProps {
   timesTamp: timesTampType;
-  changeTimesTamp: (value: object) => void;
+  changeTimesTamp: (value: timestampType) => void;
   repeatData: object;
   modelView: string;
   scheduleId?: string;

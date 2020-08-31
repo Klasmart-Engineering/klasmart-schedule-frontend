@@ -19,7 +19,8 @@ import {
 // import LayoutPair from "../ContentEdit/Layout";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import React, { useEffect } from "react";
+import { PayloadAction } from "@reduxjs/toolkit";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
@@ -31,7 +32,15 @@ import PicIconUrl from "../../assets/icons/pic.svg";
 import PlanIconUrl from "../../assets/icons/plan.svg";
 import VideoIconUrl from "../../assets/icons/video.svg";
 import { RootState } from "../../reducers";
-import { approveContent, deleteContent, getContentDetailById, publishContent, rejectContent } from "../../reducers/content";
+import {
+  approveContent,
+  AsyncTrunkReturned,
+  deleteContent,
+  getContentDetailById,
+  lockContent,
+  publishContent,
+  rejectContent,
+} from "../../reducers/content";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -68,7 +77,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   img: {
     margin: "10px 0 20px 0",
-    height: "196px",
   },
   tab: {
     width: "calc(100% + 24px)",
@@ -234,7 +242,7 @@ interface DialogProps {
   handleDialogEvent: () => void;
   onSetReason: (reason: string) => void;
 }
-function ActionDialog(props: DialogProps) {
+export function ActionDialog(props: DialogProps) {
   const { open, title, showReason, handleCloseDialog, handleDialogEvent, onSetReason } = props;
   const setReason = (event: any) => {
     console.log(event.target.value);
@@ -269,7 +277,7 @@ export default function ContentPreview(props: Content) {
   const dispatch = useDispatch();
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const id = query.get("id") || "";
+  let id = query.get("id") || "";
   const css = useStyles();
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -283,43 +291,52 @@ export default function ContentPreview(props: Content) {
     setValue(newValue);
   };
   const handleCloseDialog = () => {
-    console.log("close");
     setOpenDialog(false);
   };
-  const handleDialogEvent = () => {
-    if (actionType === "delete") {
-      dispatch(deleteContent(id));
-    }
-    if (actionType === "approve") {
-      dispatch(approveContent(id));
-    }
-    if (actionType === "reject") {
-      console.log(reason);
-      dispatch(rejectContent({ id: id, reason: reason }));
-    }
-    if (actionType === "publish") {
-      dispatch(publishContent(id));
-    }
-    setOpenDialog(false);
-    history.go(-1);
-  };
-  const handleAction = (type: string) => {
-    if (type === "edit") {
-      if (contentPreview.content_type_name === "Material") {
-        history.push(`/library/content-edit/lesson/material/tab/details/rightside/contentH5p?id=${id}`);
+  const handleDispatch = useCallback(
+    async (type: string) => {
+      switch (type) {
+        case "delete":
+          await dispatch(deleteContent(id));
+          break;
+        case "approve":
+          await dispatch(approveContent(id));
+          break;
+        case "reject":
+          await dispatch(rejectContent({ id: id, reason: reason }));
+          break;
+        case "publish":
+          await dispatch(publishContent(id));
+          break;
       }
-      if (contentPreview.content_type_name === "Plan") {
-        history.push(`/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?id=${id}`);
+      history.go(-1);
+    },
+    [dispatch, history, id, reason]
+  );
+  const handleDialogEvent = () => {
+    setOpenDialog(false);
+    handleDispatch(actionType);
+  };
+  const handleAction = async (type: string) => {
+    if (type === "edit") {
+      const lesson = contentPreview.content_type_name === "Material" ? "material" : "plan";
+      const rightSide = contentPreview.content_type_name === "Material" ? "contentH5p" : "planComposeGraphic";
+      if (contentPreview.publish_status === "published") {
+        const { payload } = ((await dispatch(lockContent(id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;
+        if (payload.id) {
+          history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${payload.id}`);
+        }
+      } else {
+        history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${id}`);
       }
     } else {
+      setTitleDialog(`Are you sure you want to ${type} this content?`);
       if (type !== "reject") {
         setActionType(type);
-        setTitleDialog(`Are you sure you want to ${type} this content?`);
         setOpenDialog(true);
       } else {
         setShowReason(true);
         setActionType(type);
-        setTitleDialog(`Are you sure you want to ${type} this content?`);
         setOpenDialog(true);
       }
     }
