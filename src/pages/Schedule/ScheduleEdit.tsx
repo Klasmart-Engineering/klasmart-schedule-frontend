@@ -382,9 +382,12 @@ function EditBox(props: CalendarStateProps) {
     setOpenStatus(false);
   };
 
-  const deleteScheduleByid = () => {
-    dispatch(removeSchedule("1"));
+  const deleteScheduleByid = async () => {
+    await dispatch(removeSchedule(scheduleDetial.id as string));
+    // @ts-ignore
+    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
     setOpenStatus(false);
+    history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
 
   /**
@@ -693,7 +696,7 @@ function EditBox(props: CalendarStateProps) {
           onChange={(e) => handleTopicListChange(e, "description")}
         />
         <ScheduleAttachment setAttachmentId={setAttachmentId} attachmentId={attachmentId} />
-        <Box className={css.fieldset}>
+        <Box className={css.fieldset} style={{ display: scheduleDetial.id ? "block" : "none" }}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live
           </Button>
