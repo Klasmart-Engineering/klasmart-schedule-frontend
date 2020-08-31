@@ -111,7 +111,6 @@ const useStyles = makeStyles((theme) => ({
 function setUrl(search: string, param: string, value: string) {
   const query = new URLSearchParams(search);
   let newUrl: any;
-  console.log(typeof value);
   if (query.get(param)) {
     if (!value || value === "0") {
       query.delete(param);
