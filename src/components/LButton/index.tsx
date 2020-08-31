@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 interface LButtonProps extends Omit<ButtonProps, "onClick"> {
   onClick: <T>(...args: Parameters<Required<ButtonProps>["onClick"]>) => Promise<T>;
 }
+
 export function LButton(props: LButtonProps) {
   const { onClick, children, ...restProps } = props;
   const [pending, setPending] = useState<boolean>(false);
