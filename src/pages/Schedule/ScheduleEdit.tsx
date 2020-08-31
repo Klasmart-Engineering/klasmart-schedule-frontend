@@ -364,7 +364,7 @@ function EditBox(props: CalendarStateProps) {
     const id = (await dispatch(saveScheduleData({ ...result }))).payload.id;
     // @ts-ignore
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
-    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/edit?schedule_id=${id}`);
+    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview?schedule_id=${id}`);
   };
 
   const [checkedStatus, setStatus] = React.useState({
