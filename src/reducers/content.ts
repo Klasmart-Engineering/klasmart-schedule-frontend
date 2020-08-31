@@ -228,6 +228,12 @@ export const rejectContent = createAsyncThunk<RejectContentResult, RejectContent
     return api.contentsReview.rejectContentReview(id, { reject_reason: reason });
   }
 );
+export const lockContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.lockContent>,
+  Parameters<typeof api.contents.lockContent>[0]
+>("contents/lockContent", async (content_id) => {
+  return await api.contents.lockContent(content_id);
+});
 
 const { actions, reducer } = createSlice({
   name: "content",
@@ -329,6 +335,13 @@ const { actions, reducer } = createSlice({
     // [rejectContent.rejected.type]: (state, { error }: any) => {
     //   alert("reject failed");
     // },
+
+    [lockContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      alert("lock success");
+    },
+    [lockContent.rejected.type]: (state, { error }: any) => {
+      alert("lock failed");
+    },
   },
 });
 
