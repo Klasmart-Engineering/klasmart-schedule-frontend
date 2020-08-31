@@ -134,7 +134,6 @@ export const save = createAsyncThunk<Content["id"], Content, { state: RootState 
     return (await api.contents.createContent(payload)).id;
   } else {
     await api.contents.updateContent(id, payload);
-    api.contents.getContentById(id);
     return id;
   }
 });

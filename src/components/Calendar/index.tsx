@@ -4,12 +4,12 @@ import moment from "moment";
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import ModalBox from "../../components/ModalBox";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
-import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
+import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 
 interface scheduleInfoProps {
   end: Date;
