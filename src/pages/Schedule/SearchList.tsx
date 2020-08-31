@@ -89,10 +89,10 @@ function timeFormat(time: number, type: string = "time") {
   }
 }
 
-const useQuery = () => {
+const useQuery = (): object => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const name = query.get("name");
+  const name: string | null = query.get("name");
   return { name };
 };
 
