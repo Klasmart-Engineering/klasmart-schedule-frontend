@@ -212,7 +212,15 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.developmental}
             control={control}
             select
-            SelectProps={{ multiple: true }}
+            SelectProps={{
+              multiple: true,
+              // renderValue:(selected:any)=>(<div >
+              //   {(selected as string[]).map((value) => (
+              //     <Chip key={value} label={value}  onDelete={(value)=>{delete selected[value]}}
+              //     />
+              //   ))}
+              // </div>)
+            }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Developmental"

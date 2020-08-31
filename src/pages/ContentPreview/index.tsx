@@ -19,6 +19,7 @@ import {
 // import LayoutPair from "../ContentEdit/Layout";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
+import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -31,7 +32,15 @@ import PicIconUrl from "../../assets/icons/pic.svg";
 import PlanIconUrl from "../../assets/icons/plan.svg";
 import VideoIconUrl from "../../assets/icons/video.svg";
 import { RootState } from "../../reducers";
-import { approveContent, deleteContent, getContentDetailById, publishContent, rejectContent } from "../../reducers/content";
+import {
+  approveContent,
+  AsyncTrunkReturned,
+  deleteContent,
+  getContentDetailById,
+  lockContent,
+  publishContent,
+  rejectContent,
+} from "../../reducers/content";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -269,7 +278,7 @@ export default function ContentPreview(props: Content) {
   const dispatch = useDispatch();
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const id = query.get("id") || "";
+  let id = query.get("id") || "";
   const css = useStyles();
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -303,13 +312,17 @@ export default function ContentPreview(props: Content) {
     setOpenDialog(false);
     history.go(-1);
   };
-  const handleAction = (type: string) => {
+  const handleAction = async (type: string) => {
     if (type === "edit") {
-      if (contentPreview.content_type_name === "Material") {
-        history.push(`/library/content-edit/lesson/material/tab/details/rightside/contentH5p?id=${id}`);
-      }
-      if (contentPreview.content_type_name === "Plan") {
-        history.push(`/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?id=${id}`);
+      const lesson = contentPreview.content_type_name === "Material" ? "material" : "plan";
+      const rightSide = contentPreview.content_type_name === "Material" ? "contentH5p" : "planComposeGraphic";
+      if (contentPreview.publish_status === "published") {
+        const { payload } = ((await dispatch(lockContent(id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;
+        if (payload.id) {
+          history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${payload.id}`);
+        }
+      } else {
+        history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${id}`);
       }
     } else {
       if (type !== "reject") {
