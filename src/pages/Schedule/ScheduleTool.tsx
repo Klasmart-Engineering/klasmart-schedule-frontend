@@ -9,6 +9,7 @@ import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/s
 import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
+import { timestampType } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -149,7 +150,7 @@ interface timesTampType {
 
 interface CalendarStateProps {
   timesTamp: timesTampType;
-  changeTimesTamp: (value: object) => void;
+  changeTimesTamp: (value: timestampType) => void;
 }
 
 interface ToolProps extends CalendarStateProps {

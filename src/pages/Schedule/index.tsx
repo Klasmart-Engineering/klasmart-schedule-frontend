@@ -10,6 +10,7 @@ import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedul
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import { timestampType } from "../../types/scheduleTypes";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -55,11 +56,11 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [timesTamp, setTimesTamp] = React.useState<any>({
+  const [timesTamp, setTimesTamp] = React.useState<timestampType>({
     start: timestampInt(new Date().getTime() / 1000),
     end: timestampInt(new Date().getTime() / 1000),
   });
-  const changeTimesTamp = (times: object) => {
+  const changeTimesTamp = (times: timestampType) => {
     setTimesTamp(times);
   };
 

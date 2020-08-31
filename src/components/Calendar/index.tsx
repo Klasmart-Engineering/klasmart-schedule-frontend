@@ -10,6 +10,7 @@ import ModalBox from "../../components/ModalBox";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { timestampType } from "../../types/scheduleTypes";
 
 interface scheduleInfoProps {
   end: Date;
@@ -146,7 +147,7 @@ interface timesTampType {
 interface CalendarProps {
   modelView: any;
   timesTamp: timesTampType;
-  changeTimesTamp: (value: object) => void;
+  changeTimesTamp: (value: timestampType) => void;
 }
 export default function KidsCalendar(props: CalendarProps) {
   const { modelView, timesTamp, changeTimesTamp } = props;

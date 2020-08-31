@@ -47,12 +47,12 @@ const useStyles = makeStyles({
   },
 });
 
-interface scheduleInfoProps {
+type scheduleInfoProps = {
   end: Date;
   id: string;
   start: Date;
   title: string;
-}
+};
 
 interface InfoProps {
   scheduleId: number;
@@ -68,22 +68,20 @@ export default function CustomizeTempalte(props: InfoProps) {
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-  const timestampToTime = (timestamp: any | null) => {
-    const date = timestamp;
+  const timestampToTime = (timestamp: Date | null): string => {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
     const [Y, M, D, W, h, m] = [
-      date.getFullYear(),
-      timestamp.getMonth(),
-      timestamp.getDate(),
-      timestamp.getDay(),
-      dateNumFun(timestamp.getHours()),
-      dateNumFun(timestamp.getMinutes()),
+      (timestamp as Date).getFullYear(),
+      (timestamp as Date).getMonth(),
+      (timestamp as Date).getDate(),
+      (timestamp as Date).getDay(),
+      dateNumFun((timestamp as Date).getHours()),
+      dateNumFun((timestamp as Date).getMinutes()),
     ];
-
     return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m} ${h > 12 ? "PM" : "AM"}`;
   };
 
-  const handleEditSchedule = (e: any) => {
+  const handleEditSchedule = (): void => {
     handleClose();
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
   };
