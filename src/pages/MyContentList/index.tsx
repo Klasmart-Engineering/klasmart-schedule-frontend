@@ -118,7 +118,7 @@ export default function MyContentList() {
       {
         label: "Delete",
         event: () => {
-          dispatch(deleteContent(id));
+          dispatch(deleteContent(id || ""));
           setOpenDelete(false);
         },
       },
@@ -137,7 +137,7 @@ export default function MyContentList() {
       {
         label: "Confirm",
         event: () => {
-          dispatch(publishContent(id));
+          dispatch(publishContent(id || ""));
           setOpenPublish(false);
         },
       },
@@ -206,7 +206,6 @@ export default function MyContentList() {
             onChangeCheckedContents={onChangeCheckedContents}
             onChangePage={changePage}
             onHandelAction={onHandelAction}
-            refresh={refresh}
           />
         ) : (
           <div style={{ margin: "0 auto", textAlign: "center" }}>

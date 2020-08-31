@@ -266,9 +266,9 @@ export default function ContentPreview(props: Content) {
   const time = (time?: number) => {
     const year = new Date((time || 0) * 1000).getFullYear();
     let mouth: string = String(new Date((time || 0) * 1000).getMonth() + 1);
-    mouth = mouth.padStart(2, 0);
+    mouth = mouth.padStart(2, "0");
     let day = String(new Date((time || 0) * 1000).getDay() + 1);
-    day = day.padStart(2, 0);
+    day = day.padStart(2, "0");
     return `${year}-${mouth}-${day}`;
   };
   return (
