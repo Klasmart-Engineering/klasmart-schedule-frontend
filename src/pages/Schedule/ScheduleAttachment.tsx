@@ -51,10 +51,12 @@ const tipsText = (
 interface ScheduleAttachmentProps {
   setAttachmentId: (id: string) => void;
   attachmentId: string;
+  attachmentName: string;
+  setAttachmentName: (name: string) => void;
 }
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentId } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName } = props;
   const css = useStyles();
   // const downloadFile = () => {
   //   const url: any = apiResourcePathById(attachmentId);
@@ -72,6 +74,11 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
   };
 
+  const getFileName = (name: any) => {
+    setAttachmentName(name);
+    return name;
+  };
+
   const [downloadUrl, setDownloadUrl] = React.useState("");
 
   return (
@@ -80,7 +87,12 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
       onChange={handleOnChange}
       render={({ uploady, item, btnRef, value, isUploading }) => (
         <Box className={css.fieldBox}>
-          <TextField disabled className={css.fieldset} placeholder="Attachment" value={item ? item.file.name : attachmentId}></TextField>
+          <TextField
+            disabled
+            className={css.fieldset}
+            placeholder="Attachment"
+            value={item ? getFileName(item.file.name) : attachmentName}
+          ></TextField>
           <HtmlTooltip title={tipsText}>
             <InfoOutlined className={css.iconField} style={{ left: "110px", display: item ? "none" : "block" }} />
           </HtmlTooltip>
