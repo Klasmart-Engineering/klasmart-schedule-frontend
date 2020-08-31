@@ -69,7 +69,7 @@ function ScheduleContent() {
   }, [modelView, timesTamp, dispatch]);
 
   React.useEffect(() => {
-    dispatch(contentLists({ org: "1" }));
+    dispatch(contentLists({ org: "1", publish_status: "published" }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
     }
@@ -96,6 +96,7 @@ function ScheduleContent() {
               repeatData={{ type, [type]: state[type] }}
               modelView={modelView}
               scheduleId={scheduleId}
+              includeTable={includeTable}
             />
           </Grid>
           <Grid item xs={9}>

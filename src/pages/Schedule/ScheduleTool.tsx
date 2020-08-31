@@ -84,7 +84,6 @@ function Tool(props: ToolProps) {
   };
 
   const createSchedule = () => {
-    selectToday();
     history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
   };
 
@@ -129,7 +128,6 @@ function Tool(props: ToolProps) {
           )}
           {!includeList && (
             <FormControl>
-              <InputLabel htmlFor="demo-customized-select-native">Model</InputLabel>
               <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
                 {/*<option value="work_week">Work Week</option>*/}
                 <option value="day">Day</option>
