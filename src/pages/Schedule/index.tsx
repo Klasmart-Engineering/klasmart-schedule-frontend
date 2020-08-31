@@ -96,6 +96,7 @@ function ScheduleContent() {
               repeatData={{ type, [type]: state[type] }}
               modelView={modelView}
               scheduleId={scheduleId}
+              includeTable={includeTable}
             />
           </Grid>
           <Grid item xs={9}>

@@ -85,7 +85,7 @@ function EditBox(props: CalendarStateProps) {
   const history = useHistory();
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
-  const { timesTamp, modelView, scheduleId } = props;
+  const { timesTamp, modelView, scheduleId, includeTable } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
@@ -364,7 +364,7 @@ function EditBox(props: CalendarStateProps) {
     const id = (await dispatch(saveScheduleData({ ...result }))).payload.id;
     // @ts-ignore
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${id}`);
+    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/edit?schedule_id=${id}`);
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -762,6 +762,7 @@ interface CalendarStateProps {
   repeatData: object;
   modelView: string;
   scheduleId?: string;
+  includeTable?: boolean;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -769,7 +770,7 @@ interface ScheduleEditProps extends CalendarStateProps {
 }
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
-  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView, scheduleId } = props;
+  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView, scheduleId, includeTable } = props;
   const template = (
     <Box>
       <Box
@@ -790,6 +791,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           repeatData={repeatData}
           modelView={modelView}
           scheduleId={scheduleId}
+          includeTable={includeTable}
         />
       </Box>
     </Box>
