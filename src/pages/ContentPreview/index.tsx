@@ -240,10 +240,10 @@ export default function ContentPreview(props: Content) {
       history.go(-1);
     }
     if (type === "edit") {
-      if (contentPreview.content_type_name === "MATERIAL") {
+      if (contentPreview.content_type_name === "Material") {
         history.push(`/library/content-edit/lesson/material/tab/details/rightside/contentH5p?id=${id}`);
       }
-      if (contentPreview.content_type_name === "PLAN") {
+      if (contentPreview.content_type_name === "Plan") {
         history.push(`/library/content-edit/lesson/plan/tab/details/rightside/contentH5p?id=${id}`);
       }
     }
@@ -259,8 +259,8 @@ export default function ContentPreview(props: Content) {
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "audio") return MusicIconUrl;
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "img") return PicIconUrl;
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "video") return VideoIconUrl;
-    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "LESSON") return PlanIconUrl;
-    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "MATERIAL") return MaterialIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "Plan") return PlanIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "Material") return MaterialIconUrl;
     if (contentPreview?.thumbnail) return apiResourcePathById(contentPreview?.thumbnail);
   };
   const time = (time?: number) => {
