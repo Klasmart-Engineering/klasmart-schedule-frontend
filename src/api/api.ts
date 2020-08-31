@@ -394,6 +394,10 @@ export interface ScheduleDetailed {
   /** schedule end time, timestamp */
   end_at?: number;
 
+  is_repeat?: boolean;
+
+  is_force?: boolean;
+
   /**
    *
    *  * AllDay - this class will last for 24 hours for the whole day
@@ -772,8 +776,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents_resources
      * @description Get content resource upload path
      */
-    getContentResourceUploadPath: (query?: { partition?: "assets" | "thumbnail"; extension?: string }, params?: RequestParams) =>
-      this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
+    getContentResourceUploadPath: (
+      query?: { partition?: "assets" | "thumbnail" | "attachment"; extension?: string },
+      params?: RequestParams
+    ) => this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
   };
   assets = {
     /**
@@ -1033,7 +1039,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create schedule
      */
     createSchedule: (data: ScheduleCreate, params?: RequestParams) =>
-      this.request<string, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
+      this.request<{ id?: string }, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule
