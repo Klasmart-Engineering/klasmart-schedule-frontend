@@ -10,7 +10,7 @@ import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedul
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { timestampType } from "../../types/scheduleTypes";
+import { timestampType, RouteParams, modeViewType } from "../../types/scheduleTypes";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -19,11 +19,6 @@ const useQuery = () => {
   const teacherName = query.get("teacher_name") || "";
   return { scheduleId, teacherName };
 };
-
-interface RouteParams {
-  rightside: "scheduleTable" | "scheduleList";
-  model: "edit" | "preview";
-}
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
   includeTable: rightside.includes("scheduleTable"),
@@ -48,9 +43,9 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [modelView, setModelView] = React.useState<string>("month");
+  const [modelView, setModelView] = React.useState<modeViewType>("month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setModelView(event.target.value as string);
+    setModelView(event.target.value as modeViewType);
   };
 
   /**
@@ -65,15 +60,12 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    // @ts-ignore
-    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
+    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
   }, [modelView, timesTamp, dispatch]);
 
   React.useEffect(() => {
     dispatch(contentLists({ org: "1", publish_status: "published" }));
-    if (scheduleId) {
-      dispatch(getScheduleInfo(scheduleId));
-    }
+    if (scheduleId) dispatch(getScheduleInfo(scheduleId));
   }, [scheduleId, dispatch]);
 
   return (

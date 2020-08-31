@@ -9,7 +9,7 @@ import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/s
 import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
-import { timestampType } from "../../types/scheduleTypes";
+import { timestampType, modeViewType } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -73,27 +73,21 @@ function Tool(props: ToolProps) {
   const history = useHistory();
   const { includeList, changeTimesTamp, changeModelView, modelView } = props;
 
-  // const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-  //   setSearchValue(event.target.value as string);
-  // };
-
-  const selectToday = () => {
+  const selectToday = (): void => {
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),
     });
   };
 
-  const createSchedule = () => {
-    history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
-  };
-
-  const searchChange = (): void => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
-  };
-
-  const backChange = (): void => {
-    history.goBack();
+  const toolRouter = (place: string = "create"): void => {
+    if (place === "create") {
+      history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
+    } else if (place === "search") {
+      history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
+    } else {
+      history.goBack();
+    }
   };
 
   return (
@@ -101,13 +95,27 @@ function Tool(props: ToolProps) {
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={3}>
           {!includeList && (
-            <Button variant="contained" color="primary" className={css.btnRadio} onClick={createSchedule}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={css.btnRadio}
+              onClick={() => {
+                toolRouter("create");
+              }}
+            >
               Schedule Class
             </Button>
           )}
         </Grid>
         <Grid item xs={5} style={{ display: "flex", alignItems: "center" }}>
-          {includeList && <ArrowBackIosOutlined className={css.arrowsrt} onClick={backChange} />}
+          {includeList && (
+            <ArrowBackIosOutlined
+              className={css.arrowsrt}
+              onClick={() => {
+                toolRouter("create");
+              }}
+            />
+          )}
           <FormControl>
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
             <BootstrapInput
@@ -117,7 +125,15 @@ function Tool(props: ToolProps) {
               onChange={(event) => setTeacherName(event.target.value)}
             />
           </FormControl>
-          <Button variant="contained" color="primary" className={css.searchBtn} startIcon={<SearchOutlined />} onClick={searchChange}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={css.searchBtn}
+            startIcon={<SearchOutlined />}
+            onClick={() => {
+              toolRouter("search");
+            }}
+          >
             Search
           </Button>
         </Grid>
@@ -155,7 +171,7 @@ interface CalendarStateProps {
 
 interface ToolProps extends CalendarStateProps {
   includeList: boolean;
-  modelView: string;
+  modelView: modeViewType;
   changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 export default function ScheduleTool(props: ToolProps) {
