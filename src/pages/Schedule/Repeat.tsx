@@ -95,6 +95,11 @@ interface RepeatCycleProps {
   dispatch: any;
 }
 
+interface weekItem {
+  day: string;
+  selected: boolean;
+}
+
 function RepeatCycle(props: any) {
   const { state, handleRepeatData } = props;
   const classes = useStyles();
@@ -150,7 +155,7 @@ function RepeatCycle(props: any) {
   if (type === "weekly") {
     weekends.forEach((item, index) => {
       if (on.length > 0) {
-        on.forEach((item1: any, index1: any) => {
+        on.forEach((item1: string) => {
           if (item.day === item1) {
             item.selected = true;
           }
@@ -159,15 +164,15 @@ function RepeatCycle(props: any) {
     });
   }
 
-  const handleWeekdaySelect = (index: number) => {
+  const handleWeekdaySelect = (index: number): void => {
     let temp = JSON.parse(JSON.stringify(weekends));
-    temp.forEach((item: any) => {
+    temp.forEach((item: weekItem) => {
       if (temp[index].day === item.day) {
         item.selected = !item.selected;
       }
     });
     setWeekends(temp);
-    let selectedDays: any = on;
+    let selectedDays: Array<string> = on;
     let idx = selectedDays.indexOf(weekends[index].day);
     if (idx > -1) {
       selectedDays.splice(idx, 1);

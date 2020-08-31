@@ -69,7 +69,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
   };
 
-  const getFileName = (name: any) => {
+  const getFileName = (name: string): string => {
     setAttachmentName(name);
     return name;
   };
