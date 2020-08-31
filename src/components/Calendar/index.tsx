@@ -81,6 +81,7 @@ function MyCalendar(props: CalendarProps) {
     // @ts-ignore
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
     setOpenStatus(false);
+    history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
 
   const [enableCustomization, setEnableCustomization] = React.useState(true);

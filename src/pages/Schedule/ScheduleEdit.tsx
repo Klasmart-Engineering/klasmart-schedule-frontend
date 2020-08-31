@@ -85,7 +85,7 @@ function EditBox(props: CalendarStateProps) {
   const history = useHistory();
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
-  const { timesTamp, modelView } = props;
+  const { timesTamp, modelView, scheduleId } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
@@ -96,9 +96,20 @@ function EditBox(props: CalendarStateProps) {
   const [programItem, setProgramItem] = React.useState<any>(defaults);
   const [teacherItem, setTeacherItem] = React.useState<any>([]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
+  const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [contentsListSelect, setContentsListSelect] = React.useState<any>([defaults]);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const currentTime = timestampInt(new Date().getTime() / 1000);
+
+  React.useEffect(() => {
+    if (scheduleId) {
+      setAttachmentName(scheduleDetial?.attachment?.name as any);
+      setAttachmentId(scheduleDetial?.attachment?.id as any);
+    } else {
+      setAttachmentName("");
+      setAttachmentId("");
+    }
+  }, [scheduleDetial, scheduleDetial.attachment, scheduleId]);
 
   React.useEffect(() => {
     const newContentsData: any = [];
@@ -121,12 +132,7 @@ function EditBox(props: CalendarStateProps) {
       repeatCheck: false,
       dueDateCheck: false,
     });
-    setClassItem(defaults);
-    setLessonPlan(defaults);
-    setSubjectItem(defaults);
-    setProgramItem(defaults);
-    setTeacherItem([]);
-    setScheduleList({
+    const newData: any = {
       attachment_path: "",
       class_id: "",
       class_type: "",
@@ -142,7 +148,14 @@ function EditBox(props: CalendarStateProps) {
       teacher_ids: [],
       title: "",
       ...timesTampDada,
-    });
+    };
+    setClassItem(defaults);
+    setLessonPlan(defaults);
+    setSubjectItem(defaults);
+    setProgramItem(defaults);
+    setTeacherItem([]);
+    setScheduleList(newData);
+    setInitScheduleList(newData);
   }, [timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
@@ -184,6 +197,7 @@ function EditBox(props: CalendarStateProps) {
       setProgramItem(scheduleDetial.program);
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
+      setInitScheduleList(newData);
     }
   }, [scheduleDetial]);
 
@@ -220,15 +234,17 @@ function EditBox(props: CalendarStateProps) {
     title: "",
   });
 
+  const [initScheduleList, setInitScheduleList] = React.useState<any>({});
+
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
     return timestampInt(new Date(currentTime).getTime() / 1000);
   };
 
-  const timestampToTime = (timestamp: Number | null) => {
+  const timestampToTime = (timestamp: Number | null, type: string = "default") => {
     const date = new Date(Number(timestamp) * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
-    const [Y, M, D, h, m, s] = [
+    const [Y, M, D, h, m] = [
       date.getFullYear(),
       dateNumFun(date.getMonth() + 1),
       dateNumFun(date.getDate()),
@@ -236,7 +252,13 @@ function EditBox(props: CalendarStateProps) {
       dateNumFun(date.getMinutes()),
       dateNumFun(date.getSeconds()),
     ];
-    return `${Y}-${M}-${D}T${h}:${m}:${s}`;
+    if (type === "all_day_start") {
+      return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
+    } else if (type === "all_day_end") {
+      return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 23, 59, 59).getTime() / 1000);
+    } else {
+      return `${Y}-${M}-${D}T${h}:${m}`;
+    }
   };
 
   /**
@@ -335,7 +357,7 @@ function EditBox(props: CalendarStateProps) {
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
-    addData["attachment_path"] = attachmentId;
+    addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
     const result = { ...scheduleList, ...addData };
     // @ts-ignore
@@ -352,6 +374,14 @@ function EditBox(props: CalendarStateProps) {
   });
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.name === "allDayCheck" && event.target.checked) {
+      const newTopocList = {
+        ...scheduleList,
+        start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
+        end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
+      };
+      setScheduleList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
+    }
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
   };
 
@@ -363,9 +393,12 @@ function EditBox(props: CalendarStateProps) {
     setOpenStatus(false);
   };
 
-  const deleteScheduleByid = () => {
-    dispatch(removeSchedule("1"));
+  const deleteScheduleByid = async () => {
+    await dispatch(removeSchedule(scheduleDetial.id as string));
+    // @ts-ignore
+    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
     setOpenStatus(false);
+    history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
 
   /**
@@ -413,6 +446,12 @@ function EditBox(props: CalendarStateProps) {
    * modal type confirm close
    */
   const closeEdit = () => {
+    const scheduleListOld = JSON.stringify(initScheduleList);
+    const scheduleListNew = JSON.stringify(scheduleList);
+    if (scheduleListNew === scheduleListOld && !checkedStatus.allDayCheck && !checkedStatus.repeatCheck && !checkedStatus.dueDateCheck) {
+      history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+      return;
+    }
     const button = [
       {
         label: "Cancel",
@@ -667,8 +706,13 @@ function EditBox(props: CalendarStateProps) {
           value={scheduleList.description}
           onChange={(e) => handleTopicListChange(e, "description")}
         />
-        <ScheduleAttachment setAttachmentId={setAttachmentId} attachmentId={attachmentId} />
-        <Box className={css.fieldset}>
+        <ScheduleAttachment
+          setAttachmentId={setAttachmentId}
+          attachmentId={attachmentId}
+          attachmentName={attachmentName}
+          setAttachmentName={setAttachmentName}
+        />
+        <Box className={css.fieldset} style={{ display: scheduleDetial.id ? "block" : "none" }}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live
           </Button>
@@ -716,6 +760,7 @@ interface CalendarStateProps {
   changeTimesTamp: (value: object) => void;
   repeatData: object;
   modelView: string;
+  scheduleId?: string;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -723,11 +768,17 @@ interface ScheduleEditProps extends CalendarStateProps {
 }
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
-  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView } = props;
+  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView, scheduleId } = props;
   const template = includePreview ? (
     <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
   ) : (
-    <EditBox changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
+    <EditBox
+      changeTimesTamp={changeTimesTamp}
+      timesTamp={timesTamp}
+      repeatData={repeatData}
+      modelView={modelView}
+      scheduleId={scheduleId}
+    />
   );
   return template;
 }

@@ -73,7 +73,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
     const [Y, M, D, W, h, m] = [
       date.getFullYear(),
-      timestamp.getMonth() + 1,
+      timestamp.getMonth(),
       timestamp.getDate(),
       timestamp.getDay(),
       dateNumFun(timestamp.getHours()),
