@@ -74,9 +74,8 @@ export default function ContentEdit() {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
       const tab = lesson === "assets" ? "assetDetails" : "details";
       history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
-      reset();
     },
-    [history, reset, routeBasePath]
+    [history, routeBasePath]
   );
   const handleChangeTab = useMemo(
     () => (tab: string) => {
@@ -115,11 +114,10 @@ export default function ContentEdit() {
   }, [history]);
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
-  }, [id, lesson, dispatch, searchText, history]);
+  }, [id, lesson, dispatch, searchText, history, editindex]);
   useEffect(() => {
     reset(ModelContentDetailForm.decode(contentDetail));
-  }, [contentDetail, reset]);
-  // useEffect(()=>{dispatch(syncHistory(history))}, [history, dispatch]);
+  }, [contentDetail, lesson, reset]);
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
