@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 
 const initialState: any = {
-  type: "yearly",
+  type: "daily",
   daily: {
     interval: 0,
     end: {

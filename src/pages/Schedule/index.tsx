@@ -113,4 +113,4 @@ export default function Schedule() {
 
 Schedule.routeBasePath = "/schedule/calendar";
 Schedule.routeMatchPath = "/schedule/calendar/rightside/:rightside/model/:model";
-Schedule.routeRedirectDefault = "/schedule/calendar/rightside/scheduleTable/model/edit";
+Schedule.routeRedirectDefault = "/schedule/calendar/rightside/scheduleTable/model/preview";

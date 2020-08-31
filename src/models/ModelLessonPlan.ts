@@ -109,7 +109,7 @@ export class ModelLessonPlan {
       const { prev, prevIdx, current } = planHash[segmentId];
       // 修改第一个的情况
       if (!prev || prevIdx == null) {
-        return current.next ? current.next[0] : {};
+        return current.next && current.next.length > 0 ? current.next[0] : {};
       }
       if (!prev.next) return;
       if (!current.next || current.next.length === 0) {

@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Card,
-  CardContent,
-  Hidden,
-  makeStyles,
-  SvgIconProps,
-  Theme,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from "react";
@@ -133,7 +121,9 @@ const useSegmentComputedStyles = makeStyles({
     },
   }),
   card: (props: SegmentBoxProps) => ({
-    marginTop: props.first || props.condition ? 40 : props.canDropCondition ? 40 + 59 + 34 : 40 + 59,
+    // 将来 condition 逻辑要用的， 不要删
+    // marginTop: props.first || props.condition ? 40 : props.canDropCondition ? 40 + 59 + 34 : 40 + 59,
+    marginTop: props.first ? 40 : 0,
     width: 200,
     position: "relative",
     "&:hover svg": {
@@ -392,12 +382,13 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
     accept: "condition",
     collect: mapDropContainerProps,
   });
-  const archerRepaintKey = useMemo(() => Date.now(), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
   const startRef = useScrollCenter(true);
   return (
     <Box className={css.planComposeGraphic}>
-      <Hidden mdDown>
+      {false && (
         <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3}>
           <ButtonGroup className={css.headerButtonGroup}>
             <Button
@@ -427,7 +418,7 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
             <DraggableConditionBtn className={css.headerConditionBtn} type="ifScoreUp60" />
           </Box>
         </Box>
-      </Hidden>
+      )}
       <Box className={computedCss.composeArea}>
         <div className={css.bgImage} />
         <ArcherContainer

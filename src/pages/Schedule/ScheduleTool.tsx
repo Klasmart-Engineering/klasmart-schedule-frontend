@@ -83,6 +83,11 @@ function Tool(props: ToolProps) {
     });
   };
 
+  const createSchedule = () => {
+    selectToday();
+    history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
+  };
+
   const searchChange = (): void => {
     history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
   };
@@ -96,7 +101,7 @@ function Tool(props: ToolProps) {
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={3}>
           {!includeList && (
-            <Button variant="contained" color="primary" className={css.btnRadio}>
+            <Button variant="contained" color="primary" className={css.btnRadio} onClick={createSchedule}>
               Schedule Class
             </Button>
           )}
@@ -105,7 +110,12 @@ function Tool(props: ToolProps) {
           {includeList && <ArrowBackIosOutlined className={css.arrowsrt} onClick={backChange} />}
           <FormControl>
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
-            <BootstrapInput id="demo-customized-textbox" value={teacherName} onChange={(event) => setTeacherName(event.target.value)} />
+            <BootstrapInput
+              id="demo-customized-textbox"
+              placeholder={"teacher name"}
+              value={teacherName}
+              onChange={(event) => setTeacherName(event.target.value)}
+            />
           </FormControl>
           <Button variant="contained" color="primary" className={css.searchBtn} startIcon={<SearchOutlined />} onClick={searchChange}>
             Search
@@ -121,7 +131,7 @@ function Tool(props: ToolProps) {
             <FormControl>
               <InputLabel htmlFor="demo-customized-select-native">Model</InputLabel>
               <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
-                <option value="agenda">Work Week</option>
+                {/*<option value="work_week">Work Week</option>*/}
                 <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>
