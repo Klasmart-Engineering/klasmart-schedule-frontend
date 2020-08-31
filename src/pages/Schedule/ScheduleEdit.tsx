@@ -493,7 +493,7 @@ function EditBox(props: CalendarStateProps) {
               <DeleteOutlineOutlined
                 style={{
                   color: "#D74040",
-                  visibility: scheduleDetial.id ? "visible" : "hidden",
+                  visibility: scheduleId ? "visible" : "hidden",
                 }}
                 className={css.toolset}
                 onClick={handleDelete}
@@ -712,7 +712,7 @@ function EditBox(props: CalendarStateProps) {
           attachmentName={attachmentName}
           setAttachmentName={setAttachmentName}
         />
-        <Box className={css.fieldset} style={{ display: scheduleDetial.id ? "block" : "none" }}>
+        <Box className={css.fieldset} style={{ display: scheduleId ? "block" : "none" }}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live
           </Button>
@@ -769,16 +769,29 @@ interface ScheduleEditProps extends CalendarStateProps {
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
   const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView, scheduleId } = props;
-  const template = includePreview ? (
-    <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
-  ) : (
-    <EditBox
-      changeTimesTamp={changeTimesTamp}
-      timesTamp={timesTamp}
-      repeatData={repeatData}
-      modelView={modelView}
-      scheduleId={scheduleId}
-    />
+  const template = (
+    <Box>
+      <Box
+        style={{
+          display: includePreview ? "block" : "none",
+        }}
+      >
+        <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
+      </Box>
+      <Box
+        style={{
+          display: includePreview ? "none" : "block",
+        }}
+      >
+        <EditBox
+          changeTimesTamp={changeTimesTamp}
+          timesTamp={timesTamp}
+          repeatData={repeatData}
+          modelView={modelView}
+          scheduleId={scheduleId}
+        />
+      </Box>
+    </Box>
   );
   return template;
 }
