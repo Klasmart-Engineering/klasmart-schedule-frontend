@@ -462,6 +462,7 @@ function EditBox(props: CalendarStateProps) {
       {
         label: "Discard",
         event: () => {
+          setOpenStatus(false);
           history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
         },
       },

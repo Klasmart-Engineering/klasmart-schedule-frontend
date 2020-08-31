@@ -84,7 +84,6 @@ function Tool(props: ToolProps) {
   };
 
   const createSchedule = () => {
-    selectToday();
     history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
   };
 
