@@ -6,6 +6,8 @@ import {
   Chip,
   Dialog,
   DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
   Grid,
   InputAdornment,
@@ -66,6 +68,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   img: {
     margin: "10px 0 20px 0",
+    height: "196px",
   },
   tab: {
     width: "calc(100% + 24px)",
@@ -226,20 +229,35 @@ function DraftRejectBtn(props: ActionProps) {
 interface DialogProps {
   open: boolean;
   title: string;
+  showReason: boolean;
   handleCloseDialog: () => void;
   handleDialogEvent: () => void;
+  onSetReason: (reason: string) => void;
 }
 function ActionDialog(props: DialogProps) {
-  const { open, title, handleCloseDialog, handleDialogEvent } = props;
+  const { open, title, showReason, handleCloseDialog, handleDialogEvent, onSetReason } = props;
+  const setReason = (event: any) => {
+    console.log(event.target.value);
+    onSetReason(event.target.value);
+  };
   return (
     <Dialog open={open} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      {showReason ? (
+        <DialogContent>
+          <DialogContentText>Please specify the reason of rejection.</DialogContentText>
+          <TextField autoFocus margin="dense" id="name" label="Reason" type="email" fullWidth onChange={setReason} />
+        </DialogContent>
+      ) : (
+        ""
+      )}
+
       <DialogActions>
-        <Button onClick={handleDialogEvent} color="primary">
-          Yes
-        </Button>
         <Button onClick={handleCloseDialog} color="primary" autoFocus>
-          Cancel
+          CANCEL
+        </Button>
+        <Button onClick={handleDialogEvent} color="primary">
+          CONFIRM
         </Button>
       </DialogActions>
     </Dialog>
@@ -259,6 +277,8 @@ export default function ContentPreview(props: Content) {
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
   const [titleDialog, setTitleDialog] = React.useState<string>("");
   const [actionType, setActionType] = React.useState<string>("");
+  const [showReason, setShowReason] = React.useState<boolean>(false);
+  const [reason, setReason] = React.useState<string>();
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
@@ -274,7 +294,8 @@ export default function ContentPreview(props: Content) {
       dispatch(approveContent(id));
     }
     if (actionType === "reject") {
-      dispatch(rejectContent(id));
+      console.log(reason);
+      dispatch(rejectContent({ id: id, reason: reason }));
     }
     if (actionType === "publish") {
       dispatch(publishContent(id));
@@ -291,10 +312,20 @@ export default function ContentPreview(props: Content) {
         history.push(`/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?id=${id}`);
       }
     } else {
-      setActionType(type);
-      setTitleDialog(`Are you sure you want to ${type} this content?`);
-      setOpenDialog(true);
+      if (type !== "reject") {
+        setActionType(type);
+        setTitleDialog(`Are you sure you want to ${type} this content?`);
+        setOpenDialog(true);
+      } else {
+        setShowReason(true);
+        setActionType(type);
+        setTitleDialog(`Are you sure you want to ${type} this content?`);
+        setOpenDialog(true);
+      }
     }
+  };
+  const onSetReason = (reason: string) => {
+    setReason(reason);
   };
   const handleClose = () => {
     history.go(-1);
@@ -325,8 +356,10 @@ export default function ContentPreview(props: Content) {
       <ActionDialog
         open={openDialog}
         title={titleDialog}
+        showReason={showReason}
         handleCloseDialog={handleCloseDialog}
         handleDialogEvent={handleDialogEvent}
+        onSetReason={onSetReason}
       ></ActionDialog>
       <Box className={css.left}>
         <Box className={css.closeIconCon}>

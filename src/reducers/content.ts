@@ -217,9 +217,17 @@ export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDLi
 export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
   return api.contentsReview.approveContentReview(id);
 });
-export const rejectContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/rejectContentReview", (id) => {
-  return api.contentsReview.rejectContentReview(id, {});
-});
+type RejectContentParams = {
+  id: Parameters<typeof api.contentsReview.rejectContentReview>[0];
+  reason: Parameters<typeof api.contentsReview.rejectContentReview>[1]["reject_reason"];
+};
+type RejectContentResult = AsyncReturnType<typeof api.contentsReview.rejectContentReview>;
+export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
+  "contentsReview/rejectContentReview",
+  ({ id, reason }) => {
+    return api.contentsReview.rejectContentReview(id, { reject_reason: reason });
+  }
+);
 
 const { actions, reducer } = createSlice({
   name: "content",
@@ -314,13 +322,13 @@ const { actions, reducer } = createSlice({
     [approveContent.rejected.type]: (state, { error }: any) => {
       alert("approve failed");
     },
-    [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.refresh = state.refresh + 1;
-      alert("reject success");
-    },
-    [rejectContent.rejected.type]: (state, { error }: any) => {
-      alert("reject failed");
-    },
+    // [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    //   state.refresh = state.refresh + 1;
+    //   alert("reject success");
+    // },
+    // [rejectContent.rejected.type]: (state, { error }: any) => {
+    //   alert("reject failed");
+    // },
   },
 });
 
