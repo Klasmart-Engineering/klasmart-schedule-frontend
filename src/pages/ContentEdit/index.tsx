@@ -34,12 +34,13 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id");
   const searchText = query.get("searchText") || "";
-  return { id, searchText, search };
+  const editindex: number = Number(query.get("editindex") || 0);
+  return { id, searchText, search, editindex };
 };
 
-const setQuery = (search: string, hash: Record<string, string>): string => {
+const setQuery = (search: string, hash: Record<string, string | number>): string => {
   const query = new URLSearchParams(search);
-  Object.keys(hash).forEach((key) => query.set(key, hash[key]));
+  Object.keys(hash).forEach((key) => query.set(key, String(hash[key])));
   return query.toString();
 };
 
@@ -63,7 +64,7 @@ export default function ContentEdit() {
   (window as any).reset = reset;
   const { contentDetail, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
-  const { id, searchText, search } = useQuery();
+  const { id, searchText, search, editindex } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
@@ -72,21 +73,21 @@ export default function ContentEdit() {
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
       const tab = lesson === "assets" ? "assetDetails" : "details";
-      history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
+      history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
       reset();
     },
     [history, reset, routeBasePath]
   );
   const handleChangeTab = useMemo(
     () => (tab: string) => {
-      history.push(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}${search}`);
+      history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}${search}`);
     },
     [history, routeBasePath, lesson, rightside, search]
   );
   const handlePublish = useCallback(async () => {
     if (!id) return;
     await dispatch(publish(id));
-    history.push("/");
+    history.replace("/");
   }, [dispatch, id, history]);
   const handleSave = useMemo(
     () =>
@@ -94,16 +95,16 @@ export default function ContentEdit() {
         const contentDetail = ModelContentDetailForm.encode({ ...value, content_type });
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
-          history.push({
-            search: setQuery(history.location.search, { id }),
+          history.replace({
+            search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
           });
         }
       }),
-    [handleSubmit, dispatch, content_type, history]
+    [handleSubmit, content_type, dispatch, history, editindex]
   );
   const handleSearch = useMemo<MediaAssetsProps["onSearch"]>(
     () => (searchText = "") => {
-      history.push({
+      history.replace({
         search: setQuery(history.location.search, { searchText }),
       });
     },

@@ -35,7 +35,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     maxHeight: 700,
   },
   table: {
-    minWidth: 700,
+    minWidth: 700 - 162,
   },
   tableHead: {
     backgroundColor: "#F2F5F7",
@@ -189,11 +189,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
       </TableCell>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.author}</TableCell>
-      <TableCell className={css.cellAction}>
+      {/* <TableCell className={css.cellAction}>
         <Button color="primary" variant="contained">
           Select
         </Button>
-      </TableCell>
+      </TableCell> */}
       {/* <TableCell>{item.developmental}</TableCell> */}
       {/* <TableCell>{item.skills}</TableCell> */}
       {/* <TableCell>{item.age}</TableCell> */}
@@ -210,7 +210,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
             <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>
             <TableCell>{lesson === "plan" ? "Material" : "Plan"} Name</TableCell>
             <TableCell>Author</TableCell>
-            <TableCell className={css.cellAction}>Action</TableCell>
+            {/* <TableCell className={css.cellAction}>Action</TableCell> */}
             {/* <TableCell>Developmental</TableCell> */}
             {/* <TableCell>Skills</TableCell> */}
             {/* <TableCell>Age</TableCell> */}
