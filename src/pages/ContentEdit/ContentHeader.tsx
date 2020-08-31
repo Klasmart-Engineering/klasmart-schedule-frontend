@@ -18,6 +18,7 @@ import clsx from "clsx";
 import React, { Fragment } from "react";
 import { Content } from "../../api/api";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
+import { LButton } from "../../components/LButton";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -118,18 +119,18 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel as any}>
             Cancel
           </Button>
-          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
+          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
             Save
-          </Button>
+          </LButton>
           {contentDetail?.publish_status === "draft" && !isDirty && (
-            <Button
+            <LButton
               variant="contained"
               endIcon={<Publish />}
               className={clsx(css.headerButton, css.greenButton)}
               onClick={onPublish as any}
             >
               Publish
-            </Button>
+            </LButton>
           )}
         </Hidden>
       </Box>

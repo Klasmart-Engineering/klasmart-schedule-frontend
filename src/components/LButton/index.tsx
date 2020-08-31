@@ -1,32 +1,46 @@
-import { Button, ButtonProps, CircularProgress } from "@material-ui/core";
-import React, { useMemo, useState } from "react";
+import { Button, ButtonProps, CircularProgress, makeStyles } from "@material-ui/core";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 interface LButtonProps extends Omit<ButtonProps, "onClick"> {
   onClick: <T>(...args: Parameters<Required<ButtonProps>["onClick"]>) => Promise<T>;
 }
 
+const useStyles = makeStyles({
+  circle: {
+    marginRight: 8,
+  },
+});
+
 export function LButton(props: LButtonProps) {
   const { onClick, children, ...restProps } = props;
+  const css = useStyles();
+  const validRef = useRef<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const handleClick = useMemo<Required<ButtonProps>["onClick"]>(
     () => (...args) => {
       setPending(true);
       return onClick(...args)
         .then((result) => {
-          setPending(false);
+          validRef.current && setPending(false);
           return result;
         })
         .catch((err) => {
-          setPending(false);
+          validRef.current && setPending(false);
           throw err;
         });
     },
     [onClick, setPending]
   );
+  useEffect(
+    () =>
+      function unmount() {
+        validRef.current = false;
+      }
+  );
   return (
     <Button {...restProps} onClick={handleClick} disabled={pending}>
+      {pending && <CircularProgress size={20} className={css.circle} />}
       {children}
-      {pending && <CircularProgress size={20} />}
     </Button>
   );
 }
