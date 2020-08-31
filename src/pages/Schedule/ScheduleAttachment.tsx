@@ -33,7 +33,7 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
 const tipsText = (
   <div style={{ paddingBottom: "8px" }}>
     <div style={{ color: "#000000", fontWeight: "bold" }}>
-      <p>Max: 100MB</p>
+      <p>Max: 10MB</p>
       <span>Support files In:</span>
     </div>
     <div style={{ color: "#666666" }}>

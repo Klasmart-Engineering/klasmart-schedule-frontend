@@ -105,7 +105,12 @@ function Tool(props: ToolProps) {
           {includeList && <ArrowBackIosOutlined className={css.arrowsrt} onClick={backChange} />}
           <FormControl>
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
-            <BootstrapInput id="demo-customized-textbox" value={teacherName} onChange={(event) => setTeacherName(event.target.value)} />
+            <BootstrapInput
+              id="demo-customized-textbox"
+              placeholder={"teacher name"}
+              value={teacherName}
+              onChange={(event) => setTeacherName(event.target.value)}
+            />
           </FormControl>
           <Button variant="contained" color="primary" className={css.searchBtn} startIcon={<SearchOutlined />} onClick={searchChange}>
             Search

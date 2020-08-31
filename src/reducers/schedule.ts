@@ -119,7 +119,7 @@ const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
     data.forEach((item: ScheduleTimeView) => {
       const start_at = new Date(Number(item.start_at) * 1000);
       const end_at = new Date(Number(item.end_at) * 1000);
-      newViewData.push({ end: start_at, id: item.id, start: end_at, title: item.title });
+      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title });
     });
   }
   return newViewData;
