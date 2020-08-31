@@ -243,8 +243,8 @@ function ContentCard(props: ContentProps) {
     if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
     if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "LESSON") return PlanIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "MATERIAL") return MaterialIconUrl;
+    if (!content?.thumbnail && content?.content_type_name === "Plan") return PlanIconUrl;
+    if (!content?.thumbnail && content?.content_type_name === "Material") return MaterialIconUrl;
     if (content?.thumbnail) return apiResourcePathById(content?.thumbnail);
   };
   return (
