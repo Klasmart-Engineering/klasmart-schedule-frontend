@@ -95,6 +95,7 @@ function ScheduleContent() {
               changeTimesTamp={changeTimesTamp}
               repeatData={{ type, [type]: state[type] }}
               modelView={modelView}
+              scheduleId={scheduleId}
             />
           </Grid>
           <Grid item xs={9}>

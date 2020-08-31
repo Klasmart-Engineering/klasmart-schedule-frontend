@@ -58,11 +58,6 @@ interface ScheduleAttachmentProps {
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const { setAttachmentId, attachmentName, setAttachmentName } = props;
   const css = useStyles();
-  // const downloadFile = () => {
-  //   const url: any = apiResourcePathById(attachmentId);
-  //   console.log(url, 111);
-  //   setDownloadUrl(url);
-  // };
   const handleOnChange = (value: any) => {
     if (value) {
       setAttachmentId(value);
