@@ -85,7 +85,7 @@ function EditBox(props: CalendarStateProps) {
   const history = useHistory();
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
-  const { timesTamp, modelView } = props;
+  const { timesTamp, modelView, scheduleId, includeTable } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
@@ -96,9 +96,20 @@ function EditBox(props: CalendarStateProps) {
   const [programItem, setProgramItem] = React.useState<any>(defaults);
   const [teacherItem, setTeacherItem] = React.useState<any>([]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
+  const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [contentsListSelect, setContentsListSelect] = React.useState<any>([defaults]);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const currentTime = timestampInt(new Date().getTime() / 1000);
+
+  React.useEffect(() => {
+    if (scheduleId) {
+      setAttachmentName(scheduleDetial?.attachment?.name as any);
+      setAttachmentId(scheduleDetial?.attachment?.id as any);
+    } else {
+      setAttachmentName("");
+      setAttachmentId("");
+    }
+  }, [scheduleDetial, scheduleDetial.attachment, scheduleId]);
 
   React.useEffect(() => {
     const newContentsData: any = [];
@@ -346,14 +357,14 @@ function EditBox(props: CalendarStateProps) {
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
-    addData["attachment_path"] = attachmentId;
+    addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
     const result = { ...scheduleList, ...addData };
     // @ts-ignore
     const id = (await dispatch(saveScheduleData({ ...result }))).payload.id;
     // @ts-ignore
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${id}`);
+    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview?schedule_id=${id}`);
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -451,6 +462,7 @@ function EditBox(props: CalendarStateProps) {
       {
         label: "Discard",
         event: () => {
+          setOpenStatus(false);
           history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
         },
       },
@@ -482,7 +494,7 @@ function EditBox(props: CalendarStateProps) {
               <DeleteOutlineOutlined
                 style={{
                   color: "#D74040",
-                  visibility: scheduleDetial.id ? "visible" : "hidden",
+                  visibility: scheduleId ? "visible" : "hidden",
                 }}
                 className={css.toolset}
                 onClick={handleDelete}
@@ -695,8 +707,13 @@ function EditBox(props: CalendarStateProps) {
           value={scheduleList.description}
           onChange={(e) => handleTopicListChange(e, "description")}
         />
-        <ScheduleAttachment setAttachmentId={setAttachmentId} attachmentId={attachmentId} />
-        <Box className={css.fieldset} style={{ display: scheduleDetial.id ? "block" : "none" }}>
+        <ScheduleAttachment
+          setAttachmentId={setAttachmentId}
+          attachmentId={attachmentId}
+          attachmentName={attachmentName}
+          setAttachmentName={setAttachmentName}
+        />
+        <Box className={css.fieldset} style={{ display: scheduleId ? "block" : "none" }}>
           <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
             Preview in Live
           </Button>
@@ -744,6 +761,8 @@ interface CalendarStateProps {
   changeTimesTamp: (value: object) => void;
   repeatData: object;
   modelView: string;
+  scheduleId?: string;
+  includeTable?: boolean;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -751,11 +770,31 @@ interface ScheduleEditProps extends CalendarStateProps {
 }
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
-  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView } = props;
-  const template = includePreview ? (
-    <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
-  ) : (
-    <EditBox changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
+  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView, scheduleId, includeTable } = props;
+  const template = (
+    <Box>
+      <Box
+        style={{
+          display: includePreview ? "block" : "none",
+        }}
+      >
+        <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
+      </Box>
+      <Box
+        style={{
+          display: includePreview ? "none" : "block",
+        }}
+      >
+        <EditBox
+          changeTimesTamp={changeTimesTamp}
+          timesTamp={timesTamp}
+          repeatData={repeatData}
+          modelView={modelView}
+          scheduleId={scheduleId}
+          includeTable={includeTable}
+        />
+      </Box>
+    </Box>
   );
   return template;
 }
