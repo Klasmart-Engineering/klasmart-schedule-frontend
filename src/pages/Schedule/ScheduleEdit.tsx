@@ -276,6 +276,8 @@ function EditBox(props: CalendarStateProps) {
    */
   const handleTopicListChange = (event: React.ChangeEvent<{ value: String | Number }>, name: string) => {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
+    if (name === "title" && (event.target.value as string).length > 20) return;
+    if (name === "description" && (event.target.value as string).length > 100) return;
     setScheduleData(name, value);
   };
 
@@ -628,7 +630,7 @@ function EditBox(props: CalendarStateProps) {
           <MenuItem value="task">task</MenuItem>
           <MenuItem value="homework">homework</MenuItem>
         </TextField>
-        <Box>
+        <Box style={{ display: scheduleList.class_type === "task" || scheduleList.class_type === "homework" ? "block" : "none" }}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
               <Grid item xs={4}>
