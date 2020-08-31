@@ -249,12 +249,14 @@ const { actions, reducer } = createSlice({
       // alert("success");
     },
     [save.rejected.type]: (state, { error }: any) => {
+      throw error;
       // alert(JSON.stringify(error));
     },
     [publish.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof publish>>) => {
       // alert("success");
     },
     [publish.rejected.type]: (state, { error }: any) => {
+      throw error;
       // alert(JSON.stringify(error));
     },
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {

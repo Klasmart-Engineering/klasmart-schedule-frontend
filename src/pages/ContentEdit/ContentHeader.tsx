@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ButtonProps,
   fade,
   FormControlLabel,
   Hidden,
@@ -18,7 +19,7 @@ import clsx from "clsx";
 import React, { Fragment } from "react";
 import { Content } from "../../api/api";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
-import { LButton } from "../../components/LButton";
+import { LButton, LButtonProps } from "../../components/LButton";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -89,15 +90,15 @@ interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
   contentDetail?: Content;
-  onCancel: Function;
-  onSave: Function;
-  onPublish: Function;
+  onCancel: ButtonProps["onClick"];
+  onSave: LButtonProps["onClick"];
+  onPublish: LButtonProps["onClick"];
   isDirty: boolean;
-  goBack: Function;
+  onBack: ButtonProps["onClick"];
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, goBack } = props;
+  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, onBack } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -106,7 +107,7 @@ function ContentHeader(props: HeaderProps) {
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
-        <IconButton size="small" className={css.arrowBack} onClick={goBack as any}>
+        <IconButton size="small" className={css.arrowBack} onClick={onBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
         <Hidden smDown>
@@ -116,10 +117,10 @@ function ContentHeader(props: HeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel as any}>
+          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel}>
             Cancel
           </Button>
-          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave as any}>
+          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
             Save
           </LButton>
           {contentDetail?.publish_status === "draft" && !isDirty && (
@@ -143,16 +144,16 @@ function ContentHeader(props: HeaderProps) {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel as any}>
+          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave as any}>
+          <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave} replace>
             <Save fontSize="small" />
-          </IconButton>
+          </LButton>
           {contentDetail?.publish_status === "draft" && !isDirty && (
-            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish as any}>
+            <LButton as={IconButton} className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish} replace>
               <Publish fontSize="small" />
-            </IconButton>
+            </LButton>
           )}
         </Box>
       </Hidden>
