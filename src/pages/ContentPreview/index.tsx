@@ -259,8 +259,8 @@ export default function ContentPreview(props: Content) {
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "audio") return MusicIconUrl;
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "img") return PicIconUrl;
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "video") return VideoIconUrl;
-    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "LESSON") return PlanIconUrl;
-    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "MATERIAL") return MaterialIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "Plan") return PlanIconUrl;
+    if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "Material") return MaterialIconUrl;
     if (contentPreview?.thumbnail) return apiResourcePathById(contentPreview?.thumbnail);
   };
   const time = (time?: number) => {
