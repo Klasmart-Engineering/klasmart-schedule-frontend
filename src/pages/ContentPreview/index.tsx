@@ -1,5 +1,19 @@
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { Box, Button, CardMedia, Chip, Grid, InputAdornment, Tab, Tabs, TextField, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Grid,
+  InputAdornment,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 // import LayoutPair from "../ContentEdit/Layout";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
@@ -105,7 +119,7 @@ function PublishedBtn(props: ActionProps) {
   const css = useStyles();
   const { handleAction } = props;
   const handleClick = () => {
-    handleAction("del");
+    handleAction("delete");
   };
   const handleEdit = () => {
     handleAction("edit");
@@ -169,7 +183,7 @@ function ArchiveBtn(props: ActionProps) {
   const css = useStyles();
   const { handleAction } = props;
   const handleDelete = () => {
-    handleAction("del");
+    handleAction("delete");
   };
   const handleRepublish = () => {
     handleAction("publish");
@@ -192,7 +206,7 @@ function DraftRejectBtn(props: ActionProps) {
   const css = useStyles();
   const { handleAction } = props;
   const handleDelete = () => {
-    handleAction("del");
+    handleAction("delete");
   };
   const handleEdit = () => {
     handleAction("edit");
@@ -209,6 +223,29 @@ function DraftRejectBtn(props: ActionProps) {
   );
 }
 
+interface DialogProps {
+  open: boolean;
+  title: string;
+  handleCloseDialog: () => void;
+  handleDialogEvent: () => void;
+}
+function ActionDialog(props: DialogProps) {
+  const { open, title, handleCloseDialog, handleDialogEvent } = props;
+  return (
+    <Dialog open={open} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <DialogActions>
+        <Button onClick={handleDialogEvent} color="primary">
+          Yes
+        </Button>
+        <Button onClick={handleCloseDialog} color="primary" autoFocus>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 export default function ContentPreview(props: Content) {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -219,33 +256,44 @@ export default function ContentPreview(props: Content) {
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const colors = ["#009688", "#9c27b0", "#ffc107"];
+  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+  const [titleDialog, setTitleDialog] = React.useState<string>("");
+  const [actionType, setActionType] = React.useState<string>("");
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-  const handleAction = (type: string) => {
-    if (type === "del") {
+  const handleCloseDialog = () => {
+    console.log("close");
+    setOpenDialog(false);
+  };
+  const handleDialogEvent = () => {
+    if (actionType === "delete") {
       dispatch(deleteContent(id));
-      history.go(-1);
     }
-    if (type === "approve") {
+    if (actionType === "approve") {
       dispatch(approveContent(id));
-      history.go(-1);
     }
-    if (type === "reject") {
+    if (actionType === "reject") {
       dispatch(rejectContent(id));
-      history.go(-1);
     }
-    if (type === "publish") {
+    if (actionType === "publish") {
       dispatch(publishContent(id));
-      history.go(-1);
     }
+    setOpenDialog(false);
+    history.go(-1);
+  };
+  const handleAction = (type: string) => {
     if (type === "edit") {
       if (contentPreview.content_type_name === "Material") {
         history.push(`/library/content-edit/lesson/material/tab/details/rightside/contentH5p?id=${id}`);
       }
       if (contentPreview.content_type_name === "Plan") {
-        history.push(`/library/content-edit/lesson/plan/tab/details/rightside/contentH5p?id=${id}`);
+        history.push(`/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?id=${id}`);
       }
+    } else {
+      setActionType(type);
+      setTitleDialog(`Are you sure you want to ${type} this content?`);
+      setOpenDialog(true);
     }
   };
   const handleClose = () => {
@@ -263,6 +311,7 @@ export default function ContentPreview(props: Content) {
     if (!contentPreview?.thumbnail && contentPreview?.content_type_name === "Material") return MaterialIconUrl;
     if (contentPreview?.thumbnail) return apiResourcePathById(contentPreview?.thumbnail);
   };
+
   const time = (time?: number) => {
     const year = new Date((time || 0) * 1000).getFullYear();
     let mouth: string = String(new Date((time || 0) * 1000).getMonth() + 1);
@@ -273,6 +322,12 @@ export default function ContentPreview(props: Content) {
   };
   return (
     <Box className={css.container}>
+      <ActionDialog
+        open={openDialog}
+        title={titleDialog}
+        handleCloseDialog={handleCloseDialog}
+        handleDialogEvent={handleDialogEvent}
+      ></ActionDialog>
       <Box className={css.left}>
         <Box className={css.closeIconCon}>
           <CloseIcon style={{ cursor: "pointer" }} onClick={handleClose} />
