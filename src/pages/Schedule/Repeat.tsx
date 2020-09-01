@@ -240,7 +240,7 @@ function RepeatCycle(props: ExtendsProps) {
                   label={type === "monthly" ? "On" : "Every"}
                   className={classes.repeatItem}
                 />
-                <FormControlLabel value="month" control={<Radio />} label="The" />
+                <FormControlLabel value="week" control={<Radio />} label="The" />
               </RadioGroup>
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
@@ -313,7 +313,7 @@ function RepeatCycle(props: ExtendsProps) {
                           id="demo-simple-select-outlined"
                           value={on_week_seq}
                           labelWidth={0}
-                          disabled={on_type !== "month"}
+                          disabled={on_type !== "week"}
                           onChange={handleOnWeekSeq}
                           // defaultValue={order}
                         >
@@ -332,7 +332,7 @@ function RepeatCycle(props: ExtendsProps) {
                           id="demo-simple-select-outlined"
                           value={on_week}
                           labelWidth={0}
-                          disabled={on_type !== "month"}
+                          disabled={on_type !== "week"}
                           onChange={handleOnWeek}
                         >
                           {weekends.map((item, index) => (
@@ -358,7 +358,7 @@ function RepeatCycle(props: ExtendsProps) {
                     value={on_week_month}
                     labelWidth={0}
                     onChange={handleOnWeekMonth}
-                    disabled={on_type !== "month"}
+                    disabled={on_type !== "week"}
                   >
                     {monthList.map((item, index) => (
                       <MenuItem key={index} value={index + 1}>
