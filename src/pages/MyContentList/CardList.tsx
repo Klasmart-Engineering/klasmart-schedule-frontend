@@ -3,7 +3,6 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
-  CardMedia,
   Checkbox,
   Collapse,
   createStyles,
@@ -21,14 +20,8 @@ import { Pagination } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Content } from "../../api/api";
-import { apiResourcePathById } from "../../api/extra";
-import DocIconUrl from "../../assets/icons/doc.svg";
-import MaterialIconUrl from "../../assets/icons/material.svg";
-import MusicIconUrl from "../../assets/icons/music.svg";
-import PicIconUrl from "../../assets/icons/pic.svg";
-import PlanIconUrl from "../../assets/icons/plan.svg";
-import VideoIconUrl from "../../assets/icons/video.svg";
 import LayoutBox from "../../components/LayoutBox";
+import { Thumbnail } from "../../components/Thumbnail";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -66,8 +59,9 @@ const useStyles = makeStyles((theme) =>
     },
     cardMedia: {
       width: "100%",
-      paddingTop: "47.6%",
+      // paddingTop: "47.6%",
       position: "relative",
+      height: "100%",
     },
     checkbox: {
       position: "absolute",
@@ -238,15 +232,15 @@ function ContentCard(props: ContentProps) {
   const handleGoPreview = (event: any, id?: string) => {
     history.push(`/library/content-preview?id=${id}`);
   };
-  const setThumbnail = () => {
-    if (!content?.thumbnail && content?.content_type_name === "document") return DocIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "Plan") return PlanIconUrl;
-    if (!content?.thumbnail && content?.content_type_name === "Material") return MaterialIconUrl;
-    if (content?.thumbnail) return apiResourcePathById(content?.thumbnail);
-  };
+  // const setThumbnail = () => {
+  //   if (!content?.thumbnail && content?.content_type_name === "document") return DocIconUrl;
+  //   if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
+  //   if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
+  //   if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
+  //   if (!content?.thumbnail && content?.content_type_name === "Plan") return PlanIconUrl;
+  //   if (!content?.thumbnail && content?.content_type_name === "Material") return MaterialIconUrl;
+  //   if (content?.thumbnail) return apiResourcePathById(content?.thumbnail);
+  // };
   return (
     <Card className={css.card}>
       <Checkbox
@@ -260,7 +254,8 @@ function ContentCard(props: ContentProps) {
         }}
       ></Checkbox>
       <CardActionArea onClick={(e) => handleGoPreview(e, content?.id)}>
-        <CardMedia className={css.cardMedia} image={setThumbnail()}></CardMedia>
+        {/* <CardMedia className={css.cardMedia} image={setThumbnail()}></CardMedia> */}
+        <Thumbnail className={css.cardMedia} type={content.content_type} id={content.thumbnail} />
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container alignContent="space-between">

@@ -24,5 +24,15 @@ interface ThumbnailProps extends React.DetailedHTMLProps<React.ImgHTMLAttributes
 export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, ref) => {
   const { type = ContentType.material, id } = props;
   const thumbail = id ? apiResourcePathById(id) : type2svg[type];
-  return <img {...props} ref={ref} alt="thumbail" src={thumbail} />;
+  return (
+    <img
+      {...props}
+      ref={ref}
+      alt="thumbail"
+      src={thumbail}
+      onError={(e) => {
+        e.target.src = type2svg[type];
+      }}
+    />
+  );
 });
