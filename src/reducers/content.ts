@@ -120,7 +120,7 @@ interface onLoadContentEditPayload {
 
 interface onLoadContentEditResult {
   contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
-  mediaList?: AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
+  mediaList?: AsyncReturnType<typeof api.contents.searchContents>;
   mockOptions?: MockOptions;
 }
 
@@ -172,14 +172,6 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   "content/getContentResourceUploadPath",
   (query) => {
     return api.contentsResources.getContentResourceUploadPath(query);
-  }
-);
-
-type IgetContentResourcePathResult = AsyncReturnType<typeof api.contentsResources.getContentResourcePath>;
-export const getContentResourcePath = createAsyncThunk<IgetContentResourcePathResult, string>(
-  "content/getContentResourcePath",
-  (resourse_id: string) => {
-    return api.contentsResources.getContentResourcePath(resourse_id);
   }
 );
 
@@ -264,6 +256,9 @@ const { actions, reducer } = createSlice({
       if (payload.contentDetail) {
         state.contentDetail = payload.contentDetail;
       }
+      if (payload.mediaList?.total) {
+        state.total = payload.mediaList.total;
+      }
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;
       }
@@ -283,6 +278,7 @@ const { actions, reducer } = createSlice({
     [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.contentsList = payload.list;
+      state.mediaList = payload.list;
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {

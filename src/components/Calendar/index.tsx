@@ -25,6 +25,8 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   },
 }));
 
+const views = { work_week: true, day: true, agenda: true, month: true, week: true };
+
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
 const localizer = momentLocalizer(moment);
@@ -80,6 +82,10 @@ function MyCalendar(props: CalendarProps) {
   const deleteScheduleByid = async () => {
     await dispatch(removeSchedule(scheduleInfo.id));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    changeTimesTamp({
+      start: Math.floor(new Date().getTime() / 1000),
+      end: Math.floor(new Date().getTime() / 1000),
+    });
     setOpenStatus(false);
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
@@ -119,6 +125,7 @@ function MyCalendar(props: CalendarProps) {
           onView={() => {}}
           onNavigate={() => {}}
           view={modelView}
+          views={views}
           popup={true}
           selectable={true}
           localizer={localizer}
