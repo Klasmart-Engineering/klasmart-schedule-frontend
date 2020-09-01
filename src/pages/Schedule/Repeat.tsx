@@ -15,6 +15,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import React from "react";
+import { stateProps } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -90,17 +91,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface RepeatCycleProps {
-  state: object;
-  dispatch: any;
-}
-
 interface weekItem {
   day: string;
   selected: boolean;
 }
 
-function RepeatCycle(props: any) {
+function RepeatCycle(props: ExtendsProps) {
   const { state, handleRepeatData } = props;
   const classes = useStyles();
   const weekendList = [
@@ -334,7 +330,7 @@ function RepeatCycle(props: any) {
   );
 }
 
-function EndRepeat(props: any) {
+function EndRepeat(props: ExtendsProps) {
   const classes = useStyles();
   const { state, handleRepeatData } = props;
   const { type } = state;
@@ -430,20 +426,20 @@ function EndRepeat(props: any) {
   );
 }
 
-function RepeatHeader(props: any) {
+function RepeatHeader(props: ExtendsProps) {
   const classes = useStyles();
   const { state, handleRepeatData } = props;
-  const { interval } = state[state.type];
   const { type } = state;
+  const { interval } = state[type];
   let _state = JSON.parse(JSON.stringify(state));
 
   const handleChangeType = (event: React.ChangeEvent<{ value: unknown }>) => {
-    // dispatch({ type: "changeData", data: { ...state, type: event.target.value as string } });
-    handleRepeatData({ ...state, type: event.target.value as string });
+    // handleRepeatData({ ...state, type: event.target.value as string });
+    _state.type = event.target.value as string;
+    handleRepeatData(_state);
   };
   const handleChangeInterval = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].interval = +event.target.value;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
@@ -492,7 +488,17 @@ function RepeatHeader(props: any) {
   );
 }
 
-export default function RepeatSchedule(props: any) {
+interface RepeatScheduleProps {
+  handleRepeatData: (data: stateProps) => void;
+  repeatState: stateProps;
+}
+
+interface ExtendsProps {
+  handleRepeatData: (data: stateProps) => void;
+  state: any;
+}
+
+export default function RepeatSchedule(props: RepeatScheduleProps) {
   const classes = useStyles();
   const { handleRepeatData, repeatState } = props;
   return (
