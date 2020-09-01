@@ -1,10 +1,5 @@
 [
-  {
-    "id": "Program-1",
-    "name": "Program1"
-  },
-  {
-    "id": "Program-2",
-    "name": "Program2"
-  }
+  { "id": "program1", "name": "program one" },
+  { "id": "program2", "name": "program two" },
+  { "id": "program3", "name": "program three" }
 ]
