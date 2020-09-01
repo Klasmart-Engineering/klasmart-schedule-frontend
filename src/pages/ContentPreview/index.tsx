@@ -238,12 +238,13 @@ interface DialogProps {
   open: boolean;
   title: string;
   showReason: boolean;
+  showError: boolean;
   handleCloseDialog: () => void;
   handleDialogEvent: () => void;
   onSetReason: (reason: string) => void;
 }
 export function ActionDialog(props: DialogProps) {
-  const { open, title, showReason, handleCloseDialog, handleDialogEvent, onSetReason } = props;
+  const { open, title, showReason, showError, handleCloseDialog, handleDialogEvent, onSetReason } = props;
   const setReason = (event: any) => {
     console.log(event.target.value);
     onSetReason(event.target.value);
@@ -254,7 +255,7 @@ export function ActionDialog(props: DialogProps) {
       {showReason ? (
         <DialogContent>
           <DialogContentText>Please specify the reason of rejection.</DialogContentText>
-          <TextField autoFocus margin="dense" id="name" label="Reason" type="email" fullWidth onChange={setReason} />
+          <TextField variant="standard" autoFocus={true} fullWidth label="Reason" error={showError} onChange={setReason} />
         </DialogContent>
       ) : (
         ""
@@ -286,6 +287,7 @@ export default function ContentPreview(props: Content) {
   const [titleDialog, setTitleDialog] = React.useState<string>("");
   const [actionType, setActionType] = React.useState<string>("");
   const [showReason, setShowReason] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<boolean>(false);
   const [reason, setReason] = React.useState<string>();
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -297,12 +299,19 @@ export default function ContentPreview(props: Content) {
     async (type: string) => {
       switch (type) {
         case "delete":
+          setOpenDialog(false);
           await dispatch(deleteContent(id));
           break;
         case "approve":
+          setOpenDialog(false);
           await dispatch(approveContent(id));
           break;
         case "reject":
+          if (!reason) {
+            setError(true);
+            return;
+          }
+          setError(false);
           await dispatch(rejectContent({ id: id, reason: reason }));
           break;
         case "publish":
@@ -314,7 +323,6 @@ export default function ContentPreview(props: Content) {
     [dispatch, history, id, reason]
   );
   const handleDialogEvent = () => {
-    setOpenDialog(false);
     handleDispatch(actionType);
   };
   const handleAction = async (type: string) => {
@@ -374,6 +382,7 @@ export default function ContentPreview(props: Content) {
         open={openDialog}
         title={titleDialog}
         showReason={showReason}
+        showError={error}
         handleCloseDialog={handleCloseDialog}
         handleDialogEvent={handleDialogEvent}
         onSetReason={onSetReason}
@@ -408,38 +417,69 @@ export default function ContentPreview(props: Content) {
           rows={2}
           label="Description"
           variant="outlined"
+          InputProps={{ readOnly: true }}
           value={contentPreview.description}
         />
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <TextField label="Created On" fullWidth variant="outlined" value={time(contentPreview.created_at)} />
+            <TextField
+              label="Created On"
+              fullWidth
+              variant="outlined"
+              InputProps={{ readOnly: true }}
+              value={time(contentPreview.created_at)}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Author" fullWidth variant="outlined" value={contentPreview.author_name} />
+            <TextField label="Author" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.author_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Program" fullWidth variant="outlined" value={contentPreview.program?.join(",")} />
+            <TextField
+              label="Program"
+              fullWidth
+              variant="outlined"
+              InputProps={{ readOnly: true }}
+              value={contentPreview.program?.join(",")}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Subject" fullWidth variant="outlined" value={contentPreview.subject_name} />
+            <TextField label="Subject" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.subject_name} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Development" fullWidth variant="outlined" value={contentPreview.developmental?.join(",")} />
+            <TextField
+              label="Development"
+              fullWidth
+              variant="outlined"
+              InputProps={{ readOnly: true }}
+              value={contentPreview.developmental?.join(",")}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Skills" fullWidth variant="outlined" value={contentPreview.skills} />
+            <TextField label="Skills" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.skills} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Visibility Settings" fullWidth variant="outlined" value={contentPreview.publish_scope} />
+            <TextField
+              label="Visibility Settings"
+              fullWidth
+              variant="outlined"
+              InputProps={{ readOnly: true }}
+              value={contentPreview.publish_scope}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Duration" fullWidth variant="outlined" value={contentPreview.suggest_time} />
+            <TextField label="Duration" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.suggest_time} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Suitable Age" fullWidth variant="outlined" value={contentPreview.age?.join(",")} />
+            <TextField
+              label="Suitable Age"
+              fullWidth
+              variant="outlined"
+              InputProps={{ readOnly: true }}
+              value={contentPreview.age?.join(",")}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Grade" fullWidth variant="outlined" value={contentPreview.grade?.join(",")} />
+            <TextField label="Grade" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.grade?.join(",")} />
           </Grid>
         </Grid>
         <TextField
@@ -448,6 +488,7 @@ export default function ContentPreview(props: Content) {
           label="Keywords"
           variant="outlined"
           InputProps={{
+            readOnly: true,
             startAdornment: (
               <InputAdornment position="start">
                 {contentPreview.keywords?.map((value, index) => (
