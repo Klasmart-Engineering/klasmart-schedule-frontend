@@ -76,6 +76,7 @@ export default function ContentEdit() {
     },
     [history, routeBasePath]
   );
+
   const handleChangeTab = useMemo(
     () => (tab: string) => {
       history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}${search}`);
