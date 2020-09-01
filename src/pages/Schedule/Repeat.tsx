@@ -144,7 +144,7 @@ function RepeatCycle(props: ExtendsProps) {
     "December",
   ];
   const [weekends, setWeekends] = React.useState(weekendList);
-  const { on_type, on, on_week, on_week_seq, on_date_day, on_week_month } = state[state.type];
+  const { on_type, on, on_week, on_week_seq, on_date_day, on_week_month, on_date_month } = state[state.type];
   const { type } = state;
   let _state = JSON.parse(JSON.stringify(state));
 
@@ -176,37 +176,36 @@ function RepeatCycle(props: ExtendsProps) {
       selectedDays.push(weekends[index].day);
     }
     _state[type].on = selectedDays;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const changeOnType = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].on_type = event.target.value;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleOnDateDay = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].on_date_day = +event.target.value;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleOnWeekSeq = (event: React.ChangeEvent<{ value: unknown }>) => {
     _state[type].on_week_seq = event.target.value;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleOnWeek = (event: React.ChangeEvent<{ value: unknown }>) => {
     _state[type].on_week = event.target.value as string;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleOnWeekMonth = (event: React.ChangeEvent<{ value: unknown }>) => {
     _state[type].on_week_month = event.target.value;
-    // dispatch({ type: "changeData", data: _state });
+    handleRepeatData(_state);
+  };
+
+  const handleOnDateMonth = (event: React.ChangeEvent<{ value: unknown }>) => {
+    _state[type].on_date_month = event.target.value;
     handleRepeatData(_state);
   };
 
@@ -235,29 +234,76 @@ function RepeatCycle(props: ExtendsProps) {
           <Grid container className={classes.repeatItem}>
             <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
               <RadioGroup aria-label="gender" name="gender1" value={on_type} onChange={changeOnType}>
-                <FormControlLabel value="date" control={<Radio />} label="On" className={classes.repeatItem} />
-                <FormControlLabel value="month" control={<Radio />} label="The" />
+                <FormControlLabel
+                  value="date"
+                  control={<Radio />}
+                  label={type === "monthly" ? "On" : "Every"}
+                  className={classes.repeatItem}
+                />
+                <FormControlLabel value="week" control={<Radio />} label="The" />
               </RadioGroup>
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
               <Grid container>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.repeatItem}>
-                  <FormControl variant="outlined" style={{ width: "100%" }} size="small">
-                    <OutlinedInput
-                      id="outlined-adornment-weight"
-                      // value={specificDayChange}
-                      aria-describedby="outlined-weight-helper-text"
-                      inputProps={{
-                        "aria-label": "weight",
-                      }}
-                      labelWidth={0}
-                      disabled={on_type !== "date"}
-                      onChange={handleOnDateDay}
-                      defaultValue={on_date_day}
-                    />
-                  </FormControl>
-                  <span className={classes.positionText}>of every month</span>
-                </Grid>
+                {type === "monthly" && (
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.repeatItem}>
+                    <FormControl variant="outlined" style={{ width: "100%" }} size="small">
+                      <OutlinedInput
+                        id="outlined-adornment-weight"
+                        // value={specificDayChange}
+                        aria-describedby="outlined-weight-helper-text"
+                        inputProps={{
+                          "aria-label": "weight",
+                        }}
+                        labelWidth={0}
+                        disabled={on_type !== "date"}
+                        onChange={handleOnDateDay}
+                        defaultValue={on_date_day}
+                      />
+                    </FormControl>
+                    <span className={classes.positionText}>of every month</span>
+                  </Grid>
+                )}
+                {type === "yearly" && (
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.repeatItem}>
+                    <Grid container justify="space-between" className={classes.positionInput}>
+                      <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
+                        <FormControl variant="outlined" size="small">
+                          <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={on_date_month}
+                            labelWidth={0}
+                            disabled={on_type !== "date"}
+                            onChange={handleOnDateMonth}
+                            // defaultValue={order}
+                          >
+                            {monthList.map((item, index) => (
+                              <MenuItem key={index} value={index + 1}>
+                                {item}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
+                        <FormControl variant="outlined" style={{ width: "100%" }} size="small">
+                          <OutlinedInput
+                            id="outlined-adornment-weight"
+                            value={on_date_day}
+                            onChange={handleOnDateDay}
+                            aria-describedby="outlined-weight-helper-text"
+                            inputProps={{
+                              "aria-label": "weight",
+                            }}
+                            labelWidth={0}
+                            disabled={on_type !== "date"}
+                          />
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )}
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Grid container justify="space-between" className={classes.positionInput}>
                     <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
@@ -267,7 +313,7 @@ function RepeatCycle(props: ExtendsProps) {
                           id="demo-simple-select-outlined"
                           value={on_week_seq}
                           labelWidth={0}
-                          disabled={on_type !== "month"}
+                          disabled={on_type !== "week"}
                           onChange={handleOnWeekSeq}
                           // defaultValue={order}
                         >
@@ -286,7 +332,7 @@ function RepeatCycle(props: ExtendsProps) {
                           id="demo-simple-select-outlined"
                           value={on_week}
                           labelWidth={0}
-                          disabled={on_type !== "month"}
+                          disabled={on_type !== "week"}
                           onChange={handleOnWeek}
                         >
                           {weekends.map((item, index) => (
@@ -312,10 +358,10 @@ function RepeatCycle(props: ExtendsProps) {
                     value={on_week_month}
                     labelWidth={0}
                     onChange={handleOnWeekMonth}
-                    disabled={on_type !== "month"}
+                    disabled={on_type !== "week"}
                   >
                     {monthList.map((item, index) => (
-                      <MenuItem key={index} value={index}>
+                      <MenuItem key={index} value={index + 1}>
                         of {item}
                       </MenuItem>
                     ))}
@@ -339,20 +385,17 @@ function EndRepeat(props: ExtendsProps) {
 
   const handleEndType = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].end.type = event.target.value;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleAfterCount = (event: React.ChangeEvent<HTMLInputElement>) => {
     _state[type].end.after_count = +event.target.value;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
   const handleAfterTime = (event: React.ChangeEvent<{ value: string }>) => {
     let _date = timeToTimestamp(event.target.value);
     _state[type].end.after_time = _date * 1000;
-    // dispatch({ type: "changeData", data: _state });
     handleRepeatData(_state);
   };
 
@@ -443,7 +486,7 @@ function RepeatHeader(props: ExtendsProps) {
     handleRepeatData(_state);
   };
 
-  const endAdornment = type === "daily" ? "day(s)" : type === "weekly" ? "week(s)" : "month(s)";
+  const endAdornment = type === "daily" ? "day(s)" : type === "weekly" ? "week(s)" : type === "monthly" ? "month(s)" : "year(s)";
 
   return (
     <div>

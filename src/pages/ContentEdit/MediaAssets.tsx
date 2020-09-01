@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
+import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useCallback } from "react";
 import { useDrag } from "react-dnd";
@@ -33,6 +34,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   tableContainer: {
     marginTop: 5,
     maxHeight: 700,
+    marginBottom: 20,
   },
   table: {
     minWidth: 700 - 162,
@@ -82,6 +84,12 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       marginLeft: 16,
       marginRight: 221,
     },
+  },
+  pagination: {
+    marginBottom: 20,
+  },
+  paginationUl: {
+    justifyContent: "center",
   },
 }));
 
@@ -169,19 +177,31 @@ function DraggableImage(props: DraggableItemProps) {
 
 export interface MediaAssetsProps {
   list: Content[];
+  total: number;
+  amountPerPage?: number;
   comingsoon?: boolean;
   searchText?: string;
   onSearch: (searchText: MediaAssetsProps["searchText"]) => any;
+  onChangePage: (page: number) => any;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const { getValues, control } = useForm<Pick<MediaAssetsProps, "searchText">>();
   const css = useStyles();
-  const { list, comingsoon, searchText, onSearch } = props;
+  const { list, comingsoon, searchText, onSearch, total, amountPerPage = 10, onChangePage } = props;
+
   const handleClickSearch = useCallback(() => {
     const { searchText } = getValues();
     onSearch(searchText);
   }, [getValues, onSearch]);
+
+  const handChangePage = useCallback(
+    (event: object, page: number) => {
+      onChangePage(page);
+    },
+    [onChangePage]
+  );
+
   const rows = list.map((item, idx) => (
     <TableRow key={idx}>
       <TableCell className={css.cellThumnbnail}>
@@ -203,25 +223,34 @@ export default function MediaAssets(props: MediaAssetsProps) {
     </TableRow>
   ));
   const table = (
-    <TableContainer className={css.tableContainer}>
-      <Table className={css.table} stickyHeader>
-        <TableHead className={css.tableHead}>
-          <TableRow>
-            <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>
-            <TableCell>{lesson === "plan" ? "Material" : "Plan"} Name</TableCell>
-            <TableCell>Author</TableCell>
-            {/* <TableCell className={css.cellAction}>Action</TableCell> */}
-            {/* <TableCell>Developmental</TableCell> */}
-            {/* <TableCell>Skills</TableCell> */}
-            {/* <TableCell>Age</TableCell> */}
-            {/* <TableCell>Grade</TableCell> */}
-            {/* <TableCell>visibility settings</TableCell> */}
-            {/* <TableCell>Created On</TableCell> */}
-          </TableRow>
-        </TableHead>
-        <TableBody>{rows}</TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer className={css.tableContainer}>
+        <Table className={css.table} stickyHeader>
+          <TableHead className={css.tableHead}>
+            <TableRow>
+              <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>
+              <TableCell>{lesson === "plan" ? "Material" : "Plan"} Name</TableCell>
+              <TableCell>Author</TableCell>
+              {/* <TableCell className={css.cellAction}>Action</TableCell> */}
+              {/* <TableCell>Developmental</TableCell> */}
+              {/* <TableCell>Skills</TableCell> */}
+              {/* <TableCell>Age</TableCell> */}
+              {/* <TableCell>Grade</TableCell> */}
+              {/* <TableCell>visibility settings</TableCell> */}
+              {/* <TableCell>Created On</TableCell> */}
+            </TableRow>
+          </TableHead>
+          <TableBody>{rows}</TableBody>
+        </Table>
+      </TableContainer>
+      <Pagination
+        className={css.pagination}
+        classes={{ ul: css.paginationUl }}
+        onChange={handChangePage}
+        count={Math.ceil(total / amountPerPage)}
+        color="primary"
+      />
+    </>
   );
   const search = (
     <Box display="flex" pt={3} pb={1}>

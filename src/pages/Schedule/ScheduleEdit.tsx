@@ -19,7 +19,13 @@ import mockProgram from "../../mocks/backendMock/program.json";
 import mockSubject from "../../mocks/backendMock/subject.json";
 import mockTeacher from "../../mocks/backendMock/teacher.json";
 import { RootState } from "../../reducers";
-import { getScheduleTimeViewData, removeSchedule, saveScheduleData } from "../../reducers/schedule";
+import {
+  getScheduleTimeViewData,
+  removeSchedule,
+  saveScheduleData,
+  resetScheduleDetial,
+  initScheduleDetial,
+} from "../../reducers/schedule";
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
@@ -88,7 +94,7 @@ function EditBox(props: CalendarStateProps) {
 
   const defaults: CommonShort = { id: "", name: "" };
 
-  const { timesTamp, modelView, scheduleId, includeTable } = props;
+  const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp } = props;
 
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -161,7 +167,8 @@ function EditBox(props: CalendarStateProps) {
     setTeacherItem([]);
     setScheduleList(newData);
     setInitScheduleList(newData);
-  }, [timesTamp]);
+    dispatch(resetScheduleDetial(initScheduleDetial));
+  }, [dispatch, timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: string[] = [];
@@ -172,7 +179,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   React.useEffect(() => {
-    if (scheduleDetial.id) {
+    if (scheduleId && scheduleDetial.id) {
       const newData: ScheduleCreate = {
         attachment: scheduleDetial.attachment,
         class_id: scheduleDetial.class!.id,
@@ -204,7 +211,7 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newData);
       setInitScheduleList(newData);
     }
-  }, [scheduleDetial]);
+  }, [scheduleDetial, scheduleId]);
 
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
@@ -220,7 +227,25 @@ function EditBox(props: CalendarStateProps) {
     }
   }, [dispatchRepeat, scheduleDetial]);
 
-  const [scheduleList, setScheduleList] = React.useState<ScheduleCreate>({});
+  const currentTime = timestampInt(new Date().getTime() / 1000);
+  const [scheduleList, setScheduleList] = React.useState<ScheduleCreate>({
+    attachment: {},
+    class_id: "",
+    class_type: "OnlineClass",
+    description: "",
+    due_at: currentTime,
+    end_at: currentTime,
+    is_all_day: false,
+    is_force: true,
+    is_repeat: false,
+    lesson_plan_id: "",
+    program_id: "",
+    repeat: {},
+    start_at: currentTime,
+    subject_id: "",
+    teacher_ids: [],
+    title: "",
+  });
 
   const [initScheduleList, setInitScheduleList] = React.useState<ScheduleCreate>({});
 
@@ -347,11 +372,9 @@ function EditBox(props: CalendarStateProps) {
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
-    const result = { ...scheduleList, ...addData };
-    // @ts-ignore
-    const id = (await dispatch(saveScheduleData({ ...result }))).payload.id;
+    await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
-    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview?schedule_id=${id}`);
+    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -383,6 +406,10 @@ function EditBox(props: CalendarStateProps) {
   const deleteScheduleByid = async () => {
     await dispatch(removeSchedule(scheduleDetial.id as string));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    changeTimesTamp({
+      start: Math.floor(new Date().getTime() / 1000),
+      end: Math.floor(new Date().getTime() / 1000),
+    });
     setOpenStatus(false);
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };

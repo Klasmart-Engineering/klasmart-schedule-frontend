@@ -9,7 +9,7 @@ import { ContentType } from "../../api/api.d";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, onLoadContentEdit, publish, save } from "../../reducers/content";
+import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save } from "../../reducers/content";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
@@ -61,8 +61,7 @@ export default function ContentEdit() {
     control,
     formState: { isDirty },
   } = formMethods;
-  (window as any).reset = reset;
-  const { contentDetail, mediaList, mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentDetail, mediaList, mockOptions, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
   const { id, searchText, search, editindex } = useQuery();
   const history = useHistory();
@@ -112,12 +111,21 @@ export default function ContentEdit() {
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  const [, setPage] = React.useState(0);
+
+  const handleChangePage = (page: number) => {
+    setPage(page);
+    dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchText }));
+  };
+
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
   }, [id, lesson, dispatch, searchText, history, editindex]);
   useEffect(() => {
     reset(ModelContentDetailForm.decode(contentDetail));
   }, [contentDetail, lesson, reset]);
+
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
@@ -128,7 +136,14 @@ export default function ContentEdit() {
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
       <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
       <Outcomes comingsoon />
-      <MediaAssets list={mediaList} comingsoon onSearch={handleSearch} searchText={searchText} />
+      <MediaAssets
+        list={mediaList}
+        comingsoon
+        onSearch={handleSearch}
+        searchText={searchText}
+        onChangePage={handleChangePage}
+        total={total}
+      />
     </ContentTabs>
   );
   const rightsideArea = (
