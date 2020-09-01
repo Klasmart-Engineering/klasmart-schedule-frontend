@@ -9,6 +9,7 @@ export interface RouteParams {
 }
 
 export type modeViewType = "month" | "day" | "workWeek" | "week";
+
 export interface stateProps {
   type: string;
   daily: {

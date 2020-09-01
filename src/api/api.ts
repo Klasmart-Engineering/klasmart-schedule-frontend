@@ -283,6 +283,8 @@ export interface ScheduleCreate {
 
   /** all_day flag */
   is_all_day?: boolean;
+
+  attachment?: CommonShort;
 }
 
 /**

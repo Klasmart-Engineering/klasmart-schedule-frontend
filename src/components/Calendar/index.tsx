@@ -79,8 +79,7 @@ function MyCalendar(props: CalendarProps) {
 
   const deleteScheduleByid = async () => {
     await dispatch(removeSchedule(scheduleInfo.id));
-    // @ts-ignore
-    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start }));
+    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     setOpenStatus(false);
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
