@@ -35,8 +35,8 @@ const initialState: stateProps = {
   yearly: {
     interval: 0,
     on_type: "date",
-    on_date_month: 0,
-    on_date_day: 0,
+    on_date_month: 1,
+    on_date_day: 1,
     on_week_month: 1,
     on_week_seq: "first",
     on_week: "Sunday",
