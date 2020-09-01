@@ -21,9 +21,9 @@ import mockTeacher from "../../mocks/backendMock/teacher.json";
 import { RootState } from "../../reducers";
 import { getScheduleTimeViewData, removeSchedule, saveScheduleData } from "../../reducers/schedule";
 import theme from "../../theme";
+import { timestampType } from "../../types/scheduleTypes";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { timestampType } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {

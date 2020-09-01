@@ -7,10 +7,10 @@ import LayoutBox from "../../components/LayoutBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { contentLists } from "../../reducers/content";
 import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedule";
+import { modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { timestampType, RouteParams, modeViewType } from "../../types/scheduleTypes";
 
 const useQuery = () => {
   const { search } = useLocation();

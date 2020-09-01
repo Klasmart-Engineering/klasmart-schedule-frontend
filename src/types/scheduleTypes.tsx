@@ -8,7 +8,7 @@ export interface RouteParams {
   model: "edit" | "preview";
 }
 
-export type modeViewType = "month" | "day" | "workWeek" | "week" | undefined;
+export type modeViewType = "month" | "day" | "workWeek" | "week";
 export interface stateProps {
   type: string;
   daily: {
