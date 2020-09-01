@@ -159,13 +159,8 @@ function Tool(props: ToolProps) {
   );
 }
 
-interface timesTampType {
-  start: number;
-  end: number;
-}
-
 interface CalendarStateProps {
-  timesTamp: timesTampType;
+  timesTamp: timestampType;
   changeTimesTamp: (value: timestampType) => void;
 }
 
@@ -174,6 +169,7 @@ interface ToolProps extends CalendarStateProps {
   modelView: modeViewType;
   changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
+
 export default function ScheduleTool(props: ToolProps) {
   const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView } = props;
   return (

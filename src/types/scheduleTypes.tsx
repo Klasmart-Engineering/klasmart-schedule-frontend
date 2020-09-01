@@ -9,49 +9,47 @@ export interface RouteParams {
 }
 
 export type modeViewType = "month" | "day" | "workWeek" | "week";
+
+type endType = {
+  type: string;
+  after_count: number;
+  after_time: number;
+};
+
+type dailyType = {
+  interval: number;
+  end: endType;
+};
+
+type weeklyType = {
+  interval: number;
+  on: string[];
+  end: endType;
+};
+
+type monthlyType = {
+  interval: number;
+  on_type: string;
+  on_date_day: number;
+  on_week_seq: string;
+  on_week: string;
+  end: endType;
+};
+
+type yearlyType = {
+  interval: number;
+  on_type: string;
+  on_date_month: number;
+  on_date_day: number;
+  on_week_month: number;
+  on_week_seq: string;
+  on_week: string;
+  end: endType;
+};
 export interface stateProps {
   type: string;
-  daily: {
-    interval: number;
-    end: {
-      type: string;
-      after_count: number;
-      after_time: number;
-    };
-  };
-  weekly: {
-    interval: number;
-    on: string[];
-    end: {
-      type: string;
-      after_count: number;
-      after_time: number;
-    };
-  };
-  monthly: {
-    interval: number;
-    on_type: string;
-    on_date_day: number;
-    on_week_seq: string;
-    on_week: string;
-    end: {
-      type: string;
-      after_count: number;
-      after_time: number;
-    };
-  };
-  yearly: {
-    interval: number;
-    on_type: string;
-    on_date_month: number;
-    on_date_day: number;
-    on_week_month: number;
-    on_week_seq: string;
-    on_week: string;
-    end: {
-      type: string;
-      after_count: number;
-      after_time: number;
-    };
-  };
+  daily: dailyType;
+  weekly: weeklyType;
+  monthly: monthlyType;
+  yearly: yearlyType;
 }

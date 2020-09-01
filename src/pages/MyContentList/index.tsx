@@ -130,6 +130,7 @@ export default function MyContentList() {
         open={openDialog}
         title={titleDialog}
         showReason={showReason}
+        showError={false}
         handleCloseDialog={handleCloseDialog}
         handleDialogEvent={handleDialogEvent}
         onSetReason={() => {}}

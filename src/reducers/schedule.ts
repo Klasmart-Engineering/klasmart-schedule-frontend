@@ -1,8 +1,6 @@
-import { AsyncThunk, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
-
-type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 
 interface scheduleViewData {
   end: Date;
@@ -26,30 +24,32 @@ interface Rootstate {
   schedule: ScheduleState;
 }
 
+export const initScheduleDetial: ScheduleDetailed = {
+  id: "",
+  title: "",
+  class: {},
+  lesson_plan: {},
+  teachers: [],
+  start_at: 0,
+  end_at: 0,
+  mode_type: "AllDay",
+  repeat: {},
+  subject: {},
+  program: {},
+  class_type: "OnlineClass",
+  due_at: 0,
+  description: "",
+  attachment: {},
+  is_all_day: true,
+  is_repeat: false,
+  is_force: false,
+};
+
 const initialState: ScheduleState = {
   saveResult: 1,
   total: 0,
   searchScheduleList: [],
-  scheduleDetial: {
-    id: "",
-    title: "",
-    class: {},
-    lesson_plan: {},
-    teachers: [],
-    start_at: 0,
-    end_at: 0,
-    mode_type: "AllDay",
-    repeat: {},
-    subject: {},
-    program: {},
-    class_type: "OnlineClass",
-    due_at: 0,
-    description: "",
-    attachment: {},
-    is_all_day: true,
-    is_repeat: false,
-    is_force: false,
-  },
+  scheduleDetial: initScheduleDetial,
   scheduleTimeViewData: [],
   attachement_id: "",
   attachment_path: "",
@@ -125,10 +125,14 @@ const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
   return newViewData;
 };
 
-const { reducer } = createSlice({
+const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
-  reducers: {},
+  reducers: {
+    resetScheduleDetial: (state, { payload }: PayloadAction<ScheduleState["scheduleDetial"]>) => {
+      state.scheduleDetial = payload;
+    },
+  },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
       state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
@@ -162,4 +166,5 @@ const { reducer } = createSlice({
   },
 });
 
+export const { resetScheduleDetial } = actions;
 export default reducer;
