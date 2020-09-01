@@ -8,7 +8,7 @@ export default function AlertDialog() {
   const [radioValue, setRadioValue] = React.useState("");
 
   return (
-    <div>
+    <div style={{ width: "400px", padding: "0px 30px 0px 30px" }}>
       <p style={{ fontSize: "20px" }}>Edit recurring event</p>
       <div style={{ paddingLeft: "20px" }}>
         <FormControl component="fieldset">
