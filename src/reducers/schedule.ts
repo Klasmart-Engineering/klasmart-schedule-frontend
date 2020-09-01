@@ -153,13 +153,12 @@ const { actions, reducer } = createSlice({
       state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
-      console.log(payload);
+      state.scheduleDetial = initScheduleDetial;
     },
     [getScheduleInfo.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
     },
     [getContentResourceUploadPath.fulfilled.type]: (state, { payload }: any) => {
-      console.log(payload);
       state.attachment_path = payload.path;
       state.attachement_id = payload.resource_id;
     },
