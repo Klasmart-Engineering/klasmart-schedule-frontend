@@ -343,6 +343,7 @@ const { actions, reducer } = createSlice({
     },
     [lockContent.rejected.type]: (state, { error }: any) => {
       alert("lock failed");
+      throw error;
     },
   },
 });
