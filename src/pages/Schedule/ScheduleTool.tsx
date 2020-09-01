@@ -146,7 +146,7 @@ function Tool(props: ToolProps) {
           {!includeList && (
             <FormControl>
               <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
-                {/*<option value="work_week">Work Week</option>*/}
+                <option value="work_week">Work Week</option>
                 <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>

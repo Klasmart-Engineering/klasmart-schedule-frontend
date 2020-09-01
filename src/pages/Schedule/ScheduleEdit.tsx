@@ -94,7 +94,7 @@ function EditBox(props: CalendarStateProps) {
 
   const defaults: CommonShort = { id: "", name: "" };
 
-  const { timesTamp, modelView, scheduleId, includeTable } = props;
+  const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp } = props;
 
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -406,6 +406,10 @@ function EditBox(props: CalendarStateProps) {
   const deleteScheduleByid = async () => {
     await dispatch(removeSchedule(scheduleDetial.id as string));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    changeTimesTamp({
+      start: Math.floor(new Date().getTime() / 1000),
+      end: Math.floor(new Date().getTime() / 1000),
+    });
     setOpenStatus(false);
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
