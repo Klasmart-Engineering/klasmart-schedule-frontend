@@ -23,7 +23,7 @@ import { Content } from "../../api/api";
 import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
 import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
-import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -172,6 +172,30 @@ export default function Details(props: DetailsProps) {
             />
           )}
         />
+        {contentDetail.id && (
+          <Box>
+            <Controller
+              as={TextField}
+              name="created_at"
+              defaultValue={formattedTime(contentDetail.created_at)}
+              control={control}
+              className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth={sm}
+              disabled
+              label="Created on"
+            ></Controller>
+            <Controller
+              as={TextField}
+              name="author_name"
+              defaultValue={contentDetail.author_name}
+              control={control}
+              className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth={sm}
+              disabled
+              label="Author"
+            ></Controller>
+          </Box>
+        )}
         <Controller
           as={FormattedTextField}
           control={control}
