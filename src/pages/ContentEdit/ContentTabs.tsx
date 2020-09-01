@@ -1,5 +1,6 @@
 import { makeStyles, Paper, Tab, Tabs, useMediaQuery, useTheme } from "@material-ui/core";
-import { TabContext, TabPanel } from "@material-ui/lab";
+import { TabContext } from "@material-ui/lab";
+import clsx from "clsx";
 import React, { Children, ReactNode } from "react";
 import { useParams } from "react-router-dom";
 
@@ -10,6 +11,10 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   },
   tabPane: {
     padding: 0,
+    display: "none",
+    "&.active": {
+      display: "block",
+    },
   },
   tab: {
     fontWeight: "bold",
@@ -38,9 +43,9 @@ export default function ContentTabs(props: ContentTabsProps) {
   const tabPanels = Children.map(children, (child) => {
     idx += 1;
     return (
-      <TabPanel key={VALUES[idx]} className={css.tabPane} value={VALUES[idx]}>
+      <div key={VALUES[idx]} className={clsx(css.tabPane, { active: tab === VALUES[idx] })}>
         {child}
-      </TabPanel>
+      </div>
     );
   });
 
