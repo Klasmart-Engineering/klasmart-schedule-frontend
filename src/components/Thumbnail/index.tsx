@@ -31,7 +31,7 @@ export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, re
       alt="thumbail"
       src={thumbail}
       onError={(e) => {
-        e.target.src = type2svg[type];
+        // e.target.src = type2svg[type];
       }}
     />
   );
