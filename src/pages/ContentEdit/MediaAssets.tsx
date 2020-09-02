@@ -1,27 +1,13 @@
-import {
-  Box,
-  Button,
-  makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from "@material-ui/core";
-import { Search } from "@material-ui/icons";
+import { Box, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
-import clsx from "clsx";
 import React, { Fragment, useCallback } from "react";
 import { useDrag } from "react-dnd";
-import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Content } from "../../api/api";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
+import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -180,21 +166,14 @@ export interface MediaAssetsProps {
   total: number;
   amountPerPage?: number;
   comingsoon?: boolean;
-  searchText?: string;
-  onSearch: (searchText: MediaAssetsProps["searchText"]) => any;
+  value?: string;
+  onSearch: (searchText: MediaAssetsProps["value"]) => any;
   onChangePage: (page: number) => any;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
-  const { getValues, control } = useForm<Pick<MediaAssetsProps, "searchText">>();
   const css = useStyles();
-  const { list, comingsoon, searchText, onSearch, total, amountPerPage = 10, onChangePage } = props;
-
-  const handleClickSearch = useCallback(() => {
-    const { searchText } = getValues();
-    onSearch(searchText);
-  }, [getValues, onSearch]);
-
+  const { list, comingsoon, value, onSearch, total, amountPerPage = 10, onChangePage } = props;
   const handChangePage = useCallback(
     (event: object, page: number) => {
       onChangePage(page);
@@ -214,12 +193,6 @@ export default function MediaAssets(props: MediaAssetsProps) {
           Select
         </Button>
       </TableCell> */}
-      {/* <TableCell>{item.developmental}</TableCell> */}
-      {/* <TableCell>{item.skills}</TableCell> */}
-      {/* <TableCell>{item.age}</TableCell> */}
-      {/* <TableCell>{item.grade}</TableCell> */}
-      {/* <TableCell>{item.publish_scope}</TableCell> */}
-      {/* <TableCell>{multipleLine(item.created.split(" "))}</TableCell> */}
     </TableRow>
   ));
   const table = (
@@ -232,12 +205,6 @@ export default function MediaAssets(props: MediaAssetsProps) {
               <TableCell>{lesson === "plan" ? "Material" : "Plan"} Name</TableCell>
               <TableCell>Author</TableCell>
               {/* <TableCell className={css.cellAction}>Action</TableCell> */}
-              {/* <TableCell>Developmental</TableCell> */}
-              {/* <TableCell>Skills</TableCell> */}
-              {/* <TableCell>Age</TableCell> */}
-              {/* <TableCell>Grade</TableCell> */}
-              {/* <TableCell>visibility settings</TableCell> */}
-              {/* <TableCell>Created On</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>{rows}</TableBody>
@@ -252,30 +219,13 @@ export default function MediaAssets(props: MediaAssetsProps) {
       />
     </>
   );
-  const search = (
-    <Box display="flex" pt={3} pb={1}>
-      <Controller
-        as={TextField}
-        control={control}
-        name="searchText"
-        defaultValue={searchText}
-        size="small"
-        className={clsx(css.fieldset, css.searchField)}
-        placeholder="Search"
-      />
-      <Button color="primary" variant="contained" size="small" className={css.fieldset} startIcon={<Search />} onClick={handleClickSearch}>
-        Search
-      </Button>
-    </Box>
-  );
-
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
         <Comingsoon />
       ) : (
         <>
-          {search}
+          <SearchcmsList searchName="searchMedia" onSearch={onSearch} value={value} />
           {list.length > 0 ? table : <NoFiles />}
         </>
       )}

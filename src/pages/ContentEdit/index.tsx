@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ContentType } from "../../api/api.d";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
+import outcomeslist from "../../mocks/outcomesList.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save } from "../../reducers/content";
@@ -19,7 +20,7 @@ import LayoutPair from "./Layout";
 import MediaAssets, { MediaAssetsProps } from "./MediaAssets";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
 import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
-import Outcomes from "./Outcomes";
+import Outcomes, { OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 
@@ -33,9 +34,10 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id");
-  const searchText = query.get("searchText") || "";
+  const searchMedia = query.get("searchMedia") || "";
+  const searchOutcomes = query.get("searchOutcomes") || "";
   const editindex: number = Number(query.get("editindex") || 0);
-  return { id, searchText, search, editindex };
+  return { id, searchMedia, searchOutcomes, search, editindex };
 };
 
 const setQuery = (search: string, hash: Record<string, string | number>): string => {
@@ -61,9 +63,11 @@ export default function ContentEdit() {
     control,
     formState: { isDirty },
   } = formMethods;
-  const { contentDetail, mediaList, mockOptions, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal } = useSelector<RootState, RootState["content"]>(
+    (state) => state.content
+  );
   const { lesson, tab, rightside } = useParams();
-  const { id, searchText, search, editindex } = useQuery();
+  const { id, searchMedia, search, editindex, searchOutcomes } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
@@ -101,10 +105,18 @@ export default function ContentEdit() {
       }),
     [handleSubmit, content_type, dispatch, history, editindex]
   );
-  const handleSearch = useMemo<MediaAssetsProps["onSearch"]>(
-    () => (searchText = "") => {
+  const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
+    () => (searchMedia = "") => {
       history.replace({
-        search: setQuery(history.location.search, { searchText }),
+        search: setQuery(history.location.search, { searchMedia }),
+      });
+    },
+    [history]
+  );
+  const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
+    () => (searchOutcomes = "") => {
+      history.replace({
+        search: setQuery(history.location.search, { searchOutcomes }),
       });
     },
     [history]
@@ -117,12 +129,12 @@ export default function ContentEdit() {
 
   const handleChangePage = (page: number) => {
     setPage(page);
-    dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchText }));
+    dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchMedia }));
   };
 
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, searchText }));
-  }, [id, lesson, dispatch, searchText, history, editindex]);
+    dispatch(onLoadContentEdit({ id, type: lesson, searchMedia }));
+  }, [id, lesson, dispatch, searchMedia, history, editindex]);
   useEffect(() => {
     reset(ModelContentDetailForm.decode(contentDetail));
   }, [contentDetail, lesson, reset]);
@@ -136,14 +148,21 @@ export default function ContentEdit() {
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
       <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
-      <Outcomes comingsoon />
+      <Outcomes
+        comingsoon
+        list={outcomeslist}
+        onSearch={handleSearchOutcomes}
+        value={searchOutcomes}
+        total={OutcomesListTotal}
+        onChangePage={(page) => {}}
+      />
       <MediaAssets
         list={mediaList}
         comingsoon
-        onSearch={handleSearch}
-        searchText={searchText}
+        onSearch={handleSearchMedia}
+        value={searchMedia}
         onChangePage={handleChangePage}
-        total={total}
+        total={MediaListTotal}
       />
     </ContentTabs>
   );

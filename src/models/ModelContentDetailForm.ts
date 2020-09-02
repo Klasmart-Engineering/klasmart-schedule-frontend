@@ -47,7 +47,7 @@ export function formattedTime(value: number | undefined): string {
     const hs = h < 10 ? `0${h}` : h;
     let m = date.getMinutes();
     const ms = m < 10 ? `0${m}` : m;
-    return `${ds}/${MMs}/${y}  ${hs}:${ms}${dayType}`;
+    return `${y}/${MMs}/${ds}  ${hs}:${ms}${dayType}`;
   }
   return "";
 }
