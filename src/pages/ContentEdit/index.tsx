@@ -133,7 +133,7 @@ export default function ContentEdit() {
   };
 
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, searchMedia }));
+    dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true }));
   }, [id, lesson, dispatch, searchMedia, history, editindex]);
   useEffect(() => {
     reset(ModelContentDetailForm.decode(contentDetail));

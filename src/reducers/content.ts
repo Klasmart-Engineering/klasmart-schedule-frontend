@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import api from "../api";
 import { Content, ContentIDListRequest } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
@@ -116,7 +117,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
 type IQueryContentParams = Parameters<typeof api.contentsDynamo.contentsDynamoList>[0];
 type IQueryContentResult = AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
 
-interface onLoadContentEditPayload {
+interface onLoadContentEditPayload extends LoadingMetaPayload {
   id: Content["id"] | null;
   type: "assets" | "material" | "plan";
   searchMedia?: string;

@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { ChangeEvent, forwardRef } from "react";
 import { ContentType } from "../../api/api.d";
 import { apiResourcePathById } from "../../api/extra";
 import docImg from "../../assets/icons/doc.svg";
@@ -30,8 +30,9 @@ export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, re
       ref={ref}
       alt="thumbail"
       src={thumbail}
-      onError={(e) => {
-        // e.target.src = type2svg[type];
+      onError={(e: ChangeEvent<HTMLImageElement>) => {
+        // todo: 不要直接操作 dom
+        e.target.src = type2svg[type];
       }}
     />
   );

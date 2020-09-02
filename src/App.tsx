@@ -3,6 +3,7 @@ import { SnackbarProvider } from "notistack";
 import React from "react";
 import { Provider } from "react-redux";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import { Loading } from "./components/Loading";
 import { Notification } from "./components/Notification";
 import CreateOutcomings from "./pages/Assessments/CreateOutcomings";
 import ContentEdit from "./pages/ContentEdit";
@@ -19,6 +20,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <HashRouter>
         <Provider store={store}>
+          <Loading />
           <SnackbarProvider>
             <HeaderNavBar />
             <Switch>
