@@ -100,9 +100,11 @@ const useQuery = () => {
 export default function SearchList() {
   const dispatch = useDispatch();
   const { name } = useQuery();
+  // const time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const current_time = Math.floor(new Date().valueOf() / 1000);
   React.useEffect(() => {
-    dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10 }));
-  }, [dispatch, name]);
+    dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10, start_at: current_time }));
+  }, [current_time, dispatch, name]);
   const { searchScheduleList, total, searchFlag } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
   const classes = useStyles();
