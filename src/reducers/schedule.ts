@@ -44,7 +44,6 @@ export const initScheduleDetial: ScheduleDetailed = {
   is_all_day: true,
   is_repeat: false,
   is_force: false,
-  repeat_id: "",
 };
 
 const initialState: ScheduleState = {
@@ -57,6 +56,8 @@ const initialState: ScheduleState = {
   attachment_path: "",
   searchFlag: false,
 };
+
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
@@ -87,7 +88,7 @@ type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.schedulesTime
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
   "schedule/schedules_time_view",
   (query) => {
-    return api.schedulesTimeView.schedulesTimeView(query);
+    return api.schedulesTimeView.schedulesTimeView({ ...query, time_zone: timeZone });
   }
 );
 
@@ -127,7 +128,7 @@ const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
     data.forEach((item: ScheduleTimeView) => {
       const start_at = new Date(Number(item.start_at) * 1000);
       const end_at = new Date(Number(item.end_at) * 1000);
-      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title, is_repeat: true });
+      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title, is_repeat: item.is_repeat });
     });
   }
   return newViewData;

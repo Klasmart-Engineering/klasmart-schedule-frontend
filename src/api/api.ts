@@ -204,6 +204,8 @@ export interface ScheduleTimeView {
 
   /** schedule end time, timestamp */
   end_at?: number;
+
+  is_repeat?: boolean;
 }
 
 /**
@@ -285,6 +287,8 @@ export interface ScheduleCreate {
   is_all_day?: boolean;
 
   attachment?: CommonShort;
+
+  time_zone?: string;
 }
 
 /**
@@ -375,6 +379,8 @@ export interface ScheduleUpdate {
 
   /** all_day flag */
   is_all_day?: boolean;
+
+  time_zone?: string;
 }
 
 /**
@@ -1087,7 +1093,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description query schedules
      */
-    schedulesTimeView: (query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null }, params?: RequestParams) =>
+    schedulesTimeView: (
+      query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null; time_zone?: string | null },
+      params?: RequestParams
+    ) =>
       this.request<{ list?: ScheduleTimeView[] }, any>(
         `/schedules_time_view${this.addQueryParams(query)}`,
         "GET",

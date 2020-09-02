@@ -48,6 +48,7 @@ type yearlyType = {
   on_week: string;
   end: endType;
 };
+
 export interface stateProps {
   type: string;
   daily: dailyType;

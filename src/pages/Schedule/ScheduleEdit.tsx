@@ -374,6 +374,7 @@ function EditBox(props: CalendarStateProps) {
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
+    addData["time_zone"] = Intl.DateTimeFormat().resolvedOptions().timeZone;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
@@ -442,10 +443,11 @@ function EditBox(props: CalendarStateProps) {
    * modal type delete
    */
   const handleDelete = () => {
-    if (scheduleDetial.repeat_id) {
+    if (scheduleDetial.is_repeat) {
       setEnableCustomization(true);
       setOpenStatus(true);
     } else {
+      setEnableCustomization(false);
       const button = [
         {
           label: "Cancel",
