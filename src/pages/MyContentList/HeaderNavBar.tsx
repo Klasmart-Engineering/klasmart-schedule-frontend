@@ -102,8 +102,8 @@ const navigation = [
     path: "/",
   },
   {
-    name: "Assesments",
-    path: "/assesments",
+    name: "Assessments",
+    path: "/assessments",
   },
   {
     name: "Schedule",
