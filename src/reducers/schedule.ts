@@ -7,6 +7,7 @@ interface scheduleViewData {
   id: string;
   start: Date;
   title: string;
+  is_repeat: boolean;
 }
 
 export interface ScheduleState {
@@ -43,6 +44,7 @@ export const initScheduleDetial: ScheduleDetailed = {
   is_all_day: true,
   is_repeat: false,
   is_force: false,
+  repeat_id: "",
 };
 
 const initialState: ScheduleState = {
@@ -89,11 +91,17 @@ export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, vie
   }
 );
 
-type deleteSchedulesParams = Parameters<typeof api.schedules.deleteSchedule>[0];
+type deleteSchedulesParams = {
+  schedule_id: Parameters<typeof api.schedules.deleteSchedule>[0];
+  repeat_edit_options: Parameters<typeof api.schedules.deleteSchedule>[1];
+};
 type deleteSchedulesResult = ReturnType<typeof api.schedules.deleteSchedule>;
-export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>("schedule/delete", (schedule_id, query) => {
-  return api.schedules.deleteSchedule(schedule_id, { repeat_edit_options: "only_current" });
-});
+export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>(
+  "schedule/delete",
+  ({ schedule_id, repeat_edit_options }, query) => {
+    return api.schedules.deleteSchedule(schedule_id, repeat_edit_options);
+  }
+);
 
 type infoSchedulesParams = Parameters<typeof api.schedules.getSchedulesById>[0];
 type infoSchedulesResult = ReturnType<typeof api.schedules.getSchedulesById>;
@@ -119,7 +127,7 @@ const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
     data.forEach((item: ScheduleTimeView) => {
       const start_at = new Date(Number(item.start_at) * 1000);
       const end_at = new Date(Number(item.end_at) * 1000);
-      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title });
+      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title, is_repeat: true });
     });
   }
   return newViewData;

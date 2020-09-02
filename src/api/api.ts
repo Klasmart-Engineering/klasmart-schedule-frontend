@@ -400,6 +400,8 @@ export interface ScheduleDetailed {
 
   is_force?: boolean;
 
+  repeat_id?: string;
+
   /**
    *
    *  * AllDay - this class will last for 24 hours for the whole day

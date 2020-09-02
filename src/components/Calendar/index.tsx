@@ -10,13 +10,15 @@ import ModalBox from "../../components/ModalBox";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
-import { timestampType } from "../../types/scheduleTypes";
+import { timestampType, repeatOptionsType } from "../../types/scheduleTypes";
+import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 
 interface scheduleInfoProps {
   end: Date;
   id: string;
   start: Date;
   title: string;
+  is_repeat: boolean;
 }
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -36,11 +38,13 @@ function MyCalendar(props: CalendarProps) {
   const { modelView, timesTamp, changeTimesTamp } = props;
   const history = useHistory();
   const [openStatus, setOpenStatus] = React.useState(false);
+  const [scheduleInfoStatus, setScheduleInfoStatus] = React.useState(true);
   const [scheduleInfo, setscheduleInfo] = React.useState<scheduleInfoProps>({
     end: new Date(new Date().getTime()),
     id: "",
     start: new Date(new Date().getTime()),
     title: "",
+    is_repeat: false,
   });
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -70,17 +74,24 @@ function MyCalendar(props: CalendarProps) {
    */
   const handleClose = () => {
     setOpenStatus(false);
+    setTimeout(() => {
+      setScheduleInfoStatus(true);
+    }, 200);
   };
 
   /**
    * close Customization template && show delete template
    */
   const handleDelete = () => {
-    setEnableCustomization(false);
+    if (scheduleInfo.is_repeat) {
+      setScheduleInfoStatus(false);
+    } else {
+      setEnableCustomization(false);
+    }
   };
 
-  const deleteScheduleByid = async () => {
-    await dispatch(removeSchedule(scheduleInfo.id));
+  const deleteScheduleByid = async (repeat_edit_options: repeatOptionsType = "only_current") => {
+    await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
@@ -97,8 +108,10 @@ function MyCalendar(props: CalendarProps) {
     text: "Are you sure you want to delete this event?",
     openStatus: openStatus,
     enableCustomization: enableCustomization,
-    customizeTemplate: (
-      <CustomizeTempalte handleDelete={handleDelete} scheduleId={1} handleClose={handleClose} scheduleInfo={scheduleInfo} />
+    customizeTemplate: scheduleInfoStatus ? (
+      <CustomizeTempalte handleDelete={handleDelete} handleClose={handleClose} scheduleInfo={scheduleInfo} />
+    ) : (
+      <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} />
     ),
     buttons: [
       {
@@ -118,41 +131,34 @@ function MyCalendar(props: CalendarProps) {
   };
 
   return (
-    <>
-      <Box className={css.calendarBox}>
-        <Calendar
-          date={new Date(timesTamp.start * 1000)}
-          onView={() => {}}
-          onNavigate={() => {}}
-          view={modelView}
-          views={views}
-          popup={true}
-          selectable={true}
-          localizer={localizer}
-          events={scheduleTimeViewData}
-          startAccessor="start"
-          endAccessor="end"
-          toolbar={false}
-          onSelectEvent={scheduleSelected}
-          onSelectSlot={(e) => {
-            creteSchedule(e);
-          }}
-          style={{ height: "100vh" }}
-        />
-        <ModalBox modalDate={modalDate} />
-      </Box>
-    </>
+    <Box className={css.calendarBox}>
+      <Calendar
+        date={new Date(timesTamp.start * 1000)}
+        onView={() => {}}
+        onNavigate={() => {}}
+        view={modelView}
+        views={views}
+        popup={true}
+        selectable={true}
+        localizer={localizer}
+        events={scheduleTimeViewData}
+        startAccessor="start"
+        endAccessor="end"
+        toolbar={false}
+        onSelectEvent={scheduleSelected}
+        onSelectSlot={(e) => {
+          creteSchedule(e);
+        }}
+        style={{ height: "100vh" }}
+      />
+      <ModalBox modalDate={modalDate} />
+    </Box>
   );
-}
-
-interface timesTampType {
-  start: number;
-  end: number;
 }
 
 interface CalendarProps {
   modelView: any;
-  timesTamp: timesTampType;
+  timesTamp: timestampType;
   changeTimesTamp: (value: timestampType) => void;
 }
 export default function KidsCalendar(props: CalendarProps) {

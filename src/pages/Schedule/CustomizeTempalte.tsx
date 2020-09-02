@@ -55,7 +55,6 @@ type scheduleInfoProps = {
 };
 
 interface InfoProps {
-  scheduleId: number;
   handleDelete: () => void;
   handleClose: () => void;
   scheduleInfo: scheduleInfoProps;
