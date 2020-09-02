@@ -374,7 +374,7 @@ function EditBox(props: CalendarStateProps) {
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
-    addData["time_zone"] = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    addData["time_zone_offset"] = new Date().getTimezoneOffset();
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);

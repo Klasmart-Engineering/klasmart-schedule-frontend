@@ -288,7 +288,7 @@ export interface ScheduleCreate {
 
   attachment?: CommonShort;
 
-  time_zone?: string;
+  time_zone_offset?: number;
 }
 
 /**
@@ -380,7 +380,7 @@ export interface ScheduleUpdate {
   /** all_day flag */
   is_all_day?: boolean;
 
-  time_zone?: string;
+  time_zone_offset?: number;
 }
 
 /**
@@ -1094,7 +1094,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description query schedules
      */
     schedulesTimeView: (
-      query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null; time_zone?: string | null },
+      query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null; time_zone_offset?: number | null },
       params?: RequestParams
     ) =>
       this.request<{ list?: ScheduleTimeView[] }, any>(

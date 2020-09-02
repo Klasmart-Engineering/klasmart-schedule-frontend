@@ -57,7 +57,7 @@ const initialState: ScheduleState = {
   searchFlag: false,
 };
 
-const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const timeZone = new Date().getTimezoneOffset();
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
@@ -88,7 +88,7 @@ type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.schedulesTime
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
   "schedule/schedules_time_view",
   (query) => {
-    return api.schedulesTimeView.schedulesTimeView({ ...query, time_zone: timeZone });
+    return api.schedulesTimeView.schedulesTimeView({ ...query, time_zone_offset: timeZone });
   }
 );
 
