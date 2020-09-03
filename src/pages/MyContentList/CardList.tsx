@@ -3,6 +3,7 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
+  CardMedia,
   Checkbox,
   Collapse,
   createStyles,
@@ -21,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Content } from "../../api/api";
 import LayoutBox from "../../components/LayoutBox";
-import { Thumbnail } from "../../components/Thumbnail";
+import { thumbnailUrl } from "../../components/Thumbnail";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -59,9 +60,10 @@ const useStyles = makeStyles((theme) =>
     },
     cardMedia: {
       width: "100%",
-      // paddingTop: "47.6%",
+      paddingTop: "47.6%",
       position: "relative",
-      maxHeight: "159.61px",
+      // height: "100%",
+      // maxHeight: "159.61px"
     },
     checkbox: {
       position: "absolute",
@@ -232,15 +234,7 @@ function ContentCard(props: ContentProps) {
   const handleGoPreview = (event: any, id?: string) => {
     history.push(`/library/content-preview?id=${id}`);
   };
-  // const setThumbnail = () => {
-  //   if (!content?.thumbnail && content?.content_type_name === "document") return DocIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "Plan") return PlanIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "Material") return MaterialIconUrl;
-  //   if (content?.thumbnail) return apiResourcePathById(content?.thumbnail);
-  // };
+  thumbnailUrl(content.thumbnail, content.content_type);
   return (
     <Card className={css.card}>
       <Checkbox
@@ -254,8 +248,7 @@ function ContentCard(props: ContentProps) {
         }}
       ></Checkbox>
       <CardActionArea onClick={(e) => handleGoPreview(e, content?.id)}>
-        {/* <CardMedia className={css.cardMedia} image={setThumbnail()}></CardMedia> */}
-        <Thumbnail className={css.cardMedia} type={content.content_type} id={content.thumbnail} />
+        <CardMedia className={css.cardMedia} image={thumbnailUrl(content.thumbnail, content.content_type)}></CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container alignContent="space-between">
