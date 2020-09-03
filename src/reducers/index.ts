@@ -1,9 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import content from "./content";
-import loading from "./loading";
-import { loadingMiddleware } from "./middleware/loadingMiddleware";
+import loading, { actSetLoading } from "./loading";
+import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
 import schedule from "./schedule";
+
+const loadingMiddleware = createLoadingMiddleware({
+  enableLoadingPayload: { type: actSetLoading.type, payload: true },
+  disableLoadingPayload: { type: actSetLoading.type, payload: false },
+});
 
 export const store = configureStore({
   reducer: {
