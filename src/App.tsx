@@ -5,11 +5,11 @@ import { Provider } from "react-redux";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Loading } from "./components/Loading";
 import { Notification } from "./components/Notification";
-import CreateOutcomings from "./pages/Assessments/CreateOutcomings";
 import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
 import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
 import MyContentList from "./pages/MyContentList/index";
+import CreateOutcome from "./pages/OutcomeEdit";
 import Preview from "./pages/Preview";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
@@ -46,7 +46,7 @@ function App() {
                 <Redirect to={Schedule.routeRedirectDefault} />
               </Route>
               <Route path="/assessments">
-                <CreateOutcomings />
+                <CreateOutcome />
               </Route>
               <Route path="/">
                 <Redirect to="/library/my-content-list?layout=card&status=published" />

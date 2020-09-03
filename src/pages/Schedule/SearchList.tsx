@@ -100,7 +100,8 @@ const useQuery = () => {
 export default function SearchList() {
   const dispatch = useDispatch();
   const { name } = useQuery();
-  // const time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const time_zone = -new Date().getTimezoneOffset() * 60;
+  console.log(time_zone);
   const current_time = Math.floor(new Date().valueOf() / 1000);
   React.useEffect(() => {
     dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10, start_at: current_time }));
@@ -138,7 +139,6 @@ export default function SearchList() {
 
   let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
   let isMore = Math.ceil(total / 10);
-  console.log(isMore);
   const getBottom = (value: boolean) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
@@ -153,7 +153,7 @@ export default function SearchList() {
           {searchScheduleList.map((item: Schedule, index: number) => (
             <div key={item.id} className={classes.partItem}>
               {isTitleSame(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at as number, "dateDay")}</h1>}
-              <Card key={index} className={classes.cardItem} onClick={() => previewSchedule((item.id as unknown) as number)}>
+              <Card className={classes.cardItem} onClick={() => previewSchedule((item.id as unknown) as number)}>
                 <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
                 <Grid container alignItems="center" className={classes.firstLine}>
                   <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
