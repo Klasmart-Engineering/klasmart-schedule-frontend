@@ -126,7 +126,7 @@ export default function Outcomes(props: OutcomesProps) {
             <>
               <OutcomesTable list={list} />
               {pagination}
-              <OutComesInput selectedOutcomesList={list} />
+              <OutComesInput value={list} />
             </>
           ) : (
             <NoFiles />

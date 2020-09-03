@@ -47,11 +47,11 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 interface OutcomesInputProps {
-  selectedOutcomesList: Outcomes[];
+  value: Outcomes[];
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
-  const { selectedOutcomesList } = props;
+  const { value } = props;
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -67,7 +67,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           Added Learning Outcomes
         </Typography>
         <Box mr={2} className={css.indexUI}>
-          <Typography variant="h6">{selectedOutcomesList.length}</Typography>
+          <Typography variant="h6">{value.length}</Typography>
         </Box>
       </Box>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
@@ -78,7 +78,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <OutcomesTable list={selectedOutcomesList} />
+          <OutcomesTable list={value} />
         </DialogContent>
       </Dialog>
     </Box>

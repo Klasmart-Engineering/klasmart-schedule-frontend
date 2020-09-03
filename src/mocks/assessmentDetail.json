@@ -1,0 +1,121 @@
+{
+  "outcomes": [
+    {
+      "id": "1",
+      "name": "Speaking and Listening",
+      "shortcode": "12swr2",
+      "assumed": false,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "2",
+      "name": "Speaking and Listening",
+      "shortcode": "12swr2",
+      "assumed": true,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "3",
+      "name": "Speaking and Listening",
+      "shortcode": "12swr2",
+      "assumed": true,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "4",
+      "name": "Speaking and Listening",
+      "shortcode": "12swr2",
+      "assumed": true,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "5",
+      "name": "Able to use apppropriate volume when speaking",
+      "shortcode": "12swr2",
+      "assumed": false,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "6",
+      "name": "Speaking and Listening",
+      "shortcode": "12swr2",
+      "assumed": true,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "7",
+      "name": "Able to repeat and chant songs",
+      "shortcode": "12swr2",
+      "assumed": true,
+      "author": "Mary Roose"
+    },
+    {
+      "id": "8",
+      "name": "Able to use apppropriate volume when speaking",
+      "shortcode": "12swr2",
+      "assumed": true,
+      "author": "Mary Roose"
+    }
+  ],
+  "summary": {
+    "title": "20200901-ClassName-LessonName",
+    "attendence": ["Luis Jennings", "Ian Pope", "Ella Jensen"],
+    "subject": "Bada Rhyme",
+    "teacher": "Glen Henderson",
+    "classEndTime": 1589118506,
+    "classLength": 45,
+    "numberofActivities": 4,
+    "numberofLearningOutcomes": 4,
+    "completeTime": 1599118506
+  },
+  "attendenceList": [
+    {
+      "id": "1",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "2",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "3",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "4",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "5",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "6",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "7",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "8",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "9",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "10",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "11",
+      "name": "Johnny Fisher"
+    },
+    {
+      "id": "12",
+      "name": "Johnny Fisher"
+    }
+  ]
+}

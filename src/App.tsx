@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import { Loading } from "./components/Loading";
 import { Notification } from "./components/Notification";
+import { AssessmentsDetail } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
 import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
@@ -45,8 +46,11 @@ function App() {
               <Route path={Schedule.routeBasePath}>
                 <Redirect to={Schedule.routeRedirectDefault} />
               </Route>
-              <Route path="/assessments">
+              <Route path="/assessments/outcomes">
                 <CreateOutcome />
+              </Route>
+              <Route path={AssessmentsDetail.routeBasePath}>
+                <AssessmentsDetail />
               </Route>
               <Route path="/">
                 <Redirect to="/library/my-content-list?layout=card&status=published" />
