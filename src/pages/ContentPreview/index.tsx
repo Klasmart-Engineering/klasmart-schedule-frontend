@@ -66,8 +66,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
   },
   img: {
-    margin: "10px 0 20px 0",
-    minHeight: "196px",
+    height: "100%",
+    width: "100%",
   },
   tab: {
     width: "calc(100% + 24px)",
@@ -240,7 +240,9 @@ export default function ContentPreview(props: Content) {
           <Typography className={css.text}>{contentPreview.name}</Typography>
           <Chip size="small" color="primary" label={contentPreview.content_type_name} />
         </Box>
-        <Thumbnail className={css.img} type={contentPreview.content_type} id={contentPreview?.thumbnail} />
+        <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>
+          <Thumbnail className={css.img} type={contentPreview.content_type} id={contentPreview?.thumbnail} />
+        </Box>
         <Tabs
           className={css.tab}
           value={value}

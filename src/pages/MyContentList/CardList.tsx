@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) =>
       width: "100%",
       // paddingTop: "47.6%",
       position: "relative",
-      height: "100%",
+      maxHeight: "159.61px",
     },
     checkbox: {
       position: "absolute",
