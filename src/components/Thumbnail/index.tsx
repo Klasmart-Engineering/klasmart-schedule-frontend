@@ -37,5 +37,3 @@ export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, re
     />
   );
 });
-
-export const thumbnailUrl = (id?: string, type?: ContentType) => (id ? apiResourcePathById(id) : type2svg[type || ContentType.material]);

@@ -22,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Content } from "../../api/api";
 import LayoutBox from "../../components/LayoutBox";
-import { thumbnailUrl } from "../../components/Thumbnail";
+import { Thumbnail } from "../../components/Thumbnail";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -62,8 +62,13 @@ const useStyles = makeStyles((theme) =>
       width: "100%",
       paddingTop: "47.6%",
       position: "relative",
-      // height: "100%",
-      // maxHeight: "159.61px"
+    },
+    cardImg: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: "100%",
+      height: "100%",
     },
     checkbox: {
       position: "absolute",
@@ -234,7 +239,6 @@ function ContentCard(props: ContentProps) {
   const handleGoPreview = (event: any, id?: string) => {
     history.push(`/library/content-preview?id=${id}`);
   };
-  thumbnailUrl(content.thumbnail, content.content_type);
   return (
     <Card className={css.card}>
       <Checkbox
@@ -248,7 +252,9 @@ function ContentCard(props: ContentProps) {
         }}
       ></Checkbox>
       <CardActionArea onClick={(e) => handleGoPreview(e, content?.id)}>
-        <CardMedia className={css.cardMedia} image={thumbnailUrl(content.thumbnail, content.content_type)}></CardMedia>
+        <CardMedia className={css.cardMedia}>
+          <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
+        </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container alignContent="space-between">
