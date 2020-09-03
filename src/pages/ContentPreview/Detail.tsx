@@ -1,17 +1,8 @@
 import { Chip, Grid, InputAdornment, TextField } from "@material-ui/core";
 import React from "react";
 import { Content } from "../../api/api";
+import { formattedTime } from "../../models/ModelContentDetailForm";
 import { OperationBtn } from "./OperationBtn";
-
-const time = (time?: number) => {
-  const year = new Date((time || 0) * 1000).getFullYear();
-  let mouth: string = String(new Date((time || 0) * 1000).getMonth() + 1);
-  mouth = mouth.padStart(2, "0");
-  let day = String(new Date((time || 0) * 1000).getDate());
-  day = day.padStart(2, "0");
-  return `${year}-${mouth}-${day}`;
-};
-
 interface DetailProps {
   contentPreview: Content;
   handleAction: (type: string) => void;
@@ -38,7 +29,7 @@ export function Detail(props: DetailProps) {
             fullWidth
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={time(contentPreview.created_at)}
+            value={formattedTime(contentPreview.created_at)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
