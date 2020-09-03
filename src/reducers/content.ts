@@ -157,6 +157,9 @@ export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryCo
   return api.contentsDynamo.contentsDynamoList(query);
 });
 
+//debug
+(window as any).api = api;
+
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
   async ({ id, type, searchMedia }) => {

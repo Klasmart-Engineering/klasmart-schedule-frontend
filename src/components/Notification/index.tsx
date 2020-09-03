@@ -2,7 +2,7 @@ import { OptionsObject, TransitionHandler, useSnackbar } from "notistack";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
-import { remove } from "../../reducers/notify";
+import { actRemove } from "../../reducers/notify";
 
 type MessageHash = RootState["notify"];
 
@@ -32,7 +32,7 @@ export function Notification() {
       const { label, ...options } = message;
       const onExit: TransitionHandler = (elm, key) => {
         delete sourceMessages[key];
-        dispatch(remove(key));
+        dispatch(actRemove(key));
       };
       enqueueSnackbar(label, { ...defaultOptions, ...options, onExit });
       sourceMessages[message.key] = message;

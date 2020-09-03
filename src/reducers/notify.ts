@@ -33,16 +33,16 @@ const { actions, reducer } = createSlice({
   name: "notify",
   initialState,
   reducers: {
-    warning: createNotifyReducer("warning"),
-    error: createNotifyReducer("error"),
-    info: createNotifyReducer("info"),
-    success: createNotifyReducer("success"),
-    remove: (state, { payload: key }: PayloadAction<SnackbarKey>) => {
+    actWarning: createNotifyReducer("warning"),
+    actError: createNotifyReducer("error"),
+    actInfo: createNotifyReducer("info"),
+    actSuccess: createNotifyReducer("success"),
+    actRemove: (state, { payload: key }: PayloadAction<SnackbarKey>) => {
       if (!key) return initialState;
       delete state[key];
     },
   },
 });
 
-export const { warning, error, info, success, remove } = actions;
+export const { actWarning, actError, actInfo, actSuccess, actRemove } = actions;
 export default reducer;
