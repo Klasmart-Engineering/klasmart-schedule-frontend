@@ -103,7 +103,7 @@ function ContentHeader(props: HeaderProps) {
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
-  const radioTypography = sm ? "subtitle2" : "h5";
+  const radioTypography = sm ? "subtitle2" : "h6";
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
