@@ -374,7 +374,7 @@ function EditBox(props: CalendarStateProps) {
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
-    addData["time_zone_offset"] = new Date().getTimezoneOffset();
+    addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
@@ -740,7 +740,12 @@ function EditBox(props: CalendarStateProps) {
           setAttachmentName={setAttachmentName}
         />
         <Box className={css.fieldset} style={{ display: scheduleId ? "block" : "none" }}>
-          <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ width: "45%", marginRight: "10%" }}
+            href={`/#/library/content-preview?id=${scheduleList.lesson_plan_id}`}
+          >
             Preview in Live
           </Button>
           <Button variant="contained" color="primary" style={{ width: "45%" }}>

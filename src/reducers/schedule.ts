@@ -57,7 +57,7 @@ const initialState: ScheduleState = {
   searchFlag: false,
 };
 
-const timeZone = new Date().getTimezoneOffset();
+const timeZone = -new Date().getTimezoneOffset() * 60;
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
