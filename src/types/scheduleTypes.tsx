@@ -10,6 +10,8 @@ export interface RouteParams {
 
 export type modeViewType = "month" | "day" | "workWeek" | "week";
 
+export type repeatOptionsType = "only_current" | "with_following";
+
 type endType = {
   type: string;
   after_count: number;
@@ -46,6 +48,7 @@ type yearlyType = {
   on_week: string;
   end: endType;
 };
+
 export interface stateProps {
   type: string;
   daily: dailyType;

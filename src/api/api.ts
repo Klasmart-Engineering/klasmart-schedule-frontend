@@ -204,6 +204,8 @@ export interface ScheduleTimeView {
 
   /** schedule end time, timestamp */
   end_at?: number;
+
+  is_repeat?: boolean;
 }
 
 /**
@@ -285,6 +287,8 @@ export interface ScheduleCreate {
   is_all_day?: boolean;
 
   attachment?: CommonShort;
+
+  time_zone_offset?: number;
 }
 
 /**
@@ -375,6 +379,8 @@ export interface ScheduleUpdate {
 
   /** all_day flag */
   is_all_day?: boolean;
+
+  time_zone_offset?: number;
 }
 
 /**
@@ -399,6 +405,8 @@ export interface ScheduleDetailed {
   is_repeat?: boolean;
 
   is_force?: boolean;
+
+  repeat_id?: string;
 
   /**
    *
@@ -779,7 +787,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Get content resource upload path
      */
     getContentResourceUploadPath: (
-      query?: { partition?: "assets" | "thumbnail" | "attachment"; extension?: string },
+      query?: { partition?: "assets" | "thumbnail" | "schedule_attachment"; extension?: string },
       params?: RequestParams
     ) => this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
   };
@@ -1085,7 +1093,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description query schedules
      */
-    schedulesTimeView: (query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null }, params?: RequestParams) =>
+    schedulesTimeView: (
+      query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null; time_zone_offset?: number | null },
+      params?: RequestParams
+    ) =>
       this.request<{ list?: ScheduleTimeView[] }, any>(
         `/schedules_time_view${this.addQueryParams(query)}`,
         "GET",

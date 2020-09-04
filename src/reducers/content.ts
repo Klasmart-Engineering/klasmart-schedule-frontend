@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import api from "../api";
 import { Content, ContentIDListRequest } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
@@ -13,6 +14,8 @@ interface IContentState {
   contentsList: Content[];
   contentPreview: Content;
   refresh: number;
+  MediaListTotal: number;
+  OutcomesListTotal: number;
 }
 
 interface RootState {
@@ -54,6 +57,8 @@ const initialState: IContentState = {
     org_name: "",
   },
   mediaList: [],
+  MediaListTotal: 0,
+  OutcomesListTotal: 0,
   mockOptions: {
     program: [],
     subject: [],
@@ -112,10 +117,10 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
 type IQueryContentParams = Parameters<typeof api.contentsDynamo.contentsDynamoList>[0];
 type IQueryContentResult = AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
 
-interface onLoadContentEditPayload {
+interface onLoadContentEditPayload extends LoadingMetaPayload {
   id: Content["id"] | null;
   type: "assets" | "material" | "plan";
-  searchText?: string;
+  searchMedia?: string;
 }
 
 interface onLoadContentEditResult {
@@ -152,15 +157,18 @@ export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryCo
   return api.contentsDynamo.contentsDynamoList(query);
 });
 
+//debug
+(window as any).api = api;
+
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type, searchText }) => {
+  async ({ id, type, searchMedia }) => {
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
     // debugger;
     const [contentDetail, mediaList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
-      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchText }),
+      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
       apiGetMockOptions(),
     ]);
     return { contentDetail, mediaList, mockOptions };
@@ -257,7 +265,7 @@ const { actions, reducer } = createSlice({
         state.contentDetail = payload.contentDetail;
       }
       if (payload.mediaList?.total) {
-        state.total = payload.mediaList.total;
+        state.MediaListTotal = payload.mediaList.total;
       }
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;

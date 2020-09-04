@@ -88,6 +88,11 @@ const useStyles = makeStyles((theme: Theme) =>
     lastRepeat: {
       marginBottom: "10px",
     },
+    after_time: {
+      "& input": {
+        fontSize: "15px",
+      },
+    },
   })
 );
 
@@ -395,14 +400,14 @@ function EndRepeat(props: ExtendsProps) {
 
   const handleAfterTime = (event: React.ChangeEvent<{ value: string }>) => {
     let _date = timeToTimestamp(event.target.value);
-    _state[type].end.after_time = _date * 1000;
+    _state[type].end.after_time = _date;
     handleRepeatData(_state);
   };
 
   const timestampToTime = (timestamp: Number | null) => {
-    const date = new Date(Number(timestamp) * 1000);
+    const date = new Date(Number(timestamp));
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
-    const [Y, M, D] = [
+    const [Y, M, D, h, m] = [
       date.getFullYear(),
       dateNumFun(date.getMonth() + 1),
       dateNumFun(date.getDate()),
@@ -410,12 +415,12 @@ function EndRepeat(props: ExtendsProps) {
       dateNumFun(date.getMinutes()),
       dateNumFun(date.getSeconds()),
     ];
-    return `${Y}-${M}-${D}`;
+    return `${Y}-${M}-${D}T${h}:${m}`;
   };
 
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
-    return timestampInt(new Date(currentTime).getTime() / 1000);
+    return timestampInt(new Date(currentTime).getTime());
   };
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -451,15 +456,16 @@ function EndRepeat(props: ExtendsProps) {
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
               <TextField
                 fullWidth
-                id="date"
+                id="datetime-local"
                 label={null}
-                type="date"
+                type="datetime-local"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={timestampToTime(end.after_time / 1000)}
+                value={timestampToTime(end.after_time)}
                 disabled={end.type !== "after_time"}
                 onChange={handleAfterTime}
+                className={classes.after_time}
               />
             </Grid>
           </Grid>

@@ -48,6 +48,26 @@ const tipsText = (
   </div>
 );
 
+const format: string[] = [
+  "avi",
+  "mov",
+  "mp4",
+  "mp3",
+  "wav",
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "bmp",
+  "doc",
+  "docx",
+  "ppt",
+  "pptx",
+  "xls",
+  "xlsx",
+  "pdf",
+];
+
 interface ScheduleAttachmentProps {
   setAttachmentId: (id: string) => void;
   attachmentId: string;
@@ -70,6 +90,14 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   };
 
   const getFileName = (name: string): string => {
+    let isWithin: boolean = false;
+    format.forEach((item) => {
+      if (name.includes(item)) {
+        isWithin = true;
+        return;
+      }
+    });
+    console.log(isWithin);
     setAttachmentName(name);
     return name;
   };
@@ -78,7 +106,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
 
   return (
     <SingleUploader
-      partition="attachment"
+      partition="schedule_attachment"
       onChange={handleOnChange}
       render={({ uploady, item, btnRef, value, isUploading }) => (
         <Box className={css.fieldBox}>

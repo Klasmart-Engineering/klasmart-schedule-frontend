@@ -3,6 +3,7 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
+  CardMedia,
   Checkbox,
   Collapse,
   createStyles,
@@ -59,8 +60,14 @@ const useStyles = makeStyles((theme) =>
     },
     cardMedia: {
       width: "100%",
-      // paddingTop: "47.6%",
+      paddingTop: "47.6%",
       position: "relative",
+    },
+    cardImg: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: "100%",
       height: "100%",
     },
     checkbox: {
@@ -232,15 +239,6 @@ function ContentCard(props: ContentProps) {
   const handleGoPreview = (event: any, id?: string) => {
     history.push(`/library/content-preview?id=${id}`);
   };
-  // const setThumbnail = () => {
-  //   if (!content?.thumbnail && content?.content_type_name === "document") return DocIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "audio") return MusicIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "img") return PicIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "video") return VideoIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "Plan") return PlanIconUrl;
-  //   if (!content?.thumbnail && content?.content_type_name === "Material") return MaterialIconUrl;
-  //   if (content?.thumbnail) return apiResourcePathById(content?.thumbnail);
-  // };
   return (
     <Card className={css.card}>
       <Checkbox
@@ -254,8 +252,9 @@ function ContentCard(props: ContentProps) {
         }}
       ></Checkbox>
       <CardActionArea onClick={(e) => handleGoPreview(e, content?.id)}>
-        {/* <CardMedia className={css.cardMedia} image={setThumbnail()}></CardMedia> */}
-        <Thumbnail className={css.cardMedia} type={content.content_type} id={content.thumbnail} />
+        <CardMedia className={css.cardMedia}>
+          <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
+        </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container alignContent="space-between">

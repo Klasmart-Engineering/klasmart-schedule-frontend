@@ -7,6 +7,7 @@ interface scheduleViewData {
   id: string;
   start: Date;
   title: string;
+  is_repeat: boolean;
 }
 
 export interface ScheduleState {
@@ -56,6 +57,8 @@ const initialState: ScheduleState = {
   searchFlag: false,
 };
 
+const timeZone = -new Date().getTimezoneOffset() * 60;
+
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
 export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, querySchedulesParams>("schedule/scheduleList", (query) => {
@@ -85,15 +88,21 @@ type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.schedulesTime
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
   "schedule/schedules_time_view",
   (query) => {
-    return api.schedulesTimeView.schedulesTimeView(query);
+    return api.schedulesTimeView.schedulesTimeView({ ...query, time_zone_offset: timeZone });
   }
 );
 
-type deleteSchedulesParams = Parameters<typeof api.schedules.deleteSchedule>[0];
+type deleteSchedulesParams = {
+  schedule_id: Parameters<typeof api.schedules.deleteSchedule>[0];
+  repeat_edit_options: Parameters<typeof api.schedules.deleteSchedule>[1];
+};
 type deleteSchedulesResult = ReturnType<typeof api.schedules.deleteSchedule>;
-export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>("schedule/delete", (schedule_id, query) => {
-  return api.schedules.deleteSchedule(schedule_id, { repeat_edit_options: "only_current" });
-});
+export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>(
+  "schedule/delete",
+  ({ schedule_id, repeat_edit_options }, query) => {
+    return api.schedules.deleteSchedule(schedule_id, repeat_edit_options);
+  }
+);
 
 type infoSchedulesParams = Parameters<typeof api.schedules.getSchedulesById>[0];
 type infoSchedulesResult = ReturnType<typeof api.schedules.getSchedulesById>;
@@ -119,7 +128,7 @@ const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
     data.forEach((item: ScheduleTimeView) => {
       const start_at = new Date(Number(item.start_at) * 1000);
       const end_at = new Date(Number(item.end_at) * 1000);
-      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title });
+      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title, is_repeat: item.is_repeat });
     });
   }
   return newViewData;

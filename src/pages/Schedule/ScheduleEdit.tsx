@@ -29,7 +29,8 @@ import {
 import theme from "../../theme";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { timestampType, modeViewType } from "../../types/scheduleTypes";
+import { timestampType, modeViewType, repeatOptionsType } from "../../types/scheduleTypes";
+import ConfilctTestTemplate from "./ConfilctTestTemplate";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -109,6 +110,7 @@ function EditBox(props: CalendarStateProps) {
   const [contentsListSelect, setContentsListSelect] = React.useState<CommonShort[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
+  const [enableCustomization, setEnableCustomization] = React.useState(true);
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -372,6 +374,7 @@ function EditBox(props: CalendarStateProps) {
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment"] = { id: attachmentId, name: attachmentName };
     addData["repeat_edit_options"] = "only_current";
+    addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
@@ -403,8 +406,10 @@ function EditBox(props: CalendarStateProps) {
     setOpenStatus(false);
   };
 
-  const deleteScheduleByid = async () => {
-    await dispatch(removeSchedule(scheduleDetial.id as string));
+  const deleteScheduleByid = async (repeat_edit_options: repeatOptionsType = "only_current") => {
+    await dispatch(
+      removeSchedule({ schedule_id: scheduleDetial.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
+    );
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
@@ -427,6 +432,8 @@ function EditBox(props: CalendarStateProps) {
   const modalDate: any = {
     title: "",
     text: modalText,
+    enableCustomization: enableCustomization,
+    customizeTemplate: <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} />,
     openStatus: openStatus,
     buttons: buttons,
     handleClose: handleClose,
@@ -436,23 +443,29 @@ function EditBox(props: CalendarStateProps) {
    * modal type delete
    */
   const handleDelete = () => {
-    const button = [
-      {
-        label: "Cancel",
-        event: () => {
-          setOpenStatus(false);
+    if (scheduleDetial.is_repeat) {
+      setEnableCustomization(true);
+      setOpenStatus(true);
+    } else {
+      setEnableCustomization(false);
+      const button = [
+        {
+          label: "Cancel",
+          event: () => {
+            setOpenStatus(false);
+          },
         },
-      },
-      {
-        label: "Delete",
-        event: () => {
-          deleteScheduleByid();
+        {
+          label: "Delete",
+          event: () => {
+            deleteScheduleByid();
+          },
         },
-      },
-    ];
-    setOpenStatus(true);
-    setModalText("Are you sure you want to delete this event?");
-    setButtons(button);
+      ];
+      setOpenStatus(true);
+      setModalText("Are you sure you want to delete this event?");
+      setButtons(button);
+    }
   };
 
   /**
@@ -727,7 +740,12 @@ function EditBox(props: CalendarStateProps) {
           setAttachmentName={setAttachmentName}
         />
         <Box className={css.fieldset} style={{ display: scheduleId ? "block" : "none" }}>
-          <Button variant="contained" color="primary" style={{ width: "45%", marginRight: "10%" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ width: "45%", marginRight: "10%" }}
+            href={`/#/library/content-preview?id=${scheduleList.lesson_plan_id}`}
+          >
             Preview in Live
           </Button>
           <Button variant="contained" color="primary" style={{ width: "45%" }}>

@@ -1,8 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { apiEmitter, ApiErrorEventData, ApiEvent } from "./api";
 import App from "./App";
 import "./index.css";
+import { store } from "./reducers";
+import { actError } from "./reducers/notify";
 import * as serviceWorker from "./serviceWorker";
+
+apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
+  if (!e) return;
+  const { label, msg } = e;
+  const message = String(label || msg || "");
+  if (message) store.dispatch(actError(message));
+});
 
 // if (process.env.NODE_ENV === 'development') {
 //   const { worker } = require('./mocks/browser')
