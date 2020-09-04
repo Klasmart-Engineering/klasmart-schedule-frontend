@@ -52,6 +52,7 @@ type scheduleInfoProps = {
   id: string;
   start: Date;
   title: string;
+  lesson_plan_id: string;
 };
 
 interface InfoProps {
@@ -82,7 +83,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleEditSchedule = (): void => {
     handleClose();
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
+    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.lesson_plan_id}`);
   };
 
   return (
@@ -103,8 +104,8 @@ export default function CustomizeTempalte(props: InfoProps) {
         <DeleteOutlined className={classes.lastIcon} onClick={handleDelete} />
       </div>
       <div className={classes.buttonPart}>
-        <Button color="primary" variant="contained">
-          Preview in Live
+        <Button color="primary" variant="contained" href={`/#/library/content-preview?id=5f4cbf110d28c183f6c6830e`}>
+          Preview
         </Button>
         <Button color="primary" variant="contained" autoFocus className={classes.lastButton}>
           Go Live
