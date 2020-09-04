@@ -156,7 +156,7 @@ function RepeatCycle(props: ExtendsProps) {
 
   if (type === "weekly") {
     weekends.forEach((item, index) => {
-      if (on.length > 0) {
+      if (on && on.length > 0) {
         on.forEach((item1: string) => {
           if (item.day === item1) {
             item.selected = true;
@@ -174,13 +174,23 @@ function RepeatCycle(props: ExtendsProps) {
       }
     });
     setWeekends(temp);
-    let selectedDays: Array<string> = on;
-    let idx = selectedDays.indexOf(weekends[index].day);
-    if (idx > -1) {
-      selectedDays.splice(idx, 1);
+    let selectedDays: Array<string>;
+    if (on && on.length > 0) {
+      selectedDays = on;
+    } else {
+      selectedDays = [];
+    }
+    if (selectedDays && selectedDays.length > 0) {
+      let idx = selectedDays.indexOf(weekends[index].day);
+      if (idx > -1) {
+        selectedDays.splice(idx, 1);
+      } else {
+        selectedDays.push(weekends[index].day);
+      }
     } else {
       selectedDays.push(weekends[index].day);
     }
+    console.log(selectedDays);
     _state[type].on = selectedDays;
     handleRepeatData(_state);
   };
@@ -571,7 +581,7 @@ function RepeatHeader(props: ExtendsProps) {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          value={type}
+          value={type || ""}
           onChange={handleChangeType}
           label={type}
           required

@@ -1,11 +1,12 @@
 import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { RootState } from "../../reducers";
+import { onLoadContentEdit } from "../../reducers/content";
 import OutcomeHeader from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
 
@@ -53,20 +54,25 @@ export default function CreateOutcomings() {
   const { control, errors, watch, handleSubmit, reset, setValue, getValues } = useForm();
   const [openStatus, setOpenStatus] = React.useState(false);
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const dispatch = useDispatch();
   watch();
   console.log(mockOptions);
 
+  React.useEffect(() => {
+    dispatch(onLoadContentEdit({ type: "material", id: null }));
+  });
+
   interface outcomeDetails {
-    name: string;
-    code: string;
+    outcome_name: string;
+    shortcode: string;
     assumed: boolean;
-    program: string;
-    subject: string;
-    development: string;
-    skills: string;
-    age: string;
-    grade: string;
-    estimateTime: string;
+    program: string[];
+    subject: string[];
+    development: string[];
+    skills: string[];
+    age: string[];
+    grade: string[];
+    estimated_time: string;
     keywords: string;
     description: string;
     reject_reason: string;
@@ -76,16 +82,16 @@ export default function CreateOutcomings() {
   }
 
   const initialDetail: outcomeDetails = {
-    name: "",
-    code: "",
+    outcome_name: "",
+    shortcode: "",
     assumed: true,
-    program: "",
-    subject: "",
-    development: "",
-    skills: "",
-    age: "",
-    grade: "",
-    estimateTime: "",
+    program: [],
+    subject: [],
+    development: [],
+    skills: [],
+    age: [],
+    grade: [],
+    estimated_time: "",
     keywords: "",
     description: "",
     reject_reason: "",
@@ -140,6 +146,7 @@ export default function CreateOutcomings() {
   };
 
   const handleDelete = () => {
+    setEnableCustomization(false);
     setOpenStatus(true);
   };
 
@@ -149,10 +156,10 @@ export default function CreateOutcomings() {
   };
 
   const handleChange = () => {
-    // console.log(2222)
     setValue("assumed", !getValues("assumed"));
-    console.log(getValues());
   };
+
+  console.log(getValues());
 
   return (
     <Box component="form" className={classes.outcomings_container}>
@@ -185,26 +192,26 @@ export default function CreateOutcomings() {
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                name="name"
+                name="outcome_name"
                 rules={{ required: true }}
-                error={errors.name ? true : false}
+                error={errors.outcome_name ? true : false}
                 as={TextField}
                 control={control}
                 size="small"
-                defaultValue={initialDetail.name}
+                defaultValue={initialDetail.outcome_name}
                 fullWidth
                 label="Learning Outcome Name"
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                name="code"
+                name="shortcode"
                 as={TextField}
                 rules={{ maxLength: 3 }}
-                error={errors.code ? true : false}
+                error={errors.shortcode ? true : false}
                 control={control}
                 size="small"
-                defaultValue={initialDetail.code}
+                defaultValue={initialDetail.shortcode}
                 fullWidth
                 label="Short Code"
               />
@@ -275,6 +282,7 @@ export default function CreateOutcomings() {
                 size="small"
                 fullWidth
                 label="Program"
+                SelectProps={{ multiple: true }}
               >
                 {getItems(mockOptions.program)}
               </Controller>
@@ -289,6 +297,7 @@ export default function CreateOutcomings() {
                 size="small"
                 fullWidth
                 label="Subject"
+                SelectProps={{ multiple: true }}
               >
                 {getItems(mockOptions.subject)}
               </Controller>
@@ -305,6 +314,7 @@ export default function CreateOutcomings() {
                 size="small"
                 fullWidth
                 label="Development Category"
+                SelectProps={{ multiple: true }}
               >
                 {getItems(mockOptions.developmental)}
               </Controller>
@@ -319,6 +329,7 @@ export default function CreateOutcomings() {
                 size="small"
                 fullWidth
                 label="Skills Category"
+                SelectProps={{ multiple: true }}
               >
                 {getItems(mockOptions.skills)}
               </Controller>
@@ -335,6 +346,7 @@ export default function CreateOutcomings() {
                 size="small"
                 fullWidth
                 label="Age"
+                SelectProps={{ multiple: true }}
               >
                 {getItems(mockOptions.age)}
               </Controller>
@@ -349,6 +361,7 @@ export default function CreateOutcomings() {
                 size="small"
                 fullWidth
                 label="Grade"
+                SelectProps={{ multiple: true }}
               >
                 {getItems(mockOptions.grade)}
               </Controller>
@@ -359,10 +372,10 @@ export default function CreateOutcomings() {
           <Grid container justify="space-between" style={{ marginTop: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                name="estimateTime"
+                name="estimated_time"
                 as={TextField}
                 control={control}
-                defaultValue={initialDetail.estimateTime}
+                defaultValue={initialDetail.estimated_time}
                 size="small"
                 fullWidth
                 label="Estimated time"

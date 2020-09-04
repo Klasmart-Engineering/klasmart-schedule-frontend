@@ -122,12 +122,16 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handleClick}>
             Publish
           </Button>
-          <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
-            Reject
-          </Button>
-          <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleClick}>
-            Approve
-          </Button>
+          {outcome_id && (
+            <>
+              <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
+                Reject
+              </Button>
+              <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleClick}>
+                Approve
+              </Button>
+            </>
+          )}
         </Hidden>
       </Box>
       <Hidden smDown>
