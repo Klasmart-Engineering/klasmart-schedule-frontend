@@ -31,6 +31,7 @@ import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import { timestampType, modeViewType, repeatOptionsType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
+import { actError } from "../../reducers/notify";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -367,7 +368,13 @@ function EditBox(props: CalendarStateProps) {
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
-      addData["due_at"] = timestampInt(selectedDueDate.getTime() / 1000);
+      const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
+      // @ts-ignore
+      if (dueDateTimestamp <= scheduleList.end_at) {
+        dispatch(actError("The due date cannot be earlier than the scheduled class end time."));
+        return;
+      }
+      addData["due_at"] = dueDateTimestamp;
     }
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
@@ -543,6 +550,7 @@ function EditBox(props: CalendarStateProps) {
             label="Class Name"
             value={scheduleList.title}
             onChange={(e) => handleTopicListChange(e, "title")}
+            required
           ></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
@@ -555,7 +563,7 @@ function EditBox(props: CalendarStateProps) {
           }}
           value={classItem}
           renderInput={(params) => (
-            <TextField {...params} error={validator.class_id} className={css.fieldset} label="Add Class" variant="outlined" />
+            <TextField {...params} error={validator.class_id} className={css.fieldset} label="Add Class" required variant="outlined" />
           )}
         />
         <Autocomplete
@@ -575,6 +583,7 @@ function EditBox(props: CalendarStateProps) {
               error={validator.lesson_plan_id}
               value={scheduleList.lesson_plan_id}
               variant="outlined"
+              required
             />
           )}
         />
@@ -596,6 +605,7 @@ function EditBox(props: CalendarStateProps) {
               error={validator.teacher_ids}
               value={scheduleList.teacher_ids}
               variant="outlined"
+              required
             />
           )}
         />
@@ -611,6 +621,7 @@ function EditBox(props: CalendarStateProps) {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  required
                   error={validator.start_at}
                   value={timestampToTime(scheduleList.start_at)}
                   onChange={(e) => handleTopicListChange(e, "start_at")}
@@ -625,6 +636,7 @@ function EditBox(props: CalendarStateProps) {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  required
                   error={validator.end_at}
                   value={timestampToTime(scheduleList.end_at)}
                   onChange={(e) => handleTopicListChange(e, "end_at")}
@@ -661,6 +673,7 @@ function EditBox(props: CalendarStateProps) {
               error={validator.subject_id}
               variant="outlined"
               value={scheduleList.subject_id}
+              required
             />
           )}
         />
@@ -680,6 +693,7 @@ function EditBox(props: CalendarStateProps) {
               variant="outlined"
               error={validator.program_id}
               value={scheduleList.program_id}
+              required
             />
           )}
         />
@@ -690,6 +704,7 @@ function EditBox(props: CalendarStateProps) {
           onChange={(e) => handleTopicListChange(e, "class_type")}
           error={validator.class_type}
           select
+          required
         >
           <MenuItem value="OnlineClass">online class</MenuItem>
           <MenuItem value="OfflineClass">offline class</MenuItem>

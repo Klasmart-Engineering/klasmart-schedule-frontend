@@ -1,8 +1,11 @@
 import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
+import { RootState } from "../../reducers";
 import OutcomeHeader from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
 
@@ -47,32 +50,11 @@ const useQuery = () => {
 export default function CreateOutcomings() {
   const classes = useStyles();
   const { outcome_id } = useQuery();
-  const { control, errors, watch, handleSubmit, reset } = useForm();
+  const { control, errors, watch, handleSubmit, reset, setValue, getValues } = useForm();
   const [openStatus, setOpenStatus] = React.useState(false);
+  const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   watch();
-
-  const mockList = [
-    {
-      id: 1,
-      name: "飞洒晒晒",
-    },
-    {
-      id: 2,
-      name: "fdsfsdfs",
-    },
-    {
-      id: 3,
-      name: "seengn",
-    },
-    {
-      id: 4,
-      name: "khgk4556",
-    },
-    {
-      id: 5,
-      name: "grtyrt54456f",
-    },
-  ];
+  console.log(mockOptions);
 
   interface outcomeDetails {
     name: string;
@@ -112,8 +94,8 @@ export default function CreateOutcomings() {
     author: "",
   };
 
-  const getItems = () =>
-    mockList.map((item) => (
+  const getItems = (list: MockOptionsItem[]) =>
+    list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
       </MenuItem>
@@ -126,10 +108,6 @@ export default function CreateOutcomings() {
       }),
     [handleSubmit]
   );
-
-  const handleReset = () => {
-    reset();
-  };
 
   const handleClose = () => {
     setOpenStatus(false);
@@ -170,11 +148,17 @@ export default function CreateOutcomings() {
     setEnableCustomization(true);
   };
 
+  const handleChange = () => {
+    // console.log(2222)
+    setValue("assumed", !getValues("assumed"));
+    console.log(getValues());
+  };
+
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
         handleSave={handleSave}
-        handleReset={handleReset}
+        handleReset={reset}
         handleDelete={handleDelete}
         outcome_id={outcome_id}
         handelReject={handelReject}
@@ -228,7 +212,11 @@ export default function CreateOutcomings() {
           </Grid>
           <Grid container justify="space-between" style={{ paddingBottom: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.checkBox}>
-              <Controller name="assumed" as={Checkbox} control={control} defaultChecked={initialDetail.assumed} size="small" />
+              <Controller
+                control={control}
+                name="assumed"
+                render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleChange} />}
+              />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
             {outcome_id && (
@@ -288,7 +276,7 @@ export default function CreateOutcomings() {
                 fullWidth
                 label="Program"
               >
-                {getItems()}
+                {getItems(mockOptions.program)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -302,7 +290,7 @@ export default function CreateOutcomings() {
                 fullWidth
                 label="Subject"
               >
-                {getItems()}
+                {getItems(mockOptions.subject)}
               </Controller>
             </Grid>
           </Grid>
@@ -318,7 +306,7 @@ export default function CreateOutcomings() {
                 fullWidth
                 label="Development Category"
               >
-                {getItems()}
+                {getItems(mockOptions.developmental)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -332,7 +320,7 @@ export default function CreateOutcomings() {
                 fullWidth
                 label="Skills Category"
               >
-                {getItems()}
+                {getItems(mockOptions.skills)}
               </Controller>
             </Grid>
           </Grid>
@@ -348,7 +336,7 @@ export default function CreateOutcomings() {
                 fullWidth
                 label="Age"
               >
-                {getItems()}
+                {getItems(mockOptions.age)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -362,7 +350,7 @@ export default function CreateOutcomings() {
                 fullWidth
                 label="Grade"
               >
-                {getItems()}
+                {getItems(mockOptions.grade)}
               </Controller>
             </Grid>
           </Grid>

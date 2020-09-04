@@ -25,25 +25,29 @@ const useStyles = makeStyles({
   },
 });
 
-interface SearchcmsListProps {
+export interface SearchcmsListProps {
   searchName: "searchMedia" | "searchOutcomes";
   onSearch: (searchName: SearchcmsListProps["value"]) => any;
   value?: string;
-  assumed?: boolean;
+  assumed?: string;
+  onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
 }
 
 export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
-  const { onSearch, value, assumed } = props;
+  const { onSearch, onCheck, value, assumed } = props;
   const { getValues, control } = useForm<Pick<SearchcmsListProps, "searchName">>();
   const handleClickSearch = useCallback(() => {
     const { searchName } = getValues();
     onSearch(searchName);
   }, [getValues, onSearch]);
 
-  const handleChangeAssumed = useCallback((e) => {
-    console.log(e.target.checked);
-  }, []);
+  const handleChangeAssumed = useCallback(
+    (e) => {
+      if (onCheck) onCheck(e.target.checked ? "true" : "");
+    },
+    [onCheck]
+  );
 
   return (
     <Box display="flex" pt={3} pb={1} width="100%">
@@ -61,7 +65,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
       </Button>
       <FormControlLabel
         className={css.checkField}
-        control={<Checkbox checked={assumed} onChange={handleChangeAssumed} color="primary" />}
+        control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
         label="Assumed"
       />
     </Box>

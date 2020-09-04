@@ -15,6 +15,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import React from "react";
+import ModalBox from "../../components/ModalBox";
 import { stateProps } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -383,7 +384,7 @@ function RepeatCycle(props: ExtendsProps) {
 
 function EndRepeat(props: ExtendsProps) {
   const classes = useStyles();
-  const { state, handleRepeatData } = props;
+  const { state, handleRepeatData, setOpenStatus } = props;
   const { type } = state;
   const { end } = state[type];
   let _state = JSON.parse(JSON.stringify(state));
@@ -400,6 +401,10 @@ function EndRepeat(props: ExtendsProps) {
 
   const handleAfterTime = (event: React.ChangeEvent<{ value: string }>) => {
     let _date = timeToTimestamp(event.target.value);
+    if (_date > Date.now() + 2 * 365 * 24 * 60 * 60 * 1000) {
+      setOpenStatus(true);
+      return;
+    }
     _state[type].end.after_time = _date;
     handleRepeatData(_state);
   };
@@ -477,17 +482,32 @@ function EndRepeat(props: ExtendsProps) {
 
 function RepeatHeader(props: ExtendsProps) {
   const classes = useStyles();
-  const { state, handleRepeatData } = props;
+  const { state, handleRepeatData, setOpenStatus } = props;
   const { type } = state;
   const { interval } = state[type];
   let _state = JSON.parse(JSON.stringify(state));
 
   const handleChangeType = (event: React.ChangeEvent<{ value: unknown }>) => {
-    // handleRepeatData({ ...state, type: event.target.value as string });
     _state.type = event.target.value as string;
     handleRepeatData(_state);
   };
   const handleChangeInterval = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (type === "daily" && +event.target.value > 2 * 365) {
+      setOpenStatus(true);
+      return;
+    }
+    if (type === "weekly" && +event.target.value > Math.floor((2 * 365) / 7)) {
+      setOpenStatus(true);
+      return;
+    }
+    if (type === "monthly" && +event.target.value > 24) {
+      setOpenStatus(true);
+      return;
+    }
+    if (type === "yearly" && +event.target.value > 2) {
+      setOpenStatus(true);
+      return;
+    }
     _state[type].interval = +event.target.value;
     handleRepeatData(_state);
   };
@@ -545,16 +565,38 @@ interface RepeatScheduleProps {
 interface ExtendsProps {
   handleRepeatData: (data: stateProps) => void;
   state: any;
+  setOpenStatus: (value: boolean) => void;
 }
 
 export default function RepeatSchedule(props: RepeatScheduleProps) {
   const classes = useStyles();
   const { handleRepeatData, repeatState } = props;
+
+  const [openStatus, setOpenStatus] = React.useState(false);
+
+  const modalData: any = {
+    title: "",
+    text: "You cannot scheduel a class beyond two years.",
+    openStatus: openStatus,
+    enableCustomization: false,
+    buttons: [
+      {
+        label: "OK",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+    ],
+    handleClose: () => {
+      setOpenStatus(false);
+    },
+  };
   return (
     <Card className={classes.container}>
-      <RepeatHeader state={repeatState} handleRepeatData={handleRepeatData} />
-      <RepeatCycle state={repeatState} handleRepeatData={handleRepeatData} />
-      <EndRepeat state={repeatState} handleRepeatData={handleRepeatData} />
+      <RepeatHeader state={repeatState} handleRepeatData={handleRepeatData} setOpenStatus={setOpenStatus} />
+      <RepeatCycle state={repeatState} handleRepeatData={handleRepeatData} setOpenStatus={setOpenStatus} />
+      <EndRepeat state={repeatState} handleRepeatData={handleRepeatData} setOpenStatus={setOpenStatus} />
+      <ModalBox modalDate={modalData} />
     </Card>
   );
 }

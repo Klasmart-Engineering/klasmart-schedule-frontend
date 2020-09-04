@@ -46,7 +46,7 @@ function App() {
               <Route path={Schedule.routeBasePath}>
                 <Redirect to={Schedule.routeRedirectDefault} />
               </Route>
-              <Route path="/assessments/outcomes">
+              <Route path="/assessments">
                 <CreateOutcome />
               </Route>
               <Route path={AssessmentsDetail.routeBasePath}>

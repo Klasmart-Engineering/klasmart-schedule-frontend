@@ -1,11 +1,25 @@
-import { Box, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  makeStyles,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
+import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { OutComesInput } from "../../components/OutcomesInput";
-import { SearchcmsList } from "../../components/SearchcmsList";
+import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
 import { Comingsoon, NoFiles } from "./MediaAssets";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -37,16 +51,56 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   addGreen: createColor(palette.success, palette),
   removeRead: createColor(palette.error, palette),
   pagination: {
-    marginBottom: 80,
+    marginBottom: 90,
   },
   paginationUl: {
     justifyContent: "center",
   },
+  outcomsInput: {
+    position: "absolute",
+    bottom: 20,
+    width: "95%",
+  },
+  addOutcomesButton: {
+    width: "100%",
+    height: 54,
+    backgroundColor: palette.primary.main,
+    borderRadius: 6,
+    padding: "5px 30px",
+    display: "flex",
+    alignItems: "center",
+    boxSizing: "border-box",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: palette.action.disabledOpacity,
+    },
+  },
+  addText: {
+    color: palette.common.white,
+  },
+  indexUI: {
+    width: 35,
+    height: 35,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: palette.common.white,
+    color: palette.primary.main,
+    position: "absolute",
+    right: 32,
+  },
+  closeButton: {
+    position: "absolute",
+    right: 14,
+    top: 9,
+    color: palette.grey[500],
+  },
 }));
+
 interface OutcomesTableProps {
   list: Outcomes[];
 }
-
 export const OutcomesTable = (props: OutcomesTableProps) => {
   const { list } = props;
   const css = useStyles();
@@ -78,6 +132,45 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     </>
   );
 };
+
+interface OutcomesInputProps {
+  value: Outcomes[];
+}
+export const OutComesInput = (props: OutcomesInputProps) => {
+  const css = useStyles();
+  const { value } = props;
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <Box className={css.outcomsInput}>
+      <Box color="primary" className={css.addOutcomesButton} boxShadow={3} onClick={handleClickOpen}>
+        <Typography component="h6" className={css.addText}>
+          Added Learning Outcomes
+        </Typography>
+        <Box mr={2} className={css.indexUI}>
+          <Typography variant="h6">{value.length}</Typography>
+        </Box>
+      </Box>
+      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+        <DialogTitle id="customized-dialog-title">
+          Added Learning Outcomes
+          <IconButton aria-label="close" className={css.closeButton} onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <OutcomesTable list={value} />
+        </DialogContent>
+      </Dialog>
+    </Box>
+  );
+};
 export interface Outcomes {
   id: string;
   name?: string;
@@ -91,13 +184,15 @@ export interface OutcomesProps {
   total: number;
   amountPerPage?: number;
   value: string;
-  onSearch: (searchName?: string) => any;
+  assumed: string;
+  onSearch: (searchName: SearchcmsListProps["value"]) => any;
+  onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
   onChangePage: (page: number) => any;
 }
 
 export default function Outcomes(props: OutcomesProps) {
   const css = useStyles();
-  const { comingsoon, list, onSearch, value } = props;
+  const { comingsoon, list, onSearch, onCheck, value, assumed } = props;
   const { lesson } = useParams();
   // const handChangePage = useCallback(
   //   (event: object, page: number) => {
@@ -121,7 +216,7 @@ export default function Outcomes(props: OutcomesProps) {
         <Comingsoon />
       ) : (
         <>
-          <SearchcmsList searchName="searchOutcomes" onSearch={onSearch} value={value} />
+          <SearchcmsList searchName="searchOutcomes" onSearch={onSearch} value={value} onCheck={onCheck} assumed={assumed} />
           {list.length > 0 ? (
             <>
               <OutcomesTable list={list} />
