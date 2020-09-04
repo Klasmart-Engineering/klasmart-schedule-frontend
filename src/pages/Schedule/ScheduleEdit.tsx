@@ -108,6 +108,7 @@ function EditBox(props: CalendarStateProps) {
   const [subjectItem, setSubjectItem] = React.useState<CommonShort | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<CommonShort | undefined>(defaults);
   const [teacherItem, setTeacherItem] = React.useState<any[] | undefined>([]);
+  const [customizeTemplateType, setCustomizeTemplateType] = React.useState<"update" | "delete">("update");
   const [contentsListSelect, setContentsListSelect] = React.useState<CommonShort[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
@@ -363,8 +364,9 @@ function EditBox(props: CalendarStateProps) {
   /**
    * save schedule data
    */
-  const saveSchedule = async () => {
+  const saveSchedule = async (repeat_edit_options: repeatOptionsType = "only_current") => {
     if (!validatorFun()) return;
+    setOpenStatus(false);
     const addData: any = {};
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
@@ -380,11 +382,23 @@ function EditBox(props: CalendarStateProps) {
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
     addData["attachment"] = { id: attachmentId, name: attachmentName };
-    addData["repeat_edit_options"] = "only_current";
+    if (scheduleId) {
+      addData["repeat_edit_options"] = repeat_edit_options;
+    }
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+  };
+
+  const saveTheTest = () => {
+    if (scheduleId && scheduleDetial.is_repeat) {
+      setCustomizeTemplateType("update");
+      setEnableCustomization(true);
+      setOpenStatus(true);
+    } else {
+      saveSchedule();
+    }
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -440,7 +454,12 @@ function EditBox(props: CalendarStateProps) {
     title: "",
     text: modalText,
     enableCustomization: enableCustomization,
-    customizeTemplate: <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} />,
+    customizeTemplate:
+      customizeTemplateType === "update" ? (
+        <ConfilctTestTemplate handleDelete={saveSchedule} handleClose={handleClose} title={"Edit"} />
+      ) : (
+        <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title={"Delete"} />
+      ),
     openStatus: openStatus,
     buttons: buttons,
     handleClose: handleClose,
@@ -451,6 +470,7 @@ function EditBox(props: CalendarStateProps) {
    */
   const handleDelete = () => {
     if (scheduleDetial.is_repeat) {
+      setCustomizeTemplateType("delete");
       setEnableCustomization(true);
       setOpenStatus(true);
     } else {
@@ -538,7 +558,7 @@ function EditBox(props: CalendarStateProps) {
                   marginLeft: "10px",
                 }}
                 className={css.toolset}
-                onClick={saveSchedule}
+                onClick={saveTheTest}
               />
             </Grid>
           </Grid>
