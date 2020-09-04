@@ -1,8 +1,22 @@
-import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  fade,
+  Hidden,
+  IconButton,
+  makeStyles,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useState } from "react";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -81,6 +95,13 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
+  const [open, setOpen] = useState(false);
+  const handleCancel = useCallback(() => {
+    setOpen(false);
+  }, []);
+  const handleOpen = useCallback(() => {
+    setOpen(true);
+  }, []);
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -100,7 +121,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
             Save
           </Button>
-          <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={onComplete}>
+          <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleOpen}>
             Compelete
           </Button>
         </Hidden>
@@ -113,18 +134,29 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
         </Box>
       </Hidden>
       <Hidden mdUp>
-        <Box display="flex" justifyContent="flex-end" pt={3}>
+        <Box display="flex" justifyContent="flex-end" py={2}>
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onBack}>
             <CancelOutlined fontSize="small" />
           </IconButton>
           <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave}>
             <Save fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onComplete}>
+          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleOpen}>
             <Check fontSize="small" />
           </IconButton>
         </Box>
       </Hidden>
+      <Dialog open={open} onClose={handleCancel}>
+        <DialogContent dividers>You cannot change the assessment after clicking Complete.</DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={onComplete} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   );
 }

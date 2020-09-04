@@ -15,9 +15,9 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import React from "react";
+import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { AssessmentDetail } from ".";
+import { AssessmentDetailProps } from ".";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -33,12 +33,12 @@ const useStyles = makeStyles(({ palette }) => ({
   },
   fieldset: {
     "&:not(:first-child)": {
-      marginTop: 20,
+      marginTop: 30,
     },
   },
   editBox: {
     width: "100%",
-    marginTop: 20,
+    marginTop: 30,
     position: "relative",
   },
   editButton: {
@@ -49,8 +49,8 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 interface SummaryProps {
-  SummaryDetail: AssessmentDetail["summary"];
-  attendenceList: AssessmentDetail["attendenceList"];
+  SummaryDetail: AssessmentDetailProps["summary"];
+  attendenceList: AssessmentDetailProps["attendenceList"];
   onOk: ButtonProps["onClick"];
 }
 export function Summary(props: SummaryProps) {
@@ -60,9 +60,12 @@ export function Summary(props: SummaryProps) {
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { control } = useForm();
   const [open, setOpen] = React.useState(false);
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
+  const handleOpen = useCallback(() => {
+    setOpen(true);
+  }, []);
   const fliterAttendence = attendenceList.map((item) => (
     <FormControlLabel
       key={item.id}
@@ -83,7 +86,7 @@ export function Summary(props: SummaryProps) {
         <Box className={css.classSummaryHeader} boxShadow={3}>
           <Typography variant="h6">Class Summary</Typography>
         </Box>
-        <Box px={2} py={5}>
+        <Box px={5} py={5}>
           <Controller
             as={TextField}
             fullWidth
@@ -105,7 +108,7 @@ export function Summary(props: SummaryProps) {
               className={css.fieldset}
               label="Attendence"
             />
-            <Button className={css.editButton} color="primary" variant="contained" onClick={() => setOpen(true)}>
+            <Button className={css.editButton} color="primary" variant="contained" onClick={handleOpen}>
               Edit
             </Button>
           </Box>

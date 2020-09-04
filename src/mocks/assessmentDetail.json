@@ -1,5 +1,5 @@
 {
-  "outcomes": [
+  "outcomesList": [
     {
       "id": "1",
       "name": "Speaking and Listening",
@@ -11,14 +11,14 @@
       "id": "2",
       "name": "Speaking and Listening",
       "shortcode": "12swr2",
-      "assumed": true,
+      "assumed": false,
       "author": "Mary Roose"
     },
     {
       "id": "3",
       "name": "Speaking and Listening",
       "shortcode": "12swr2",
-      "assumed": true,
+      "assumed": false,
       "author": "Mary Roose"
     },
     {
