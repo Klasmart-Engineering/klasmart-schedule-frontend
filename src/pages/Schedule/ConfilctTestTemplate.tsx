@@ -21,7 +21,7 @@ export default function AlertDialog(props: InfoProps) {
 
   return (
     <div style={{ width: "400px", padding: "0px 30px 0px 30px" }}>
-      <p style={{ fontSize: "20px" }}>Edit recurring event</p>
+      <p style={{ fontSize: "20px" }}>Delete recurring event</p>
       <div style={{ paddingLeft: "20px" }}>
         <FormControl component="fieldset">
           <RadioGroup
