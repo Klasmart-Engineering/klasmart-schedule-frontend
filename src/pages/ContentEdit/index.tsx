@@ -36,11 +36,12 @@ const useQuery = () => {
   const id = query.get("id");
   const searchMedia = query.get("searchMedia") || "";
   const searchOutcomes = query.get("searchOutcomes") || "";
+  const assumed = query.get("assumed") || "";
   const editindex: number = Number(query.get("editindex") || 0);
-  return { id, searchMedia, searchOutcomes, search, editindex };
+  return { id, searchMedia, searchOutcomes, search, editindex, assumed };
 };
 
-const setQuery = (search: string, hash: Record<string, string | number>): string => {
+const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
   const query = new URLSearchParams(search);
   Object.keys(hash).forEach((key) => query.set(key, String(hash[key])));
   return query.toString();
@@ -67,7 +68,7 @@ export default function ContentEdit() {
     (state) => state.content
   );
   const { lesson, tab, rightside } = useParams();
-  const { id, searchMedia, search, editindex, searchOutcomes } = useQuery();
+  const { id, searchMedia, search, editindex, searchOutcomes, assumed } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
@@ -121,6 +122,14 @@ export default function ContentEdit() {
     },
     [history]
   );
+  const handleCheckAssumed = useMemo<OutcomesProps["onCheck"]>(
+    () => (assumed = "") => {
+      history.replace({
+        search: setQuery(history.location.search, { assumed }),
+      });
+    },
+    [history]
+  );
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -152,7 +161,9 @@ export default function ContentEdit() {
         comingsoon
         list={outcomeslist}
         onSearch={handleSearchOutcomes}
+        onCheck={handleCheckAssumed}
         value={searchOutcomes}
+        assumed={assumed}
         total={OutcomesListTotal}
         onChangePage={(page) => {}}
       />
