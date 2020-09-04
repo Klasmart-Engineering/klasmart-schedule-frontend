@@ -111,7 +111,7 @@ function MyCalendar(props: CalendarProps) {
     customizeTemplate: scheduleInfoStatus ? (
       <CustomizeTempalte handleDelete={handleDelete} handleClose={handleClose} scheduleInfo={scheduleInfo} />
     ) : (
-      <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} />
+      <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title="Delete" />
     ),
     buttons: [
       {
