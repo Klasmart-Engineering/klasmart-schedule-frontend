@@ -93,7 +93,7 @@ function Tool(props: ToolProps) {
   return (
     <Box className={css.toolBox}>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={12} md={3} lg={3}>
           {!includeList && (
             <Button
               variant="contained"
@@ -107,7 +107,7 @@ function Tool(props: ToolProps) {
             </Button>
           )}
         </Grid>
-        <Grid item xs={5} style={{ display: "flex", alignItems: "center" }}>
+        <Grid item xs={12} sm={8} md={4} lg={4} style={{ display: "flex", alignItems: "center" }}>
           {includeList && (
             <ArrowBackIosOutlined
               className={css.arrowsrt}
@@ -137,7 +137,7 @@ function Tool(props: ToolProps) {
             Search
           </Button>
         </Grid>
-        <Grid item xs={4} className={css.modelSelect}>
+        <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
           {!includeList && (
             <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }} onClick={selectToday}>
               Today

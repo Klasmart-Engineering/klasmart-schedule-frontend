@@ -81,7 +81,7 @@ function ScheduleContent() {
               timesTamp={timesTamp}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={12} md={4} lg={3}>
             <ScheduleEdit
               includePreview={includePreview}
               timesTamp={timesTamp}
@@ -92,7 +92,7 @@ function ScheduleContent() {
               includeTable={includeTable}
             />
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} sm={12} md={8} lg={9}>
             {includeTable && <KidsCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} />}
             {includeList && <SearchList />}
           </Grid>

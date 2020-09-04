@@ -161,7 +161,6 @@ const { actions, reducer } = createSlice({
     },
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
-      alert("save success");
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       console.log(JSON.stringify(error));
