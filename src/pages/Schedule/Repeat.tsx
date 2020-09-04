@@ -386,7 +386,7 @@ function EndRepeat(props: ExtendsProps) {
   const classes = useStyles();
   const { state, handleRepeatData, setOpenStatus } = props;
   const { type } = state;
-  const { end } = state[type];
+  const { end, interval } = state[type];
   let _state = JSON.parse(JSON.stringify(state));
 
   const handleEndType = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -395,6 +395,22 @@ function EndRepeat(props: ExtendsProps) {
   };
 
   const handleAfterCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (type === "daily" && +event.target.value * interval > 2 * 365) {
+      setOpenStatus(true);
+      return;
+    }
+    if (type === "weekly" && +event.target.value * interval > Math.floor((2 * 365) / 7)) {
+      setOpenStatus(true);
+      return;
+    }
+    if (type === "monthly" && +event.target.value * interval > 24) {
+      setOpenStatus(true);
+      return;
+    }
+    if (type === "yearly" && +event.target.value * interval > 2) {
+      setOpenStatus(true);
+      return;
+    }
     _state[type].end.after_count = +event.target.value;
     handleRepeatData(_state);
   };
@@ -484,7 +500,7 @@ function RepeatHeader(props: ExtendsProps) {
   const classes = useStyles();
   const { state, handleRepeatData, setOpenStatus } = props;
   const { type } = state;
-  const { interval } = state[type];
+  const { interval, end } = state[type];
   let _state = JSON.parse(JSON.stringify(state));
 
   const handleChangeType = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -492,21 +508,54 @@ function RepeatHeader(props: ExtendsProps) {
     handleRepeatData(_state);
   };
   const handleChangeInterval = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (type === "daily" && +event.target.value > 2 * 365) {
-      setOpenStatus(true);
-      return;
+    if (type === "daily") {
+      if (end.type === "after_count") {
+        if (+event.target.value > 2 * 365 || +event.target.value * end.after_count > 2 * 365) {
+          setOpenStatus(true);
+          return;
+        }
+      }
+      if (+event.target.value > 2 * 365) {
+        setOpenStatus(true);
+        return;
+      }
     }
-    if (type === "weekly" && +event.target.value > Math.floor((2 * 365) / 7)) {
-      setOpenStatus(true);
-      return;
+    if (type === "weekly") {
+      if (end.type === "after_count") {
+        if (+event.target.value > Math.floor((2 * 365) / 7) || +event.target.value * end.after_count > Math.floor((2 * 365) / 7)) {
+          setOpenStatus(true);
+          return;
+        }
+      }
+      if (+event.target.value > Math.floor((2 * 365) / 7)) {
+        setOpenStatus(true);
+        return;
+      }
     }
-    if (type === "monthly" && +event.target.value > 24) {
-      setOpenStatus(true);
-      return;
+    if (type === "monthly") {
+      if (end.type === "after_count") {
+        if (+event.target.value > 24 || +event.target.value * end.after_count > 24) {
+          setOpenStatus(true);
+          return;
+        }
+      }
+      if (+event.target.value > 24) {
+        setOpenStatus(true);
+        return;
+      }
     }
-    if (type === "yearly" && +event.target.value > 2) {
-      setOpenStatus(true);
-      return;
+    if (type === "yearly") {
+      console.log(+event.target.value, end.after_count);
+      if (end.type === "after_count") {
+        if (+event.target.value > 2 || +event.target.value * end.after_count > 2) {
+          setOpenStatus(true);
+          return;
+        }
+      }
+      if (+event.target.value > 2) {
+        setOpenStatus(true);
+        return;
+      }
     }
     _state[type].interval = +event.target.value;
     handleRepeatData(_state);
@@ -591,6 +640,7 @@ export default function RepeatSchedule(props: RepeatScheduleProps) {
       setOpenStatus(false);
     },
   };
+
   return (
     <Card className={classes.container}>
       <RepeatHeader state={repeatState} handleRepeatData={handleRepeatData} setOpenStatus={setOpenStatus} />

@@ -4,6 +4,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React from "react";
 import { apiResourcePathById } from "../../api/extra";
+import ModalBox from "../../components/ModalBox";
 import { SingleUploader } from "../../components/SingleUploader";
 
 const useStyles = makeStyles(() => ({
@@ -80,6 +81,11 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const css = useStyles();
   const handleOnChange = (value: string | undefined): void => {
     if (value) {
+      let si = format.some((item) => value.includes(item));
+      if (!si) {
+        setOpenStatus(true);
+        return;
+      }
       setAttachmentId(value);
       const url: string | undefined = apiResourcePathById(value);
       setDownloadUrl(url);
@@ -90,42 +96,62 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   };
 
   const getFileName = (name: string): string => {
-    let isWithin: boolean = false;
-    format.forEach((item) => {
-      if (name.includes(item)) {
-        isWithin = true;
-        return;
-      }
-    });
-    console.log(isWithin);
+    let si = format.some((item) => name.includes(item));
+    if (!si) {
+      setAttachmentName("");
+      setAttachmentId("");
+      return attachmentName;
+    }
     setAttachmentName(name);
     return name;
   };
 
   const [downloadUrl, setDownloadUrl] = React.useState<string | undefined>("");
+  const [openStatus, setOpenStatus] = React.useState(false);
+
+  const modalDate: any = {
+    title: "",
+    text: "Please upload the file in the correct format",
+    openStatus: openStatus,
+    enableCustomization: false,
+    buttons: [
+      {
+        label: "OK",
+        event: () => {
+          setOpenStatus(false);
+        },
+      },
+    ],
+    handleClose: () => {
+      setOpenStatus(false);
+    },
+  };
 
   return (
-    <SingleUploader
-      partition="schedule_attachment"
-      onChange={handleOnChange}
-      render={({ uploady, item, btnRef, value, isUploading }) => (
-        <Box className={css.fieldBox}>
-          <TextField
-            disabled
-            className={css.fieldset}
-            placeholder="Attachment"
-            value={item ? getFileName(item.file.name) : attachmentName}
-          ></TextField>
-          <HtmlTooltip title={tipsText}>
-            <InfoOutlined className={css.iconField} style={{ left: "110px", display: item ? "none" : "block" }} />
-          </HtmlTooltip>
-          <input type="file" style={{ display: "none" }} />
-          <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
-          <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-            {downloadUrl && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
-          </a>
-        </Box>
-      )}
-    />
+    <>
+      <SingleUploader
+        partition="schedule_attachment"
+        onChange={handleOnChange}
+        render={({ uploady, item, btnRef, value, isUploading }) => (
+          <Box className={css.fieldBox}>
+            <TextField
+              disabled
+              className={css.fieldset}
+              placeholder="Attachment"
+              value={item ? getFileName(item.file.name) : attachmentName}
+            ></TextField>
+            <HtmlTooltip title={tipsText}>
+              <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
+            </HtmlTooltip>
+            <input type="file" style={{ display: "none" }} />
+            <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
+            <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
+              {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
+            </a>
+          </Box>
+        )}
+      />
+      <ModalBox modalDate={modalDate} />
+    </>
   );
 }
