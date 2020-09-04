@@ -8,6 +8,7 @@ interface scheduleViewData {
   start: Date;
   title: string;
   is_repeat: boolean;
+  lesson_plan_id: string;
 }
 
 export interface ScheduleState {
@@ -128,7 +129,14 @@ const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
     data.forEach((item: ScheduleTimeView) => {
       const start_at = new Date(Number(item.start_at) * 1000);
       const end_at = new Date(Number(item.end_at) * 1000);
-      newViewData.push({ end: end_at, id: item.id, start: start_at, title: item.title, is_repeat: item.is_repeat });
+      newViewData.push({
+        end: end_at,
+        id: item.id,
+        start: start_at,
+        title: item.title,
+        is_repeat: item.is_repeat,
+        lesson_plan_id: item.lesson_plan_id,
+      });
     });
   }
   return newViewData;

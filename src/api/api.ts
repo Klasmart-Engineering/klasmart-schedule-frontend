@@ -206,6 +206,8 @@ export interface ScheduleTimeView {
   end_at?: number;
 
   is_repeat?: boolean;
+
+  lesson_plan_id?: string;
 }
 
 /**

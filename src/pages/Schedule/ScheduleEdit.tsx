@@ -368,6 +368,7 @@ function EditBox(props: CalendarStateProps) {
     if (!validatorFun()) return;
     setOpenStatus(false);
     const addData: any = {};
+    addData["due_at"] = 0;
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
@@ -499,6 +500,7 @@ function EditBox(props: CalendarStateProps) {
    * modal type confirm close
    */
   const closeEdit = () => {
+    setEnableCustomization(false);
     const scheduleListOld = JSON.stringify(initScheduleList);
     const scheduleListNew = JSON.stringify(scheduleList);
     if (scheduleListNew === scheduleListOld && !checkedStatus.allDayCheck && !checkedStatus.repeatCheck && !checkedStatus.dueDateCheck) {
@@ -781,7 +783,7 @@ function EditBox(props: CalendarStateProps) {
             style={{ width: "45%", marginRight: "10%" }}
             href={`/#/library/content-preview?id=${scheduleList.lesson_plan_id}`}
           >
-            Preview in Live
+            Preview
           </Button>
           <Button variant="contained" color="primary" style={{ width: "45%" }}>
             Go Live
