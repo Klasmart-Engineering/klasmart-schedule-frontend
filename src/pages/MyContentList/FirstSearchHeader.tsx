@@ -6,12 +6,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
+import clsx from "clsx";
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { Author, PublishStatus } from "../../api/api.d";
 import LayoutBox from "../../components/LayoutBox";
+import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    marginTop: 20,
     flexGrow: 1,
     marginBottom: "20px",
   },
@@ -77,22 +80,18 @@ interface TabPanelProps {
   value: any;
 }
 
-// function TabPanel(props: TabPanelProps) {
-//   const { children, value, index } = props;
-//   return <div>{value === index && <Typography>{children}</Typography>}</div>;
-// }
-
-interface SecondaryMenuProps {
-  layout: string;
-  status: string;
-  showMyOnly: boolean;
+export const isUnpublish = (value: QueryCondition): boolean => {
+  return (value.publish_status === PublishStatus.pending && value.author === Author.self) || value.publish_status === PublishStatus.draft || value.publish_status === PublishStatus.rejected;
 }
-export default function SecondaryMenu(props: SecondaryMenuProps) {
-  const classes = useStyles();
-  const { layout, status } = props;
-  const path = `#/library/my-content-list?layout=${layout}`;
+
+export interface FirstSearchHeaderProps extends QueryConditionBaseProps {}
+export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
+  const css = useStyles();
+  const { value, onChange } = props;
+  const unpublish = isUnpublish(value);
+  const createHandleClick = (publish_status: QueryCondition['publish_status']) => () => onChange({...value, publish_status})
   return (
-    <div className={classes.root}>
+    <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
@@ -101,43 +100,43 @@ export default function SecondaryMenu(props: SecondaryMenuProps) {
                 href={`#/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}
                 variant="contained"
                 color="primary"
-                className={classes.createBtn}
+                className={css.createBtn}
               >
                 Create +
               </Button>
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
-                href={`${path}&status=published`}
-                className={`${classes.nav} ${status === "published" ? classes.actives : ""}`}
+                onClick={createHandleClick(PublishStatus.published)}
+                className={clsx(css.nav, {[css.actives]: value?.publish_status === "published"})}
                 startIcon={<PublishOutlined />}
               >
                 Published
               </Button>
               <Button
-                href={`${path}&status=pending`}
-                className={`${classes.nav} ${status === "pending" ? classes.actives : ""}`}
+                onClick={createHandleClick(PublishStatus.pending)}
+                className={clsx(css.nav, {[css.actives]: value?.publish_status === "pending"})}
                 startIcon={<HourglassEmptyOutlined />}
               >
                 Pending
               </Button>
               <Button
-                href={`${path}&status=unpublished`}
-                className={`${classes.nav} ${status === "unpublished" ? classes.actives : ""}`}
+                onClick={createHandleClick(PublishStatus.draft)}
+                className={clsx(css.nav, {[css.actives]: unpublish})}
                 startIcon={<PublishOutlined />}
               >
                 Unpublished
               </Button>
               <Button
-                href={`${path}&status=archive`}
-                className={`${classes.nav} ${status === "archive" ? classes.actives : ""}`}
+                onClick={createHandleClick(PublishStatus.archive)}
+                className={clsx(css.nav, {[css.actives]: value?.publish_status === "archive"})}
                 startIcon={<ArchiveOutlined />}
               >
                 Archived
               </Button>
               <Button
-                href={`${path}&status=assets`}
-                className={`${classes.nav} ${status === "assets" ? classes.actives : ""}`}
+                onClick={createHandleClick(PublishStatus.assets)}
+                className={clsx(css.nav, {[css.actives]: value?.publish_status === "assets"})}
                 startIcon={<PermMediaOutlined />}
               >
                 Assets
@@ -146,21 +145,15 @@ export default function SecondaryMenu(props: SecondaryMenuProps) {
           </Grid>
         </Hidden>
       </LayoutBox>
-      <SecondaryMenuMb layout={layout} status={status} />
     </div>
   );
 }
-interface SecondaryMenuMbProps {
-  layout: string;
-  status: string;
-}
-function SecondaryMenuMb(props: SecondaryMenuMbProps) {
-  const history = useHistory();
+
+export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
-  const { status } = props;
-  const { pathname } = useLocation();
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    history.push(`${pathname}?layout=card&status=${newValue}`);
+  const { value, onChange } = props;
+  const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
+    onChange({ ...value, publish_status })
   };
   return (
     <div className={classes.root}>
@@ -169,7 +162,7 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={status}
+                value={value?.publish_status}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
@@ -177,11 +170,11 @@ function SecondaryMenuMb(props: SecondaryMenuMbProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab value={"published"} label="Published" className={classes.capitalize} />
-                <Tab value={"pending"} label="Pending" className={classes.capitalize} />
-                <Tab value={"unpublished"} label="Unpublished" className={classes.capitalize} />
-                <Tab value={"archive"} label="Archive" className={classes.capitalize} />
-                <Tab value={"assets"} label="Assets" className={classes.capitalize} />
+                <Tab value={PublishStatus.published} label="Published" className={classes.capitalize} />
+                <Tab value={PublishStatus.pending} label="Pending" className={classes.capitalize} />
+                <Tab value={PublishStatus.draft} label="Unpublished" className={classes.capitalize} />
+                <Tab value={PublishStatus.archive} label="Archive" className={classes.capitalize} />
+                <Tab value={PublishStatus.assets} label="Assets" className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>

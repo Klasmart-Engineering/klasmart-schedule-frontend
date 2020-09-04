@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import confirm from './confirm';
 import content from "./content";
 import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
@@ -13,6 +14,7 @@ const loadingMiddleware = createLoadingMiddleware({
 export const store = configureStore({
   reducer: {
     loading,
+    confirm,
     notify,
     content,
     schedule,

@@ -3,6 +3,7 @@ import { SnackbarProvider } from "notistack";
 import React from "react";
 import { Provider } from "react-redux";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Loading } from "./components/Loading";
 import { Notification } from "./components/Notification";
 import { AssessmentsDetail } from "./pages/AssessmentEdit";
@@ -53,10 +54,11 @@ function App() {
                 <AssessmentsDetail />
               </Route>
               <Route path="/">
-                <Redirect to="/library/my-content-list?layout=card&status=published" />
+                <Redirect to="/library/my-content-list?publish_status=published" />
               </Route>
             </Switch>
             <Notification />
+            <ConfirmDialog />
           </SnackbarProvider>
         </Provider>
       </HashRouter>

@@ -1,28 +1,18 @@
-import {
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Checkbox,
-  Collapse,
-  createStyles,
-  Grid,
-  IconButton,
-  styled,
-  Typography,
-} from "@material-ui/core";
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Checkbox, Collapse, createStyles, Grid, IconButton, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank, ExpandMore } from "@material-ui/icons";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { Fragment, useState } from "react";
+import { Controller, UseFormMethods } from "react-hook-form";
 import { Content } from "../../api/api";
+import { PublishStatus } from "../../api/api.d";
+import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { Thumbnail } from "../../components/Thumbnail";
+import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
@@ -174,71 +164,18 @@ interface ExpandBtnProps {
 const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   transform: props.open ? "rotate(180deg)" : "none",
 }));
-
-interface ActionProps {
-  id?: string;
-  onHandelAction: (type: string, id?: string) => void;
-}
-function PublishedAction(props: ActionProps) {
-  const css = useStyles();
-  const { id, onHandelAction } = props;
-  const handleRemovePublished = (e: any) => {
-    onHandelAction("delete", id);
-  };
-  return (
-    <React.Fragment>
-      <RemoveCircleOutlineIcon className={css.iconColor} onClick={handleRemovePublished} />
-    </React.Fragment>
-  );
-}
-
-function UnpublishedAction(props: ActionProps) {
-  const css = useStyles();
-  const { id, onHandelAction } = props;
-  const handleDeleteUnpublished = (e: any) => {
-    onHandelAction("delete", id);
-  };
-  return (
-    <React.Fragment>
-      <DeleteOutlineIcon className={css.iconColor} onClick={handleDeleteUnpublished} />
-    </React.Fragment>
-  );
-}
-
-function ArchivedAction(props: ActionProps) {
-  const css = useStyles();
-  const { id, onHandelAction } = props;
-  const handlePublish = (e: any) => {
-    onHandelAction("publish", id);
-  };
-  const handleDeleteArchived = (e: any) => {
-    onHandelAction("delete", id);
-  };
-  return (
-    <div>
-      <PublishOutlinedIcon className={css.rePublishColor} onClick={handlePublish} />
-      <DeleteOutlineIcon className={css.iconColor} onClick={handleDeleteArchived} />
-    </div>
-  );
-}
-interface ContentProps {
+interface ContentProps extends ContentActionProps {
   content: Content;
-  onCheckedChange: (isChecked: boolean, id: string) => any;
-  onHandelAction: (type: string, id?: string) => void;
-  status: string;
+  queryCondition: QueryCondition;
+  selectedContentGroupContext: CheckboxGroupContext;
+  onClickContent: ContentCardListProps['onClickContent'];
 }
 function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
-  const { content, onCheckedChange, onHandelAction, status } = props;
-  const history = useHistory();
-
-  const handleChecked = (event: any, id?: string) => {
-    onCheckedChange(event.target.checked, id || "");
-  };
-  const handleGoPreview = (event: any, id?: string) => {
-    history.push(`/library/content-preview?id=${id}`);
-  };
+  const { content, queryCondition, selectedContentGroupContext, onDelete, onPublish, onClickContent } = props;
+  const { registerChange, hashValue } = selectedContentGroupContext;
+  const DeleteIcon = content?.publish_status === PublishStatus.published ? RemoveCircleOutlineIcon : DeleteOutlineIcon;
   return (
     <Card className={css.card}>
       <Checkbox
@@ -247,11 +184,11 @@ function ContentCard(props: ContentProps) {
         size="small"
         className={css.checkbox}
         color="secondary"
-        onChange={(e) => {
-          handleChecked(e, content?.id);
-        }}
+        value={content.id}
+        checked={hashValue[content.id as string]}
+        onChange={registerChange}
       ></Checkbox>
-      <CardActionArea onClick={(e) => handleGoPreview(e, content?.id)}>
+      <CardActionArea onClick={(e) => onClickContent(content.id)}>
         <CardMedia className={css.cardMedia}>
           <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
         </CardMedia>
@@ -278,58 +215,51 @@ function ContentCard(props: ContentProps) {
         <Typography className={css.body2} variant="body2">
           {content?.author_name}
         </Typography>
-        {content?.publish_status === "published" && <PublishedAction id={content?.id} onHandelAction={onHandelAction} />}
-        {(content?.publish_status === "draft" || content?.publish_status === "rejected") && (
-          <UnpublishedAction id={content.id} onHandelAction={onHandelAction} />
-        )}
-        {content?.publish_status === "pending" && status === "unpublished" && (
-          <UnpublishedAction id={content.id} onHandelAction={onHandelAction} />
-        )}
-        {content?.publish_status === "archive" && <ArchivedAction id={content?.id} onHandelAction={onHandelAction} />}
+        {content?.publish_status === "archive" && <PublishOutlinedIcon className={css.rePublishColor} onClick={() => onPublish(content.id as string)}/>}
+        {queryCondition.publish_status !== PublishStatus.pending && <DeleteIcon className={css.iconColor} onClick={() => onDelete(content.id as string)} /> }
       </CardActions>
     </Card>
   );
 }
 
-interface ContentCardListProps {
+interface ContentActionProps {
+  onPublish: (id: NonNullable<Content['id']>) => any;
+  onDelete: (id: NonNullable<Content['id']>) => any;
+}
+
+export interface ContentCardListProps extends ContentActionProps {
+  formMethods: UseFormMethods<ContentListForm>;
   total: number;
   amountPerPage?: number;
   list: Content[];
-  onChangeCheckedContents: (arr: string[]) => any;
+  queryCondition: QueryCondition;
   onChangePage: (page: number) => void;
-  onHandelAction: (type: string, id?: string) => void;
-  status: string;
+  onClickContent: (id: Content['id']) => any;
 }
-export default function ContentCardList(props: ContentCardListProps) {
+export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
-  const { list, total, amountPerPage = 16, status } = props;
-  const [checkedArr, setCheckedArr] = React.useState<string[]>([]);
-  const { onChangeCheckedContents, onChangePage, onHandelAction } = props;
-  const onCheckedArrChange = (isChecked: boolean, id: string) => {
-    isChecked ? checkedArr.push(id) : checkedArr.splice(checkedArr.indexOf(id), 1);
-    setCheckedArr(checkedArr);
-    onChangeCheckedContents(checkedArr);
-  };
-  const changePage = (event: object, page: number) => {
-    onChangePage(page);
-  };
-  const cardlist = list.map((item, idx) => (
-    <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
-      <ContentCard content={item} onCheckedChange={onCheckedArrChange} onHandelAction={onHandelAction} status={status}></ContentCard>
-    </Grid>
-  ));
-  useEffect(() => {
-    setCheckedArr([]);
-  }, [list]);
+  const { formMethods, list, total, amountPerPage = 16, queryCondition, onPublish, onDelete, onChangePage, onClickContent } = props;
+  const { control } = formMethods;
+  const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Grid className={css.gridContainer} container>
-        {cardlist}
+        <Controller name={ContentListFormKey.CHECKED_CONTENT_IDS} control={control} defaultValue={[]} render={(props) => (
+          <CheckboxGroup {...props} render={(selectedContentGroupContext) =>
+            <Fragment>
+              {list.map((item, idx) => (
+                <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
+                  <ContentCard content={item}  {...{ onPublish, onDelete, queryCondition, selectedContentGroupContext, onClickContent }}/>
+                </Grid>
+              ))}
+            </Fragment>
+          }/>
+        )}/>
       </Grid>
       <Pagination
         className={css.pagination}
         classes={{ ul: css.paginationUl }}
-        onChange={changePage}
+        onChange={handleChangePage}
         count={Math.ceil(total / amountPerPage)}
         color="primary"
       />

@@ -152,7 +152,7 @@ export const publish = createAsyncThunk<Content, Required<Content>["id"], { stat
   // debugger;
   return api.contents.publishContent(id, { scope: publish_scope });
 });
-export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryContentParams>("content/contentsList", (query) => {
+export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryContentParams>("content/contentsDynamoList", (query) => {
   // debugger;
   return api.contentsDynamo.contentsDynamoList(query);
 });
@@ -183,38 +183,38 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   }
 );
 
-type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0];
+type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0] & LoadingMetaPayload;
 type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
-export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contents", async (query) => {
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contentLists", async ({ metaLoading, ...query }) => {
   const { list, total } = await api.contents.searchContents(query);
   return { list, total };
 });
 
-export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentById", (id) =>
+export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentDetailById", (id) =>
   api.contents.getContentById(id)
 );
 
 export const deleteContent = createAsyncThunk<Content, Required<Content>["id"]>("content/deleteContent", (id) => {
   return api.contents.deleteContent(id);
 });
-export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publish", (id) => {
+export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publishContent", (id) => {
   return api.contents.publishContent(id, { scope: "" });
 });
 
 // type BulkActionIds = Parameters<typeof>
 export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
-  "contents_bulk/deleteContentBulk",
+  "content/bulkDeleteContent",
   (idList) => {
     return api.contentsBulk.deleteContentBulk({ id: idList });
   }
 );
 export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
-  "contents_bulk/publishContentBulk",
+  "content/bulkPublishContent",
   (idList) => {
     return api.contentsBulk.publishContentBulk({ id: idList });
   }
 );
-export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("contentsReview/approveContentReview", (id) => {
+export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("content/approveContentReview", (id) => {
   return api.contentsReview.approveContentReview(id);
 });
 type RejectContentParams = {
@@ -223,7 +223,7 @@ type RejectContentParams = {
 };
 type RejectContentResult = AsyncReturnType<typeof api.contentsReview.rejectContentReview>;
 export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
-  "contentsReview/rejectContentReview",
+  "content/rejectContent",
   ({ id, reason }) => {
     return api.contentsReview.rejectContentReview(id, { reject_reason: reason });
   }
@@ -231,7 +231,7 @@ export const rejectContent = createAsyncThunk<RejectContentResult, RejectContent
 export const lockContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.lockContent>,
   Parameters<typeof api.contents.lockContent>[0]
->("contents/lockContent", async (content_id) => {
+>("content/lockContent", async (content_id) => {
   return await api.contents.lockContent(content_id);
 });
 
