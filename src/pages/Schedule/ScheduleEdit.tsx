@@ -31,7 +31,7 @@ import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import { timestampType, modeViewType, repeatOptionsType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
-import { actError } from "../../reducers/notify";
+import { actError, actSuccess } from "../../reducers/notify";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -388,6 +388,7 @@ function EditBox(props: CalendarStateProps) {
     }
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
+    dispatch(actSuccess("save success"));
     dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
   };
@@ -569,7 +570,7 @@ function EditBox(props: CalendarStateProps) {
           <TextField
             error={validator.title}
             className={css.fieldset}
-            label="Class Name"
+            label="Lesson Name"
             value={scheduleList.title}
             onChange={(e) => handleTopicListChange(e, "title")}
             required
