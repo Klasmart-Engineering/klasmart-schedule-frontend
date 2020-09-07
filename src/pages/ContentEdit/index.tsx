@@ -136,6 +136,11 @@ export default function ContentEdit() {
 
   const [, setPage] = React.useState(0);
 
+  const [assetsFileType, setAssetsFileType] = React.useState<"image" | "video" | "audio" | "document">("image");
+  const handleChangeFile = (type: "image" | "video" | "audio" | "document") => {
+    setAssetsFileType(type);
+  };
+
   const handleChangePage = (page: number) => {
     setPage(page);
     dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchMedia }));
@@ -151,7 +156,7 @@ export default function ContentEdit() {
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
-      <AssetDetails />
+      <AssetDetails formMethods={formMethods} mockOptions={mockOptions} fileType={assetsFileType} handleChangeFile={handleChangeFile} />
     </MediaAssetsLibrary>
   );
   const contentTabs = (
@@ -181,13 +186,13 @@ export default function ContentEdit() {
     <>
       {includeH5p && includeAsset && (
         <ContentH5p>
-          <MediaAssetsEdit readonly={readonly} overlay />
+          <MediaAssetsEdit readonly={readonly} overlay fileType={assetsFileType} />
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && (
         <Controller name="data" as={ContentH5p} defaultValue={contentDetail.data} control={control} rules={{ required: true }} />
       )}
-      {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} />}
+      {!includeH5p && includeAsset && <MediaAssetsEdit readonly={readonly} overlay={includeH5p} fileType={assetsFileType} />}
       {includePlanComposeGraphic && (
         <Controller name="data" as={PlanComposeGraphic} defaultValue={JSON.parse(contentDetail.data || "{}")} control={control} />
       )}

@@ -43,9 +43,8 @@ function AssetPreview() {
   );
 }
 
-interface FileTypeProps {
+interface FileTypeProps extends AssetEditProps {
   fileFormat: any;
-  fileType: any;
 }
 function FileText(props: FileTypeProps) {
   const { fileType, fileFormat } = props;
@@ -62,14 +61,14 @@ function FileText(props: FileTypeProps) {
 }
 
 interface AssetEditProps {
-  asset?: any;
-  topicList?: any;
+  fileType: string;
 }
+
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const [open, setOpen] = React.useState(false);
   const [, setFiles] = React.useState([]);
-  const { topicList } = props;
+  const { fileType } = props;
   const handleClose = () => {
     setOpen(false);
   };
@@ -80,18 +79,18 @@ function AssetEdit(props: AssetEditProps) {
     setOpen(false);
     setFiles(files);
   };
-  const fileFormat = {
+  const fileFormat: any = {
     video: [".avi", ".mov", ".mp4"],
-    images: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
+    image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
     document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
     audio: [".mp3", ".wav"],
   };
   return (
     <Box className={css.uploadBox} boxShadow={3}>
-      <p className={css.title}>Select a file or drop it here</p>
+      <p className={css.title}>Upload a file</p>
       <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
         <div className={css.uploadBtn}>
-          <FileText fileFormat={fileFormat} fileType={topicList.fileType} />
+          <FileText fileFormat={fileFormat} fileType={fileType} />
           <Button variant="contained" color="primary" onClick={handleOpen}>
             Upload Files
           </Button>
@@ -99,7 +98,7 @@ function AssetEdit(props: AssetEditProps) {
         <DropzoneDialog
           open={open}
           onSave={handleSave}
-          acceptedFiles={fileFormat.images}
+          acceptedFiles={fileFormat[fileType]}
           showPreviews={true}
           maxFileSize={5000000}
           onClose={handleClose}
@@ -125,10 +124,9 @@ interface MediaAssetsEditProps extends AssetEditProps {
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
-    const { readonly, overlay, asset, topicList } = this.props;
-    if (!topicList) return null;
+    const { readonly, overlay, fileType } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
     if (readonly) return <AssetPreview />;
-    return <AssetEdit asset={asset} />;
+    return <AssetEdit fileType={fileType} />;
   }
 }

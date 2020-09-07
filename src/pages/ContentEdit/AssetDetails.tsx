@@ -1,140 +1,78 @@
-import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
-import { CloudUploadOutlined, SettingsOutlined } from "@material-ui/icons";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  CircularProgressProps,
+  createMuiTheme,
+  makeStyles,
+  MenuItem,
+  TextField,
+  ThemeProvider,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
+import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { SingleUploader } from "../../components/SingleUploader";
+import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
+import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
-    marginTop: 20,
+    marginTop: 32,
   },
   halfFieldset: {
-    marginTop: 20,
+    marginTop: 32,
     width: "calc(50% - 10px)",
     "&:not(:first-child)": {
       marginLeft: 20,
     },
   },
+  thumbnailImg: {
+    width: 260,
+    height: 132,
+  },
+  thumbnailButton: {
+    height: 56,
+    marginRight: "auto",
+  },
+  thumbnailProgressText: {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 }));
 
-interface DetailProps {
-  sm: any;
-  theme: Object;
-}
-function AssetsDetails(props: DetailProps) {
+function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
-  const { sm, theme } = props;
-  const dispatch = useDispatch();
-
-  interface InitData {
-    fileType: string;
-    assetsName: string;
-    program: string;
-    subject: string;
-    developmental: string;
-    skills: string;
-    age: number;
-    description: string;
-    keywords: string;
-  }
-
-  const [topicList, setTopicList] = React.useState({
-    fileType: "images",
-    assetsName: "",
-    program: "",
-    subject: "",
-    developmental: "",
-    skills: "",
-    age: 1,
-    description: "",
-    keywords: "",
-  });
-
-  const handleTopicListChange = (event: React.ChangeEvent<{ value: String }>, name: string) => {
-    const newTopocList = {
-      ...topicList,
-      [name]: event.target.value as string,
-    };
-    setTopicList((newTopocList as unknown) as { [key in keyof InitData]: InitData[key] });
-    dispatch({ type: "save", topicList: newTopocList });
-  };
   return (
-    <ThemeProvider theme={theme}>
-      <Box p="7.8% 8.5%">
-        <TextField label="Lesson Material" value={topicList.fileType} onChange={(e) => handleTopicListChange(e, "fileType")} select>
-          <MenuItem value="images">Image</MenuItem>
-          <MenuItem value="video">Video</MenuItem>
-          <MenuItem value="audio">Audio</MenuItem>
-          <MenuItem value="document">Document</MenuItem>
-        </TextField>
-        <Box className={css.fieldset}>
-          <input id="thumbnail-file-input" type="file" accept="image/*" hidden></input>
-          <label htmlFor="thumbnail-file-input">
-            <Button size={sm ? "medium" : "large"} variant="contained" component="span" color="primary" endIcon={<CloudUploadOutlined />}>
-              Thumbnail
-            </Button>
-          </label>
-        </Box>
-        <TextField
-          className={css.fieldset}
-          label="Assets Name"
-          value={topicList.assetsName}
-          onChange={(e) => handleTopicListChange(e, "assetsName")}
-        ></TextField>
-        <TextField
-          className={css.fieldset}
-          label="Program"
-          value={topicList.program}
-          onChange={(e) => handleTopicListChange(e, "program")}
-          InputProps={{ endAdornment: <SettingsOutlined /> }}
-        ></TextField>
-        <TextField
-          className={css.fieldset}
-          label="Subject"
-          value={topicList.subject}
-          onChange={(e) => handleTopicListChange(e, "subject")}
-        ></TextField>
-        <Box>
-          <TextField
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label="Developmental"
-            value={topicList.developmental}
-            onChange={(e) => handleTopicListChange(e, "developmental")}
-            InputProps={{ endAdornment: <SettingsOutlined /> }}
-          ></TextField>
-          <TextField
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label="Skills"
-            value={topicList.skills}
-            onChange={(e) => handleTopicListChange(e, "skills")}
-            InputProps={{ endAdornment: <SettingsOutlined /> }}
-          ></TextField>
-        </Box>
-        <TextField className={css.fieldset} label="age" value={topicList.age} onChange={(e) => handleTopicListChange(e, "age")} select>
-          <MenuItem value={1}>3-4</MenuItem>
-          <MenuItem value={2}>4-2</MenuItem>
-          <MenuItem value={3}>5-6</MenuItem>
-        </TextField>
-        <TextField
-          className={css.fieldset}
-          label="Description"
-          value={topicList.description}
-          onChange={(e) => handleTopicListChange(e, "description")}
-        ></TextField>
-        <TextField
-          className={css.fieldset}
-          label="Keywords"
-          value={topicList.keywords}
-          onChange={(e) => handleTopicListChange(e, "keywords")}
-        ></TextField>
+    <Box position="relative" display="inline-flex" alignItems="center">
+      <CircularProgress className={css.thumbnailImg} variant="static" {...props} />
+      <Box className={css.thumbnailProgressText}>
+        <Typography variant="caption" component="div" color="textSecondary">
+          {`${Math.round(props.value || 0)}%`}
+        </Typography>
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 }
 
-interface AssetDetailsProps {}
-export default function AssetDetails(props: AssetDetailsProps) {
+function AssetsDetails(props: AssetDetailsProps) {
+  const css = useStyles();
+  const {
+    formMethods: { control },
+    mockOptions,
+    handleChangeFile,
+    fileType,
+  } = props;
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
@@ -152,5 +90,140 @@ export default function AssetDetails(props: AssetDetailsProps) {
       },
     },
   });
-  return <AssetsDetails theme={theme} sm={sm} />;
+  const menuItemList = (list: MockOptionsItem[]) =>
+    list.map((item) => (
+      <MenuItem key={item.id} value={item.id}>
+        {item.name}
+      </MenuItem>
+    ));
+
+  const handleTopicListChange = (event: React.ChangeEvent<{ value: String }>, name: string) => {
+    handleChangeFile(event.target.value as "image" | "video" | "audio" | "document");
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Box component="form" p="7.8% 8.5%">
+        <TextField label="Lesson Material" required value={fileType} onChange={(e) => handleTopicListChange(e, "fileType")} select>
+          <MenuItem value="image">Image</MenuItem>
+          <MenuItem value="video">Video</MenuItem>
+          <MenuItem value="audio">Audio</MenuItem>
+          <MenuItem value="document">Document</MenuItem>
+        </TextField>
+        <Controller
+          name="thumbnail"
+          control={control}
+          render={(props) => (
+            <SingleUploader
+              partition="thumbnail"
+              {...props}
+              render={({ uploady, item, btnRef, value, isUploading }) => (
+                <Box className={css.fieldset} display="flex">
+                  <Button
+                    className={css.thumbnailButton}
+                    ref={btnRef}
+                    size={sm ? "medium" : "large"}
+                    variant="contained"
+                    component="span"
+                    color="primary"
+                    endIcon={<CloudUploadOutlined />}
+                  >
+                    Thumbnail
+                  </Button>
+                  {isUploading && <ProgressWithText value={item?.completed} />}
+                  {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
+                </Box>
+              )}
+            />
+          )}
+        />
+        <Controller
+          as={TextField}
+          control={control}
+          className={css.fieldset}
+          name="name"
+          label={"Assets Name"}
+          required
+          rules={{ required: true }}
+          helperText=""
+        />
+        <Controller as={TextField} select className={css.fieldset} label="Program" name="program" control={control}>
+          {menuItemList(mockOptions.program)}
+        </Controller>
+        <Controller as={TextField} select className={css.fieldset} label="Subject" name="subject" control={control}>
+          {menuItemList(mockOptions.subject)}
+        </Controller>
+        <Box>
+          <Controller
+            as={TextField}
+            name="developmental"
+            control={control}
+            select
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Developmental"
+          >
+            {menuItemList(mockOptions.developmental)}
+          </Controller>
+          <Controller
+            as={TextField}
+            name="skills"
+            control={control}
+            select
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Skills"
+          >
+            {menuItemList(mockOptions.skills)}
+          </Controller>
+        </Box>
+        <Box>
+          <Controller
+            as={TextField}
+            name="age"
+            control={control}
+            select
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Age"
+          >
+            {menuItemList(mockOptions.age)}
+          </Controller>
+          <Controller
+            as={TextField}
+            name="grade"
+            control={control}
+            select
+            className={sm ? css.fieldset : css.halfFieldset}
+            fullWidth={sm}
+            label="Grade"
+          >
+            {menuItemList(mockOptions.grade)}
+          </Controller>
+        </Box>
+        <Controller as={TextField} control={control} name="description" className={css.fieldset} label="Description" />
+        <Controller
+          as={FormattedTextField}
+          control={control}
+          name="keywords"
+          decode={decodeArray}
+          className={css.fieldset}
+          label="Keywords"
+          helperText=""
+        />
+      </Box>
+    </ThemeProvider>
+  );
+}
+
+interface AssetDetailsProps {
+  formMethods: UseFormMethods<ContentDetailForm>;
+  mockOptions: MockOptions;
+  fileType: "image" | "video" | "audio" | "document";
+  handleChangeFile: (type: "image" | "video" | "audio" | "document") => void;
+}
+
+export default function AssetDetails(props: AssetDetailsProps) {
+  const { formMethods, mockOptions, fileType, handleChangeFile } = props;
+  return <AssetsDetails formMethods={formMethods} mockOptions={mockOptions} fileType={fileType} handleChangeFile={handleChangeFile} />;
 }

@@ -41,7 +41,7 @@ export default function AlertDialog(props: InfoProps) {
           Cancel
         </Button>
         <Button color="primary" onClick={deleteSchedule}>
-          {title}
+          {title === "Edit" ? "Confirm" : title}
         </Button>
       </div>
     </div>
