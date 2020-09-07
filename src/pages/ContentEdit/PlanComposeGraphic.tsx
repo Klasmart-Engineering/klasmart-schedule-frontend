@@ -5,6 +5,7 @@ import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from 
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
+import blankImg from '../../assets/icons/deleted.jpg';
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import { Thumbnail } from "../../components/Thumbnail";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
@@ -201,9 +202,15 @@ interface MaterialCardProps {
   onRemove: SvgIconProps["onClick"];
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
-  const { material = {}, onRemove } = props;
-  const { thumbnail, author, name, content_type } = material;
   const css = useStyles();
+  if(props.material===null){
+    return <Box position="relative">
+      <img src={blankImg} alt="qq" width={200} height={150}/> 
+      <CancelRounded onClick={props.onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
+    </Box> 
+  }else{
+  const { material={} , onRemove } = props;
+  const { thumbnail, author, name, content_type } = material;
   return (
     <Card ref={ref}>
       <Thumbnail className={css.cardMedia} type={content_type} id={thumbnail} />
@@ -218,6 +225,7 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
       <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
     </Card>
   );
+  }
 });
 
 interface mapDropSegmentPropsReturn {
@@ -235,7 +243,7 @@ interface SegmentBoxProps extends Segment {
   onChange: (value: Segment) => any;
 }
 function SegmentBox(props: SegmentBoxProps) {
-  const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
+  const { first, material, materialId, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
   const addPlan = useMemo(
     () => (item: DragItem) => {
@@ -291,7 +299,7 @@ function SegmentBox(props: SegmentBoxProps) {
     </Box>
   );
   // 既没选 material 也没选 condition 的情况
-  if (!material && !condition)
+  if (!material && !condition && !materialId)
     return (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary">
