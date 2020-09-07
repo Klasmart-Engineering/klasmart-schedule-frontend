@@ -36,7 +36,7 @@ export function LButton<TAs extends ComponentType<any> | "button" = typeof Butto
         })
         .catch((err) => {
           validRef.current && setPending(false);
-          throw err;
+          // throw err;
         });
     },
     [onClick, setPending]

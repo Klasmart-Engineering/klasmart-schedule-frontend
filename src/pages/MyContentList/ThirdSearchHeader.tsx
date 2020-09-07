@@ -1,53 +1,51 @@
-import { Grid, Menu, MenuItem, withStyles } from "@material-ui/core";
-import FormControl from "@material-ui/core/FormControl";
+import { Grid, Menu, MenuItem, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
-import InputBase from "@material-ui/core/InputBase/InputBase";
-import NativeSelect from "@material-ui/core/NativeSelect/NativeSelect";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { MoreHoriz } from "@material-ui/icons";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
+import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { OrderBy, PublishStatus } from "../../api/api.d";
 import LayoutBox from "../../components/LayoutBox";
 import { isUnpublish } from "./FirstSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 // @ts-ignore
-const BootstrapInput = withStyles((theme) => ({
-  root: {
-    "label + &": {
-      marginTop: theme.spacing(3),
-    },
-  },
-  input: {
-    borderRadius: 4,
-    position: "relative",
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid #ced4da",
-    fontSize: 16,
-    padding: "8px 26px 13px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-    "&:focus": {
-      borderRadius: 4,
-      borderColor: "#80bdff",
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-    },
-  },
-}))(InputBase);
+// const BootstrapInput = withStyles((theme) => ({
+//   root: {
+//     "label + &": {
+//       marginTop: theme.spacing(3),
+//     },
+//   },
+//   input: {
+//     borderRadius: 4,
+//     position: "relative",
+//     backgroundColor: theme.palette.background.paper,
+//     border: "1px solid #ced4da",
+//     fontSize: 16,
+//     padding: "8px 26px 13px 12px",
+//     transition: theme.transitions.create(["border-color", "box-shadow"]),
+//     // Use the system font instead of the default Roboto font.
+//     fontFamily: [
+//       "-apple-system",
+//       "BlinkMacSystemFont",
+//       '"Segoe UI"',
+//       "Roboto",
+//       '"Helvetica Neue"',
+//       "Arial",
+//       "sans-serif",
+//       '"Apple Color Emoji"',
+//       '"Segoe UI Emoji"',
+//       '"Segoe UI Symbol"',
+//     ].join(","),
+//     "&:focus": {
+//       borderRadius: 4,
+//       borderColor: "#80bdff",
+//       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
+//     },
+//   },
+// }))(InputBase);
 // @ts-ignore
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,6 +70,10 @@ const useStyles = makeStyles((theme) => ({
     height: "40px",
     backgroundColor: "#0E78D5",
     marginLeft: "20px",
+  },
+  bulkActionSelect: {
+    width: 160,
+    height: 40,
   },
   formControl: {
     minWidth: 136,
@@ -110,13 +112,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function SubUnpublished(props: QueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (e: ChangeEvent<{}>, publish_status: QueryCondition['publish_status']) => onChange({ ...value, publish_status });
+  const handleChange = (e: ChangeEvent<{}>, publish_status: QueryCondition["publish_status"]) => onChange({ ...value, publish_status });
   return (
-    <Tabs className={classes.tabs} value={value.publish_status} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+    <Tabs
+      className={classes.tabs}
+      value={value.publish_status}
+      onChange={handleChange}
+      indicatorColor="primary"
+      textColor="primary"
+      centered
+    >
       <Tab value={PublishStatus.draft} label="Draft" />
       <Tab value={PublishStatus.pending} label="Waiting for Approval" />
       <Tab value={PublishStatus.rejected} label="Rejected" />
@@ -125,8 +133,8 @@ function SubUnpublished(props: QueryConditionBaseProps) {
 }
 
 enum BulkAction {
-  publish = 'publish', 
-  remove = 'remove',
+  publish = "publish",
+  remove = "remove",
 }
 
 interface BulkActionOption {
@@ -142,13 +150,17 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
     case PublishStatus.pending:
       return [];
     case PublishStatus.archive:
-      return [{label: "republish", value: BulkAction.publish}, {label: "delete", value: BulkAction.remove}];
+      return [
+        { label: "republish", value: BulkAction.publish },
+        { label: "delete", value: BulkAction.remove },
+      ];
     default:
-      return unpublish ? [{label: "delete", value: BulkAction.remove}] : [];
+      return unpublish ? [{ label: "delete", value: BulkAction.remove }] : [];
   }
 }
 
 const sortOptions = [
+  { label: "Display By", value: undefined },
   { label: "Material Name(A-Z)", value: OrderBy.content_name },
   { label: "Material Name(Z-A)", value: OrderBy._content_name },
   { label: "Created On(New-Old)", value: OrderBy._created_at },
@@ -162,21 +174,28 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onBulkDelete, onBulkPublish } = props;
   const unpublish = isUnpublish(value);
-  const handleChangeBulkAction = (event: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
     if (event.target.value === BulkAction.remove) onBulkDelete();
   };
-  const handleChangeOrder = (event: ChangeEvent<HTMLSelectElement>) => {
-    onChange({...value, order_by: event.target.value as OrderBy});
+  const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
+    const order_by = event.target.value as OrderBy | undefined;
+    onChange(
+      produce(value, (draft) => {
+        order_by ? (draft.order_by = order_by) : delete draft.order_by;
+      })
+    );
   };
 
   const bulkOptions = getBulkAction(value).map((item) => (
-    <option key={item.label} value={item.value}>
+    <MenuItem key={item.label} value={item.value}>
       {item.label}
-    </option>
+    </MenuItem>
   ));
   const orderbyOptions = sortOptions.map((item) => (
-    <option key={item.label} value={item.value}>{item.label}</option>
+    <MenuItem key={item.label} value={item.value}>
+      {item.label}
+    </MenuItem>
   ));
   return (
     <div className={classes.root}>
@@ -186,11 +205,17 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={6} xs={6} md={3}>
               {bulkOptions.length > 0 && (
-                <FormControl variant="outlined">
-                  <NativeSelect id="demo-customized-select-native" onChange={handleChangeBulkAction} input={<BootstrapInput/>} inputProps={{ placeholder: 'Bulk Actions' }} >
-                    {bulkOptions}
-                  </NativeSelect>
-                </FormControl>
+                <TextField
+                  size="small"
+                  fullWidth
+                  onChange={handleChangeBulkAction}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  value="default"
+                >
+                  <MenuItem value="default">Bulk Actions</MenuItem>
+                  {bulkOptions}
+                </TextField>
               )}
             </Grid>
             {unpublish ? (
@@ -203,11 +228,16 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               </Hidden>
             )}
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
-              <FormControl>
-                <NativeSelect id="demo-customized-select-native" value={value.order_by} onChange={handleChangeOrder} input={<BootstrapInput />} inputProps={{ placeholder: 'Display By' }}>
-                  {orderbyOptions}
-                </NativeSelect>
-              </FormControl>
+              <TextField
+                size="small"
+                fullWidth
+                onChange={handleChangeOrder}
+                label="Display By"
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {orderbyOptions}
+              </TextField>
             </Grid>
           </Grid>
         </Hidden>
@@ -236,9 +266,13 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const showSort = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClickOrderbyItem = (event: any, order_by: OrderBy) => {
+  const handleClickOrderbyItem = (event: any, order_by: OrderBy | undefined) => {
     setAnchorEl(null);
-    onChange({...value, order_by});
+    onChange(
+      produce(value, (draft) => {
+        order_by ? (draft.order_by = order_by) : delete draft.order_by;
+      })
+    );
   };
   const handleSortClose = () => {
     setAnchorEl(null);
@@ -265,8 +299,12 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               <ImportExportIcon onClick={showSort} />
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleSortClose}>
                 {sortOptions.map((item, index) => (
-                  <MenuItem key={item.label} selected={value.order_by === item.value} onClick={(e) => handleClickOrderbyItem(e, item.value)}>
-                    {item}
+                  <MenuItem
+                    key={item.label}
+                    selected={value.order_by === item.value}
+                    onClick={(e) => handleClickOrderbyItem(e, item.value)}
+                  >
+                    {item.label}
                   </MenuItem>
                 ))}
               </Menu>

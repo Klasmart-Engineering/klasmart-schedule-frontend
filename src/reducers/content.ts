@@ -1,9 +1,11 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api from "../api";
 import { Content, ContentIDListRequest } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { actWarning } from "./notify";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
@@ -13,7 +15,6 @@ interface IContentState {
   total: number;
   contentsList: Content[];
   contentPreview: Content;
-  refresh: number;
   MediaListTotal: number;
   OutcomesListTotal: number;
 }
@@ -104,7 +105,6 @@ const initialState: IContentState = {
     age_name: [],
     org_name: "",
   },
-  refresh: 0,
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -185,33 +185,50 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0] & LoadingMetaPayload;
 type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
-export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>("content/contentLists", async ({ metaLoading, ...query }) => {
-  const { list, total } = await api.contents.searchContents(query);
-  return { list, total };
-});
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
+  "content/contentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contents.searchContents(query);
+    return { list, total };
+  }
+);
 
 export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentDetailById", (id) =>
   api.contents.getContentById(id)
 );
 
-export const deleteContent = createAsyncThunk<Content, Required<Content>["id"]>("content/deleteContent", (id) => {
+export const deleteContent = createAsyncThunk<string, Required<Content>["id"]>("content/deleteContent", async (id, { dispatch }) => {
+  const content = `Are you sure you want to delete this content?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
   return api.contents.deleteContent(id);
 });
-export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publishContent", (id) => {
+export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publishContent", async (id, { dispatch }) => {
+  const content = `Are you sure you want to publish this content?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
   return api.contents.publishContent(id, { scope: "" });
 });
 
 // type BulkActionIds = Parameters<typeof>
 export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
   "content/bulkDeleteContent",
-  (idList) => {
-    return api.contentsBulk.deleteContentBulk({ id: idList });
+  async (ids, { dispatch }) => {
+    if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
+    const content = `Are you sure you want to delete these contents?`;
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.contentsBulk.deleteContentBulk({ id: ids });
   }
 );
 export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
   "content/bulkPublishContent",
-  (idList) => {
-    return api.contentsBulk.publishContentBulk({ id: idList });
+  async (ids, { dispatch }) => {
+    if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
+    const content = `Are you sure you want to publish these contents?`;
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.contentsBulk.publishContentBulk({ id: ids });
   }
 );
 export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("content/approveContentReview", (id) => {
@@ -222,12 +239,9 @@ type RejectContentParams = {
   reason: Parameters<typeof api.contentsReview.rejectContentReview>[1]["reject_reason"];
 };
 type RejectContentResult = AsyncReturnType<typeof api.contentsReview.rejectContentReview>;
-export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
-  "content/rejectContent",
-  ({ id, reason }) => {
-    return api.contentsReview.rejectContentReview(id, { reject_reason: reason });
-  }
-);
+export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>("content/rejectContent", ({ id, reason }) => {
+  return api.contentsReview.rejectContentReview(id, { reject_reason: reason });
+});
 export const lockContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.lockContent>,
   Parameters<typeof api.contents.lockContent>[0]
@@ -290,52 +304,49 @@ const { actions, reducer } = createSlice({
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {
-      alert(JSON.stringify(error));
+      // alert(JSON.stringify(error));
     },
     [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.contentPreview = payload;
     },
     [getContentDetailById.rejected.type]: (state, { error }: any) => {
-      alert(JSON.stringify(error));
+      // alert(JSON.stringify(error));
     },
     [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.refresh = state.refresh + 1;
-      alert("delete success");
+      // alert("delete success");
     },
     [deleteContent.rejected.type]: (state, { error }: any) => {
-      alert("delete failed");
+      // alert("delete failed");
+      throw error;
     },
     [publishContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.refresh = state.refresh + 1;
-      alert("publish success");
+      // alert("publish success");
     },
     [publishContent.rejected.type]: (state, { error }: any) => {
-      alert("publish failed");
+      // alert("publish failed");
     },
     [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.refresh = state.refresh + 1;
-      alert("bulk delete success");
+      // alert("bulk delete success");
     },
-    [bulkDeleteContent.rejected.type]: (state, { payload }: PayloadAction<any>) => {
-      alert("bulk delete failed");
+    [bulkDeleteContent.rejected.type]: (state, { error }: any) => {
+      // alert("bulk delete failed");
+      throw error;
     },
-    [bulkPublishContent.fulfilled.type]: (state, { error }: any) => {
-      state.refresh = state.refresh + 1;
-      alert("bulk publish success");
+    [bulkPublishContent.fulfilled.type]: (state, { payload }: any) => {
+      // alert("bulk publish success");
     },
     [bulkPublishContent.rejected.type]: (state, { error }: any) => {
-      alert("bulk publish failed");
+      // alert("bulk publish failed");
+      throw error;
     },
     [approveContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.refresh = state.refresh + 1;
-      alert("approve success");
+      // alert("approve success");
     },
     [approveContent.rejected.type]: (state, { error }: any) => {
-      alert("approve failed");
+      // alert("approve failed");
     },
     // [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-    //   state.refresh = state.refresh + 1;
     //   alert("reject success");
     // },
     // [rejectContent.rejected.type]: (state, { error }: any) => {
@@ -343,10 +354,10 @@ const { actions, reducer } = createSlice({
     // },
 
     [lockContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      alert("lock success");
+      // alert("lock success");
     },
     [lockContent.rejected.type]: (state, { error }: any) => {
-      alert("lock failed");
+      // alert("lock failed");
       throw error;
     },
   },

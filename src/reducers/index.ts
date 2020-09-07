@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import confirm from './confirm';
+import confirm from "./confirm";
 import content from "./content";
 import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
@@ -23,3 +23,4 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

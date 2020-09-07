@@ -23,18 +23,17 @@ function toHash(list: string[]): HashValue {
 
 export function CheckboxGroup(props: CheckboxGroupProps) {
   const { render, value = [], onChange } = props;
-  // const [hashValue, setHashValue] = useState<HashValue>(useMemo(() => toHash(value), [value]))
   const hashValue = useMemo(() => toHash(value), [value]);
-  const registerChange = useMemo<CheckboxGroupContext['registerChange']>(() => (event) => {
-    const { checked, value } = event.target;
-    // setHashValue(produce(hashValue, draft => {
-    //   checked ? (draft[value] = true) : delete draft[value];
-    // }))
-    const newhashValue = produce(hashValue, draft => {
-      checked ? (draft[value] = true) : delete draft[value];
-    });
-    const list = Object.keys(newhashValue);
-    onChange(list.length ? list : undefined);
-  }, [hashValue, onChange]);
+  const registerChange = useMemo<CheckboxGroupContext["registerChange"]>(
+    () => (event) => {
+      const { checked, value } = event.target;
+      const newhashValue = produce(hashValue, (draft) => {
+        checked ? (draft[value] = true) : delete draft[value];
+      });
+      const list = Object.keys(newhashValue);
+      onChange(list.length ? list : []);
+    },
+    [hashValue, onChange]
+  );
   return render({ hashValue, registerChange });
 }
