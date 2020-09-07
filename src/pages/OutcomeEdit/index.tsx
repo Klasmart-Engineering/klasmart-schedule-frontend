@@ -60,44 +60,58 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     dispatch(onLoadContentEdit({ type: "material", id: null }));
-  });
+  }, [dispatch]);
 
   interface outcomeDetails {
-    outcome_name: string;
-    shortcode: string;
-    assumed: boolean;
-    program: string[];
-    subject: string[];
-    development: string[];
-    skills: string[];
-    age: string[];
-    grade: string[];
-    estimated_time: string;
-    keywords: string;
-    description: string;
-    reject_reason: string;
-    organization: string;
-    create_time: string;
-    author: string;
+    outcome_id?: string;
+    ancestor_id?: string;
+    shortcode?: string;
+    assumed?: boolean;
+    outcome_name?: string;
+    program?: { program_id?: string; program_name?: string }[];
+    subject?: { subject_id?: string; subject_name?: string }[];
+    developmental?: { developmental_id?: string; developmental_name?: string }[];
+    skills?: { skill_id?: string; skill_name?: string }[];
+    age?: { age_id?: string; age_name?: string }[];
+    grade?: { grade_id?: string; grade_name?: string }[];
+    estimated_time?: number;
+    reject_reason?: string;
+    keywords?: string[];
+    source_id?: string;
+    locked_by?: string;
+    author_id?: string;
+    author_name?: string;
+    organization_id?: string;
+    organization_name?: string;
+    publish_scope?: string;
+    publish_status?: "draft" | "pending" | "published" | "rejected";
+    created_at?: number;
+    description?: string;
   }
 
   const initialDetail: outcomeDetails = {
+    outcome_id: "",
     outcome_name: "",
     shortcode: "",
     assumed: true,
     program: [],
     subject: [],
-    development: [],
+    developmental: [],
     skills: [],
     age: [],
     grade: [],
-    estimated_time: "",
-    keywords: "",
-    description: "",
+    estimated_time: 0,
+    keywords: [],
+    // description: "",
     reject_reason: "",
-    organization: "",
-    create_time: "",
-    author: "",
+    created_at: 0,
+    author_id: "",
+    author_name: "",
+    publish_status: "draft",
+    organization_id: "",
+    organization_name: "",
+    locked_by: "",
+    description: "",
   };
 
   const getItems = (list: MockOptionsItem[]) =>
@@ -229,10 +243,10 @@ export default function CreateOutcomings() {
             {outcome_id && (
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
                 <Controller
-                  name="organization "
+                  name="organization_name"
                   as={TextField}
                   control={control}
-                  defaultValue={initialDetail.organization}
+                  defaultValue={initialDetail.organization_name}
                   fullWidth
                   label="Organization"
                   disabled
@@ -245,10 +259,10 @@ export default function CreateOutcomings() {
             <Grid container justify="space-between" style={{ paddingBottom: "40px" }}>
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
                 <Controller
-                  name="create_time"
+                  name="created_at"
                   as={TextField}
                   control={control}
-                  defaultValue={initialDetail.create_time}
+                  defaultValue={initialDetail.created_at}
                   fullWidth
                   disabled
                   label="Create Time"
@@ -257,10 +271,10 @@ export default function CreateOutcomings() {
               </Grid>
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
                 <Controller
-                  name="author"
+                  name="author_name"
                   as={TextField}
                   control={control}
-                  defaultValue={initialDetail.author}
+                  defaultValue={initialDetail.author_name}
                   fullWidth
                   size="small"
                   disabled
@@ -306,11 +320,11 @@ export default function CreateOutcomings() {
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                name="development"
+                name="developmental"
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.development}
+                defaultValue={initialDetail.developmental}
                 size="small"
                 fullWidth
                 label="Development Category"

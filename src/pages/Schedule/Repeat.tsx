@@ -436,7 +436,7 @@ function EndRepeat(props: ExtendsProps) {
   };
 
   const timestampToTime = (timestamp: Number | null) => {
-    const date = new Date(Number(timestamp));
+    const date = new Date(Number(timestamp) * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
     const [Y, M, D, h, m] = [
       date.getFullYear(),
@@ -451,7 +451,7 @@ function EndRepeat(props: ExtendsProps) {
 
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
-    return timestampInt(new Date(currentTime).getTime());
+    return timestampInt(Math.floor(new Date(currentTime).getTime() / 1000));
   };
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 

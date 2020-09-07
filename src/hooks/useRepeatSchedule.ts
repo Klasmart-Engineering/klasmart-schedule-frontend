@@ -8,7 +8,7 @@ const initialState: stateProps = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: Date.now(),
+      after_time: Math.floor(Date.now() / 1000),
     },
   },
   weekly: {
@@ -17,7 +17,7 @@ const initialState: stateProps = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: Date.now(),
+      after_time: Math.floor(Date.now() / 1000),
     },
   },
   monthly: {
@@ -29,7 +29,7 @@ const initialState: stateProps = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: Date.now(),
+      after_time: Math.floor(Date.now() / 1000),
     },
   },
   yearly: {
@@ -43,7 +43,7 @@ const initialState: stateProps = {
     end: {
       type: "never",
       after_count: 0,
-      after_time: Date.now(),
+      after_time: Math.floor(Date.now() / 1000),
     },
   },
 };
