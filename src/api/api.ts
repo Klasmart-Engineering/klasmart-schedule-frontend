@@ -23,11 +23,12 @@ export interface AssetCreateRequest {
 }
 
 export type CreateContentRequest = {
-  content_type?: number;
+  content_type?: 1 | 2 | 3;
   name?: string;
   program?: string[];
   subject?: string[];
   reject_reason?: string;
+  outcomes?: string[];
   developmental?: string[];
   skills?: string[];
   age?: string[];
@@ -50,7 +51,7 @@ export type RejectReasonRequest = { reject_reason?: string };
 export type LockContentResponse = { id?: string };
 
 export type ContentCondition = {
-  content_type?: string;
+  content_type?: "1" | "2" | "3";
   scope?: string;
   publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
   author?: string;
@@ -60,9 +61,10 @@ export type ContentCondition = {
 
 export type Content = {
   id?: string;
-  content_type?: number;
+  content_type?: 1 | 2 | 3;
   name?: string;
   program?: string[];
+  outcomes?: string[];
   subject?: string[];
   suggest_time?: number;
   reject_reason?: string;
@@ -205,6 +207,7 @@ export interface ScheduleTimeView {
   /** schedule end time, timestamp */
   end_at?: number;
 
+  /** If true, schedule is repeat */
   is_repeat?: boolean;
 
   lesson_plan_id?: string;
@@ -275,9 +278,7 @@ export interface ScheduleCreate {
 
   /** schedule description */
   description?: string;
-
-  /** schedule attachment id */
-  attachment_id?: string;
+  attachment?: CommonShort;
 
   /** If true, skip the conflict detection */
   is_force?: boolean;
@@ -288,8 +289,7 @@ export interface ScheduleCreate {
   /** all_day flag */
   is_all_day?: boolean;
 
-  attachment?: CommonShort;
-
+  /** time zone offset(second) */
   time_zone_offset?: number;
 }
 
@@ -314,14 +314,6 @@ export interface ScheduleUpdate {
 
   /** schedule end time, timestamp */
   end_at?: number;
-
-  /**
-   *
-   *  * AllDay - this class will last for 24 hours for the whole day
-   *  * Repeat - repeat it daily/weekly/monthly/yearly
-   *
-   */
-  mode_type?: "AllDay" | "Repeat";
 
   /** repeat edit option */
   repeat_edit_options?: "only_current" | "with_following";
@@ -369,9 +361,7 @@ export interface ScheduleUpdate {
 
   /** schedule description */
   description?: string;
-
-  /** schedule attachment id */
-  attachment_id?: string;
+  attachment?: CommonShort;
 
   /** If true, skip the conflict detection */
   is_force?: boolean;
@@ -382,6 +372,7 @@ export interface ScheduleUpdate {
   /** all_day flag */
   is_all_day?: boolean;
 
+  /** time zone offset(second) */
   time_zone_offset?: number;
 }
 
@@ -403,20 +394,6 @@ export interface ScheduleDetailed {
 
   /** schedule end time, timestamp */
   end_at?: number;
-
-  is_repeat?: boolean;
-
-  is_force?: boolean;
-
-  repeat_id?: string;
-
-  /**
-   *
-   *  * AllDay - this class will last for 24 hours for the whole day
-   *  * Repeat - repeat it daily/weekly/monthly/yearly
-   *
-   */
-  mode_type?: "AllDay" | "Repeat";
 
   /** repeat options, only work when mode_type equal Repeat, */
   repeat?: {
@@ -461,6 +438,9 @@ export interface ScheduleDetailed {
 
   /** all_day flag */
   is_all_day?: boolean;
+
+  /** If true, schedule is repeat */
+  is_repeat?: boolean;
 }
 
 /**
@@ -486,6 +466,57 @@ export interface RepeatEnd {
   /** end after the time(unix timestamp) */
   after_time?: number;
 }
+
+export type CreateLearningOutComesRequest = {
+  outcome_name?: string;
+  author_id?: string;
+  author_name?: string;
+  assumed?: boolean;
+  shortcode?: string;
+  organization_id?: string;
+  program?: string[];
+  subject?: string[];
+  reject_reason?: string;
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
+  grade?: string[];
+  estimated_time?: number;
+  keywords?: string[];
+  description?: string;
+};
+
+export type PublishLearningOutcomesRequest = { scope?: string };
+
+export type OutcomesIDListRequest = { outcome_ids?: string[] };
+
+export type LockLearningOutcomesResponse = { outcome_id?: string };
+
+export type LearningOutcomes = {
+  outcome_id?: string;
+  ancestor_id?: string;
+  shortcode?: string;
+  assumed?: boolean;
+  outcome_name?: string;
+  program?: { program_id?: string; program_name?: string }[];
+  subject?: { subject_id?: string; subject_name?: string }[];
+  developmental?: { developmental_id?: string; developmental_name?: string }[];
+  skills?: { skill_id?: string; skill_name?: string }[];
+  age?: { age_id?: string; age_name?: string }[];
+  grade?: { grade_id?: string; grade_name?: string }[];
+  estimated_time?: number;
+  reject_reason?: string;
+  keywords?: string[];
+  source_id?: string;
+  locked_by?: string;
+  author_id?: string;
+  author_name?: string;
+  organization_id?: string;
+  organization_name?: string;
+  publish_scope?: string;
+  publish_status?: "draft" | "pending" | "published" | "rejected";
+  created_at?: number;
+};
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
   secure?: boolean;
@@ -605,7 +636,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchContents: (
       query?: {
         name?: string | null;
-        content_type?: string | null;
+        content_type?: "1" | "2" | "3";
         publish_status?: string | null;
         scope?: string | null;
         author?: string | null;
@@ -624,7 +655,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create content
      */
     createContent: (data: CreateContentRequest, params?: RequestParams) =>
-      this.request<{ id?: string }, any>(`/contents`, "POST", params, data),
+      this.request<LockContentResponse, any>(`/contents`, "POST", params, data),
 
     /**
      * @tags content
@@ -643,6 +674,33 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     lockContent: (content_id: string, params?: RequestParams) =>
       this.request<LockContentResponse, any>(`/contents/${content_id}/lock`, "PUT", params),
+
+    /**
+     * @tags content
+     * @name getContentsStatistics
+     * @request PUT:/contents/{content_id}/statistics
+     * @description get content sub contents count and outcomes count by content_id
+     */
+    getContentsStatistics: (content_id: string, params?: RequestParams) =>
+      this.request<any, any>(`/contents/${content_id}/statistics`, "PUT", params),
+
+    /**
+     * @tags content
+     * @name approveContentReview
+     * @request PUT:/contents/{content_id}/review/approve
+     * @description Approve a content review by content_id
+     */
+    approveContentReview: (content_id: string, params?: RequestParams) =>
+      this.request<any, any>(`/contents/${content_id}/review/approve`, "PUT", params),
+
+    /**
+     * @tags content
+     * @name rejectContentReview
+     * @request PUT:/contents/{content_id}/review/reject
+     * @description Reject a content review by content_id
+     */
+    rejectContentReview: (content_id: string, data: RejectReasonRequest, params?: RequestParams) =>
+      this.request<any, any>(`/contents/${content_id}/review/reject`, "PUT", params, data),
 
     /**
      * @tags content
@@ -668,46 +726,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Delete content by content_id
      */
     deleteContent: (content_id: string, params?: RequestParams) => this.request<any, any>(`/contents/${content_id}`, "DELETE", params),
-  };
-  contentsReview = {
-    /**
-     * @tags content
-     * @name approveContentReview
-     * @request PUT:/contents_review/{content_id}/approve
-     * @description Approve a content review by content_id
-     */
-    approveContentReview: (content_id: string, params?: RequestParams) =>
-      this.request<any, any>(`/contents_review/${content_id}/approve`, "PUT", params),
-
-    /**
-     * @tags content
-     * @name rejectContentReview
-     * @request PUT:/contents_review/{content_id}/reject
-     * @description Reject a content review by content_id
-     */
-    rejectContentReview: (content_id: string, data: RejectReasonRequest, params?: RequestParams) =>
-      this.request<any, any>(`/contents_review/${content_id}/reject`, "PUT", params, data),
-  };
-  contentsDynamo = {
-    /**
-     * @tags content
-     * @name contentsDynamoList
-     * @request GET:/contents_dynamo
-     * @description Search user's private content with condition
-     */
-    contentsDynamoList: (
-      query?: {
-        name?: string | null;
-        publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
-        author?: string | null;
-        content_type?: string | null;
-        description?: string | null;
-        keywords?: string | null;
-        org?: string | null;
-        key?: string | null;
-      },
-      params?: RequestParams
-    ) => this.request<{ key?: string; list?: Content[] }, any>(`/contents_dynamo${this.addQueryParams(query)}`, "GET", params),
   };
   contentsBulk = {
     /**
@@ -738,7 +756,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchPrivateContents: (
       query?: {
         name?: string | null;
-        content_type?: string | null;
+        content_type?: "1" | "2" | "3";
         publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         scope?: string | null;
         author?: string | null;
@@ -760,7 +778,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchPendingContents: (
       query?: {
         name?: string | null;
-        content_type?: string | null;
+        content_type?: "1" | "2" | "3";
         publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         scope?: string | null;
         author?: string | null;
@@ -789,7 +807,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Get content resource upload path
      */
     getContentResourceUploadPath: (
-      query?: { partition?: "assets" | "thumbnail" | "schedule_attachment"; extension?: string },
+      query?: { partition?: "assets" | "thumbnail" | "attachment" | "schedule_attachment"; extension?: string },
       params?: RequestParams
     ) => this.request<{ path?: string; resource_id?: string }, any>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
   };
@@ -1024,8 +1042,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description query schedules
      */
     querySchedules: (
-      query?: {
+      query: {
         teacher_name?: string | null;
+        time_zone_offset: number | null;
         start_at?: number | null;
         order_by?: "create_at" | "-create_at" | "start_at" | "-start_at";
         page?: number | null;
@@ -1051,7 +1070,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create schedule
      */
     createSchedule: (data: ScheduleCreate, params?: RequestParams) =>
-      this.request<{ id?: string }, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
+      this.request<LockContentResponse, any>(`/schedules`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule
@@ -1073,7 +1092,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update schedule
      */
     updateSchedule: (schedule_id: string, data: ScheduleUpdate, params?: RequestParams) =>
-      this.request<{ id?: string }, any>(`/schedules/${schedule_id}`, "PUT", params, data, BodyType.Json, true),
+      this.request<LockContentResponse, any>(`/schedules/${schedule_id}`, "PUT", params, data, BodyType.Json, true),
 
     /**
      * @tags schedule
@@ -1096,7 +1115,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description query schedules
      */
     schedulesTimeView: (
-      query: { view_type?: "day" | "workWeek" | "week" | "month"; time_at: string | null; time_zone_offset?: number | null },
+      query: {
+        view_type?: "day" | "workWeek" | "week" | "month";
+        time_at: string | null;
+        time_zone_offset: number | null;
+      },
       params?: RequestParams
     ) =>
       this.request<{ list?: ScheduleTimeView[] }, any>(
@@ -1108,16 +1131,283 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         true
       ),
   };
-  scheduleAttachmentUpload = {
+  learningOutcomes = {
     /**
-     * @tags schedule
-     * @name getAttachmentUploadPath
-     * @summary get schedules attachment upload path
-     * @request GET:/schedule_attachment_upload/{ext}
-     * @secure
-     * @description get schedules attachment upload path
+     * @tags learning_outcomes
+     * @name searchLearningOutcomes
+     * @request GET:/learning_outcomes
+     * @description Search learning outcomes with condition
      */
-    getAttachmentUploadPath: (ext: string, params?: RequestParams) =>
-      this.request<{ attachment_url?: string }, any>(`/schedule_attachment_upload/${ext}`, "GET", params, null, BodyType.Json, true),
+    searchLearningOutcomes: (
+      query?: {
+        outcome_name?: string | null;
+        description?: string | null;
+        keywords?: string | null;
+        shortcode?: string | null;
+        author_name?: string | null;
+        page?: number | null;
+        page_size?: number | null;
+        order_by?: "name" | "-name" | "created_at" | "-created_at";
+      },
+      params?: RequestParams
+    ) => this.request<{ total?: number; list?: LearningOutcomes[] }, any>(`/learning_outcomes${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags learning_outcomes
+     * @name createLearningOutcomes
+     * @request POST:/learning_outcomes
+     * @description Create learning outcomes
+     */
+    createLearningOutcomes: (data: CreateLearningOutComesRequest, params?: RequestParams) =>
+      this.request<LockLearningOutcomesResponse, any>(`/learning_outcomes`, "POST", params, data),
+
+    /**
+     * @tags learning_outcomes
+     * @name getLearningOutcomesById
+     * @request GET:/learning_outcomes/{outcome_id}
+     * @description Get learning outcomes by id
+     */
+    getLearningOutcomesById: (outcome_id: string, params?: RequestParams) =>
+      this.request<LearningOutcomes, any>(`/learning_outcomes/${outcome_id}`, "GET", params),
+
+    /**
+     * @tags learning_outcomes
+     * @name updateLearningOutcomes
+     * @request PUT:/learning_outcomes/{outcome_id}
+     * @description Update learning outcomes by id
+     */
+    updateLearningOutcomes: (outcome_id: string, data: CreateLearningOutComesRequest, params?: RequestParams) =>
+      this.request<any, any>(`/learning_outcomes/${outcome_id}`, "PUT", params, data),
+
+    /**
+     * @tags learning_outcomes
+     * @name deleteLearningOutcome
+     * @request DELETE:/learning_outcomes/{outcome_id}
+     * @description Delete learning outcomes by id
+     */
+    deleteLearningOutcome: (outcome_id: string, params?: RequestParams) =>
+      this.request<any, any>(`/learning_outcomes/${outcome_id}`, "DELETE", params),
+
+    /**
+     * @tags learning_outcomes
+     * @name publishLearningOutcomes
+     * @request PUT:/learning_outcomes/{outcome_id}/publish
+     * @description Publish learning outcomes
+     */
+    publishLearningOutcomes: (outcome_id: string, data: PublishLearningOutcomesRequest, params?: RequestParams) =>
+      this.request<any, any>(`/learning_outcomes/${outcome_id}/publish`, "PUT", params, data),
+
+    /**
+     * @tags learning_outcomes
+     * @name lockLearningOutcomes
+     * @request PUT:/learning_outcomes/{outcome_id}/lock
+     * @description Lock a learning outcomes by content_id
+     */
+    lockLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
+      this.request<LockLearningOutcomesResponse, any>(`/learning_outcomes/${outcome_id}/lock`, "PUT", params),
+
+    /**
+     * @tags learning_outcomes
+     * @name approveLearningOutcomes
+     * @request PUT:/learning_outcomes/{outcome_id}/approve
+     * @description Approve a learning outcomes by outcome_id
+     */
+    approveLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
+      this.request<any, any>(`/learning_outcomes/${outcome_id}/approve`, "PUT", params),
+
+    /**
+     * @tags learning_outcomes
+     * @name rejectLearningOutcomes
+     * @request PUT:/learning_outcomes/{outcome_id}/reject
+     * @description Reject a learning outcomes by outcome_id
+     */
+    rejectLearningOutcomes: (outcome_id: string, data: RejectReasonRequest, params?: RequestParams) =>
+      this.request<any, any>(`/learning_outcomes/${outcome_id}/reject`, "PUT", params, data),
+  };
+  bulkPublish = {
+    /**
+     * @tags learning_outcomes
+     * @name publishLearningOutcomesBulk
+     * @request PUT:/bulk_publish/learning_outcomes
+     * @description Publish learning outcomes bulk
+     */
+    publishLearningOutcomesBulk: (data: OutcomesIDListRequest, params?: RequestParams) =>
+      this.request<any, any>(`/bulk_publish/learning_outcomes`, "PUT", params, data),
+  };
+  bulk = {
+    /**
+     * @tags learning_outcomes
+     * @name deleteOutcomeBulk
+     * @request DELETE:/bulk/learning_outcomes
+     * @description Delete learning outcome bulk
+     */
+    deleteOutcomeBulk: (data: OutcomesIDListRequest, params?: RequestParams) =>
+      this.request<any, any>(`/bulk/learning_outcomes`, "DELETE", params, data),
+  };
+  privateLearningOutcomes = {
+    /**
+     * @tags learning_outcomes
+     * @name searchPrivateLearningOutcomes
+     * @request GET:/private_learning_outcomes
+     * @description Search user's private learning outcomes with condition
+     */
+    searchPrivateLearningOutcomes: (
+      query?: {
+        outcome_name?: string | null;
+        description?: string | null;
+        keyword?: string | null;
+        shortcode?: string | null;
+        author_name?: string | null;
+        page?: number | null;
+        page_size?: number | null;
+        order_by?: "name" | "-name" | "created_at" | "-created_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<{ total?: number; list?: LearningOutcomes[] }, any>(
+        `/private_learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  pendingLearningOutcomes = {
+    /**
+     * @tags learning_outcomes
+     * @name searchPendingLearningOutcomes
+     * @request GET:/pending_learning_outcomes
+     * @description Search pending learning outcomes
+     */
+    searchPendingLearningOutcomes: (
+      query?: {
+        outcome_name?: string | null;
+        description?: string | null;
+        keyword?: string | null;
+        shortcode?: string | null;
+        author_name?: string | null;
+        page?: number | null;
+        page_size?: number | null;
+        order_by?: "name" | "-name" | "created_at" | "-created_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<{ total?: number; list?: LearningOutcomes[] }, any>(
+        `/pending_learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  assessments = {
+    /**
+     * @tags assessments
+     * @name listAssessment
+     * @summary list assessment
+     * @request GET:/assessments
+     * @secure
+     * @description list assessment
+     */
+    listAssessment: (
+      query?: {
+        status?: "all" | "in_progress" | "complete";
+        teacher_name?: string;
+        page?: number;
+        page_size?: number;
+        order_by?: "class_end_time" | "-class_end_time" | "complete_time" | "-complete_time";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<
+        {
+          total?: number;
+          items?: {
+            id?: string;
+            title?: string;
+            subject?: { id?: string; name?: string };
+            program?: { id?: string; name?: string };
+            teacher?: { id?: string; name?: string };
+            class_end_time?: number;
+            complete_time?: number;
+            status?: "in_progress" | "complete";
+          }[];
+        },
+        any
+      >(`/assessments${this.addQueryParams(query)}`, "GET", params, null, BodyType.Json, true),
+
+    /**
+     * @tags assessments
+     * @name addAssessment
+     * @summary add assessment
+     * @request POST:/assessments
+     * @secure
+     * @description add assessment
+     */
+    addAssessment: (
+      data: {
+        schedule_id?: string;
+        class_id?: string;
+        class_name?: string;
+        lesson_name?: string;
+        attendance_ids?: string[];
+        program_id?: string;
+        subject_id?: string;
+        teacher_id?: string;
+        class_length?: number;
+        class_end_time?: number;
+        complete_time?: number;
+      },
+      params?: RequestParams
+    ) => this.request<LockContentResponse, any>(`/assessments`, "POST", params, data, BodyType.Json, true),
+  };
+  assessment = {
+    /**
+     * @tags assessments
+     * @name getAssessment
+     * @summary get assessment detail
+     * @request GET:/assessment/{id}
+     * @secure
+     * @description get assessment detail
+     */
+    getAssessment: (id: string, params?: RequestParams) =>
+      this.request<
+        {
+          id?: string;
+          title?: string;
+          class_id?: string;
+          attendances?: { id?: string; name?: string }[];
+          subject?: { id?: string; name?: string };
+          teacher?: { id?: string; name?: string };
+          class_end_time?: number;
+          class_length?: number;
+          number_of_activities?: number;
+          number_of_outcomes?: number;
+          complete_time?: number;
+          outcome_attendance_maps?: {
+            outcome_id?: string;
+            outcome_name?: string;
+            assumed?: boolean;
+            attendance_ids?: string[];
+          }[];
+        },
+        any
+      >(`/assessment/${id}`, "GET", params, null, BodyType.Json, true),
+
+    /**
+     * @tags assessments
+     * @name updateAssessment
+     * @summary update assessment
+     * @request PUT:/assessment/{id}
+     * @secure
+     * @description update assessment
+     */
+    updateAssessment: (
+      id: string,
+      data: {
+        action?: "save" | "complete";
+        id?: string;
+        status?: "in_progress" | "complete";
+        attendance_ids?: string[];
+        outcome_attendance_maps?: { outcome_id?: string; attendance_ids?: string[] }[];
+      },
+      params?: RequestParams
+    ) => this.request<any, any>(`/assessment/${id}`, "PUT", params, data, BodyType.Json, true),
   };
 }

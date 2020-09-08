@@ -94,7 +94,13 @@ function MyCalendar(props: CalendarProps) {
 
   const deleteScheduleByid = async (repeat_edit_options: repeatOptionsType = "only_current") => {
     await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
-    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start.toString(),
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      })
+    );
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),

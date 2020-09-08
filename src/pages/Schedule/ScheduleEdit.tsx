@@ -389,7 +389,13 @@ function EditBox(props: CalendarStateProps) {
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
     dispatch(actSuccess("save success"));
-    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start.toString(),
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      })
+    );
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
   };
 
@@ -433,7 +439,13 @@ function EditBox(props: CalendarStateProps) {
     await dispatch(
       removeSchedule({ schedule_id: scheduleDetial.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
     );
-    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start.toString(),
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      })
+    );
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),

@@ -104,7 +104,15 @@ export default function SearchList() {
   console.log(time_zone);
   const current_time = Math.floor(new Date().valueOf() / 1000);
   React.useEffect(() => {
-    dispatch(getSearchScheduleList({ teacher_name: name, page: 1, page_size: 10, start_at: current_time }));
+    dispatch(
+      getSearchScheduleList({
+        teacher_name: name,
+        page: 1,
+        page_size: 10,
+        start_at: current_time,
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      })
+    );
   }, [current_time, dispatch, name]);
   const { searchScheduleList, total, searchFlag } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
@@ -142,7 +150,7 @@ export default function SearchList() {
   const getBottom = (value: boolean) => {
     if (value) {
       // setScheduleList([...scheduleList, ...listssss]);
-      dispatch(getSearchScheduleList({ teacher_name: name, page, page_size: 10 }));
+      dispatch(getSearchScheduleList({ teacher_name: name, page, page_size: 10, time_zone_offset: -new Date().getTimezoneOffset() * 60 }));
     }
   };
 

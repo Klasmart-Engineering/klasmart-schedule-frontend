@@ -34,7 +34,6 @@ export const initScheduleDetial: ScheduleDetailed = {
   teachers: [],
   start_at: 0,
   end_at: 0,
-  mode_type: "AllDay",
   repeat: {},
   subject: {},
   program: {},
@@ -44,7 +43,6 @@ export const initScheduleDetial: ScheduleDetailed = {
   attachment: {},
   is_all_day: true,
   is_repeat: false,
-  is_force: false,
 };
 
 const initialState: ScheduleState = {
@@ -57,8 +55,6 @@ const initialState: ScheduleState = {
   attachment_path: "",
   searchFlag: false,
 };
-
-const timeZone = -new Date().getTimezoneOffset() * 60;
 
 type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
@@ -89,7 +85,7 @@ type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.schedulesTime
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
   "schedule/schedules_time_view",
   (query) => {
-    return api.schedulesTimeView.schedulesTimeView({ ...query, time_zone_offset: timeZone });
+    return api.schedulesTimeView.schedulesTimeView({ ...query });
   }
 );
 

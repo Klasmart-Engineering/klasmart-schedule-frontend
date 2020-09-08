@@ -60,7 +60,13 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    dispatch(getScheduleTimeViewData({ view_type: modelView, time_at: timesTamp.start.toString() }));
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start.toString(),
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      })
+    );
   }, [modelView, timesTamp, dispatch]);
 
   React.useEffect(() => {
