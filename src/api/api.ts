@@ -10,24 +10,27 @@
  * ---------------------------------------------------------------
  */
 
-/**
- * Asset
- */
-export interface AssetCreateRequest {
-  /** asset name */
-  name?: string;
-  size?: number;
-  category?: Category;
-  tags?: Tag[];
-  url?: string;
-}
-
-export type CreateContentRequest = {
-  content_type?: 1 | 2 | 3;
+export type AssetCreateRequest = {
+  content_type?: 10 | 11 | 12 | 13;
   name?: string;
   program?: string[];
   subject?: string[];
-  reject_reason?: string;
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
+  grade?: string[];
+  keywords?: string[];
+  description?: string;
+  thumbnail?: string;
+  data?: string;
+  extra?: string;
+};
+
+export type CreateContentRequest = {
+  content_type?: 1 | 2 | 10 | 11 | 12 | 13;
+  name?: string;
+  program?: string[];
+  subject?: string[];
   outcomes?: string[];
   developmental?: string[];
   skills?: string[];
@@ -61,7 +64,7 @@ export type ContentCondition = {
 
 export type Content = {
   id?: string;
-  content_type?: 1 | 2 | 3;
+  content_type?: 1 | 2 | 10 | 11 | 12 | 13;
   name?: string;
   program?: string[];
   outcomes?: string[];
@@ -96,53 +99,38 @@ export type Content = {
   created_at?: number;
 };
 
-export type Asset = AssetCreateRequest & { id?: string; uploader?: string; created_at?: number; updated_at?: number };
-
-/**
- * create tag request
- */
-export interface TagCreate {
-  /** tag name */
-  name?: string;
-}
-
-/**
- * update tag request
- */
-export interface TagUpdate {
-  /** tag name */
-  name?: string;
-
-  /**
-   *
-   *  * 1 - enable
-   *  * 2 - disable
-   *
-   */
-  states?: 1 | 2;
-}
-
-/**
- * Asset
- */
-export interface Tag {
-  /** tag id */
+export type Asset = {
   id?: string;
-
-  /** tag name */
+  content_type?: 10 | 11 | 12 | 13;
   name?: string;
-
-  /**
-   *
-   *  * 1 - enable
-   *  * 2 - disable
-   *
-   */
-  states?: 1 | 2;
-
-  /** tag create time, timestamp */
+  program?: string[];
+  outcomes?: string[];
+  subject?: string[];
+  reject_reason?: string;
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
+  grade?: string[];
+  keywords?: string[];
+  description?: string;
+  thumbnail?: string;
+  data?: string;
+  extra?: string;
+  author?: string;
+  author_name?: string;
+  org?: string;
+  publish_scope?: string;
+  publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
+  content_type_name?: string;
+  program_name?: string[];
+  grade_name?: string[];
+  subject_name?: string[];
+  developmental_name?: string[];
+  skills_name?: string[];
+  age_name?: string[];
+  org_name?: string;
   created_at?: number;
-}
+};
 
 /**
  * Asset
@@ -210,6 +198,7 @@ export interface ScheduleTimeView {
   /** If true, schedule is repeat */
   is_repeat?: boolean;
 
+  /** schedule lesson_plan_id */
   lesson_plan_id?: string;
 }
 
@@ -824,13 +813,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         id?: string | null;
         name?: string | null;
-        category?: string | null;
-        size_min?: number | null;
-        size_max?: number | null;
-        tag?: string | null;
         page?: number | null;
         page_size?: number | null;
-        order_by?: "name" | "-name" | "create_at" | "-create_at" | "last_update_at" | "-last_update_at";
+        order_by?: "id" | "-id" | "created_at" | "-created_at" | "updated_at" | "-updated_at" | "content_name" | "-content_name";
       },
       params?: RequestParams
     ) =>
@@ -886,17 +871,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteAsset: (asset_id: string, params?: RequestParams) =>
       this.request<any, any>(`/assets/${asset_id}`, "DELETE", params, null, BodyType.Json, true),
-
-    /**
-     * @tags asset
-     * @name getAssetUploadPath
-     * @summary GetAssetUploadPath
-     * @request GET:/assets/{ext}/upload
-     * @secure
-     * @description GetAssetUploadPath
-     */
-    getAssetUploadPath: (ext: string, params?: RequestParams) =>
-      this.request<{ path?: string }, any>(`/assets/${ext}/upload`, "GET", params, null, BodyType.Json, true),
   };
   categories = {
     /**
@@ -987,7 +961,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         order_by?: "name" | "-name" | "create_at" | "-create_at";
       },
       params?: RequestParams
-    ) => this.request<{ total?: number; list?: Tag[] }, any>(`/tag${this.addQueryParams(query)}`, "GET", params, null, BodyType.Json, true),
+    ) => this.request<{ total?: number; list?: any[] }, any>(`/tag${this.addQueryParams(query)}`, "GET", params, null, BodyType.Json, true),
 
     /**
      * @tags tag
@@ -997,7 +971,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description Create Tag
      */
-    createTag: (data: TagCreate, params?: RequestParams) => this.request<string, any>(`/tag`, "POST", params, data, BodyType.Json, true),
+    createTag: (data: any, params?: RequestParams) => this.request<string, any>(`/tag`, "POST", params, data, BodyType.Json, true),
 
     /**
      * @tags tag
@@ -1008,7 +982,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get tag by id
      */
     getTagById: (tag_id: string, params?: RequestParams) =>
-      this.request<Tag, any>(`/tag/${tag_id}`, "GET", params, null, BodyType.Json, true),
+      this.request<any, any>(`/tag/${tag_id}`, "GET", params, null, BodyType.Json, true),
 
     /**
      * @tags tag
@@ -1018,8 +992,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @secure
      * @description update tag
      */
-    updateTag: (tag_id: string, data: TagUpdate, params?: RequestParams) =>
-      this.request<Tag, any>(`/tag/${tag_id}`, "PUT", params, data, BodyType.Json, true),
+    updateTag: (tag_id: string, data: any, params?: RequestParams) =>
+      this.request<any, any>(`/tag/${tag_id}`, "PUT", params, data, BodyType.Json, true),
 
     /**
      * @tags tag
@@ -1145,6 +1119,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         keywords?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
+        publish_status?: ("draft" | "pending" | "published" | "rejected")[] | null | null;
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";
@@ -1258,6 +1233,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         keyword?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
+        publish_status?: ("draft" | "pending" | "published" | "rejected")[] | null | null;
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";
@@ -1284,6 +1260,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         keyword?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
+        publish_status?: ("draft" | "pending" | "published" | "rejected")[] | null | null;
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";

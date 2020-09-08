@@ -1,12 +1,12 @@
 export enum ContentType {
-  image = 6,
-  video = 5,
-  audio = 4,
-  doc = 3,
+  image = 10,
+  video = 11,
+  audio = 12,
+  doc = 13,
+  assets = 3,
   plan = 2,
   material = 1,
 }
-
 
 export enum PublishStatus {
   published = 'published',

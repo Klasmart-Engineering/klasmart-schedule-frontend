@@ -1,7 +1,8 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api from "../api";
-import { Content, ContentIDListRequest } from "../api/api";
+import { Content, ContentIDListRequest, CreateContentRequest } from "../api/api";
+import { ContentType } from "../api/api.d";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -27,7 +28,7 @@ const initialState: IContentState = {
   history: undefined,
   contentDetail: {
     id: "",
-    content_type: 0,
+    content_type: ContentType.material,
     suggest_time: 0,
     grade: [],
     name: "",
@@ -74,7 +75,7 @@ const initialState: IContentState = {
   contentPreview: {
     created_at: 0,
     id: "",
-    content_type: 0,
+    content_type: ContentType.material,
     suggest_time: 0,
     grade: [],
     grade_name: [],
@@ -114,9 +115,6 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   ? U
   : any;
 
-type IQueryContentParams = Parameters<typeof api.contentsDynamo.contentsDynamoList>[0];
-type IQueryContentResult = AsyncReturnType<typeof api.contentsDynamo.contentsDynamoList>;
-
 interface onLoadContentEditPayload extends LoadingMetaPayload {
   id: Content["id"] | null;
   type: "assets" | "material" | "plan";
@@ -129,7 +127,7 @@ interface onLoadContentEditResult {
   mockOptions?: MockOptions;
 }
 
-export const save = createAsyncThunk<Content["id"], Content, { state: RootState }>("content/save", async (payload, { getState }) => {
+export const save = createAsyncThunk<Content["id"], CreateContentRequest, { state: RootState }>("content/save", async (payload, { getState }) => {
   const {
     content: {
       contentDetail: { id },
@@ -152,13 +150,6 @@ export const publish = createAsyncThunk<Content, Required<Content>["id"], { stat
   // debugger;
   return api.contents.publishContent(id, { scope: publish_scope });
 });
-export const contentsDynamoList = createAsyncThunk<IQueryContentResult, IQueryContentParams>("content/contentsDynamoList", (query) => {
-  // debugger;
-  return api.contentsDynamo.contentsDynamoList(query);
-});
-
-//debug
-(window as any).api = api;
 
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
@@ -232,15 +223,15 @@ export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDLi
   }
 );
 export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("content/approveContentReview", (id) => {
-  return api.contentsReview.approveContentReview(id);
+  return api.contents.approveContentReview(id);
 });
 type RejectContentParams = {
-  id: Parameters<typeof api.contentsReview.rejectContentReview>[0];
-  reason: Parameters<typeof api.contentsReview.rejectContentReview>[1]["reject_reason"];
+  id: Parameters<typeof api.contents.rejectContentReview>[0];
+  reason: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
 };
-type RejectContentResult = AsyncReturnType<typeof api.contentsReview.rejectContentReview>;
+type RejectContentResult = AsyncReturnType<typeof api.contents.rejectContentReview>;
 export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>("content/rejectContent", ({ id, reason }) => {
-  return api.contentsReview.rejectContentReview(id, { reject_reason: reason });
+  return api.contents.rejectContentReview(id, { reject_reason: reason });
 });
 export const lockContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.lockContent>,
@@ -289,12 +280,6 @@ const { actions, reducer } = createSlice({
       }
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
-    [contentsDynamoList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentsDynamoList>>) => {
-      // alert("success");
-    },
-    [contentsDynamoList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {

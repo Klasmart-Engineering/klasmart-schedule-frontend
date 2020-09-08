@@ -14,6 +14,7 @@ const type2svg = {
   [ContentType.audio]: audioImg,
   [ContentType.doc]: docImg,
   [ContentType.plan]: planImg,
+  [ContentType.assets]: imageImg,
   [ContentType.material]: materialImg,
 };
 
