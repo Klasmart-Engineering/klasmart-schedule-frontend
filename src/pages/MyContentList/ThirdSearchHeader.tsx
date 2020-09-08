@@ -8,7 +8,7 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { OrderBy, PublishStatus } from "../../api/api.d";
-import LayoutBox from "../LayoutBox";
+import LayoutBox from "../../components/LayoutBox";
 import { isUnpublish } from "./FirstSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 // @ts-ignore

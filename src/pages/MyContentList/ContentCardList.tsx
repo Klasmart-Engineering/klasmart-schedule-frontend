@@ -26,7 +26,7 @@ import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGr
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { Thumbnail } from "../../components/Thumbnail";
-import { ContentListForm, ContentListFormKey, QueryCondition } from "../../components/UIListSearchHeader/types";
+import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>

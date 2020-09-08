@@ -6,20 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { OrderBy } from "../../api/api.d";
 import emptyIconUrl from "../../assets/icons/empty.svg";
-import {
-  FirstSearchHeaderMb,
-  FirstSearchHeaderProps,
-  SecondSearchHeader,
-  SecondSearchHeaderMb,
-  ThirdSearchHeader,
-  ThirdSearchHeaderMb,
-  ThirdSearchHeaderProps,
-} from "../../components/UIListSearchHeader";
-import FirstSearchHeader from "../../components/UIListSearchHeader/FirstSearchHeader";
-import { ContentListForm, ContentListFormKey, QueryCondition } from "../../components/UIListSearchHeader/types";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
+import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
+import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
+import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
 const PAGE_SIZE = 16;
 
