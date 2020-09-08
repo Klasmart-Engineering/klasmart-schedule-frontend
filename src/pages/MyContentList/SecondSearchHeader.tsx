@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel, Grid, InputAdornment, Menu, MenuItem } from
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField/TextField";
+import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField";
 import { Search } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
@@ -162,6 +162,9 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
       })
     );
   };
+  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter") handleClickSearch();
+  };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -171,6 +174,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               <TextField
                 size="small"
                 className={classes.searchText}
+                onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={"Search"}
                 defaultValue={value.name}
