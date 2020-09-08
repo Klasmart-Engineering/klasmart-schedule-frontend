@@ -5,6 +5,7 @@ import content from "./content";
 import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
+import outcome from "./outcome";
 import schedule from "./schedule";
 const loadingMiddleware = createLoadingMiddleware({
   enableLoadingPayload: { type: actSetLoading.type, payload: true },
@@ -17,6 +18,7 @@ export const store = configureStore({
     confirm,
     notify,
     content,
+    outcome,
     schedule,
     assessment,
   },

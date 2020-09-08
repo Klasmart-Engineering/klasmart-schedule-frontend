@@ -21,6 +21,9 @@ import {
 } from "@material-ui/icons";
 import PropTypes from "prop-types";
 import React from "react";
+import { UseFormMethods } from "react-hook-form";
+import { LearningOutcomes } from "../../api/api";
+import { BulkListForm, OutcomeQueryCondition } from "./types";
 
 interface Data {
   type: string;
@@ -192,7 +195,7 @@ interface TableListProps {
   list: any[];
   total: number;
 }
-export default function TableList(props: TableListProps) {
+export function TableList(props: TableListProps) {
   const { list, status, total } = props;
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>("asc");
@@ -437,4 +440,22 @@ export default function TableList(props: TableListProps) {
       </Paper>
     </div>
   );
+}
+
+interface OutcomeActionProps {
+  onPublish: (id: NonNullable<LearningOutcomes["outcome_id"]>) => any;
+  onDelete: (id: NonNullable<LearningOutcomes["outcome_id"]>) => any;
+}
+
+export interface OutcomeListProps extends OutcomeActionProps {
+  formMethods: UseFormMethods<BulkListForm>;
+  total: number;
+  amountPerPage?: number;
+  list: LearningOutcomes[];
+  queryCondition: OutcomeQueryCondition;
+  onChangePage: (page: number) => void;
+  onClickContent: (id: LearningOutcomes["outcome_id"]) => any;
+}
+export default function FakeTableList(props: OutcomeListProps) {
+  return null;
 }

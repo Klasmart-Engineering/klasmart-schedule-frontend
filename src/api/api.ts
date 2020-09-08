@@ -1119,7 +1119,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         keywords?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
-        publish_status?: ("draft" | "pending" | "published" | "rejected")[] | null | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected" | null;
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";

@@ -293,9 +293,6 @@
     },
     "/contents/{content_id}/statistics": {
       "put": {
-        "500": {
-          "description": "Internal Server Error"
-        },
         "tags": ["content"],
         "parameters": [
           {
@@ -330,6 +327,9 @@
               }
             }
           }
+        },
+        "500": {
+          "description": "Internal Server Error"
         }
       }
     },
@@ -4028,6 +4028,7 @@
                   "type": "string"
                 },
                 "description": "grade name",
+
                 "example": ["program1"]
               },
               "subject_name": {
@@ -4235,6 +4236,7 @@
                   "type": "string"
                 },
                 "description": "grade name",
+
                 "example": ["program1"]
               },
               "subject_name": {

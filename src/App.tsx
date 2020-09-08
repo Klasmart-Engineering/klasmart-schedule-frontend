@@ -12,6 +12,7 @@ import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
 import MyContentList from "./pages/MyContentList/index";
 import CreateOutcome from "./pages/OutcomeEdit";
+import OutcomeList from "./pages/OutcomeList";
 import Preview from "./pages/Preview";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
@@ -40,6 +41,12 @@ function App() {
               </Route>
               <Route path="/library/my-content-list">
                 <MyContentList />
+              </Route>
+              <Route path={OutcomeList.routeBasePath}>
+                <OutcomeList />
+              </Route>
+              <Route path={OutcomeList.routeBasePath}>
+                <Redirect to={OutcomeList.routeRedirectDefault} />
               </Route>
               <Route path={Schedule.routeMatchPath}>
                 <Schedule />

@@ -9,16 +9,16 @@ export enum ContentType {
 }
 
 export enum PublishStatus {
-  published = 'published',
-  pending = 'pending',
-  draft = 'draft',
-  rejected = 'rejected',
-  archive = 'archive',
-  assets = 'assets',
+  published = "published",
+  pending = "pending",
+  draft = "draft",
+  rejected = "rejected",
+  archive = "archive",
+  assets = "assets",
 }
 
 export enum Author {
-  self = '{self}',
+  self = "{self}",
 }
 
 export enum OrderBy {
@@ -28,6 +28,20 @@ export enum OrderBy {
   _created_at = "-created_at",
   updated_at = "updated_at",
   _updated_at = "-updated_at",
-  content_name =  "content_name",
+  content_name = "content_name",
   _content_name = "-content_name",
+}
+
+export enum OutcomePublishStatus {
+  published = "published",
+  pending = "pending",
+  draft = "draft",
+  rejected = "rejected",
+}
+
+export enum OutcomeOrderBy {
+  name = "name",
+  _name = "-name",
+  created_at = "created_at",
+  _created_at = "-created_at",
 }
