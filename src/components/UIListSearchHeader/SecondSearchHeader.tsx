@@ -8,7 +8,7 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useState } from "react";
 import { Author, PublishStatus } from "../../api/api.d";
-import LayoutBox from "../../components/LayoutBox";
+import LayoutBox from "../LayoutBox";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({

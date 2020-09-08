@@ -6,10 +6,10 @@ import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Loading } from "./components/Loading";
 import { Notification } from "./components/Notification";
+import { UIAppHeaderNavBar } from "./components/UIAppHeaderNavBar";
 import { AssessmentsDetail } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
-import HeaderNavBar from "./pages/MyContentList/HeaderNavBar";
 import MyContentList from "./pages/MyContentList/index";
 import CreateOutcome from "./pages/OutcomeEdit";
 import Preview from "./pages/Preview";
@@ -24,7 +24,7 @@ function App() {
         <Provider store={store}>
           <Loading />
           <SnackbarProvider>
-            <HeaderNavBar />
+            <UIAppHeaderNavBar />
             <Switch>
               <Route path={Preview.routeBasePath}>
                 <Preview />
