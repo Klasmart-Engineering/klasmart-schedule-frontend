@@ -292,6 +292,7 @@ export function ContentCardList(props: ContentCardListProps) {
         />
       </Grid>
       <Pagination
+        page={queryCondition.page}
         className={css.pagination}
         classes={{ ul: css.paginationUl }}
         onChange={handleChangePage}

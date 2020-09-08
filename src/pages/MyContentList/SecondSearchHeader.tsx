@@ -89,7 +89,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   };
   const handleItemClick = (event: any) => {
     setAnchorEl(null);
-    const author = value.author === Author.self ? null : Author.self;
+    const author = value.author === Author.self ? undefined : Author.self;
     onChange({ ...value, author });
   };
   return (

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, forwardRef } from "react";
+import React, { forwardRef, Fragment, useReducer } from "react";
 import { ContentType } from "../../api/api.d";
 import { apiResourcePathById } from "../../api/extra";
 import docImg from "../../assets/icons/doc.svg";
@@ -23,17 +23,14 @@ interface ThumbnailProps extends React.DetailedHTMLProps<React.ImgHTMLAttributes
 }
 export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, ref) => {
   const { type = ContentType.material, id } = props;
-  const thumbail = id ? apiResourcePathById(id) : type2svg[type];
+  const [loaded, dispatchLoaded] = useReducer(() => true, false);
+  const thumbail = id && apiResourcePathById(id);
+  const defaultThumbail = type2svg[type];
+  const display = loaded ? "inline-block" : "none";
   return (
-    <img
-      {...props}
-      ref={ref}
-      alt="thumbail"
-      src={thumbail}
-      onError={(e: ChangeEvent<HTMLImageElement>) => {
-        // todo: 不要直接操作 dom
-        e.target.src = type2svg[type];
-      }}
-    />
+    <Fragment>
+      {!loaded && <img {...props} ref={ref} alt="thumbail" src={defaultThumbail} />}
+      <img {...props} ref={ref} alt="thumbail" src={thumbail} onLoad={dispatchLoaded} style={{ display }} />
+    </Fragment>
   );
 });
