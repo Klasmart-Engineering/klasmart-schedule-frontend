@@ -9,8 +9,8 @@ import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
-import FakeTableList, { OutcomeListProps } from "./TableList";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
@@ -76,22 +76,22 @@ export default function OutcomeList() {
   const { getValues, reset } = formMethods;
   const { outcomeList, total } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const dispatch = useDispatch<AppDispatch>();
-  const handlePublish: OutcomeListProps["onPublish"] = (id) => {
+  const handlePublish: OutcomeTableProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishOutcome(id)));
   };
   const handleBulkPublish: ThirdSearchHeaderProps["onBulkPublish"] = () => {
     const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
     return refreshWithDispatch(dispatch(bulkPublishOutcome(ids)));
   };
-  const handleDelete: OutcomeListProps["onDelete"] = (id) => {
+  const handleDelete: OutcomeTableProps["onDelete"] = (id) => {
     return refreshWithDispatch(dispatch(deleteOutcome(id)));
   };
   const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = () => {
     const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
     return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
   };
-  const handleChangePage: OutcomeListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickConent: OutcomeListProps["onClickContent"] = (id) => history.push(`/library/content-preview?id=${id}`);
+  const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
+  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) => history.push(`/library/content-preview?id=${id}`);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push("/assesmemts/assesment-list");
   useEffect(() => {
@@ -109,13 +109,13 @@ export default function OutcomeList() {
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
       <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
       {outcomeList && outcomeList.length > 0 ? (
-        <FakeTableList
+        <OutcomeTable
           formMethods={formMethods}
           list={outcomeList}
           total={total}
           queryCondition={condition}
           onChangePage={handleChangePage}
-          onClickContent={handleClickConent}
+          onClickOutcome={handleClickOutcome}
           onPublish={handlePublish}
           onDelete={handleDelete}
         />

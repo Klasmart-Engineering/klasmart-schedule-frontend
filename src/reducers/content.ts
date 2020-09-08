@@ -2,7 +2,7 @@ import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult 
 import { useHistory } from "react-router-dom";
 import api from "../api";
 import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
-import { ContentType } from "../api/api.d";
+import { ContentType, OutcomePublishStatus } from "../api/api.d";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -166,7 +166,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     const [contentDetail, mediaList, outcomeList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
       api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
-      api.learningOutcomes.searchLearningOutcomes({ publish_status: ["published"] }),
+      api.learningOutcomes.searchLearningOutcomes({ publish_status: OutcomePublishStatus.published }),
       apiGetMockOptions(),
     ]);
     return { contentDetail, mediaList, outcomeList, mockOptions };
