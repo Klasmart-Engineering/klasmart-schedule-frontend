@@ -1,5 +1,7 @@
 import { Box, FormControl, makeStyles, Select, Typography } from "@material-ui/core";
-import React, { useCallback, useMemo } from "react";
+import { cloneDeep } from "lodash";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useHistory, useLocation } from "react-router-dom";
 import noOutcomes from "../../assets/icons/noLearningOutcomes.svg";
 import assessmentDetail from "../../mocks/assessmentDetail.json";
@@ -66,32 +68,30 @@ function OutcomesFilter(props: OutcomesFilterProps) {
     </Box>
   );
 }
-export interface SummaryDetail {
-  title: string;
-  attendence: string[];
-  subject: string;
-  teacher: string;
-  classEndTime: number;
-  classLength: number;
-  numberofActivities: number;
-  numberofLearningOutcomes: number;
-  completeTime: number;
-}
+
 export interface Attendence {
   id: string;
   name: string;
 }
 export interface Outcomes {
-  id: string;
-  name?: string;
-  shortcode: string;
+  outcome_id: string;
+  outcome_name: string;
   assumed: boolean;
-  author: string;
+  attendence_ids: Attendence[];
 }
 export interface AssessmentDetailProps {
-  summary: SummaryDetail;
-  outcomesList: Outcomes[];
-  attendenceList: Attendence[];
+  id: string;
+  title: string;
+  class_id: string;
+  attendences: Attendence[];
+  subject: string;
+  teacher: string;
+  class_end_time: number;
+  class_length: number;
+  number_of_activities: number;
+  number_of_outcomes: number;
+  complete_time: number;
+  outcome_attendence_maps: Outcomes[];
 }
 const useQuery = () => {
   const { search } = useLocation();
@@ -100,28 +100,37 @@ const useQuery = () => {
   const filterOutcomes = query.get("filterOutcomes");
   return { id, filterOutcomes };
 };
-const handleOutcomeslist = (list: Outcomes[], value: string) => {
-  // todo:
+const handleOutcomeslist = (list: AssessmentDetailProps["outcome_attendence_maps"], value: string) => {
   if (value === "all" || value === null) return list;
-  return list.filter((item: Outcomes) => {
-    return value === "assumed" ? (item.assumed = true) : (item.assumed = true);
+  let newList = cloneDeep(list);
+  return newList.filter((item: Outcomes) => {
+    return value === "assumed" ? item.assumed === true : item.assumed === false;
   });
 };
-const { summary, outcomesList, attendenceList } = assessmentDetail;
+let { outcome_attendence_maps, attendences } = assessmentDetail;
 
 export function AssessmentsDetail() {
   const history = useHistory();
   let { filterOutcomes = "all" } = useQuery();
   if (!filterOutcomes) filterOutcomes = "all";
-  const outcomesListInner = handleOutcomeslist(outcomesList, filterOutcomes);
+  const outcomesListInner = handleOutcomeslist(outcome_attendence_maps, filterOutcomes);
+  const formMethods = useForm<AssessmentDetailProps>();
+  const { handleSubmit, watch, getValues } = formMethods;
+
+  let [selectedAttendence, SetSelectedAttendence] = useState(attendences);
   const handleAssessmentSave = () => {};
   const handleAssessmentComplete = () => {};
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
-  const handleOK = () => {
-    // todo filter attendencelist
-  };
+
+  const handleOK = useMemo(
+    () =>
+      handleSubmit((data) => {
+        SetSelectedAttendence(data.attendences);
+      }),
+    [handleSubmit]
+  );
   const handleFilterOutcomes = useMemo<OutcomesFilterProps["onChange"]>(
     () => (value) => {
       history.replace({
@@ -130,16 +139,22 @@ export function AssessmentsDetail() {
     },
     [history]
   );
+  useEffect(() => {
+    // todo:dispatch() 重新渲染页面
+  }, [filterOutcomes]);
+  watch();
+  console.log(getValues());
 
-  const rightsideArea =
-    outcomesListInner.length > 0 ? (
-      <>
-        <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-        <OutcomesTable outcomesList={outcomesListInner} attendenceList={attendenceList} />
-      </>
-    ) : (
-      <NoOutComesList />
-    );
+  const rightsideArea = (
+    <>
+      <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+      {outcomesListInner.length > 0 ? (
+        <OutcomesTable outcomesList={outcomesListInner} attendenceList={selectedAttendence} formMethods={formMethods} />
+      ) : (
+        <NoOutComesList />
+      )}
+    </>
+  );
 
   return (
     <>
@@ -150,7 +165,7 @@ export function AssessmentsDetail() {
         onComplete={handleAssessmentComplete}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary SummaryDetail={summary} onOk={handleOK} attendenceList={attendenceList} />
+        <Summary assessmentDetail={assessmentDetail} onOk={handleOK} formMethods={formMethods} selectedAttendence={selectedAttendence} />
         {rightsideArea}
       </LayoutPair>
     </>

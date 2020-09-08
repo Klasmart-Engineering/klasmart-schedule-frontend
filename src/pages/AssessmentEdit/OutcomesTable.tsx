@@ -10,8 +10,10 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import React from "react";
+import React, { Fragment, useState } from "react";
+import { Controller, UseFormMethods } from "react-hook-form";
 import { AssessmentDetailProps, Outcomes } from ".";
+import { CheckboxGroup } from "../../components/CheckboxGroup";
 
 const useStyles = makeStyles({
   tableContainer: {
@@ -39,47 +41,44 @@ const useStyles = makeStyles({
   },
 });
 
-interface OutcomesTableProps {
-  outcomesList: AssessmentDetailProps["outcomesList"];
-  attendenceList: AssessmentDetailProps["attendenceList"];
+interface AssessActionProps {
+  assumed: boolean;
+  onChangeAward: (e: React.ChangeEvent<HTMLInputElement>) => any;
+  onChangeSkip: (e: React.ChangeEvent<HTMLInputElement>) => any;
+  attendenceList: AssessmentDetailProps["attendences"];
+  formMethods: UseFormMethods<AssessmentDetailProps>;
+  selectedAttendence: AssessmentDetailProps["attendences"];
+  index: number;
 }
-export function OutcomesTable(props: OutcomesTableProps) {
+const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
-  const { outcomesList, attendenceList } = props;
-  const fliterAttendence = attendenceList.map((item) => (
-    <FormControlLabel
-      key={item.id}
-      className={css.checkBoxUi}
-      control={
-        <Checkbox
-          // checked={state.checkedB}
-          // onChange={handleChange}
-          name={item.name}
-          color="primary"
-        />
-      }
-      label={item.name}
-    />
-  ));
-  const assessAction = (
+  const {
+    assumed,
+    attendenceList,
+    formMethods: { control },
+    selectedAttendence,
+    onChangeSkip,
+    index,
+  } = props;
+  const [defaultvalue, SetValue] = useState(selectedAttendence.map((v) => v.id));
+  const qtyKeys = `outcome_attendence_maps[${index}].attendence_ids`;
+  const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      SetValue(attendenceList.map((v) => v.id));
+    }
+  };
+  return (
     <Box display="flex" alignItems="center">
       <Box width={500} fontSize={14}>
         <FormControlLabel
-          control={
-            <Checkbox
-              // checked={state.checkedB}
-              // onChange={handleChange}
-              name="award"
-              color="primary"
-            />
-          }
+          control={<Checkbox defaultChecked={assumed} onChange={handleChangeAward} name="award" color="primary" />}
           label="Award All"
         />
         <FormControlLabel
           control={
             <Checkbox
               // checked={state.checkedB}
-              // onChange={handleChange}
+              onChange={onChangeSkip}
               name="skip"
               color="primary"
             />
@@ -88,19 +87,73 @@ export function OutcomesTable(props: OutcomesTableProps) {
         />
       </Box>
       <Box px={3} className={css.assessActionline}>
-        {fliterAttendence}
+        <Controller
+          name={qtyKeys}
+          control={control}
+          defaultValue={defaultvalue}
+          render={(props) => (
+            <CheckboxGroup
+              {...props}
+              render={(selectedContentGroupContext) => (
+                <Fragment>
+                  {attendenceList.map((item) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          value={item.id}
+                          checked={selectedContentGroupContext.hashValue[item.id as string]}
+                          onChange={selectedContentGroupContext.registerChange}
+                        />
+                      }
+                      label={item.name}
+                      key={item.id}
+                    />
+                  ))}
+                </Fragment>
+              )}
+            />
+          )}
+        />
       </Box>
     </Box>
   );
-  const rows = outcomesList.map((item: Outcomes) => (
-    <TableRow key={item.id}>
+};
+
+interface OutcomesTableProps {
+  outcomesList: AssessmentDetailProps["outcome_attendence_maps"];
+  attendenceList: AssessmentDetailProps["attendences"];
+  formMethods: UseFormMethods<AssessmentDetailProps>;
+}
+export function OutcomesTable(props: OutcomesTableProps) {
+  const css = useStyles();
+  const { outcomesList, attendenceList, formMethods } = props;
+  const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.checked);
+  };
+  const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.checked);
+  };
+
+  const rows = outcomesList.map((item: Outcomes, index) => (
+    <TableRow key={item.outcome_id}>
       <TableCell className={css.tableCellLine} align="center">
-        {item.name}
+        {item.outcome_name}
       </TableCell>
       <TableCell className={css.tableCellLine} align="center">
         {item.assumed ? "Assumed" : "Unassumed"}
       </TableCell>
-      <TableCell>{assessAction}</TableCell>
+      <TableCell>
+        <AssessAction
+          assumed={item.assumed}
+          attendenceList={attendenceList}
+          formMethods={formMethods}
+          selectedAttendence={item.attendence_ids}
+          onChangeAward={(e) => handleChangeAward(e)}
+          onChangeSkip={(e) => handleChangeSkip(e)}
+          index={index}
+        ></AssessAction>
+      </TableCell>
     </TableRow>
   ));
   return (

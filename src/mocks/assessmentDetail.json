@@ -1,74 +1,206 @@
 {
-  "outcomesList": [
+  "outcome_attendence_maps": [
     {
-      "id": "1",
-      "name": "Speaking and Listening",
-      "shortcode": "12swr2",
+      "outcome_id": "1",
+      "outcome_name": "Speaking and Listening",
       "assumed": false,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "3",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "2",
-      "name": "Speaking and Listening",
-      "shortcode": "12swr2",
+      "outcome_id": "2",
+      "outcome_name": "Speaking and Listening",
       "assumed": false,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "2",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "3",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "4",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "3",
-      "name": "Speaking and Listening",
-      "shortcode": "12swr2",
+      "outcome_id": "3",
+      "outcome_name": "Speaking and Listening",
       "assumed": false,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "2",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "3",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "4",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "4",
-      "name": "Speaking and Listening",
-      "shortcode": "12swr2",
+      "outcome_id": "4",
+      "outcome_name": "Speaking and Listening",
       "assumed": true,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "2",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "3",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "4",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "5",
-      "name": "Able to use apppropriate volume when speaking",
-      "shortcode": "12swr2",
+      "outcome_id": "5",
+      "outcome_name": "Able to use apppropriate volume when speaking",
       "assumed": false,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "2",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "9",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "10",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "6",
-      "name": "Speaking and Listening",
-      "shortcode": "12swr2",
+      "outcome_id": "6",
+      "outcome_name": "Speaking and Listening",
       "assumed": true,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "2",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "3",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "4",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "7",
-      "name": "Able to repeat and chant songs",
-      "shortcode": "12swr2",
+      "outcome_id": "7",
+      "outcome_name": "Able to repeat and chant songs",
       "assumed": true,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "5",
+          "name": "Johnny Fisher"
+        }
+      ]
     },
     {
-      "id": "8",
-      "name": "Able to use apppropriate volume when speaking",
-      "shortcode": "12swr2",
+      "outcome_id": "8",
+      "outcome_name": "Able to use apppropriate volume when speaking",
       "assumed": true,
-      "author": "Mary Roose"
+      "attendence_ids": [
+        {
+          "id": "1",
+          "name": "Johnny Fisher"
+        },
+        {
+          "id": "7",
+          "name": "Johnny Fisher"
+        },
+
+        {
+          "id": "10",
+          "name": "Johnny Fisher"
+        }
+      ]
     }
   ],
-  "summary": {
-    "title": "20200901-ClassName-LessonName",
-    "attendence": ["Luis Jennings", "Ian Pope", "Ella Jensen"],
-    "subject": "Bada Rhyme",
-    "teacher": "Glen Henderson",
-    "classEndTime": 1589118506,
-    "classLength": 45,
-    "numberofActivities": 4,
-    "numberofLearningOutcomes": 4,
-    "completeTime": 1599118506
-  },
-  "attendenceList": [
+  "id": "2wffff",
+  "class_id": "wrwrww",
+  "title": "20200901-ClassName-LessonName",
+  "subject": "Bada Rhyme",
+  "teacher": "Glen Henderson",
+  "class_end_time": 1589118506,
+  "class_length": 45,
+  "number_of_activities": 4,
+  "number_of_outcomes": 4,
+  "complete_time": 1599118506,
+  "attendences": [
     {
       "id": "1",
       "name": "Johnny Fisher"

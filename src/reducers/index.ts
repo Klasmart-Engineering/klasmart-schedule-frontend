@@ -1,4 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
+<<<<<<< HEAD
+=======
+import assessment from "./assessment";
+>>>>>>> feat: add selectAttendence
 import confirm from "./confirm";
 import content from "./content";
 import loading, { actSetLoading } from "./loading";
@@ -18,6 +22,7 @@ export const store = configureStore({
     notify,
     content,
     schedule,
+    assessment,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loadingMiddleware),
 });

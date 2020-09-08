@@ -56,6 +56,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
         control={control}
         name="searchName"
         defaultValue={value}
+        type="search"
         size="small"
         className={clsx(css.fieldset, css.searchField)}
         placeholder="Search"

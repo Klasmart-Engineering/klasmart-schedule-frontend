@@ -201,6 +201,7 @@ export default function Details(props: DetailsProps) {
           control={control}
           name="suggest_time"
           decode={Number}
+          type="number"
           className={css.fieldset}
           label="Suggested Duration (min)"
           defaultValue={contentDetail.suggest_time}
@@ -312,6 +313,7 @@ export default function Details(props: DetailsProps) {
           as={TextField}
           control={control}
           name="description"
+          multiline
           defaultValue={contentDetail.description}
           className={css.fieldset}
           label="Description"
