@@ -17,8 +17,8 @@ import {
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { AssessmentDetailProps, Attendence } from ".";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { AssessmentState } from "../../reducers/assessment";
 
 const useStyles = makeStyles(({ palette }) => ({
   classSummaryHeader: {
@@ -59,59 +59,60 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface AttendenceInputProps {
-  attendences: AssessmentDetailProps["attendences"];
-  formMethods: UseFormMethods<AssessmentDetailProps>;
-  selectedAttendence: AssessmentDetailProps["attendences"];
+  attendances: AssessmentState["attendances"];
+  formMethods: UseFormMethods<AssessmentState>;
+  selectedAttendence: AssessmentState["attendances"];
 }
 export const AttendanceInput = (props: AttendenceInputProps) => {
   const {
-    attendences,
+    attendances,
     formMethods: { control, getValues },
     selectedAttendence,
   } = props;
-  const handleCheck = (item: Attendence) => {
-    const { attendences } = getValues();
-    const newattendences = attendences?.includes(item)
-      ? attendences?.filter((attendences) => attendences !== item)
-      : [...(attendences ?? []), item];
+  const handleCheck = (item: { id?: string; name?: string }) => {
+    const { attendances } = getValues();
+    const newattendences = attendances?.includes(item)
+      ? attendances?.filter((attendances) => attendances !== item)
+      : [...(attendances ?? []), item];
     return newattendences;
   };
   return (
     <Box>
-      {attendences.map((item) => (
-        <FormControlLabel
-          control={
-            <Controller
-              name="attendences"
-              defaultValue={selectedAttendence}
-              render={({ onChange: onCheckChange }) => {
-                return (
-                  <Checkbox
-                    defaultChecked={selectedAttendence.includes(item)}
-                    onChange={() => onCheckChange(handleCheck(item))}
-                    color="primary"
-                  />
-                );
-              }}
-              control={control}
-            />
-          }
-          key={item.id}
-          label={item.name}
-        />
-      ))}
+      {attendances &&
+        attendances.map((item) => (
+          <FormControlLabel
+            control={
+              <Controller
+                name="attendences"
+                defaultValue={selectedAttendence}
+                render={({ onChange: onCheckChange }) => {
+                  return (
+                    <Checkbox
+                      defaultChecked={selectedAttendence && selectedAttendence.includes(item)}
+                      onChange={() => onCheckChange(handleCheck(item))}
+                      color="primary"
+                    />
+                  );
+                }}
+                control={control}
+              />
+            }
+            key={item.id}
+            label={item.name}
+          />
+        ))}
     </Box>
   );
 };
 interface SummaryProps {
-  formMethods: UseFormMethods<AssessmentDetailProps>;
-  assessmentDetail: AssessmentDetailProps;
-  selectedAttendence: AssessmentDetailProps["attendences"];
+  formMethods: UseFormMethods<AssessmentState>;
+  assessmentDetail: AssessmentState;
+  selectedAttendence: AssessmentState["attendances"];
   onOk: Function;
 }
 export function Summary(props: SummaryProps) {
   const {
-    assessmentDetail: { attendences },
+    assessmentDetail: { attendances },
     assessmentDetail,
     onOk,
     formMethods,
@@ -157,7 +158,7 @@ export function Summary(props: SummaryProps) {
               fullWidth
               disabled
               name="attendence"
-              defaultValue={selectedAttendence.map((v) => v.name)}
+              defaultValue={selectedAttendence && selectedAttendence.map((v) => v.name)}
               className={clsx(css.fieldset, css.nowarp)}
               label="Attendence"
             />
@@ -165,8 +166,22 @@ export function Summary(props: SummaryProps) {
               Edit
             </Button>
           </Box>
-          <TextField fullWidth disabled name="subject" defaultValue={assessmentDetail.subject} className={css.fieldset} label="Subject" />
-          <TextField fullWidth disabled name="teacher" defaultValue={assessmentDetail.teacher} className={css.fieldset} label="Teacher" />
+          <TextField
+            fullWidth
+            disabled
+            name="subject"
+            defaultValue={assessmentDetail.subject && assessmentDetail.subject.name}
+            className={css.fieldset}
+            label="Subject"
+          />
+          <TextField
+            fullWidth
+            disabled
+            name="teacher"
+            defaultValue={assessmentDetail.teacher && assessmentDetail.teacher.name}
+            className={css.fieldset}
+            label="Teacher"
+          />
           <TextField
             fullWidth
             disabled
@@ -215,7 +230,7 @@ export function Summary(props: SummaryProps) {
       <Dialog open={open} onClose={handleCancel}>
         <DialogTitle>Edit Attendance</DialogTitle>
         <DialogContent dividers>
-          <AttendanceInput attendences={attendences} formMethods={formMethods} selectedAttendence={selectedAttendence}></AttendanceInput>
+          <AttendanceInput attendances={attendances} formMethods={formMethods} selectedAttendence={selectedAttendence}></AttendanceInput>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleCancel} color="primary">

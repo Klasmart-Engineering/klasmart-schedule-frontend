@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ContentType } from "../../api/api.d";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
-import outcomeslist from "../../mocks/outcomesList.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save } from "../../reducers/content";
@@ -64,9 +63,10 @@ export default function ContentEdit() {
     control,
     formState: { isDirty },
   } = formMethods;
-  const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal } = useSelector<RootState, RootState["content"]>(
-    (state) => state.content
-  );
+  const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
+    RootState,
+    RootState["content"]
+  >((state) => state.content);
   const { lesson, tab, rightside } = useParams();
   const { id, searchMedia, search, editindex, searchOutcomes, assumed } = useQuery();
   const history = useHistory();
@@ -164,7 +164,7 @@ export default function ContentEdit() {
       <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
       <Outcomes
         comingsoon
-        list={outcomeslist}
+        list={outcomeList}
         onSearch={handleSearchOutcomes}
         onCheck={handleCheckAssumed}
         value={searchOutcomes}

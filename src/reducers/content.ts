@@ -1,7 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api from "../api";
-import { Content, ContentIDListRequest, CreateContentRequest } from "../api/api";
+import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import { ContentType } from "../api/api.d";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { actAsyncConfirm } from "./confirm";
@@ -12,6 +12,7 @@ interface IContentState {
   history?: ReturnType<typeof useHistory>;
   contentDetail: Content;
   mediaList: Content[];
+  outcomeList: LearningOutcomes[];
   mockOptions: MockOptions;
   total: number;
   contentsList: Content[];
@@ -61,6 +62,7 @@ const initialState: IContentState = {
   mediaList: [],
   MediaListTotal: 0,
   OutcomesListTotal: 0,
+  outcomeList: [],
   mockOptions: {
     program: [],
     subject: [],
@@ -122,24 +124,28 @@ interface onLoadContentEditPayload extends LoadingMetaPayload {
 }
 
 interface onLoadContentEditResult {
+  outcomeList?: AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
   contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
   mediaList?: AsyncReturnType<typeof api.contents.searchContents>;
   mockOptions?: MockOptions;
 }
 
-export const save = createAsyncThunk<Content["id"], CreateContentRequest, { state: RootState }>("content/save", async (payload, { getState }) => {
-  const {
-    content: {
-      contentDetail: { id },
-    },
-  } = getState();
-  if (!id) {
-    return (await api.contents.createContent(payload)).id;
-  } else {
-    await api.contents.updateContent(id, payload);
-    return id;
+export const save = createAsyncThunk<Content["id"], CreateContentRequest, { state: RootState }>(
+  "content/save",
+  async (payload, { getState }) => {
+    const {
+      content: {
+        contentDetail: { id },
+      },
+    } = getState();
+    if (!id) {
+      return (await api.contents.createContent(payload)).id;
+    } else {
+      await api.contents.updateContent(id, payload);
+      return id;
+    }
   }
-});
+);
 
 export const publish = createAsyncThunk<Content, Required<Content>["id"], { state: RootState }>("content/publish", (id, { getState }) => {
   const {
@@ -157,12 +163,13 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     // 将来做 assets 补全剩下逻辑
     if (type === "assets") return {};
     // debugger;
-    const [contentDetail, mediaList, mockOptions] = await Promise.all([
+    const [contentDetail, mediaList, outcomeList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
       api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
+      api.learningOutcomes.searchLearningOutcomes({ publish_status: ["published"] }),
       apiGetMockOptions(),
     ]);
-    return { contentDetail, mediaList, mockOptions };
+    return { contentDetail, mediaList, outcomeList, mockOptions };
   }
 );
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
@@ -277,6 +284,13 @@ const { actions, reducer } = createSlice({
       }
       if (payload.mockOptions) {
         state.mockOptions = payload.mockOptions;
+      }
+
+      if (payload.outcomeList?.total) {
+        state.OutcomesListTotal = payload.outcomeList.total;
+      }
+      if (payload.outcomeList?.list) {
+        state.outcomeList = payload.outcomeList.list;
       }
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {

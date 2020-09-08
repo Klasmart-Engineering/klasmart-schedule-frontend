@@ -19,6 +19,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { useParams } from "react-router-dom";
+import { LearningOutcomes } from "../../api/api";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
 import { Comingsoon, NoFiles } from "./MediaAssets";
 
@@ -99,18 +100,20 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 }));
 
 interface OutcomesTableProps {
-  list: Outcomes[];
+  list: LearningOutcomes[];
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
   const { list } = props;
   const css = useStyles();
   const rows = list.map((item, idx) => (
-    <TableRow key={item.id}>
-      <TableCell>{item.name}</TableCell>
+    <TableRow key={item.outcome_id}>
+      <TableCell>{item.outcome_name}</TableCell>
       <TableCell>{item.shortcode}</TableCell>
       <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
-      <TableCell>{item.author}</TableCell>
-      <TableCell>{item.id === "4" ? <AddCircle className={css.addGreen} /> : <RemoveCircle className={css.removeRead} />}</TableCell>
+      <TableCell>{item.author_name}</TableCell>
+      <TableCell>
+        {item.outcome_id === "4" ? <AddCircle className={css.addGreen} /> : <RemoveCircle className={css.removeRead} />}
+      </TableCell>
     </TableRow>
   ));
   return (
@@ -134,7 +137,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 };
 
 interface OutcomesInputProps {
-  value: Outcomes[];
+  value: LearningOutcomes[];
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
@@ -180,7 +183,7 @@ export interface Outcomes {
 }
 export interface OutcomesProps {
   comingsoon?: boolean;
-  list: Outcomes[];
+  list: LearningOutcomes[];
   total: number;
   amountPerPage?: number;
   value: string;

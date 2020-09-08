@@ -2,10 +2,13 @@ import { Box, FormControl, makeStyles, Select, Typography } from "@material-ui/c
 import { cloneDeep } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { LearningOutcomes } from "../../api/api";
 import noOutcomes from "../../assets/icons/noLearningOutcomes.svg";
-import assessmentDetail from "../../mocks/assessmentDetail.json";
 import { setQuery } from "../../models/ModelContentDetailForm";
+import { RootState } from "../../reducers";
+import { AssessmentState, getAssessment } from "../../reducers/assessment";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
 import { OutcomesTable } from "./OutcomesTable";
@@ -38,7 +41,7 @@ export function NoOutComesList() {
     <Box display="flex" flexDirection="column" alignItems="center" position="relative">
       <img className={css.noOutComesImage} alt="empty" src={noOutcomes} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        No Learning Outcomes available.
+        No learning outcome is available.
       </Typography>
     </Box>
   );
@@ -69,30 +72,6 @@ function OutcomesFilter(props: OutcomesFilterProps) {
   );
 }
 
-export interface Attendence {
-  id: string;
-  name: string;
-}
-export interface Outcomes {
-  outcome_id: string;
-  outcome_name: string;
-  assumed: boolean;
-  attendence_ids: Attendence[];
-}
-export interface AssessmentDetailProps {
-  id: string;
-  title: string;
-  class_id: string;
-  attendences: Attendence[];
-  subject: string;
-  teacher: string;
-  class_end_time: number;
-  class_length: number;
-  number_of_activities: number;
-  number_of_outcomes: number;
-  complete_time: number;
-  outcome_attendence_maps: Outcomes[];
-}
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
@@ -100,24 +79,27 @@ const useQuery = () => {
   const filterOutcomes = query.get("filterOutcomes");
   return { id, filterOutcomes };
 };
-const handleOutcomeslist = (list: AssessmentDetailProps["outcome_attendence_maps"], value: string) => {
+const handleOutcomeslist = (list: AssessmentState["outcome_attendance_maps"], value: string) => {
   if (value === "all" || value === null) return list;
   let newList = cloneDeep(list);
-  return newList.filter((item: Outcomes) => {
+  if (!newList) return list;
+  return newList.filter((item: LearningOutcomes) => {
     return value === "assumed" ? item.assumed === true : item.assumed === false;
   });
 };
-let { outcome_attendence_maps, attendences } = assessmentDetail;
 
 export function AssessmentsDetail() {
   const history = useHistory();
-  let { filterOutcomes = "all" } = useQuery();
+  const dispatch = useDispatch();
+  let { filterOutcomes = "all", id } = useQuery();
   if (!filterOutcomes) filterOutcomes = "all";
-  const outcomesListInner = handleOutcomeslist(outcome_attendence_maps, filterOutcomes);
-  const formMethods = useForm<AssessmentDetailProps>();
+  const assessmentDetail = useSelector<RootState, RootState["assessment"]>((state) => state.assessment);
+  let { outcome_attendance_maps, attendances } = assessmentDetail;
+  const outcomesListInner = handleOutcomeslist(outcome_attendance_maps, filterOutcomes);
+  const formMethods = useForm<AssessmentState>();
   const { handleSubmit, watch, getValues } = formMethods;
 
-  let [selectedAttendence, SetSelectedAttendence] = useState(attendences);
+  let [selectedAttendence, SetSelectedAttendence] = useState(attendances);
   const handleAssessmentSave = () => {};
   const handleAssessmentComplete = () => {};
   const handleGoBack = useCallback(() => {
@@ -127,7 +109,7 @@ export function AssessmentsDetail() {
   const handleOK = useMemo(
     () =>
       handleSubmit((data) => {
-        SetSelectedAttendence(data.attendences);
+        SetSelectedAttendence(data.attendances);
       }),
     [handleSubmit]
   );
@@ -141,15 +123,18 @@ export function AssessmentsDetail() {
   );
   useEffect(() => {
     // todo:dispatch() 重新渲染页面
-  }, [filterOutcomes]);
+    if (id) {
+      dispatch(getAssessment({ id }));
+    }
+  }, [filterOutcomes, dispatch, id]);
   watch();
   console.log(getValues());
 
   const rightsideArea = (
     <>
       <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-      {outcomesListInner.length > 0 ? (
-        <OutcomesTable outcomesList={outcomesListInner} attendenceList={selectedAttendence} formMethods={formMethods} />
+      {outcomesListInner && outcomesListInner.length > 0 ? (
+        <OutcomesTable outcomesList={outcomesListInner} attendanceList={selectedAttendence} formMethods={formMethods} />
       ) : (
         <NoOutComesList />
       )}

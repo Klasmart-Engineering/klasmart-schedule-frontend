@@ -10,10 +10,10 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { AssessmentDetailProps, Outcomes } from ".";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { AssessmentState } from "../../reducers/assessment";
 
 const useStyles = makeStyles({
   tableContainer: {
@@ -42,17 +42,17 @@ const useStyles = makeStyles({
 });
 
 interface AssessActionProps {
-  assumed: boolean;
+  assumed?: boolean;
   onChangeAward: (e: React.ChangeEvent<HTMLInputElement>) => any;
   onChangeSkip: (e: React.ChangeEvent<HTMLInputElement>) => any;
-  attendenceList: AssessmentDetailProps["attendences"];
-  formMethods: UseFormMethods<AssessmentDetailProps>;
-  selectedAttendence: AssessmentDetailProps["attendences"];
+  attendenceList: AssessmentState["attendances"];
+  formMethods: UseFormMethods<AssessmentState>;
+  selectedAttendence?: string[];
   index: number;
 }
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
-  const {
+  let {
     assumed,
     attendenceList,
     formMethods: { control },
@@ -60,11 +60,11 @@ const AssessAction = (props: AssessActionProps) => {
     onChangeSkip,
     index,
   } = props;
-  const [defaultvalue, SetValue] = useState(selectedAttendence.map((v) => v.id));
+  // if(assumed){selectedAttendence = attendenceList && attendenceList.map(v=>v.id)}
   const qtyKeys = `outcome_attendence_maps[${index}].attendence_ids`;
   const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      SetValue(attendenceList.map((v) => v.id));
+      // selectedAttendence = attendenceList
     }
   };
   return (
@@ -90,26 +90,27 @@ const AssessAction = (props: AssessActionProps) => {
         <Controller
           name={qtyKeys}
           control={control}
-          defaultValue={defaultvalue}
+          defaultValue={selectedAttendence}
           render={(props) => (
             <CheckboxGroup
               {...props}
               render={(selectedContentGroupContext) => (
                 <Fragment>
-                  {attendenceList.map((item) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          value={item.id}
-                          checked={selectedContentGroupContext.hashValue[item.id as string]}
-                          onChange={selectedContentGroupContext.registerChange}
-                        />
-                      }
-                      label={item.name}
-                      key={item.id}
-                    />
-                  ))}
+                  {attendenceList &&
+                    attendenceList.map((item) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            value={item.id}
+                            checked={selectedContentGroupContext.hashValue[item.id as string]}
+                            onChange={selectedContentGroupContext.registerChange}
+                          />
+                        }
+                        label={item.name}
+                        key={item.id}
+                      />
+                    ))}
                 </Fragment>
               )}
             />
@@ -121,13 +122,13 @@ const AssessAction = (props: AssessActionProps) => {
 };
 
 interface OutcomesTableProps {
-  outcomesList: AssessmentDetailProps["outcome_attendence_maps"];
-  attendenceList: AssessmentDetailProps["attendences"];
-  formMethods: UseFormMethods<AssessmentDetailProps>;
+  outcomesList: AssessmentState["outcome_attendance_maps"];
+  attendanceList: AssessmentState["attendances"];
+  formMethods: UseFormMethods<AssessmentState>;
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendenceList, formMethods } = props;
+  const { outcomesList, attendanceList, formMethods } = props;
   const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.checked);
   };
@@ -135,27 +136,29 @@ export function OutcomesTable(props: OutcomesTableProps) {
     console.log(e.target.checked);
   };
 
-  const rows = outcomesList.map((item: Outcomes, index) => (
-    <TableRow key={item.outcome_id}>
-      <TableCell className={css.tableCellLine} align="center">
-        {item.outcome_name}
-      </TableCell>
-      <TableCell className={css.tableCellLine} align="center">
-        {item.assumed ? "Assumed" : "Unassumed"}
-      </TableCell>
-      <TableCell>
-        <AssessAction
-          assumed={item.assumed}
-          attendenceList={attendenceList}
-          formMethods={formMethods}
-          selectedAttendence={item.attendence_ids}
-          onChangeAward={(e) => handleChangeAward(e)}
-          onChangeSkip={(e) => handleChangeSkip(e)}
-          index={index}
-        ></AssessAction>
-      </TableCell>
-    </TableRow>
-  ));
+  const rows =
+    outcomesList &&
+    outcomesList.map((item, index) => (
+      <TableRow key={item.outcome_id}>
+        <TableCell className={css.tableCellLine} align="center">
+          {item.outcome_name}
+        </TableCell>
+        <TableCell className={css.tableCellLine} align="center">
+          {item.assumed ? "Assumed" : "Unassumed"}
+        </TableCell>
+        <TableCell>
+          <AssessAction
+            assumed={item.assumed}
+            attendenceList={attendanceList}
+            formMethods={formMethods}
+            selectedAttendence={item.attendance_ids}
+            onChangeAward={(e) => handleChangeAward(e)}
+            onChangeSkip={(e) => handleChangeSkip(e)}
+            index={index}
+          ></AssessAction>
+        </TableCell>
+      </TableRow>
+    ));
   return (
     <TableContainer className={css.tableContainer}>
       <Table className={css.table} stickyHeader>
