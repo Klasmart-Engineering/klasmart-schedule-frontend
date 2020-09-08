@@ -15,7 +15,9 @@ import {
   Theme,
 } from "@material-ui/core";
 import React from "react";
+import { useDispatch } from "react-redux";
 import ModalBox from "../../components/ModalBox";
+import { actError } from "../../reducers/notify";
 import { stateProps } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -103,6 +105,7 @@ interface weekItem {
 }
 
 function RepeatCycle(props: ExtendsProps) {
+  const dispatch = useDispatch();
   const { state, handleRepeatData } = props;
   const classes = useStyles();
   const weekendList = [
@@ -166,6 +169,12 @@ function RepeatCycle(props: ExtendsProps) {
     });
   }
 
+  const getDateInfo = (month: number) => {
+    const date = new Date();
+    const year = date.getFullYear();
+    return new Date(year, month, 0).getDate();
+  };
+
   const handleWeekdaySelect = (index: number): void => {
     let temp = JSON.parse(JSON.stringify(weekends));
     temp.forEach((item: weekItem) => {
@@ -201,6 +210,14 @@ function RepeatCycle(props: ExtendsProps) {
   };
 
   const handleOnDateDay = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if ((+event.target.value < 1 || +event.target.value > getDateInfo(on_date_month)) && type === "yearly") {
+      dispatch(actError("Please enter a valid date"));
+      return;
+    }
+    if ((+event.target.value < 1 || +event.target.value > 31) && type === "monthly") {
+      dispatch(actError("Please enter a valid date"));
+      return;
+    }
     _state[type].on_date_day = +event.target.value;
     handleRepeatData(_state);
   };
@@ -221,6 +238,10 @@ function RepeatCycle(props: ExtendsProps) {
   };
 
   const handleOnDateMonth = (event: React.ChangeEvent<{ value: unknown }>) => {
+    if (on_date_day && on_date_day > getDateInfo(event.target.value as number)) {
+      dispatch(actError("Please enter a valid date"));
+      return;
+    }
     _state[type].on_date_month = event.target.value;
     handleRepeatData(_state);
   };
