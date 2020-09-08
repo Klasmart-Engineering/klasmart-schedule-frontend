@@ -81,15 +81,19 @@ interface TabPanelProps {
 }
 
 export const isUnpublish = (value: QueryCondition): boolean => {
-  return (value.publish_status === PublishStatus.pending && value.author === Author.self) || value.publish_status === PublishStatus.draft || value.publish_status === PublishStatus.rejected;
-}
+  return (
+    (value.publish_status === PublishStatus.pending && value.author === Author.self) ||
+    value.publish_status === PublishStatus.draft ||
+    value.publish_status === PublishStatus.rejected
+  );
+};
 
 export interface FirstSearchHeaderProps extends QueryConditionBaseProps {}
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const unpublish = isUnpublish(value);
-  const createHandleClick = (publish_status: QueryCondition['publish_status']) => () => onChange({...value, publish_status})
+  const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () => onChange({ ...value, publish_status });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -108,35 +112,35 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(PublishStatus.published)}
-                className={clsx(css.nav, {[css.actives]: value?.publish_status === "published"})}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
                 startIcon={<PublishOutlined />}
               >
                 Published
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.pending)}
-                className={clsx(css.nav, {[css.actives]: value?.publish_status === "pending"})}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
                 startIcon={<HourglassEmptyOutlined />}
               >
                 Pending
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.draft)}
-                className={clsx(css.nav, {[css.actives]: unpublish})}
+                className={clsx(css.nav, { [css.actives]: unpublish })}
                 startIcon={<PublishOutlined />}
               >
                 Unpublished
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.archive)}
-                className={clsx(css.nav, {[css.actives]: value?.publish_status === "archive"})}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === "archive" })}
                 startIcon={<ArchiveOutlined />}
               >
                 Archived
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.assets)}
-                className={clsx(css.nav, {[css.actives]: value?.publish_status === "assets"})}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === "assets" })}
                 startIcon={<PermMediaOutlined />}
               >
                 Assets
@@ -153,7 +157,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
-    onChange({ ...value, publish_status })
+    onChange({ ...value, publish_status });
   };
   return (
     <div className={classes.root}>
