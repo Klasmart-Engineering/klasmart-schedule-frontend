@@ -1,6 +1,6 @@
 import React, { forwardRef, Fragment, useReducer } from "react";
-import { ContentType } from "../../api/api.d";
 import { apiResourcePathById } from "../../api/extra";
+import { ContentType } from "../../api/type";
 import docImg from "../../assets/icons/doc.svg";
 import materialImg from "../../assets/icons/material.svg";
 import audioImg from "../../assets/icons/music.svg";

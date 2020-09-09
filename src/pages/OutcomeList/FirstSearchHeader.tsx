@@ -8,7 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import { HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, OutcomePublishStatus } from "../../api/api.d";
+import { Author, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 

@@ -12,6 +12,7 @@ import clsx from "clsx";
 import React from "react";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
 import imgUrl1 from "../../assets/icons/kidsloop-logo.svg";
+import { OutcomeList } from "../../pages/OutcomeList";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -103,7 +104,7 @@ const navigation = [
   },
   {
     name: "Assessments",
-    path: "/assessments/outcome-list",
+    path: OutcomeList.routeRedirectDefault,
   },
   {
     name: "Schedule",

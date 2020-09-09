@@ -2,8 +2,8 @@ import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult 
 import { useHistory } from "react-router-dom";
 import api from "../api";
 import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
-import { ContentType, OutcomePublishStatus } from "../api/api.d";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { ContentType, OutcomePublishStatus } from "../api/type";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";

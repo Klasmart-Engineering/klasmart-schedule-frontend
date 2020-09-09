@@ -1,3 +1,11 @@
+import api from ".";
+
+type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
+  ? U
+  : T extends (...args: any) => infer U
+  ? U
+  : any;
+
 export enum ContentType {
   image = 10,
   video = 11,
@@ -45,3 +53,20 @@ export enum OutcomeOrderBy {
   created_at = "created_at",
   _created_at = "-created_at",
 }
+
+export enum AssessmentStatus {
+  all = "all",
+  in_progress = "in_progress",
+  complete = "complete",
+}
+
+export enum AssessmentOrderBy {
+  class_end_time = "class_end_time",
+  _class_end_time = "-class_end_time",
+  complete_time = "complete_time",
+  _complete_time = "-complete_time",
+}
+
+export type ListAssessmentRequest = Parameters<typeof api.assessments.listAssessment>[0];
+export type ListAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.listAssessment>>;
+export type ListAssessmentResultItem = NonNullable<ListAssessmentResult["items"]>[0];

@@ -1,15 +1,13 @@
-import { Checkbox, FormControlLabel, Grid, InputAdornment, Menu, MenuItem } from "@material-ui/core";
+import { Grid, InputAdornment } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField";
 import { Search } from "@material-ui/icons";
-import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
-import React, { ChangeEvent, MouseEventHandler, useState } from "react";
-import { Author, PublishStatus } from "../../api/type";
+import React, { ChangeEvent, useState } from "react";
 import LayoutBox from "../../components/LayoutBox";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { AssessmentQueryCondition, AssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,23 +73,11 @@ const useStyles = makeStyles((theme) => ({
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [searchText, setSearchText] = useState<QueryCondition["name"]>();
+  const [searchText, setSearchText] = useState<AssessmentQueryCondition["teacher_name"]>();
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
-  const handleClickSearch = () => onChange({ ...value, name: searchText });
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleClickIconMyonly: MouseEventHandler<SVGSVGElement & HTMLElement> = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleItemClick = (event: any) => {
-    setAnchorEl(null);
-    const author = value.author === Author.self ? undefined : Author.self;
-    onChange({ ...value, author });
-  };
+  const handleClickSearch = () => onChange({ ...value, teacher_name: searchText });
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -107,14 +93,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 Create +
               </Button>
             </Grid>
-            <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
-              <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
-              <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-                <MenuItem selected={value.author === Author.self} onClick={handleItemClick}>
-                  My Only
-                </MenuItem>
-              </Menu>
-            </Grid>
+            <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}></Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <TextField
                 style={{ width: "100%", height: "100%" }}
@@ -140,27 +119,19 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   );
 }
 
-export interface SecondSearchHeaderProps extends QueryConditionBaseProps {}
+export interface SecondSearchHeaderProps extends AssessmentQueryConditionBaseProps {}
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<QueryCondition["name"]>();
+  const [searchText, setSearchText] = useState<AssessmentQueryCondition["teacher_name"]>();
   const handleClickSearch = () =>
     onChange(
       produce(value, (draft) => {
-        searchText ? (draft.name = searchText) : delete draft.name;
+        searchText ? (draft.teacher_name = searchText) : delete draft.teacher_name;
       })
     );
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
-  };
-  const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
-    const author = event.target.checked ? Author.self : null;
-    onChange(
-      produce(value, (draft) => {
-        author ? (draft.author = author) : delete draft.author;
-      })
-    );
   };
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
@@ -177,24 +148,13 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={"Search"}
-                defaultValue={value.name}
+                defaultValue={value.teacher_name}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> Search
               </Button>
             </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status === PublishStatus.published ? (
-                <FormControlLabel
-                  value="end"
-                  control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}
-                  label="My Only"
-                  labelPlacement="end"
-                />
-              ) : (
-                ""
-              )}
-            </Grid>
+            <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}></Grid>
           </Grid>
         </Hidden>
       </LayoutBox>

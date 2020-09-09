@@ -4,10 +4,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { OrderBy } from "../../api/api.d";
+import { OrderBy } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
+import { AssessmentList } from "../AssesmentList";
+import CreateOutcomings from "../OutcomeEdit";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
@@ -68,7 +70,7 @@ function useRefreshWithDispatch() {
   return { refreshKey, refreshWithDispatch };
 }
 
-export default function OutcomeList() {
+export function OutcomeList() {
   const condition = useQuery();
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
@@ -91,12 +93,12 @@ export default function OutcomeList() {
     return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) => history.push(`/library/content-preview?id=${id}`);
+  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) =>
+    history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ id }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
-  const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push("/assesmemts/assesment-list");
+  const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
   useEffect(() => {
     reset();
-    // todo: dont remove
     dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
   }, [condition, reset, dispatch, refreshKey]);
 

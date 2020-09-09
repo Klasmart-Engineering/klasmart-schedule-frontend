@@ -21,7 +21,7 @@ import { Pagination } from "@material-ui/lab";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { Content } from "../../api/api";
-import { PublishStatus } from "../../api/api.d";
+import { PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";

@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
 import { Box, makeStyles } from "@material-ui/core";
+import React, { ReactNode } from "react";
 
 interface LayoutBoxProps {
   mainBase: number;
@@ -19,6 +19,7 @@ const useStyles = makeStyles({
     flexGrow: 1,
     flexShrink: 1,
     flexBasis: props.mainBase,
+    overflowX: "scroll",
   }),
 });
 

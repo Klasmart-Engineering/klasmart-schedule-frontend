@@ -7,7 +7,7 @@ import { Search } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useState } from "react";
-import { Author, PublishStatus } from "../../api/api.d";
+import { Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 

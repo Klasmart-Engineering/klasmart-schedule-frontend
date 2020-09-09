@@ -7,7 +7,7 @@ import { MoreHoriz } from "@material-ui/icons";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
-import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/api.d";
+import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { isUnpublish } from "./FirstSearchHeader";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";

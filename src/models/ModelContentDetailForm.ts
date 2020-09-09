@@ -1,5 +1,5 @@
 import { Content, CreateContentRequest } from "../api/api";
-import { ContentType } from "../api/api.d";
+import { ContentType } from "../api/type";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 export interface ContentDetailPlanType extends Omit<CreateContentRequest, "data"> {

@@ -20,11 +20,16 @@ export const apiEmitter = mitt();
 fetchIntercept.register({
   response: function (response) {
     if (response.ok) return response;
-    response.json().then((result) => {
-      const { msg, label } = result;
-      if (!msg && !label) return;
-      apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label });
-    });
+    response
+      .json()
+      .then((result) => {
+        const { msg, label } = result;
+        if (!msg && !label) return;
+        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label });
+      })
+      .catch(async (e) => {
+        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: response.statusText });
+      });
     return response;
   },
 });

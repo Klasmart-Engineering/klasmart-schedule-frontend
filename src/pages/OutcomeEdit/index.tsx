@@ -426,3 +426,5 @@ export default function CreateOutcomings() {
     </Box>
   );
 }
+
+CreateOutcomings.routeBasePath = "/outcome-edit";

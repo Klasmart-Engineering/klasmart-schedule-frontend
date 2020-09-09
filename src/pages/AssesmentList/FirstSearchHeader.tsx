@@ -5,12 +5,12 @@ import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
+import { HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, PublishStatus } from "../../api/type";
+import { Author, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,20 +80,20 @@ interface TabPanelProps {
   value: any;
 }
 
-export const isUnpublish = (value: QueryCondition): boolean => {
+export const isUnpublish = (value: OutcomeQueryCondition): boolean => {
   return (
-    (value.publish_status === PublishStatus.pending && value.author === Author.self) ||
-    value.publish_status === PublishStatus.draft ||
-    value.publish_status === PublishStatus.rejected
+    (value.publish_status === OutcomePublishStatus.pending && value.author_name === Author.self) ||
+    value.publish_status === OutcomePublishStatus.draft ||
+    value.publish_status === OutcomePublishStatus.rejected
   );
 };
 
-export interface FirstSearchHeaderProps extends QueryConditionBaseProps {}
-export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
+export interface FirstSearchHeaderProps extends OutcomeQueryConditionBaseProps {}
+export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const unpublish = isUnpublish(value);
-  const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () => onChange({ publish_status });
+  const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () => onChange({ ...value, publish_status });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -111,39 +111,28 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
-                onClick={createHandleClick(PublishStatus.published)}
+                onClick={createHandleClick(OutcomePublishStatus.published)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
                 startIcon={<PublishOutlined />}
               >
-                Published
+                Learning Outcomes
               </Button>
               <Button
-                onClick={createHandleClick(PublishStatus.pending)}
+                onClick={createHandleClick(OutcomePublishStatus.pending)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
                 startIcon={<HourglassEmptyOutlined />}
               >
                 Pending
               </Button>
               <Button
-                onClick={createHandleClick(PublishStatus.draft)}
+                onClick={createHandleClick(OutcomePublishStatus.draft)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
                 startIcon={<PublishOutlined />}
               >
                 Unpublished
               </Button>
-              <Button
-                onClick={createHandleClick(PublishStatus.archive)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "archive" })}
-                startIcon={<ArchiveOutlined />}
-              >
-                Archived
-              </Button>
-              <Button
-                onClick={createHandleClick(PublishStatus.assets)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "assets" })}
-                startIcon={<PermMediaOutlined />}
-              >
-                Assets
+              <Button className={clsx(css.nav, { [css.actives]: true })} startIcon={<PermMediaOutlined />}>
+                Assessments
               </Button>
             </Grid>
           </Grid>
@@ -156,9 +145,11 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
-    onChange({ publish_status });
+  const handleChange = (event: React.ChangeEvent<{}>, publish_status: OutcomePublishStatus | HeaderCategory) => {
+    if (!publish_status) return;
+    return onChange({ ...value, publish_status: publish_status as OutcomePublishStatus });
   };
+
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
@@ -174,11 +165,10 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab value={PublishStatus.published} label="Published" className={classes.capitalize} />
-                <Tab value={PublishStatus.pending} label="Pending" className={classes.capitalize} />
-                <Tab value={PublishStatus.draft} label="Unpublished" className={classes.capitalize} />
-                <Tab value={PublishStatus.archive} label="Archive" className={classes.capitalize} />
-                <Tab value={PublishStatus.assets} label="Assets" className={classes.capitalize} />
+                <Tab value={OutcomePublishStatus.published} label="Published" className={classes.capitalize} />
+                <Tab value={OutcomePublishStatus.pending} label="Pending" className={classes.capitalize} />
+                <Tab value={OutcomePublishStatus.draft} label="Unpublished" className={classes.capitalize} />
+                <Tab label="Assesment" className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>
