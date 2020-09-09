@@ -61,10 +61,11 @@ const useStyles = makeStyles((theme) =>
     checkbox: {
       padding: 0,
       borderRadius: 5,
-      top: 10,
-      left: 12,
       backgroundColor: "white",
-      zIndex: 10,
+    },
+    tableHead: {
+      height: 80,
+      backgroundColor: "#f2f5f7",
     },
   })
 );
@@ -82,7 +83,7 @@ function OutomeRow(props: OutcomeProps) {
   const DeleteIcon = outcome?.publish_status === OutcomePublishStatus.published ? RemoveCircleOutlineIcon : DeleteOutlineIcon;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
-      <TableCell padding="checkbox">
+      <TableCell align="center" padding="checkbox">
         <Checkbox
           icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
           checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
@@ -94,16 +95,16 @@ function OutomeRow(props: OutcomeProps) {
           onChange={registerChange}
         ></Checkbox>
       </TableCell>
-      <TableCell>{outcome.outcome_name}</TableCell>
-      <TableCell>{outcome.shortcode}</TableCell>
-      <TableCell>{outcome.program}</TableCell>
-      <TableCell>{outcome.subject}</TableCell>
-      <TableCell>{outcome.skills}</TableCell>
-      <TableCell>{outcome.publish_scope}</TableCell>
-      <TableCell>{outcome.assumed}</TableCell>
-      <TableCell>{outcome.created_at}</TableCell>
-      <TableCell>{outcome.author_name}</TableCell>
-      <TableCell>
+      <TableCell align="center">{outcome.outcome_name}</TableCell>
+      <TableCell align="center">{outcome.shortcode}</TableCell>
+      <TableCell align="center">{outcome.program}</TableCell>
+      <TableCell align="center">{outcome.subject}</TableCell>
+      <TableCell align="center">{outcome.skills}</TableCell>
+      <TableCell align="center">{outcome.publish_scope}</TableCell>
+      <TableCell align="center">{outcome.assumed}</TableCell>
+      <TableCell align="center">{outcome.created_at}</TableCell>
+      <TableCell align="center">{outcome.author_name}</TableCell>
+      <TableCell align="center">
         {queryCondition.publish_status !== OutcomePublishStatus.pending && (
           <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(outcome.outcome_id as string)}>
             <DeleteIcon />
@@ -199,9 +200,9 @@ export function OutcomeTable(props: OutcomeTableProps) {
               render={(selectedContentGroupContext) => (
                 <TableContainer>
                   <Table>
-                    <TableHead>
+                    <TableHead className={css.tableHead}>
                       <TableRow>
-                        <TableCell padding="checkbox">
+                        <TableCell align="center" padding="checkbox">
                           <Checkbox
                             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
                             checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
@@ -210,16 +211,16 @@ export function OutcomeTable(props: OutcomeTableProps) {
                             color="secondary"
                           />
                         </TableCell>
-                        <TableCell>Learning Outcomes</TableCell>
-                        <TableCell>Short Code</TableCell>
-                        <TableCell>Program</TableCell>
-                        <TableCell>Subject</TableCell>
-                        <TableCell>Milestone</TableCell>
-                        <TableCell>Standard</TableCell>
-                        <TableCell>Assumed</TableCell>
-                        <TableCell>Created On</TableCell>
-                        <TableCell>Author</TableCell>
-                        <TableCell>Actions</TableCell>
+                        <TableCell align="center">Learning Outcomes</TableCell>
+                        <TableCell align="center">Short Code</TableCell>
+                        <TableCell align="center">Program</TableCell>
+                        <TableCell align="center">Subject</TableCell>
+                        <TableCell align="center">Milestone</TableCell>
+                        <TableCell align="center">Standard</TableCell>
+                        <TableCell align="center">Assumed</TableCell>
+                        <TableCell align="center">Created On</TableCell>
+                        <TableCell align="center">Author</TableCell>
+                        <TableCell align="center">Actions</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
