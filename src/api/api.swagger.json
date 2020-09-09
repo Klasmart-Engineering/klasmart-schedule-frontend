@@ -2294,15 +2294,30 @@
             }
           },
           {
+            "name": "search_key",
+            "in": "query",
+            "description": "fuzzy search",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "assumed",
+            "in": "query",
+            "description": "filter outcomes by assumed: 1 true, 0 false, -1 all",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
             "name": "publish_status",
             "in": "query",
             "description": "Search learning outcomes by publish_status",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["draft", "pending", "published", "rejected"]
-              },
+              "type": "string",
+              "enum": ["draft", "pending", "published", "rejected"],
               "nullable": true,
               "example": "name"
             }
@@ -2387,14 +2402,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "description": "learning outcomes info",
-                  "properties": {
-                    "outcome_id": {
-                      "type": "string",
-                      "description": "learning outcome id",
-                      "example": "1"
-                    }
-                  }
+                  "$ref": "#/components/schemas/LearningOutcomes"
                 }
               }
             }
@@ -2768,7 +2776,7 @@
             }
           },
           {
-            "name": "keyword",
+            "name": "keywords",
             "in": "query",
             "description": "Search learning outcomes by keyword",
             "schema": {
@@ -2795,15 +2803,30 @@
             }
           },
           {
+            "name": "search_key",
+            "in": "query",
+            "description": "fuzzy search",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "assumed",
+            "in": "query",
+            "description": "filter outcomes by assumed: 1 true, 0 false -1 all",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
             "name": "publish_status",
             "in": "query",
             "description": "Search learning outcomes by publish_status",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["draft", "pending", "published", "rejected"]
-              },
+              "type": "string",
+              "enum": ["draft", "pending", "published", "rejected"],
               "nullable": true,
               "example": "name"
             }
@@ -2892,7 +2915,7 @@
             }
           },
           {
-            "name": "keyword",
+            "name": "keywords",
             "in": "query",
             "description": "Search learning outcomes by keyword",
             "schema": {
@@ -2919,15 +2942,30 @@
             }
           },
           {
+            "name": "search_key",
+            "in": "query",
+            "description": "fuzzy search",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "assumed",
+            "in": "query",
+            "description": "filter outcomes by assumed: 1 true, 0 false, -1 all",
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
+          },
+          {
             "name": "publish_status",
             "in": "query",
             "description": "Search learning outcomes by publish_status",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": ["draft", "pending", "published", "rejected"]
-              },
+              "type": "string",
+              "enum": ["draft", "pending", "published", "rejected"],
               "nullable": true,
               "example": "name"
             }
@@ -3027,7 +3065,7 @@
             "description": "page index, not paging if page <= 0",
             "schema": {
               "type": "integer",
-              "format": "int32",
+              "format": "int",
               "default": 1
             }
           },
@@ -3037,7 +3075,7 @@
             "description": "records per page, not paging if page_size <= 0",
             "schema": {
               "type": "integer",
-              "format": "int32",
+              "format": "int",
               "default": 10
             }
           },
@@ -3261,7 +3299,7 @@
         }
       }
     },
-    "/assessment/{id}": {
+    "/assessments/{id}": {
       "get": {
         "tags": ["assessments"],
         "summary": "get assessment detail",
@@ -3457,15 +3495,6 @@
                     "type": "string",
                     "description": "update assessment action",
                     "enum": ["save", "complete"]
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "assessment id"
-                  },
-                  "status": {
-                    "type": "string",
-                    "description": "assessment status",
-                    "enum": ["in_progress", "complete"]
                   },
                   "attendance_ids": {
                     "type": "array",
@@ -5339,6 +5368,11 @@
                 "description": "learning outcomes publish status",
                 "enum": ["draft", "pending", "published", "rejected"],
                 "example": "published"
+              },
+              "description": {
+                "type": "string",
+                "description": "description",
+                "example": "description001"
               },
               "created_at": {
                 "type": "integer",

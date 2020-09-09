@@ -504,6 +504,7 @@ export type LearningOutcomes = {
   organization_name?: string;
   publish_scope?: string;
   publish_status?: "draft" | "pending" | "published" | "rejected";
+  description?: string;
   created_at?: number;
 };
 
@@ -1119,7 +1120,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         keywords?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
-        publish_status?: "draft" | "pending" | "published" | "rejected" | null;
+        search_key?: string | null;
+        assumed?: number | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";
@@ -1134,7 +1137,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create learning outcomes
      */
     createLearningOutcomes: (data: CreateLearningOutComesRequest, params?: RequestParams) =>
-      this.request<LockLearningOutcomesResponse, any>(`/learning_outcomes`, "POST", params, data),
+      this.request<LearningOutcomes, any>(`/learning_outcomes`, "POST", params, data),
 
     /**
      * @tags learning_outcomes
@@ -1230,10 +1233,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         outcome_name?: string | null;
         description?: string | null;
-        keyword?: string | null;
+        keywords?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
-        publish_status?: ("draft" | "pending" | "published" | "rejected")[] | null | null;
+        search_key?: string | null;
+        assumed?: number | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";
@@ -1257,10 +1262,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         outcome_name?: string | null;
         description?: string | null;
-        keyword?: string | null;
+        keywords?: string | null;
         shortcode?: string | null;
         author_name?: string | null;
-        publish_status?: ("draft" | "pending" | "published" | "rejected")[] | null | null;
+        search_key?: string | null;
+        assumed?: number | null;
+        publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number | null;
         page_size?: number | null;
         order_by?: "name" | "-name" | "created_at" | "-created_at";
@@ -1333,13 +1340,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) => this.request<LockContentResponse, any>(`/assessments`, "POST", params, data, BodyType.Json, true),
-  };
-  assessment = {
+
     /**
      * @tags assessments
      * @name getAssessment
      * @summary get assessment detail
-     * @request GET:/assessment/{id}
+     * @request GET:/assessments/{id}
      * @secure
      * @description get assessment detail
      */
@@ -1365,13 +1371,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
           }[];
         },
         any
-      >(`/assessment/${id}`, "GET", params, null, BodyType.Json, true),
+      >(`/assessments/${id}`, "GET", params, null, BodyType.Json, true),
 
     /**
      * @tags assessments
      * @name updateAssessment
      * @summary update assessment
-     * @request PUT:/assessment/{id}
+     * @request PUT:/assessments/{id}
      * @secure
      * @description update assessment
      */
@@ -1379,12 +1385,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       id: string,
       data: {
         action?: "save" | "complete";
-        id?: string;
-        status?: "in_progress" | "complete";
         attendance_ids?: string[];
         outcome_attendance_maps?: { outcome_id?: string; attendance_ids?: string[] }[];
       },
       params?: RequestParams
-    ) => this.request<any, any>(`/assessment/${id}`, "PUT", params, data, BodyType.Json, true),
+    ) => this.request<any, any>(`/assessments/${id}`, "PUT", params, data, BodyType.Json, true),
   };
 }

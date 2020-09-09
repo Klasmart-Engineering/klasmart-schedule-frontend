@@ -7,16 +7,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : T extends (...args: any) => infer U
   ? U
   : any;
-export interface Attendence {
-  id: string;
-  name: string;
-}
-export interface Outcomes {
-  outcome_id: string;
-  outcome_name: string;
-  assumed: boolean;
-  attendence_ids: Attendence[];
-}
+
 export interface AssessmentState {
   id?: string;
   title?: string;
@@ -65,10 +56,10 @@ export const update = createAsyncThunk<AssessmentState["id"], AssessmentState, {
     return id;
   }
 );
-export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessment.getAssessment>, { id: string }>(
+export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string }>(
   "assessment/getAssessment",
   async ({ id }) => {
-    return await api.assessment.getAssessment(id);
+    return await api.assessments.getAssessment(id);
   }
 );
 

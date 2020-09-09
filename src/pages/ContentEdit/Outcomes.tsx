@@ -101,10 +101,25 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 
 interface OutcomesTableProps {
   list: LearningOutcomes[];
+  value?: string[];
+  onChange?: (value: OutcomesProps["value"]) => any;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list } = props;
+  const { list, value, onChange } = props;
   const css = useStyles();
+  const handleAction = (id: string | undefined, type: "add" | "remove") => {
+    if (type === "add") {
+      if (id && value) {
+        onChange && onChange(value.concat([id]));
+      }
+    } else {
+      if (id && value) {
+        value.splice(value.indexOf(id), 1);
+        onChange && onChange(value);
+      }
+    }
+  };
+
   const rows = list.map((item, idx) => (
     <TableRow key={item.outcome_id}>
       <TableCell>{item.outcome_name}</TableCell>
@@ -112,7 +127,11 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
       <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
       <TableCell>{item.author_name}</TableCell>
       <TableCell>
-        {item.outcome_id === "4" ? <AddCircle className={css.addGreen} /> : <RemoveCircle className={css.removeRead} />}
+        {value && value.indexOf(item.outcome_id ? item.outcome_id : "") < 0 ? (
+          <AddCircle className={css.addGreen} onClick={() => handleAction(item.outcome_id, "add")} />
+        ) : (
+          <RemoveCircle className={css.removeRead} onClick={() => handleAction(item.outcome_id, "remove")} />
+        )}
       </TableCell>
     </TableRow>
   ));
@@ -137,7 +156,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 };
 
 interface OutcomesInputProps {
-  value: LearningOutcomes[];
+  value?: string[];
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
@@ -157,7 +176,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           Added Learning Outcomes
         </Typography>
         <Box mr={2} className={css.indexUI}>
-          <Typography variant="h6">{value.length}</Typography>
+          <Typography variant="h6">{value && value.length}</Typography>
         </Box>
       </Box>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
@@ -168,34 +187,30 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <OutcomesTable list={value} />
+          <OutcomesTable list={[]} value={value} />
         </DialogContent>
       </Dialog>
     </Box>
   );
 };
-export interface Outcomes {
-  id: string;
-  name?: string;
-  shortcode: string;
-  assumed: boolean;
-  author: string;
-}
+
 export interface OutcomesProps {
   comingsoon?: boolean;
   list: LearningOutcomes[];
   total: number;
   amountPerPage?: number;
-  value: string;
+  searchName: string;
   assumed: string;
   onSearch: (searchName: SearchcmsListProps["value"]) => any;
   onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
   onChangePage: (page: number) => any;
+  value?: string[];
+  onChange?: (value: OutcomesProps["value"]) => any;
 }
 
 export default function Outcomes(props: OutcomesProps) {
   const css = useStyles();
-  const { comingsoon, list, onSearch, onCheck, value, assumed } = props;
+  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange } = props;
   const { lesson } = useParams();
   // const handChangePage = useCallback(
   //   (event: object, page: number) => {
@@ -219,16 +234,16 @@ export default function Outcomes(props: OutcomesProps) {
         <Comingsoon />
       ) : (
         <>
-          <SearchcmsList searchName="searchOutcomes" onSearch={onSearch} value={value} onCheck={onCheck} assumed={assumed} />
+          <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
           {list.length > 0 ? (
             <>
-              <OutcomesTable list={list} />
+              <OutcomesTable list={list} value={value} onChange={onChange} />
               {pagination}
-              <OutComesInput value={list} />
             </>
           ) : (
             <NoFiles />
           )}
+          <OutComesInput value={value} />
         </>
       )}
     </Box>

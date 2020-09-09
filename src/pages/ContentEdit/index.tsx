@@ -34,10 +34,10 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id");
   const searchMedia = query.get("searchMedia") || "";
-  const searchOutcomes = query.get("searchOutcomes") || "";
+  const searchOutcome = query.get("searchOutcome") || "";
   const assumed = query.get("assumed") || "";
   const editindex: number = Number(query.get("editindex") || 0);
-  return { id, searchMedia, searchOutcomes, search, editindex, assumed };
+  return { id, searchMedia, searchOutcome, search, editindex, assumed };
 };
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
@@ -61,6 +61,8 @@ export default function ContentEdit() {
     reset,
     handleSubmit,
     control,
+    watch,
+    getValues,
     formState: { isDirty },
   } = formMethods;
   const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
@@ -68,7 +70,7 @@ export default function ContentEdit() {
     RootState["content"]
   >((state) => state.content);
   const { lesson, tab, rightside } = useParams();
-  const { id, searchMedia, search, editindex, searchOutcomes, assumed } = useQuery();
+  const { id, searchMedia, search, editindex, searchOutcome, assumed } = useQuery();
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
@@ -115,9 +117,9 @@ export default function ContentEdit() {
     [history]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => (searchOutcomes = "") => {
+    () => (searchOutcome = "") => {
       history.replace({
-        search: setQuery(history.location.search, { searchOutcomes }),
+        search: setQuery(history.location.search, { searchOutcome }),
       });
     },
     [history]
@@ -147,11 +149,13 @@ export default function ContentEdit() {
   };
 
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true }));
-  }, [id, lesson, dispatch, searchMedia, history, editindex]);
+    dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true, searchOutcome, assumed }));
+  }, [id, lesson, dispatch, searchMedia, history, editindex, assumed, searchOutcome]);
   useEffect(() => {
     reset(ModelContentDetailForm.decode(contentDetail));
   }, [contentDetail, lesson, reset]);
+  watch();
+  console.log(getValues());
 
   const assetDetails = (
     <MediaAssetsLibrary>
@@ -162,15 +166,19 @@ export default function ContentEdit() {
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
       <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
-      <Outcomes
+      <Controller
+        as={Outcomes}
+        name="outcomes"
+        defaultValue={contentDetail.outcomes}
+        control={control}
         comingsoon
         list={outcomeList}
         onSearch={handleSearchOutcomes}
         onCheck={handleCheckAssumed}
-        value={searchOutcomes}
+        searchName={searchOutcome}
         assumed={assumed}
         total={OutcomesListTotal}
-        onChangePage={(page) => {}}
+        onChangePage={() => {}}
       />
       <MediaAssets
         list={mediaList}

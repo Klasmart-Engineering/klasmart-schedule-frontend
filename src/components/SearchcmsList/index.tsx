@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 });
 
 export interface SearchcmsListProps {
-  searchName: "searchMedia" | "searchOutcomes";
+  searchName: "searchMedia" | "searchOutcome";
   onSearch: (searchName: SearchcmsListProps["value"]) => any;
   value?: string;
   assumed?: string;
