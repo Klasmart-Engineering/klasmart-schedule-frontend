@@ -1,12 +1,14 @@
 import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
-import React, { useMemo } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
+import { actSuccess } from "../../reducers/notify";
+import { approve, deleteOutcome, getOutcomeDetail, publish, reject, save, updateOutcome } from "../../reducers/outcomes";
 import OutcomeHeader from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
 
@@ -55,64 +57,20 @@ export default function CreateOutcomings() {
   const [openStatus, setOpenStatus] = React.useState(false);
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const [showCode, setShoeCode] = React.useState(false);
+  let { outcomeDetail }: any = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   watch();
-  console.log(mockOptions);
 
   React.useEffect(() => {
     dispatch(onLoadContentEdit({ type: "material", id: null }));
   }, [dispatch]);
 
-  interface outcomeDetails {
-    outcome_id?: string;
-    ancestor_id?: string;
-    shortcode?: string;
-    assumed?: boolean;
-    outcome_name?: string;
-    program?: { program_id?: string; program_name?: string }[];
-    subject?: { subject_id?: string; subject_name?: string }[];
-    developmental?: { developmental_id?: string; developmental_name?: string }[];
-    skills?: { skill_id?: string; skill_name?: string }[];
-    age?: { age_id?: string; age_name?: string }[];
-    grade?: { grade_id?: string; grade_name?: string }[];
-    estimated_time?: number;
-    reject_reason?: string;
-    keywords?: string[];
-    source_id?: string;
-    locked_by?: string;
-    author_id?: string;
-    author_name?: string;
-    organization_id?: string;
-    organization_name?: string;
-    publish_scope?: string;
-    publish_status?: "draft" | "pending" | "published" | "rejected";
-    created_at?: number;
-    description?: string;
-  }
-
-  const initialDetail: outcomeDetails = {
-    outcome_id: "",
-    outcome_name: "",
-    shortcode: "",
-    assumed: true,
-    program: [],
-    subject: [],
-    developmental: [],
-    skills: [],
-    age: [],
-    grade: [],
-    estimated_time: 0,
-    keywords: [],
-    // description: "",
-    reject_reason: "",
-    created_at: 0,
-    author_id: "",
-    author_name: "",
-    publish_status: "draft",
-    organization_id: "",
-    organization_name: "",
-    locked_by: "",
-    description: "",
-  };
+  React.useEffect(() => {
+    if (outcome_id) {
+      dispatch(getOutcomeDetail(outcome_id));
+    }
+  }, [dispatch, outcome_id]);
 
   const getItems = (list: MockOptionsItem[]) =>
     list.map((item) => (
@@ -121,19 +79,48 @@ export default function CreateOutcomings() {
       </MenuItem>
     ));
 
-  const handleSave = useMemo(
+  const handleSave = React.useMemo(
     () =>
       handleSubmit(async (value: any) => {
-        console.log(value);
+        if (outcome_id) {
+          await dispatch(updateOutcome({ outcome_id, value }));
+          dispatch(actSuccess("Update Success"));
+          return;
+        }
+        const result: any = await dispatch(save(value));
+        setShoeCode(true);
+        console.log(result);
+        history.push(`/assessments/outcomes?outcome_id=${result.payload.outcome_id}`);
+        dispatch(actSuccess("Save Success"));
       }),
-    [handleSubmit]
+    [dispatch, handleSubmit, history, outcome_id]
   );
 
   const handleClose = () => {
     setOpenStatus(false);
   };
 
+  const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
+    const date = new Date(Number(timestamp) * 1000);
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const [Y, M, D] = [
+      date.getFullYear(),
+      dateNumFun(date.getMonth() + 1),
+      dateNumFun(date.getDate()),
+      dateNumFun(date.getHours()),
+      dateNumFun(date.getMinutes()),
+      dateNumFun(date.getSeconds()),
+    ];
+    return `${Y}-${M}-${D}`;
+  };
+
   const [enableCustomization, setEnableCustomization] = React.useState(false);
+
+  const handleReject = (reason: string) => {
+    dispatch(reject({ id: outcome_id, reject_reason: reason }));
+    setOpenStatus(false);
+    dispatch(actSuccess("Reject Success"));
+  };
 
   const modalDate: any = {
     title: "",
@@ -151,12 +138,14 @@ export default function CreateOutcomings() {
         label: "Delete",
         event: () => {
           // deleteScheduleByid();
+          dispatch(deleteOutcome(outcome_id));
           setOpenStatus(false);
+          dispatch(actSuccess("Delete Success"));
         },
       },
     ],
     handleClose: handleClose,
-    customizeTemplate: <CustomizeRejectTemplate handleClose={handleClose} />,
+    customizeTemplate: <CustomizeRejectTemplate handleClose={handleClose} handleReject={handleReject} />,
   };
 
   const handleDelete = () => {
@@ -169,11 +158,30 @@ export default function CreateOutcomings() {
     setEnableCustomization(true);
   };
 
-  const handleChange = () => {
+  const handleAssumedChange = () => {
     setValue("assumed", !getValues("assumed"));
   };
 
-  console.log(getValues());
+  const handlePublish = async () => {
+    if (outcomeDetail.publish_status === "draft") {
+      const result: any = await dispatch(publish(outcomeDetail.outcome_id));
+      if (result.payload === "ok") {
+        history.push("/assessments/outcome-list");
+      }
+    }
+  };
+
+  const handleApprove = () => {
+    if (outcome_id && outcomeDetail.publish_status === "pending") {
+      dispatch(approve(outcome_id));
+      history.push("/assessments/outcome-list");
+    }
+  };
+
+  const handleKeywordsChange = (event: React.ChangeEvent<{ value: string }>) => {
+    const keywords = event.target.value.split(",");
+    setValue("keywords", keywords);
+  };
 
   return (
     <Box component="form" className={classes.outcomings_container}>
@@ -183,10 +191,13 @@ export default function CreateOutcomings() {
         handleDelete={handleDelete}
         outcome_id={outcome_id}
         handelReject={handelReject}
+        handlePublish={handlePublish}
+        handleApprove={handleApprove}
+        publish_status={outcomeDetail.publish_status}
       />
       <div className={classes.middleBox}>
         <Box style={{ borderBottom: "1px solid #d7d7d7", marginBottom: "40px" }}>
-          {outcome_id && (
+          {outcomeDetail.publish_status && outcomeDetail.publish_status === "rejected" && (
             <Grid container>
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                 <Controller
@@ -196,7 +207,7 @@ export default function CreateOutcomings() {
                   as={TextField}
                   control={control}
                   size="small"
-                  defaultValue={initialDetail.reject_reason}
+                  defaultValue={outcomeDetail.reject_reason}
                   fullWidth
                   label="Reject Reason"
                 />
@@ -212,77 +223,74 @@ export default function CreateOutcomings() {
                 as={TextField}
                 control={control}
                 size="small"
-                defaultValue={initialDetail.outcome_name}
+                defaultValue={outcomeDetail.outcome_name}
                 fullWidth
-                label="Learning Outcome Name"
+                label="Learning outcome Name"
               />
             </Grid>
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="shortcode"
-                as={TextField}
-                rules={{ maxLength: 3 }}
-                error={errors.shortcode ? true : false}
-                control={control}
-                size="small"
-                defaultValue={initialDetail.shortcode}
-                fullWidth
-                label="Short Code"
-              />
-            </Grid>
-          </Grid>
-          <Grid container justify="space-between" style={{ paddingBottom: "40px" }}>
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.checkBox}>
-              <Controller
-                control={control}
-                name="assumed"
-                render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleChange} />}
-              />
-              <p className={classes.checkLabel}>Assumed</p>
-            </Grid>
-            {outcome_id && (
-              <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
+            {(outcome_id || showCode) && (
+              <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                 <Controller
-                  name="organization_name"
+                  name="shortcode"
                   as={TextField}
                   control={control}
-                  defaultValue={initialDetail.organization_name}
-                  fullWidth
-                  label="Organization"
-                  disabled
                   size="small"
+                  defaultValue={outcomeDetail.shortcode}
+                  fullWidth
+                  label="Short Code"
+                  disabled
                 />
               </Grid>
             )}
-          </Grid>
-          {outcome_id && (
-            <Grid container justify="space-between" style={{ paddingBottom: "40px" }}>
-              <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
-                <Controller
-                  name="created_at"
-                  as={TextField}
-                  control={control}
-                  defaultValue={initialDetail.created_at}
-                  fullWidth
-                  disabled
-                  label="Create Time"
-                  size="small"
-                />
-              </Grid>
-              <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
-                <Controller
-                  name="author_name"
-                  as={TextField}
-                  control={control}
-                  defaultValue={initialDetail.author_name}
-                  fullWidth
-                  size="small"
-                  disabled
-                  label="Author"
-                />
-              </Grid>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
+              <Controller
+                control={control}
+                name="assumed"
+                render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleAssumedChange} />}
+              />
+              <p className={classes.checkLabel}>Assumed</p>
             </Grid>
-          )}
+            {(outcome_id || showCode) && (
+              <>
+                <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+                  <Controller
+                    name="organization_name"
+                    as={TextField}
+                    control={control}
+                    defaultValue={outcomeDetail.organization_id}
+                    fullWidth
+                    label="Organization"
+                    disabled
+                    size="small"
+                  />
+                </Grid>
+                <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+                  <Controller
+                    name="created_at"
+                    as={TextField}
+                    control={control}
+                    defaultValue={timestampToTime(outcomeDetail.created_at)}
+                    fullWidth
+                    disabled
+                    label="Create Time"
+                    size="small"
+                  />
+                </Grid>
+                <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+                  <Controller
+                    name="author_name"
+                    as={TextField}
+                    control={control}
+                    defaultValue={outcomeDetail.author_name}
+                    fullWidth
+                    size="small"
+                    disabled
+                    label="Author"
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
         </Box>
         <Box style={{ paddingBottom: "10px", borderBottom: "1px solid #d7d7d7" }}>
           <Grid container justify="space-between">
@@ -292,7 +300,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.program}
+                defaultValue={outcomeDetail.program}
                 size="small"
                 fullWidth
                 label="Program"
@@ -307,7 +315,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.subject}
+                defaultValue={outcomeDetail.subject}
                 size="small"
                 fullWidth
                 label="Subject"
@@ -324,7 +332,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.developmental}
+                defaultValue={outcomeDetail.developmental}
                 size="small"
                 fullWidth
                 label="Development Category"
@@ -339,7 +347,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.skills}
+                defaultValue={outcomeDetail.skills}
                 size="small"
                 fullWidth
                 label="Skills Category"
@@ -356,7 +364,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.age}
+                defaultValue={outcomeDetail.age}
                 size="small"
                 fullWidth
                 label="Age"
@@ -371,7 +379,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 select
                 control={control}
-                defaultValue={initialDetail.grade}
+                defaultValue={outcomeDetail.grade}
                 size="small"
                 fullWidth
                 label="Grade"
@@ -387,23 +395,27 @@ export default function CreateOutcomings() {
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="estimated_time"
-                as={TextField}
                 control={control}
-                defaultValue={initialDetail.estimated_time}
+                defaultValue={outcomeDetail.estimated_time || ""}
+                as={TextField}
                 size="small"
                 fullWidth
                 label="Estimated time"
+                rules={{ required: true, pattern: /^[0-9]*$/ }}
+                error={errors.estimated_time ? true : false}
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="keywords"
-                as={TextField}
+                // as={TextField}
                 control={control}
-                defaultValue={initialDetail.keywords}
-                size="small"
-                fullWidth
-                label="Keywords"
+                // defaultValue={outcomeDetail.keywords?.map(item => (item + ',')) || []}
+                // onChange={handleKeywordsChange}
+                // render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleAssumedChange} />}
+                render={({ value, onChange }) => (
+                  <TextField defaultValue={value || []} onChange={handleKeywordsChange} size="small" fullWidth label="Keywords" />
+                )}
               />
             </Grid>
           </Grid>
@@ -414,7 +426,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 control={control}
                 size="small"
-                defaultValue={initialDetail.description}
+                defaultValue={outcomeDetail.description || ""}
                 fullWidth
                 label="Description"
               />

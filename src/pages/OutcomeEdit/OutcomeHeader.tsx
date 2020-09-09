@@ -83,12 +83,15 @@ interface OutcomeHeaderProps {
   handleDelete: () => void;
   outcome_id: string;
   handelReject: () => void;
+  handlePublish: () => void;
+  handleApprove: () => void;
+  publish_status: string | undefined;
 }
 
 function OutcomeHeader(props: OutcomeHeaderProps) {
   const history = useHistory();
   const css = useStyles();
-  const { handleSave, handleReset, handleDelete, outcome_id, handelReject } = props;
+  const { handleSave, handleReset, handleDelete, outcome_id, handelReject, handlePublish, handleApprove, publish_status } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   // const size = sm ? "small" : "medium";
@@ -119,15 +122,15 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
             Save
           </Button>
-          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handleClick}>
+          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
             Publish
           </Button>
-          {outcome_id && (
+          {outcome_id && publish_status === "pending" && (
             <>
               <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
                 Reject
               </Button>
-              <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleClick}>
+              <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
                 Approve
               </Button>
             </>

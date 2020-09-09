@@ -199,7 +199,6 @@ function RepeatCycle(props: ExtendsProps) {
     } else {
       selectedDays.push(weekends[index].day);
     }
-    console.log(selectedDays);
     _state[type].on = selectedDays;
     handleRepeatData(_state);
   };
@@ -210,6 +209,7 @@ function RepeatCycle(props: ExtendsProps) {
   };
 
   const handleOnDateDay = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isNaN(+event.target.value)) return;
     if ((+event.target.value < 1 || +event.target.value > getDateInfo(on_date_month)) && type === "yearly") {
       dispatch(actError("Please enter a valid date"));
       return;
@@ -295,7 +295,7 @@ function RepeatCycle(props: ExtendsProps) {
                         labelWidth={0}
                         disabled={on_type !== "date"}
                         onChange={handleOnDateDay}
-                        defaultValue={on_date_day}
+                        value={on_date_day}
                       />
                     </FormControl>
                     <span className={classes.positionText}>of every month</span>
@@ -426,6 +426,7 @@ function EndRepeat(props: ExtendsProps) {
   };
 
   const handleAfterCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isNaN(+event.target.value)) return;
     if (type === "daily" && +event.target.value * interval > 2 * 365) {
       setOpenStatus(true);
       return;
@@ -539,6 +540,7 @@ function RepeatHeader(props: ExtendsProps) {
     handleRepeatData(_state);
   };
   const handleChangeInterval = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isNaN(+event.target.value)) return;
     if (type === "daily") {
       if (end.type === "after_count") {
         if (+event.target.value > 2 * 365 || +event.target.value * end.after_count > 2 * 365) {
@@ -576,7 +578,6 @@ function RepeatHeader(props: ExtendsProps) {
       }
     }
     if (type === "yearly") {
-      console.log(+event.target.value, end.after_count);
       if (end.type === "after_count") {
         if (+event.target.value > 2 || +event.target.value * end.after_count > 2) {
           setOpenStatus(true);

@@ -100,14 +100,14 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
-              <Button
+              {/* <Button
                 href={`#/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}
                 variant="contained"
                 color="primary"
                 className={css.createBtn}
               >
                 Create +
-              </Button>
+              </Button> */}
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button

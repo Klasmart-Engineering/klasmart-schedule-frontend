@@ -125,8 +125,8 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
 }
 
 const sortOptions = [
-  { label: "Material Name(A-Z)", value: OrderBy.content_name },
-  { label: "Material Name(Z-A)", value: OrderBy._content_name },
+  { label: "Name(A-Z)", value: OrderBy.content_name },
+  { label: "Name(Z-A)", value: OrderBy._content_name },
   { label: "Created On(New-Old)", value: OrderBy._created_at },
   { label: "Created On(Old-New)", value: OrderBy.created_at },
 ];
