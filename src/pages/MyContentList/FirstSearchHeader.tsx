@@ -3,8 +3,6 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
@@ -156,17 +154,17 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
-    onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
-  };
+  // const { value, onChange } = props;
+  // const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
+  //   onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
+  // };
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
-              <Tabs
+              {/* <Tabs
                 value={value?.publish_status}
                 onChange={handleChange}
                 variant="scrollable"
@@ -180,7 +178,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 <Tab value={PublishStatus.draft} label="Unpublished" className={classes.capitalize} />
                 <Tab value={PublishStatus.archive} label="Archive" className={classes.capitalize} />
                 <Tab value={PublishStatus.assets} label="Assets" className={classes.capitalize} />
-              </Tabs>
+              </Tabs> */}
             </AppBar>
           </Grid>
         </Grid>

@@ -78,7 +78,7 @@ const initialState: IContentState = {
   contentPreview: {
     created_at: 0,
     id: "",
-    content_type: ContentType.material,
+    content_type: undefined,
     suggest_time: 0,
     grade: [],
     grade_name: [],

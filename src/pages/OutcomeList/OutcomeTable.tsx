@@ -45,6 +45,11 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
+const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
+  e.stopPropagation();
+  if (handler) return handler(e);
+};
+
 interface OutcomeProps extends OutcomeActionProps {
   outcome: LearningOutcomes;
   queryCondition: OutcomeQueryCondition;
@@ -67,6 +72,7 @@ function OutomeRow(props: OutcomeProps) {
             color="secondary"
             value={outcome.outcome_id}
             checked={hashValue[outcome.outcome_id as string] || false}
+            onClick={stopPropagation()}
             onChange={registerChange}
           ></Checkbox>
         </TableCell>
@@ -82,7 +88,12 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {queryCondition.publish_status !== OutcomePublishStatus.pending && (
-          <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(outcome.outcome_id as string)}>
+          <LButton
+            as={IconButton}
+            replace
+            className={css.iconColor}
+            onClick={stopPropagation((e) => onDelete(outcome.outcome_id as string))}
+          >
             <DeleteOutlineIcon />
           </LButton>
         )}

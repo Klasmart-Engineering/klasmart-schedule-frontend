@@ -6,10 +6,13 @@ import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField
 import { Search } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
-import React, { ChangeEvent, MouseEventHandler, useState } from "react";
+import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
+
+const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -143,16 +146,14 @@ export interface SecondSearchHeaderProps extends OutcomeQueryConditionBaseProps 
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<OutcomeQueryCondition["search_key"]>();
+  const { control, reset, getValues } = useForm();
   const handleClickSearch = () =>
     onChange(
       produce(value, (draft) => {
+        const searchText = getValues()[SEARCH_TEXT_KEY];
         searchText ? (draft.search_key = searchText) : delete draft.search_key;
       })
     );
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
-  };
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
     const author = event.target.checked ? Author.self : null;
     onChange(
@@ -164,19 +165,24 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
+  useEffect(() => {
+    reset();
+  }, [value.search_key, reset]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <TextField
+              <Controller
+                as={TextField}
+                name={SEARCH_TEXT_KEY}
+                control={control}
                 size="small"
                 className={classes.searchText}
                 onKeyPress={handleKeyPress}
-                onChange={handleChange}
-                placeholder={"Search"}
                 defaultValue={value.search_key || ""}
+                placeholder={"Search"}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> Search
