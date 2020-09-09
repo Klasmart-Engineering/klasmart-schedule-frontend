@@ -93,7 +93,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const unpublish = isUnpublish(value);
-  const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () => onChange({ ...value, publish_status });
+  const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () => onChange({ publish_status });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -157,7 +157,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
-    onChange({ ...value, publish_status });
+    onChange({ publish_status });
   };
   return (
     <div className={classes.root}>

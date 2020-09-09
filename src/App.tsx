@@ -61,7 +61,7 @@ function App() {
                 <AssessmentsDetail />
               </Route>
               <Route path="/">
-                <Redirect to="/library/my-content-list?publish_status=published" />
+                <Redirect to={MyContentList.routeRedirectDefault} />
               </Route>
             </Switch>
             <Notification />

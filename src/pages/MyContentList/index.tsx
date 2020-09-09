@@ -128,3 +128,6 @@ export default function MyContentList() {
     </div>
   );
 }
+
+MyContentList.routeBasePath = "/library/my-content-list";
+MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._created_at}`;

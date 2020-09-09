@@ -11,42 +11,7 @@ import { OrderBy, PublishStatus } from "../../api/api.d";
 import LayoutBox from "../../components/LayoutBox";
 import { isUnpublish } from "./FirstSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
-// @ts-ignore
-// const BootstrapInput = withStyles((theme) => ({
-//   root: {
-//     "label + &": {
-//       marginTop: theme.spacing(3),
-//     },
-//   },
-//   input: {
-//     borderRadius: 4,
-//     position: "relative",
-//     backgroundColor: theme.palette.background.paper,
-//     border: "1px solid #ced4da",
-//     fontSize: 16,
-//     padding: "8px 26px 13px 12px",
-//     transition: theme.transitions.create(["border-color", "box-shadow"]),
-//     // Use the system font instead of the default Roboto font.
-//     fontFamily: [
-//       "-apple-system",
-//       "BlinkMacSystemFont",
-//       '"Segoe UI"',
-//       "Roboto",
-//       '"Helvetica Neue"',
-//       "Arial",
-//       "sans-serif",
-//       '"Apple Color Emoji"',
-//       '"Segoe UI Emoji"',
-//       '"Segoe UI Symbol"',
-//     ].join(","),
-//     "&:focus": {
-//       borderRadius: 4,
-//       borderColor: "#80bdff",
-//       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-//     },
-//   },
-// }))(InputBase);
-// @ts-ignore
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -160,7 +125,6 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
 }
 
 const sortOptions = [
-  { label: "Display By", value: undefined },
   { label: "Material Name(A-Z)", value: OrderBy.content_name },
   { label: "Material Name(Z-A)", value: OrderBy._content_name },
   { label: "Created On(New-Old)", value: OrderBy._created_at },
@@ -209,11 +173,10 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   size="small"
                   fullWidth
                   onChange={handleChangeBulkAction}
+                  label="Bulk Actions"
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-                  value="default"
                 >
-                  <MenuItem value="default">Bulk Actions</MenuItem>
                   {bulkOptions}
                 </TextField>
               )}
@@ -233,6 +196,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 fullWidth
                 onChange={handleChangeOrder}
                 label="Display By"
+                value={value.order_by}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
