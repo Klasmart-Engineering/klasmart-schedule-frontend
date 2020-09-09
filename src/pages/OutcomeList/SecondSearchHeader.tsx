@@ -10,7 +10,7 @@ import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "reac
 import { Controller, useForm } from "react-hook-form";
 import { Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
+import { OutcomeQueryConditionBaseProps } from "./types";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 
@@ -78,12 +78,16 @@ const useStyles = makeStyles((theme) => ({
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+  const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [searchText, setSearchText] = useState<OutcomeQueryCondition["search_key"]>();
-  const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+  const handleClickSearch = () => {
+    onChange(
+      produce(value, (draft) => {
+        const searchText = getValues()[SEARCH_TEXT_KEY];
+        searchText ? (draft.search_key = searchText) : delete draft.search_key;
+      })
+    );
   };
-  const handleClickSearch = () => onChange({ ...value, search_key: searchText });
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -95,6 +99,9 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
     const author_name = value.author_name === Author.self ? undefined : Author.self;
     onChange({ ...value, author_name });
   };
+  useEffect(() => {
+    reset();
+  }, [value.search_key, reset]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -119,13 +126,16 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               </Menu>
             </Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
-              <TextField
+              <Controller
+                as={TextField}
+                name={SEARCH_TEXT_KEY}
+                control={control}
                 style={{ width: "100%", height: "100%" }}
-                onChange={handleChangeSearchText}
                 onBlur={handleClickSearch}
                 label="Search"
                 variant="outlined"
                 size="small"
+                defaultValue={value.search_key || ""}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

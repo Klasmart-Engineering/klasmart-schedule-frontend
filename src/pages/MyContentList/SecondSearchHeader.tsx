@@ -80,16 +80,14 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const { value, onChange } = props;
   const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  // const [searchText, setSearchText] = useState<QueryCondition["name"]>();
-  const handleClickSearch = () =>
+  const handleClickSearch = () => {
     onChange(
-      onChange(
-        produce(value, (draft) => {
-          const searchText = getValues()[SEARCH_TEXT_KEY];
-          searchText ? (draft.name = searchText) : delete draft.name;
-        })
-      )
+      produce(value, (draft) => {
+        const searchText = getValues()[SEARCH_TEXT_KEY];
+        searchText ? (draft.name = searchText) : delete draft.name;
+      })
     );
+  };
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -99,7 +97,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const handleItemClick = (event: any) => {
     setAnchorEl(null);
     const author = value.author === Author.self ? undefined : Author.self;
-    onChange({ ...value, author });
+    onChange(
+      produce(value, (draft) => {
+        author ? (draft.author = author) : delete draft.author;
+      })
+    );
   };
   useEffect(() => {
     reset();
@@ -133,10 +135,10 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 name={SEARCH_TEXT_KEY}
                 control={control}
                 style={{ width: "100%", height: "100%" }}
-                onBlur={handleClickSearch}
                 label="Search"
                 variant="outlined"
                 size="small"
+                defaultValue={value.name || ""}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
