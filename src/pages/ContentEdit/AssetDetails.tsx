@@ -19,6 +19,7 @@ import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import { SingleUploader } from "../../components/SingleUploader";
 import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
 import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
+import { Content } from "../../api/api";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -72,6 +73,7 @@ function AssetsDetails(props: AssetDetailsProps) {
     mockOptions,
     handleChangeFile,
     fileType,
+    contentDetail,
   } = props;
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
@@ -145,12 +147,31 @@ function AssetsDetails(props: AssetDetailsProps) {
           label={"Assets Name"}
           required
           rules={{ required: true }}
+          defaultValue={contentDetail.name}
           helperText=""
         />
-        <Controller as={TextField} select className={css.fieldset} label="Program" name="program" control={control}>
+        <Controller
+          as={TextField}
+          select
+          className={css.fieldset}
+          label="Program"
+          name="program"
+          control={control}
+          SelectProps={{ multiple: true }}
+          defaultValue={contentDetail.program}
+        >
           {menuItemList(mockOptions.program)}
         </Controller>
-        <Controller as={TextField} select className={css.fieldset} label="Subject" name="subject" control={control}>
+        <Controller
+          as={TextField}
+          select
+          className={css.fieldset}
+          label="Subject"
+          name="subject"
+          control={control}
+          SelectProps={{ multiple: true }}
+          defaultValue={contentDetail.subject}
+        >
           {menuItemList(mockOptions.subject)}
         </Controller>
         <Box>
@@ -162,6 +183,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Developmental"
+            SelectProps={{ multiple: true }}
+            defaultValue={contentDetail.developmental}
           >
             {menuItemList(mockOptions.developmental)}
           </Controller>
@@ -173,6 +196,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Skills"
+            SelectProps={{ multiple: true }}
+            defaultValue={contentDetail.skills}
           >
             {menuItemList(mockOptions.skills)}
           </Controller>
@@ -186,6 +211,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Age"
+            SelectProps={{ multiple: true }}
+            defaultValue={contentDetail.age}
           >
             {menuItemList(mockOptions.age)}
           </Controller>
@@ -197,11 +224,20 @@ function AssetsDetails(props: AssetDetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Grade"
+            SelectProps={{ multiple: true }}
+            defaultValue={contentDetail.grade}
           >
             {menuItemList(mockOptions.grade)}
           </Controller>
         </Box>
-        <Controller as={TextField} control={control} name="description" className={css.fieldset} label="Description" />
+        <Controller
+          as={TextField}
+          control={control}
+          name="description"
+          className={css.fieldset}
+          label="Description"
+          defaultValue={contentDetail.description}
+        />
         <Controller
           as={FormattedTextField}
           control={control}
@@ -209,7 +245,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           decode={decodeArray}
           className={css.fieldset}
           label="Keywords"
-          helperText=""
+          defaultValue={contentDetail.keywords}
         />
       </Box>
     </ThemeProvider>
@@ -221,9 +257,18 @@ interface AssetDetailsProps {
   mockOptions: MockOptions;
   fileType: "image" | "video" | "audio" | "document";
   handleChangeFile: (type: "image" | "video" | "audio" | "document") => void;
+  contentDetail: Content;
 }
 
 export default function AssetDetails(props: AssetDetailsProps) {
-  const { formMethods, mockOptions, fileType, handleChangeFile } = props;
-  return <AssetsDetails formMethods={formMethods} mockOptions={mockOptions} fileType={fileType} handleChangeFile={handleChangeFile} />;
+  const { formMethods, mockOptions, fileType, handleChangeFile, contentDetail } = props;
+  return (
+    <AssetsDetails
+      formMethods={formMethods}
+      mockOptions={mockOptions}
+      fileType={fileType}
+      handleChangeFile={handleChangeFile}
+      contentDetail={contentDetail}
+    />
+  );
 }

@@ -49,7 +49,7 @@ const useStyles = makeStyles({
 });
 
 interface Audio {
-  audioUrl: string;
+  src: string | undefined;
 }
 
 export default function AssetAudio(props: Audio) {
@@ -93,7 +93,7 @@ export default function AssetAudio(props: Audio) {
         </Box>
         <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
       </Box>
-      <audio id="audio" style={{ width: "100%" }} src={props.audioUrl}></audio>
+      <audio id="audio" style={{ width: "100%" }} src={props.src}></audio>
     </Box>
   );
 }

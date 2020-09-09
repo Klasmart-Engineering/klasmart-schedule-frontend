@@ -1,13 +1,17 @@
-import { Box, makeStyles, Typography } from "@material-ui/core";
+import { Box, CircularProgress, CircularProgressProps, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { DropzoneDialog } from "material-ui-dropzone";
 import React from "react";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { Content } from "../../api/api";
+import { SingleUploader } from "../../components/SingleUploader";
+import { apiResourcePathById } from "../../api/extra";
+import AssetImg from "./AssetPreview/AssetImg";
+import AssetVideo from "./AssetPreview/AssetVideo";
+import AssetAudio from "./AssetPreview/AssetAudio";
+import AssetFile from "./AssetPreview/AssetFile";
 
 const useStyles = makeStyles((theme) => ({
-  assetImg: {
-    width: 775,
-    Height: 248,
-  },
   uploadBox: {
     height: "calc(100% - 36px)",
     padding: "6px 20px 30px 20px",
@@ -18,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   uploadBtn: {
     textAlign: "center",
+    width: "100%",
   },
   title: {
     color: "#000000",
@@ -31,20 +36,54 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: "30px",
     lineHeight: "64px",
   },
+  thumbnailImg: {
+    width: 260,
+    height: 132,
+  },
+  thumbnailProgressText: {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  assetPreviewBox: {
+    marginBottom: "5%",
+  },
 }));
 
-function AssetPreview() {
+interface PreviewProps {
+  fileType: string;
+  resourceId: string | undefined;
+}
+
+function AssetPreview(props: PreviewProps) {
   const css = useStyles();
+  const { fileType, resourceId } = props;
+  const path = apiResourcePathById(resourceId);
+  const getSuffix = (resourceId: string | undefined) => {
+    if (JSON.stringify(resourceId) === "{}" || !resourceId) return;
+    return resourceId.substring(resourceId.lastIndexOf(".") + 1, resourceId.length);
+  };
   return (
-    <Box display="flex" flexDirection="column">
-      <img className={css.assetImg} src="https://beta-hub.kidsloop.net/e23a62b86d44c7ae5eb7993dbb6f7d7d.png" alt="assetImg" />
-      <Typography variant="body1">Content type: jpg</Typography>
+    <Box display="flex" flexDirection="column" alignItems="center" className={css.assetPreviewBox}>
+      {fileType === "image" && <AssetImg src={path} />}
+      {fileType === "video" && <AssetVideo src={path} />}
+      {fileType === "audio" && <AssetAudio src={path} />}
+      {fileType === "document" && <AssetFile src={path} />}
+      <Typography variant="body1" style={{ marginTop: "12px" }}>
+        Content type: {getSuffix(resourceId)}
+      </Typography>
     </Box>
   );
 }
 
-interface FileTypeProps extends AssetEditProps {
+interface FileTypeProps {
   fileFormat: any;
+  fileType: string;
 }
 function FileText(props: FileTypeProps) {
   const { fileType, fileFormat } = props;
@@ -60,25 +99,29 @@ function FileText(props: FileTypeProps) {
   );
 }
 
+function ProgressWithText(props: CircularProgressProps) {
+  const css = useStyles();
+  return (
+    <Box position="relative" display="inline-flex" alignItems="center">
+      <CircularProgress className={css.thumbnailImg} variant="static" {...props} />
+      <Box className={css.thumbnailProgressText}>
+        <Typography variant="caption" component="div" color="textSecondary">
+          {`${Math.round(props.value || 0)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
 interface AssetEditProps {
   fileType: string;
+  formMethods: UseFormMethods<ContentDetailForm>;
+  contentDetail: Content;
 }
 
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [, setFiles] = React.useState([]);
-  const { fileType } = props;
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleSave = (files: any) => {
-    setOpen(false);
-    setFiles(files);
-  };
+  const { fileType, formMethods, contentDetail } = props;
   const fileFormat: any = {
     video: [".avi", ".mov", ".mp4"],
     image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
@@ -90,19 +133,30 @@ function AssetEdit(props: AssetEditProps) {
       <p className={css.title}>Upload a file</p>
       <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
         <div className={css.uploadBtn}>
-          <FileText fileFormat={fileFormat} fileType={fileType} />
-          <Button variant="contained" color="primary" onClick={handleOpen}>
-            Upload Files
-          </Button>
+          <Controller
+            name="data"
+            control={formMethods.control}
+            defaultValue={JSON.parse(contentDetail.data || "{}")}
+            render={(props) => (
+              <SingleUploader
+                partition="thumbnail"
+                {...props}
+                render={({ uploady, item, btnRef, value, isUploading }) => (
+                  <>
+                    {(JSON.stringify(value) === "{}" || !value) && !isUploading && <FileText fileFormat={fileFormat} fileType={fileType} />}
+                    {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
+                    {!isUploading && (
+                      <Button variant="contained" color="primary" ref={btnRef}>
+                        Upload Files
+                      </Button>
+                    )}
+                    {isUploading && <ProgressWithText value={item?.completed} />}
+                  </>
+                )}
+              />
+            )}
+          />
         </div>
-        <DropzoneDialog
-          open={open}
-          onSave={handleSave}
-          acceptedFiles={fileFormat[fileType]}
-          showPreviews={true}
-          maxFileSize={5000000}
-          onClose={handleClose}
-        />
       </Box>
     </Box>
   );
@@ -124,9 +178,9 @@ interface MediaAssetsEditProps extends AssetEditProps {
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
-    const { readonly, overlay, fileType } = this.props;
+    const { readonly, overlay, fileType, formMethods, contentDetail } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
-    if (readonly) return <AssetPreview />;
-    return <AssetEdit fileType={fileType} />;
+    if (readonly) return <AssetPreview fileType={fileType} resourceId={JSON.parse(contentDetail.data || "{}")} />;
+    return <AssetEdit fileType={fileType} formMethods={formMethods} contentDetail={contentDetail} />;
   }
 }

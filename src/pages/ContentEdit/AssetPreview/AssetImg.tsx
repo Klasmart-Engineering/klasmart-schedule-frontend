@@ -9,10 +9,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface img {
-  imgUrl: string;
+  src: string | undefined;
 }
 
 export default function AssetImg(props: img) {
   const css = useStyles();
-  return <img className={css.assetsContent} src={props.imgUrl} alt="assetImg" />;
+  return <img className={css.assetsContent} src={props.src} alt="assetImg" />;
 }

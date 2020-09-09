@@ -48,7 +48,7 @@ const useStyles = makeStyles({
 });
 
 interface video {
-  videoUrl: string;
+  src: string | undefined;
 }
 
 export default function AssetVideo(props: video) {
@@ -82,7 +82,7 @@ export default function AssetVideo(props: video) {
         ? <PauseCircleOutlineIcon className={classes.videoTool} />
         : <PlayCircleFilledIcon className={classes.videoTool} />
       } */}
-      <video id="video" className={classes.video} src={props.videoUrl} onClick={handlePlay}></video>
+      <video id="video" className={classes.video} src={props.src} onClick={handlePlay}></video>
       <Box className={classes.controls}>
         <Box className={classes.tools}>
           <FastRewindOutlinedIcon className={classes.itemTool} />
