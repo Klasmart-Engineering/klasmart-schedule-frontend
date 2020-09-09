@@ -2,13 +2,13 @@ import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { approve, deleteOutcome, getOutcomeDetail, publish, save, updateOutcome } from "../../reducers/outcomes";
+import { approve, deleteOutcome, getOutcomeDetail, publish, reject, save, updateOutcome } from "../../reducers/outcomes";
 import OutcomeHeader from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
 
@@ -57,9 +57,9 @@ export default function CreateOutcomings() {
   const [openStatus, setOpenStatus] = React.useState(false);
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
-  // const history = useHistory()
+  const history = useHistory();
   const [showCode, setShoeCode] = React.useState(false);
-  const { outcomeDetail } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  let { outcomeDetail }: any = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   watch();
 
   React.useEffect(() => {
@@ -87,18 +87,40 @@ export default function CreateOutcomings() {
           dispatch(actSuccess("Update Success"));
           return;
         }
-        await dispatch(save(value));
+        const result: any = await dispatch(save(value));
         setShoeCode(true);
+        console.log(result);
+        history.push(`/assessments/outcomes?outcome_id=${result.payload.outcome_id}`);
         dispatch(actSuccess("Save Success"));
       }),
-    [dispatch, handleSubmit, outcome_id]
+    [dispatch, handleSubmit, history, outcome_id]
   );
 
   const handleClose = () => {
     setOpenStatus(false);
   };
 
+  const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
+    const date = new Date(Number(timestamp) * 1000);
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const [Y, M, D] = [
+      date.getFullYear(),
+      dateNumFun(date.getMonth() + 1),
+      dateNumFun(date.getDate()),
+      dateNumFun(date.getHours()),
+      dateNumFun(date.getMinutes()),
+      dateNumFun(date.getSeconds()),
+    ];
+    return `${Y}-${M}-${D}`;
+  };
+
   const [enableCustomization, setEnableCustomization] = React.useState(false);
+
+  const handleReject = (reason: string) => {
+    dispatch(reject({ id: outcome_id, reject_reason: reason }));
+    setOpenStatus(false);
+    dispatch(actSuccess("Reject Success"));
+  };
 
   const modalDate: any = {
     title: "",
@@ -123,7 +145,7 @@ export default function CreateOutcomings() {
       },
     ],
     handleClose: handleClose,
-    customizeTemplate: <CustomizeRejectTemplate handleClose={handleClose} />,
+    customizeTemplate: <CustomizeRejectTemplate handleClose={handleClose} handleReject={handleReject} />,
   };
 
   const handleDelete = () => {
@@ -140,23 +162,26 @@ export default function CreateOutcomings() {
     setValue("assumed", !getValues("assumed"));
   };
 
-  const handlePublish = () => {
-    if (outcome_id && outcomeDetail.publish_status === "draft") {
-      dispatch(publish(outcome_id));
+  const handlePublish = async () => {
+    if (outcomeDetail.publish_status === "draft") {
+      const result: any = await dispatch(publish(outcomeDetail.outcome_id));
+      if (result.payload === "ok") {
+        history.push("/assessments/outcome-list");
+      }
     }
   };
 
   const handleApprove = () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
       dispatch(approve(outcome_id));
+      history.push("/assessments/outcome-list");
     }
   };
 
-  const handleEstimateTimeChange = (event: any) => {
-    setValue("estimated_time", +getValues("estimated_time"));
+  const handleKeywordsChange = (event: React.ChangeEvent<{ value: string }>) => {
+    const keywords = event.target.value.split(",");
+    setValue("keywords", keywords);
   };
-
-  console.log(outcomeDetail);
 
   return (
     <Box component="form" className={classes.outcomings_container}>
@@ -208,8 +233,6 @@ export default function CreateOutcomings() {
                 <Controller
                   name="shortcode"
                   as={TextField}
-                  rules={{ maxLength: 3 }}
-                  error={errors.shortcode ? true : false}
                   control={control}
                   size="small"
                   defaultValue={outcomeDetail.shortcode}
@@ -246,7 +269,7 @@ export default function CreateOutcomings() {
                     name="created_at"
                     as={TextField}
                     control={control}
-                    defaultValue={outcomeDetail.created_at}
+                    defaultValue={timestampToTime(outcomeDetail.created_at)}
                     fullWidth
                     disabled
                     label="Create Time"
@@ -373,23 +396,26 @@ export default function CreateOutcomings() {
               <Controller
                 name="estimated_time"
                 control={control}
+                defaultValue={outcomeDetail.estimated_time || ""}
+                as={TextField}
                 size="small"
                 fullWidth
                 label="Estimated time"
-                render={({ onChange, value }) => (
-                  <TextField defaultValue={value || ""} onChange={handleEstimateTimeChange} size="small" fullWidth label="Estimated time" />
-                )}
+                rules={{ required: true, pattern: /^[0-9]*$/ }}
+                error={errors.estimated_time ? true : false}
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="keywords"
-                as={TextField}
+                // as={TextField}
                 control={control}
-                defaultValue={outcomeDetail.keywords}
-                size="small"
-                fullWidth
-                label="Keywords"
+                // defaultValue={outcomeDetail.keywords?.map(item => (item + ',')) || []}
+                // onChange={handleKeywordsChange}
+                // render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleAssumedChange} />}
+                render={({ value, onChange }) => (
+                  <TextField defaultValue={value || []} onChange={handleKeywordsChange} size="small" fullWidth label="Keywords" />
+                )}
               />
             </Grid>
           </Grid>
@@ -400,7 +426,7 @@ export default function CreateOutcomings() {
                 as={TextField}
                 control={control}
                 size="small"
-                defaultValue={""}
+                defaultValue={outcomeDetail.description || ""}
                 fullWidth
                 label="Description"
               />

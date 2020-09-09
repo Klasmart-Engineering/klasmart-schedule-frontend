@@ -125,7 +125,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
             Publish
           </Button>
-          {outcome_id && publish_status === "pendding" && (
+          {outcome_id && publish_status === "pending" && (
             <>
               <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
                 Reject

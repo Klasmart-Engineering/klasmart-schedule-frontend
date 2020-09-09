@@ -35,6 +35,7 @@ const initialState: outcomeState = {
     publish_scope: "",
     publish_status: "draft",
     created_at: 0,
+    description: "",
   },
   createOutcome: {
     outcome_name: "",
@@ -68,8 +69,8 @@ type ParamsUpdateOutcome = {
   id: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[0];
   data: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[1];
 };
-export const updateOutcome = createAsyncThunk<any, any>("outcome/update", ({ id, payload }) => {
-  return api.learningOutcomes.updateLearningOutcomes(id, payload);
+export const updateOutcome = createAsyncThunk<any, any>("outcome/update", ({ outcome_id, value }) => {
+  return api.learningOutcomes.updateLearningOutcomes(outcome_id, value);
 });
 
 export const publish = createAsyncThunk<LearningOutcomes, LearningOutcomes["outcome_id"], { state: RootState }>(
@@ -92,7 +93,7 @@ export const deleteOutcome = createAsyncThunk<ResultDeleteOutcome, string>("outc
 
 type ResuleGetOutcomeDetail = ReturnType<typeof api.learningOutcomes.getLearningOutcomesById>;
 type ParamsGetOutcomeDetail = Parameters<typeof api.learningOutcomes.getLearningOutcomesById>[0];
-export const getOutcomeDetail = createAsyncThunk<ResuleGetOutcomeDetail, string>("outcome/getOutcomeDetail", (id) => {
+export const getOutcomeDetail = createAsyncThunk<LearningOutcomes, string>("outcome/getOutcomeDetail", (id) => {
   return api.learningOutcomes.getLearningOutcomesById(id);
 });
 
@@ -118,25 +119,25 @@ const { reducer } = createSlice({
       state.outcomeDetail = payload;
     },
     [save.rejected.type]: (state, { error }: any) => {
-      alert(error);
+      // alert(error);
     },
     [publish.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       console.log(payload);
     },
     [publish.rejected.type]: (state, { error }: any) => {
-      alert(error);
+      // alert(error);
     },
     [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       console.log(payload);
     },
     [deleteOutcome.rejected.type]: (state, { error }: any) => {
-      alert(error);
+      // alert(error);
     },
     [getOutcomeDetail.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeDetail = payload;
     },
     [getOutcomeDetail.rejected.type]: (state, { error }: any) => {
-      alert(error);
+      // alert(error);
     },
     [approve.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       console.log("success");
