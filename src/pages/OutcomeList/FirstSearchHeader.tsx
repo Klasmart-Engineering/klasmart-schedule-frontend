@@ -117,7 +117,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
                 startIcon={<PublishOutlined />}
               >
-                Published
+                Learning Outcomes
               </Button>
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.pending)}
@@ -138,7 +138,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 className={clsx(css.nav, { [css.actives]: false })}
                 startIcon={<PermMediaOutlined />}
               >
-                Assetsment
+                Assessments
               </Button>
             </Grid>
           </Grid>

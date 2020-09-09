@@ -131,5 +131,5 @@ export default function OutcomeList() {
   );
 }
 
-OutcomeList.routeBasePath = "/assesmemts/outcome-list";
-OutcomeList.routeRedirectDefault = "/assesmemts/outcome-list?publish_status=published";
+OutcomeList.routeBasePath = "/assessments/outcome-list";
+OutcomeList.routeRedirectDefault = "/assessments/outcome-list?publish_status=published&page=1";

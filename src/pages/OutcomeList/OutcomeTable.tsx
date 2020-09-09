@@ -13,7 +13,6 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
@@ -57,6 +56,7 @@ const useStyles = makeStyles((theme) =>
     },
     paginationUl: {
       justifyContent: "center",
+      marginTop: 10,
     },
     checkbox: {
       padding: 0,
@@ -80,7 +80,6 @@ function OutomeRow(props: OutcomeProps) {
   const css = useStyles();
   const { outcome, queryCondition, selectedContentGroupContext, onDelete, onClickOutcome } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
-  const DeleteIcon = outcome?.publish_status === OutcomePublishStatus.published ? RemoveCircleOutlineIcon : DeleteOutlineIcon;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
       <TableCell align="center" padding="checkbox">
@@ -107,7 +106,7 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell align="center">
         {queryCondition.publish_status !== OutcomePublishStatus.pending && (
           <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(outcome.outcome_id as string)}>
-            <DeleteIcon />
+            <DeleteOutlineIcon />
           </LButton>
         )}
       </TableCell>

@@ -103,7 +103,7 @@ const navigation = [
   },
   {
     name: "Assessments",
-    path: "/assesmemts/outcome-list",
+    path: "/assessments/outcome-list",
   },
   {
     name: "Schedule",
