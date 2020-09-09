@@ -1,6 +1,6 @@
 import { Box, FormControl, makeStyles, Select, Typography } from "@material-ui/core";
 import { cloneDeep } from "lodash";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -79,7 +79,7 @@ const useQuery = () => {
   const filterOutcomes = query.get("filterOutcomes");
   return { id, filterOutcomes };
 };
-const handleOutcomeslist = (list: AssessmentState["outcome_attendance_maps"], value: string) => {
+const handleOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
   if (value === "all" || value === null) return list;
   let newList = cloneDeep(list);
   if (!newList) return list;
@@ -88,31 +88,37 @@ const handleOutcomeslist = (list: AssessmentState["outcome_attendance_maps"], va
   });
 };
 
-export function AssessmentsDetail() {
+export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
   let { filterOutcomes = "all", id } = useQuery();
   if (!filterOutcomes) filterOutcomes = "all";
-  const assessmentDetail = useSelector<RootState, RootState["assessment"]>((state) => state.assessment);
+  const assessmentDetail = useSelector<RootState, RootState["assessment"]["assessmentDetail"]>(
+    (state) => state.assessment.assessmentDetail
+  );
   let { outcome_attendance_maps, attendances } = assessmentDetail;
   const outcomesListInner = handleOutcomeslist(outcome_attendance_maps, filterOutcomes);
-  const formMethods = useForm<AssessmentState>();
-  const { handleSubmit, watch, getValues } = formMethods;
-
-  let [selectedAttendence, SetSelectedAttendence] = useState(attendances);
-  const handleAssessmentSave = () => {};
+  const formMethods = useForm<AssessmentState["assessmentDetail"]>();
+  const { handleSubmit, reset } = formMethods;
+  const handleAssessmentSave = useMemo(
+    () =>
+      handleSubmit((value) => {
+        // const {id, attendances, outcome_attendance_maps} = value
+        if (id) {
+          // const data= {action: "save", attendance_ids: attendances?.map(v=>v.id),
+          // outcome_attendance_maps: outcome_attendance_maps?.map(v => {outcome_id: v.outcome_id, attendance_ids:v.attendance_ids}) }
+          // dispatch(updateAssessment({id, data }))
+        }
+        console.log("value=", value);
+      }),
+    [handleSubmit, id]
+  );
   const handleAssessmentComplete = () => {};
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
 
-  const handleOK = useMemo(
-    () =>
-      handleSubmit((data) => {
-        SetSelectedAttendence(data.attendances);
-      }),
-    [handleSubmit]
-  );
+  const handleOK = useMemo(() => handleSubmit((data) => {}), [handleSubmit]);
   const handleFilterOutcomes = useMemo<OutcomesFilterProps["onChange"]>(
     () => (value) => {
       history.replace({
@@ -122,19 +128,21 @@ export function AssessmentsDetail() {
     [history]
   );
   useEffect(() => {
-    // todo:dispatch() 重新渲染页面
     if (id) {
       dispatch(getAssessment({ id }));
     }
   }, [filterOutcomes, dispatch, id]);
-  watch();
-  console.log(getValues());
-
+  useEffect(() => {
+    reset(assessmentDetail);
+  }, [assessmentDetail, reset]);
+  (window as any).reset = reset;
+  // watch();
+  // console.log(getValues());
   const rightsideArea = (
     <>
       <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
       {outcomesListInner && outcomesListInner.length > 0 ? (
-        <OutcomesTable outcomesList={outcomesListInner} attendanceList={selectedAttendence} formMethods={formMethods} />
+        <OutcomesTable outcomesList={outcomesListInner} attendanceList={attendances} formMethods={formMethods} />
       ) : (
         <NoOutComesList />
       )}
@@ -150,10 +158,10 @@ export function AssessmentsDetail() {
         onComplete={handleAssessmentComplete}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary assessmentDetail={assessmentDetail} onOk={handleOK} formMethods={formMethods} selectedAttendence={selectedAttendence} />
+        <Summary assessmentDetail={assessmentDetail} onOk={handleOK} formMethods={formMethods} selectedAttendence={attendances} />
         {rightsideArea}
       </LayoutPair>
     </>
   );
 }
-AssessmentsDetail.routeBasePath = "/assessments/assessments-detail";
+AssessmentsEdit.routeBasePath = "/assessments/assessments-detail";

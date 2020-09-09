@@ -9,51 +9,42 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 export interface AssessmentState {
-  id?: string;
-  title?: string;
-  class_id?: string;
-  attendances?: { id?: string; name?: string }[];
-  subject?: { id?: string; name?: string };
-  teacher?: { id?: string; name?: string };
-  class_end_time?: number;
-  class_length?: number;
-  number_of_activities?: number;
-  number_of_outcomes?: number;
-  complete_time?: number;
-  outcome_attendance_maps?: {
-    outcome_id?: string;
-    outcome_name?: string;
-    assumed?: boolean;
-    attendance_ids?: string[];
-  }[];
+  assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
 }
 interface RootState {
   assessment: AssessmentState;
 }
 
 const initialState: AssessmentState = {
-  id: "",
-  title: "",
-  class_id: "",
-  attendances: [],
-  subject: {},
-  teacher: {},
-  class_end_time: 0,
-  class_length: 0,
-  number_of_activities: 0,
-  number_of_outcomes: 0,
-  complete_time: 0,
-  outcome_attendance_maps: [],
+  assessmentDetail: {
+    id: "",
+    title: "",
+    class_id: "",
+    attendances: [],
+    subject: {
+      id: "",
+      name: "",
+    },
+    teacher: {
+      id: "",
+      name: "",
+    },
+    class_end_time: 0,
+    class_length: 0,
+    number_of_activities: 0,
+    number_of_outcomes: 0,
+    complete_time: 0,
+    outcome_attendance_maps: [],
+  },
 };
-
-export const update = createAsyncThunk<AssessmentState["id"], AssessmentState, { state: RootState }>(
-  "assessment/save",
-  (payload, { getState }) => {
-    const {
-      assessment: { id },
-    } = getState();
-    //  update assessment
-    return id;
+interface IupdateAssessmentParams {
+  id: Parameters<typeof api.assessments.updateAssessment>[0];
+  data: Parameters<typeof api.assessments.updateAssessment>[1];
+}
+export const updateAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.updateAssessment>, IupdateAssessmentParams>(
+  "assessment/updateAssessment",
+  async ({ id, data }) => {
+    await api.assessments.updateAssessment(id, data);
   }
 );
 export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string }>(
@@ -70,10 +61,14 @@ const { reducer } = createSlice({
   extraReducers: {
     [getAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       if (payload) {
-        state = payload;
+        state.assessmentDetail = payload;
       }
     },
     [getAssessment.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [updateAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof updateAssessment>>) => {},
+    [updateAssessment.rejected.type]: (state, { error }: any) => {
       throw error;
     },
   },

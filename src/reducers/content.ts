@@ -59,6 +59,7 @@ const initialState: IContentState = {
     age_name: [],
     org_name: "",
     outcomes: [],
+    outcome_entities: [],
   },
   mediaList: [],
   MediaListTotal: 0,
@@ -109,6 +110,7 @@ const initialState: IContentState = {
     age_name: [],
     org_name: "",
     outcomes: [],
+    outcome_entities: [],
   },
 };
 

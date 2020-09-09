@@ -96,6 +96,15 @@ export type Content = {
   skills_name?: string[];
   age_name?: string[];
   org_name?: string;
+  outcome_entities?: {
+    outcome_id?: string;
+    outcome_name?: string;
+    shortcode?: string;
+    assumed?: boolean;
+    author_id?: string;
+    author_name?: string;
+    ancestor_id?: string;
+  }[];
   created_at?: number;
 };
 

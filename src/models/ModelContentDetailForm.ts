@@ -2,12 +2,15 @@ import { Content, CreateContentRequest } from "../api/api";
 import { ContentType } from "../api/type";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
-export interface ContentDetailPlanType extends Omit<CreateContentRequest, "data"> {
+interface MyExtendedDetailForm {
+  outcome_entities?: Content["outcome_entities"];
+}
+export interface ContentDetailPlanType extends Omit<CreateContentRequest, "data">, MyExtendedDetailForm {
   data: Segment;
   created_at?: string;
 }
 let time: number | undefined = 0;
-export interface ContentDetailMaterialType extends Omit<CreateContentRequest, "data"> {
+export interface ContentDetailMaterialType extends Omit<CreateContentRequest, "data">, MyExtendedDetailForm {
   data: { source: string };
   created_at?: string;
 }

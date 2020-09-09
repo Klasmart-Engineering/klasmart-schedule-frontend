@@ -18,10 +18,13 @@ interface CheckboxGroupProps {
 }
 
 function toHash(list: string[]): HashValue {
-  return list.reduce<HashValue>((result, key) => {
-    result[key] = true;
-    return result;
-  }, {});
+  return (
+    list &&
+    list.reduce<HashValue>((result, key) => {
+      result[key] = true;
+      return result;
+    }, {})
+  );
 }
 
 export function CheckboxGroup(props: CheckboxGroupProps) {

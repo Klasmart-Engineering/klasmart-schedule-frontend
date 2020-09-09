@@ -15,11 +15,11 @@ import {
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React, { useCallback } from "react";
+import React, { Fragment, useCallback } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentState } from "../../reducers/assessment";
-
 const useStyles = makeStyles(({ palette }) => ({
   classSummaryHeader: {
     height: 64,
@@ -59,26 +59,25 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface AttendenceInputProps {
-  attendances: AssessmentState["attendances"];
-  formMethods: UseFormMethods<AssessmentState>;
-  selectedAttendence: AssessmentState["attendances"];
+  attendances: AssessmentState["assessmentDetail"]["attendances"];
+  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  selectedAttendence: AssessmentState["assessmentDetail"]["attendances"];
 }
 export const AttendanceInput = (props: AttendenceInputProps) => {
   const {
     attendances,
-    formMethods: { control, getValues },
-    selectedAttendence,
+    formMethods: { control },
   } = props;
-  const handleCheck = (item: { id?: string; name?: string }) => {
-    const { attendances } = getValues();
-    const newattendences = attendances?.includes(item)
-      ? attendances?.filter((attendances) => attendances !== item)
-      : [...(attendances ?? []), item];
-    return newattendences;
-  };
+  // const handleCheck = (item: { id?: string; name?: string }) => {
+  //   const { attendances } = getValues();
+  //   const newattendences = attendances?.includes(item)
+  //     ? attendances?.filter((attendances) => attendances !== item)
+  //     : [...(attendances ?? []), item];
+  //   return newattendences;
+  // };
   return (
     <Box>
-      {attendances &&
+      {/* {attendances &&
         attendances.map((item) => (
           <FormControlLabel
             control={
@@ -100,14 +99,43 @@ export const AttendanceInput = (props: AttendenceInputProps) => {
             key={item.id}
             label={item.name}
           />
-        ))}
+        ))} */}
+      <Controller
+        name="attendance"
+        control={control}
+        defaultValue={attendances?.map((v) => v.id)}
+        render={(props) => (
+          <CheckboxGroup
+            {...props}
+            render={(selectedContentGroupContext) => (
+              <Fragment>
+                {attendances &&
+                  attendances.map((item) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          value={item.id}
+                          checked={selectedContentGroupContext.hashValue[item.id as string]}
+                          onChange={selectedContentGroupContext.registerChange}
+                        />
+                      }
+                      label={item.name}
+                      key={item.id}
+                    />
+                  ))}
+              </Fragment>
+            )}
+          />
+        )}
+      />
     </Box>
   );
 };
 interface SummaryProps {
-  formMethods: UseFormMethods<AssessmentState>;
-  assessmentDetail: AssessmentState;
-  selectedAttendence: AssessmentState["attendances"];
+  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  assessmentDetail: AssessmentState["assessmentDetail"];
+  selectedAttendence: AssessmentState["assessmentDetail"]["attendances"];
   onOk: Function;
 }
 export function Summary(props: SummaryProps) {
@@ -119,8 +147,10 @@ export function Summary(props: SummaryProps) {
     selectedAttendence,
   } = props;
   const {
-    formMethods: { reset },
+    formMethods: { reset, control },
   } = props;
+  // console.log("subject=",assessmentDetail.subject ? assessmentDetail.subject.name : "1");
+
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -145,7 +175,9 @@ export function Summary(props: SummaryProps) {
           <Typography variant="h6">Class Summary</Typography>
         </Box>
         <Box px={5} py={5}>
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
             name="title"
@@ -154,11 +186,13 @@ export function Summary(props: SummaryProps) {
             label="Assessment Title"
           />
           <Box className={css.editBox}>
-            <TextField
+            <Controller
+              as={TextField}
+              control={control}
               fullWidth
               disabled
-              name="attendence"
-              defaultValue={selectedAttendence && selectedAttendence.map((v) => v.name)}
+              name="attendent"
+              defaultValue={assessmentDetail.attendances && assessmentDetail.attendances.map((v) => v.name)}
               className={clsx(css.fieldset, css.nowarp)}
               label="Attendence"
             />
@@ -166,23 +200,29 @@ export function Summary(props: SummaryProps) {
               Edit
             </Button>
           </Box>
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
-            name="subject"
-            defaultValue={assessmentDetail.subject && assessmentDetail.subject.name}
+            name="subject.name"
+            defaultValue={assessmentDetail.subject?.name}
             className={css.fieldset}
             label="Subject"
           />
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
-            name="teacher"
-            defaultValue={assessmentDetail.teacher && assessmentDetail.teacher.name}
+            name="teacher.name"
+            defaultValue={assessmentDetail?.teacher?.name}
             className={css.fieldset}
             label="Teacher"
           />
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
             name="classEndTime"
@@ -191,7 +231,9 @@ export function Summary(props: SummaryProps) {
             label="Class End Time"
           />
           <Box className={css.editBox}>
-            <TextField
+            <Controller
+              as={TextField}
+              control={control}
               fullWidth
               disabled
               name="classLength"
@@ -201,7 +243,9 @@ export function Summary(props: SummaryProps) {
             />
             <Typography className={css.minutes}>Minutes</Typography>
           </Box>
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
             name="numberofActivities"
@@ -209,7 +253,9 @@ export function Summary(props: SummaryProps) {
             className={css.fieldset}
             label="Number of Activities"
           />
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
             name="numberofLearningOutcomes"
@@ -217,7 +263,9 @@ export function Summary(props: SummaryProps) {
             className={css.fieldset}
             label="Number of Learning Outcomes"
           />
-          <TextField
+          <Controller
+            as={TextField}
+            control={control}
             fullWidth
             disabled
             name="completeTime"

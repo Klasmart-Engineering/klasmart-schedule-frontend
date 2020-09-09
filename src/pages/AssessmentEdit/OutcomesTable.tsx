@@ -9,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@material-ui/core";
 import React, { Fragment } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
@@ -45,10 +46,11 @@ interface AssessActionProps {
   assumed?: boolean;
   onChangeAward: (e: React.ChangeEvent<HTMLInputElement>) => any;
   onChangeSkip: (e: React.ChangeEvent<HTMLInputElement>) => any;
-  attendenceList: AssessmentState["attendances"];
-  formMethods: UseFormMethods<AssessmentState>;
+  attendenceList: AssessmentState["assessmentDetail"]["attendances"];
+  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
   selectedAttendence?: string[];
   index: number;
+  outcome_id?: string;
 }
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
@@ -59,9 +61,9 @@ const AssessAction = (props: AssessActionProps) => {
     selectedAttendence,
     onChangeSkip,
     index,
+    outcome_id,
   } = props;
-  // if(assumed){selectedAttendence = attendenceList && attendenceList.map(v=>v.id)}
-  const qtyKeys = `outcome_attendence_maps[${index}].attendence_ids`;
+  // if(assumed){selectedAttendence = attendenceList?.map(v=>v.id)}
   const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       // selectedAttendence = attendenceList
@@ -69,7 +71,7 @@ const AssessAction = (props: AssessActionProps) => {
   };
   return (
     <Box display="flex" alignItems="center">
-      <Box width={500} fontSize={14}>
+      <Box width={300} fontSize={14}>
         <FormControlLabel
           control={<Checkbox defaultChecked={assumed} onChange={handleChangeAward} name="award" color="primary" />}
           label="Award All"
@@ -88,9 +90,9 @@ const AssessAction = (props: AssessActionProps) => {
       </Box>
       <Box px={3} className={css.assessActionline}>
         <Controller
-          name={qtyKeys}
+          name={`outcome_attendance_maps[${index}].attendance_ids`}
           control={control}
-          defaultValue={selectedAttendence}
+          defaultValue={selectedAttendence || []}
           render={(props) => (
             <CheckboxGroup
               {...props}
@@ -103,7 +105,7 @@ const AssessAction = (props: AssessActionProps) => {
                           <Checkbox
                             color="primary"
                             value={item.id}
-                            checked={selectedContentGroupContext.hashValue[item.id as string]}
+                            checked={selectedContentGroupContext.hashValue[item.id as string] || false}
                             onChange={selectedContentGroupContext.registerChange}
                           />
                         }
@@ -116,19 +118,28 @@ const AssessAction = (props: AssessActionProps) => {
             />
           )}
         />
+        <Controller
+          as={TextField}
+          control={control}
+          disabled
+          name={`outcome_attendance_maps[${index}].outcome_id`}
+          defaultValue={outcome_id}
+          style={{ display: "none" }}
+        />
       </Box>
     </Box>
   );
 };
 
 interface OutcomesTableProps {
-  outcomesList: AssessmentState["outcome_attendance_maps"];
-  attendanceList: AssessmentState["attendances"];
-  formMethods: UseFormMethods<AssessmentState>;
+  outcomesList: AssessmentState["assessmentDetail"]["outcome_attendance_maps"];
+  attendanceList: AssessmentState["assessmentDetail"]["attendances"];
+  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
   const { outcomesList, attendanceList, formMethods } = props;
+  // const {formMethods: {getValues, watch}}=props
   const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.checked);
   };
@@ -144,7 +155,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
           {item.outcome_name}
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
-          {item.assumed ? "Assumed" : "Unassumed"}
+          {item.assumed ? "Yes" : ""}
         </TableCell>
         <TableCell>
           <AssessAction
@@ -155,6 +166,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
             onChangeAward={(e) => handleChangeAward(e)}
             onChangeSkip={(e) => handleChangeSkip(e)}
             index={index}
+            outcome_id={item.outcome_id}
           ></AssessAction>
         </TableCell>
       </TableRow>

@@ -8,7 +8,7 @@ import { Loading } from "./components/Loading";
 import { Notification } from "./components/Notification";
 import { UIAppHeaderNavBar } from "./components/UIAppHeaderNavBar";
 import { AssessmentList } from "./pages/AssesmentList";
-import { AssessmentsDetail } from "./pages/AssessmentEdit";
+import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
 import MyContentList from "./pages/MyContentList/index";
@@ -58,8 +58,8 @@ function App() {
               <Route path={CreateOutcomings.routeBasePath}>
                 <CreateOutcome />
               </Route>
-              <Route path={AssessmentsDetail.routeBasePath}>
-                <AssessmentsDetail />
+              <Route path={AssessmentsEdit.routeBasePath}>
+                <AssessmentsEdit />
               </Route>
               <Route path="/">
                 <Redirect to={MyContentList.routeRedirectDefault} />

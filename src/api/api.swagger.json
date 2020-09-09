@@ -4057,7 +4057,6 @@
                   "type": "string"
                 },
                 "description": "grade name",
-
                 "example": ["program1"]
               },
               "subject_name": {
@@ -4096,6 +4095,43 @@
                 "type": "string",
                 "description": "org name",
                 "example": "school1"
+              },
+              "outcome_entities": {
+                "type": "array",
+                "description": "outcome info",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "outcome_id": {
+                      "type": "string",
+                      "description": "outcome id"
+                    },
+                    "outcome_name": {
+                      "type": "string",
+                      "description": "outcome name"
+                    },
+                    "shortcode": {
+                      "type": "string",
+                      "description": "outcome shortcode"
+                    },
+                    "assumed": {
+                      "type": "boolean",
+                      "description": "outcome shortcode"
+                    },
+                    "author_id": {
+                      "type": "string",
+                      "description": "outcome author id"
+                    },
+                    "author_name": {
+                      "type": "string",
+                      "description": "outcome author name"
+                    },
+                    "ancestor_id": {
+                      "type": "string",
+                      "description": "outcome ancestor id"
+                    }
+                  }
+                }
               },
               "created_at": {
                 "type": "integer",
@@ -4265,7 +4301,6 @@
                   "type": "string"
                 },
                 "description": "grade name",
-
                 "example": ["program1"]
               },
               "subject_name": {

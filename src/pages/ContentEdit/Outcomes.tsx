@@ -17,6 +17,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
+import { cloneDeep } from "lodash";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LearningOutcomes } from "../../api/api";
@@ -100,41 +101,47 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 }));
 
 interface OutcomesTableProps {
-  list: LearningOutcomes[];
-  value?: string[];
-  onChange?: (value: OutcomesProps["value"]) => any;
+  list?: LearningOutcomes[];
+  value?: LearningOutcomes[];
+  outcomesEntities?: LearningOutcomes[];
+  onChange?: (value: LearningOutcomes[]) => any;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange } = props;
+  const { list, value, onChange, outcomesEntities } = props;
   const css = useStyles();
-  const handleAction = (id: string | undefined, type: "add" | "remove") => {
+  const handleAction = (item: LearningOutcomes, type: "add" | "remove") => {
+    const { outcome_id: id } = item;
     if (type === "add") {
-      if (id && value) {
-        onChange && onChange(value.concat([id]));
+      if (id && value && outcomesEntities) {
+        onChange && onChange(value.concat([item]));
       }
     } else {
-      if (id && value) {
-        value.splice(value.indexOf(id), 1);
-        onChange && onChange(value);
+      if (id && value && outcomesEntities) {
+        // value.splice(value.indexOf(value.find((v) => v.outcome_id === id )), 1);
+        let newValue = cloneDeep(value);
+        newValue = newValue.filter((v) => v.outcome_id !== id);
+        onChange && onChange(newValue);
       }
     }
   };
 
-  const rows = list.map((item, idx) => (
-    <TableRow key={item.outcome_id}>
-      <TableCell>{item.outcome_name}</TableCell>
-      <TableCell>{item.shortcode}</TableCell>
-      <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
-      <TableCell>{item.author_name}</TableCell>
-      <TableCell>
-        {value && value.indexOf(item.outcome_id ? item.outcome_id : "") < 0 ? (
-          <AddCircle className={css.addGreen} onClick={() => handleAction(item.outcome_id, "add")} />
-        ) : (
-          <RemoveCircle className={css.removeRead} onClick={() => handleAction(item.outcome_id, "remove")} />
-        )}
-      </TableCell>
-    </TableRow>
-  ));
+  const rows =
+    list &&
+    list.map((item, idx) => (
+      <TableRow key={item.outcome_id}>
+        <TableCell>{item.outcome_name}</TableCell>
+        <TableCell>{item.shortcode}</TableCell>
+        <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
+        <TableCell>{item.author_name}</TableCell>
+        <TableCell>
+          {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
+            <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
+          ) : (
+            <RemoveCircle className={css.removeRead} onClick={() => handleAction(item, "remove")} />
+          )}
+        </TableCell>
+      </TableRow>
+    ));
   return (
     <>
       <TableContainer className={css.tableContainer}>
@@ -156,11 +163,13 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 };
 
 interface OutcomesInputProps {
-  value?: string[];
+  value?: LearningOutcomes[];
+  outcomesEntities?: LearningOutcomes[];
+  onChange?: (value: LearningOutcomes[]) => any;
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
-  const { value } = props;
+  const { value, onChange } = props;
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -187,7 +196,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <OutcomesTable list={[]} value={value} />
+          <OutcomesTable list={value} value={value} onChange={onChange} />
         </DialogContent>
       </Dialog>
     </Box>
@@ -204,13 +213,14 @@ export interface OutcomesProps {
   onSearch: (searchName: SearchcmsListProps["value"]) => any;
   onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
   onChangePage: (page: number) => any;
-  value?: string[];
-  onChange?: (value: OutcomesProps["value"]) => any;
+  value?: LearningOutcomes[];
+  outcomesEntities?: LearningOutcomes[];
+  onChange?: (value: LearningOutcomes[]) => any;
 }
 
 export default function Outcomes(props: OutcomesProps) {
   const css = useStyles();
-  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange } = props;
+  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange, outcomesEntities } = props;
   const { lesson } = useParams();
   // const handChangePage = useCallback(
   //   (event: object, page: number) => {
@@ -237,13 +247,13 @@ export default function Outcomes(props: OutcomesProps) {
           <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
           {list.length > 0 ? (
             <>
-              <OutcomesTable list={list} value={value} onChange={onChange} />
+              <OutcomesTable list={list} value={value} onChange={onChange} outcomesEntities={outcomesEntities} />
               {pagination}
             </>
           ) : (
             <NoFiles />
           )}
-          <OutComesInput value={value} />
+          <OutComesInput value={value} outcomesEntities={outcomesEntities} onChange={onChange} />
         </>
       )}
     </Box>

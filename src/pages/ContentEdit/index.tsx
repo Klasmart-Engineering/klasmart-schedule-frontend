@@ -108,8 +108,11 @@ export default function ContentEdit() {
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value: ContentDetailForm) => {
-        const data: object = lesson === "assets" ? { source: value.data.toString() } : {};
-        const contentDetail = ModelContentDetailForm.encode({ ...value, content_type, data });
+        const { outcome_entities,  ...restValues } = value;
+        const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
+        const input = { ...restValues, content_type, outcomes };
+        if (lesson === "assets") Object.assign(input, { source: value.data.toString() });
+        const contentDetail = ModelContentDetailForm.encode(input);
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           history.replace({
@@ -185,8 +188,8 @@ export default function ContentEdit() {
       <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
       <Controller
         as={Outcomes}
-        name="outcomes"
-        defaultValue={contentDetail.outcomes}
+        name="outcome_entities"
+        defaultValue={contentDetail.outcome_entities}
         control={control}
         comingsoon
         list={outcomeList}
@@ -196,6 +199,7 @@ export default function ContentEdit() {
         assumed={assumed}
         total={OutcomesListTotal}
         onChangePage={() => {}}
+        outcomesEntities={contentDetail.outcome_entities}
       />
       <MediaAssets
         list={mediaList}
