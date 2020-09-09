@@ -1,4 +1,4 @@
-import { Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
@@ -126,7 +126,6 @@ function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
 }
 
 const sortOptions = [
-  { label: "Display By", value: undefined },
   { label: "Material Name(A-Z)", value: OutcomeOrderBy.name },
   { label: "Material Name(Z-A)", value: OutcomeOrderBy._name },
   { label: "Created On(New-Old)", value: OutcomeOrderBy._created_at },
@@ -167,7 +166,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
-          <hr style={{ borderColor: "#e0e0e0" }} />
+          <Divider />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={6} xs={6} md={3}>
               {bulkOptions.length > 0 && (
@@ -175,11 +174,11 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   size="small"
                   fullWidth
                   onChange={handleChangeBulkAction}
+                  label="Bulk Action"
+                  value=""
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-                  value="default"
                 >
-                  <MenuItem value="default">Bulk Actions</MenuItem>
                   {bulkOptions}
                 </TextField>
               )}

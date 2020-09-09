@@ -8,7 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, PublishStatus } from "../../api/type";
+import { Author, OrderBy, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
@@ -93,7 +93,8 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const unpublish = isUnpublish(value);
-  const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () => onChange({ publish_status });
+  const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
+    onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -157,7 +158,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
-    onChange({ publish_status });
+    onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
   };
   return (
     <div className={classes.root}>

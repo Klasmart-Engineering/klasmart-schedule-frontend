@@ -165,6 +165,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
+  console.log(value.name);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -177,7 +178,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={"Search"}
-                defaultValue={value.name}
+                defaultValue={value.name ? value.name : ""}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> Search

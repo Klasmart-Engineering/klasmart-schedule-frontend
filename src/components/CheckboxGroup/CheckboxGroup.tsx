@@ -5,12 +5,15 @@ type HashValue = Record<string, boolean>;
 
 export interface CheckboxGroupContext {
   registerChange: (event: ChangeEvent<HTMLInputElement>) => any;
+  registerAllChange: CheckboxGroupContext["registerChange"];
   hashValue: HashValue;
+  isAllvalue: boolean;
 }
 
 interface CheckboxGroupProps {
   render: (props: CheckboxGroupContext) => ReactElement;
   value?: string[];
+  allValue?: CheckboxGroupProps["value"];
   onChange: (value: string[] | undefined) => any;
 }
 
@@ -22,8 +25,9 @@ function toHash(list: string[]): HashValue {
 }
 
 export function CheckboxGroup(props: CheckboxGroupProps) {
-  const { render, value = [], onChange } = props;
+  const { render, value = [], onChange, allValue = [] } = props;
   const hashValue = useMemo(() => toHash(value), [value]);
+  const isAllvalue = allValue.length > 0 && value.length === allValue.length;
   const registerChange = useMemo<CheckboxGroupContext["registerChange"]>(
     () => (event) => {
       const { checked, value } = event.target;
@@ -35,5 +39,12 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
     },
     [hashValue, onChange]
   );
-  return render({ hashValue, registerChange });
+  const registerAllChange = useMemo<CheckboxGroupContext["registerAllChange"]>(
+    () => (event) => {
+      const { checked } = event.target;
+      onChange(checked ? allValue : []);
+    },
+    [onChange, allValue]
+  );
+  return render({ hashValue, registerChange, registerAllChange, isAllvalue });
 }

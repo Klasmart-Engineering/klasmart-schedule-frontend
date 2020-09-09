@@ -76,11 +76,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [searchText, setSearchText] = useState<OutcomeQueryCondition["outcome_name"]>();
+  const [searchText, setSearchText] = useState<OutcomeQueryCondition["search_key"]>();
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
-  const handleClickSearch = () => onChange({ ...value, outcome_name: searchText });
+  const handleClickSearch = () => onChange({ ...value, search_key: searchText });
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -144,11 +144,11 @@ export interface SecondSearchHeaderProps extends OutcomeQueryConditionBaseProps 
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<OutcomeQueryCondition["outcome_name"]>();
+  const [searchText, setSearchText] = useState<OutcomeQueryCondition["search_key"]>();
   const handleClickSearch = () =>
     onChange(
       produce(value, (draft) => {
-        searchText ? (draft.outcome_name = searchText) : delete draft.outcome_name;
+        searchText ? (draft.search_key = searchText) : delete draft.search_key;
       })
     );
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -169,7 +169,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
-          <Grid container spacing={3} style={{ marginTop: "6px" }}>
+          <Grid container style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
               <TextField
                 size="small"
@@ -177,7 +177,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={"Search"}
-                defaultValue={value.outcome_name}
+                defaultValue={value.search_key}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> Search

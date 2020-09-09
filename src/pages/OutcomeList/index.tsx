@@ -9,7 +9,6 @@ import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
-import CreateOutcomings from "../OutcomeEdit";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
@@ -29,13 +28,13 @@ const useQuery = (): OutcomeQueryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
-    const outcome_name = query.get("outcome_name");
+    const search_key = query.get("search_key");
     const publish_status = query.get("publish_status");
     const author_name = query.get("author_name");
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
 
-    return clearNull({ outcome_name, publish_status, author_name, page, order_by });
+    return clearNull({ search_key, publish_status, author_name, page, order_by });
   }, [search]);
 };
 
@@ -93,8 +92,8 @@ export function OutcomeList() {
     return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) =>
-    history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ id }) });
+  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) => {};
+  // history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ id }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
   useEffect(() => {

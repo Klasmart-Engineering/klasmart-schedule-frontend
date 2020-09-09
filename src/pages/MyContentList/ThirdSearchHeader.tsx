@@ -174,6 +174,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   fullWidth
                   onChange={handleChangeBulkAction}
                   label="Bulk Actions"
+                  value=""
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
                 >

@@ -100,7 +100,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
-          <Grid container spacing={3}>
+          <Grid container>
             <Grid item md={3} lg={5} xl={7}>
               <Button
                 href={`#/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}

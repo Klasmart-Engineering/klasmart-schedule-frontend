@@ -5,27 +5,9 @@ import React from "react";
 import { ListAssessmentResultItem } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { AssessmentQueryCondition } from "./types";
-const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    tableContainer: {
-      [theme.breakpoints.only("xl")]: {
-        width: calcGridWidth(4, 0.86),
-      },
-      [theme.breakpoints.only("lg")]: {
-        width: calcGridWidth(4, 0.86),
-      },
-      [theme.breakpoints.only("md")]: {
-        width: calcGridWidth(3, 0.86),
-      },
-      [theme.breakpoints.only("sm")]: {
-        width: calcGridWidth(2, 0.9),
-      },
-      [theme.breakpoints.only("xs")]: {
-        width: calcGridWidth(1, 1),
-      },
-    },
     iconColor: {
       color: "#D32F2F",
       padding: "0 0 0 10px",
@@ -39,7 +21,7 @@ const useStyles = makeStyles((theme) =>
     },
     paginationUl: {
       justifyContent: "center",
-      marginTop: 10,
+      marginTop: 30,
     },
     checkbox: {
       padding: 0,
@@ -85,8 +67,8 @@ export function AssessmentTable(props: AssessmentTableProps) {
   const { list, total, amountPerPage = 16, queryCondition, onChangePage, onClickAssessment } = props;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <TableContainer className={css.tableContainer}>
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX={"scroll"}>
+      <TableContainer>
         <Table>
           <TableHead className={css.tableHead}>
             <TableRow>

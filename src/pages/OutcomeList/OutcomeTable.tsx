@@ -1,20 +1,10 @@
-import {
-  Checkbox,
-  createStyles,
-  Grid,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
+import { Checkbox, createStyles, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import { Pagination } from "@material-ui/lab";
-import React from "react";
+import clsx from "clsx";
+import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { LearningOutcomes } from "../../api/api";
 import { OutcomePublishStatus } from "../../api/type";
@@ -22,27 +12,9 @@ import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGr
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
-const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    gridContainer: {
-      [theme.breakpoints.only("xl")]: {
-        width: calcGridWidth(4, 0.86),
-      },
-      [theme.breakpoints.only("lg")]: {
-        width: calcGridWidth(4, 0.86),
-      },
-      [theme.breakpoints.only("md")]: {
-        width: calcGridWidth(3, 0.86),
-      },
-      [theme.breakpoints.only("sm")]: {
-        width: calcGridWidth(2, 0.9),
-      },
-      [theme.breakpoints.only("xs")]: {
-        width: calcGridWidth(1, 1),
-      },
-    },
     iconColor: {
       color: "#D32F2F",
       padding: "0 0 0 10px",
@@ -56,7 +28,7 @@ const useStyles = makeStyles((theme) =>
     },
     paginationUl: {
       justifyContent: "center",
-      marginTop: 10,
+      marginTop: 30,
     },
     checkbox: {
       padding: 0,
@@ -66,6 +38,9 @@ const useStyles = makeStyles((theme) =>
     tableHead: {
       height: 80,
       backgroundColor: "#f2f5f7",
+    },
+    tableCell: {
+      textAlign: "center",
     },
   })
 );
@@ -82,28 +57,30 @@ function OutomeRow(props: OutcomeProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
-      <TableCell align="center" padding="checkbox">
-        <Checkbox
-          icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-          checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-          size="small"
-          className={css.checkbox}
-          color="secondary"
-          value={outcome.outcome_id}
-          checked={hashValue[outcome.outcome_id as string] || false}
-          onChange={registerChange}
-        ></Checkbox>
-      </TableCell>
-      <TableCell align="center">{outcome.outcome_name}</TableCell>
-      <TableCell align="center">{outcome.shortcode}</TableCell>
-      <TableCell align="center">{outcome.program}</TableCell>
-      <TableCell align="center">{outcome.subject}</TableCell>
-      <TableCell align="center">{outcome.skills}</TableCell>
-      <TableCell align="center">{outcome.publish_scope}</TableCell>
-      <TableCell align="center">{outcome.assumed}</TableCell>
-      <TableCell align="center">{outcome.created_at}</TableCell>
-      <TableCell align="center">{outcome.author_name}</TableCell>
-      <TableCell align="center">
+      {outcome.publish_status !== OutcomePublishStatus.pending && (
+        <TableCell align="center" padding="checkbox">
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+            value={outcome.outcome_id}
+            checked={hashValue[outcome.outcome_id as string] || false}
+            onChange={registerChange}
+          ></Checkbox>
+        </TableCell>
+      )}
+      <TableCell className={clsx(css.tableCell)}>{outcome.outcome_name}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.shortcode}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.program}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.subject}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.skills}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.publish_scope}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.assumed}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.created_at}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>
         {queryCondition.publish_status !== OutcomePublishStatus.pending && (
           <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(outcome.outcome_id as string)}>
             <DeleteOutlineIcon />
@@ -111,59 +88,6 @@ function OutomeRow(props: OutcomeProps) {
         )}
       </TableCell>
     </TableRow>
-
-    // <Card className={css.card}>
-    //   <Checkbox
-    //     icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-    //     checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-    //     size="small"
-    //     className={css.checkbox}
-    //     color="secondary"
-    //     value={content.id}
-    //     checked={hashValue[content.id as string] || false}
-    //     onChange={registerChange}
-    //   ></Checkbox>
-    //   <CardActionArea onClick={(e) => onClickOutcome(content.id)}>
-    //     <CardMedia className={css.cardMedia}>
-    //       <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
-    //     </CardMedia>
-    //   </CardActionArea>
-    //   <CardContent className={css.cardContent}>
-    //     <Grid container alignContent="space-between">
-    //       <Typography variant="h6" style={{ flex: 1 }} noWrap={true}>
-    //         {content?.name}
-    //       </Typography>
-    //       <ExpandBtn className={css.iconButtonExpandMore} {...expand.expandMore}>
-    //         <ExpandMore fontSize="small"></ExpandMore>
-    //       </ExpandBtn>
-    //     </Grid>
-    //     <Collapse {...expand.collapse} unmountOnExit>
-    //       <Typography className={css.body2} variant="body2">
-    //         {content?.name}
-    //       </Typography>
-    //     </Collapse>
-    //   </CardContent>
-    //   <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
-    //     {content?.content_type_name}
-    //   </Typography>
-    //   <CardActions className={css.cardActions}>
-    //     <Typography className={css.body2} variant="body2">
-    //       {content?.author_name}
-    //     </Typography>
-    //     <div>
-    //       {content?.publish_status === "archive" && (
-    //         <LButton as={IconButton} replace className={css.rePublishColor} onClick={() => onPublish(content.id as string)}>
-    //           <PublishOutlinedIcon />
-    //         </LButton>
-    //       )}
-    //       {queryCondition.publish_status !== OutcomePublishStatus.pending && (
-    //         <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string)}>
-    //           <DeleteIcon />
-    //         </LButton>
-    //       )}
-    //     </div>
-    //   </CardActions>
-    // </Card>
   );
 }
 
@@ -184,23 +108,25 @@ export interface OutcomeTableProps extends OutcomeActionProps {
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();
   const { formMethods, list, total, amountPerPage = 16, queryCondition, onPublish, onDelete, onChangePage, onClickOutcome } = props;
+  const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <Grid className={css.gridContainer} container>
-        <Controller
-          name={BulkListFormKey.CHECKED_BULK_IDS}
-          control={control}
-          defaultValue={[]}
-          render={(props) => (
-            <CheckboxGroup
-              {...props}
-              render={(selectedContentGroupContext) => (
-                <TableContainer>
-                  <Table>
-                    <TableHead className={css.tableHead}>
-                      <TableRow>
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX="scroll">
+      <Controller
+        name={BulkListFormKey.CHECKED_BULK_IDS}
+        control={control}
+        defaultValue={[]}
+        render={(props) => (
+          <CheckboxGroup
+            allValue={allValue}
+            {...props}
+            render={(selectedContentGroupContext) => (
+              <TableContainer>
+                <Table>
+                  <TableHead className={css.tableHead}>
+                    <TableRow>
+                      {list[0].publish_status !== OutcomePublishStatus.pending && (
                         <TableCell align="center" padding="checkbox">
                           <Checkbox
                             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
@@ -208,36 +134,39 @@ export function OutcomeTable(props: OutcomeTableProps) {
                             size="small"
                             className={css.checkbox}
                             color="secondary"
+                            checked={selectedContentGroupContext.isAllvalue}
+                            onChange={selectedContentGroupContext.registerAllChange}
                           />
                         </TableCell>
-                        <TableCell align="center">Learning Outcomes</TableCell>
-                        <TableCell align="center">Short Code</TableCell>
-                        <TableCell align="center">Program</TableCell>
-                        <TableCell align="center">Subject</TableCell>
-                        <TableCell align="center">Milestone</TableCell>
-                        <TableCell align="center">Standard</TableCell>
-                        <TableCell align="center">Assumed</TableCell>
-                        <TableCell align="center">Created On</TableCell>
-                        <TableCell align="center">Author</TableCell>
-                        <TableCell align="center">Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {list.map((item, idx) => (
-                        <OutomeRow
-                          key={item.outcome_id}
-                          outcome={item}
-                          {...{ onPublish, onDelete, queryCondition, selectedContentGroupContext, onClickOutcome }}
-                        />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            />
-          )}
-        />
-      </Grid>
+                      )}
+                      <TableCell className={clsx(css.tableCell)}>Learning Outcomes</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Short Code</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Program</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Subject</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Milestone</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Standard</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Assumed</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Created On</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Author</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {list.map((item, idx) => (
+                      <OutomeRow
+                        key={item.outcome_id}
+                        outcome={item}
+                        {...{ onPublish, onDelete, queryCondition, selectedContentGroupContext, onClickOutcome }}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          />
+        )}
+      />
+
       <Pagination
         page={queryCondition.page}
         className={css.pagination}
