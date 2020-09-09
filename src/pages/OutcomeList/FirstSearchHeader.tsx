@@ -8,7 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import { HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, OutcomePublishStatus } from "../../api/type";
+import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
@@ -95,7 +95,8 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange, onChangeCategory } = props;
   const unpublish = isUnpublish(value);
-  const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () => onChange({ ...value, publish_status });
+  const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
+    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._created_at });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -155,7 +156,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     if (publish_status === HeaderCategory.assessment) {
       return onChangeCategory(HeaderCategory.assessment);
     }
-    onChange({ ...value, publish_status: publish_status as OutcomePublishStatus });
+    onChange({ publish_status: publish_status as OutcomePublishStatus, page: 1, order_by: OutcomeOrderBy._created_at });
   };
 
   return (

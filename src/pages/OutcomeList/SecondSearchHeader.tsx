@@ -118,7 +118,6 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <TextField
                 style={{ width: "100%", height: "100%" }}
-                value={searchText}
                 onChange={handleChangeSearchText}
                 onBlur={handleClickSearch}
                 label="Search"
@@ -177,7 +176,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={"Search"}
-                defaultValue={value.search_key}
+                defaultValue={value.search_key || ""}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> Search

@@ -81,7 +81,7 @@ function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) =>
-    onChange({ ...value, publish_status });
+    onChange({ ...value, publish_status, page: 1 });
   return (
     <Tabs
       className={classes.tabs}
@@ -126,8 +126,8 @@ function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
 }
 
 const sortOptions = [
-  { label: "Material Name(A-Z)", value: OutcomeOrderBy.name },
-  { label: "Material Name(Z-A)", value: OutcomeOrderBy._name },
+  { label: "Learning Outcome Name(A-Z)", value: OutcomeOrderBy.name },
+  { label: "Learning Outcome Name(Z-A)", value: OutcomeOrderBy._name },
   { label: "Created On(New-Old)", value: OutcomeOrderBy._created_at },
   { label: "Created On(Old-New)", value: OutcomeOrderBy.created_at },
 ];

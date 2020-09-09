@@ -9,6 +9,7 @@ import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
+import CreateOutcomings from "../OutcomeEdit";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
@@ -92,8 +93,8 @@ export function OutcomeList() {
     return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) => {};
-  // history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ id }) });
+  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) =>
+    history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ id }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
   useEffect(() => {

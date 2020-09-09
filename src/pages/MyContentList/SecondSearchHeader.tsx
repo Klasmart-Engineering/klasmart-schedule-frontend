@@ -178,7 +178,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={"Search"}
-                defaultValue={value.name ? value.name : ""}
+                defaultValue={value.name || ""}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> Search
