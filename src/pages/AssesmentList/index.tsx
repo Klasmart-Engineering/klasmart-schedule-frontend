@@ -7,7 +7,7 @@ import { AssessmentOrderBy, AssessmentStatus } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
-import { AssessmentsDetail } from "../AssessmentEdit";
+import { AssessmentsEdit } from "../AssessmentEdit";
 import { OutcomeList } from "../OutcomeList";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -52,7 +52,7 @@ export function AssessmentList() {
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) =>
-    history.push({ pathname: AssessmentsDetail.routeBasePath, search: toQueryString({ id }) });
+    history.push({ pathname: AssessmentsEdit.routeBasePath, search: toQueryString({ id }) });
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeOutcome: FirstSearchHeaderProps["onChange"] = (value) =>
     history.push({ pathname: OutcomeList.routeBasePath, search: toQueryString(value) });
