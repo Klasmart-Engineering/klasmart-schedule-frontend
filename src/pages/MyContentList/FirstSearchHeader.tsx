@@ -8,6 +8,7 @@ import clsx from "clsx";
 import React from "react";
 import { Assets, Author, OrderBy, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import ContentEdit from "../ContentEdit";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -104,7 +105,11 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
               <Button
-                href={`#/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}
+                href={
+                  value.content_type
+                    ? `#/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetEdit`
+                    : `#${ContentEdit.routeRedirectDefault}`
+                }
                 variant="contained"
                 color="primary"
                 className={css.createBtn}
