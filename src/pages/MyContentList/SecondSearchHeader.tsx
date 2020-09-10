@@ -8,7 +8,7 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Author, PublishStatus, Assets } from "../../api/type";
+import { Assets, Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { QueryConditionBaseProps } from "./types";
 
@@ -81,12 +81,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClickSearch = () => {
-    onChange(
-      produce(value, (draft) => {
-        const searchText = getValues()[SEARCH_TEXT_KEY];
-        searchText ? (draft.name = searchText) : delete draft.name;
-      })
-    );
+    const newValue = produce(value, (draft) => {
+      const searchText = getValues()[SEARCH_TEXT_KEY];
+      searchText ? (draft.name = searchText) : delete draft.name;
+    });
+    onChange({ ...newValue, page: 1 });
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -164,13 +163,14 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { control, reset, getValues } = useForm();
   const { value, onChange } = props;
-  const handleClickSearch = () =>
-    onChange(
-      produce(value, (draft) => {
-        const searchText = getValues()[SEARCH_TEXT_KEY];
-        searchText ? (draft.name = searchText) : delete draft.name;
-      })
-    );
+  const handleClickSearch = () => {
+    const newValue = produce(value, (draft) => {
+      const searchText = getValues()[SEARCH_TEXT_KEY];
+      searchText ? (draft.name = searchText) : delete draft.name;
+    });
+    onChange({ ...newValue, page: 1 });
+  };
+
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
     const author = event.target.checked ? Author.self : null;
     onChange(

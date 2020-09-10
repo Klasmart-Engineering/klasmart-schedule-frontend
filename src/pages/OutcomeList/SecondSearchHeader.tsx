@@ -81,12 +81,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClickSearch = () => {
-    onChange(
-      produce(value, (draft) => {
-        const searchText = getValues()[SEARCH_TEXT_KEY];
-        searchText ? (draft.search_key = searchText) : delete draft.search_key;
-      })
-    );
+    const newValue = produce(value, (draft) => {
+      const searchText = getValues()[SEARCH_TEXT_KEY];
+      searchText ? (draft.search_key = searchText) : delete draft.search_key;
+    });
+    onChange({ ...newValue, page: 1 });
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -157,13 +156,14 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const { control, reset, getValues } = useForm();
-  const handleClickSearch = () =>
-    onChange(
-      produce(value, (draft) => {
-        const searchText = getValues()[SEARCH_TEXT_KEY];
-        searchText ? (draft.search_key = searchText) : delete draft.search_key;
-      })
-    );
+  const handleClickSearch = () => {
+    const newValue = produce(value, (draft) => {
+      const searchText = getValues()[SEARCH_TEXT_KEY];
+      searchText ? (draft.search_key = searchText) : delete draft.search_key;
+    });
+    onChange({ ...newValue, page: 1 });
+  };
+
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
     const author = event.target.checked ? Author.self : null;
     onChange(

@@ -77,7 +77,12 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
-  const handleClickSearch = () => onChange({ ...value, teacher_name: searchText });
+  const handleClickSearch = () => {
+    const newValue = produce(value, (draft) => {
+      searchText ? (draft.teacher_name = searchText) : delete draft.teacher_name;
+    });
+    onChange({ ...newValue, page: 1 });
+  };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -124,12 +129,12 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const [searchText, setSearchText] = useState<AssessmentQueryCondition["teacher_name"]>();
-  const handleClickSearch = () =>
-    onChange(
-      produce(value, (draft) => {
-        searchText ? (draft.teacher_name = searchText) : delete draft.teacher_name;
-      })
-    );
+  const handleClickSearch = () => {
+    const newValue = produce(value, (draft) => {
+      searchText ? (draft.teacher_name = searchText) : delete draft.teacher_name;
+    });
+    onChange({ ...newValue, page: 1 });
+  };
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
