@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, OrderBy, PublishStatus } from "../../api/type";
+import { Assets, Author, OrderBy, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
@@ -86,13 +86,17 @@ export const isUnpublish = (value: QueryCondition): boolean => {
   );
 };
 
-export interface FirstSearchHeaderProps extends QueryConditionBaseProps {}
+export interface FirstSearchHeaderProps extends QueryConditionBaseProps {
+  onChangeAssets: (arg: string) => any;
+}
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
     onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
+  const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
+    onChange({ page: 1, content_type, order_by: OrderBy._created_at });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -138,8 +142,8 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 Archived
               </Button>
               <Button
-                onClick={createHandleClick(PublishStatus.assets)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "assets" })}
+                onClick={assetsHandleClick(Assets.assets_type)}
+                className={clsx(css.nav, { [css.actives]: value?.content_type === "3" })}
                 startIcon={<PermMediaOutlined />}
               >
                 Assets
@@ -154,8 +158,11 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, publish_status: string) => {
+  const { value, onChange, onChangeAssets } = props;
+  const handleChange = (event: React.ChangeEvent<{}>, publish_status: QueryCondition["publish_status"] | string) => {
+    if (publish_status === Assets.assets_type) {
+      return onChangeAssets(Assets.assets_type);
+    }
     onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
   };
   return (
@@ -165,7 +172,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={value?.publish_status}
+                value={value?.publish_status || value.content_type}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
@@ -177,7 +184,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 <Tab value={PublishStatus.pending} label="Pending" className={classes.capitalize} />
                 <Tab value={PublishStatus.draft} label="Unpublished" className={classes.capitalize} />
                 <Tab value={PublishStatus.archive} label="Archive" className={classes.capitalize} />
-                <Tab value={PublishStatus.assets} label="Assets" className={classes.capitalize} />
+                <Tab value={Assets.assets_type} label="Assets" className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>

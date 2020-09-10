@@ -8,6 +8,7 @@ import { OrderBy } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
+import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
@@ -32,8 +33,9 @@ const useQuery = (): QueryCondition => {
     const author = query.get("author");
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
+    const content_type = query.get("content_type");
 
-    return clearNull({ name, publish_status, author, page, order_by });
+    return clearNull({ name, publish_status, author, page, order_by, content_type });
   }, [search]);
 };
 
@@ -91,8 +93,11 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkDeleteContent(ids)));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickConent: ContentCardListProps["onClickContent"] = (id) => history.push(`/library/content-preview?id=${id}`);
+  const handleClickConent: ContentCardListProps["onClickContent"] = (id) =>
+    history.push({ pathname: ContentPreview.routeBasePath, search: toQueryString({ id: id }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
+  const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type) =>
+    history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._created_at }) });
   useEffect(() => {
     reset();
     dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
@@ -100,8 +105,8 @@ export default function MyContentList() {
 
   return (
     <div>
-      <FirstSearchHeader value={condition} onChange={handleChange} />
-      <FirstSearchHeaderMb value={condition} onChange={handleChange} />
+      <FirstSearchHeader value={condition} onChange={handleChange} onChangeAssets={handleChangeAssets} />
+      <FirstSearchHeaderMb value={condition} onChange={handleChange} onChangeAssets={handleChangeAssets} />
       <SecondSearchHeader value={condition} onChange={handleChange} />
       <SecondSearchHeaderMb value={condition} onChange={handleChange} />
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />

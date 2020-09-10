@@ -70,3 +70,8 @@ export enum AssessmentOrderBy {
 export type ListAssessmentRequest = Parameters<typeof api.assessments.listAssessment>[0];
 export type ListAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.listAssessment>>;
 export type ListAssessmentResultItem = NonNullable<ListAssessmentResult["items"]>[0];
+
+export enum Assets {
+  assets_type = "3",
+  assets_name = "Assets",
+}

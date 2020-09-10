@@ -8,7 +8,7 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Author, PublishStatus } from "../../api/type";
+import { Author, PublishStatus, Assets } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { QueryConditionBaseProps } from "./types";
 
@@ -122,7 +122,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               </Button>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
-              <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
+              {value.publish_status === PublishStatus.published || value.content_type === Assets.assets_type ? (
+                <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
+              ) : (
+                ""
+              )}
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem selected={value.author === Author.self} onClick={handleItemClick}>
                   My Only
@@ -202,7 +206,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status === PublishStatus.published ? (
+              {value.publish_status === PublishStatus.published || value.content_type === Assets.assets_type ? (
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}

@@ -10,6 +10,7 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import ContentEdit from "../ContentEdit";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -103,12 +104,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container>
             <Grid item md={3} lg={5} xl={7}>
-              <Button
-                href={`#/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}
-                variant="contained"
-                color="primary"
-                className={css.createBtn}
-              >
+              <Button href={`#${ContentEdit.routeRedirectDefault}`} variant="contained" color="primary" className={css.createBtn}>
                 Create +
               </Button>
             </Grid>
