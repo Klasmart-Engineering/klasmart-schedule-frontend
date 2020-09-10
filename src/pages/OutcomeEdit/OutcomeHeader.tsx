@@ -87,12 +87,23 @@ interface OutcomeHeaderProps {
   handleApprove: () => void;
   publish_status: string | undefined;
   showPublish: boolean;
+  finalData: any;
 }
 
 function OutcomeHeader(props: OutcomeHeaderProps) {
   const history = useHistory();
   const css = useStyles();
-  const { handleSave, handleReset, handleDelete, outcome_id, handelReject, handlePublish, handleApprove, publish_status } = props;
+  const {
+    handleSave,
+    handleReset,
+    handleDelete,
+    outcome_id,
+    handelReject,
+    handlePublish,
+    handleApprove,
+    publish_status,
+    finalData,
+  } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   // const size = sm ? "small" : "medium";
@@ -114,9 +125,11 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-            Delete
-          </Button>
+          {finalData.outcome_id && (
+            <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+              Delete
+            </Button>
+          )}
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
             Cancel
           </Button>
