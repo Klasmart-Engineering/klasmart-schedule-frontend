@@ -27,7 +27,7 @@ export type AssetCreateRequest = {
 };
 
 export type CreateContentRequest = {
-  content_type?: 1 | 2 | 10 | 11 | 12 | 13;
+  content_type?: 1 | 2 | 3 | 10 | 11 | 12 | 13;
   name?: string;
   program?: string[];
   subject?: string[];
@@ -64,7 +64,7 @@ export type ContentCondition = {
 
 export type Content = {
   id?: string;
-  content_type?: 1 | 2 | 10 | 11 | 12 | 13;
+  content_type?: 1 | 2 | 3 | 10 | 11 | 12 | 13;
   name?: string;
   program?: string[];
   outcomes?: string[];

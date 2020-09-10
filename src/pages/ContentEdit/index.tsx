@@ -56,6 +56,13 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
   readonly: rightside.includes("Preview"),
 });
 
+const type2File = {
+  image: ContentType.image,
+  video: ContentType.video,
+  audio: ContentType.audio,
+  document: ContentType.doc,
+};
+
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
@@ -76,7 +83,8 @@ export default function ContentEdit() {
   const history = useHistory();
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
-  const content_type = lesson === "material" ? ContentType.material : ContentType.plan;
+  const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
+  const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? type2File[assetsFileType] : ContentType.plan;
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -100,7 +108,8 @@ export default function ContentEdit() {
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value: ContentDetailForm) => {
-        const contentDetail = ModelContentDetailForm.encode({ ...value, content_type });
+        const data: object = lesson === "assets" ? { source: value.data.toString() } : {};
+        const contentDetail = ModelContentDetailForm.encode({ ...value, content_type, data });
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           history.replace({
@@ -108,7 +117,7 @@ export default function ContentEdit() {
           });
         }
       }),
-    [handleSubmit, content_type, dispatch, history, editindex]
+    [handleSubmit, content_type, lesson, dispatch, history, editindex]
   );
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
     () => (searchMedia = "") => {
@@ -140,7 +149,6 @@ export default function ContentEdit() {
 
   const [, setPage] = React.useState(0);
 
-  const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
   const handleChangeFile = (type: contentFileType) => {
     const formValues: object = getValues();
     reset(ModelContentDetailForm.decode({ ...formValues, data: "" }));
