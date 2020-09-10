@@ -2,13 +2,11 @@ import { Chip, Grid, InputAdornment, TextField } from "@material-ui/core";
 import React from "react";
 import { Content } from "../../api/api";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-import { OperationBtn } from "./OperationBtn";
 interface DetailProps {
   contentPreview: Content;
-  handleAction: (type: string) => void;
 }
 export function Detail(props: DetailProps) {
-  const { contentPreview, handleAction } = props;
+  const { contentPreview } = props;
   const colors = ["#009688", "#9c27b0", "#ffc107"];
   return (
     <>
@@ -94,13 +92,12 @@ export function Detail(props: DetailProps) {
           startAdornment: (
             <InputAdornment position="start">
               {contentPreview.keywords?.map((value, index) => (
-                <Chip key={value} label={value} style={{ color: "#fff", backgroundColor: colors[index % 3], margin: 2 }} />
+                <Chip key={value + index} label={value} style={{ color: "#fff", backgroundColor: colors[index % 3], margin: 2 }} />
               ))}
             </InputAdornment>
           ),
         }}
       ></TextField>
-      <OperationBtn publish_status={contentPreview.publish_status} handleAction={handleAction} />
     </>
   );
 }

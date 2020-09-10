@@ -4,7 +4,7 @@ import api from "../api";
 import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { ContentType, OutcomePublishStatus } from "../api/type";
-import { actAsyncConfirm } from "./confirm";
+import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 
@@ -238,17 +238,34 @@ export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDLi
     return api.contentsBulk.publishContentBulk({ id: ids });
   }
 );
-export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>("content/approveContentReview", (id) => {
-  return api.contents.approveContentReview(id);
-});
+export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>(
+  "content/approveContentReview",
+  async (id, { dispatch }) => {
+    const content = `Are you sure you want to approve this content?`;
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.contents.approveContentReview(id);
+  }
+);
 type RejectContentParams = {
   id: Parameters<typeof api.contents.rejectContentReview>[0];
-  reason: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
+  // reason: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
 };
 type RejectContentResult = AsyncReturnType<typeof api.contents.rejectContentReview>;
-export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>("content/rejectContent", ({ id, reason }) => {
-  return api.contents.rejectContentReview(id, { reject_reason: reason });
-});
+export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
+  "content/rejectContent",
+  async ({ id }, { dispatch }) => {
+    const content = `Are you sure you want to publish these contents?`;
+    const type = ConfirmDialogType.textField;
+    const { isConfirmed, value } = unwrapResult(await dispatch(actAsyncConfirm({ content, type })));
+    if (!isConfirmed) return Promise.reject();
+    if (value) {
+      return api.contents.rejectContentReview(id, { reject_reason: value });
+    } else {
+      return dispatch(actWarning("Reason is required"));
+    }
+  }
+);
 export const lockContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.lockContent>,
   Parameters<typeof api.contents.lockContent>[0]
@@ -354,12 +371,12 @@ const { actions, reducer } = createSlice({
     [approveContent.rejected.type]: (state, { error }: any) => {
       // alert("approve failed");
     },
-    // [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-    //   alert("reject success");
-    // },
-    // [rejectContent.rejected.type]: (state, { error }: any) => {
-    //   alert("reject failed");
-    // },
+    [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("reject success");
+    },
+    [rejectContent.rejected.type]: (state, { error }: any) => {
+      // alert("reject failed");
+    },
 
     [lockContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("lock success");

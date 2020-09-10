@@ -1,22 +1,9 @@
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Box, Chip, Tab, Tabs, Typography } from "@material-ui/core";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
@@ -31,7 +18,9 @@ import {
   publishContent,
   rejectContent,
 } from "../../reducers/content";
+import { actSuccess } from "../../reducers/notify";
 import { Detail } from "./Detail";
+import { ActionProps, OperationBtn } from "./OperationBtn";
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     width: "100%",
@@ -98,43 +87,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: 2,
   },
 }));
-interface DialogProps {
-  open: boolean;
-  title: string;
-  showReason: boolean;
-  showError: boolean;
-  handleCloseDialog: () => void;
-  handleDialogEvent: () => void;
-  onSetReason: (reason: string) => void;
-}
-export function ActionDialog(props: DialogProps) {
-  const { open, title, showReason, showError, handleCloseDialog, handleDialogEvent, onSetReason } = props;
-  const setReason = (event: any) => {
-    console.log(event.target.value);
-    onSetReason(event.target.value);
-  };
-  return (
-    <Dialog open={open} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-      {showReason ? (
-        <DialogContent>
-          <DialogContentText>Please specify the reason of rejection.</DialogContentText>
-          <TextField variant="standard" autoFocus={true} fullWidth label="Reason" error={showError} onChange={setReason} />
-        </DialogContent>
-      ) : (
-        ""
-      )}
-      <DialogActions>
-        <Button onClick={handleCloseDialog} color="primary" autoFocus>
-          CANCEL
-        </Button>
-        <Button onClick={handleDialogEvent} color="primary">
-          CONFIRM
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
 
 export default function ContentPreview(props: Content) {
   const history = useHistory();
@@ -145,74 +97,64 @@ export default function ContentPreview(props: Content) {
   const css = useStyles();
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
-  const [titleDialog, setTitleDialog] = React.useState<string>("");
-  const [actionType, setActionType] = React.useState<string>("");
-  const [showReason, setShowReason] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<boolean>(false);
-  const [reason, setReason] = React.useState<string>();
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleDelete: ActionProps["onDelete"] = async () => {
+    await dispatch(deleteContent(id));
+    history.go(-1);
   };
-  const handleDispatch = useCallback(
-    async (type: string) => {
-      switch (type) {
-        case "delete":
-          setOpenDialog(false);
-          await dispatch(deleteContent(id));
-          break;
-        case "approve":
-          setOpenDialog(false);
-          await dispatch(approveContent(id));
-          break;
-        case "reject":
-          if (!reason) {
-            setError(true);
-            return;
-          }
-          setError(false);
-          await dispatch(rejectContent({ id: id, reason: reason }));
-          break;
-        case "publish":
-          await dispatch(publishContent(id));
-          break;
-      }
+  const handlePublish = async () => {
+    await dispatch(publishContent(id));
+    history.go(-1);
+  };
+  const handleApprove = async () => {
+    await dispatch(approveContent(id));
+    history.go(-1);
+  };
+  const handleReject = async () => {
+    const { payload } = ((await dispatch(rejectContent({ id: id }))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof rejectContent>>;
+    if (payload === "ok") {
+      dispatch(actSuccess("Reject success"));
       history.go(-1);
-    },
-    [dispatch, history, id, reason]
-  );
-  const handleDialogEvent = () => {
-    handleDispatch(actionType);
-  };
-  const handleAction = async (type: string) => {
-    if (type === "edit") {
-      const lesson = contentPreview.content_type_name === "Material" ? "material" : "plan";
-      const rightSide = contentPreview.content_type_name === "Material" ? "contentH5p" : "planComposeGraphic";
-      if (contentPreview.publish_status === "published") {
-        const { payload } = ((await dispatch(lockContent(id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;
-        if (payload.id) {
-          history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${payload.id}`);
-        }
-      } else {
-        history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${id}`);
-      }
-    } else {
-      setTitleDialog(`Are you sure you want to ${type} this content?`);
-      if (type !== "reject") {
-        setActionType(type);
-        setOpenDialog(true);
-      } else {
-        setShowReason(true);
-        setActionType(type);
-        setOpenDialog(true);
-      }
     }
   };
-  const onSetReason = (reason: string) => {
-    setReason(reason);
+  // enum ContentTypeMap {
+  //   Material = "material",
+  //   Plan = "plan",
+  //   Assets = "assets"
+  // }
+  // enum RightSideMap {
+  //   Material = "contentH5p",
+  //   Plan = "planComposeGraphic",
+  //   Assets = "assetEdit"
+  // }
+
+  const handleEdit: ActionProps["onDelete"] = async () => {
+    const lesson =
+      contentPreview.content_type_name === "Material"
+        ? "material"
+        : contentPreview.content_type_name === "Plan"
+        ? "plan"
+        : contentPreview.content_type_name === "Assets"
+        ? "assets"
+        : "material";
+    const rightSide =
+      contentPreview.content_type_name === "Material"
+        ? "contentH5p"
+        : contentPreview.content_type_name === "Plan"
+        ? "planComposeGraphic"
+        : contentPreview.content_type_name === "Assets"
+        ? "assetEdit"
+        : "contentH5p";
+    if (contentPreview.publish_status === "published") {
+      const { payload } = ((await dispatch(lockContent(id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;
+      if (payload.id) {
+        history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${payload.id}`);
+      }
+    } else {
+      history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${id}`);
+    }
   };
   const handleClose = () => {
     history.go(-1);
@@ -222,15 +164,6 @@ export default function ContentPreview(props: Content) {
   }, [dispatch, id]);
   return (
     <Box className={css.container}>
-      <ActionDialog
-        open={openDialog}
-        title={titleDialog}
-        showReason={showReason}
-        showError={error}
-        handleCloseDialog={handleCloseDialog}
-        handleDialogEvent={handleDialogEvent}
-        onSetReason={onSetReason}
-      ></ActionDialog>
       <Box className={css.left}>
         <Box className={css.closeIconCon}>
           <CloseIcon style={{ cursor: "pointer" }} onClick={handleClose} />
@@ -255,7 +188,16 @@ export default function ContentPreview(props: Content) {
           <Tab label="Details" />
           <Tab label="Assessments" />
         </Tabs>
-        <Detail contentPreview={contentPreview} handleAction={handleAction} />
+        <Detail contentPreview={contentPreview} />
+        <OperationBtn
+          publish_status={contentPreview.publish_status}
+          content_type_name={contentPreview.content_type_name}
+          onDelete={handleDelete}
+          onPublish={handlePublish}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onEdit={handleEdit}
+        />
       </Box>
       <Box className={css.right}>right</Box>
     </Box>
