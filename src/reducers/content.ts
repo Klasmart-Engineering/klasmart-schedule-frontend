@@ -164,17 +164,16 @@ export const publish = createAsyncThunk<Content, Required<Content>["id"], { stat
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
   async ({ id, type, searchMedia, searchOutcome, assumed }) => {
-    // 将来做 assets 补全剩下逻辑
-    if (type === "assets") return {};
-    // debugger;
     const [contentDetail, mediaList, outcomeList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
-      api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
-      api.learningOutcomes.searchLearningOutcomes({
-        publish_status: OutcomePublishStatus.published,
-        search_key: searchOutcome,
-        assumed: assumed === "true" ? 1 : -1,
-      }),
+      (type === "material" || type === "plan") &&
+        api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
+      (type === "material" || type === "plan") &&
+        api.learningOutcomes.searchLearningOutcomes({
+          publish_status: OutcomePublishStatus.published,
+          search_key: searchOutcome,
+          assumed: assumed === "true" ? 1 : -1,
+        }),
       apiGetMockOptions(),
     ]);
     return { contentDetail, mediaList, outcomeList, mockOptions };

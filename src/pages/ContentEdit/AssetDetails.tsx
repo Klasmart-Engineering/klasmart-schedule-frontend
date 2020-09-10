@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
+import { Controller, FieldError, UseFormMethods } from "react-hook-form";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import { SingleUploader } from "../../components/SingleUploader";
 import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
@@ -69,7 +69,7 @@ function ProgressWithText(props: CircularProgressProps) {
 function AssetsDetails(props: AssetDetailsProps) {
   const css = useStyles();
   const {
-    formMethods: { control },
+    formMethods: { control, errors },
     mockOptions,
     handleChangeFile,
     fileType,
@@ -101,6 +101,10 @@ function AssetsDetails(props: AssetDetailsProps) {
 
   const handleTopicListChange = (event: React.ChangeEvent<{ value: String }>, name: string) => {
     handleChangeFile(event.target.value as "image" | "video" | "audio" | "document");
+  };
+
+  const errorValidator = (filed: (FieldError | undefined)[] | FieldError | undefined): boolean => {
+    return filed ? true : false;
   };
 
   return (
@@ -148,7 +152,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           required
           rules={{ required: true }}
           defaultValue={contentDetail.name}
-          helperText=""
+          error={errorValidator(errors.name)}
         />
         <Controller
           as={TextField}
@@ -184,6 +188,9 @@ function AssetsDetails(props: AssetDetailsProps) {
             fullWidth={sm}
             label="Developmental"
             SelectProps={{ multiple: true }}
+            required
+            rules={{ required: true }}
+            error={errorValidator(errors.developmental)}
             defaultValue={contentDetail.developmental}
           >
             {menuItemList(mockOptions.developmental)}
@@ -193,9 +200,12 @@ function AssetsDetails(props: AssetDetailsProps) {
             name="skills"
             control={control}
             select
+            required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Skills"
+            rules={{ required: true }}
+            error={errorValidator(errors.skills)}
             SelectProps={{ multiple: true }}
             defaultValue={contentDetail.skills}
           >
@@ -208,9 +218,12 @@ function AssetsDetails(props: AssetDetailsProps) {
             name="age"
             control={control}
             select
+            required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Age"
+            rules={{ required: true }}
+            error={errorValidator(errors.age)}
             SelectProps={{ multiple: true }}
             defaultValue={contentDetail.age}
           >
@@ -221,9 +234,12 @@ function AssetsDetails(props: AssetDetailsProps) {
             name="grade"
             control={control}
             select
+            required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Grade"
+            rules={{ required: true }}
+            error={errorValidator(errors.grade)}
             SelectProps={{ multiple: true }}
             defaultValue={contentDetail.grade}
           >

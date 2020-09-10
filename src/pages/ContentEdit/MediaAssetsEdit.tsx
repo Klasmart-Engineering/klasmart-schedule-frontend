@@ -63,10 +63,11 @@ interface PreviewProps {
 function AssetPreview(props: PreviewProps) {
   const css = useStyles();
   const { fileType, resourceId } = props;
-  const path = apiResourcePathById(resourceId);
-  const getSuffix = (resourceId: string | undefined) => {
-    if (JSON.stringify(resourceId) === "{}" || !resourceId) return;
-    return resourceId.substring(resourceId.lastIndexOf(".") + 1, resourceId.length);
+  const source = typeof resourceId === "object" ? resourceId["source"] : resourceId;
+  const path = apiResourcePathById(source);
+  const getSuffix = (source: string | undefined) => {
+    if (JSON.stringify(source) === "{}" || !source) return;
+    return source.substring(source.lastIndexOf(".") + 1, source.length);
   };
   return (
     <Box display="flex" flexDirection="column" alignItems="center" className={css.assetPreviewBox}>
@@ -75,7 +76,7 @@ function AssetPreview(props: PreviewProps) {
       {fileType === "audio" && <AssetAudio src={path} />}
       {fileType === "document" && <AssetFile src={path} />}
       <Typography variant="body1" style={{ marginTop: "12px" }}>
-        Content type: {getSuffix(resourceId)}
+        Content type: {getSuffix(source)}
       </Typography>
     </Box>
   );
@@ -139,7 +140,7 @@ function AssetEdit(props: AssetEditProps) {
             defaultValue={JSON.parse(contentDetail.data || "{}")}
             render={(props) => (
               <SingleUploader
-                partition="thumbnail"
+                partition="assets"
                 {...props}
                 render={({ uploady, item, btnRef, value, isUploading }) => (
                   <>
