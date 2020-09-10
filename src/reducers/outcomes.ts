@@ -127,18 +127,12 @@ const { reducer } = createSlice({
     [publish.rejected.type]: (state, { error }: any) => {
       // alert(error);
     },
-    [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      console.log(payload);
-    },
-    [deleteOutcome.rejected.type]: (state, { error }: any) => {
-      // alert(error);
-    },
+    [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [deleteOutcome.rejected.type]: (state, { error }: any) => {},
     [getOutcomeDetail.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeDetail = payload;
     },
-    [getOutcomeDetail.rejected.type]: (state, { error }: any) => {
-      // alert(error);
-    },
+    [getOutcomeDetail.rejected.type]: (state, { error }: any) => {},
     [approve.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       console.log("success");
     },

@@ -12,7 +12,7 @@ import { AssessmentsDetail } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit";
 import ContentPreview from "./pages/ContentPreview";
 import MyContentList from "./pages/MyContentList/index";
-import CreateOutcome from "./pages/OutcomeEdit";
+import { default as CreateOutcome, default as CreateOutcomings } from "./pages/OutcomeEdit";
 import { OutcomeList } from "./pages/OutcomeList";
 import Preview from "./pages/Preview";
 import Schedule from "./pages/Schedule";
@@ -55,7 +55,7 @@ function App() {
               <Route path={Schedule.routeBasePath}>
                 <Redirect to={Schedule.routeRedirectDefault} />
               </Route>
-              <Route path="/assessments/outcomes">
+              <Route path={CreateOutcomings.routeBasePath}>
                 <CreateOutcome />
               </Route>
               <Route path={AssessmentsDetail.routeBasePath}>

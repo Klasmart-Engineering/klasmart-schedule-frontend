@@ -1,6 +1,5 @@
-import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
+import { Box, Checkbox, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { MockOptionsItem } from "../../api/extra";
@@ -53,14 +52,22 @@ const useQuery = () => {
 export default function CreateOutcomings() {
   const classes = useStyles();
   const { outcome_id } = useQuery();
-  const { control, errors, watch, handleSubmit, reset, setValue, getValues } = useForm();
   const [openStatus, setOpenStatus] = React.useState(false);
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
   const history = useHistory();
   const [showCode, setShoeCode] = React.useState(false);
-  let { outcomeDetail }: any = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
-  watch();
+  const [showPublish, setShowPublish] = React.useState(false);
+  const { outcomeDetail } = useSelector<RootState, RootState["outcomes"]>((state) => state.outcomes);
+  const [finalData, setFinalData] = React.useState(outcomeDetail);
+  const [mulSelect, setMulselect] = React.useState({
+    program: [],
+    subject: [],
+    developmental: [],
+    skills: [],
+    age: [],
+    grade: [],
+  });
 
   React.useEffect(() => {
     dispatch(onLoadContentEdit({ type: "material", id: null }));
@@ -72,6 +79,10 @@ export default function CreateOutcomings() {
     }
   }, [dispatch, outcome_id]);
 
+  React.useEffect(() => {
+    setFinalData(outcomeDetail);
+  }, [outcomeDetail]);
+
   const getItems = (list: MockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -79,22 +90,26 @@ export default function CreateOutcomings() {
       </MenuItem>
     ));
 
-  const handleSave = React.useMemo(
-    () =>
-      handleSubmit(async (value: any) => {
-        if (outcome_id) {
-          await dispatch(updateOutcome({ outcome_id, value }));
-          dispatch(actSuccess("Update Success"));
-          return;
-        }
-        const result: any = await dispatch(save(value));
-        setShoeCode(true);
-        console.log(result);
-        history.push(`/assessments/outcomes?outcome_id=${result.payload.outcome_id}`);
+  const handleSave = async () => {
+    const data = {
+      ...finalData,
+      ...mulSelect,
+    };
+    if (outcome_id) {
+      await dispatch(updateOutcome({ outcome_id, value: data }));
+      dispatch(actSuccess("Update Success"));
+      setShowPublish(true);
+      return;
+    } else {
+      const result: any = await dispatch(save(data));
+      setShoeCode(true);
+      if (result.payload.outcome_id) {
+        history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}`);
         dispatch(actSuccess("Save Success"));
-      }),
-    [dispatch, handleSubmit, history, outcome_id]
-  );
+        setShowPublish(true);
+      }
+    }
+  };
 
   const handleClose = () => {
     setOpenStatus(false);
@@ -116,10 +131,12 @@ export default function CreateOutcomings() {
 
   const [enableCustomization, setEnableCustomization] = React.useState(false);
 
-  const handleReject = (reason: string) => {
-    dispatch(reject({ id: outcome_id, reject_reason: reason }));
+  const handleReject = async (reason: string) => {
+    const result: any = await dispatch(reject({ id: outcome_id, reject_reason: reason }));
+    if (result.paylod === "ok") {
+      dispatch(actSuccess("Reject Success"));
+    }
     setOpenStatus(false);
-    dispatch(actSuccess("Reject Success"));
   };
 
   const modalDate: any = {
@@ -136,11 +153,14 @@ export default function CreateOutcomings() {
       },
       {
         label: "Delete",
-        event: () => {
-          // deleteScheduleByid();
-          dispatch(deleteOutcome(outcome_id));
+        event: async () => {
+          const result: any = await dispatch(deleteOutcome(outcome_id));
+          console.log(result);
+          if (result.payload === "ok") {
+            dispatch(actSuccess("Delete Success"));
+            history.push("/assessments/outcome-list");
+          }
           setOpenStatus(false);
-          dispatch(actSuccess("Delete Success"));
         },
       },
     ],
@@ -148,18 +168,21 @@ export default function CreateOutcomings() {
     customizeTemplate: <CustomizeRejectTemplate handleClose={handleClose} handleReject={handleReject} />,
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setEnableCustomization(false);
     setOpenStatus(true);
+  };
+
+  const handleReset = () => {
+    setFinalData({
+      ...finalData,
+      ...outcomeDetail,
+    });
   };
 
   const handelReject = (): void => {
     setOpenStatus(true);
     setEnableCustomization(true);
-  };
-
-  const handleAssumedChange = () => {
-    setValue("assumed", !getValues("assumed"));
   };
 
   const handlePublish = async () => {
@@ -180,113 +203,181 @@ export default function CreateOutcomings() {
 
   const handleKeywordsChange = (event: React.ChangeEvent<{ value: string }>) => {
     const keywords = event.target.value.split(",");
-    setValue("keywords", keywords);
+    setFinalData({
+      ...finalData,
+      keywords,
+    });
   };
+
+  const handleDDDChange = (name: string, event: React.ChangeEvent<{ value: any }>) => {
+    let aaa = event.target.value.filter((item: any) => item);
+    console.log(aaa);
+    if (name === "program") {
+      setFinalData({
+        ...finalData,
+        [name]: aaa.map((item: any) => ({
+          program_id: item,
+          program_name: item,
+        })),
+      });
+      setMulselect({
+        ...mulSelect,
+        program: event.target.value.filter((item: any) => item),
+      });
+    }
+    if (name === "subject") {
+      setFinalData({
+        ...finalData,
+        [name]: aaa.map((item: any) => ({
+          subject_id: item,
+          subject_name: item,
+        })),
+      });
+      setMulselect({
+        ...mulSelect,
+        subject: aaa,
+      });
+    }
+    if (name === "developmental") {
+      setFinalData({
+        ...finalData,
+        [name]: aaa.map((item: any) => ({
+          developmental_id: item,
+          developmental_name: item,
+        })),
+      });
+      setMulselect({
+        ...mulSelect,
+        developmental: aaa,
+      });
+    }
+    if (name === "skills") {
+      setFinalData({
+        ...finalData,
+        [name]: aaa.map((item: any) => ({
+          skill_id: item,
+          skill_name: item,
+        })),
+      });
+      setMulselect({
+        ...mulSelect,
+        skills: aaa,
+      });
+    }
+    if (name === "age") {
+      setFinalData({
+        ...finalData,
+        [name]: aaa.map((item: any) => ({
+          age_id: item,
+          age_name: item,
+        })),
+      });
+      setMulselect({
+        ...mulSelect,
+        age: aaa,
+      });
+    }
+    if (name === "grade") {
+      setFinalData({
+        ...finalData,
+        [name]: aaa.map((item: any) => ({
+          grade_id: item,
+          grade_name: item,
+        })),
+      });
+      setMulselect({
+        ...mulSelect,
+        grade: aaa,
+      });
+    }
+  };
+
+  const handleInputChange = (name: string, event: React.ChangeEvent<{ value: any }>) => {
+    if (name === "assumed") {
+      setFinalData({
+        ...finalData,
+        assumed: !finalData.assumed,
+      });
+      return;
+    }
+    if (name === "estimated_time") {
+      console.log(event.target.value);
+      setFinalData({
+        ...finalData,
+        estimated_time: +event.target.value,
+      });
+      return;
+    }
+    setFinalData({
+      ...finalData,
+      [name]: event.target.value,
+    });
+  };
+
+  const getKeywords = (keywords: string[] | undefined) => {
+    if (!keywords) return;
+    keywords.map((item: any) => item);
+  };
+
+  console.log(finalData);
 
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
         handleSave={handleSave}
-        handleReset={reset}
+        handleReset={handleReset}
         handleDelete={handleDelete}
         outcome_id={outcome_id}
         handelReject={handelReject}
         handlePublish={handlePublish}
         handleApprove={handleApprove}
         publish_status={outcomeDetail.publish_status}
+        showPublish={showPublish}
       />
       <div className={classes.middleBox}>
         <Box style={{ borderBottom: "1px solid #d7d7d7", marginBottom: "40px" }}>
           {outcomeDetail.publish_status && outcomeDetail.publish_status === "rejected" && (
             <Grid container>
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                <Controller
-                  name="reject_reason"
-                  rules={{ required: true }}
-                  error={errors.reject_reason}
-                  as={TextField}
-                  control={control}
+                <TextField
                   size="small"
-                  defaultValue={outcomeDetail.reject_reason}
+                  defaultValue={finalData.reject_reason}
                   fullWidth
                   label="Reject Reason"
+                  onChange={(event) => handleInputChange("reject_reason", event)}
                 />
               </Grid>
             </Grid>
           )}
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="outcome_name"
-                rules={{ required: true }}
-                error={errors.outcome_name ? true : false}
-                as={TextField}
-                control={control}
+              <TextField
                 size="small"
-                defaultValue={outcomeDetail.outcome_name}
+                value={finalData.outcome_name}
                 fullWidth
                 label="Learning outcome Name"
+                onChange={(event) => handleInputChange("outcome_name", event)}
               />
             </Grid>
             {(outcome_id || showCode) && (
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                <Controller
-                  name="shortcode"
-                  as={TextField}
-                  control={control}
-                  size="small"
-                  defaultValue={outcomeDetail.shortcode}
-                  fullWidth
-                  label="Short Code"
-                  disabled
-                />
+                <TextField size="small" value={finalData.shortcode} fullWidth label="Short Code" disabled />
               </Grid>
             )}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
-              <Controller
-                control={control}
-                name="assumed"
-                render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleAssumedChange} />}
-              />
+              <Checkbox checked={finalData.assumed || false} onChange={(event) => handleInputChange("assumed", event)} />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
             {(outcome_id || showCode) && (
               <>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  <Controller
-                    name="organization_name"
-                    as={TextField}
-                    control={control}
-                    defaultValue={outcomeDetail.organization_id}
-                    fullWidth
-                    label="Organization"
-                    disabled
-                    size="small"
-                  />
+                  <TextField value={finalData.organization_id} fullWidth label="Organization" disabled size="small" />
                 </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  <Controller
-                    name="created_at"
-                    as={TextField}
-                    control={control}
-                    defaultValue={timestampToTime(outcomeDetail.created_at)}
-                    fullWidth
-                    disabled
-                    label="Create Time"
-                    size="small"
-                  />
+                  <TextField fullWidth value={timestampToTime(finalData.created_at)} disabled label="Create Time" size="small" />
                 </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  <Controller
-                    name="author_name"
-                    as={TextField}
-                    control={control}
-                    defaultValue={outcomeDetail.author_name}
-                    fullWidth
-                    size="small"
-                    disabled
-                    label="Author"
-                  />
+                  <TextField value={finalData.author_name} fullWidth size="small" disabled label="Author" />
                 </Grid>
               </>
             )}
@@ -295,140 +386,124 @@ export default function CreateOutcomings() {
         <Box style={{ paddingBottom: "10px", borderBottom: "1px solid #d7d7d7" }}>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="program"
-                as={TextField}
-                select
-                control={control}
-                defaultValue={outcomeDetail.program}
-                size="small"
-                fullWidth
-                label="Program"
-                SelectProps={{ multiple: true }}
-              >
-                {getItems(mockOptions.program)}
-              </Controller>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="demo-mutiple-name-label">Program</InputLabel>
+                <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  multiple
+                  value={finalData.program?.map((item: any) => item.program_id)}
+                  onChange={(event) => handleDDDChange("program", event)}
+                  label="Program"
+                >
+                  {getItems(mockOptions.program)}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="subject"
-                as={TextField}
-                select
-                control={control}
-                defaultValue={outcomeDetail.subject}
-                size="small"
-                fullWidth
-                label="Subject"
-                SelectProps={{ multiple: true }}
-              >
-                {getItems(mockOptions.subject)}
-              </Controller>
-            </Grid>
-          </Grid>
-          <Grid container justify="space-between">
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="developmental"
-                as={TextField}
-                select
-                control={control}
-                defaultValue={outcomeDetail.developmental}
-                size="small"
-                fullWidth
-                label="Development Category"
-                SelectProps={{ multiple: true }}
-              >
-                {getItems(mockOptions.developmental)}
-              </Controller>
-            </Grid>
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="skills"
-                as={TextField}
-                select
-                control={control}
-                defaultValue={outcomeDetail.skills}
-                size="small"
-                fullWidth
-                label="Skills Category"
-                SelectProps={{ multiple: true }}
-              >
-                {getItems(mockOptions.skills)}
-              </Controller>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="demo-mutiple-name-label">Subject</InputLabel>
+                <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  multiple
+                  value={finalData.subject?.map((item: any) => item.subject_id)}
+                  onChange={(event) => handleDDDChange("subject", event)}
+                  label="Subject"
+                >
+                  {getItems(mockOptions.subject)}
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="age"
-                as={TextField}
-                select
-                control={control}
-                defaultValue={outcomeDetail.age}
-                size="small"
-                fullWidth
-                label="Age"
-                SelectProps={{ multiple: true }}
-              >
-                {getItems(mockOptions.age)}
-              </Controller>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="demo-mutiple-name-label">Developmental</InputLabel>
+                <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  multiple
+                  value={finalData.developmental?.map((item: any) => item.developmental_id)}
+                  onChange={(event) => handleDDDChange("developmental", event)}
+                  label={"Developmental"}
+                >
+                  {getItems(mockOptions.developmental)}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="grade"
-                as={TextField}
-                select
-                control={control}
-                defaultValue={outcomeDetail.grade}
-                size="small"
-                fullWidth
-                label="Grade"
-                SelectProps={{ multiple: true }}
-              >
-                {getItems(mockOptions.grade)}
-              </Controller>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="demo-mutiple-name-label">Skills</InputLabel>
+                <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  multiple
+                  value={finalData.skills?.map((item: any) => item.skill_id)}
+                  onChange={(event) => handleDDDChange("skills", event)}
+                  label="Skills"
+                >
+                  {getItems(mockOptions.skills)}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid container justify="space-between">
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="demo-mutiple-name-label">Age</InputLabel>
+                <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  multiple
+                  value={finalData.age?.map((item: any) => item.age_id)}
+                  onChange={(event) => handleDDDChange("age", event)}
+                  label="Age"
+                >
+                  {getItems(mockOptions.age)}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="demo-mutiple-name-label">Grade</InputLabel>
+                <Select
+                  labelId="demo-mutiple-name-label"
+                  id="demo-mutiple-name"
+                  multiple
+                  value={finalData.grade?.map((item: any) => item.grade_id)}
+                  onChange={(event) => handleDDDChange("grade", event)}
+                  label="Grade"
+                >
+                  {getItems(mockOptions.grade)}
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </Box>
         <Box>
           <Grid container justify="space-between" style={{ marginTop: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="estimated_time"
-                control={control}
-                defaultValue={outcomeDetail.estimated_time || ""}
-                as={TextField}
+              <TextField
                 size="small"
                 fullWidth
+                value={finalData.estimated_time}
                 label="Estimated time"
-                rules={{ required: true, pattern: /^[0-9]*$/ }}
-                error={errors.estimated_time ? true : false}
+                onChange={(event) => handleInputChange("estimated_time", event)}
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="keywords"
-                // as={TextField}
-                control={control}
-                // defaultValue={outcomeDetail.keywords?.map(item => (item + ',')) || []}
-                // onChange={handleKeywordsChange}
-                // render={({ onChange, value }) => <Checkbox checked={value || false} onChange={handleAssumedChange} />}
-                render={({ value, onChange }) => (
-                  <TextField defaultValue={value || []} onChange={handleKeywordsChange} size="small" fullWidth label="Keywords" />
-                )}
-              />
+              <TextField value={getKeywords(finalData.keywords)} onChange={handleKeywordsChange} size="small" fullWidth label="Keywords" />
             </Grid>
           </Grid>
           <Grid container justify="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
-              <Controller
-                name="description"
-                as={TextField}
-                control={control}
+              <TextField
                 size="small"
-                defaultValue={outcomeDetail.description || ""}
+                value={finalData.description || ""}
                 fullWidth
                 label="Description"
+                onChange={(event) => handleInputChange("description", event)}
               />
             </Grid>
           </Grid>
@@ -439,4 +514,4 @@ export default function CreateOutcomings() {
   );
 }
 
-CreateOutcomings.routeBasePath = "/outcome-edit";
+CreateOutcomings.routeBasePath = "/assessments/outcome-edit";

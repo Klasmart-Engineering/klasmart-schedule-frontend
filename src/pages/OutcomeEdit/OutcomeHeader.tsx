@@ -86,6 +86,7 @@ interface OutcomeHeaderProps {
   handlePublish: () => void;
   handleApprove: () => void;
   publish_status: string | undefined;
+  showPublish: boolean;
 }
 
 function OutcomeHeader(props: OutcomeHeaderProps) {
