@@ -15,9 +15,9 @@ import {
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React, { Fragment, useCallback, useMemo } from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
-import { GetAssessmentResult } from "../../api/type";
+import React, { Fragment, useCallback, useMemo, useReducer } from "react";
+import { Controller, useForm, UseFormMethods } from "react-hook-form";
+import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { ModelAssessment } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -39,8 +39,9 @@ const useStyles = makeStyles(({ palette }) => ({
     },
   },
   nowarp: {
-    wrap: "nowrap",
-    // overflow: "none",
+    whiteSpace: "nowrap",
+    overflow: "none",
+    textOverflow: "ellipsis",
   },
   editBox: {
     width: "100%",
@@ -61,15 +62,16 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface AttendenceInputProps {
+  defaultValue: PopupInputProps["value"];
   assessmentDetail: GetAssessmentResult;
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
 }
 export const AttendanceInput = (props: AttendenceInputProps) => {
   const {
+    defaultValue,
     assessmentDetail,
     formMethods: { control },
   } = props;
-  const { attendance_ids: defaultValue } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
   return (
     <Box>
       <Controller
@@ -106,34 +108,66 @@ export const AttendanceInput = (props: AttendenceInputProps) => {
     </Box>
   );
 };
+interface PopupInputProps {
+  assessmentDetail: SummaryProps["assessmentDetail"];
+  value?: UpdateAssessmentRequestDatAattendanceIds;
+  onChange?: (value: PopupInputProps["value"]) => any;
+}
+function PopupInput(props: PopupInputProps) {
+  const { value, onChange, assessmentDetail } = props;
+  const css = useStyles();
+  const formMethods = useForm<UpdateAssessmentRequestData>();
+  const [open, toggle] = useReducer((open) => {
+    formMethods.reset();
+    return !open;
+  }, false);
+  const attendanceString = useMemo(() => {
+    const { attendances } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
+    return attendances?.map((item) => item.name).join(", ");
+  }, [assessmentDetail, value]);
+  const handleOk = useCallback(() => {
+    const { attendance_ids } = formMethods.getValues();
+    toggle();
+    if (onChange) return onChange(attendance_ids || []);
+  }, [formMethods, onChange]);
+  return (
+    <Box className={css.editBox}>
+      <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendence" />
+      <Button className={css.editButton} color="primary" variant="contained" onClick={toggle}>
+        Edit
+      </Button>
+      <Dialog open={open} onClose={toggle}>
+        <DialogTitle>Edit Attendance</DialogTitle>
+        <DialogContent dividers>
+          <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={toggle} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleOk} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+}
+
 interface SummaryProps {
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
   assessmentDetail: AssessmentState["assessmentDetail"];
   selectedAttendence: AssessmentState["assessmentDetail"]["attendances"];
-  onOk: Function;
 }
 export function Summary(props: SummaryProps) {
-  const { assessmentDetail, onOk, formMethods, selectedAttendence } = props;
+  const { assessmentDetail } = props;
   const {
-    formMethods: { reset },
+    formMethods: { control },
   } = props;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const [open, setOpen] = React.useState(false);
-  const handleCancel = useCallback(() => {
-    reset();
-    setOpen(false);
-  }, [reset]);
-  const handleOpen = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const handleOk = useCallback(() => {
-    onOk();
-    setOpen(false);
-  }, [onOk]);
-  const attendanceString = useMemo(() => selectedAttendence?.map((item) => item.name).join(", "), [selectedAttendence]);
+  const { attendance_ids: default_attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
@@ -149,12 +183,13 @@ export function Summary(props: SummaryProps) {
             className={css.fieldset}
             label="Assessment Title"
           />
-          <Box className={css.editBox}>
-            <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendence" />
-            <Button className={css.editButton} color="primary" variant="contained" onClick={handleOpen}>
-              Edit
-            </Button>
-          </Box>
+          <Controller
+            as={PopupInput}
+            name="attendance_ids"
+            defaultValue={default_attendance_ids}
+            assessmentDetail={assessmentDetail}
+            control={control}
+          />
           <TextField
             fullWidth
             disabled
@@ -216,20 +251,6 @@ export function Summary(props: SummaryProps) {
           />
         </Box>
       </Paper>
-      <Dialog open={true} onClose={handleCancel} style={{ display: open ? "block" : "none" }}>
-        <DialogTitle>Edit Attendance</DialogTitle>
-        <DialogContent dividers>
-          <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods}></AttendanceInput>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleOk} color="primary">
-            Ok
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 }

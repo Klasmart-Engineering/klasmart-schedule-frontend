@@ -82,3 +82,4 @@ export type GetAssessmentResultOutcomeAttendanceMap = NonNullable<GetAssessmentR
 
 export type UpdateAssessmentRequestId = Parameters<typeof api.assessments.updateAssessment>[0];
 export type UpdateAssessmentRequestData = Parameters<typeof api.assessments.updateAssessment>[1];
+export type UpdateAssessmentRequestDatAattendanceIds = NonNullable<UpdateAssessmentRequestData>["attendance_ids"];

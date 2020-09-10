@@ -122,8 +122,6 @@ export function AssessmentsEdit() {
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
-
-  const handleOK = useMemo(() => handleSubmit((data) => {}), [handleSubmit]);
   const handleFilterOutcomes = useMemo<OutcomesFilterProps["onChange"]>(
     () => (value) => {
       history.replace({
@@ -162,7 +160,7 @@ export function AssessmentsEdit() {
         onComplete={handleAssessmentComplete}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary assessmentDetail={assessmentDetail} onOk={handleOK} formMethods={formMethods} selectedAttendence={attendances} />
+        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} selectedAttendence={attendances} />
         {rightsideArea}
       </LayoutPair>
     </>

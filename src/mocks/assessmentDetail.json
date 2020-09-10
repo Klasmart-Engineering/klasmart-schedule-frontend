@@ -1,229 +1,88 @@
 {
-  "outcome_attendence_maps": [
+  "outcome_attendance_maps": [
     {
       "outcome_id": "1",
       "outcome_name": "Speaking and Listening",
       "assumed": false,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "3",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     },
     {
       "outcome_id": "2",
       "outcome_name": "Speaking and Listening",
       "assumed": false,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "2",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "3",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "4",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     },
     {
       "outcome_id": "3",
       "outcome_name": "Speaking and Listening",
       "assumed": false,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "2",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "3",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "4",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     },
     {
       "outcome_id": "4",
       "outcome_name": "Speaking and Listening",
       "assumed": true,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "2",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "3",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "4",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     },
     {
       "outcome_id": "5",
       "outcome_name": "Able to use apppropriate volume when speaking",
       "assumed": false,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "2",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "9",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "10",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     },
     {
       "outcome_id": "6",
       "outcome_name": "Speaking and Listening",
       "assumed": true,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "2",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "3",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "4",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     },
     {
       "outcome_id": "7",
       "outcome_name": "Able to repeat and chant songs",
       "assumed": true,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "5",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["2"]
     },
     {
       "outcome_id": "8",
       "outcome_name": "Able to use apppropriate volume when speaking",
       "assumed": true,
-      "attendence_ids": [
-        {
-          "id": "1",
-          "name": "Johnny Fisher"
-        },
-        {
-          "id": "7",
-          "name": "Johnny Fisher"
-        },
-
-        {
-          "id": "10",
-          "name": "Johnny Fisher"
-        }
-      ]
+      "attendance_ids": ["1", "2"]
     }
   ],
   "id": "2wffff",
   "class_id": "wrwrww",
   "title": "20200901-ClassName-LessonName",
-  "subject": "Bada Rhyme",
-  "teacher": "Glen Henderson",
+  "subject": { "name": "Bada Rhyme" },
+  "teacher": { "name": "Glen Henderson" },
   "class_end_time": 1589118506,
   "class_length": 45,
   "number_of_activities": 4,
   "number_of_outcomes": 4,
   "complete_time": 1599118506,
-  "attendences": [
+  "attendances": [
     {
       "id": "1",
-      "name": "Johnny Fisher"
+      "name": "Johnny Fisher1"
     },
     {
       "id": "2",
-      "name": "Johnny Fisher"
+      "name": "Johnny Fisher2"
     },
     {
       "id": "3",
-      "name": "Johnny Fisher"
+      "name": "Johnny Fisher3"
     },
     {
       "id": "4",
-      "name": "Johnny Fisher"
+      "name": "Johnny Fisher4"
     },
     {
       "id": "5",
-      "name": "Johnny Fisher"
+      "name": "Johnny Fisher5"
     },
     {
       "id": "6",
-      "name": "Johnny Fisher"
+      "name": "Johnny Fisher6"
     },
     {
       "id": "7",

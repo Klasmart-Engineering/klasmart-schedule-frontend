@@ -54,13 +54,11 @@ const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
   const {
     outcome: { outcome_id, attendance_ids, skip },
-    formMethods: { control, getValues, setValue },
+    formMethods: { control, setValue },
     index,
     attendenceList,
   } = props;
   const allValue = useMemo(() => attendenceList?.map((item) => item.id as string), [attendenceList]);
-  (window as any).setValue = setValue;
-  (window as any).getValues = getValues;
   const handleChangeSkip: CheckboxProps["onChange"] = (e) => {
     const skip = e.target.checked;
     if (skip) {
