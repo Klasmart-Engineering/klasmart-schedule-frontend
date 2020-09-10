@@ -93,8 +93,8 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkDeleteContent(ids)));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickConent: ContentCardListProps["onClickContent"] = (id) =>
-    history.push({ pathname: ContentPreview.routeBasePath, search: toQueryString({ id: id }) });
+  const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) =>
+    history.push({ pathname: ContentPreview.routeBasePath, search: toQueryString({ id: id, content_type: content_type }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._created_at }) });

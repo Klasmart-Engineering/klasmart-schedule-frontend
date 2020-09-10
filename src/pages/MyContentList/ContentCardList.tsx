@@ -202,7 +202,7 @@ function ContentCard(props: ContentProps) {
         checked={hashValue[content.id as string] || false}
         onChange={registerChange}
       ></Checkbox>
-      <CardActionArea onClick={(e) => onClickContent(content.id)}>
+      <CardActionArea onClick={(e) => onClickContent(content.id, content.content_type)}>
         <CardMedia className={css.cardMedia}>
           <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
         </CardMedia>
@@ -258,7 +258,7 @@ export interface ContentCardListProps extends ContentActionProps {
   list: Content[];
   queryCondition: QueryCondition;
   onChangePage: (page: number) => void;
-  onClickContent: (id: Content["id"]) => any;
+  onClickContent: (id: Content["id"], content_type: Content["content_type"]) => any;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();

@@ -7,6 +7,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Content } from "../../api/api";
+import { ContentType } from "../../api/type";
 import { Thumbnail } from "../../components/Thumbnail";
 import { RootState } from "../../reducers";
 import {
@@ -94,6 +95,7 @@ export default function ContentPreview(props: Content) {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   let id = query.get("id") || "";
+  const content_type: ContentType = Number(query.get("content_type"));
   const css = useStyles();
   const [value, setValue] = React.useState(0);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -174,7 +176,7 @@ export default function ContentPreview(props: Content) {
           <Chip size="small" color="primary" label={contentPreview.content_type_name} />
         </Box>
         <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>
-          <Thumbnail className={css.img} type={contentPreview.content_type} id={contentPreview?.thumbnail} />
+          <Thumbnail className={css.img} type={content_type} id={contentPreview?.thumbnail} />
         </Box>
         <Tabs
           className={css.tab}
