@@ -75,3 +75,10 @@ export enum Assets {
   assets_type = "3",
   assets_name = "Assets",
 }
+export type GetAssessmentRequest = Parameters<typeof api.assessments.getAssessment>[0];
+export type GetAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
+export type GetAssessmentResultAttendance = NonNullable<GetAssessmentResult["attendances"]>[0];
+export type GetAssessmentResultOutcomeAttendanceMap = NonNullable<GetAssessmentResult["outcome_attendance_maps"]>[0];
+
+export type UpdateAssessmentRequestId = Parameters<typeof api.assessments.updateAssessment>[0];
+export type UpdateAssessmentRequestData = Parameters<typeof api.assessments.updateAssessment>[1];

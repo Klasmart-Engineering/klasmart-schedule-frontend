@@ -15,9 +15,11 @@ import {
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React, { Fragment, useCallback } from "react";
+import React, { Fragment, useCallback, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import { GetAssessmentResult } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { ModelAssessment } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentState } from "../../reducers/assessment";
 const useStyles = makeStyles(({ palette }) => ({
@@ -38,7 +40,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
   nowarp: {
     wrap: "nowrap",
-    overflow: "none",
+    // overflow: "none",
   },
   editBox: {
     width: "100%",
@@ -59,75 +61,47 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface AttendenceInputProps {
-  attendances: AssessmentState["assessmentDetail"]["attendances"];
+  assessmentDetail: GetAssessmentResult;
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
-  selectedAttendence: AssessmentState["assessmentDetail"]["attendances"];
 }
 export const AttendanceInput = (props: AttendenceInputProps) => {
   const {
-    attendances,
+    assessmentDetail,
     formMethods: { control },
   } = props;
-  // const handleCheck = (item: { id?: string; name?: string }) => {
-  //   const { attendances } = getValues();
-  //   const newattendences = attendances?.includes(item)
-  //     ? attendances?.filter((attendances) => attendances !== item)
-  //     : [...(attendances ?? []), item];
-  //   return newattendences;
-  // };
+  const { attendance_ids: defaultValue } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
   return (
     <Box>
-      {/* {attendances &&
-        attendances.map((item) => (
-          <FormControlLabel
-            control={
-              <Controller
-                name="attendences"
-                defaultValue={selectedAttendence}
-                render={({ onChange: onCheckChange }) => {
-                  return (
-                    <Checkbox
-                      defaultChecked={selectedAttendence && selectedAttendence.includes(item)}
-                      onChange={() => onCheckChange(handleCheck(item))}
-                      color="primary"
-                    />
-                  );
-                }}
-                control={control}
-              />
-            }
-            key={item.id}
-            label={item.name}
-          />
-        ))} */}
       <Controller
-        name="attendance"
+        name="attendance_ids"
         control={control}
-        defaultValue={attendances?.map((v) => v.id)}
-        render={(props) => (
-          <CheckboxGroup
-            {...props}
-            render={(selectedContentGroupContext) => (
-              <Fragment>
-                {attendances &&
-                  attendances.map((item) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          value={item.id}
-                          checked={selectedContentGroupContext.hashValue[item.id as string]}
-                          onChange={selectedContentGroupContext.registerChange}
-                        />
-                      }
-                      label={item.name}
-                      key={item.id}
-                    />
-                  ))}
-              </Fragment>
-            )}
-          />
-        )}
+        defaultValue={defaultValue}
+        render={(props) => {
+          return (
+            <CheckboxGroup
+              {...props}
+              render={(selectedContentGroupContext) => (
+                <Fragment>
+                  {assessmentDetail.attendances &&
+                    assessmentDetail.attendances.map((item) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            value={item.id}
+                            checked={selectedContentGroupContext.hashValue[item.id as string] || false}
+                            onChange={selectedContentGroupContext.registerChange}
+                          />
+                        }
+                        label={item.name}
+                        key={item.id}
+                      />
+                    ))}
+                </Fragment>
+              )}
+            />
+          );
+        }}
       />
     </Box>
   );
@@ -139,18 +113,10 @@ interface SummaryProps {
   onOk: Function;
 }
 export function Summary(props: SummaryProps) {
+  const { assessmentDetail, onOk, formMethods, selectedAttendence } = props;
   const {
-    assessmentDetail: { attendances },
-    assessmentDetail,
-    onOk,
-    formMethods,
-    selectedAttendence,
+    formMethods: { reset },
   } = props;
-  const {
-    formMethods: { reset, control },
-  } = props;
-  // console.log("subject=",assessmentDetail.subject ? assessmentDetail.subject.name : "1");
-
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -167,7 +133,7 @@ export function Summary(props: SummaryProps) {
     onOk();
     setOpen(false);
   }, [onOk]);
-
+  const attendanceString = useMemo(() => selectedAttendence?.map((item) => item.name).join(", "), [selectedAttendence]);
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
@@ -175,110 +141,85 @@ export function Summary(props: SummaryProps) {
           <Typography variant="h6">Class Summary</Typography>
         </Box>
         <Box px={5} py={5}>
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="title"
-            defaultValue={assessmentDetail.title}
+            value={assessmentDetail.title || ""}
             className={css.fieldset}
             label="Assessment Title"
           />
           <Box className={css.editBox}>
-            <Controller
-              as={TextField}
-              control={control}
-              fullWidth
-              disabled
-              name="attendent"
-              defaultValue={assessmentDetail.attendances && assessmentDetail.attendances.map((v) => v.name)}
-              className={clsx(css.fieldset, css.nowarp)}
-              label="Attendence"
-            />
+            <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendence" />
             <Button className={css.editButton} color="primary" variant="contained" onClick={handleOpen}>
               Edit
             </Button>
           </Box>
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="subject.name"
-            defaultValue={assessmentDetail.subject?.name}
+            value={assessmentDetail.subject?.name || ""}
             className={css.fieldset}
             label="Subject"
           />
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="teacher.name"
-            defaultValue={assessmentDetail?.teacher?.name}
+            value={assessmentDetail?.teacher?.name || ""}
             className={css.fieldset}
             label="Teacher"
           />
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="classEndTime"
-            defaultValue={formattedTime(assessmentDetail.class_end_time)}
+            value={formattedTime(assessmentDetail.class_end_time)}
             className={css.fieldset}
             label="Class End Time"
           />
           <Box className={css.editBox}>
-            <Controller
-              as={TextField}
-              control={control}
+            <TextField
               fullWidth
               disabled
               name="classLength"
-              defaultValue={assessmentDetail.class_length}
+              value={assessmentDetail.class_length || ""}
               className={css.fieldset}
               label="Class Length"
             />
             <Typography className={css.minutes}>Minutes</Typography>
           </Box>
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="numberofActivities"
-            defaultValue={assessmentDetail.number_of_activities}
+            value={assessmentDetail.number_of_activities || ""}
             className={css.fieldset}
             label="Number of Activities"
           />
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="numberofLearningOutcomes"
-            defaultValue={assessmentDetail.number_of_outcomes}
+            value={assessmentDetail.number_of_outcomes || ""}
             className={css.fieldset}
             label="Number of Learning Outcomes"
           />
-          <Controller
-            as={TextField}
-            control={control}
+          <TextField
             fullWidth
             disabled
             name="completeTime"
-            defaultValue={formattedTime(assessmentDetail.complete_time)}
+            value={formattedTime(assessmentDetail.complete_time) || ""}
             className={css.fieldset}
             label="Assessment Complete Time"
           />
         </Box>
       </Paper>
-      <Dialog open={open} onClose={handleCancel}>
+      <Dialog open={true} onClose={handleCancel} style={{ display: open ? "block" : "none" }}>
         <DialogTitle>Edit Attendance</DialogTitle>
         <DialogContent dividers>
-          <AttendanceInput attendances={attendances} formMethods={formMethods} selectedAttendence={selectedAttendence}></AttendanceInput>
+          <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods}></AttendanceInput>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleCancel} color="primary">

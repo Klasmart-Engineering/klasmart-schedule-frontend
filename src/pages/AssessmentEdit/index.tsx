@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { LearningOutcomes } from "../../api/api";
+import { UpdateAssessmentRequestData } from "../../api/type";
 import noOutcomes from "../../assets/icons/noLearningOutcomes.svg";
+import { ModelAssessment } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AssessmentState, getAssessment } from "../../reducers/assessment";
@@ -76,10 +78,10 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id");
-  const filterOutcomes = query.get("filterOutcomes");
+  const filterOutcomes = query.get("filterOutcomes") || undefined;
   return { id, filterOutcomes };
 };
-const handleOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
+const filterOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
   if (value === "all" || value === null) return list;
   let newList = cloneDeep(list);
   if (!newList) return list;
@@ -91,15 +93,18 @@ const handleOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_a
 export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
-  let { filterOutcomes = "all", id } = useQuery();
-  if (!filterOutcomes) filterOutcomes = "all";
+  const { filterOutcomes = "all", id } = useQuery();
   const assessmentDetail = useSelector<RootState, RootState["assessment"]["assessmentDetail"]>(
     (state) => state.assessment.assessmentDetail
   );
-  let { outcome_attendance_maps, attendances } = assessmentDetail;
-  const outcomesListInner = handleOutcomeslist(outcome_attendance_maps, filterOutcomes);
-  const formMethods = useForm<AssessmentState["assessmentDetail"]>();
-  const { handleSubmit, reset } = formMethods;
+  const formMethods = useForm<UpdateAssessmentRequestData>();
+  const { handleSubmit, reset, watch } = formMethods;
+  const formValue = watch();
+  const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
+  const filteredOutcomelist = useMemo(() => filterOutcomeslist(assessmentDetail.outcome_attendance_maps, filterOutcomes), [
+    assessmentDetail,
+    filterOutcomes,
+  ]);
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit((value) => {
@@ -133,16 +138,15 @@ export function AssessmentsEdit() {
     }
   }, [filterOutcomes, dispatch, id]);
   useEffect(() => {
-    reset(assessmentDetail);
+    if (assessmentDetail.id) {
+      reset(ModelAssessment.toRequest(assessmentDetail));
+    }
   }, [assessmentDetail, reset]);
-  (window as any).reset = reset;
-  // watch();
-  // console.log(getValues());
   const rightsideArea = (
     <>
       <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-      {outcomesListInner && outcomesListInner.length > 0 ? (
-        <OutcomesTable outcomesList={outcomesListInner} attendanceList={attendances} formMethods={formMethods} />
+      {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+        <OutcomesTable outcomesList={filteredOutcomelist} attendanceList={attendances} formMethods={formMethods} />
       ) : (
         <NoOutComesList />
       )}

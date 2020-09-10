@@ -1375,6 +1375,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
           outcome_attendance_maps?: {
             outcome_id?: string;
             outcome_name?: string;
+            skip?: boolean;
             assumed?: boolean;
             attendance_ids?: string[];
           }[];
@@ -1395,7 +1396,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       data: {
         action?: "save" | "complete";
         attendance_ids?: string[];
-        outcome_attendance_maps?: { outcome_id?: string; attendance_ids?: string[] }[];
+        outcome_attendance_maps?: { outcome_id?: string; skip?: boolean; attendance_ids?: string[] }[];
       },
       params?: RequestParams
     ) => this.request<any, any>(`/assessments/${id}`, "PUT", params, data, BodyType.Json, true),

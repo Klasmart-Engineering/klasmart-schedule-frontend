@@ -1,6 +1,7 @@
 import {
   Box,
   Checkbox,
+  CheckboxProps,
   FormControlLabel,
   makeStyles,
   Table,
@@ -11,8 +12,9 @@ import {
   TableRow,
   TextField,
 } from "@material-ui/core";
-import React, { Fragment } from "react";
+import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { AssessmentState } from "../../reducers/assessment";
 
@@ -43,91 +45,91 @@ const useStyles = makeStyles({
 });
 
 interface AssessActionProps {
-  assumed?: boolean;
-  onChangeAward: (e: React.ChangeEvent<HTMLInputElement>) => any;
-  onChangeSkip: (e: React.ChangeEvent<HTMLInputElement>) => any;
+  outcome: GetAssessmentResultOutcomeAttendanceMap;
   attendenceList: AssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
-  selectedAttendence?: string[];
   index: number;
-  outcome_id?: string;
 }
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
-  let {
-    assumed,
-    attendenceList,
-    formMethods: { control },
-    selectedAttendence,
-    onChangeSkip,
+  const {
+    outcome: { outcome_id, attendance_ids, skip },
+    formMethods: { control, getValues, setValue },
     index,
-    outcome_id,
+    attendenceList,
   } = props;
-  // if(assumed){selectedAttendence = attendenceList?.map(v=>v.id)}
-  const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      // selectedAttendence = attendenceList
+  const allValue = useMemo(() => attendenceList?.map((item) => item.id as string), [attendenceList]);
+  (window as any).setValue = setValue;
+  (window as any).getValues = getValues;
+  const handleChangeSkip: CheckboxProps["onChange"] = (e) => {
+    const skip = e.target.checked;
+    if (skip) {
+      setValue(`outcome_attendance_maps[${index}].attendance_ids`, []);
+      setValue(`outcome_attendance_maps[${index}].skip`, true);
+    } else {
+      setValue(`outcome_attendance_maps[${index}].skip`, false);
     }
   };
   return (
-    <Box display="flex" alignItems="center">
-      <Box width={300} fontSize={14}>
-        <FormControlLabel
-          control={<Checkbox defaultChecked={assumed} onChange={handleChangeAward} name="award" color="primary" />}
-          label="Award All"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              // checked={state.checkedB}
-              onChange={onChangeSkip}
-              name="skip"
-              color="primary"
-            />
-          }
-          label="Skip"
-        />
-      </Box>
-      <Box px={3} className={css.assessActionline}>
-        <Controller
-          name={`outcome_attendance_maps[${index}].attendance_ids`}
-          control={control}
-          defaultValue={selectedAttendence || []}
-          render={(props) => (
-            <CheckboxGroup
-              {...props}
-              render={(selectedContentGroupContext) => (
-                <Fragment>
-                  {attendenceList &&
-                    attendenceList.map((item) => (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="primary"
-                            value={item.id}
-                            checked={selectedContentGroupContext.hashValue[item.id as string] || false}
-                            onChange={selectedContentGroupContext.registerChange}
-                          />
-                        }
-                        label={item.name}
-                        key={item.id}
-                      />
-                    ))}
-                </Fragment>
-              )}
-            />
+    <Controller
+      name={`outcome_attendance_maps[${index}].attendance_ids`}
+      control={control}
+      defaultValue={attendance_ids || []}
+      render={(props) => (
+        <CheckboxGroup
+          allValue={allValue}
+          {...props}
+          render={(selectedContentGroupContext) => (
+            <Box display="flex" alignItems="center">
+              <Box width={300} fontSize={14}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedContentGroupContext.isAllvalue || false}
+                      onChange={selectedContentGroupContext.registerAllChange}
+                      name="award"
+                      color="primary"
+                    />
+                  }
+                  label="Award All"
+                  disabled={skip}
+                />
+                <FormControlLabel
+                  control={<Checkbox onChange={handleChangeSkip} checked={skip || false} name="skip" color="primary" />}
+                  label="Skip"
+                />
+              </Box>
+              <Box px={3} className={css.assessActionline}>
+                {attendenceList &&
+                  attendenceList.map((item) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          value={item.id}
+                          checked={selectedContentGroupContext.hashValue[item.id as string] || false}
+                          onChange={selectedContentGroupContext.registerChange}
+                        />
+                      }
+                      label={item.name}
+                      key={item.id}
+                      disabled={skip}
+                    />
+                  ))}
+                <Controller
+                  as={TextField}
+                  control={control}
+                  disabled
+                  name={`outcome_attendance_maps[${index}].outcome_id`}
+                  defaultValue={outcome_id}
+                  style={{ display: "none" }}
+                />
+              </Box>
+            </Box>
           )}
         />
-        <Controller
-          as={TextField}
-          control={control}
-          disabled
-          name={`outcome_attendance_maps[${index}].outcome_id`}
-          defaultValue={outcome_id}
-          style={{ display: "none" }}
-        />
-      </Box>
-    </Box>
+      )}
+    />
   );
 };
 
@@ -139,35 +141,18 @@ interface OutcomesTableProps {
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
   const { outcomesList, attendanceList, formMethods } = props;
-  // const {formMethods: {getValues, watch}}=props
-  const handleChangeAward = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.checked);
-  };
-  const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.checked);
-  };
-
   const rows =
     outcomesList &&
-    outcomesList.map((item, index) => (
-      <TableRow key={item.outcome_id}>
+    outcomesList.map((outcome, index) => (
+      <TableRow key={outcome.outcome_id}>
         <TableCell className={css.tableCellLine} align="center">
-          {item.outcome_name}
+          {outcome.outcome_name}
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
-          {item.assumed ? "Yes" : ""}
+          {outcome.assumed ? "Yes" : ""}
         </TableCell>
         <TableCell>
-          <AssessAction
-            assumed={item.assumed}
-            attendenceList={attendanceList}
-            formMethods={formMethods}
-            selectedAttendence={item.attendance_ids}
-            onChangeAward={(e) => handleChangeAward(e)}
-            onChangeSkip={(e) => handleChangeSkip(e)}
-            index={index}
-            outcome_id={item.outcome_id}
-          ></AssessAction>
+          <AssessAction outcome={outcome} attendenceList={attendanceList} formMethods={formMethods} index={index}></AssessAction>
         </TableCell>
       </TableRow>
     ));
