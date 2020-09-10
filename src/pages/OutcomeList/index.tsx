@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { OrderBy } from "../../api/type";
+import { OrderBy, OutcomeOrderBy } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
@@ -93,8 +93,8 @@ export function OutcomeList() {
     return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (id) =>
-    history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ id }) });
+  const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (outcome_id) =>
+    history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ outcome_id }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
   useEffect(() => {
@@ -134,4 +134,4 @@ export function OutcomeList() {
 }
 
 OutcomeList.routeBasePath = "/assessments/outcome-list";
-OutcomeList.routeRedirectDefault = "/assessments/outcome-list?publish_status=published&page=1";
+OutcomeList.routeRedirectDefault = `/assessments/outcome-list?publish_status=published&page=1&order_by=${OutcomeOrderBy._created_at}`;

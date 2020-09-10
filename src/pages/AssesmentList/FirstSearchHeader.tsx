@@ -8,7 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import { HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, OutcomePublishStatus } from "../../api/type";
+import { AssessmentStatus, Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
@@ -93,7 +93,8 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const unpublish = isUnpublish(value);
-  const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () => onChange({ ...value, publish_status });
+  const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"], order_by: OutcomeQueryCondition["order_by"]) => () =>
+    onChange({ ...value, publish_status, order_by });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -111,21 +112,21 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
-                onClick={createHandleClick(OutcomePublishStatus.published)}
+                onClick={createHandleClick(OutcomePublishStatus.published, OutcomeOrderBy._created_at)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
                 startIcon={<PublishOutlined />}
               >
                 Learning Outcomes
               </Button>
               <Button
-                onClick={createHandleClick(OutcomePublishStatus.pending)}
+                onClick={createHandleClick(OutcomePublishStatus.pending, OutcomeOrderBy._created_at)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
                 startIcon={<HourglassEmptyOutlined />}
               >
                 Pending
               </Button>
               <Button
-                onClick={createHandleClick(OutcomePublishStatus.draft)}
+                onClick={createHandleClick(OutcomePublishStatus.draft, OutcomeOrderBy._created_at)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
                 startIcon={<PublishOutlined />}
               >
@@ -147,7 +148,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const { value, onChange } = props;
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: OutcomePublishStatus | HeaderCategory) => {
     if (!publish_status) return;
-    return onChange({ ...value, publish_status: publish_status as OutcomePublishStatus });
+    return onChange({ ...value, publish_status: publish_status as OutcomePublishStatus, order_by: OutcomeOrderBy._created_at });
   };
 
   return (
@@ -157,7 +158,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={value?.publish_status}
+                value={AssessmentStatus.all}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
@@ -168,7 +169,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 <Tab value={OutcomePublishStatus.published} label="Published" className={classes.capitalize} />
                 <Tab value={OutcomePublishStatus.pending} label="Pending" className={classes.capitalize} />
                 <Tab value={OutcomePublishStatus.draft} label="Unpublished" className={classes.capitalize} />
-                <Tab label="Assesment" className={classes.capitalize} />
+                <Tab value={AssessmentStatus.all} label="Assesment" className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>

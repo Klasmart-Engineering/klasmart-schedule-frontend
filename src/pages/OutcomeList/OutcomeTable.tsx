@@ -12,6 +12,7 @@ import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGr
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
+import { formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -84,7 +85,7 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{outcome.skills}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.publish_scope}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.assumed}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.created_at}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.created_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {queryCondition.publish_status !== OutcomePublishStatus.pending && (

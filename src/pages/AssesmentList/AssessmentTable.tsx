@@ -4,6 +4,7 @@ import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { ListAssessmentResultItem } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentQueryCondition } from "./types";
 
 const useStyles = makeStyles((theme) =>
@@ -48,8 +49,8 @@ function AssessmentRow(props: AssessmentProps) {
       <TableCell align="center">{assessment.program?.name}</TableCell>
       <TableCell align="center">{assessment.status}</TableCell>
       <TableCell align="center">{assessment.teacher?.name}</TableCell>
-      <TableCell align="center">{assessment.class_end_time}</TableCell>
-      <TableCell align="center">{assessment.complete_time}</TableCell>
+      <TableCell align="center">{formattedTime(assessment.class_end_time)}</TableCell>
+      <TableCell align="center">{formattedTime(assessment.complete_time)}</TableCell>
     </TableRow>
   );
 }
