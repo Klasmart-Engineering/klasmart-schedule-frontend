@@ -28,10 +28,11 @@ export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, re
   const thumbail = id && apiResourcePathById(id);
   const defaultThumbail = type2svg[type];
   const display = loaded ? "inline-block" : "none";
+
   return (
     <Fragment>
-      {!loaded && <img {...props} ref={ref} alt="thumbail" src={defaultThumbail} />}
-      <img {...props} ref={ref} alt="thumbail" src={thumbail} onLoad={dispatchLoaded} style={{ display }} />
+      {!loaded && <img {...props} ref={!loaded ? ref : null} alt="thumbail" src={defaultThumbail} />}
+      <img {...props} ref={loaded ? ref : null} alt="thumbail" src={thumbail} onLoad={dispatchLoaded} style={{ display }} />
     </Fragment>
   );
 });
