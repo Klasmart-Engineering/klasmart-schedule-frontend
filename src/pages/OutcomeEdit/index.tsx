@@ -112,7 +112,6 @@ export default function CreateOutcomings() {
         label: "Delete",
         event: async () => {
           const result: any = await dispatch(deleteOutcome(outcome_id));
-          console.log(result);
           if (result.payload === "ok") {
             dispatch(actSuccess("Delete Success"));
             history.push("/assessments/outcome-list");
@@ -167,25 +166,24 @@ export default function CreateOutcomings() {
   };
 
   const handleMultipleChange = (name: string, event: React.ChangeEvent<{ value: any }>) => {
-    let aaa = event.target.value.filter((item: any) => item);
-    console.log(aaa);
+    let aaa = event.target.value.filter((item: string) => item);
     if (name === "program") {
       setFinalData({
         ...finalData,
-        [name]: aaa.map((item: any) => ({
+        [name]: aaa.map((item: string) => ({
           program_id: item,
           program_name: item,
         })),
       });
       setMulselect({
         ...mulSelect,
-        program: event.target.value.filter((item: any) => item),
+        program: event.target.value.filter((item: string) => item),
       });
     }
     if (name === "subject") {
       setFinalData({
         ...finalData,
-        [name]: aaa.map((item: any) => ({
+        [name]: aaa.map((item: string) => ({
           subject_id: item,
           subject_name: item,
         })),
@@ -198,7 +196,7 @@ export default function CreateOutcomings() {
     if (name === "developmental") {
       setFinalData({
         ...finalData,
-        [name]: aaa.map((item: any) => ({
+        [name]: aaa.map((item: string) => ({
           developmental_id: item,
           developmental_name: item,
         })),
@@ -211,7 +209,7 @@ export default function CreateOutcomings() {
     if (name === "skills") {
       setFinalData({
         ...finalData,
-        [name]: aaa.map((item: any) => ({
+        [name]: aaa.map((item: string) => ({
           skill_id: item,
           skill_name: item,
         })),
@@ -224,7 +222,7 @@ export default function CreateOutcomings() {
     if (name === "age") {
       setFinalData({
         ...finalData,
-        [name]: aaa.map((item: any) => ({
+        [name]: aaa.map((item: string) => ({
           age_id: item,
           age_name: item,
         })),
@@ -237,7 +235,7 @@ export default function CreateOutcomings() {
     if (name === "grade") {
       setFinalData({
         ...finalData,
-        [name]: aaa.map((item: any) => ({
+        [name]: aaa.map((item: string) => ({
           grade_id: item,
           grade_name: item,
         })),
@@ -249,7 +247,7 @@ export default function CreateOutcomings() {
     }
   };
 
-  const handleInputChange = (name: string, event: React.ChangeEvent<{ value: any }>) => {
+  const handleInputChange = (name: string, event: React.ChangeEvent<{ value: string }>) => {
     if (name === "assumed") {
       setFinalData({
         ...finalData,
@@ -258,7 +256,6 @@ export default function CreateOutcomings() {
       return;
     }
     if (name === "estimated_time") {
-      console.log(event.target.value);
       setFinalData({
         ...finalData,
         estimated_time: +event.target.value,
@@ -273,10 +270,8 @@ export default function CreateOutcomings() {
 
   const getKeywords = (keywords: string[] | undefined) => {
     if (!keywords) return;
-    keywords.map((item: any) => item);
+    keywords.map((item: string) => item);
   };
-
-  console.log(finalData);
 
   return (
     <Box component="form" className={classes.outcomings_container}>

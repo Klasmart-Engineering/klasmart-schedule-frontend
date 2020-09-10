@@ -64,19 +64,18 @@ export const save = createAsyncThunk<LearningOutcomes, CreateLearningOutComesReq
   }
 );
 
-type ResultUpdateOutcome = ReturnType<typeof api.learningOutcomes.updateLearningOutcomes>;
+export type ResultUpdateOutcome = ReturnType<typeof api.learningOutcomes.updateLearningOutcomes>;
 type ParamsUpdateOutcome = {
-  id: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[0];
-  data: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[1];
+  outcome_id: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[0];
+  value: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[1];
 };
-export const updateOutcome = createAsyncThunk<any, any>("outcome/update", ({ outcome_id, value }) => {
+export const updateOutcome = createAsyncThunk<ResultUpdateOutcome, ParamsUpdateOutcome>("outcome/update", ({ outcome_id, value }) => {
   return api.learningOutcomes.updateLearningOutcomes(outcome_id, value);
 });
 
 export const publish = createAsyncThunk<LearningOutcomes, LearningOutcomes["outcome_id"], { state: RootState }>(
   "outcome/publish",
   (id, { getState }) => {
-    // return id
     const {
       outcome: {
         outcomeDetail: { publish_scope },
