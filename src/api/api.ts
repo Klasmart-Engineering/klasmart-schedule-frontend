@@ -1385,7 +1385,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
             title?: string;
             subject?: { id?: string; name?: string };
             program?: { id?: string; name?: string };
-            teacher?: { id?: string; name?: string };
+            teachers?: { id?: string; name?: string }[];
             class_end_time?: number;
             complete_time?: number;
             status?: "in_progress" | "complete";
@@ -1423,7 +1423,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
           class_id?: string;
           attendances?: { id?: string; name?: string }[];
           subject?: { id?: string; name?: string };
-          teacher?: { id?: string; name?: string };
+          teachers?: { id?: string; name?: string }[];
           class_end_time?: number;
           class_length?: number;
           number_of_activities?: number;

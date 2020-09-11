@@ -17,6 +17,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment, useCallback, useState } from "react";
+import { GetAssessmentResult } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 
@@ -89,10 +90,11 @@ interface AssessmentHeaderProps {
   name: string;
   onBack: ButtonProps["onClick"];
   onSave: LButtonProps["onClick"];
-  onComplete: LButtonProps["onClick"];
+  onComplete: Function;
+  assessmentDetail: GetAssessmentResult;
 }
 export function AssessmentHeader(props: AssessmentHeaderProps) {
-  const { name, onComplete, onSave, onBack } = props;
+  const { name, onComplete, onSave, onBack, assessmentDetail } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -103,6 +105,10 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
   const handleOpen = useCallback(() => {
     setOpen(true);
   }, []);
+  const handleOk = useCallback(() => {
+    setOpen(false);
+    onComplete();
+  }, [onComplete]);
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -119,12 +125,16 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onBack}>
             Cancel
           </Button>
-          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
-            Save
-          </LButton>
-          <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleOpen as any}>
-            Compelete
-          </LButton>
+          {assessmentDetail.status === "in_progress" && (
+            <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
+              Save
+            </LButton>
+          )}
+          {assessmentDetail.status === "in_progress" && (
+            <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleOpen as any}>
+              Compelete
+            </Button>
+          )}
         </Hidden>
       </Box>
       <Hidden smDown>
@@ -139,12 +149,16 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onBack}>
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave}>
-            <Save fontSize="small" />
-          </LButton>
-          <LButton as={IconButton} className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleOpen as any}>
-            <Check fontSize="small" />
-          </LButton>
+          {assessmentDetail.status === "in_progress" && (
+            <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave} replace>
+              <Save fontSize="small" />
+            </LButton>
+          )}
+          {assessmentDetail.status === "in_progress" && (
+            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleOpen as any}>
+              <Check fontSize="small" />
+            </IconButton>
+          )}
         </Box>
       </Hidden>
       <Dialog open={open} onClose={handleCancel}>
@@ -153,7 +167,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <Button autoFocus onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={onComplete} color="primary">
+          <Button onClick={handleOk} color="primary">
             Ok
           </Button>
         </DialogActions>

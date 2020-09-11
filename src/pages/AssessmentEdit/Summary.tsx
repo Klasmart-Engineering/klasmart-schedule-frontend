@@ -202,7 +202,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="teacher.name"
-            value={assessmentDetail?.teacher?.name || ""}
+            value={assessmentDetail.teachers?.map((v) => v.name)}
             className={css.fieldset}
             label="Teacher"
           />

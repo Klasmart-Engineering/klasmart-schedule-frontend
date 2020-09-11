@@ -26,10 +26,7 @@ const initialState: AssessmentState = {
       id: "",
       name: "",
     },
-    teacher: {
-      id: "",
-      name: "",
-    },
+    teachers: [],
     class_end_time: 0,
     class_length: 0,
     number_of_activities: 0,
@@ -42,12 +39,10 @@ interface IupdateAssessmentParams {
   id: Parameters<typeof api.assessments.updateAssessment>[0];
   data: Parameters<typeof api.assessments.updateAssessment>[1];
 }
-export const updateAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.updateAssessment>, IupdateAssessmentParams>(
-  "assessment/updateAssessment",
-  async ({ id, data }) => {
-    await api.assessments.updateAssessment(id, data);
-  }
-);
+export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams>("assessment/updateAssessment", async ({ id, data }) => {
+  await api.assessments.updateAssessment(id, data);
+  return id;
+});
 export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string } & LoadingMetaPayload>(
   "assessment/getAssessment",
   async ({ id }) => {

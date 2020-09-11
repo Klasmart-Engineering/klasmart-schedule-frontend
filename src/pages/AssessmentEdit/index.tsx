@@ -1,3 +1,4 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -8,7 +9,7 @@ import { UpdateAssessmentRequestData } from "../../api/type";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AssessmentState, getAssessment, updateAssessment } from "../../reducers/assessment";
+import { AssessmentState, AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessment";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
 import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
@@ -19,8 +20,9 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id");
+  const editindex: number = Number(query.get("editindex") || 0);
   const filterOutcomes = query.get("filterOutcomes") || undefined;
-  return { id, filterOutcomes };
+  return { id, filterOutcomes, editindex };
 };
 const filterOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
   if (value === "all" || value === null) return list;
@@ -34,7 +36,7 @@ const filterOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_a
 export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { filterOutcomes = "all", id } = useQuery();
+  const { filterOutcomes = "all", id, editindex } = useQuery();
   const assessmentDetail = useSelector<RootState, RootState["assessment"]["assessmentDetail"]>(
     (state) => state.assessment.assessmentDetail
   );
@@ -48,23 +50,37 @@ export function AssessmentsEdit() {
   ]);
   const handleAssessmentSave = useMemo(
     () =>
-      handleSubmit((value) => {
+      handleSubmit(async (value) => {
         if (id) {
           const data: UpdateAssessmentRequestData = { ...value, action: "save" };
-          dispatch(updateAssessment({ id, data }));
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof updateAssessment>
+          >;
+          if (payload) {
+            history.replace({
+              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+            });
+          }
         }
       }),
-    [handleSubmit, id, dispatch]
+    [handleSubmit, id, dispatch, history, editindex]
   );
   const handleAssessmentComplete = useMemo(
     () =>
-      handleSubmit((value) => {
+      handleSubmit(async (value) => {
         if (id) {
           const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
-          dispatch(updateAssessment({ id, data }));
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof updateAssessment>
+          >;
+          if (payload) {
+            history.replace({
+              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+            });
+          }
         }
       }),
-    [handleSubmit, id, dispatch]
+    [handleSubmit, id, dispatch, history, editindex]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -81,7 +97,7 @@ export function AssessmentsEdit() {
     if (id) {
       dispatch(getAssessment({ id, metaLoading: true }));
     }
-  }, [filterOutcomes, dispatch, id]);
+  }, [filterOutcomes, dispatch, id, editindex]);
   useEffect(() => {
     if (assessmentDetail.id) {
       reset(ModelAssessment.toRequest(assessmentDetail));
@@ -105,6 +121,7 @@ export function AssessmentsEdit() {
         onSave={handleAssessmentSave}
         onBack={handleGoBack}
         onComplete={handleAssessmentComplete}
+        assessmentDetail={assessmentDetail}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} selectedAttendence={attendances} />

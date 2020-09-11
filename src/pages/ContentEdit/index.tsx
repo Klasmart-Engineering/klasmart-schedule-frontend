@@ -71,7 +71,6 @@ export default function ContentEdit() {
     reset,
     handleSubmit,
     control,
-    watch,
     getValues,
     formState: { isDirty },
   } = formMethods;
@@ -187,8 +186,6 @@ export default function ContentEdit() {
   useEffect(() => {
     reset(ModelContentDetailForm.decode(contentDetail));
   }, [contentDetail, lesson, reset]);
-  watch();
-
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
@@ -209,7 +206,6 @@ export default function ContentEdit() {
         name="outcome_entities"
         defaultValue={contentDetail.outcome_entities}
         control={control}
-        comingsoon
         list={outcomeList}
         onSearch={handleSearchOutcomes}
         onCheck={handleCheckAssumed}
