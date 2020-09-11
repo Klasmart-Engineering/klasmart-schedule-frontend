@@ -18,7 +18,7 @@ import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
-import React from "react";
+import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { LearningOutcomes } from "../../api/api";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
@@ -216,21 +216,21 @@ export interface OutcomesProps {
 
 export default function Outcomes(props: OutcomesProps) {
   const css = useStyles();
-  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange } = props;
+  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange, amountPerPage = 10, onChangePage, total } = props;
   const { lesson } = useParams();
-  // const handChangePage = useCallback(
-  //   (event: object, page: number) => {
-  //     onChangePage(page);
-  //   },
-  //   [onChangePage]
-  // );
+  const handChangePage = useCallback(
+    (event: object, page: number) => {
+      onChangePage(page);
+    },
+    [onChangePage]
+  );
 
   const pagination = (
     <Pagination
       className={css.pagination}
       classes={{ ul: css.paginationUl }}
-      // onChange={handChangePage}
-      // count={Math.ceil(total / amountPerPage)}
+      onChange={handChangePage}
+      count={Math.ceil(total / amountPerPage)}
       color="primary"
     />
   );

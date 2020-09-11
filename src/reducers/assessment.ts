@@ -1,5 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -47,11 +48,10 @@ export const updateAssessment = createAsyncThunk<AsyncReturnType<typeof api.asse
     await api.assessments.updateAssessment(id, data);
   }
 );
-export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string }>(
+export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string } & LoadingMetaPayload>(
   "assessment/getAssessment",
   async ({ id }) => {
     return await api.assessments.getAssessment(id);
-    // return mockAssessmentDetail as any;
   }
 );
 

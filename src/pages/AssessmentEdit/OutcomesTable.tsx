@@ -16,6 +16,7 @@ import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { AssessmentState } from "../../reducers/assessment";
 
 const useStyles = makeStyles({
@@ -49,16 +50,18 @@ interface AssessActionProps {
   attendenceList: AssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
   index: number;
+  formValue: UpdateAssessmentRequestDataOmitAction;
 }
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
   const {
-    outcome: { outcome_id, attendance_ids, skip },
+    outcome: { outcome_id, attendance_ids },
     formMethods: { control, setValue },
     index,
     attendenceList,
+    formValue,
   } = props;
-
+  const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
   const allValue = useMemo(() => attendenceList?.map((item) => item.id as string), [attendenceList]);
   const handleChangeSkip: CheckboxProps["onChange"] = (e) => {
     const skip = e.target.checked;
@@ -93,10 +96,6 @@ const AssessAction = (props: AssessActionProps) => {
                   label="Award All"
                   disabled={skip}
                 />
-                {/* <FormControlLabel
-                  control={<Checkbox onChange={handleChangeSkip} defaultChecked={skip || false} color="primary" />}
-                  label="Skip"
-                /> */}
                 <Controller
                   name={`outcome_attendance_maps[${index}].skip`}
                   defaultValue={skip || false}
@@ -147,10 +146,11 @@ interface OutcomesTableProps {
   outcomesList: AssessmentState["assessmentDetail"]["outcome_attendance_maps"];
   attendanceList: AssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  formValue: UpdateAssessmentRequestDataOmitAction;
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods } = props;
+  const { outcomesList, attendanceList, formMethods, formValue } = props;
   const rows =
     outcomesList &&
     outcomesList.map((outcome, index) => (
@@ -162,7 +162,13 @@ export function OutcomesTable(props: OutcomesTableProps) {
           {outcome.assumed ? "Yes" : ""}
         </TableCell>
         <TableCell>
-          <AssessAction outcome={outcome} attendenceList={attendanceList} formMethods={formMethods} index={index}></AssessAction>
+          <AssessAction
+            outcome={outcome}
+            attendenceList={attendanceList}
+            formMethods={formMethods}
+            index={index}
+            formValue={formValue}
+          ></AssessAction>
         </TableCell>
       </TableRow>
     ));
