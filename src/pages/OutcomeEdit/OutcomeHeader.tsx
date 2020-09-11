@@ -103,6 +103,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     handleApprove,
     publish_status,
     finalData,
+    showPublish,
   } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -136,9 +137,11 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
             Save
           </Button>
-          <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
-            Publish
-          </Button>
+          {(showPublish || finalData.publish_status === "draft") && (
+            <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
+              Publish
+            </Button>
+          )}
           {outcome_id && publish_status === "pending" && (
             <>
               <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>

@@ -18,6 +18,7 @@ import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/ico
 import clsx from "clsx";
 import React, { Fragment, useCallback, useState } from "react";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
+import { LButton, LButtonProps } from "../../components/LButton";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -87,8 +88,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface AssessmentHeaderProps {
   name: string;
   onBack: ButtonProps["onClick"];
-  onSave: ButtonProps["onClick"];
-  onComplete: ButtonProps["onClick"];
+  onSave: LButtonProps["onClick"];
+  onComplete: LButtonProps["onClick"];
 }
 export function AssessmentHeader(props: AssessmentHeaderProps) {
   const { name, onComplete, onSave, onBack } = props;
@@ -118,12 +119,12 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onBack}>
             Cancel
           </Button>
-          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
+          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
             Save
-          </Button>
-          <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleOpen}>
+          </LButton>
+          <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleOpen as any}>
             Compelete
-          </Button>
+          </LButton>
         </Hidden>
       </Box>
       <Hidden smDown>
@@ -138,12 +139,12 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onBack}>
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave}>
+          <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave}>
             <Save fontSize="small" />
-          </IconButton>
-          <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleOpen}>
+          </LButton>
+          <LButton as={IconButton} className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleOpen as any}>
             <Check fontSize="small" />
-          </IconButton>
+          </LButton>
         </Box>
       </Hidden>
       <Dialog open={open} onClose={handleCancel}>

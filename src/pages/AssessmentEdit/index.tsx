@@ -41,7 +41,6 @@ export function AssessmentsEdit() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;
   const formValue = watch();
-  debugger;
   const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   const filteredOutcomelist = useMemo(() => filterOutcomeslist(assessmentDetail.outcome_attendance_maps, filterOutcomes), [
     assessmentDetail,
@@ -80,7 +79,7 @@ export function AssessmentsEdit() {
   );
   useEffect(() => {
     if (id) {
-      dispatch(getAssessment({ id }));
+      dispatch(getAssessment({ id, metaLoading: true }));
     }
   }, [filterOutcomes, dispatch, id]);
   useEffect(() => {
@@ -92,7 +91,7 @@ export function AssessmentsEdit() {
     <>
       <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
       {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-        <OutcomesTable outcomesList={filteredOutcomelist} attendanceList={attendances} formMethods={formMethods} />
+        <OutcomesTable outcomesList={filteredOutcomelist} attendanceList={attendances} formMethods={formMethods} formValue={formValue} />
       ) : (
         <NoOutComesList />
       )}

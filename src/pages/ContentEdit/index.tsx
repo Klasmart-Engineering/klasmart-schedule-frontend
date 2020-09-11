@@ -5,11 +5,12 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { ContentType } from "../../api/type";
+import { ContentType, OutcomePublishStatus } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save } from "../../reducers/content";
+import { actOutcomeList } from "../../reducers/outcome";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
@@ -158,10 +159,27 @@ export default function ContentEdit() {
     setAssetsFileType(type);
   };
 
-  const handleChangePage = (page: number) => {
-    setPage(page);
-    dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchMedia }));
-  };
+  const handleChangePage = useMemo(
+    () => (page: number) => {
+      setPage(page);
+      dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchMedia }));
+    },
+    [dispatch, lesson, searchMedia]
+  );
+  const handleChangePageOutCome = useMemo(
+    () => (page: number) => {
+      setPage(page);
+      dispatch(
+        actOutcomeList({
+          page,
+          publish_status: OutcomePublishStatus.published,
+          search_key: searchOutcome,
+          assumed: assumed === "true" ? 1 : -1,
+        })
+      );
+    },
+    [assumed, dispatch, searchOutcome]
+  );
 
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true, searchOutcome, assumed }));
@@ -198,7 +216,7 @@ export default function ContentEdit() {
         searchName={searchOutcome}
         assumed={assumed}
         total={OutcomesListTotal}
-        onChangePage={() => {}}
+        onChangePage={handleChangePageOutCome}
       />
       <MediaAssets
         list={mediaList}

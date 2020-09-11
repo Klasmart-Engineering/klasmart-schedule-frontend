@@ -46,16 +46,7 @@ interface OutcomeFormProps {
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
-  const {
-    mockOptions,
-    outcome_id,
-    finalData,
-    handleInputChange,
-    handleMultipleChange,
-    handleKeywordsChange,
-    getKeywords,
-    showCode,
-  } = props;
+  const { mockOptions, outcome_id, finalData, handleInputChange, handleMultipleChange, handleKeywordsChange, showCode } = props;
   const classes = useStyles();
 
   const getItems = (list: MockOptionsItem[]) =>
@@ -105,6 +96,8 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 fullWidth
                 label="Learning outcome Name"
                 onChange={(event) => handleInputChange("outcome_name", event)}
+                required
+                error={!finalData.outcome_name}
               />
             </Grid>
             {(outcome_id || showCode) && (
@@ -241,7 +234,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <TextField value={getKeywords(finalData.keywords)} onChange={handleKeywordsChange} size="small" fullWidth label="Keywords" />
+              <TextField
+                value={finalData.keywords.map((item: any) => item)}
+                onChange={handleKeywordsChange}
+                size="small"
+                fullWidth
+                label="Keywords"
+              />
             </Grid>
           </Grid>
           <Grid container justify="space-between" className={classes.marginItem}>

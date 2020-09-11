@@ -6,7 +6,7 @@ import ModalBox from "../../components/ModalBox";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { approve, deleteOutcome, getOutcomeDetail, publish, reject, save, updateOutcome } from "../../reducers/outcomes";
+import { approve, deleteOutcome, getOutcomeDetail, lock, publish, reject, save, updateOutcome } from "../../reducers/outcomes";
 import { OutcomeForm } from "./OutcomeForm";
 import OutcomeHeader from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
@@ -60,16 +60,38 @@ export default function CreateOutcomings() {
     setFinalData(outcomeDetail);
   }, [outcomeDetail]);
 
+  // React.useEffect(() => {
+  //   if(outcome_id && finalData.publish_status === 'published') {
+  //     dispatch(lock(outcome_id))
+  //   }
+  // }, [dispatch, finalData.publish_status, outcome_id])
+
   const handleSave = async () => {
+    if (!finalData.outcome_name) return;
     const data = {
       ...finalData,
       ...mulSelect,
     };
     if (outcome_id) {
-      await dispatch(updateOutcome({ outcome_id, value: data }));
-      dispatch(actSuccess("Update Success"));
-      setShowPublish(true);
-      return;
+      if (data.publish_status === "published") {
+        const result: any = await dispatch(lock(data.outcome_id as string));
+        console.log(result);
+        if (result.payload.outcome_id) {
+          const afterLock: any = await dispatch(updateOutcome({ outcome_id: result.payload.outcome_id, value: data }));
+          if (afterLock.payload === "ok") {
+            dispatch(actSuccess("Update Success"));
+            setShowPublish(true);
+            history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}`);
+          }
+        }
+      } else {
+        const result: any = await dispatch(updateOutcome({ outcome_id, value: data }));
+        if (result.payload === "ok") {
+          dispatch(actSuccess("Update Success"));
+          setShowPublish(true);
+        }
+        return;
+      }
     } else {
       const result: any = await dispatch(save(data));
       setShoeCode(true);
@@ -88,6 +110,7 @@ export default function CreateOutcomings() {
   const [enableCustomization, setEnableCustomization] = React.useState(false);
 
   const handleReject = async (reason: string) => {
+    if (!reason) return;
     const result: any = await dispatch(reject({ id: outcome_id, reject_reason: reason }));
     if (result.payload === "ok") {
       dispatch(actSuccess("Reject Success"));
@@ -175,10 +198,6 @@ export default function CreateOutcomings() {
           program_name: item,
         })),
       });
-      setMulselect({
-        ...mulSelect,
-        program: event.target.value.filter((item: string) => item),
-      });
     }
     if (name === "subject") {
       setFinalData({
@@ -187,10 +206,6 @@ export default function CreateOutcomings() {
           subject_id: item,
           subject_name: item,
         })),
-      });
-      setMulselect({
-        ...mulSelect,
-        subject: aaa,
       });
     }
     if (name === "developmental") {
@@ -201,10 +216,6 @@ export default function CreateOutcomings() {
           developmental_name: item,
         })),
       });
-      setMulselect({
-        ...mulSelect,
-        developmental: aaa,
-      });
     }
     if (name === "skills") {
       setFinalData({
@@ -213,10 +224,6 @@ export default function CreateOutcomings() {
           skill_id: item,
           skill_name: item,
         })),
-      });
-      setMulselect({
-        ...mulSelect,
-        skills: aaa,
       });
     }
     if (name === "age") {
@@ -227,10 +234,6 @@ export default function CreateOutcomings() {
           age_name: item,
         })),
       });
-      setMulselect({
-        ...mulSelect,
-        age: aaa,
-      });
     }
     if (name === "grade") {
       setFinalData({
@@ -240,11 +243,11 @@ export default function CreateOutcomings() {
           grade_name: item,
         })),
       });
-      setMulselect({
-        ...mulSelect,
-        grade: aaa,
-      });
     }
+    setMulselect({
+      ...mulSelect,
+      [name]: aaa,
+    });
   };
 
   const handleInputChange = (name: string, event: React.ChangeEvent<{ value: string }>) => {
@@ -269,8 +272,9 @@ export default function CreateOutcomings() {
   };
 
   const getKeywords = (keywords: string[] | undefined) => {
-    if (!keywords) return;
-    keywords.map((item: string) => item);
+    if (!keywords || !keywords.length) return;
+    console.log(keywords);
+    return keywords.map((item: string) => item);
   };
 
   return (
