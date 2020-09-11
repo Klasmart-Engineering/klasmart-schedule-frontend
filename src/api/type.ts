@@ -74,7 +74,7 @@ export type ListAssessmentResultItem = NonNullable<ListAssessmentResult["items"]
 export enum Assets {
   assets_type = "3",
   assets_name = "Assets",
-  not_assets_type = "1",
+  not_assets_type = "1,2",
 }
 export type GetAssessmentRequest = Parameters<typeof api.assessments.getAssessment>[0];
 export type GetAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
