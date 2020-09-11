@@ -95,7 +95,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const { value, onChange, onCreateContent } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, content_type: Assets.not_assets_type, order_by: OrderBy._created_at, page: 1 });
+    onChange({ publish_status, content_type: Assets.not_assets_type as any, order_by: OrderBy._created_at, page: 1 });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
     onChange({ content_type, order_by: OrderBy._created_at, page: 1 });
   return (

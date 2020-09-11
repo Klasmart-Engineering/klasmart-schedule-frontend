@@ -21,14 +21,10 @@ export const apiResourcePathById = (resource_id?: string) => {
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
 
-// const extraApi = new Api({ baseUrl: '' });
+export const apiGetH5pResourceById = (id: string) => {
+  return `${process.env.REACT_APP_BASE_API}/h5p-www/play/${id}`;
+};
 
-// /**
-//  * @tags extra
-//  * @name uploadResource
-//  * @request PUT:{resourcePutUrl}
-//  * @description upload resource to aws s3
-//  */
-// export const apiUploadResource = (resourcePutUrl: string, params?: RequestParams) => {
-//   return extraApi.request<any, any>(resourcePutUrl, "PUT", params);
-// }
+export const apiCreateH5pResource = () => {
+  return `${process.env.REACT_APP_BASE_API}/h5p-www/new`;
+};
