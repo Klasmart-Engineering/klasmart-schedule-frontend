@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Assets, ContentType, OrderBy } from "../../api/type";
+import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
@@ -105,7 +105,7 @@ export default function MyContentList() {
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._created_at }) });
   const handleCreateContent = () => {
-    if (condition.content_type === Assets.assets_type) {
+    if (condition.content_type === SearchContentsRequestContentType.assets) {
       history.push(`/library/content-edit/lesson/assets/tab/details/rightside/assetsEdit`);
     } else {
       history.push({ pathname: ContentEdit.routeRedirectDefault });
@@ -158,4 +158,4 @@ export default function MyContentList() {
 }
 
 MyContentList.routeBasePath = "/library/my-content-list";
-MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._created_at}&content_type=${Assets.not_assets_type}`;
+MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._created_at}&content_type=${SearchContentsRequestContentType.materialandplan}`;

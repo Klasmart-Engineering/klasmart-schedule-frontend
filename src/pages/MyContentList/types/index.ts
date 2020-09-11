@@ -19,3 +19,8 @@ export enum ContentListFormKey {
 export interface ContentListForm {
   [ContentListFormKey.CHECKED_CONTENT_IDS]: NonNullable<ContentIDListRequest["id"]>;
 }
+
+export enum Assets {
+  assets_type = "3",
+  assets_name = "Assets",
+}

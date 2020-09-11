@@ -8,9 +8,9 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Assets, Author, PublishStatus } from "../../api/type";
+import { Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { QueryConditionBaseProps } from "./types";
+import { Assets, QueryConditionBaseProps } from "./types";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 

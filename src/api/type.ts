@@ -71,11 +71,6 @@ export type ListAssessmentRequest = Parameters<typeof api.assessments.listAssess
 export type ListAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.listAssessment>>;
 export type ListAssessmentResultItem = NonNullable<ListAssessmentResult["items"]>[0];
 
-export enum Assets {
-  assets_type = "3",
-  assets_name = "Assets",
-  not_assets_type = "1,2",
-}
 export type GetAssessmentRequest = Parameters<typeof api.assessments.getAssessment>[0];
 export type GetAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
 export type GetAssessmentResultAttendance = NonNullable<GetAssessmentResult["attendances"]>[0];
@@ -84,3 +79,10 @@ export type GetAssessmentResultOutcomeAttendanceMap = NonNullable<GetAssessmentR
 export type UpdateAssessmentRequestId = Parameters<typeof api.assessments.updateAssessment>[0];
 export type UpdateAssessmentRequestData = Parameters<typeof api.assessments.updateAssessment>[1];
 export type UpdateAssessmentRequestDatAattendanceIds = NonNullable<UpdateAssessmentRequestData>["attendance_ids"];
+
+export enum SearchContentsRequestContentType {
+  material = "1",
+  plan = "2",
+  assets = "3",
+  materialandplan = "1,2",
+}

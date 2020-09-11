@@ -21,12 +21,12 @@ import { Pagination } from "@material-ui/lab";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { Content } from "../../api/api";
-import { Assets, PublishStatus } from "../../api/type";
+import { PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { Thumbnail } from "../../components/Thumbnail";
-import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
+import { Assets, ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
 const useStyles = makeStyles((theme) =>

@@ -2,7 +2,7 @@ import { Box, Button, fade, makeStyles } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import clsx from "clsx";
 import React from "react";
-import { Assets } from "../../api/type";
+import { Assets } from "../MyContentList/types";
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
   backgroundColor: paletteColor.main,
