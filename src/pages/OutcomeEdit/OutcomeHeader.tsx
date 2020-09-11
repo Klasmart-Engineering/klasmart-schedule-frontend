@@ -1,6 +1,6 @@
 import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { ArrowBack, Cancel, CancelOutlined, Check, Clear, Delete, Publish, Save } from "@material-ui/icons";
+import { ArrowBack, Cancel, CancelOutlined, Check, Clear, ClearSharp, Delete, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
@@ -110,7 +110,6 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
   const sm = useMediaQuery(breakpoints.down("sm"));
   // const size = sm ? "small" : "medium";
   // const radioTypography = sm ? "subtitle2" : "h5";
-  const handleClick = () => {};
   const goBack = () => {
     history.go(-1);
   };
@@ -164,15 +163,30 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
+          {finalData.outcome_id && (
+            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+              <Delete fontSize="small" />
+            </Button>
+          )}
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
             <CancelOutlined fontSize="small" />
           </IconButton>
           <Button className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
             <Save fontSize="small" />
           </Button>
-          <Button className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleClick}>
+          <Button className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
             <Publish fontSize="small" />
           </Button>
+          {outcome_id && publish_status === "pending" && (
+            <>
+              <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
+                <ClearSharp fontSize="small" />
+              </Button>
+              <Button className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
+                <Check fontSize="small" />
+              </Button>
+            </>
+          )}
         </Box>
       </Hidden>
     </Fragment>
