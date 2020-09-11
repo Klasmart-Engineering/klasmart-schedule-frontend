@@ -130,8 +130,8 @@ export default function MyContentList() {
         onChangeAssets={handleChangeAssets}
         onCreateContent={handleCreateContent}
       />
-      <SecondSearchHeader value={condition} onChange={handleChange} />
-      <SecondSearchHeaderMb value={condition} onChange={handleChange} />
+      <SecondSearchHeader value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
+      <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
       <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
       {contentsList && contentsList.length > 0 ? (

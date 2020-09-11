@@ -1,7 +1,8 @@
-import { Box, Button, fade, makeStyles } from "@material-ui/core";
+import { Box, fade, makeStyles } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import clsx from "clsx";
 import React from "react";
+import { LButton } from "../../components/LButton";
 import { Assets } from "../MyContentList/types";
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -46,37 +47,37 @@ export function OperationBtn(props: ActionProps) {
   return (
     <Box display="flex" justifyContent="flex-end">
       {publish_status === "published" && (
-        <Button variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+        <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
           Remove
-        </Button>
+        </LButton>
       )}
       {(publish_status === "draft" || publish_status === "pending" || publish_status === "rejected" || publish_status === "archive") && (
-        <Button variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+        <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
           Delete
-        </Button>
+        </LButton>
       )}
       {(publish_status === "rejected" || publish_status === "pending") && (
-        <Button variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
+        <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
           Reject
-        </Button>
+        </LButton>
       )}
       {(publish_status === "published" ||
         publish_status === "draft" ||
         publish_status === "rejected" ||
         content_type_name === Assets.assets_name) && (
-        <Button variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+        <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
           Edit
-        </Button>
+        </LButton>
       )}
       {publish_status === "pending" && (
-        <Button variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
+        <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
           Approve
-        </Button>
+        </LButton>
       )}
       {publish_status === "archive" && (
-        <Button variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
+        <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
           Republish
-        </Button>
+        </LButton>
       )}
     </Box>
   );

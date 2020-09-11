@@ -54,7 +54,7 @@ export type RejectReasonRequest = { reject_reason?: string };
 export type LockContentResponse = { id?: string };
 
 export type ContentCondition = {
-  content_type?: "1" | "2" | "3";
+  content_type?: string;
   scope?: string;
   publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
   author?: string;
@@ -670,7 +670,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchContents: (
       query?: {
         name?: string | null;
-        content_type?: "1" | "2" | "3";
+        content_type?: string | null;
         publish_status?: string | null;
         scope?: string | null;
         author?: string | null;
@@ -760,6 +760,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Delete content by content_id
      */
     deleteContent: (content_id: string, params?: RequestParams) => this.request<any, any>(`/contents/${content_id}`, "DELETE", params),
+
+    /**
+     * @tags content
+     * @name getLiveToken
+     * @summary get live token
+     * @request GET:/contents/{content_id}/live/token
+     * @secure
+     * @description get live token
+     */
+    getLiveToken: (content_id: string, params?: RequestParams) =>
+      this.request<LiveToken, any>(`/contents/${content_id}/live/token`, "GET", params, null, BodyType.Json, true),
   };
   contentsBulk = {
     /**
@@ -790,7 +801,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchPrivateContents: (
       query?: {
         name?: string | null;
-        content_type?: "1" | "2" | "3";
+        content_type?: string | null;
         publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         scope?: string | null;
         author?: string | null;
@@ -812,7 +823,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchPendingContents: (
       query?: {
         name?: string | null;
-        content_type?: "1" | "2" | "3";
+        content_type?: string | null;
         publish_status?: "draft" | "pending" | "published" | "rejected" | "archive";
         scope?: string | null;
         author?: string | null;
@@ -916,6 +927,18 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteAsset: (asset_id: string, params?: RequestParams) =>
       this.request<any, any>(`/assets/${asset_id}`, "DELETE", params, null, BodyType.Json, true),
+  };
+  crypto = {
+    /**
+     * @tags crypto
+     * @name signH5pURL
+     * @summary SignH5pURL
+     * @request GET:/crypto/h5p/signature
+     * @secure
+     * @description Sign a h5p url
+     */
+    signH5PUrl: (query: { url: string }, params?: RequestParams) =>
+      this.request<{ url?: string }, any>(`/crypto/h5p/signature${this.addQueryParams(query)}`, "GET", params, null, BodyType.Json, true),
   };
   categories = {
     /**
@@ -1374,25 +1397,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     /**
      * @tags assessments
      * @name addAssessment
-     * @summary add assessment
+     * @summary assessment callback
      * @request POST:/assessments
      * @secure
-     * @description add assessment
+     * @description assessment callback
      */
     addAssessment: (
-      data: {
-        schedule_id?: string;
-        class_id?: string;
-        class_name?: string;
-        lesson_name?: string;
-        attendance_ids?: string[];
-        program_id?: string;
-        subject_id?: string;
-        teacher_id?: string;
-        class_length?: number;
-        class_end_time?: number;
-        complete_time?: number;
-      },
+      data: { schedule_id?: string; attendance_ids?: string[]; class_length?: number; class_end_time?: number },
       params?: RequestParams
     ) => this.request<LockContentResponse, any>(`/assessments`, "POST", params, data, BodyType.Json, true),
 
@@ -1418,6 +1429,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
           number_of_activities?: number;
           number_of_outcomes?: number;
           complete_time?: number;
+          status?: "in_progress" | "complete";
           outcome_attendance_maps?: {
             outcome_id?: string;
             outcome_name?: string;

@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
+  const { value, onChange, onCreateContent } = props;
   const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClickSearch = () => {
@@ -115,7 +115,8 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 variant="contained"
                 color="primary"
                 className={classes.createBtn}
-                href="/library/content-edit/lesson/material/tab/details/rightside/contentH5p"
+                onClick={onCreateContent}
+                // href="/library/content-edit/lesson/material/tab/details/rightside/contentH5p"
               >
                 Create +
               </Button>
@@ -158,7 +159,9 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   );
 }
 
-export interface SecondSearchHeaderProps extends QueryConditionBaseProps {}
+export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
+  onCreateContent: () => any;
+}
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { control, reset, getValues } = useForm();

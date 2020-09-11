@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { Author, OrderBy, PublishStatus } from "../../api/type";
+import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Assets, QueryCondition, QueryConditionBaseProps } from "./types";
 
@@ -95,7 +95,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const { value, onChange, onCreateContent } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
+    onChange({ publish_status, content_type: SearchContentsRequestContentType.materialandplan, order_by: OrderBy._created_at, page: 1 });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
     onChange({ content_type, order_by: OrderBy._created_at, page: 1 });
   return (

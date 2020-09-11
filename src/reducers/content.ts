@@ -350,6 +350,7 @@ const { actions, reducer } = createSlice({
     },
     [publishContent.rejected.type]: (state, { error }: any) => {
       // alert("publish failed");
+      throw error;
     },
     [bulkDeleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("bulk delete success");
@@ -370,12 +371,14 @@ const { actions, reducer } = createSlice({
     },
     [approveContent.rejected.type]: (state, { error }: any) => {
       // alert("approve failed");
+      throw error;
     },
     [rejectContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("reject success");
     },
     [rejectContent.rejected.type]: (state, { error }: any) => {
       // alert("reject failed");
+      throw error;
     },
 
     [lockContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {

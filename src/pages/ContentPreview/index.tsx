@@ -21,7 +21,7 @@ import {
 } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { Detail } from "./Detail";
-import { ActionProps, OperationBtn } from "./OperationBtn";
+import { OperationBtn } from "./OperationBtn";
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     width: "100%",
@@ -102,7 +102,7 @@ export default function ContentPreview(props: Content) {
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-  const handleDelete: ActionProps["onDelete"] = async () => {
+  const handleDelete = async () => {
     await dispatch(deleteContent(id));
     history.go(-1);
   };
@@ -122,7 +122,7 @@ export default function ContentPreview(props: Content) {
     }
   };
 
-  const handleEdit: ActionProps["onDelete"] = async () => {
+  const handleEdit = async () => {
     const lesson =
       contentPreview.content_type_name === "Material" ? "material" : contentPreview.content_type_name === "Plan" ? "plan" : "material";
     const rightSide =
