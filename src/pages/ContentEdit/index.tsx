@@ -108,7 +108,7 @@ export default function ContentEdit() {
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value: ContentDetailForm) => {
-        const { outcome_entities,  ...restValues } = value;
+        const { outcome_entities, ...restValues } = value;
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
         const input = { ...restValues, content_type, outcomes };
         if (lesson === "assets") Object.assign(input, { source: value.data.toString() });
@@ -199,7 +199,6 @@ export default function ContentEdit() {
         assumed={assumed}
         total={OutcomesListTotal}
         onChangePage={() => {}}
-        outcomesEntities={contentDetail.outcome_entities}
       />
       <MediaAssets
         list={mediaList}

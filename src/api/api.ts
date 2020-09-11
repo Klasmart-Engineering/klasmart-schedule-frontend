@@ -484,6 +484,33 @@ export type CreateLearningOutComesRequest = {
   description?: string;
 };
 
+export type CreateLearningOutcomesResponse = {
+  outcome_id?: string;
+  ancestor_id?: string;
+  shortcode?: string;
+  assumed?: boolean;
+  outcome_name?: string;
+  program?: string[];
+  subject?: string[];
+  reject_reason?: string;
+  developmental?: string[];
+  skills?: string[];
+  age?: string[];
+  grade?: string[];
+  estimated_time?: number;
+  keywords?: string[];
+  source_id?: string;
+  locked_by?: string;
+  author_id?: string;
+  author_name?: string;
+  organization_id?: string;
+  organization_name?: string;
+  publish_scope?: string;
+  publish_status?: "draft" | "pending" | "published" | "rejected";
+  description?: string;
+  created_at?: number;
+};
+
 export type PublishLearningOutcomesRequest = { scope?: string };
 
 export type OutcomesIDListRequest = { outcome_ids?: string[] };
@@ -516,6 +543,14 @@ export type LearningOutcomes = {
   description?: string;
   created_at?: number;
 };
+
+/**
+ * live token
+ */
+export interface LiveToken {
+  /** live token */
+  token?: string;
+}
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
   secure?: boolean;
@@ -1088,6 +1123,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteSchedule: (schedule_id: string, query?: { repeat_edit_options?: "only_current" | "with_following" }, params?: RequestParams) =>
       this.request<any, any>(`/schedules/${schedule_id}${this.addQueryParams(query)}`, "DELETE", params, null, BodyType.Json, true),
+
+    /**
+     * @tags schedule
+     * @name getLiveToken
+     * @summary get live token
+     * @request GET:/schedules/{schedule_id}/live/token
+     * @secure
+     * @description get live token
+     */
+    getLiveToken: (schedule_id: string, params?: RequestParams) =>
+      this.request<LiveToken, any>(`/schedules/${schedule_id}/live/token`, "GET", params, null, BodyType.Json, true),
   };
   schedulesTimeView = {
     /**
@@ -1146,7 +1192,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create learning outcomes
      */
     createLearningOutcomes: (data: CreateLearningOutComesRequest, params?: RequestParams) =>
-      this.request<LearningOutcomes, any>(`/learning_outcomes`, "POST", params, data),
+      this.request<CreateLearningOutcomesResponse, any>(`/learning_outcomes`, "POST", params, data),
 
     /**
      * @tags learning_outcomes
@@ -1375,8 +1421,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
           outcome_attendance_maps?: {
             outcome_id?: string;
             outcome_name?: string;
-            skip?: boolean;
             assumed?: boolean;
+            skip?: boolean;
             attendance_ids?: string[];
           }[];
         },

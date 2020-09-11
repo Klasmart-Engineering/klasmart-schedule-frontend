@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
-import { CreateLearningOutComesRequest, LearningOutcomes } from "../api/api";
+import { CreateLearningOutComesRequest, CreateLearningOutcomesResponse, LearningOutcomes } from "../api/api";
 
 interface outcomeState {
   createOutcome: CreateLearningOutComesRequest;
@@ -57,7 +57,7 @@ const initialState: outcomeState = {
   },
 };
 
-export const save = createAsyncThunk<LearningOutcomes, CreateLearningOutComesRequest, { state: RootState }>(
+export const save = createAsyncThunk<CreateLearningOutcomesResponse, CreateLearningOutComesRequest, { state: RootState }>(
   "outcome/save",
   async (payload, { getState }) => {
     return await api.learningOutcomes.createLearningOutcomes(payload);

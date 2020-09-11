@@ -103,21 +103,19 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 interface OutcomesTableProps {
   list?: LearningOutcomes[];
   value?: LearningOutcomes[];
-  outcomesEntities?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, outcomesEntities } = props;
+  const { list, value, onChange } = props;
   const css = useStyles();
   const handleAction = (item: LearningOutcomes, type: "add" | "remove") => {
     const { outcome_id: id } = item;
     if (type === "add") {
-      if (id && value && outcomesEntities) {
+      if (id && value) {
         onChange && onChange(value.concat([item]));
       }
     } else {
-      if (id && value && outcomesEntities) {
-        // value.splice(value.indexOf(value.find((v) => v.outcome_id === id )), 1);
+      if (id && value) {
         let newValue = cloneDeep(value);
         newValue = newValue.filter((v) => v.outcome_id !== id);
         onChange && onChange(newValue);
@@ -164,7 +162,6 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 
 interface OutcomesInputProps {
   value?: LearningOutcomes[];
-  outcomesEntities?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
@@ -214,13 +211,12 @@ export interface OutcomesProps {
   onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
   onChangePage: (page: number) => any;
   value?: LearningOutcomes[];
-  outcomesEntities?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
 }
 
 export default function Outcomes(props: OutcomesProps) {
   const css = useStyles();
-  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange, outcomesEntities } = props;
+  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange } = props;
   const { lesson } = useParams();
   // const handChangePage = useCallback(
   //   (event: object, page: number) => {
@@ -247,13 +243,13 @@ export default function Outcomes(props: OutcomesProps) {
           <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
           {list.length > 0 ? (
             <>
-              <OutcomesTable list={list} value={value} onChange={onChange} outcomesEntities={outcomesEntities} />
+              <OutcomesTable list={list} value={value} onChange={onChange} />
               {pagination}
             </>
           ) : (
             <NoFiles />
           )}
-          <OutComesInput value={value} outcomesEntities={outcomesEntities} onChange={onChange} />
+          <OutComesInput value={value} onChange={onChange} />
         </>
       )}
     </Box>
