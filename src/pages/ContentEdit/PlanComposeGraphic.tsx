@@ -1,11 +1,23 @@
-import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Card,
+  CardContent,
+  makeStyles,
+  SvgIconProps,
+  Theme,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
-import blankImg from '../../assets/icons/deleted.jpg';
+import blankImg from "../../assets/icons/deleted.jpg";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import { Thumbnail } from "../../components/Thumbnail";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
@@ -203,28 +215,30 @@ interface MaterialCardProps {
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
   const css = useStyles();
-  if(props.material===null){
-    return <Box position="relative">
-      <img src={blankImg} alt="qq" width={200} height={150}/> 
-      <CancelRounded onClick={props.onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
-    </Box> 
-  }else{
-  const { material={} , onRemove } = props;
-  const { thumbnail, author, name, content_type } = material;
-  return (
-    <Card ref={ref}>
-      <Thumbnail className={css.cardMedia} type={content_type} id={thumbnail} />
-      <CardContent className={css.cardContent}>
-        <Typography component="div" variant="caption" noWrap>
-          {name}
-        </Typography>
-        <Typography component="div" variant="caption" color="textSecondary" noWrap>
-          {author}
-        </Typography>
-      </CardContent>
-      <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
-    </Card>
-  );
+  if (props.material === null) {
+    return (
+      <Box position="relative">
+        <img src={blankImg} alt="qq" width={200} height={150} />
+        <CancelRounded onClick={props.onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
+      </Box>
+    );
+  } else {
+    const { material = {}, onRemove } = props;
+    const { thumbnail, author, name, content_type } = material;
+    return (
+      <Card ref={ref}>
+        <Thumbnail className={css.cardMedia} type={content_type} id={thumbnail} />
+        <CardContent className={css.cardContent}>
+          <Typography component="div" variant="caption" noWrap>
+            {name}
+          </Typography>
+          <Typography component="div" variant="caption" color="textSecondary" noWrap>
+            {author}
+          </Typography>
+        </CardContent>
+        <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
+      </Card>
+    );
   }
 });
 
@@ -357,16 +371,16 @@ function SegmentBox(props: SegmentBoxProps) {
   );
 }
 
-const useScrollCenter = (once?: boolean) => {
+const useScrollCenter = (once?: boolean, disable = false) => {
   const countRef = useRef(0);
   const enable = once ? countRef.current < 1 : true;
   const ref = useCallback(
     (node: HTMLElement | null) => {
-      if (!enable || !node) return;
+      if (!enable || !node || disable) return;
       countRef.current += 1;
       node.scrollIntoView({ inline: "center", behavior: "smooth" });
     },
-    [enable]
+    [disable, enable]
   );
   return ref;
 };
@@ -393,7 +407,9 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
-  const startRef = useScrollCenter(true);
+  const { breakpoints } = useTheme();
+  const disable = useMediaQuery(breakpoints.down("md"));
+  const startRef = useScrollCenter(true, disable);
   return (
     <Box className={css.planComposeGraphic}>
       {false && (

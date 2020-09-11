@@ -9,8 +9,7 @@ import { ContentType, OutcomePublishStatus } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save } from "../../reducers/content";
-import { actOutcomeList } from "../../reducers/outcome";
+import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save, searchOutcomeList } from "../../reducers/content";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
@@ -169,7 +168,7 @@ export default function ContentEdit() {
     () => (page: number) => {
       setPage(page);
       dispatch(
-        actOutcomeList({
+        searchOutcomeList({
           page,
           publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,

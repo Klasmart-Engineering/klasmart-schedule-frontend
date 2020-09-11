@@ -199,6 +199,15 @@ export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContent
     return { list, total };
   }
 );
+type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
+export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+  "content/searchOutcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    return { list, total };
+  }
+);
 
 export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentDetailById", (id) =>
   api.contents.getContentById(id)
@@ -329,6 +338,14 @@ const { actions, reducer } = createSlice({
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [searchOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.outcomeList = payload.list;
+      state.OutcomesListTotal = payload.total;
+    },
+    [searchOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
