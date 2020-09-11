@@ -1,16 +1,30 @@
 import { Chip, Grid, InputAdornment, TextField } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
 import { Content } from "../../api/api";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-interface DetailProps {
+
+const useStyles = makeStyles(() => ({
+  textFiled: {
+    height: "112px",
+    marginBottom: 20,
+    "& .MuiInputBase-root": {
+      height: "100%",
+    },
+  },
+}));
+
+interface ContentPreviewProps {
   contentPreview: Content;
 }
-export function Detail(props: DetailProps) {
+export function Detail(props: ContentPreviewProps) {
+  const css = useStyles();
   const { contentPreview } = props;
   const colors = ["#009688", "#9c27b0", "#ffc107"];
   return (
     <>
       <TextField
+        className={css.textFiled}
         margin="normal"
         fullWidth
         multiline

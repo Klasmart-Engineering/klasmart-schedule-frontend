@@ -37,7 +37,7 @@ function App() {
               <Route path={ContentEdit.routeBasePath}>
                 <Redirect to={ContentEdit.routeRedirectDefault} />
               </Route>
-              <Route path={ContentPreview.routeBasePath}>
+              <Route path={ContentPreview.routeMatchPath}>
                 <ContentPreview />
               </Route>
               <Route path={MyContentList.routeBasePath}>

@@ -1,14 +1,11 @@
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
-import { Box, Chip, Tab, Tabs, Typography } from "@material-ui/core";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import CloseIcon from "@material-ui/icons/Close";
+import { Box } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Content } from "../../api/api";
 import { ContentType } from "../../api/type";
-import { Thumbnail } from "../../components/Thumbnail";
 import { RootState } from "../../reducers";
 import {
   approveContent,
@@ -20,88 +17,27 @@ import {
   rejectContent,
 } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
+import LayoutPair from "../ContentEdit/Layout";
+import { Assessments } from "./Assessments";
+import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
 import { OperationBtn } from "./OperationBtn";
-const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    width: "100%",
-    display: "flex",
-    height: "100%",
-    [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
-    },
-  },
-  left: {
-    width: "434px",
-    height: "100%",
-    padding: "12px",
-    boxSizing: "border-box",
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
-    },
-  },
-  closeIconCon: {
-    textAlign: "right",
-  },
-  text: {
-    fontSize: "24px",
-    fontWeight: 700,
-    marginRight: "10px",
-    [theme.breakpoints.down("lg")]: {
-      fontSize: "20px",
-    },
-  },
-  nameCon: {
-    display: "flex",
-    alignItems: "center",
-  },
-  img: {
-    height: "100%",
-    width: "100%",
-  },
-  tab: {
-    width: "calc(100% + 24px)",
-    backgroundColor: "#f0f0f0",
-    marginLeft: "-12px",
-    fontSize: "18px",
-  },
-  textFiled: {
-    height: "112px",
-    "& .MuiInputBase-root": {
-      height: "100%",
-    },
-  },
-  right: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  chips: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  chip: {
-    margin: 2,
-  },
-}));
+import { TabValue } from "./type";
 
-export default function ContentPreview(props: Content) {
-  const history = useHistory();
-  const dispatch = useDispatch();
+const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  let id = query.get("id") || "";
+  const id = query.get("id") || "";
   const content_type: ContentType = Number(query.get("content_type"));
-  const css = useStyles();
-  const [value, setValue] = React.useState(0);
+  return { id, content_type, search };
+};
+export default function ContentPreview(props: Content) {
+  const dispatch = useDispatch();
+  const { routeBasePath } = ContentPreview;
+  const { id, content_type, search } = useQuery();
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-  };
+  const { tab } = useParams();
+  const history = useHistory();
   const handleDelete = async () => {
     await dispatch(deleteContent(id));
     history.go(-1);
@@ -121,7 +57,6 @@ export default function ContentPreview(props: Content) {
       history.go(-1);
     }
   };
-
   const handleEdit = async () => {
     const lesson =
       contentPreview.content_type_name === "Material" ? "material" : contentPreview.content_type_name === "Plan" ? "plan" : "material";
@@ -143,36 +78,25 @@ export default function ContentPreview(props: Content) {
   const handleClose = () => {
     history.go(-1);
   };
-  useEffect(() => {
-    dispatch(getContentDetailById(id));
-  }, [dispatch, id]);
-  return (
-    <Box className={css.container}>
-      <Box className={css.left}>
-        <Box className={css.closeIconCon}>
-          <CloseIcon style={{ cursor: "pointer" }} onClick={handleClose} />
-        </Box>
-        <Typography className={css.text}>Title</Typography>
-        <Box className={css.nameCon}>
-          <Typography className={css.text}>{contentPreview.name}</Typography>
-          <Chip size="small" color="primary" label={contentPreview.content_type_name} />
-        </Box>
-        <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>
-          <Thumbnail className={css.img} type={content_type} id={contentPreview?.thumbnail} />
-        </Box>
-        <Tabs
-          className={css.tab}
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="fullWidth"
-          aria-label="full width tabs example"
-        >
-          <Tab label="Details" />
-          <Tab label="Assessments" />
-        </Tabs>
-        <Detail contentPreview={contentPreview} />
+  const handleChangeTab = useMemo(
+    () => (value: string) => {
+      console.log(value);
+      history.replace(`${routeBasePath}/tab/${value}${search}`);
+    },
+    [history, routeBasePath, search]
+  );
+
+  const leftside = (
+    <Box style={{ padding: 12 }}>
+      <ContentPreviewHeader
+        tab={tab}
+        contentPreview={contentPreview}
+        content_type={content_type}
+        onClose={handleClose}
+        onChangeTab={handleChangeTab}
+      />
+      {tab === TabValue.details ? <Detail contentPreview={contentPreview} /> : <Assessments />}
+      {tab === TabValue.details && (
         <OperationBtn
           publish_status={contentPreview.publish_status}
           content_type_name={contentPreview.content_type_name}
@@ -182,9 +106,22 @@ export default function ContentPreview(props: Content) {
           onReject={handleReject}
           onEdit={handleEdit}
         />
-      </Box>
-      <Box className={css.right}>right</Box>
+      )}
     </Box>
+  );
+  const rightside = <Box style={{ backgroundColor: "rgba(0,0,0,0.5)", height: "100%" }}>rightside</Box>;
+  useEffect(() => {
+    dispatch(getContentDetailById(id));
+  }, [dispatch, id]);
+  return (
+    <Fragment>
+      <LayoutPair breakpoint="md" leftWidth={434} rightWidth={1400} spacing={0} basePadding={0} padding={0}>
+        {leftside}
+        {rightside}
+      </LayoutPair>
+    </Fragment>
   );
 }
 ContentPreview.routeBasePath = "/library/content-preview";
+ContentPreview.routeMatchPath = "/library/content-preview/tab/:tab";
+ContentPreview.routeRedirectDefault = `/library/content-preview/tab/details`;
