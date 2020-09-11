@@ -109,6 +109,12 @@ export const approve = createAsyncThunk<any, any>("outcome/approve", (id) => {
   return api.learningOutcomes.approveLearningOutcomes(id);
 });
 
+type ResultLockOutcome = ReturnType<typeof api.learningOutcomes.lockLearningOutcomes>;
+type ParamsLockOutcome = Parameters<typeof api.learningOutcomes.lockLearningOutcomes>[0];
+export const lock = createAsyncThunk<ResultLockOutcome, ParamsLockOutcome>("outcome/lock", (id) => {
+  return api.learningOutcomes.lockLearningOutcomes(id);
+});
+
 const { reducer } = createSlice({
   name: "outcome",
   initialState,
@@ -118,22 +124,29 @@ const { reducer } = createSlice({
       state.outcomeDetail = payload;
     },
     [save.rejected.type]: (state, { error }: any) => {
-      // alert(error);
+      throw error;
     },
-    [publish.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      console.log(payload);
-    },
+    [publish.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
     [publish.rejected.type]: (state, { error }: any) => {
-      // alert(error);
+      throw error;
     },
     [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
-    [deleteOutcome.rejected.type]: (state, { error }: any) => {},
+    [deleteOutcome.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
     [getOutcomeDetail.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeDetail = payload;
     },
-    [getOutcomeDetail.rejected.type]: (state, { error }: any) => {},
-    [approve.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      console.log("success");
+    [getOutcomeDetail.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [approve.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [approve.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [lock.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [lock.rejected.type]: (state, { error }: any) => {
+      throw error;
     },
   },
 });

@@ -19,7 +19,17 @@ export default function CustomizeRejectTemplate(props: CustomizeRejectTemplatePr
       <h2 style={{ fontSize: "20px" }}>Edit recurring event</h2>
       <p>Please specify the reason of rejection.</p>
       <div>
-        <TextField id="standard-basic" label="Reason" autoFocus variant="standard" fullWidth value={reason} onChange={handleChange} />
+        <TextField
+          id="standard-basic"
+          label="Reason"
+          autoFocus
+          variant="standard"
+          fullWidth
+          value={reason}
+          onChange={handleChange}
+          required
+          error={!reason}
+        />
       </div>
       <div style={{ marginTop: "20px", textAlign: "right" }}>
         <Button color="primary" onClick={handleClose}>
