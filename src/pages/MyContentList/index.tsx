@@ -4,10 +4,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { OrderBy } from "../../api/type";
+import { Assets, ContentType, OrderBy } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
+import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -93,11 +94,23 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkDeleteContent(ids)));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) =>
-    history.push({ pathname: ContentPreview.routeBasePath, search: toQueryString({ id: id, content_type: content_type }) });
+  const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
+    if (content_type !== ContentType.material && content_type !== ContentType.plan) {
+      history.push(`/library/content-edit/lesson/assets/tab/details/rightside/assetsEdit?id=${id}`);
+    } else {
+      history.push({ pathname: ContentPreview.routeBasePath, search: toQueryString({ id: id, content_type: content_type }) });
+    }
+  };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._created_at }) });
+  const handleCreateContent = () => {
+    if (condition.content_type === Assets.assets_type) {
+      history.push(`/library/content-edit/lesson/assets/tab/details/rightside/assetsEdit`);
+    } else {
+      history.push({ pathname: ContentEdit.routeRedirectDefault });
+    }
+  };
   useEffect(() => {
     reset();
     dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
@@ -105,8 +118,18 @@ export default function MyContentList() {
 
   return (
     <div>
-      <FirstSearchHeader value={condition} onChange={handleChange} onChangeAssets={handleChangeAssets} />
-      <FirstSearchHeaderMb value={condition} onChange={handleChange} onChangeAssets={handleChangeAssets} />
+      <FirstSearchHeader
+        value={condition}
+        onChange={handleChange}
+        onChangeAssets={handleChangeAssets}
+        onCreateContent={handleCreateContent}
+      />
+      <FirstSearchHeaderMb
+        value={condition}
+        onChange={handleChange}
+        onChangeAssets={handleChangeAssets}
+        onCreateContent={handleCreateContent}
+      />
       <SecondSearchHeader value={condition} onChange={handleChange} />
       <SecondSearchHeaderMb value={condition} onChange={handleChange} />
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
@@ -135,4 +158,4 @@ export default function MyContentList() {
 }
 
 MyContentList.routeBasePath = "/library/my-content-list";
-MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._created_at}`;
+MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._created_at}&content_type=${Assets.not_assets_type}`;

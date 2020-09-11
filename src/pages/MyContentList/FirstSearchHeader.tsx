@@ -8,7 +8,6 @@ import clsx from "clsx";
 import React from "react";
 import { Assets, Author, OrderBy, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import ContentEdit from "../ContentEdit";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -89,31 +88,23 @@ export const isUnpublish = (value: QueryCondition): boolean => {
 
 export interface FirstSearchHeaderProps extends QueryConditionBaseProps {
   onChangeAssets: (arg: string) => any;
+  onCreateContent: () => any;
 }
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
-  const { value, onChange } = props;
+  const { value, onChange, onCreateContent } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
+    onChange({ publish_status, content_type: Assets.not_assets_type, order_by: OrderBy._created_at, page: 1 });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
-    onChange({ page: 1, content_type, order_by: OrderBy._created_at });
+    onChange({ content_type, order_by: OrderBy._created_at, page: 1 });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
-              <Button
-                href={
-                  value.content_type
-                    ? `#/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetEdit`
-                    : `#${ContentEdit.routeRedirectDefault}`
-                }
-                variant="contained"
-                color="primary"
-                className={css.createBtn}
-              >
+              <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
                 Create +
               </Button>
             </Grid>
@@ -148,7 +139,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               </Button>
               <Button
                 onClick={assetsHandleClick(Assets.assets_type)}
-                className={clsx(css.nav, { [css.actives]: value?.content_type === "3" })}
+                className={clsx(css.nav, { [css.actives]: value?.content_type === Assets.assets_type })}
                 startIcon={<PermMediaOutlined />}
               >
                 Assets

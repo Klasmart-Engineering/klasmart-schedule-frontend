@@ -40,7 +40,7 @@ function App() {
               <Route path={ContentPreview.routeBasePath}>
                 <ContentPreview />
               </Route>
-              <Route path="/library/my-content-list">
+              <Route path={MyContentList.routeBasePath}>
                 <MyContentList />
               </Route>
               <Route path={OutcomeList.routeBasePath}>

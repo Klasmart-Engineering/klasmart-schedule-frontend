@@ -121,33 +121,15 @@ export default function ContentPreview(props: Content) {
       history.go(-1);
     }
   };
-  // enum ContentTypeMap {
-  //   Material = "material",
-  //   Plan = "plan",
-  //   Assets = "assets"
-  // }
-  // enum RightSideMap {
-  //   Material = "contentH5p",
-  //   Plan = "planComposeGraphic",
-  //   Assets = "assetEdit"
-  // }
 
   const handleEdit: ActionProps["onDelete"] = async () => {
     const lesson =
-      contentPreview.content_type_name === "Material"
-        ? "material"
-        : contentPreview.content_type_name === "Plan"
-        ? "plan"
-        : contentPreview.content_type_name === "Assets"
-        ? "assets"
-        : "material";
+      contentPreview.content_type_name === "Material" ? "material" : contentPreview.content_type_name === "Plan" ? "plan" : "material";
     const rightSide =
       contentPreview.content_type_name === "Material"
         ? "contentH5p"
         : contentPreview.content_type_name === "Plan"
         ? "planComposeGraphic"
-        : contentPreview.content_type_name === "Assets"
-        ? "assetEdit"
         : "contentH5p";
     if (contentPreview.publish_status === "published") {
       const { payload } = ((await dispatch(lockContent(id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;

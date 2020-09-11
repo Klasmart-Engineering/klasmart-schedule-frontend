@@ -21,7 +21,7 @@ import { Pagination } from "@material-ui/lab";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { Content } from "../../api/api";
-import { PublishStatus } from "../../api/type";
+import { Assets, PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
@@ -189,7 +189,10 @@ function ContentCard(props: ContentProps) {
   const expand = useExpand();
   const { content, queryCondition, selectedContentGroupContext, onDelete, onPublish, onClickContent } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
-  const DeleteIcon = content?.publish_status === PublishStatus.published ? RemoveCircleOutlineIcon : DeleteOutlineIcon;
+  const DeleteIcon =
+    content?.publish_status === PublishStatus.published && content?.content_type_name !== Assets.assets_name
+      ? RemoveCircleOutlineIcon
+      : DeleteOutlineIcon;
   return (
     <Card className={css.card}>
       <Checkbox
