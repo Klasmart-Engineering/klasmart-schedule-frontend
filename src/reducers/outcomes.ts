@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { CreateLearningOutComesRequest, CreateLearningOutcomesResponse, LearningOutcomes } from "../api/api";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface outcomeState {
   createOutcome: CreateLearningOutComesRequest;
@@ -86,13 +87,14 @@ export const publish = createAsyncThunk<LearningOutcomes, LearningOutcomes["outc
 );
 
 type ResultDeleteOutcome = ReturnType<typeof api.learningOutcomes.deleteLearningOutcome>;
-export const deleteOutcome = createAsyncThunk<ResultDeleteOutcome, string>("outcpme/deleteOutcome", (id) => {
+type ParamsDeleteOutcome = { id: Parameters<typeof api.learningOutcomes.deleteLearningOutcome>[0] } & LoadingMetaPayload;
+export const deleteOutcome = createAsyncThunk<ResultDeleteOutcome, ParamsDeleteOutcome>("outcpme/deleteOutcome", ({ id }) => {
   return api.learningOutcomes.deleteLearningOutcome(id);
 });
 
 type ResuleGetOutcomeDetail = ReturnType<typeof api.learningOutcomes.getLearningOutcomesById>;
-type ParamsGetOutcomeDetail = Parameters<typeof api.learningOutcomes.getLearningOutcomesById>[0];
-export const getOutcomeDetail = createAsyncThunk<LearningOutcomes, string>("outcome/getOutcomeDetail", (id) => {
+type ParamsGetOutcomeDetail = { id: Parameters<typeof api.learningOutcomes.getLearningOutcomesById>[0] } & LoadingMetaPayload;
+export const getOutcomeDetail = createAsyncThunk<LearningOutcomes, ParamsGetOutcomeDetail>("outcome/getOutcomeDetail", ({ id }) => {
   return api.learningOutcomes.getLearningOutcomesById(id);
 });
 
@@ -148,6 +150,8 @@ const { reducer } = createSlice({
     [lock.rejected.type]: (state, { error }: any) => {
       throw error;
     },
+    [updateOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [updateOutcome.rejected.type]: ({ error }: any) => {},
   },
 });
 

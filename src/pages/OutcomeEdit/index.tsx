@@ -7,8 +7,8 @@ import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { approve, deleteOutcome, getOutcomeDetail, lock, publish, reject, save, updateOutcome } from "../../reducers/outcomes";
-import { OutcomeForm } from "./OutcomeForm";
-import OutcomeHeader from "./OutcomeHeader";
+import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
+import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
 
 const useStyles = makeStyles(() => ({
@@ -52,7 +52,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     if (outcome_id) {
-      dispatch(getOutcomeDetail(outcome_id));
+      dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
     }
   }, [dispatch, outcome_id]);
 
@@ -60,13 +60,7 @@ export default function CreateOutcomings() {
     setFinalData(outcomeDetail);
   }, [outcomeDetail]);
 
-  // React.useEffect(() => {
-  //   if(outcome_id && finalData.publish_status === 'published') {
-  //     dispatch(lock(outcome_id))
-  //   }
-  // }, [dispatch, finalData.publish_status, outcome_id])
-
-  const handleSave = async () => {
+  const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
     if (!finalData.outcome_name) return;
     const data = {
       ...finalData,
@@ -75,7 +69,6 @@ export default function CreateOutcomings() {
     if (outcome_id) {
       if (data.publish_status === "published") {
         const result: any = await dispatch(lock(data.outcome_id as string));
-        console.log(result);
         if (result.payload.outcome_id) {
           const afterLock: any = await dispatch(updateOutcome({ outcome_id: result.payload.outcome_id, value: data }));
           if (afterLock.payload === "ok") {
@@ -134,12 +127,12 @@ export default function CreateOutcomings() {
       {
         label: "Delete",
         event: async () => {
-          const result: any = await dispatch(deleteOutcome(outcome_id));
+          const result: any = await dispatch(deleteOutcome({ id: outcome_id, metaLoading: true }));
+          setOpenStatus(false);
           if (result.payload === "ok") {
             dispatch(actSuccess("Delete Success"));
             history.push("/assessments/outcome-list");
           }
-          setOpenStatus(false);
         },
       },
     ],
@@ -164,7 +157,7 @@ export default function CreateOutcomings() {
     setEnableCustomization(true);
   };
 
-  const handlePublish = async () => {
+  const handlePublish: OutcomeHeaderProps["handlePublish"] = async () => {
     if (outcomeDetail.publish_status === "draft") {
       const result: any = await dispatch(publish(outcomeDetail.outcome_id));
       if (result.payload === "ok") {
@@ -173,14 +166,14 @@ export default function CreateOutcomings() {
     }
   };
 
-  const handleApprove = () => {
+  const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
-      dispatch(approve(outcome_id));
+      await dispatch(approve(outcome_id));
       history.push("/assessments/outcome-list");
     }
   };
 
-  const handleKeywordsChange = (event: React.ChangeEvent<{ value: string }>) => {
+  const handleKeywordsChange: OutcomeFormProps["handleKeywordsChange"] = (event) => {
     const keywords = event.target.value.split(",");
     setFinalData({
       ...finalData,
@@ -188,8 +181,8 @@ export default function CreateOutcomings() {
     });
   };
 
-  const handleMultipleChange = (name: string, event: React.ChangeEvent<{ value: any }>) => {
-    let aaa = event.target.value.filter((item: string) => item);
+  const handleMultipleChange: OutcomeFormProps["handleMultipleChange"] = (name, event) => {
+    let aaa = (event.target.value as string[]).filter((item: string) => item);
     if (name === "program") {
       setFinalData({
         ...finalData,

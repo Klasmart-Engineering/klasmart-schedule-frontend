@@ -2,7 +2,7 @@ import { Button, TextField } from "@material-ui/core";
 import React from "react";
 
 interface CustomizeRejectTemplateProps {
-  handleClose: () => void;
+  handleClose: () => any;
   handleReject: (reason: string) => void;
 }
 

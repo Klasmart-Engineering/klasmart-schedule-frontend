@@ -1,10 +1,11 @@
-import { Box, Button, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Clear, Delete, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
+import { LButton, LButtonProps } from "../../components/LButton";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -77,14 +78,14 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
 }));
 
-interface OutcomeHeaderProps {
-  handleSave: () => void;
-  handleReset: () => void;
-  handleDelete: () => void;
+export interface OutcomeHeaderProps {
+  handleSave: LButtonProps["onClick"];
+  handleReset: ButtonProps["onClick"];
+  handleDelete: ButtonProps["onClick"];
   outcome_id: string;
-  handelReject: () => void;
-  handlePublish: () => void;
-  handleApprove: () => void;
+  handelReject: ButtonProps["onClick"];
+  handlePublish: LButtonProps["onClick"];
+  handleApprove: LButtonProps["onClick"];
   publish_status: string | undefined;
   showPublish: boolean;
   finalData: any;
@@ -134,22 +135,22 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
             Cancel
           </Button>
-          <Button variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
             Save
-          </Button>
+          </LButton>
           {(showPublish || finalData.publish_status === "draft") && (
-            <Button variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
+            <LButton variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
               Publish
-            </Button>
+            </LButton>
           )}
           {outcome_id && publish_status === "pending" && (
             <>
               <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
                 Reject
               </Button>
-              <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
+              <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
                 Approve
-              </Button>
+              </LButton>
             </>
           )}
         </Hidden>

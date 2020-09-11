@@ -1,4 +1,16 @@
-import { Box, Checkbox, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  Grid,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  Select,
+  SelectProps,
+  TextField,
+  TextFieldProps,
+} from "@material-ui/core";
 import React from "react";
 import { MockOptionsItem } from "../../api/extra";
 
@@ -33,14 +45,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface OutcomeFormProps {
+export interface OutcomeFormProps {
   mockOptions: any;
   outcome_id: string;
   finalData: any;
   setFinalData: any;
   handleInputChange: (name: string, event: React.ChangeEvent<{ value: any }>) => void;
-  handleMultipleChange: (name: string, event: React.ChangeEvent<{ value: any }>) => void;
-  handleKeywordsChange: (event: React.ChangeEvent<{ value: string }>) => void;
+  handleMultipleChange: (name: string, event: Parameters<NonNullable<SelectProps["onChange"]>>[0]) => void;
+  handleKeywordsChange: TextFieldProps["onChange"];
   getKeywords: (keywords: string[] | undefined) => void;
   showCode: boolean;
 }
