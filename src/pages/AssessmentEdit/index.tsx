@@ -1,4 +1,3 @@
-import { Box, FormControl, makeStyles, Select, Typography } from "@material-ui/core";
 import { cloneDeep } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -6,73 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { LearningOutcomes } from "../../api/api";
 import { UpdateAssessmentRequestData } from "../../api/type";
-import noOutcomes from "../../assets/icons/noLearningOutcomes.svg";
-import { ModelAssessment } from "../../models/ModelAssessment";
+import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AssessmentState, getAssessment } from "../../reducers/assessment";
+import { AssessmentState, getAssessment, updateAssessment } from "../../reducers/assessment";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
+import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
 import { OutcomesTable } from "./OutcomesTable";
 import { Summary } from "./Summary";
-
-const useStyles = makeStyles(({ palette, shadows }) => ({
-  noOutComesImage: {
-    marginTop: 100,
-    marginBottom: 20,
-    width: 578,
-    height: 578,
-  },
-  emptyDesc: {
-    position: "absolute",
-    bottom: 100,
-  },
-  selectButton: {
-    width: 160,
-    marginBotton: 20,
-    backgroundColor: "white",
-    borderRadius: 4,
-    boxShadow: shadows[3],
-    color: palette.text.primary,
-  },
-}));
-
-export function NoOutComesList() {
-  const css = useStyles();
-  return (
-    <Box display="flex" flexDirection="column" alignItems="center" position="relative">
-      <img className={css.noOutComesImage} alt="empty" src={noOutcomes} />
-      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        No learning outcome is available.
-      </Typography>
-    </Box>
-  );
-}
-interface OutcomesFilterProps {
-  value: string;
-  onChange?: (vale: OutcomesFilterProps["value"]) => any;
-}
-function OutcomesFilter(props: OutcomesFilterProps) {
-  const css = useStyles();
-  const { value = "all", onChange } = props;
-  const handleChange = useCallback(
-    (e) => {
-      if (onChange) onChange(e.target.value);
-    },
-    [onChange]
-  );
-  return (
-    <Box display="flex" justifyContent="flex-end" mb={2}>
-      <FormControl variant="outlined" size="small" className={css.selectButton}>
-        <Select native defaultValue={value} onChange={handleChange}>
-          <option value="all">All </option>
-          <option value="assumed">Assumed </option>
-          <option value="unassumed">Unassumed </option>
-        </Select>
-      </FormControl>
-    </Box>
-  );
-}
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -97,9 +38,10 @@ export function AssessmentsEdit() {
   const assessmentDetail = useSelector<RootState, RootState["assessment"]["assessmentDetail"]>(
     (state) => state.assessment.assessmentDetail
   );
-  const formMethods = useForm<UpdateAssessmentRequestData>();
+  const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;
   const formValue = watch();
+  debugger;
   const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   const filteredOutcomelist = useMemo(() => filterOutcomeslist(assessmentDetail.outcome_attendance_maps, filterOutcomes), [
     assessmentDetail,
@@ -108,17 +50,23 @@ export function AssessmentsEdit() {
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit((value) => {
-        // const {id, attendances, outcome_attendance_maps} = value
         if (id) {
-          // const data= {action: "save", attendance_ids: attendances?.map(v=>v.id),
-          // outcome_attendance_maps: outcome_attendance_maps?.map(v => {outcome_id: v.outcome_id, attendance_ids:v.attendance_ids}) }
-          // dispatch(updateAssessment({id, data }))
+          const data: UpdateAssessmentRequestData = { ...value, action: "save" };
+          dispatch(updateAssessment({ id, data }));
         }
-        console.log("value=", value);
       }),
-    [handleSubmit, id]
+    [handleSubmit, id, dispatch]
   );
-  const handleAssessmentComplete = () => {};
+  const handleAssessmentComplete = useMemo(
+    () =>
+      handleSubmit((value) => {
+        if (id) {
+          const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
+          dispatch(updateAssessment({ id, data }));
+        }
+      }),
+    [handleSubmit, id, dispatch]
+  );
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);

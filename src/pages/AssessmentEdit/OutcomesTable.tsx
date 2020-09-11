@@ -58,6 +58,7 @@ const AssessAction = (props: AssessActionProps) => {
     index,
     attendenceList,
   } = props;
+
   const allValue = useMemo(() => attendenceList?.map((item) => item.id as string), [attendenceList]);
   const handleChangeSkip: CheckboxProps["onChange"] = (e) => {
     const skip = e.target.checked;
@@ -92,9 +93,20 @@ const AssessAction = (props: AssessActionProps) => {
                   label="Award All"
                   disabled={skip}
                 />
-                <FormControlLabel
-                  control={<Checkbox onChange={handleChangeSkip} checked={skip || false} name="skip" color="primary" />}
+                {/* <FormControlLabel
+                  control={<Checkbox onChange={handleChangeSkip} defaultChecked={skip || false} color="primary" />}
                   label="Skip"
+                /> */}
+                <Controller
+                  name={`outcome_attendance_maps[${index}].skip`}
+                  defaultValue={skip || false}
+                  render={(props) => (
+                    <FormControlLabel
+                      control={<Checkbox checked={props.value} onChange={handleChangeSkip} color="primary" />}
+                      label="Skip"
+                    />
+                  )}
+                  control={control}
                 />
               </Box>
               <Box px={3} className={css.assessActionline}>

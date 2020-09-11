@@ -4,6 +4,7 @@ import { GetAssessmentResult, UpdateAssessmentRequestData } from "../api/type";
 interface ObjContainId {
   id?: string;
 }
+export type UpdateAssessmentRequestDataOmitAction = Omit<UpdateAssessmentRequestData, "action">;
 function toHash<T extends ObjContainId>(arr: T[]): Record<string, T> {
   return arr.reduce<Record<string, T>>((result, item) => {
     if (!item.id) return result;
@@ -26,7 +27,7 @@ export const ModelAssessment = {
     // });
   },
 
-  toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestData): GetAssessmentResult {
+  toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestDataOmitAction): GetAssessmentResult {
     const draft = cloneDeep(defaultDetail);
     const attendanceHash = toHash(defaultDetail.attendances || []);
     draft.attendances = value.attendance_ids?.map((id) => attendanceHash[id]) || [];
