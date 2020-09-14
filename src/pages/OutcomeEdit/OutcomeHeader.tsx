@@ -1,6 +1,6 @@
 import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { ArrowBack, Cancel, CancelOutlined, Check, Clear, ClearSharp, Delete, Publish, Save } from "@material-ui/icons";
+import { ArrowBack, Cancel, CancelOutlined, Check, Clear, ClearSharp, Create, Delete, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
@@ -76,6 +76,9 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     color: "red",
     fontWeight: 700,
   },
+  editButton: {
+    marginRight: "30px",
+  },
 }));
 
 export interface OutcomeHeaderProps {
@@ -90,6 +93,8 @@ export interface OutcomeHeaderProps {
   showPublish: boolean;
   finalData: any;
   isSame: boolean;
+  showEdit: boolean;
+  handleEdit: ButtonProps["onClick"];
 }
 
 function OutcomeHeader(props: OutcomeHeaderProps) {
@@ -106,6 +111,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     publish_status,
     finalData,
     isSame,
+    showEdit,
+    handleEdit,
   } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -127,11 +134,18 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           {sm ? "Create New Content" : "For Organizations"}
         </Typography>
         <Hidden smDown>
-          {finalData.outcome_id && (
+          {/* {finalData.outcome_id && showEdit && (
             <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
               Delete
             </Button>
           )}
+          {
+            showEdit && (
+              <Button variant="contained" endIcon={<Create />} color="primary" className={clsx(css.headerButton)} onClick={handleEdit}>
+                Edit
+              </Button>
+            )
+          }
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
             Cancel
           </Button>
@@ -151,6 +165,120 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
               <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
                 Approve
               </LButton>
+            </>
+          )} */}
+          {finalData.publish_status === "draft" && (
+            <>
+              {showEdit && (
+                <>
+                  <Button
+                    variant="contained"
+                    endIcon={<Create />}
+                    color="primary"
+                    className={clsx(css.headerButton, css.editButton)}
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                    Delete
+                  </Button>
+                </>
+              )}
+              {!showEdit && (
+                <>
+                  {isSame ? (
+                    <LButton
+                      variant="contained"
+                      endIcon={<Publish />}
+                      className={clsx(css.headerButton, css.greenButton)}
+                      onClick={handlePublish}
+                    >
+                      Publish
+                    </LButton>
+                  ) : (
+                    <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                      Save
+                    </LButton>
+                  )}
+                  <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                    Cancel
+                  </Button>
+                </>
+              )}
+            </>
+          )}
+          {finalData.publish_status === "pending" && (
+            <>
+              <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                Delete
+              </Button>
+              <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
+                Reject
+              </Button>
+              <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
+                Approve
+              </LButton>
+            </>
+          )}
+          {finalData.publish_status === "rejected" && (
+            <>
+              {showEdit && (
+                <>
+                  <Button
+                    variant="contained"
+                    endIcon={<Create />}
+                    color="primary"
+                    className={clsx(css.headerButton, css.editButton)}
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                    Delete
+                  </Button>
+                </>
+              )}
+              {!showEdit && (
+                <>
+                  <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                    Save
+                  </LButton>
+                  <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                    Cancel
+                  </Button>
+                </>
+              )}
+            </>
+          )}
+          {finalData.publish_status === "published" && (
+            <>
+              {showEdit && (
+                <>
+                  <Button
+                    variant="contained"
+                    endIcon={<Create />}
+                    color="primary"
+                    className={clsx(css.headerButton, css.editButton)}
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                    Delete
+                  </Button>
+                </>
+              )}
+              {!showEdit && (
+                <>
+                  <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                    Save
+                  </LButton>
+                  <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                    Cancel
+                  </Button>
+                </>
+              )}
             </>
           )}
         </Hidden>

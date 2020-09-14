@@ -657,7 +657,7 @@ export default function RepeatSchedule(props: RepeatScheduleProps) {
 
   const modalData: any = {
     title: "",
-    text: "You cannot scheduel a class beyond two years.",
+    text: "You cannot schedule a class beyond two years.",
     openStatus: openStatus,
     enableCustomization: false,
     buttons: [

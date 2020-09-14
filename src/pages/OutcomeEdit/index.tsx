@@ -38,6 +38,7 @@ export default function CreateOutcomings() {
   const { outcomeDetail } = useSelector<RootState, RootState["outcomes"]>((state) => state.outcomes);
   const [finalData, setFinalData] = React.useState(outcomeDetail);
   const [finalDataTest, setFinalDataTest] = React.useState(outcomeDetail);
+  const [showEdit, setShowEdit] = React.useState(false);
   const [mulSelect, setMulselect] = React.useState({
     program: [],
     subject: [],
@@ -56,6 +57,7 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     if (outcome_id) {
       dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+      setShowEdit(true);
     }
   }, [dispatch, outcome_id]);
 
@@ -281,6 +283,10 @@ export default function CreateOutcomings() {
     console.log(keywords);
     return keywords.map((item: string) => item);
   };
+
+  const handleEdit: OutcomeHeaderProps["handleEdit"] = () => {
+    setShowEdit(!showEdit);
+  };
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
@@ -295,6 +301,8 @@ export default function CreateOutcomings() {
         showPublish={showPublish}
         finalData={finalData}
         isSame={isSame}
+        showEdit={showEdit}
+        handleEdit={handleEdit}
       />
       <OutcomeForm
         outcome_id={outcome_id}
@@ -306,6 +314,7 @@ export default function CreateOutcomings() {
         handleKeywordsChange={handleKeywordsChange}
         getKeywords={getKeywords}
         showCode={showCode}
+        showEdit={showEdit}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

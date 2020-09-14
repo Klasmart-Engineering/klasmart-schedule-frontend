@@ -55,10 +55,11 @@ export interface OutcomeFormProps {
   handleKeywordsChange: TextFieldProps["onChange"];
   getKeywords: (keywords: string[] | undefined) => void;
   showCode: boolean;
+  showEdit: boolean;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
-  const { mockOptions, outcome_id, finalData, handleInputChange, handleMultipleChange, handleKeywordsChange, showCode } = props;
+  const { mockOptions, outcome_id, finalData, handleInputChange, handleMultipleChange, handleKeywordsChange, showCode, showEdit } = props;
   const classes = useStyles();
 
   const getItems = (list: MockOptionsItem[]) =>
@@ -110,6 +111,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 onChange={(event) => handleInputChange("outcome_name", event)}
                 required
                 error={!finalData.outcome_name}
+                disabled={showEdit}
               />
             </Grid>
             {(outcome_id || showCode) && (
@@ -118,7 +120,11 @@ export function OutcomeForm(props: OutcomeFormProps) {
               </Grid>
             )}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
-              <Checkbox checked={finalData.assumed || false} onChange={(event) => handleInputChange("assumed", event)} />
+              <Checkbox
+                checked={finalData.assumed || false}
+                onChange={(event) => handleInputChange("assumed", event)}
+                disabled={showEdit}
+              />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
             {(outcome_id || showCode) && (
@@ -148,6 +154,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   value={finalData.program?.map((item: any) => item.program_id)}
                   onChange={(event) => handleMultipleChange("program", event)}
                   label="Program"
+                  disabled={showEdit}
                 >
                   {getItems(mockOptions.program)}
                 </Select>
@@ -163,6 +170,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   value={finalData.subject?.map((item: any) => item.subject_id)}
                   onChange={(event) => handleMultipleChange("subject", event)}
                   label="Subject"
+                  disabled={showEdit}
                 >
                   {getItems(mockOptions.subject)}
                 </Select>
@@ -180,6 +188,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   value={finalData.developmental?.map((item: any) => item.developmental_id)}
                   onChange={(event) => handleMultipleChange("developmental", event)}
                   label="Developmental"
+                  disabled={showEdit}
                 >
                   {getItems(mockOptions.developmental)}
                 </Select>
@@ -195,6 +204,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   value={finalData.skills?.map((item: any) => item.skill_id)}
                   onChange={(event) => handleMultipleChange("skills", event)}
                   label="Skills"
+                  disabled={showEdit}
                 >
                   {getItems(mockOptions.skills)}
                 </Select>
@@ -212,6 +222,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   value={finalData.age?.map((item: any) => item.age_id)}
                   onChange={(event) => handleMultipleChange("age", event)}
                   label="Age"
+                  disabled={showEdit}
                 >
                   {getItems(mockOptions.age)}
                 </Select>
@@ -227,6 +238,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   value={finalData.grade?.map((item: any) => item.grade_id)}
                   onChange={(event) => handleMultipleChange("grade", event)}
                   label="Grade"
+                  disabled={showEdit}
                 >
                   {getItems(mockOptions.grade)}
                 </Select>
@@ -243,6 +255,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 value={finalData.estimated_time}
                 label="Estimated time"
                 onChange={(event) => handleInputChange("estimated_time", event)}
+                disabled={showEdit}
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -252,6 +265,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 size="small"
                 fullWidth
                 label="Keywords"
+                disabled={showEdit}
               />
             </Grid>
           </Grid>
@@ -263,6 +277,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 fullWidth
                 label="Description"
                 onChange={(event) => handleInputChange("description", event)}
+                disabled={showEdit}
               />
             </Grid>
           </Grid>
