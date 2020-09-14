@@ -10,6 +10,7 @@ import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../mo
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AssessmentState, AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessment";
+import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
 import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
@@ -57,6 +58,7 @@ export function AssessmentsEdit() {
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
+            dispatch(actSuccess("Save successfully"));
             history.replace({
               search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
             });
@@ -74,6 +76,7 @@ export function AssessmentsEdit() {
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
+            dispatch(actSuccess("Complete successfully"));
             history.replace({
               search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
             });
