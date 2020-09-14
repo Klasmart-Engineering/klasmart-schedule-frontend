@@ -101,6 +101,15 @@ export class ModelLessonPlan {
     return result === plan ? plan : cloneDeep(result);
   }
 
+  static toArray(plan: Segment): Segment["material"][] {
+    const result: Segment["material"][] = [];
+    ModelLessonPlan.forEach(plan, (item) => {
+      result.push(item.material);
+    });
+
+    return result;
+  }
+
   // 这里只考虑了单节点情况，如果将来有condition 分叉，需要修改实现
   static remove(plan: Segment, segmentId: Segment["segmentId"]): Segment {
     const result = produce(plan, (draft) => {

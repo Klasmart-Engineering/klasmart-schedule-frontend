@@ -267,7 +267,7 @@ function NavBarSmall(props: NavBarSmallProps) {
 
 function HeaderNavBar(props: any) {
   const classes = useStyles();
-  const hideList = ["content-edit", "outcome-edit"];
+  const hideList = ["content-edit", "outcome-edit", "assessments-detail"];
   const isContentEdit = hideList.some((item: string) => props.location.pathname.includes(item));
 
   return <div className={classes.root}>{!isContentEdit ? <NavBarLarge /> : ""}</div>;
