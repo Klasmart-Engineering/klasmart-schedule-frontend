@@ -113,7 +113,9 @@ export default function CustomizeTempalte(props: InfoProps) {
           variant="contained"
           autoFocus
           className={classes.lastButton}
-          href={`/#/live/?schedule_id=${scheduleInfo.id}`}
+          onClick={() => {
+            window.open(`/#/live/?schedule_id=${scheduleInfo.id}`);
+          }}
         >
           Go Live
         </Button>
