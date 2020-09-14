@@ -17,11 +17,13 @@ import {
 import clsx from "clsx";
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentState } from "../../reducers/assessment";
+import { actWarning } from "../../reducers/notify";
 const useStyles = makeStyles(({ palette }) => ({
   classSummaryHeader: {
     height: 64,
@@ -118,6 +120,7 @@ interface PopupInputProps {
 function PopupInput(props: PopupInputProps) {
   const { value, onChange, assessmentDetail } = props;
   const css = useStyles();
+  const dispatch = useDispatch();
   const formMethods = useForm<UpdateAssessmentRequestData>();
   const [open, toggle] = useReducer((open) => {
     formMethods.reset();
@@ -129,9 +132,10 @@ function PopupInput(props: PopupInputProps) {
   }, [assessmentDetail, value]);
   const handleOk = useCallback(() => {
     const { attendance_ids } = formMethods.getValues();
+    if (!attendance_ids?.length) return Promise.reject(dispatch(actWarning("You must choose at least one student.")));
     toggle();
     if (onChange) return onChange(attendance_ids || []);
-  }, [formMethods, onChange]);
+  }, [dispatch, formMethods, onChange]);
   return (
     <Box className={css.editBox}>
       <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendence" />

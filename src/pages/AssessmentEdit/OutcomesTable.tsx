@@ -43,6 +43,13 @@ const useStyles = makeStyles({
   assessActionline: {
     borderLeft: "1px solid #ebebeb",
   },
+  tablecellError: {
+    padding: 0,
+    paddingBottom: 16,
+  },
+  cellError: {
+    // border: '1px solid red',
+  },
 });
 
 interface AssessActionProps {
@@ -84,7 +91,7 @@ const AssessAction = (props: AssessActionProps) => {
           allValue={allValue}
           {...props}
           render={(selectedContentGroupContext) => (
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="center" className={css.cellError} p={2} pb={0}>
               <Box width={300} fontSize={14}>
                 <FormControlLabel
                   control={
@@ -165,7 +172,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
         <TableCell className={css.tableCellLine} align="center">
           {outcome.assumed ? "Yes" : ""}
         </TableCell>
-        <TableCell>
+        <TableCell className={css.tablecellError}>
           <AssessAction
             outcome={outcome}
             attendenceList={attendanceList}

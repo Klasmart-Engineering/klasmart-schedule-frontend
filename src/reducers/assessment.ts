@@ -43,8 +43,10 @@ interface IupdateAssessmentParams {
 export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams>(
   "assessment/updateAssessment",
   async ({ id, data }, { dispatch }) => {
-    if (data.action === "complete" && !data.attendance_ids?.length)
-      return Promise.reject(dispatch(actWarning("You must choose at least one student.")));
+    const errorlist: IupdateAssessmentParams["data"]["outcome_attendance_maps"] =
+      data.outcome_attendance_maps && data.outcome_attendance_maps.filter((item) => !item.skip && !item.attendance_ids);
+    if (data.action === "complete" && errorlist && errorlist.length > 0)
+      return Promise.reject(dispatch(actWarning("Please fill in all the information")));
     await api.assessments.updateAssessment(id, data);
     return id;
   }
