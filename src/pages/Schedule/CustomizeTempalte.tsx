@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
+import ContentPreview from "../ContentPreview";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -104,7 +105,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         <DeleteOutlined className={classes.lastIcon} onClick={handleDelete} />
       </div>
       <div className={classes.buttonPart}>
-        <Button color="primary" variant="contained" href={`/#/library/content-preview?id=${scheduleInfo.lesson_plan_id}`}>
+        <Button color="primary" variant="contained" href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}>
           Preview
         </Button>
         <Button

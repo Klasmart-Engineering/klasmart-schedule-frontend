@@ -19,19 +19,20 @@ import mockProgram from "../../mocks/backendMock/program.json";
 import mockSubject from "../../mocks/backendMock/subject.json";
 import mockTeacher from "../../mocks/backendMock/teacher.json";
 import { RootState } from "../../reducers";
+import { actError, actSuccess } from "../../reducers/notify";
 import {
   getScheduleTimeViewData,
-  removeSchedule,
-  saveScheduleData,
-  resetScheduleDetial,
   initScheduleDetial,
+  removeSchedule,
+  resetScheduleDetial,
+  saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
+import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
+import ContentPreview from "../ContentPreview";
+import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { timestampType, modeViewType, repeatOptionsType } from "../../types/scheduleTypes";
-import ConfilctTestTemplate from "./ConfilctTestTemplate";
-import { actError, actSuccess } from "../../reducers/notify";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -822,7 +823,7 @@ function EditBox(props: CalendarStateProps) {
             variant="contained"
             color="primary"
             style={{ width: "45%", marginRight: "10%" }}
-            href={`/#/library/content-preview?id=${scheduleList.lesson_plan_id}`}
+            href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}`}
           >
             Preview
           </Button>

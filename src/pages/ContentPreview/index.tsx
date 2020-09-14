@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Content } from "../../api/api";
 import { ContentType } from "../../api/type";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { RootState } from "../../reducers";
 import {
   approveContent,
@@ -21,6 +22,7 @@ import LayoutPair from "../ContentEdit/Layout";
 import { Assessments } from "./Assessments";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
+import { MaterialPreview, MaterialPreviewProps, PlanPreview, PlanPreviewProps } from "./H5pPreview";
 import { OperationBtn } from "./OperationBtn";
 import { TabValue } from "./type";
 
@@ -109,7 +111,26 @@ export default function ContentPreview(props: Content) {
       )}
     </Box>
   );
-  const rightside = <Box style={{ backgroundColor: "rgba(0,0,0,0.5)", height: "100%" }}>rightside</Box>;
+
+  const PlanRes = () => {
+    const segment: Segment = JSON.parse(contentPreview.data || "{}");
+    const h5pArray: PlanPreviewProps["contents"] = ModelLessonPlan.toArray(segment);
+    return h5pArray as PlanPreviewProps["contents"];
+  };
+
+  const MaterialRes = () => {
+    const h5pItem: MaterialPreviewProps["h5pItem"] = JSON.parse(contentPreview.data || "");
+    return h5pItem;
+  };
+  const handleGoLive = () => {
+    history.push(`/live/?content_id=${contentPreview.id}`);
+  };
+  const rightside = (
+    <Fragment>
+      {contentPreview.content_type === ContentType.plan && <PlanPreview contents={PlanRes()} onGoLive={handleGoLive} />}
+      {contentPreview.content_type === ContentType.material && <MaterialPreview h5pItem={MaterialRes()} onGoLive={handleGoLive} />}
+    </Fragment>
+  );
   useEffect(() => {
     dispatch(getContentDetailById(id));
   }, [dispatch, id]);
