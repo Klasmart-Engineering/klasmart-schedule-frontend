@@ -5,6 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import { LearningOutcomes } from "../../api/api";
 import { ContentType, OutcomePublishStatus } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
@@ -110,7 +111,7 @@ export default function ContentEdit() {
         const { outcome_entities, ...restValues } = value;
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
         const input = { ...restValues, content_type, outcomes };
-        if (lesson === "assets") Object.assign(input, { source: value.data.toString() });
+        if (lesson === "assets") Object.assign(input, { data: { source: value.data.toString() } });
         const contentDetail = ModelContentDetailForm.encode(input);
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
@@ -178,6 +179,12 @@ export default function ContentEdit() {
     },
     [assumed, dispatch, searchOutcome]
   );
+  const handleGoOutcomeDetail = useMemo(
+    () => (id: LearningOutcomes["outcome_id"]) => {
+      history.push(`/assessments/outcome-edit?outcome_id=${id}`);
+    },
+    [history]
+  );
 
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true, searchOutcome, assumed }));
@@ -212,6 +219,7 @@ export default function ContentEdit() {
         assumed={assumed}
         total={OutcomesListTotal}
         onChangePage={handleChangePageOutCome}
+        onGoOutcomesDetail={handleGoOutcomeDetail}
       />
       <MediaAssets
         list={mediaList}

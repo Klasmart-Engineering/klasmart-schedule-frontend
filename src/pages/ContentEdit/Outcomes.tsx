@@ -98,15 +98,19 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     top: 9,
     color: palette.grey[500],
   },
+  outcomeCursor: {
+    cursor: "pointer",
+  },
 }));
 
 interface OutcomesTableProps {
   list?: LearningOutcomes[];
   value?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
+  onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange } = props;
+  const { list, value, onChange, onGoOutcomesDetail } = props;
   const css = useStyles();
   const handleAction = (item: LearningOutcomes, type: "add" | "remove") => {
     const { outcome_id: id } = item;
@@ -127,7 +131,9 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     list &&
     list.map((item, idx) => (
       <TableRow key={item.outcome_id}>
-        <TableCell>{item.outcome_name}</TableCell>
+        <TableCell className={css.outcomeCursor} onClick={() => onGoOutcomesDetail(item.outcome_id) as any}>
+          {item.outcome_name}
+        </TableCell>
         <TableCell>{item.shortcode}</TableCell>
         <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
         <TableCell>{item.author_name}</TableCell>
@@ -163,10 +169,11 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 interface OutcomesInputProps {
   value?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
+  onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
-  const { value, onChange } = props;
+  const { value, onChange, onGoOutcomesDetail } = props;
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -193,7 +200,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <OutcomesTable list={value} value={value} onChange={onChange} />
+          <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
         </DialogContent>
       </Dialog>
     </Box>
@@ -212,11 +219,25 @@ export interface OutcomesProps {
   onChangePage: (page: number) => any;
   value?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
+  onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
 }
 
 export default function Outcomes(props: OutcomesProps) {
   const css = useStyles();
-  const { comingsoon, list, onSearch, onCheck, searchName, assumed, value, onChange, amountPerPage = 10, onChangePage, total } = props;
+  const {
+    comingsoon,
+    list,
+    onSearch,
+    onCheck,
+    searchName,
+    assumed,
+    value,
+    onChange,
+    amountPerPage = 10,
+    onChangePage,
+    total,
+    onGoOutcomesDetail,
+  } = props;
   const { lesson } = useParams();
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -243,13 +264,13 @@ export default function Outcomes(props: OutcomesProps) {
           <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
           {list.length > 0 ? (
             <>
-              <OutcomesTable list={list} value={value} onChange={onChange} />
+              <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
               {pagination}
             </>
           ) : (
             <NoFiles />
           )}
-          <OutComesInput value={value} onChange={onChange} />
+          <OutComesInput value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
         </>
       )}
     </Box>
