@@ -120,19 +120,25 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel}>
             Cancel
           </Button>
-          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
+          <LButton
+            variant="contained"
+            endIcon={<Save />}
+            color="primary"
+            className={css.headerButton}
+            onClick={onSave}
+            disabled={contentDetail?.publish_status === "draft" && !isDirty}
+          >
             Save
           </LButton>
-          {contentDetail?.publish_status === "draft" && !isDirty && (
-            <LButton
-              variant="contained"
-              endIcon={<Publish />}
-              className={clsx(css.headerButton, css.greenButton)}
-              onClick={onPublish as any}
-            >
-              Publish
-            </LButton>
-          )}
+          <LButton
+            variant="contained"
+            endIcon={<Publish />}
+            className={clsx(css.headerButton, css.greenButton)}
+            onClick={onPublish as any}
+            disabled={!(contentDetail?.publish_status === "draft" && !isDirty)}
+          >
+            Publish
+          </LButton>
         </Hidden>
       </Box>
       <Hidden smDown>
@@ -147,14 +153,26 @@ function ContentHeader(props: HeaderProps) {
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave} replace>
+          <LButton
+            as={IconButton}
+            className={clsx(css.iconButton, css.primaryIconButton)}
+            color="primary"
+            onClick={onSave}
+            replace
+            disabled={contentDetail?.publish_status === "draft" && !isDirty}
+          >
             <Save fontSize="small" />
           </LButton>
-          {contentDetail?.publish_status === "draft" && !isDirty && (
-            <LButton as={IconButton} className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish} replace>
-              <Publish fontSize="small" />
-            </LButton>
-          )}
+          <LButton
+            as={IconButton}
+            className={clsx(css.iconButton, css.greenButton)}
+            color="primary"
+            onClick={onPublish}
+            replace
+            disabled={!(contentDetail?.publish_status === "draft" && !isDirty)}
+          >
+            <Publish fontSize="small" />
+          </LButton>
         </Box>
       </Hidden>
       <Box display="flex" justifyContent="center">

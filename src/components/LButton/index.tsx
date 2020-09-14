@@ -19,10 +19,11 @@ export type LButtonProps<TAs extends ComponentType<any> | "button" = typeof Butt
   onClick: (...args: Parameters<AsProps<TAs>["onClick"]>) => Promise<any>;
   as?: TAs;
   replace?: boolean;
+  disabled?: boolean;
 };
 
 export function LButton<TAs extends ComponentType<any> | "button" = typeof Button>(props: LButtonProps<TAs>) {
-  const { onClick, children, as: As = Button, replace, ...restProps } = props;
+  const { onClick, children, as: As = Button, replace, disabled, ...restProps } = props;
   const css = useStyles(props);
   const validRef = useRef<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
@@ -48,7 +49,7 @@ export function LButton<TAs extends ComponentType<any> | "button" = typeof Butto
     };
   });
   return (
-    <As {...restProps} onClick={handleClick} disabled={pending}>
+    <As {...restProps} onClick={handleClick} disabled={pending || disabled}>
       {pending && <CircularProgress size={20} className={css.circle} />}
       {(!replace || !pending) && children}
     </As>
