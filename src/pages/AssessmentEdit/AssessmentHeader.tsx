@@ -16,7 +16,7 @@ import {
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { Fragment, useCallback, useState } from "react";
+import React, { Fragment, useCallback, useReducer } from "react";
 import { GetAssessmentResult } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
@@ -71,24 +71,15 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   redOutlinedButton: createOutlinedColor(palette.error, palette),
   greenButton: createContainedColor(palette.success, palette),
   primaryIconButton: createContainedColor(palette.primary, palette),
-  radioGroup: {
-    flexDirection: "row",
-    padding: "7px 0",
-    marginTop: 16,
-  },
-  radio: {
-    "&:not(:first-child)": {
-      marginLeft: 64,
-    },
-    [breakpoints.down("sm")]: {
-      marginRight: 0,
-    },
+  dialog: {},
+  dialogContentRemoveborder: {
+    borderBottom: "none",
   },
 }));
 
 interface AssessmentHeaderProps {
   name: string;
-  onBack: ButtonProps["onClick"];
+  onBack: ButtonProps["onClick"] | any;
   onSave: LButtonProps["onClick"];
   onComplete: Function;
   assessmentDetail: GetAssessmentResult;
@@ -98,17 +89,20 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const [open, setOpen] = useState(false);
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-  }, []);
-  const handleOpen = useCallback(() => {
-    setOpen(true);
-  }, []);
+  const [open, toggle] = useReducer((open) => {
+    return !open;
+  }, false);
+  const [openCancel, toggleCancel] = useReducer((open) => {
+    return !open;
+  }, false);
   const handleOk = useCallback(() => {
-    setOpen(false);
+    toggle();
     onComplete();
   }, [onComplete]);
+  const handleDiscard = useCallback(() => {
+    toggleCancel();
+    onBack();
+  }, [onBack]);
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -121,21 +115,19 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
         <Typography variant="h6" className={css.title}>
           {sm ? name : "For Organizations"}
         </Typography>
-        <Hidden smDown>
-          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onBack}>
-            Cancel
-          </Button>
-          {assessmentDetail.status === "in_progress" && (
+        {assessmentDetail.status === "in_progress" && (
+          <Hidden smDown>
+            <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={toggleCancel}>
+              Cancel
+            </Button>
             <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
               Save
             </LButton>
-          )}
-          {assessmentDetail.status === "in_progress" && (
-            <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleOpen as any}>
+            <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={toggle as any}>
               Compelete
             </Button>
-          )}
-        </Hidden>
+          </Hidden>
+        )}
       </Box>
       <Hidden smDown>
         <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
@@ -144,31 +136,44 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           </Typography>
         </Box>
       </Hidden>
-      <Hidden mdUp>
-        <Box display="flex" justifyContent="flex-end" py={2}>
-          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onBack}>
-            <CancelOutlined fontSize="small" />
-          </IconButton>
-          {assessmentDetail.status === "in_progress" && (
+      {assessmentDetail.status === "in_progress" && (
+        <Hidden mdUp>
+          <Box display="flex" justifyContent="flex-end" py={2}>
+            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={toggleCancel}>
+              <CancelOutlined fontSize="small" />
+            </IconButton>
             <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave} replace>
               <Save fontSize="small" />
             </LButton>
-          )}
-          {assessmentDetail.status === "in_progress" && (
-            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleOpen as any}>
+            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={toggle as any}>
               <Check fontSize="small" />
             </IconButton>
-          )}
-        </Box>
-      </Hidden>
-      <Dialog open={open} onClose={handleCancel}>
-        <DialogContent dividers>You cannot change the assessment after clicking Complete.</DialogContent>
+          </Box>
+        </Hidden>
+      )}
+      <Dialog open={open} onClose={toggle} className={css.dialog}>
+        <DialogContent dividers className={css.dialogContentRemoveborder}>
+          You cannot change the assessment after clicking Complete.
+        </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleCancel} color="primary">
+          <Button autoFocus onClick={toggle} color="primary">
             Cancel
           </Button>
           <Button onClick={handleOk} color="primary">
             Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openCancel} onClose={toggleCancel}>
+        <DialogContent dividers className={css.dialogContentRemoveborder}>
+          Discard unsaved changes?
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={toggleCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDiscard} color="primary">
+            Discard
           </Button>
         </DialogActions>
       </Dialog>

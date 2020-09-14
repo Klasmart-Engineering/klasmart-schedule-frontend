@@ -19,7 +19,7 @@ import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
-import { ModelAssessment } from "../../models/ModelAssessment";
+import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentState } from "../../reducers/assessment";
 const useStyles = makeStyles(({ palette }) => ({
@@ -64,13 +64,13 @@ const useStyles = makeStyles(({ palette }) => ({
 export interface AttendenceInputProps {
   defaultValue: PopupInputProps["value"];
   assessmentDetail: GetAssessmentResult;
-  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
 }
 export const AttendanceInput = (props: AttendenceInputProps) => {
   const {
     defaultValue,
     assessmentDetail,
-    formMethods: { control },
+    formMethods: { control, errors },
   } = props;
   return (
     <Box>
@@ -78,6 +78,8 @@ export const AttendanceInput = (props: AttendenceInputProps) => {
         name="attendance_ids"
         control={control}
         defaultValue={defaultValue}
+        rules={{ required: true }}
+        error={errors.attendance_ids}
         render={(props) => {
           return (
             <CheckboxGroup
@@ -133,7 +135,13 @@ function PopupInput(props: PopupInputProps) {
   return (
     <Box className={css.editBox}>
       <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendence" />
-      <Button className={css.editButton} color="primary" variant="contained" onClick={toggle}>
+      <Button
+        className={css.editButton}
+        color="primary"
+        variant="contained"
+        onClick={toggle}
+        disabled={assessmentDetail.status === "complete"}
+      >
         Edit
       </Button>
       <Dialog open={open} onClose={toggle}>
@@ -155,7 +163,7 @@ function PopupInput(props: PopupInputProps) {
 }
 
 interface SummaryProps {
-  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
   assessmentDetail: AssessmentState["assessmentDetail"];
   selectedAttendence: AssessmentState["assessmentDetail"]["attendances"];
 }

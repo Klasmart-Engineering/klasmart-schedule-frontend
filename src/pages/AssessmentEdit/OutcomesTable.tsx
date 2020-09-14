@@ -51,6 +51,7 @@ interface AssessActionProps {
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
+  status?: "complete" | "in_progress";
 }
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
@@ -60,6 +61,7 @@ const AssessAction = (props: AssessActionProps) => {
     index,
     attendenceList,
     formValue,
+    status,
   } = props;
   const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
   const allValue = useMemo(() => attendenceList?.map((item) => item.id as string), [attendenceList]);
@@ -94,7 +96,7 @@ const AssessAction = (props: AssessActionProps) => {
                     />
                   }
                   label="Award All"
-                  disabled={skip}
+                  disabled={skip || status === "complete"}
                 />
                 <Controller
                   name={`outcome_attendance_maps[${index}].skip`}
@@ -103,6 +105,7 @@ const AssessAction = (props: AssessActionProps) => {
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={handleChangeSkip} color="primary" />}
                       label="Skip"
+                      disabled={status === "complete"}
                     />
                   )}
                   control={control}
@@ -122,7 +125,7 @@ const AssessAction = (props: AssessActionProps) => {
                       }
                       label={item.name}
                       key={item.id}
-                      disabled={skip}
+                      disabled={skip || status === "complete"}
                     />
                   ))}
                 <Controller
@@ -147,10 +150,11 @@ interface OutcomesTableProps {
   attendanceList: AssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
   formValue: UpdateAssessmentRequestDataOmitAction;
+  status?: "complete" | "in_progress";
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods, formValue } = props;
+  const { outcomesList, attendanceList, formMethods, formValue, status } = props;
   const rows =
     outcomesList &&
     outcomesList.map((outcome, index) => (
@@ -168,6 +172,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
             formMethods={formMethods}
             index={index}
             formValue={formValue}
+            status={status}
           ></AssessAction>
         </TableCell>
       </TableRow>

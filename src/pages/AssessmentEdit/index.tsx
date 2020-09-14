@@ -107,7 +107,13 @@ export function AssessmentsEdit() {
     <>
       <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
       {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-        <OutcomesTable outcomesList={filteredOutcomelist} attendanceList={attendances} formMethods={formMethods} formValue={formValue} />
+        <OutcomesTable
+          outcomesList={filteredOutcomelist}
+          attendanceList={attendances}
+          formMethods={formMethods}
+          formValue={formValue}
+          status={assessmentDetail.status}
+        />
       ) : (
         <NoOutComesList />
       )}

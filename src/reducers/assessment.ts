@@ -1,6 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { actWarning } from "./notify";
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -39,10 +40,15 @@ interface IupdateAssessmentParams {
   id: Parameters<typeof api.assessments.updateAssessment>[0];
   data: Parameters<typeof api.assessments.updateAssessment>[1];
 }
-export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams>("assessment/updateAssessment", async ({ id, data }) => {
-  await api.assessments.updateAssessment(id, data);
-  return id;
-});
+export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams>(
+  "assessment/updateAssessment",
+  async ({ id, data }, { dispatch }) => {
+    if (data.action === "complete" && !data.attendance_ids?.length)
+      return Promise.reject(dispatch(actWarning("You must choose at least one student.")));
+    await api.assessments.updateAssessment(id, data);
+    return id;
+  }
+);
 export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string } & LoadingMetaPayload>(
   "assessment/getAssessment",
   async ({ id }) => {
