@@ -57,10 +57,10 @@ const initialState: ScheduleState = {
   searchFlag: false,
 };
 
-type querySchedulesParams = Parameters<typeof api.schedules.querySchedules>[0];
+type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedules>[0] } & LoadingMetaPayload;
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
-export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, querySchedulesParams>("schedule/scheduleList", (query) => {
-  return api.schedules.querySchedules(query);
+export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, querySchedulesParams>("schedule/scheduleList", ({ data }) => {
+  return api.schedules.querySchedules(data);
 });
 
 export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate, { state: Rootstate }>(
@@ -152,13 +152,11 @@ const { actions, reducer } = createSlice({
   },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
-      state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
+      // state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
+      state.searchScheduleList = payload.data;
       state.total = payload.total;
-      state.searchFlag = true;
     },
-    [getSearchScheduleList.rejected.type]: (state, { error }: any) => {
-      state.searchFlag = false;
-    },
+    [getSearchScheduleList.rejected.type]: (state, { error }: any) => {},
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
     },

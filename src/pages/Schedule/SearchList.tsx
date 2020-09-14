@@ -1,10 +1,9 @@
 import { Box, Card, createStyles, Grid, makeStyles, Theme } from "@material-ui/core";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { AccessTime, PeopleOutlineOutlined } from "@material-ui/icons";
+import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import VisibilitySensor from "react-visibility-sensor";
 import emptyBox from "../../../src/assets/icons/empty.svg";
 import { Schedule } from "../../api/api";
 import { RootState } from "../../reducers";
@@ -54,6 +53,9 @@ const useStyles = makeStyles((theme: Theme) =>
     circle: {
       textAlign: "center",
     },
+    paginationUl: {
+      justifyContent: "center",
+    },
   })
 );
 
@@ -97,25 +99,36 @@ const useQuery = () => {
   return { name };
 };
 
+const timestampToTime = () => {
+  const date = new Date();
+  const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+  const [Y, M, D] = [
+    date.getFullYear(),
+    dateNumFun(date.getMonth() + 1),
+    dateNumFun(date.getDate()),
+    dateNumFun(date.getHours()),
+    dateNumFun(date.getMinutes()),
+    dateNumFun(date.getSeconds()),
+  ];
+  return `${Y}-${M}-${D}`;
+};
+
 export default function SearchList() {
   const dispatch = useDispatch();
   const { name } = useQuery();
-  const time_zone = -new Date().getTimezoneOffset() * 60;
-  console.log(time_zone);
-  const current_time = Math.floor(new Date().valueOf() / 1000);
+  const [page, setPage] = React.useState(1);
+  const current_time = Math.floor(new Date(timestampToTime()).valueOf() / 1000);
   React.useEffect(() => {
-    dispatch(
-      getSearchScheduleList({
-        teacher_name: name,
-        page: 1,
-        page_size: 10,
-        start_at: current_time,
-        time_zone_offset: -new Date().getTimezoneOffset() * 60,
-      })
-    );
+    const data = {
+      teacher_name: name,
+      page: 1,
+      page_size: 10,
+      time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      start_at: current_time,
+    };
+    dispatch(getSearchScheduleList({ data, metaLoading: true }));
   }, [current_time, dispatch, name]);
-  const { searchScheduleList, total, searchFlag } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-
+  const { searchScheduleList, total } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const classes = useStyles();
 
   const history = useHistory();
@@ -145,13 +158,17 @@ export default function SearchList() {
     history.push(`/schedule/calendar/rightside/scheduleList/model/edit/?schedule_id=${id}`);
   };
 
-  let page: number = parseInt(`${searchScheduleList.length / 10}`) + 1;
-  let isMore = Math.ceil(total / 10);
-  const getBottom = (value: boolean) => {
-    if (value) {
-      // setScheduleList([...scheduleList, ...listssss]);
-      dispatch(getSearchScheduleList({ teacher_name: name, page, page_size: 10, time_zone_offset: -new Date().getTimezoneOffset() * 60 }));
-    }
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    // console.log(value)
+    setPage(value);
+    const data = {
+      teacher_name: name,
+      page: value,
+      page_size: 10,
+      time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      start_at: current_time,
+    };
+    dispatch(getSearchScheduleList({ data, metaLoading: true }));
   };
 
   return (
@@ -195,28 +212,22 @@ export default function SearchList() {
               </Card>
             </div>
           ))}
-          {searchScheduleList.length % 10 === 0 && isMore >= page ? (
-            <VisibilitySensor onChange={getBottom}>
-              <div className={classes.circle}>
-                <CircularProgress />
-              </div>
-            </VisibilitySensor>
-          ) : (
-            <div className={classes.circle}>{"No More Data"}</div>
-          )}
         </>
       ) : (
         <div style={{ textAlign: "center" }}>
-          {searchFlag ? (
-            <>
-              <img src={emptyBox} alt="" />
-              <p>No results found.</p>
-            </>
-          ) : (
-            <CircularProgress />
-          )}
+          <img src={emptyBox} alt="" />
+          <p>No results found.</p>
         </div>
       )}
+      <div style={{ textAlign: "center" }}>
+        <Pagination
+          count={Math.ceil(total / 10)}
+          color="primary"
+          classes={{ ul: classes.paginationUl }}
+          onChange={handlePageChange}
+          page={page}
+        />
+      </div>
     </Box>
   );
 }
