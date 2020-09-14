@@ -121,7 +121,7 @@ function NavBarLarge() {
   const history = useHistory();
   const currentValue = useLocation().pathname.split("/")[1];
 
-  const handleChangeSelect = (item: any): void => {
+  const handleChangeSelect = (item: { name: string; path: string }): void => {
     history.push(item.path);
   };
 

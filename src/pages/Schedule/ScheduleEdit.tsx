@@ -798,7 +798,7 @@ function EditBox(props: CalendarStateProps) {
           >
             Preview
           </Button>
-          <Button variant="contained" color="primary" style={{ width: "45%" }}>
+          <Button variant="contained" color="primary" style={{ width: "45%" }} href={`/#/live/?schedule_id=${scheduleId}`}>
             Go Live
           </Button>
         </Box>

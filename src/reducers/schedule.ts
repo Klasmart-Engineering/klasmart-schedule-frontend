@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface scheduleViewData {
   end: Date;
@@ -80,7 +81,7 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
   }
 );
 
-type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.schedulesTimeView>[0];
+type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.schedulesTimeView>[0] & LoadingMetaPayload;
 type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.schedulesTimeView>;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
   "schedule/schedules_time_view",
@@ -118,6 +119,14 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
     return api.contentsResources.getContentResourceUploadPath(query);
   }
 );
+
+interface LiveSchedulePayload extends LoadingMetaPayload {
+  schedule_id: Parameters<typeof api.schedules.getLiveToken>[0];
+}
+type LiveScheduleResult = ReturnType<typeof api.schedules.getLiveToken>;
+export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>("schedule/live", async ({ schedule_id }) => {
+  return api.schedules.getLiveToken(schedule_id);
+});
 
 const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
   const newViewData: any = [];
@@ -168,6 +177,9 @@ const { actions, reducer } = createSlice({
     [getContentResourceUploadPath.fulfilled.type]: (state, { payload }: any) => {
       state.attachment_path = payload.path;
       state.attachement_id = payload.resource_id;
+    },
+    [getScheduleLiveToken.fulfilled.type]: (state, { payload }: any) => {
+      // console.log(payload)
     },
   },
 });

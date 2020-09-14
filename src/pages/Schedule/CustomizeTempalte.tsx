@@ -107,7 +107,13 @@ export default function CustomizeTempalte(props: InfoProps) {
         <Button color="primary" variant="contained" href={`/#/library/content-preview?id=${scheduleInfo.lesson_plan_id}`}>
           Preview
         </Button>
-        <Button color="primary" variant="contained" autoFocus className={classes.lastButton}>
+        <Button
+          color="primary"
+          variant="contained"
+          autoFocus
+          className={classes.lastButton}
+          href={`/#/live/?schedule_id=${scheduleInfo.id}`}
+        >
           Go Live
         </Button>
       </div>

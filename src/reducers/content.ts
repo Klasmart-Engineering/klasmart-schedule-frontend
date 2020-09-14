@@ -282,6 +282,14 @@ export const lockContent = createAsyncThunk<
   return await api.contents.lockContent(content_id);
 });
 
+interface LiveContentPayload extends LoadingMetaPayload {
+  content_id: Parameters<typeof api.contents.getLiveToken>[0];
+}
+type LiveContentResult = ReturnType<typeof api.contents.getLiveToken>;
+export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>("contents/live", async ({ content_id }) => {
+  return api.contents.getLiveToken(content_id);
+});
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -404,6 +412,9 @@ const { actions, reducer } = createSlice({
     [lockContent.rejected.type]: (state, { error }: any) => {
       // alert("lock failed");
       throw error;
+    },
+    [getContentLiveToken.rejected.type]: (state, { error }: any) => {
+      // console.log(error)
     },
   },
 });
