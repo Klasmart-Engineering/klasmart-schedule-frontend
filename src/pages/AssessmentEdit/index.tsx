@@ -133,7 +133,7 @@ export function AssessmentsEdit() {
         assessmentDetail={assessmentDetail}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} selectedAttendence={attendances} />
+        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} />
         {rightsideArea}
       </LayoutPair>
     </>

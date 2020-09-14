@@ -63,12 +63,12 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-export interface AttendenceInputProps {
+export interface AttendanceInputProps {
   defaultValue: PopupInputProps["value"];
   assessmentDetail: GetAssessmentResult;
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
 }
-export const AttendanceInput = (props: AttendenceInputProps) => {
+export const AttendanceInput = (props: AttendanceInputProps) => {
   const {
     defaultValue,
     assessmentDetail,
@@ -138,7 +138,7 @@ function PopupInput(props: PopupInputProps) {
   }, [dispatch, formMethods, onChange]);
   return (
     <Box className={css.editBox}>
-      <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendence" />
+      <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendance" />
       <Button
         className={css.editButton}
         color="primary"
@@ -169,7 +169,6 @@ function PopupInput(props: PopupInputProps) {
 interface SummaryProps {
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
   assessmentDetail: AssessmentState["assessmentDetail"];
-  selectedAttendence: AssessmentState["assessmentDetail"]["attendances"];
 }
 export function Summary(props: SummaryProps) {
   const { assessmentDetail } = props;

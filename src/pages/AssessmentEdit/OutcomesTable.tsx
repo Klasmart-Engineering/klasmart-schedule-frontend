@@ -54,7 +54,7 @@ const useStyles = makeStyles({
 
 interface AssessActionProps {
   outcome: GetAssessmentResultOutcomeAttendanceMap;
-  attendenceList: AssessmentState["assessmentDetail"]["attendances"];
+  attendanceList: AssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
@@ -66,12 +66,12 @@ const AssessAction = (props: AssessActionProps) => {
     outcome: { outcome_id, attendance_ids },
     formMethods: { control, setValue },
     index,
-    attendenceList,
+    attendanceList,
     formValue,
     status,
   } = props;
   const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
-  const allValue = useMemo(() => attendenceList?.map((item) => item.id as string), [attendenceList]);
+  const allValue = useMemo(() => attendanceList?.map((item) => item.id as string), [attendanceList]);
   const handleChangeSkip: CheckboxProps["onChange"] = (e) => {
     const skip = e.target.checked;
     if (skip) {
@@ -119,8 +119,8 @@ const AssessAction = (props: AssessActionProps) => {
                 />
               </Box>
               <Box px={3} className={css.assessActionline}>
-                {attendenceList &&
-                  attendenceList.map((item) => (
+                {attendanceList &&
+                  attendanceList.map((item) => (
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -175,7 +175,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
         <TableCell className={css.tablecellError}>
           <AssessAction
             outcome={outcome}
-            attendenceList={attendanceList}
+            attendanceList={attendanceList}
             formMethods={formMethods}
             index={index}
             formValue={formValue}
