@@ -9,7 +9,8 @@ import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/s
 import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
-import { timestampType, modeViewType } from "../../types/scheduleTypes";
+import { useLocation } from "react-router-dom";
+import { modeViewType, timestampType } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -67,9 +68,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const useQuery = () => {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const name = query.get("name") || "";
+  return name;
+};
+
 function Tool(props: ToolProps) {
   const css = useStyles();
-  const [teacherName, setTeacherName] = React.useState("");
+  const [teacherName, setTeacherName] = React.useState(useQuery());
   const history = useHistory();
   const { includeList, changeTimesTamp, changeModelView, modelView } = props;
 

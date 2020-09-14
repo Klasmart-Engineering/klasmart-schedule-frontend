@@ -37,6 +37,7 @@ export default function CreateOutcomings() {
   const [showPublish, setShowPublish] = React.useState(false);
   const { outcomeDetail } = useSelector<RootState, RootState["outcomes"]>((state) => state.outcomes);
   const [finalData, setFinalData] = React.useState(outcomeDetail);
+  const [finalDataTest, setFinalDataTest] = React.useState(outcomeDetail);
   const [mulSelect, setMulselect] = React.useState({
     program: [],
     subject: [],
@@ -45,6 +46,8 @@ export default function CreateOutcomings() {
     age: [],
     grade: [],
   });
+
+  const isSame = JSON.stringify(finalData) === JSON.stringify(finalDataTest);
 
   React.useEffect(() => {
     dispatch(onLoadContentEdit({ type: "material", id: null }));
@@ -58,6 +61,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     setFinalData(outcomeDetail);
+    setFinalDataTest(outcomeDetail);
   }, [outcomeDetail]);
 
   const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
@@ -82,6 +86,7 @@ export default function CreateOutcomings() {
         if (result.payload === "ok") {
           dispatch(actSuccess("Update Success"));
           setShowPublish(true);
+          dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
         }
         return;
       }
@@ -146,10 +151,7 @@ export default function CreateOutcomings() {
   };
 
   const handleReset = () => {
-    setFinalData({
-      ...finalData,
-      ...outcomeDetail,
-    });
+    history.push("/assessments/outcome-list");
   };
 
   const handelReject = (): void => {
@@ -264,12 +266,21 @@ export default function CreateOutcomings() {
     });
   };
 
+  React.useEffect(() => {
+    if (finalData.program?.length === 0) setFinalData({ ...finalData, program: [{ program_id: "", program_name: "" }] });
+    if (finalData.subject?.length === 0) setFinalData({ ...finalData, subject: [{ subject_id: "", subject_name: "" }] });
+    if (finalData.developmental?.length === 0)
+      setFinalData({ ...finalData, developmental: [{ developmental_id: "", developmental_name: "" }] });
+    if (finalData.skills?.length === 0) setFinalData({ ...finalData, skills: [{ skill_id: "", skill_name: "" }] });
+    if (finalData.age?.length === 0) setFinalData({ ...finalData, age: [{ age_id: "", age_name: "" }] });
+    if (finalData.grade?.length === 0) setFinalData({ ...finalData, grade: [{ grade_id: "", grade_name: "" }] });
+  }, [finalData]);
+
   const getKeywords = (keywords: string[] | undefined) => {
     if (!keywords || !keywords.length) return;
     console.log(keywords);
     return keywords.map((item: string) => item);
   };
-
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
@@ -283,6 +294,7 @@ export default function CreateOutcomings() {
         publish_status={outcomeDetail.publish_status}
         showPublish={showPublish}
         finalData={finalData}
+        isSame={isSame}
       />
       <OutcomeForm
         outcome_id={outcome_id}

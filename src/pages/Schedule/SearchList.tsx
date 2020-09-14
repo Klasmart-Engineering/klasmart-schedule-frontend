@@ -155,7 +155,8 @@ export default function SearchList() {
     return false;
   }
   const previewSchedule = (id: number) => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/?schedule_id=${id}`);
+    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/?name=${name}&schedule_id=${id}`);
+    document.documentElement.scrollTop = 0;
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -169,6 +170,7 @@ export default function SearchList() {
       start_at: current_time,
     };
     dispatch(getSearchScheduleList({ data, metaLoading: true }));
+    document.documentElement.scrollTop = 0;
   };
 
   return (

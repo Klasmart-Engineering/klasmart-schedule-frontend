@@ -89,6 +89,7 @@ export interface OutcomeHeaderProps {
   publish_status: string | undefined;
   showPublish: boolean;
   finalData: any;
+  isSame: boolean;
 }
 
 function OutcomeHeader(props: OutcomeHeaderProps) {
@@ -104,7 +105,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     handleApprove,
     publish_status,
     finalData,
-    showPublish,
+    isSame,
   } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -137,7 +138,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
             Save
           </LButton>
-          {(showPublish || finalData.publish_status === "draft") && (
+          {isSame && finalData.publish_status === "draft" && (
             <LButton variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
               Publish
             </LButton>
