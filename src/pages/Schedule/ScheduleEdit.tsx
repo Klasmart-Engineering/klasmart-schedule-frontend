@@ -315,6 +315,11 @@ function EditBox(props: CalendarStateProps) {
    */
   const handleTopicListChange = (event: React.ChangeEvent<{ value: String | Number }>, name: string) => {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (name === "start_at" && value < currentTime) {
+      dispatch(actError("Start time cannot be earlier than current time"));
+      return;
+    }
     if (name === "title" && (event.target.value as string).length > 20) return;
     if (name === "description" && (event.target.value as string).length > 100) return;
     setScheduleData(name, value);
@@ -388,7 +393,6 @@ function EditBox(props: CalendarStateProps) {
     }
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
-    dispatch(actSuccess("save success"));
     dispatch(
       getScheduleTimeViewData({
         view_type: modelView,
@@ -396,7 +400,13 @@ function EditBox(props: CalendarStateProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
+    dispatch(actSuccess("Save successful"));
     history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+  };
+
+  const isScheduleExpired = (): boolean => {
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    return scheduleId ? Number(scheduleDetial.end_at) < currentTime : false;
   };
 
   const saveTheTest = () => {
@@ -446,6 +456,7 @@ function EditBox(props: CalendarStateProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
+    dispatch(actSuccess("Delete sucessfully"));
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),
@@ -558,24 +569,26 @@ function EditBox(props: CalendarStateProps) {
                 onClick={closeEdit}
               />
             </Grid>
-            <Grid item xs={6} style={{ textAlign: "right" }}>
-              <DeleteOutlineOutlined
-                style={{
-                  color: "#D74040",
-                  visibility: scheduleId ? "visible" : "hidden",
-                }}
-                className={css.toolset}
-                onClick={handleDelete}
-              />
-              <Save
-                style={{
-                  color: "#0E78D5",
-                  marginLeft: "10px",
-                }}
-                className={css.toolset}
-                onClick={saveTheTest}
-              />
-            </Grid>
+            {!isScheduleExpired() && (
+              <Grid item xs={6} style={{ textAlign: "right" }}>
+                <DeleteOutlineOutlined
+                  style={{
+                    color: "#D74040",
+                    visibility: scheduleId ? "visible" : "hidden",
+                  }}
+                  className={css.toolset}
+                  onClick={handleDelete}
+                />
+                <Save
+                  style={{
+                    color: "#0E78D5",
+                    marginLeft: "10px",
+                  }}
+                  className={css.toolset}
+                  onClick={saveTheTest}
+                />
+              </Grid>
+            )}
           </Grid>
         </Box>
         <Box className={css.fieldBox}>
@@ -586,6 +599,7 @@ function EditBox(props: CalendarStateProps) {
             value={scheduleList.title}
             onChange={(e) => handleTopicListChange(e, "title")}
             required
+            disabled={isScheduleExpired()}
           ></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
@@ -597,6 +611,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "class_id");
           }}
           value={classItem}
+          disabled={isScheduleExpired()}
           renderInput={(params) => (
             <TextField {...params} error={validator.class_id} className={css.fieldset} label="Add Class" required variant="outlined" />
           )}
@@ -610,6 +625,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "lesson_plan_id");
           }}
           value={lessonPlan}
+          disabled={isScheduleExpired()}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -632,6 +648,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "teacher_ids");
           }}
           value={teacherItem}
+          disabled={isScheduleExpired()}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -659,6 +676,7 @@ function EditBox(props: CalendarStateProps) {
                   required
                   error={validator.start_at}
                   value={timestampToTime(scheduleList.start_at)}
+                  disabled={isScheduleExpired()}
                   onChange={(e) => handleTopicListChange(e, "start_at")}
                 />
               </Grid>
@@ -674,6 +692,7 @@ function EditBox(props: CalendarStateProps) {
                   required
                   error={validator.end_at}
                   value={timestampToTime(scheduleList.end_at)}
+                  disabled={isScheduleExpired()}
                   onChange={(e) => handleTopicListChange(e, "end_at")}
                 />
               </Grid>
@@ -683,10 +702,12 @@ function EditBox(props: CalendarStateProps) {
         <Box>
           <FormGroup row>
             <FormControlLabel
+              disabled={isScheduleExpired()}
               control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
               label="All Day"
             />
             <FormControlLabel
+              disabled={isScheduleExpired()}
               control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
               label="Repeat"
             />
@@ -700,6 +721,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "subject_id");
           }}
           value={subjectItem}
+          disabled={isScheduleExpired()}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -708,6 +730,7 @@ function EditBox(props: CalendarStateProps) {
               error={validator.subject_id}
               variant="outlined"
               value={scheduleList.subject_id}
+              disabled={isScheduleExpired()}
               required
             />
           )}
@@ -720,6 +743,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "program_id");
           }}
           value={programItem}
+          disabled={isScheduleExpired()}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -740,6 +764,7 @@ function EditBox(props: CalendarStateProps) {
           error={validator.class_type}
           select
           required
+          disabled={isScheduleExpired()}
         >
           <MenuItem value="OnlineClass">online class</MenuItem>
           <MenuItem value="OfflineClass">offline class</MenuItem>
@@ -751,6 +776,7 @@ function EditBox(props: CalendarStateProps) {
             <Grid container justify="space-between" alignItems="center">
               <Grid item xs={4}>
                 <FormControlLabel
+                  disabled={isScheduleExpired()}
                   control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
                   label="Due Date"
                 />
@@ -767,6 +793,7 @@ function EditBox(props: CalendarStateProps) {
                     "aria-label": "change date",
                   }}
                   value={selectedDueDate}
+                  disabled={isScheduleExpired()}
                   onChange={handleDueDateChange}
                 />
               </Grid>
@@ -781,6 +808,7 @@ function EditBox(props: CalendarStateProps) {
           rows={4}
           variant="outlined"
           value={scheduleList.description}
+          disabled={isScheduleExpired()}
           onChange={(e) => handleTopicListChange(e, "description")}
         />
         <ScheduleAttachment

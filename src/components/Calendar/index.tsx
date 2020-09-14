@@ -12,6 +12,7 @@ import { RootState } from "../../reducers";
 import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 import { timestampType, repeatOptionsType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
+import { actSuccess } from "../../reducers/notify";
 
 interface scheduleInfoProps {
   end: Date;
@@ -67,6 +68,8 @@ function MyCalendar(props: CalendarProps) {
    * @param e
    */
   const creteSchedule = (e: any) => {
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (getTimestamp(e.start) < currentTime) return;
     changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
@@ -101,10 +104,12 @@ function MyCalendar(props: CalendarProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
+    dispatch(actSuccess("Delete sucessfully"));
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),
     });
+    setScheduleInfoStatus(true);
     setOpenStatus(false);
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
