@@ -10,7 +10,7 @@ import React, { ChangeEvent } from "react";
 import { OrderBy, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { isUnpublish } from "./FirstSearchHeader";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { Assets, QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -109,7 +109,7 @@ interface BulkActionOption {
 
 function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
-  if (condition.content_type) {
+  if (condition.content_type === Assets.assets_type) {
     return [{ label: "delete", value: BulkAction.remove }];
   }
   switch (condition.publish_status) {
