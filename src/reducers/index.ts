@@ -4,11 +4,13 @@ import assessments from "./assessments";
 import confirm from "./confirm";
 import content from "./content";
 import loading, { actSetLoading } from "./loading";
+import locale from "./locale";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
 import outcome from "./outcome";
 import outcomes from "./outcomes";
 import schedule from "./schedule";
+
 const loadingMiddleware = createLoadingMiddleware({
   enableLoadingPayload: { type: actSetLoading.type, payload: true },
   disableLoadingPayload: { type: actSetLoading.type, payload: false },
@@ -16,6 +18,7 @@ const loadingMiddleware = createLoadingMiddleware({
 
 export const store = configureStore({
   reducer: {
+    locale,
     loading,
     confirm,
     notify,
