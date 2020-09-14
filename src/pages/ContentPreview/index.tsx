@@ -123,7 +123,9 @@ export default function ContentPreview(props: Content) {
     return h5pItem;
   };
   const handleGoLive = () => {
-    history.push(`/live/?content_id=${contentPreview.id}`);
+    // history.push(`/live/?content_id=${contentPreview.id}`);
+    // window.location.href = `/live/?content_id=${contentPreview.id}`
+    window.open(`/#/live/?content_id=${contentPreview.id}`, "_blank");
   };
   const rightside = (
     <Fragment>

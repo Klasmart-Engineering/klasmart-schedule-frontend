@@ -15,7 +15,7 @@ const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => (
     backgroundColor: paletteColor.dark,
   },
 });
-const useStyles = makeStyles(({ palette }) => ({
+const useStyles = makeStyles(({ palette, breakpoints }) => ({
   btn: {
     marginLeft: "10px",
     cursor: "pointer",
@@ -27,6 +27,10 @@ const useStyles = makeStyles(({ palette }) => ({
     height: "100%",
     position: "relative",
     overflow: "hidden",
+    minHeight: "calc(100vh - 60px)",
+    // [breakpoints.up("md")]: {
+    //   minHeight: 'calc(100vh - 60px)',
+    // },
   },
   h5pCon: {
     width: "90%",
@@ -108,15 +112,12 @@ export function PlanPreview(props: PlanPreviewProps) {
   const { contents, onGoLive } = props;
   let currContent = contents[currIndex];
   let source = JSON.parse(currContent?.data || "{}");
-  console.log(contents);
-  console.log(source);
   const handlePrev = () => {
     if (currIndex > 0) {
       setCurrIndex(currIndex - 1);
       currContent = contents[currIndex];
       source = JSON.parse(currContent?.data || "{}");
     }
-    console.log(currIndex);
   };
   const handleNext = () => {
     if (currIndex < contents.length - 1) {
@@ -124,7 +125,6 @@ export function PlanPreview(props: PlanPreviewProps) {
       currContent = contents[currIndex];
       source = JSON.parse(currContent?.data || "{}");
     }
-    console.log(currContent);
   };
   return (
     <Box className={css.previewContainer}>
