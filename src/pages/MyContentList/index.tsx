@@ -16,7 +16,7 @@ import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
-const PAGE_SIZE = 11;
+const PAGE_SIZE = 16;
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
