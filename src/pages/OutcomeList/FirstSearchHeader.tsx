@@ -5,14 +5,13 @@ import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import { HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import CreateOutcomings from "../OutcomeEdit";
+import { AssessmentsIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "./icons";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -112,28 +111,29 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.published)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
-                startIcon={<PublishOutlined />}
+                // startIcon={<SvgIcon style={{color: "#0E78D5"}} component={LOIcon} />}
+                startIcon={value?.publish_status === "published" ? <LoBlueIcon /> : <LoIcon />}
               >
                 Learning Outcomes
               </Button>
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.pending)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
-                startIcon={<HourglassEmptyOutlined />}
+                startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
               >
                 Pending
               </Button>
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.draft)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
-                startIcon={<PublishOutlined />}
+                startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
               >
                 Unpublished
               </Button>
               <Button
                 onClick={() => onChangeCategory(HeaderCategory.assessment)}
                 className={clsx(css.nav, { [css.actives]: false })}
-                startIcon={<PermMediaOutlined />}
+                startIcon={<AssessmentsIcon />}
               >
                 Assessments
               </Button>

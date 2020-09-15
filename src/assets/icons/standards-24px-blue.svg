@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>flag-24px</title>
+    <g id="home-没有list" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Assessments-standards/milestone" transform="translate(-857.000000, -125.000000)">
+            <g id="flag-24px" transform="translate(857.000000, 125.000000)">
+                <polygon id="路径" points="0 0 24 0 24 24 0 24"></polygon>
+                <path d="M12.36,6 L12.76,8 L18,8 L18,14 L14.64,14 L14.24,12 L7,12 L7,6 L12.36,6 M14,4 L5,4 L5,21 L7,21 L7,14 L12.6,14 L13,16 L20,16 L20,6 L14.4,6 L14,4 Z" id="形状" fill="#0E78D5" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>
