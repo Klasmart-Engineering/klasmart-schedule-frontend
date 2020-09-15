@@ -16,6 +16,7 @@ const getDiffMessage = (targetMessages: MessageHash) => {
 };
 
 const defaultOptions: OptionsObject = {
+  autoHideDuration: 2000,
   anchorOrigin: {
     horizontal: "right",
     vertical: "top",
