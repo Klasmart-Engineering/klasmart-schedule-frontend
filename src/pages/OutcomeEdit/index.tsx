@@ -6,7 +6,7 @@ import ModalBox from "../../components/ModalBox";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { approve, deleteOutcome, getOutcomeDetail, lock, publish, reject, save, updateOutcome } from "../../reducers/outcomes";
+import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject, save, updateOutcome } from "../../reducers/outcome";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
@@ -35,7 +35,7 @@ export default function CreateOutcomings() {
   const history = useHistory();
   const [showCode, setShoeCode] = React.useState(false);
   const [showPublish, setShowPublish] = React.useState(false);
-  const { outcomeDetail } = useSelector<RootState, RootState["outcomes"]>((state) => state.outcomes);
+  const { outcomeDetail } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [finalData, setFinalData] = React.useState(outcomeDetail);
   const [finalDataTest, setFinalDataTest] = React.useState(outcomeDetail);
   const [showEdit, setShowEdit] = React.useState(false);
@@ -74,7 +74,7 @@ export default function CreateOutcomings() {
     };
     if (outcome_id) {
       if (data.publish_status === "published") {
-        const result: any = await dispatch(lock(data.outcome_id as string));
+        const result: any = await dispatch(lockOutcome(data.outcome_id as string));
         if (result.payload.outcome_id) {
           const afterLock: any = await dispatch(updateOutcome({ outcome_id: result.payload.outcome_id, value: data }));
           if (afterLock.payload === "ok") {
@@ -134,7 +134,7 @@ export default function CreateOutcomings() {
       {
         label: "Delete",
         event: async () => {
-          const result: any = await dispatch(deleteOutcome({ id: outcome_id, metaLoading: true }));
+          const result: any = await dispatch(deleteOutcome(outcome_id));
           setOpenStatus(false);
           if (result.payload === "ok") {
             dispatch(actSuccess("Delete Success"));
@@ -163,7 +163,7 @@ export default function CreateOutcomings() {
 
   const handlePublish: OutcomeHeaderProps["handlePublish"] = async () => {
     if (outcomeDetail.publish_status === "draft") {
-      const result: any = await dispatch(publish(outcomeDetail.outcome_id));
+      const result: any = await dispatch(publishOutcome(outcomeDetail.outcome_id as string));
       if (result.payload === "ok") {
         history.push("/assessments/outcome-list");
       }

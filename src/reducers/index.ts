@@ -7,7 +7,6 @@ import locale from "./locale";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
 import outcome from "./outcome";
-import outcomes from "./outcomes";
 import schedule from "./schedule";
 
 const loadingMiddleware = createLoadingMiddleware({
@@ -25,7 +24,6 @@ export const store = configureStore({
     outcome,
     schedule,
     assessments,
-    outcomes,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loadingMiddleware),
 });
