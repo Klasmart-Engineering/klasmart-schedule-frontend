@@ -9,7 +9,7 @@ import { UpdateAssessmentRequestData } from "../../api/type";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AssessmentState, AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessment";
+import { AsyncTrunkReturned, getAssessment, IAssessmentState, updateAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
@@ -25,7 +25,7 @@ const useQuery = () => {
   const filterOutcomes = query.get("filterOutcomes") || undefined;
   return { id, filterOutcomes, editindex };
 };
-const filterOutcomeslist = (list: AssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
+const filterOutcomeslist = (list: IAssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
   if (value === "all" || value === null) return list;
   let newList = cloneDeep(list);
   if (!newList) return list;
@@ -38,8 +38,8 @@ export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { filterOutcomes = "all", id, editindex } = useQuery();
-  const assessmentDetail = useSelector<RootState, RootState["assessment"]["assessmentDetail"]>(
-    (state) => state.assessment.assessmentDetail
+  const assessmentDetail = useSelector<RootState, RootState["assessments"]["assessmentDetail"]>(
+    (state) => state.assessments.assessmentDetail
   );
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;

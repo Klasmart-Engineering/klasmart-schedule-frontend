@@ -22,7 +22,7 @@ import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentReque
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-import { AssessmentState } from "../../reducers/assessment";
+import { IAssessmentState } from "../../reducers/assessments";
 import { actWarning } from "../../reducers/notify";
 const useStyles = makeStyles(({ palette }) => ({
   classSummaryHeader: {
@@ -168,7 +168,7 @@ function PopupInput(props: PopupInputProps) {
 
 interface SummaryProps {
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
-  assessmentDetail: AssessmentState["assessmentDetail"];
+  assessmentDetail: IAssessmentState["assessmentDetail"];
 }
 export function Summary(props: SummaryProps) {
   const { assessmentDetail } = props;

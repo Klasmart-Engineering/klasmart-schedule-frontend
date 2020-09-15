@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import assessment from "./assessment";
 import assessments from "./assessments";
 import confirm from "./confirm";
 import content from "./content";
@@ -8,7 +7,6 @@ import locale from "./locale";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
 import outcome from "./outcome";
-import outcomes from "./outcomes";
 import schedule from "./schedule";
 
 const loadingMiddleware = createLoadingMiddleware({
@@ -25,9 +23,7 @@ export const store = configureStore({
     content,
     outcome,
     schedule,
-    assessment,
     assessments,
-    outcomes,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loadingMiddleware),
 });

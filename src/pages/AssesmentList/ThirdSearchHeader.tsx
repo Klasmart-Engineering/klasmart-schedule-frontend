@@ -143,7 +143,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 fullWidth
                 onChange={handleChangeOrder}
-                value={value.order_by || AssessmentOrderBy._complete_time}
+                value={value.order_by || AssessmentOrderBy._class_end_time}
                 label="Display By"
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
