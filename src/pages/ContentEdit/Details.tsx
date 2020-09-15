@@ -151,6 +151,7 @@ export default function Details(props: DetailsProps) {
           render={(props) => (
             <SingleUploader
               partition="thumbnail"
+              accept="image/*"
               {...props}
               render={({ uploady, item, btnRef, value, isUploading }) => (
                 <Box className={css.fieldset} display="flex">

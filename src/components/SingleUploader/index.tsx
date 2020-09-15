@@ -2,7 +2,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { BatchItem } from "@rpldy/shared";
 import { PreSendData, UploadyContextType, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
 import { UPLOADER_EVENTS } from "@rpldy/uploader";
-import Uploady, { UploadyContext } from "@rpldy/uploady";
+import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
 import React, { ReactNode, RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../../api";
@@ -41,7 +41,7 @@ const parseExtension = (filename: string) => {
 };
 
 type FetchUploadUrlResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
-interface SingleUploaderProps extends BaseUploaderProps, BaseUploaderProps {
+interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   partition: NonNullable<Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0]>["partition"];
   value?: string;
   onChange?: (value?: string) => any;
