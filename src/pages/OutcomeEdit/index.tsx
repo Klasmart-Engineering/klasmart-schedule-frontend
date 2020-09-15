@@ -41,6 +41,7 @@ export default function CreateOutcomings() {
   const [finalData, setFinalData] = React.useState(outcomeDetail);
   const [finalDataTest, setFinalDataTest] = React.useState(outcomeDetail);
   const [showEdit, setShowEdit] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
   const [mulSelect, setMulselect] = React.useState({
     program: [],
     subject: [],
@@ -78,7 +79,7 @@ export default function CreateOutcomings() {
         outcome_id: "",
         ancestor_id: "",
         shortcode: "",
-        assumed: false,
+        assumed: true,
         outcome_name: "",
         program: [],
         subject: [],
@@ -104,7 +105,10 @@ export default function CreateOutcomings() {
   }, [outcomeDetail, outcome_id]);
 
   const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
-    if (!finalData.outcome_name) return;
+    if (!finalData.outcome_name) {
+      setIsError(true);
+      return;
+    }
     const data = {
       ...finalData,
       ...mulSelect,
@@ -115,6 +119,7 @@ export default function CreateOutcomings() {
         dispatch(actSuccess("Update Success"));
         setShowPublish(true);
         dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+        setIsError(false);
       }
     } else {
       const result: any = await dispatch(save(data));
@@ -123,6 +128,7 @@ export default function CreateOutcomings() {
         history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
         dispatch(actSuccess("Save Success"));
         setShowPublish(true);
+        setIsError(false);
       }
     }
   };
@@ -138,7 +144,7 @@ export default function CreateOutcomings() {
     const result: any = await dispatch(reject({ id: outcome_id, reject_reason: reason }));
     if (result.payload === "ok") {
       dispatch(actSuccess("Reject Success"));
-      history.push("/assessments/outcome-list");
+      history.go(-1);
     }
     setOpenStatus(false);
   };
@@ -162,7 +168,8 @@ export default function CreateOutcomings() {
           setOpenStatus(false);
           if (result.payload === "ok") {
             dispatch(actSuccess("Delete Success"));
-            history.push("/assessments/outcome-list");
+            // history.push("/assessments/outcome-list");
+            history.go(-1);
           }
         },
       },
@@ -172,8 +179,12 @@ export default function CreateOutcomings() {
   };
 
   const handleDelete = async () => {
-    setEnableCustomization(false);
-    setOpenStatus(true);
+    const result: any = await dispatch(deleteOutcome(outcome_id));
+    setOpenStatus(false);
+    if (result.payload === "ok") {
+      dispatch(actSuccess("Delete Success"));
+      history.go(-1);
+    }
   };
 
   const handleReset = () => {
@@ -189,7 +200,7 @@ export default function CreateOutcomings() {
     if (outcomeDetail.publish_status === "draft") {
       const result: any = await dispatch(publishOutcome(outcomeDetail.outcome_id as string));
       if (result.payload === "ok") {
-        history.push("/assessments/outcome-list");
+        history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
       }
     }
   };
@@ -197,7 +208,8 @@ export default function CreateOutcomings() {
   const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
       await dispatch(approve(outcome_id));
-      history.push("/assessments/outcome-list");
+      // history.push("/assessments/outcome-list");
+      history.go(-1);
     }
   };
 
@@ -350,6 +362,7 @@ export default function CreateOutcomings() {
         getKeywords={getKeywords}
         showCode={showCode}
         showEdit={showEdit}
+        isError={isError}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

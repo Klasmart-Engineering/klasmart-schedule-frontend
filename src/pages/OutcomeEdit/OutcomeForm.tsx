@@ -56,10 +56,21 @@ export interface OutcomeFormProps {
   getKeywords: (keywords: string[] | undefined) => void;
   showCode: boolean;
   showEdit: boolean;
+  isError: boolean;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
-  const { mockOptions, outcome_id, finalData, handleInputChange, handleMultipleChange, handleKeywordsChange, showCode, showEdit } = props;
+  const {
+    mockOptions,
+    outcome_id,
+    finalData,
+    handleInputChange,
+    handleMultipleChange,
+    handleKeywordsChange,
+    showCode,
+    showEdit,
+    isError,
+  } = props;
   const classes = useStyles();
 
   const getItems = (list: MockOptionsItem[]) =>
@@ -72,7 +83,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
     const date = new Date(Number(timestamp) * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
-    const [Y, M, D] = [
+    const [Y, M, D, h, m] = [
       date.getFullYear(),
       dateNumFun(date.getMonth() + 1),
       dateNumFun(date.getDate()),
@@ -80,7 +91,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
       dateNumFun(date.getMinutes()),
       dateNumFun(date.getSeconds()),
     ];
-    return `${Y}-${M}-${D}`;
+    return `${Y}-${M}-${D} ${h}:${m}`;
   };
 
   return (
@@ -110,7 +121,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 label="Learning outcome Name"
                 onChange={(event) => handleInputChange("outcome_name", event)}
                 required
-                error={!finalData.outcome_name}
+                error={isError}
                 disabled={showEdit}
               />
             </Grid>
