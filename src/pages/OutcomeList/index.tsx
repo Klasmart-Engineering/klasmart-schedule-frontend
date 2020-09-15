@@ -97,6 +97,15 @@ export function OutcomeList() {
     history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ outcome_id }) });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
+
+  useEffect(() => {
+    let page = condition.page;
+    if (outcomeList.length === 0 && total > 1) {
+      page = 1;
+      history.push({ search: toQueryString({ ...condition, page }) });
+    }
+  }, [condition, condition.page, history, outcomeList.length, total]);
+
   useEffect(() => {
     reset();
     dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));

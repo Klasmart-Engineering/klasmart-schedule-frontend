@@ -20,7 +20,16 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     marginLeft: "10px",
     cursor: "pointer",
   },
-  whiteIconBtn: createContainedColor(palette.primary, palette),
+  whiteIconBtn: {
+    color: "#000",
+    backgroundColor: "#fff",
+    "&:hover": {
+      backgroundColor: "#e0e0e0",
+    },
+    "&:disabled": {
+      backgroundColor: "#e0e0e0",
+    },
+  },
   rejectBtn: createContainedColor(palette.error, palette),
   previewContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -108,7 +117,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 //   const css = useStyles();
 //   return (
 //     <Fragment>
-//       <img className={css.noH5p} alt="comingsoon" src={noH5pUrl} />
+//       <img className={css.noH5p} src={noH5pUrl} />
 //       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
 //         The file has been deleted
 //       </Typography>

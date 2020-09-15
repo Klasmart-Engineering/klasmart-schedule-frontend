@@ -2,6 +2,7 @@ import { Box, createStyles, makeStyles, Table, TableBody, TableCell, TableHead, 
 import TableContainer from "@material-ui/core/TableContainer/TableContainer";
 import React from "react";
 import { LearningOutcomes } from "../../api/api";
+import { Empty } from "../ContentEdit/MediaAssets";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -10,6 +11,9 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: "#f2f5f7",
     },
     tableCell: {
+      textAlign: "center",
+    },
+    tabContainer: {
       textAlign: "center",
     },
   })
@@ -24,12 +28,7 @@ function OutComeRow(props: OutcomeProps) {
     <TableRow>
       <TableCell className={css.tableCell}>{outcome.outcome_name}</TableCell>
       <TableCell className={css.tableCell}>{outcome.shortcode}</TableCell>
-      {/* <TableCell className={css.tableCell}>{outcome.program}</TableCell>
-      <TableCell className={css.tableCell}>{outcome.subject}</TableCell>
-      <TableCell className={css.tableCell}>{outcome.skills}</TableCell>
-      <TableCell className={css.tableCell}>{outcome.publish_scope}</TableCell> */}
       <TableCell className={css.tableCell}>{outcome.assumed}</TableCell>
-      {/* <TableCell className={css.tableCell}>{formattedTime(outcome.created_at)}</TableCell> */}
       <TableCell className={css.tableCell}>{outcome.author_name}</TableCell>
     </TableRow>
   );
@@ -41,29 +40,29 @@ export function LearningOutcome(props: LearningOutcomeProps) {
   const css = useStyles();
   const { list } = props;
   return (
-    <Box>
-      <TableContainer>
-        <Table>
-          <TableHead className={css.tableHead}>
-            <TableRow>
-              <TableCell className={css.tableCell}>Learning Outcomes</TableCell>
-              <TableCell className={css.tableCell}>Short Code</TableCell>
-              {/* <TableCell className={css.tableCell}>Program</TableCell>
-              <TableCell className={css.tableCell}>Subject</TableCell>
-              <TableCell className={css.tableCell}>Milestone</TableCell>
-              <TableCell className={css.tableCell}>Standard</TableCell> */}
-              <TableCell className={css.tableCell}>Assumed</TableCell>
-              {/* <TableCell className={css.tableCell}>Created On</TableCell> */}
-              <TableCell className={css.tableCell}>Author</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {list.map((item, idx) => (
-              <OutComeRow key={item.outcome_id} outcome={item} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Box className={css.tabContainer}>
+      {list.length > 0 ? (
+        <TableContainer>
+          <Table>
+            <TableHead className={css.tableHead}>
+              <TableRow>
+                <TableCell className={css.tableCell}>Learning Outcomes</TableCell>
+                <TableCell className={css.tableCell}>Short Code</TableCell>
+                <TableCell className={css.tableCell}>Assumed</TableCell>
+                <TableCell className={css.tableCell}>Author</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody className={css.tableCell}>
+              {list.map((item, idx) => (
+                <OutComeRow key={item.outcome_id} outcome={item} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Empty />
+      )}
     </Box>
   );
 }

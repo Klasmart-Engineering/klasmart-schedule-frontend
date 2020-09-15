@@ -16,7 +16,7 @@ import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 11;
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -111,6 +111,14 @@ export default function MyContentList() {
       history.push({ pathname: ContentEdit.routeRedirectDefault });
     }
   };
+
+  useEffect(() => {
+    if (contentsList.length === 0 && total > 0) {
+      const page = 1;
+      history.push({ search: toQueryString({ ...condition, page }) });
+    }
+  }, [condition, contentsList, history, total]);
+
   useEffect(() => {
     reset();
     dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
