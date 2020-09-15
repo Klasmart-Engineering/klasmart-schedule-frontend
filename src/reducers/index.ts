@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import assessment from "./assessment";
 import assessments from "./assessments";
 import confirm from "./confirm";
 import content from "./content";
@@ -25,7 +24,6 @@ export const store = configureStore({
     content,
     outcome,
     schedule,
-    assessment,
     assessments,
     outcomes,
   },

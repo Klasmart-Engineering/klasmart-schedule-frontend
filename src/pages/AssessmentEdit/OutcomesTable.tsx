@@ -17,7 +17,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
-import { AssessmentState } from "../../reducers/assessment";
+import { IAssessmentState } from "../../reducers/assessments";
 
 const useStyles = makeStyles({
   tableContainer: {
@@ -54,8 +54,8 @@ const useStyles = makeStyles({
 
 interface AssessActionProps {
   outcome: GetAssessmentResultOutcomeAttendanceMap;
-  attendanceList: AssessmentState["assessmentDetail"]["attendances"];
-  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  attendanceList: IAssessmentState["assessmentDetail"]["attendances"];
+  formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
   status?: "complete" | "in_progress";
@@ -153,9 +153,9 @@ const AssessAction = (props: AssessActionProps) => {
 };
 
 interface OutcomesTableProps {
-  outcomesList: AssessmentState["assessmentDetail"]["outcome_attendance_maps"];
-  attendanceList: AssessmentState["assessmentDetail"]["attendances"];
-  formMethods: UseFormMethods<AssessmentState["assessmentDetail"]>;
+  outcomesList: IAssessmentState["assessmentDetail"]["outcome_attendance_maps"];
+  attendanceList: IAssessmentState["assessmentDetail"]["attendances"];
+  formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   formValue: UpdateAssessmentRequestDataOmitAction;
   status?: "complete" | "in_progress";
 }
