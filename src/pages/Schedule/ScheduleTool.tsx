@@ -98,6 +98,12 @@ function Tool(props: ToolProps) {
     }
   };
 
+  const handleKeyDown = (event: any) => {
+    if (event.keyCode === 13 && event.target.value.trim()) {
+      history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
+    }
+  };
+
   return (
     <Box className={css.toolBox}>
       <Grid container spacing={2} alignItems="center">
@@ -131,6 +137,7 @@ function Tool(props: ToolProps) {
               placeholder={"teacher name"}
               value={teacherName}
               onChange={(event) => setTeacherName(event.target.value)}
+              onKeyDown={handleKeyDown}
             />
           </FormControl>
           <Button

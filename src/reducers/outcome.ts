@@ -10,6 +10,7 @@ interface IOutcomeState {
   total: number;
   outcomeList: LearningOutcomes[];
   createOutcome: CreateLearningOutComesRequest;
+  lockOutcome_id: string;
 }
 
 interface RootState {
@@ -63,6 +64,7 @@ const initialState: IOutcomeState = {
     keywords: [],
     description: "",
   },
+  lockOutcome_id: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -157,8 +159,8 @@ type ParamsRejectOutcome = {
   id: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[0];
   reject_reason: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[1]["reject_reason"];
 };
-export const reject = createAsyncThunk<ResultRejectOutcome, ParamsRejectOutcome>("outcome/reject", ({ id, reject_reason }) => {
-  return api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason });
+export const reject = createAsyncThunk<ResultRejectOutcome, ParamsRejectOutcome>("outcome/reject", async ({ id, reject_reason }) => {
+  return await api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason });
 });
 
 export const approve = createAsyncThunk<any, any>("outcome/approve", (id) => {
@@ -207,6 +209,7 @@ const { reducer } = createSlice({
     },
     [lockOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("lock success");
+      state.lockOutcome_id = payload.outcome_id;
     },
     [lockOutcome.rejected.type]: (state, { error }: any) => {
       // alert("lock failed");

@@ -35,7 +35,7 @@ export default function CreateOutcomings() {
   const history = useHistory();
   const [showCode, setShoeCode] = React.useState(false);
   const [showPublish, setShowPublish] = React.useState(false);
-  const { outcomeDetail } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeDetail, lockOutcome_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [finalData, setFinalData] = React.useState(outcomeDetail);
   const [finalDataTest, setFinalDataTest] = React.useState(outcomeDetail);
   const [showEdit, setShowEdit] = React.useState(false);
@@ -73,24 +73,11 @@ export default function CreateOutcomings() {
       ...mulSelect,
     };
     if (outcome_id) {
-      if (data.publish_status === "published") {
-        const result: any = await dispatch(lockOutcome(data.outcome_id as string));
-        if (result.payload.outcome_id) {
-          const afterLock: any = await dispatch(updateOutcome({ outcome_id: result.payload.outcome_id, value: data }));
-          if (afterLock.payload === "ok") {
-            dispatch(actSuccess("Update Success"));
-            setShowPublish(true);
-            history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}`);
-          }
-        }
-      } else {
-        const result: any = await dispatch(updateOutcome({ outcome_id, value: data }));
-        if (result.payload === "ok") {
-          dispatch(actSuccess("Update Success"));
-          setShowPublish(true);
-          dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
-        }
-        return;
+      const result: any = await dispatch(updateOutcome({ outcome_id, value: data }));
+      if (result.payload === "ok") {
+        dispatch(actSuccess("Update Success"));
+        setShowPublish(true);
+        dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
       }
     } else {
       const result: any = await dispatch(save(data));
@@ -284,9 +271,18 @@ export default function CreateOutcomings() {
     return keywords.map((item: string) => item);
   };
 
-  const handleEdit: OutcomeHeaderProps["handleEdit"] = () => {
+  const handleEdit: OutcomeHeaderProps["handleEdit"] = async () => {
     setShowEdit(!showEdit);
+    if (outcomeDetail.publish_status === "published") {
+      await dispatch(lockOutcome(outcome_id));
+    }
   };
+
+  React.useEffect(() => {
+    if (lockOutcome_id) {
+      history.push(`/assessments/outcome-edit?outcome_id=${lockOutcome_id}`);
+    }
+  }, [history, lockOutcome_id]);
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader

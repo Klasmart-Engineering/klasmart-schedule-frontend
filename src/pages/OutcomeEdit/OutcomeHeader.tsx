@@ -109,7 +109,6 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     handlePublish,
     handleApprove,
     publish_status,
-    finalData,
     isSame,
     showEdit,
     handleEdit,
@@ -121,6 +120,226 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
   const goBack = () => {
     history.go(-1);
   };
+
+  const getHeaderButtons = () => {
+    return (
+      <>
+        {publish_status === "draft" && (
+          <>
+            {showEdit && (
+              <>
+                <Button
+                  variant="contained"
+                  endIcon={<Create />}
+                  color="primary"
+                  className={clsx(css.headerButton, css.editButton)}
+                  onClick={handleEdit}
+                >
+                  Edit
+                </Button>
+                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                  Delete
+                </Button>
+              </>
+            )}
+            {!showEdit && (
+              <>
+                {isSame ? (
+                  <LButton
+                    variant="contained"
+                    endIcon={<Publish />}
+                    className={clsx(css.headerButton, css.greenButton)}
+                    onClick={handlePublish}
+                  >
+                    Publish
+                  </LButton>
+                ) : (
+                  <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                    Save
+                  </LButton>
+                )}
+                <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                  Cancel
+                </Button>
+              </>
+            )}
+          </>
+        )}
+        {publish_status === "pending" && (
+          <>
+            <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+              Delete
+            </Button>
+            <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
+              Reject
+            </Button>
+            <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
+              Approve
+            </LButton>
+          </>
+        )}
+        {publish_status === "rejected" && (
+          <>
+            {showEdit && (
+              <>
+                <Button
+                  variant="contained"
+                  endIcon={<Create />}
+                  color="primary"
+                  className={clsx(css.headerButton, css.editButton)}
+                  onClick={handleEdit}
+                >
+                  Edit
+                </Button>
+                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                  Delete
+                </Button>
+              </>
+            )}
+            {!showEdit && (
+              <>
+                <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                  Save
+                </LButton>
+                <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                  Cancel
+                </Button>
+              </>
+            )}
+          </>
+        )}
+        {publish_status === "published" && (
+          <>
+            {showEdit && (
+              <>
+                <Button
+                  variant="contained"
+                  endIcon={<Create />}
+                  color="primary"
+                  className={clsx(css.headerButton, css.editButton)}
+                  onClick={handleEdit}
+                >
+                  Edit
+                </Button>
+                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                  Delete
+                </Button>
+              </>
+            )}
+            {!showEdit && (
+              <>
+                <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                  Save
+                </LButton>
+                <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                  Cancel
+                </Button>
+              </>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
+
+  const getHeaderButtonsSmallScreen = () => {
+    return (
+      <>
+        {publish_status === "draft" && (
+          <>
+            {showEdit && (
+              <>
+                <Button variant="contained" color="primary" className={clsx(css.headerButton, css.editButton)} onClick={handleEdit}>
+                  <Create fontSize="small" />
+                </Button>
+                <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                  <Delete fontSize="small" />
+                </Button>
+              </>
+            )}
+            {!showEdit && (
+              <>
+                {isSame ? (
+                  <LButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
+                    <Publish fontSize="small" />
+                  </LButton>
+                ) : (
+                  <LButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
+                    <Save fontSize="small" />
+                  </LButton>
+                )}
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
+                  <CancelOutlined fontSize="small" />
+                </IconButton>
+              </>
+            )}
+          </>
+        )}
+        {publish_status === "pending" && (
+          <>
+            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+              <Delete fontSize="small" />
+            </Button>
+            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
+              <ClearSharp fontSize="small" />
+            </Button>
+            <LButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
+              <Check fontSize="small" />
+            </LButton>
+          </>
+        )}
+        {publish_status === "rejected" && (
+          <>
+            {showEdit && (
+              <>
+                <Button variant="contained" color="primary" className={clsx(css.headerButton, css.editButton)} onClick={handleEdit}>
+                  <Create fontSize="small" />
+                </Button>
+                <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                  <Delete fontSize="small" />
+                </Button>
+              </>
+            )}
+            {!showEdit && (
+              <>
+                <LButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
+                  <Save fontSize="small" />
+                </LButton>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
+                  <CancelOutlined fontSize="small" />
+                </IconButton>
+              </>
+            )}
+          </>
+        )}
+        {publish_status === "published" && (
+          <>
+            {showEdit && (
+              <>
+                <Button variant="contained" color="primary" className={clsx(css.headerButton, css.editButton)} onClick={handleEdit}>
+                  <Create fontSize="small" />
+                </Button>
+                <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                  <Delete fontSize="small" />
+                </Button>
+              </>
+            )}
+            {!showEdit && (
+              <>
+                <LButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
+                  <Save fontSize="small" />
+                </LButton>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
+                  <CancelOutlined fontSize="small" />
+                </IconButton>
+              </>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
+
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -131,157 +350,9 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
-          {sm ? "Create New Content" : "For Organizations"}
+          {sm ? "Create a New Learning Outcome" : "For Organizations"}
         </Typography>
-        <Hidden smDown>
-          {/* {finalData.outcome_id && showEdit && (
-            <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-              Delete
-            </Button>
-          )}
-          {
-            showEdit && (
-              <Button variant="contained" endIcon={<Create />} color="primary" className={clsx(css.headerButton)} onClick={handleEdit}>
-                Edit
-              </Button>
-            )
-          }
-          <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
-            Cancel
-          </Button>
-          <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
-            Save
-          </LButton>
-          {isSame && finalData.publish_status === "draft" && (
-            <LButton variant="contained" endIcon={<Publish />} className={clsx(css.headerButton, css.greenButton)} onClick={handlePublish}>
-              Publish
-            </LButton>
-          )}
-          {outcome_id && publish_status === "pending" && (
-            <>
-              <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
-                Reject
-              </Button>
-              <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
-                Approve
-              </LButton>
-            </>
-          )} */}
-          {finalData.publish_status === "draft" && (
-            <>
-              {showEdit && (
-                <>
-                  <Button
-                    variant="contained"
-                    endIcon={<Create />}
-                    color="primary"
-                    className={clsx(css.headerButton, css.editButton)}
-                    onClick={handleEdit}
-                  >
-                    Edit
-                  </Button>
-                  <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                    Delete
-                  </Button>
-                </>
-              )}
-              {!showEdit && (
-                <>
-                  {isSame ? (
-                    <LButton
-                      variant="contained"
-                      endIcon={<Publish />}
-                      className={clsx(css.headerButton, css.greenButton)}
-                      onClick={handlePublish}
-                    >
-                      Publish
-                    </LButton>
-                  ) : (
-                    <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
-                      Save
-                    </LButton>
-                  )}
-                  <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
-                    Cancel
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-          {finalData.publish_status === "pending" && (
-            <>
-              <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                Delete
-              </Button>
-              <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
-                Reject
-              </Button>
-              <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
-                Approve
-              </LButton>
-            </>
-          )}
-          {finalData.publish_status === "rejected" && (
-            <>
-              {showEdit && (
-                <>
-                  <Button
-                    variant="contained"
-                    endIcon={<Create />}
-                    color="primary"
-                    className={clsx(css.headerButton, css.editButton)}
-                    onClick={handleEdit}
-                  >
-                    Edit
-                  </Button>
-                  <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                    Delete
-                  </Button>
-                </>
-              )}
-              {!showEdit && (
-                <>
-                  <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
-                    Save
-                  </LButton>
-                  <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
-                    Cancel
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-          {finalData.publish_status === "published" && (
-            <>
-              {showEdit && (
-                <>
-                  <Button
-                    variant="contained"
-                    endIcon={<Create />}
-                    color="primary"
-                    className={clsx(css.headerButton, css.editButton)}
-                    onClick={handleEdit}
-                  >
-                    Edit
-                  </Button>
-                  <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                    Delete
-                  </Button>
-                </>
-              )}
-              {!showEdit && (
-                <>
-                  <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
-                    Save
-                  </LButton>
-                  <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
-                    Cancel
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-        </Hidden>
+        <Hidden smDown>{getHeaderButtons()}</Hidden>
       </Box>
       <Hidden smDown>
         <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
@@ -292,30 +363,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          {finalData.outcome_id && (
-            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
-              <Delete fontSize="small" />
-            </Button>
-          )}
-          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
-            <CancelOutlined fontSize="small" />
-          </IconButton>
-          <Button className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
-            <Save fontSize="small" />
-          </Button>
-          <Button className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
-            <Publish fontSize="small" />
-          </Button>
-          {outcome_id && publish_status === "pending" && (
-            <>
-              <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
-                <ClearSharp fontSize="small" />
-              </Button>
-              <Button className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
-                <Check fontSize="small" />
-              </Button>
-            </>
-          )}
+          {getHeaderButtonsSmallScreen()}
         </Box>
       </Hidden>
     </Fragment>
