@@ -1,6 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api from "../api";
-import { LearningOutcomes, OutcomesIDListRequest } from "../api/api";
+import { CreateLearningOutComesRequest, CreateLearningOutcomesResponse, LearningOutcomes, OutcomesIDListRequest } from "../api/api";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -9,6 +9,7 @@ interface IOutcomeState {
   outcomeDetail: LearningOutcomes;
   total: number;
   outcomeList: LearningOutcomes[];
+  createOutcome: CreateLearningOutComesRequest;
 }
 
 interface RootState {
@@ -17,32 +18,51 @@ interface RootState {
 
 const initialState: IOutcomeState = {
   outcomeDetail: {
-    outcome_id: undefined,
-    ancestor_id: undefined,
-    shortcode: undefined,
-    assumed: undefined,
-    outcome_name: undefined,
+    outcome_id: "",
+    ancestor_id: "",
+    shortcode: "",
+    assumed: false,
+    outcome_name: "",
     program: [],
     subject: [],
     developmental: [],
     skills: [],
     age: [],
     grade: [],
-    estimated_time: undefined,
-    reject_reason: undefined,
+    estimated_time: 1,
+    reject_reason: "",
     keywords: [],
-    source_id: undefined,
-    locked_by: undefined,
-    author_id: undefined,
-    author_name: undefined,
-    organization_id: undefined,
-    organization_name: undefined,
-    publish_scope: undefined,
-    publish_status: undefined,
-    created_at: undefined,
+    source_id: "",
+    locked_by: "",
+    author_id: "",
+    author_name: "",
+    organization_id: "",
+    organization_name: "",
+    publish_scope: "",
+    publish_status: "draft",
+    created_at: 0,
+    description: "",
   },
   total: 0,
   outcomeList: [],
+  createOutcome: {
+    outcome_name: "",
+    author_id: "",
+    author_name: "",
+    assumed: false,
+    shortcode: "",
+    organization_id: "",
+    program: [],
+    subject: [],
+    reject_reason: "",
+    developmental: [],
+    skills: [],
+    age: [],
+    grade: [],
+    estimated_time: 10,
+    keywords: [],
+    description: "",
+  },
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -74,9 +94,9 @@ export const deleteOutcome = createAsyncThunk<string, Required<LearningOutcomes>
 export const publishOutcome = createAsyncThunk<LearningOutcomes, Required<LearningOutcomes>["outcome_id"]>(
   "outcome/publishOutcome",
   async (id, { dispatch }) => {
-    const content = `Are you sure you want to publish this outcome?`;
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
+    // const content = `Are you sure you want to publish this outcome?`;
+    // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    // if (!isConfirmed) return Promise.reject();
     return api.learningOutcomes.publishLearningOutcomes(id, { scope: "" });
   }
 );
@@ -108,6 +128,41 @@ export const lockOutcome = createAsyncThunk<
   Parameters<typeof api.learningOutcomes.lockLearningOutcomes>[0]
 >("outcome/lockOutcome", async (id) => {
   return await api.learningOutcomes.lockLearningOutcomes(id);
+});
+
+export const save = createAsyncThunk<CreateLearningOutcomesResponse, CreateLearningOutComesRequest, { state: RootState }>(
+  "outcome/save",
+  async (payload, { getState }) => {
+    return await api.learningOutcomes.createLearningOutcomes(payload);
+  }
+);
+
+export type ResultUpdateOutcome = ReturnType<typeof api.learningOutcomes.updateLearningOutcomes>;
+type ParamsUpdateOutcome = {
+  outcome_id: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[0];
+  value: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[1];
+};
+export const updateOutcome = createAsyncThunk<ResultUpdateOutcome, ParamsUpdateOutcome>("outcome/update", ({ outcome_id, value }) => {
+  return api.learningOutcomes.updateLearningOutcomes(outcome_id, value);
+});
+
+type ResuleGetOutcomeDetail = ReturnType<typeof api.learningOutcomes.getLearningOutcomesById>;
+type ParamsGetOutcomeDetail = { id: Parameters<typeof api.learningOutcomes.getLearningOutcomesById>[0] } & LoadingMetaPayload;
+export const getOutcomeDetail = createAsyncThunk<LearningOutcomes, ParamsGetOutcomeDetail>("outcome/getOutcomeDetail", ({ id }) => {
+  return api.learningOutcomes.getLearningOutcomesById(id);
+});
+
+type ResultRejectOutcome = ReturnType<typeof api.learningOutcomes.rejectLearningOutcomes>;
+type ParamsRejectOutcome = {
+  id: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[0];
+  reject_reason: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[1]["reject_reason"];
+};
+export const reject = createAsyncThunk<ResultRejectOutcome, ParamsRejectOutcome>("outcome/reject", ({ id, reject_reason }) => {
+  return api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason });
+});
+
+export const approve = createAsyncThunk<any, any>("outcome/approve", (id) => {
+  return api.learningOutcomes.approveLearningOutcomes(id);
 });
 
 const { reducer } = createSlice({
@@ -157,6 +212,24 @@ const { reducer } = createSlice({
       // alert("lock failed");
       throw error;
     },
+    [save.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeDetail = payload;
+    },
+    [save.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [getOutcomeDetail.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeDetail = payload;
+    },
+    [getOutcomeDetail.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [approve.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [approve.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [updateOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
+    [updateOutcome.rejected.type]: ({ error }: any) => {},
   },
 });
 
