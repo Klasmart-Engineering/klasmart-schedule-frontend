@@ -28,8 +28,3 @@ export const apiGetH5pResourceById = (id: string) => {
 export const apiCreateH5pResource = () => {
   return `${process.env.REACT_APP_BASE_API}/h5p-www/new`;
 };
-
-export type LocaleName = "en" | "kr" | "cn";
-export const apiGetTranslation = (name: LocaleName) => {
-  return import(`../locale/${name}.json`);
-};

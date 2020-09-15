@@ -1,22 +1,23 @@
-import React, { ReactNode, useEffect } from "react";
-import { IntlProvider } from "react-intl";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../reducers";
-import { actAsyncSetLocale } from "../../reducers/locale";
+import React, { ReactNode, useEffect, useState } from "react";
+import { RawIntlProvider } from "react-intl";
+import { localeManager } from "../../locale/LocaleManager";
 
 export interface LocaleProps {
   children: ReactNode;
 }
 export function Locale(props: LocaleProps) {
   const { children } = props;
-  const { name, translation } = useSelector<RootState, RootState["locale"]>((state) => state.locale);
-  const dispatch = useDispatch<AppDispatch>();
+  const [locale, setLocale] = useState(localeManager.intl?.locale);
   useEffect(() => {
-    dispatch(actAsyncSetLocale());
-  }, [dispatch]);
+    localeManager.on("change", (intl) => {
+      if (!intl) return;
+      setLocale(intl.locale);
+    });
+  }, []);
+  if (!localeManager.intl) return null;
   return (
-    <IntlProvider key={name} locale={name} messages={translation}>
+    <RawIntlProvider key={locale} value={localeManager.intl}>
       {children}
-    </IntlProvider>
+    </RawIntlProvider>
   );
 }
