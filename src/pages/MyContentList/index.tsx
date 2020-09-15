@@ -96,7 +96,7 @@ export default function MyContentList() {
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
     if (content_type !== ContentType.material && content_type !== ContentType.plan) {
-      history.push(`/library/content-edit/lesson/assets/tab/details/rightside/assetsEdit?id=${id}`);
+      history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
     } else {
       history.push({ pathname: ContentPreview.routeRedirectDefault, search: toQueryString({ id: id, content_type: content_type }) });
     }
@@ -106,7 +106,7 @@ export default function MyContentList() {
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._created_at }) });
   const handleCreateContent = () => {
     if (condition.content_type === SearchContentsRequestContentType.assets) {
-      history.push(`/library/content-edit/lesson/assets/tab/details/rightside/assetsEdit`);
+      history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
     } else {
       history.push({ pathname: ContentEdit.routeRedirectDefault });
     }
