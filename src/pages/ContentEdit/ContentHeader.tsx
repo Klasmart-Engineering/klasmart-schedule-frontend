@@ -14,7 +14,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { ArrowBack, Cancel, CancelOutlined, Publish, Save } from "@material-ui/icons";
+import { ArrowBack, Cancel, CancelOutlined, Publish, Save, DeleteOutlineOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { Content } from "../../api/api";
@@ -95,10 +95,12 @@ interface HeaderProps {
   onPublish: LButtonProps["onClick"];
   isDirty: boolean;
   onBack: ButtonProps["onClick"];
+  onDelete: ButtonProps["onClick"];
+  id: string | null;
 }
 
 function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, onBack } = props;
+  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, onBack, onDelete, id } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -120,25 +122,40 @@ function ContentHeader(props: HeaderProps) {
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel}>
             Cancel
           </Button>
-          <LButton
-            variant="contained"
-            endIcon={<Save />}
-            color="primary"
-            className={css.headerButton}
-            onClick={onSave}
-            disabled={contentDetail?.publish_status === "draft" && !isDirty}
-          >
-            Save
-          </LButton>
-          <LButton
-            variant="contained"
-            endIcon={<Publish />}
-            className={clsx(css.headerButton, css.greenButton)}
-            onClick={onPublish as any}
-            disabled={!(contentDetail?.publish_status === "draft" && !isDirty)}
-          >
-            Publish
-          </LButton>
+          {lesson !== "assets" && (
+            <LButton
+              variant="contained"
+              endIcon={<Save />}
+              color="primary"
+              className={css.headerButton}
+              onClick={onSave}
+              disabled={contentDetail?.publish_status === "draft" && !isDirty}
+            >
+              Save
+            </LButton>
+          )}
+          {!(lesson === "assets" && id) && (
+            <LButton
+              variant="contained"
+              endIcon={<Publish />}
+              className={clsx(css.headerButton, css.greenButton)}
+              onClick={onPublish as any}
+              disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+            >
+              Publish
+            </LButton>
+          )}
+          {lesson === "assets" && id && (
+            <LButton
+              variant="outlined"
+              endIcon={<DeleteOutlineOutlined />}
+              color="primary"
+              className={clsx(css.headerButton, css.redOutlinedButton)}
+              onClick={onDelete as any}
+            >
+              Delete
+            </LButton>
+          )}
         </Hidden>
       </Box>
       <Hidden smDown>
@@ -153,26 +170,41 @@ function ContentHeader(props: HeaderProps) {
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
             <CancelOutlined fontSize="small" />
           </IconButton>
-          <LButton
-            as={IconButton}
-            className={clsx(css.iconButton, css.primaryIconButton)}
-            color="primary"
-            onClick={onSave}
-            replace
-            disabled={contentDetail?.publish_status === "draft" && !isDirty}
-          >
-            <Save fontSize="small" />
-          </LButton>
-          <LButton
-            as={IconButton}
-            className={clsx(css.iconButton, css.greenButton)}
-            color="primary"
-            onClick={onPublish}
-            replace
-            disabled={!(contentDetail?.publish_status === "draft" && !isDirty)}
-          >
-            <Publish fontSize="small" />
-          </LButton>
+          {lesson !== "assets" && (
+            <LButton
+              as={IconButton}
+              className={clsx(css.iconButton, css.primaryIconButton)}
+              color="primary"
+              onClick={onSave}
+              replace
+              disabled={contentDetail?.publish_status === "draft" && !isDirty}
+            >
+              <Save fontSize="small" />
+            </LButton>
+          )}
+          {!(lesson === "assets" && id) && (
+            <LButton
+              as={IconButton}
+              className={clsx(css.iconButton, css.greenButton)}
+              color="primary"
+              onClick={onPublish}
+              replace
+              disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+            >
+              <Publish fontSize="small" />
+            </LButton>
+          )}
+          {lesson === "assets" && id && (
+            <LButton
+              as={IconButton}
+              className={clsx(css.iconButton, css.redOutlinedButton)}
+              color="primary"
+              onClick={onDelete as any}
+              replace
+            >
+              <DeleteOutlineOutlined fontSize="small" />
+            </LButton>
+          )}
         </Box>
       </Hidden>
       <Box display="flex" justifyContent="center">

@@ -146,7 +146,7 @@ function AssetEdit(props: AssetEditProps) {
                   <>
                     {(JSON.stringify(value) === "{}" || !value) && !isUploading && <FileText fileFormat={fileFormat} fileType={fileType} />}
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
-                    {!isUploading && (
+                    {!isUploading && !contentDetail.id && (
                       <Button variant="contained" color="primary" ref={btnRef}>
                         Upload Files
                       </Button>

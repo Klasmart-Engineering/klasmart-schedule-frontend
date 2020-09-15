@@ -10,7 +10,15 @@ import { ContentType, OutcomePublishStatus } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists, onLoadContentEdit, publish, save, searchOutcomeList } from "../../reducers/content";
+import {
+  AsyncTrunkReturned,
+  contentLists,
+  onLoadContentEdit,
+  publish,
+  save,
+  searchOutcomeList,
+  deleteContent,
+} from "../../reducers/content";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
@@ -100,11 +108,7 @@ export default function ContentEdit() {
     },
     [history, routeBasePath, lesson, rightside, search]
   );
-  const handlePublish = useCallback(async () => {
-    if (!id) return;
-    await dispatch(publish(id));
-    history.replace("/");
-  }, [dispatch, id, history]);
+
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value: ContentDetailForm) => {
@@ -122,6 +126,20 @@ export default function ContentEdit() {
       }),
     [handleSubmit, content_type, lesson, dispatch, history, editindex]
   );
+
+  const handlePublish = useCallback(async () => {
+    if (lesson === "assets") await handleSave();
+    if (!id) return;
+    await dispatch(publish(id));
+    history.replace("/");
+  }, [lesson, handleSave, id, dispatch, history]);
+
+  const handleDelete = useCallback(async () => {
+    if (!id) return;
+    await dispatch(deleteContent(id));
+    history.goBack();
+  }, [dispatch, id, history]);
+
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
     () => (searchMedia = "") => {
       history.replace({
@@ -269,6 +287,8 @@ export default function ContentEdit() {
         onPublish={handlePublish}
         isDirty={isDirty}
         onBack={handleGoBack}
+        onDelete={handleDelete}
+        id={id}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftsideArea}

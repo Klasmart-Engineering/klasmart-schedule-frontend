@@ -107,10 +107,21 @@ function AssetsDetails(props: AssetDetailsProps) {
     return filed ? true : false;
   };
 
+  const isIdExist = (): boolean => {
+    return contentDetail.id ? true : false;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
-        <TextField label="Lesson Material" required value={fileType} onChange={(e) => handleTopicListChange(e, "fileType")} select>
+        <TextField
+          label="Lesson Material"
+          required
+          value={fileType}
+          onChange={(e) => handleTopicListChange(e, "fileType")}
+          disabled={isIdExist()}
+          select
+        >
           <MenuItem value="image">Image</MenuItem>
           <MenuItem value="video">Video</MenuItem>
           <MenuItem value="audio">Audio</MenuItem>
@@ -132,6 +143,7 @@ function AssetsDetails(props: AssetDetailsProps) {
                     variant="contained"
                     component="span"
                     color="primary"
+                    style={{ visibility: isIdExist() ? "hidden" : "visible" }}
                     endIcon={<CloudUploadOutlined />}
                   >
                     Thumbnail
@@ -152,6 +164,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           required
           rules={{ required: true }}
           defaultValue={contentDetail.name}
+          disabled={isIdExist()}
           error={errorValidator(errors.name)}
         />
         <Controller
@@ -163,6 +176,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           SelectProps={{ multiple: true }}
           defaultValue={contentDetail.program}
+          disabled={isIdExist()}
         >
           {menuItemList(mockOptions.program)}
         </Controller>
@@ -175,6 +189,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           SelectProps={{ multiple: true }}
           defaultValue={contentDetail.subject}
+          disabled={isIdExist()}
         >
           {menuItemList(mockOptions.subject)}
         </Controller>
@@ -192,6 +207,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             rules={{ required: true }}
             error={errorValidator(errors.developmental)}
             defaultValue={contentDetail.developmental}
+            disabled={isIdExist()}
           >
             {menuItemList(mockOptions.developmental)}
           </Controller>
@@ -208,6 +224,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             error={errorValidator(errors.skills)}
             SelectProps={{ multiple: true }}
             defaultValue={contentDetail.skills}
+            disabled={isIdExist()}
           >
             {menuItemList(mockOptions.skills)}
           </Controller>
@@ -226,6 +243,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             error={errorValidator(errors.age)}
             SelectProps={{ multiple: true }}
             defaultValue={contentDetail.age}
+            disabled={isIdExist()}
           >
             {menuItemList(mockOptions.age)}
           </Controller>
@@ -242,6 +260,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             error={errorValidator(errors.grade)}
             SelectProps={{ multiple: true }}
             defaultValue={contentDetail.grade}
+            disabled={isIdExist()}
           >
             {menuItemList(mockOptions.grade)}
           </Controller>
@@ -253,6 +272,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           className={css.fieldset}
           label="Description"
           defaultValue={contentDetail.description}
+          disabled={isIdExist()}
         />
         <Controller
           as={FormattedTextField}
@@ -262,6 +282,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           className={css.fieldset}
           label="Keywords"
           defaultValue={contentDetail.keywords}
+          disabled={isIdExist()}
         />
       </Box>
     </ThemeProvider>
