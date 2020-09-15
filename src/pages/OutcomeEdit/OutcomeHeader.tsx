@@ -245,6 +245,9 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <>
             {showEdit && (
               <>
+                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                  Delete
+                </Button>
                 <Button
                   variant="contained"
                   endIcon={<Create />}
@@ -253,9 +256,6 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   onClick={handleEdit}
                 >
                   Edit
-                </Button>
-                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                  Delete
                 </Button>
               </>
             )}
