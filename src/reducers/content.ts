@@ -210,9 +210,17 @@ export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQuer
     return { list, total };
   }
 );
-
-export const getContentDetailById = createAsyncThunk<Content, Required<Content>["id"]>("content/getContentDetailById", (id) =>
-  api.contents.getContentById(id)
+// content_id: Parameters<typeof api.contents.getLiveToken>[0];
+interface IQueryGetContentDetailByIdParams extends LoadingMetaPayload {
+  content_id: Parameters<typeof api.contents.getContentById>[0];
+}
+type IQueryGetContentDetailByIdResult = AsyncReturnType<typeof api.contents.getContentById>;
+export const getContentDetailById = createAsyncThunk<IQueryGetContentDetailByIdResult, IQueryGetContentDetailByIdParams>(
+  "content/getContentDetailById",
+  async ({ content_id }) => {
+    const res = await api.contents.getContentById(content_id);
+    return res;
+  }
 );
 
 export const deleteContent = createAsyncThunk<string, Required<Content>["id"]>("content/deleteContent", async (id, { dispatch }) => {

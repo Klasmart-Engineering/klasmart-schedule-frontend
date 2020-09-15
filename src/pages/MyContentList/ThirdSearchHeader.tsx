@@ -114,7 +114,7 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      return [{ label: "moveToArchived", value: BulkAction.remove }];
+      return [{ label: "delete", value: BulkAction.remove }];
     case PublishStatus.pending:
       return [];
     case PublishStatus.archive:
@@ -173,8 +173,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid item sm={6} xs={6} md={3}>
               {bulkOptions.length > 0 && (
                 <TextField
+                  style={{ width: 200 }}
                   size="small"
-                  fullWidth
                   onChange={handleChangeBulkAction}
                   label="Bulk Actions"
                   value=""
@@ -197,7 +197,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <TextField
                 size="small"
-                fullWidth
+                style={{ width: 200 }}
                 onChange={handleChangeOrder}
                 label="Display By"
                 value={value.order_by}

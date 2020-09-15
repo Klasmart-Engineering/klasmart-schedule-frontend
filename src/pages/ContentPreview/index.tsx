@@ -19,12 +19,12 @@ import {
 } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
-import { Assessments } from "./Assessments";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
-import { MaterialPreview, MaterialPreviewProps, PlanPreview, PlanPreviewProps } from "./H5pPreview";
+import { H5pPreview } from "./H5pPreview";
+import { LearningOutcome } from "./LeaningOutcomes";
 import { OperationBtn } from "./OperationBtn";
-import { TabValue } from "./type";
+import { DataH5p, TabValue } from "./type";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -82,7 +82,6 @@ export default function ContentPreview(props: Content) {
   };
   const handleChangeTab = useMemo(
     () => (value: string) => {
-      console.log(value);
       history.replace(`${routeBasePath}/tab/${value}${search}`);
     },
     [history, routeBasePath, search]
@@ -97,7 +96,11 @@ export default function ContentPreview(props: Content) {
         onClose={handleClose}
         onChangeTab={handleChangeTab}
       />
-      {tab === TabValue.details ? <Detail contentPreview={contentPreview} /> : <Assessments />}
+      {tab === TabValue.details ? (
+        <Detail contentPreview={contentPreview} />
+      ) : (
+        <LearningOutcome list={contentPreview.outcome_entities || []} />
+      )}
       {tab === TabValue.details && (
         <OperationBtn
           publish_status={contentPreview.publish_status}
@@ -112,27 +115,29 @@ export default function ContentPreview(props: Content) {
     </Box>
   );
 
-  const PlanRes = () => {
-    const segment: Segment = JSON.parse(contentPreview.data || "{}");
-    const h5pArray: PlanPreviewProps["contents"] = ModelLessonPlan.toArray(segment);
-    return h5pArray as PlanPreviewProps["contents"];
-  };
-
-  const MaterialRes = () => {
-    const h5pItem: MaterialPreviewProps["h5pItem"] = JSON.parse(contentPreview.data || "");
-    return h5pItem;
+  const planRes = (): DataH5p[] => {
+    if (contentPreview.content_type === ContentType.plan) {
+      const segment: Segment = JSON.parse(contentPreview.data || "{}");
+      const h5pArray = ModelLessonPlan.toArray(segment);
+      const h5ps: DataH5p[] = h5pArray.map((item, index) => {
+        return JSON.parse(item?.data || "");
+      });
+      return h5ps;
+    } else {
+      const h5pItem = JSON.parse(contentPreview.data || "{}");
+      return [h5pItem];
+    }
   };
   const handleGoLive = () => {
     window.open(`/#/live/?content_id=${contentPreview.id}`, "_blank");
   };
   const rightside = (
     <Fragment>
-      {contentPreview.content_type === ContentType.plan && <PlanPreview contents={PlanRes()} onGoLive={handleGoLive} />}
-      {contentPreview.content_type === ContentType.material && <MaterialPreview h5pItem={MaterialRes()} onGoLive={handleGoLive} />}
+      <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>
     </Fragment>
   );
   useEffect(() => {
-    dispatch(getContentDetailById(id));
+    dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
   }, [dispatch, id]);
   return (
     <Fragment>

@@ -53,7 +53,7 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={contentPreview.program?.join(",")}
+            value={contentPreview.program_name?.join(",")}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -65,11 +65,11 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={contentPreview.developmental?.join(",")}
+            value={contentPreview.developmental_name?.join(",")}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Skills" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.skills} />
+          <TextField label="Skills" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.skills_name} />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -93,7 +93,13 @@ export function Detail(props: ContentPreviewProps) {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Grade" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.grade?.join(",")} />
+          <TextField
+            label="Grade"
+            fullWidth
+            variant="outlined"
+            InputProps={{ readOnly: true }}
+            value={contentPreview.grade_name?.join(",")}
+          />
         </Grid>
       </Grid>
       <TextField

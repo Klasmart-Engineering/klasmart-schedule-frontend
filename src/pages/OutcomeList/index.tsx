@@ -99,7 +99,7 @@ export function OutcomeList() {
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
   useEffect(() => {
     reset();
-    dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+    dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
   }, [condition, reset, dispatch, refreshKey]);
 
   return (

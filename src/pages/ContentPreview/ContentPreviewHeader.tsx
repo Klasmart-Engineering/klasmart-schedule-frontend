@@ -65,7 +65,7 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
         aria-label="full width tabs example"
       >
         <Tab label="Details" value={TabValue.details} />
-        <Tab label="Assessments" value={TabValue.assessments} />
+        <Tab label="Leaning Outcomes" value={TabValue.leaningoutcomes} />
       </Tabs>
     </Fragment>
   );

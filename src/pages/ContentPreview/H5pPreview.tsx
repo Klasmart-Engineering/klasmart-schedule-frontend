@@ -3,10 +3,10 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
-import React, { Fragment, useState } from "react";
-import { Content } from "../../api/api";
-import noH5pUrl from "../../assets/icons/noh5p.svg";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import ContentH5p from "../ContentEdit/ContentH5p";
+import { DataH5p, PreviewBaseProps } from "./type";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -104,56 +104,56 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
 }));
 
-function EmptyContent() {
-  const css = useStyles();
-  return (
-    <Fragment>
-      <img className={css.noH5p} alt="comingsoon" src={noH5pUrl} />
-      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        The file has been deleted
-      </Typography>
-    </Fragment>
-  );
+// function EmptyContent() {
+//   const css = useStyles();
+//   return (
+//     <Fragment>
+//       <img className={css.noH5p} alt="comingsoon" src={noH5pUrl} />
+//       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+//         The file has been deleted
+//       </Typography>
+//     </Fragment>
+//   );
+// }
+interface H5pPreview extends PreviewBaseProps {
+  h5pArray: DataH5p[];
 }
-interface DataH5p {
-  source?: string;
-}
-export interface PlanPreviewProps {
-  contents: (Content | undefined)[];
-  onGoLive: () => any;
-}
-export function PlanPreview(props: PlanPreviewProps) {
+export function H5pPreview(props: H5pPreview) {
+  const history = useHistory();
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
-  const { contents, onGoLive } = props;
-  let currContent = contents[currIndex];
-  let source = JSON.parse(currContent?.data || "{}");
+  const { h5pArray, onGoLive } = props;
+  let h5pItem = h5pArray[currIndex];
   const handlePrev = () => {
     if (currIndex > 0) {
       setCurrIndex(currIndex - 1);
-      currContent = contents[currIndex];
-      source = JSON.parse(currContent?.data || "{}");
+      h5pItem = h5pArray[currIndex];
+      console.log(history);
     }
   };
   const handleNext = () => {
-    if (currIndex < contents.length - 1) {
+    if (currIndex < h5pArray.length - 1) {
       setCurrIndex(currIndex + 1);
-      currContent = contents[currIndex];
-      source = JSON.parse(currContent?.data || "{}");
+      h5pItem = h5pArray[currIndex];
     }
   };
   return (
     <Box className={css.previewContainer}>
-      <Box className={css.h5pCon}>{JSON.stringify(source) === "{}" ? <EmptyContent /> : <ContentH5p value={source} />}</Box>
+      {/* <Box className={css.h5pCon}>{JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />}</Box> */}
+      <Box className={css.h5pCon}>
+        <ContentH5p value={h5pItem} />
+      </Box>
       <Box className={css.btnCon}>
-        <Box className={css.iconCon}>
-          <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
-            <ArrowBackIosOutlinedIcon />
-          </IconButton>
-          <IconButton disabled={currIndex >= contents.length - 1} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handleNext}>
-            <ArrowForwardIosOutlinedIcon />
-          </IconButton>
-        </Box>
+        {h5pArray.length > 1 && (
+          <Box className={css.iconCon}>
+            <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
+              <ArrowBackIosOutlinedIcon />
+            </IconButton>
+            <IconButton disabled={currIndex >= h5pArray.length - 1} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handleNext}>
+              <ArrowForwardIosOutlinedIcon />
+            </IconButton>
+          </Box>
+        )}
         <Hidden only={["xs", "sm"]}>
           <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
             <Box style={{ fontSize: 18 }}>View in</Box>
@@ -166,25 +166,6 @@ export function PlanPreview(props: PlanPreviewProps) {
             <Typography style={{ fontSize: 12 }}>KidsLoop Live</Typography>
           </Box>
         </Hidden>
-      </Box>
-    </Box>
-  );
-}
-export interface MaterialPreviewProps {
-  h5pItem: DataH5p;
-  onGoLive: () => any;
-}
-export function MaterialPreview(props: MaterialPreviewProps) {
-  const css = useStyles();
-  const { h5pItem, onGoLive } = props;
-  return (
-    <Box className={css.previewContainer}>
-      <Box className={css.h5pCon}>{JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />}</Box>
-      <Box className={css.btnCon}>
-        <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-          <Box>View in</Box>
-          <Typography variant="h5">KidsLoop Live</Typography>
-        </Box>
       </Box>
     </Box>
   );

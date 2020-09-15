@@ -1,8 +1,12 @@
 export enum TabValue {
   details = "details",
-  assessments = "assessments",
+  leaningoutcomes = "leaningoutcomes",
 }
 
 export interface DataH5p {
   source?: string;
+}
+
+export interface PreviewBaseProps {
+  onGoLive: () => any;
 }
