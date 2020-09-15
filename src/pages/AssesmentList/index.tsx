@@ -89,4 +89,4 @@ export function AssessmentList() {
 }
 
 AssessmentList.routeBasePath = "/assessments/assessment-list";
-AssessmentList.routeRedirectDefault = `/assessments/assessment-list?status=${AssessmentStatus.all}&page=1`;
+AssessmentList.routeRedirectDefault = `/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`;
