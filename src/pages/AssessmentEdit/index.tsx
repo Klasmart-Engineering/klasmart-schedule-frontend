@@ -1,15 +1,13 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { LearningOutcomes } from "../../api/api";
 import { UpdateAssessmentRequestData } from "../../api/type";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAssessment, IAssessmentState, updateAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
@@ -25,14 +23,6 @@ const useQuery = () => {
   const filterOutcomes = query.get("filterOutcomes") || undefined;
   return { id, filterOutcomes, editindex };
 };
-const filterOutcomeslist = (list: IAssessmentState["assessmentDetail"]["outcome_attendance_maps"], value: string) => {
-  if (value === "all" || value === null) return list;
-  let newList = cloneDeep(list);
-  if (!newList) return list;
-  return newList.filter((item: LearningOutcomes) => {
-    return value === "assumed" ? item.assumed === true : item.assumed === false;
-  });
-};
 
 export function AssessmentsEdit() {
   const history = useHistory();
@@ -45,10 +35,7 @@ export function AssessmentsEdit() {
   const { handleSubmit, reset, watch } = formMethods;
   const formValue = watch();
   const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
-  const filteredOutcomelist = useMemo(() => filterOutcomeslist(assessmentDetail.outcome_attendance_maps, filterOutcomes), [
-    assessmentDetail,
-    filterOutcomes,
-  ]);
+  const filteredOutcomelist = assessmentDetail.outcome_attendance_maps;
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
@@ -100,7 +87,7 @@ export function AssessmentsEdit() {
     if (id) {
       dispatch(getAssessment({ id, metaLoading: true }));
     }
-  }, [filterOutcomes, dispatch, id, editindex]);
+  }, [dispatch, id, editindex]);
   useEffect(() => {
     if (assessmentDetail.id) {
       reset(ModelAssessment.toRequest(assessmentDetail));
@@ -116,6 +103,7 @@ export function AssessmentsEdit() {
           formMethods={formMethods}
           formValue={formValue}
           status={assessmentDetail.status}
+          filterOutcomes={filterOutcomes}
         />
       ) : (
         <NoOutComesList />

@@ -158,14 +158,20 @@ interface OutcomesTableProps {
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   formValue: UpdateAssessmentRequestDataOmitAction;
   status?: "complete" | "in_progress";
+  filterOutcomes: string;
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods, formValue, status } = props;
+  const { outcomesList, attendanceList, formMethods, formValue, status, filterOutcomes } = props;
   const rows =
     outcomesList &&
     outcomesList.map((outcome, index) => (
-      <TableRow key={outcome.outcome_id}>
+      <TableRow
+        key={outcome.outcome_id}
+        style={{
+          display: (filterOutcomes === "assumed" && !outcome.assumed) || (filterOutcomes === "unassumed" && outcome.assumed) ? "none" : "",
+        }}
+      >
         <TableCell className={css.tableCellLine} align="center">
           {outcome.outcome_name}
         </TableCell>
