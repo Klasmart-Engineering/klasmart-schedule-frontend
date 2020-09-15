@@ -1,4 +1,4 @@
-import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Box, Hidden, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
@@ -26,7 +26,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     backgroundColor: "rgba(0,0,0,0.5)",
     height: "100%",
     position: "relative",
-    overflow: "hidden",
     minHeight: "calc(100vh - 60px)",
     // [breakpoints.up("md")]: {
     //   minHeight: 'calc(100vh - 60px)',
@@ -67,12 +66,29 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     color: "#fff",
     cursor: "pointer",
   },
+  viewMbBtn: {
+    width: 100,
+    height: 40,
+    borderRadius: 20,
+    position: "absolute",
+    right: "5%",
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#d32f2f",
+    color: "#fff",
+  },
   iconBtn: {
     width: 48,
     height: 48,
   },
   iconCon: {
-    width: 200,
+    width: 180,
+    [breakpoints.down("sm")]: {
+      width: 120,
+    },
     display: "flex",
     justifyContent: "space-between",
   },
@@ -138,10 +154,18 @@ export function PlanPreview(props: PlanPreviewProps) {
             <ArrowForwardIosOutlinedIcon />
           </IconButton>
         </Box>
-        <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-          <Box>View in</Box>
-          <Typography variant="h5">KidsLoop Live</Typography>
-        </Box>
+        <Hidden only={["xs", "sm"]}>
+          <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
+            <Box style={{ fontSize: 18 }}>View in</Box>
+            <Typography style={{ fontSize: 24 }}>KidsLoop Live</Typography>
+          </Box>
+        </Hidden>
+        <Hidden only={["md", "lg", "xl"]}>
+          <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
+            <Box style={{ fontSize: 12 }}>View in</Box>
+            <Typography style={{ fontSize: 12 }}>KidsLoop Live</Typography>
+          </Box>
+        </Hidden>
       </Box>
     </Box>
   );
