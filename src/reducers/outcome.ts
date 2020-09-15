@@ -22,7 +22,7 @@ const initialState: IOutcomeState = {
     outcome_id: "",
     ancestor_id: "",
     shortcode: "",
-    assumed: false,
+    assumed: true,
     outcome_name: "",
     program: [],
     subject: [],

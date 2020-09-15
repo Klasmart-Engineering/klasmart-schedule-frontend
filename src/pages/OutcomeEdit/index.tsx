@@ -23,12 +23,14 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const outcome_id = query.get("outcome_id") || "";
-  return { outcome_id };
+  const status = query.get("status") || "";
+  const before = query.get("before") || "";
+  return { outcome_id, status, before };
 };
 
 export default function CreateOutcomings() {
   const classes = useStyles();
-  const { outcome_id } = useQuery();
+  const { outcome_id, status, before } = useQuery();
   const [openStatus, setOpenStatus] = React.useState(false);
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
@@ -62,9 +64,44 @@ export default function CreateOutcomings() {
   }, [dispatch, outcome_id]);
 
   React.useEffect(() => {
+    if (status || before) setShowEdit(false);
+  }, [before, status]);
+
+  React.useEffect(() => {
     setFinalData(outcomeDetail);
     setFinalDataTest(outcomeDetail);
   }, [outcomeDetail]);
+
+  React.useEffect(() => {
+    if (!outcome_id) {
+      setFinalData({
+        outcome_id: "",
+        ancestor_id: "",
+        shortcode: "",
+        assumed: false,
+        outcome_name: "",
+        program: [],
+        subject: [],
+        developmental: [],
+        skills: [],
+        age: [],
+        grade: [],
+        estimated_time: 1,
+        reject_reason: "",
+        keywords: [],
+        source_id: "",
+        locked_by: "",
+        author_id: "",
+        author_name: "",
+        organization_id: "",
+        organization_name: "",
+        publish_scope: "",
+        publish_status: "draft",
+        created_at: 0,
+        description: "",
+      });
+    }
+  }, [outcomeDetail, outcome_id]);
 
   const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
     if (!finalData.outcome_name) return;
@@ -83,7 +120,7 @@ export default function CreateOutcomings() {
       const result: any = await dispatch(save(data));
       setShoeCode(true);
       if (result.payload?.outcome_id) {
-        history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}`);
+        history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
         dispatch(actSuccess("Save Success"));
         setShowPublish(true);
       }
@@ -280,7 +317,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     if (lockOutcome_id) {
-      history.push(`/assessments/outcome-edit?outcome_id=${lockOutcome_id}`);
+      history.push(`/assessments/outcome-edit?outcome_id=${lockOutcome_id}&before=published`);
     }
   }, [history, lockOutcome_id]);
   return (
@@ -299,6 +336,8 @@ export default function CreateOutcomings() {
         isSame={isSame}
         showEdit={showEdit}
         handleEdit={handleEdit}
+        status={status}
+        before={before}
       />
       <OutcomeForm
         outcome_id={outcome_id}

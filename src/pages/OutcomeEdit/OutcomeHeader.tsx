@@ -77,7 +77,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     fontWeight: 700,
   },
   editButton: {
-    marginRight: "30px",
+    marginRight: "10px",
   },
 }));
 
@@ -95,6 +95,8 @@ export interface OutcomeHeaderProps {
   isSame: boolean;
   showEdit: boolean;
   handleEdit: ButtonProps["onClick"];
+  status: string | undefined;
+  before: string | undefined;
 }
 
 function OutcomeHeader(props: OutcomeHeaderProps) {
@@ -112,6 +114,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     isSame,
     showEdit,
     handleEdit,
+    status,
+    before,
   } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -128,39 +132,98 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <>
             {showEdit && (
               <>
-                <Button
-                  variant="contained"
-                  endIcon={<Create />}
-                  color="primary"
-                  className={clsx(css.headerButton, css.editButton)}
-                  onClick={handleEdit}
-                >
-                  Edit
-                </Button>
-                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                  Delete
-                </Button>
+                {before ? (
+                  <>
+                    <Button
+                      variant="contained"
+                      endIcon={<Cancel />}
+                      className={clsx(css.headerButton, css.redButton)}
+                      onClick={handleReset}
+                    >
+                      Cancel
+                    </Button>
+                    <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
+                      Save
+                    </LButton>
+                    <LButton
+                      variant="contained"
+                      endIcon={<Publish />}
+                      className={clsx(css.headerButton, css.greenButton)}
+                      onClick={handlePublish}
+                      disabled={!isSame}
+                    >
+                      Publish
+                    </LButton>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                      Delete
+                    </Button>
+                    {/* <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
+                        Cancel
+                      </Button> */}
+                    {!status ? (
+                      <Button
+                        variant="contained"
+                        endIcon={<Create />}
+                        color="primary"
+                        className={clsx(css.headerButton, css.editButton)}
+                        onClick={handleEdit}
+                      >
+                        Edit
+                      </Button>
+                    ) : (
+                      <>
+                        <LButton
+                          variant="contained"
+                          endIcon={<Save />}
+                          color="primary"
+                          className={css.headerButton}
+                          onClick={handleSave}
+                          disabled={!isSame}
+                        >
+                          Save
+                        </LButton>
+                        <LButton
+                          variant="contained"
+                          endIcon={<Publish />}
+                          className={clsx(css.headerButton, css.greenButton)}
+                          onClick={handlePublish}
+                          disabled={isSame}
+                        >
+                          Publish
+                        </LButton>
+                      </>
+                    )}
+                  </>
+                )}
               </>
             )}
             {!showEdit && (
               <>
-                {isSame ? (
-                  <LButton
-                    variant="contained"
-                    endIcon={<Publish />}
-                    className={clsx(css.headerButton, css.greenButton)}
-                    onClick={handlePublish}
-                  >
-                    Publish
-                  </LButton>
-                ) : (
-                  <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
-                    Save
-                  </LButton>
-                )}
                 <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
                   Cancel
                 </Button>
+                <LButton
+                  variant="contained"
+                  endIcon={<Save />}
+                  color="primary"
+                  className={css.headerButton}
+                  onClick={handleSave}
+                  disabled={isSame}
+                >
+                  Save
+                </LButton>
+                <LButton
+                  variant="contained"
+                  endIcon={<Publish />}
+                  className={clsx(css.headerButton, css.greenButton)}
+                  onClick={handlePublish}
+                  disabled={!isSame}
+                >
+                  Publish
+                </LButton>
               </>
             )}
           </>
@@ -218,6 +281,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   color="primary"
                   className={clsx(css.headerButton, css.editButton)}
                   onClick={handleEdit}
+                  style={{ marginRight: "30px" }}
                 >
                   Edit
                 </Button>

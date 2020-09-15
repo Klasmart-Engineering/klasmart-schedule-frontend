@@ -41,7 +41,7 @@ const useStyles = makeStyles(() => ({
     transform: "translateY(-50%)",
     margin: 0,
     padding: 0,
-    color: "rgba(0, 0, 0, 0.5)",
+    color: "rgba(0, 0, 0, 0.8)",
   },
 }));
 
