@@ -173,6 +173,7 @@ export default function ContentEdit() {
           page,
           publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
+          page_size: 10,
           assumed: assumed === "true" ? 1 : -1,
         })
       );

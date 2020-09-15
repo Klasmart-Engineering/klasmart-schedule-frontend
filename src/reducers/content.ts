@@ -174,6 +174,8 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
         api.learningOutcomes.searchLearningOutcomes({
           publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
+          page: 1,
+          page_size: 10,
           assumed: assumed === "true" ? 1 : -1,
         }),
       apiGetMockOptions(),

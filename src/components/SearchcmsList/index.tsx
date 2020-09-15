@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControlLabel, makeStyles, TextField } from "@material-ui/core";
+import { Box, Button, Checkbox, FormControlLabel, makeStyles, TextField, TextFieldProps } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
@@ -48,15 +48,18 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
     },
     [onCheck]
   );
+  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter") handleClickSearch();
+  };
 
   return (
     <Box display="flex" pt={3} pb={1} width="100%">
       <Controller
         as={TextField}
         control={control}
+        onKeyPress={handleKeyPress}
         name="searchName"
         defaultValue={value}
-        type="search"
         size="small"
         className={clsx(css.fieldset, css.searchField)}
         placeholder="Search"
