@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { apiGetMockOptions, MockOptions } from "../api/extra";
 
 interface scheduleViewData {
   end: Date;
@@ -21,6 +22,7 @@ export interface ScheduleState {
   attachement_id: string;
   attachment_path: string;
   searchFlag: boolean;
+  mockOptions: MockOptions;
 }
 
 interface Rootstate {
@@ -55,6 +57,16 @@ const initialState: ScheduleState = {
   attachement_id: "",
   attachment_path: "",
   searchFlag: false,
+  mockOptions: {
+    options: [],
+    visibility_settings: [],
+    classes: [],
+    class_types: [],
+    organizations: [],
+    teachers: [],
+    students: [],
+    users: [],
+  },
 };
 
 type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedules>[0] } & LoadingMetaPayload;
@@ -128,6 +140,10 @@ export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSch
   return api.schedules.getLiveToken(schedule_id);
 });
 
+export const getMockOptions = createAsyncThunk("mock/options", async () => {
+  return apiGetMockOptions();
+});
+
 const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
   const newViewData: any = [];
   if (data.length > 0) {
@@ -178,6 +194,9 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleLiveToken.fulfilled.type]: (state, { payload }: any) => {
       // console.log(payload)
+    },
+    [getMockOptions.fulfilled.type]: (state, { payload }: any) => {
+      state.mockOptions = payload;
     },
   },
 });
