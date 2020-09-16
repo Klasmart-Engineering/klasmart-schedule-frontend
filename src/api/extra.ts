@@ -6,14 +6,28 @@ export interface MockOptionsItem {
   id: string;
   name: string;
 }
-export interface MockOptions {
-  program: MockOptionsItem[];
-  subject: MockOptionsItem[];
+
+export interface MockOptionsOptionsDevelopmentalItem extends MockOptionsItem {
   skills: MockOptionsItem[];
+}
+
+export interface MockOptionsOptionsItem {
+  program: MockOptionsItem;
+  subject: MockOptionsItem[];
+  developmental: MockOptionsOptionsDevelopmentalItem[];
   age: MockOptionsItem[];
   grade: MockOptionsItem[];
-  developmental: MockOptionsItem[];
+}
+
+export interface MockOptions {
+  options: MockOptionsOptionsItem[];
   visibility_settings: MockOptionsItem[];
+  classes: MockOptionsItem[];
+  class_types: MockOptionsItem[];
+  organizations: MockOptionsItem[];
+  teachers: MockOptionsItem[];
+  students: MockOptionsItem[];
+  users: MockOptionsItem[];
 }
 
 export const apiResourcePathById = (resource_id?: string) => {

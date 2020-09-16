@@ -9,15 +9,16 @@ import { LearningOutcomes } from "../../api/api";
 import { ContentType, OutcomePublishStatus } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
+import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,
   contentLists,
+  deleteContent,
   onLoadContentEdit,
   publish,
   save,
   searchOutcomeList,
-  deleteContent,
 } from "../../reducers/content";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
@@ -80,6 +81,8 @@ export default function ContentEdit() {
     handleSubmit,
     control,
     getValues,
+    setValue,
+    watch,
     formState: { isDirty },
   } = formMethods;
   const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
@@ -93,6 +96,8 @@ export default function ContentEdit() {
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? type2File[assetsFileType] : ContentType.plan;
+  const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
+  const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -209,14 +214,30 @@ export default function ContentEdit() {
     dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true, searchOutcome, assumed }));
   }, [id, lesson, dispatch, searchMedia, history, editindex, assumed, searchOutcome]);
   useEffect(() => {
+    // 编辑表单时 加载完 contentDetial 的逻辑
     reset(ModelContentDetailForm.decode(contentDetail));
   }, [contentDetail, lesson, reset]);
+  useEffect(() => {
+    ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+  }, [programId, mockOptions, reset, getValues, setValue]);
+  useEffect(() => {
+    // 切换 developmentalId 的逻辑
+    if (developmentalId) setValue("skills", []);
+  }, [developmentalId, mockOptions, reset, getValues, setValue]);
+  useEffect(() => {
+    // 新建表单时，加载完 mockOptions 的逻辑
+    if (id) return;
+    const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
+    const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
+    if (!defaultDevelopmentalId || !defaultProgramId) return;
+    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId] });
+  }, [mockOptions, reset, id]);
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
       <AssetDetails
         formMethods={formMethods}
-        mockOptions={mockOptions}
+        flattenedMockOptions={flattenedMockOptions}
         fileType={assetsFileType}
         handleChangeFile={handleChangeFile}
         contentDetail={contentDetail}
@@ -225,7 +246,7 @@ export default function ContentEdit() {
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
-      <Details contentDetail={contentDetail} formMethods={formMethods} mockOptions={mockOptions} />
+      <Details contentDetail={contentDetail} formMethods={formMethods} flattenedMockOptions={flattenedMockOptions} />
       <Controller
         as={Outcomes}
         name="outcome_entities"

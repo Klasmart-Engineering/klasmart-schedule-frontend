@@ -385,6 +385,11 @@ function EditBox(props: CalendarStateProps) {
       }
       addData["due_at"] = dueDateTimestamp;
     }
+    // @ts-ignore
+    if (scheduleList.end_at < scheduleList.start_at) {
+      dispatch(actError("End time cannot be earlier than start time"));
+      return;
+    }
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
@@ -411,7 +416,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const saveTheTest = () => {
-    if (scheduleId && scheduleDetial.is_repeat) {
+    if (scheduleId && scheduleDetial.is_repeat && checkedStatus.repeatCheck) {
       setCustomizeTemplateType("update");
       setEnableCustomization(true);
       setOpenStatus(true);

@@ -66,13 +66,14 @@ const initialState: IContentState = {
   OutcomesListTotal: 0,
   outcomeList: [],
   mockOptions: {
-    program: [],
-    subject: [],
-    skills: [],
-    age: [],
-    grade: [],
-    developmental: [],
+    options: [],
     visibility_settings: [],
+    classes: [],
+    class_types: [],
+    organizations: [],
+    teachers: [],
+    students: [],
+    users: [],
   },
   total: 0,
   contentsList: [],
@@ -327,6 +328,8 @@ const { actions, reducer } = createSlice({
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
       // debugger
       if (payload.contentDetail) {
+        // debug
+        // state.contentDetail = require('../mocks/contentDetial.json');
         state.contentDetail = payload.contentDetail;
       }
       if (payload.mediaList?.total) {
