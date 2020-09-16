@@ -4,7 +4,6 @@ import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import ContentH5p from "../ContentEdit/ContentH5p";
 import { DataH5p, PreviewBaseProps } from "./type";
 
@@ -128,7 +127,6 @@ interface H5pPreview extends PreviewBaseProps {
   h5pArray: DataH5p[];
 }
 export function H5pPreview(props: H5pPreview) {
-  const history = useHistory();
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
   const { h5pArray, onGoLive } = props;
@@ -137,7 +135,6 @@ export function H5pPreview(props: H5pPreview) {
     if (currIndex > 0) {
       setCurrIndex(currIndex - 1);
       h5pItem = h5pArray[currIndex];
-      console.log(history);
     }
   };
   const handleNext = () => {
