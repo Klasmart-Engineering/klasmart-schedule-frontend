@@ -363,6 +363,10 @@ const { actions, reducer } = createSlice({
     [searchOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
+    [getContentDetailById.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentPreview = initialState.contentPreview;
+    },
     [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.contentPreview = payload;

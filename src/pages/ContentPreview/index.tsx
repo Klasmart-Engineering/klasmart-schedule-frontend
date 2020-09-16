@@ -88,7 +88,7 @@ export default function ContentPreview(props: Content) {
   );
 
   const leftside = (
-    <Box style={{ padding: 12 }} key={id}>
+    <Box style={{ padding: 12 }}>
       <ContentPreviewHeader
         tab={tab}
         contentPreview={contentPreview}
@@ -133,7 +133,7 @@ export default function ContentPreview(props: Content) {
   };
   const rightside = (
     <Fragment>
-      <H5pPreview key={id} h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>
+      <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>
     </Fragment>
   );
   useEffect(() => {

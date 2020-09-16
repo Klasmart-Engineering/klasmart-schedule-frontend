@@ -53,7 +53,7 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
         <Chip size="small" color="primary" label={contentPreview.content_type_name} />
       </Box>
       <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>
-        <Thumbnail className={css.img} type={content_type} id={contentPreview?.thumbnail} />
+        <Thumbnail className={css.img} type={content_type} id={contentPreview?.thumbnail} key={contentPreview?.thumbnail} />
       </Box>
       <Tabs
         className={css.tab}
