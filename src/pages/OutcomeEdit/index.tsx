@@ -4,10 +4,11 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import ModalBox from "../../components/ModalBox";
+import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject } from "../../reducers/outcome";
+import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject, save } from "../../reducers/outcome";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
@@ -61,9 +62,27 @@ export default function CreateOutcomings() {
     setValue,
     getValues,
   } = formMethods;
-  watch();
-  console.log(isDirty, 1111);
-  console.log(getValues());
+
+  const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
+  const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
+
+  React.useEffect(() => {
+    ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+  }, [programId, mockOptions, reset, setValue]);
+
+  React.useEffect(() => {
+    // 切换 developmentalId 的逻辑
+    if (developmentalId) setValue("skills", []);
+  }, [developmentalId, mockOptions, reset, getValues, setValue]);
+
+  React.useEffect(() => {
+    // 新建表单时，加载完 mockOptions 的逻辑
+    if (outcome_id) return;
+    const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
+    const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
+    if (!defaultDevelopmentalId || !defaultProgramId) return;
+    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId] });
+  }, [mockOptions, reset, outcome_id]);
 
   // const isSame = JSON.stringify(finalData) === JSON.stringify(finalDataTest);
 
@@ -84,7 +103,6 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     setFinalData(outcomeDetail);
-    setFinalDataTest(outcomeDetail);
   }, [outcomeDetail, setFinalDataTest]);
 
   // const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
@@ -124,8 +142,9 @@ export default function CreateOutcomings() {
     () =>
       handleSubmit(async (value) => {
         console.log(value);
+        await dispatch(save(value));
       }),
-    [handleSubmit]
+    [dispatch, handleSubmit]
   );
 
   const [enableCustomization, setEnableCustomization] = React.useState(false);
@@ -313,6 +332,15 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     reset(outcomeDetail);
   }, [outcomeDetail, reset]);
+
+  React.useEffect(() => {
+    // const data = getValues()
+    if (outcomeDetail.program?.length) {
+      reset({ ...outcomeDetail, program: [outcomeDetail.program[0].program_id] });
+    }
+  }, [outcomeDetail, reset]);
+
+  console.log(getValues());
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
@@ -334,7 +362,7 @@ export default function CreateOutcomings() {
       />
       <OutcomeForm
         outcome_id={outcome_id}
-        mockOptions={mockOptions}
+        flattenedMockOptions={flattenedMockOptions}
         handleInputChange={handleInputChange}
         handleMultipleChange={handleMultipleChange}
         handleKeywordsChange={handleKeywordsChange}

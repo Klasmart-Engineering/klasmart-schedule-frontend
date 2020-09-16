@@ -2,7 +2,9 @@ import { Box, Checkbox, Grid, makeStyles, MenuItem, SelectProps, TextField, Text
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { LearningOutcomes } from "../../api/api";
-import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
+import { MockOptionsItem } from "../../api/extra";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
+import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
 const useStyles = makeStyles(() => ({
   outcomings_container: {
@@ -36,7 +38,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface OutcomeFormProps {
-  mockOptions: any;
+  flattenedMockOptions: FlattenedMockOptions;
   outcome_id: string;
   handleInputChange: (name: string, event: React.ChangeEvent<{ value: any }>) => void;
   handleMultipleChange: (name: string, event: Parameters<NonNullable<SelectProps["onChange"]>>[0]) => void;
@@ -56,15 +58,16 @@ export function OutcomeForm(props: OutcomeFormProps) {
     showEdit,
     formMethods: { control, errors },
     outcomeDetail,
+    flattenedMockOptions,
   } = props;
   const classes = useStyles();
 
-  // const getItems = (list: MockOptionsItem[]) =>
-  //   list.map((item) => (
-  //     <MenuItem key={item.id} value={item.id}>
-  //       {item.name}
-  //     </MenuItem>
-  //   ));
+  const getItems = (list: MockOptionsItem[]) =>
+    list.map((item) => (
+      <MenuItem key={item.id} value={item.id}>
+        {item.name}
+      </MenuItem>
+    ));
 
   const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
     const date = new Date(Number(timestamp) * 1000);
@@ -127,20 +130,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               </Grid>
             )}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
-              <Controller
-                name="assumed"
-                control={control}
-                as={Checkbox}
-                defaultChecked={outcomeDetail.assumed}
-                disabled={showEdit}
-                // render={() => <Checkbox
-                //   defaultChecked={outcomeDetail.assumed}
-                //   disabled={showEdit}
-                //   onChange={(event) => {
-                //     setValue('assumed', event.target.checked)
-                //   }}
-                // />}
-              />
+              <Controller name="assumed" control={control} as={Checkbox} defaultChecked={outcomeDetail.assumed} disabled={showEdit} />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
             {(outcome_id || showCode) && (
@@ -195,18 +185,18 @@ export function OutcomeForm(props: OutcomeFormProps) {
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                as={TextField}
+                as={FormattedTextField}
                 select
-                SelectProps={{ multiple: true }}
                 label="Program"
                 name="program"
+                encode={encodeOneItemArray}
+                decode={decodeOneItemArray}
                 defaultValue={outcomeDetail.program}
                 control={control}
                 disabled={showEdit}
                 fullWidth
               >
-                {/* {getItems(mockOptions.program)} */}
-                <MenuItem value={0}>{"first"}</MenuItem>
+                {getItems(flattenedMockOptions.program)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -221,26 +211,25 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {/* {getItems(mockOptions.subject)} */}
-                <MenuItem value={0}>{"first"}</MenuItem>
+                {getItems(flattenedMockOptions.subject)}
               </Controller>
             </Grid>
           </Grid>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                as={TextField}
+                as={FormattedTextField}
                 select
-                SelectProps={{ multiple: true }}
                 label="Developmental"
                 name="developmental"
+                encode={encodeOneItemArray}
+                decode={decodeOneItemArray}
                 defaultValue={outcomeDetail.developmental}
                 control={control}
                 disabled={showEdit}
                 fullWidth
               >
-                {/* {getItems(mockOptions.developmental)} */}
-                <MenuItem value={0}>{"first"}</MenuItem>
+                {getItems(flattenedMockOptions.developmental)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -255,8 +244,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {/* {getItems(mockOptions.skills)} */}
-                <MenuItem value={0}>{"first"}</MenuItem>
+                {getItems(flattenedMockOptions.skills)}
               </Controller>
             </Grid>
           </Grid>
@@ -273,8 +261,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {/* {getItems(mockOptions.age)} */}
-                <MenuItem value={0}>{"first"}</MenuItem>
+                {getItems(flattenedMockOptions.age)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -289,8 +276,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {/* {getItems(mockOptions.grade)} */}
-                <MenuItem value={0}>{"first"}</MenuItem>
+                {getItems(flattenedMockOptions.grade)}
               </Controller>
             </Grid>
           </Grid>
@@ -298,18 +284,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
         <Box>
           <Grid container justify="space-between" style={{ marginTop: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              {/* <Controller
-                name="estimated_time"
-                as={TextField}
-                control={control}
-                defaultValue={outcomeDetail.estimated_time}
-                label="Estimated time"
-                disabled={showEdit}
-                fullWidth
-                size="small"
-                rules={{pattern: /^[0-9]*$/}}
-                error={errors.estimated_time}
-              /> */}
               <Controller
                 as={FormattedTextField}
                 control={control}
@@ -319,21 +293,12 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 label="Estimated time"
                 defaultValue={outcomeDetail.estimated_time}
                 fullWidth
-                rules={{ pattern: /^[0-9]*$ / }}
-                error={errors.estimated_time ? true : false}
+                disabled={showEdit}
+                // rules={{ pattern: /^[0-9]*$ / }}
+                // error={errors.estimated_time ? true : false}
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              {/* <Controller
-                name="keywords"
-                as={TextField}
-                control={control}
-                defaultValue={[""]}
-                label="Keywords"
-                disabled={showEdit}
-                fullWidth
-                size="small"
-              /> */}
               <Controller
                 as={FormattedTextField}
                 control={control}
@@ -343,6 +308,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 label="Keywords"
                 helperText=""
                 fullWidth
+                disabled={showEdit}
               />
             </Grid>
           </Grid>
