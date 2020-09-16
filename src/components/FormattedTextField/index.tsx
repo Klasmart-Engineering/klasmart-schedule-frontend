@@ -10,7 +10,8 @@ type FormatedTextFieldProps<T> = TextFieldProps & {
 };
 
 type IRef<T> = Parameters<ForwardRefRenderFunction<T>>[1];
-export const FormattedTextField = forwardRef(<T extends unknown>(props: FormatedTextFieldProps<T>, ref: IRef<T>) => {
+// todo: 移除 any
+export const FormattedTextField = forwardRef((props: FormatedTextFieldProps<any>, ref: IRef<any>) => {
   const { encode = String, decode, value, defaultValue, onChange, ...rest } = props;
   const handleClick = useMemo(
     () => (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,3 +26,5 @@ export const FormattedTextField = forwardRef(<T extends unknown>(props: Formated
 });
 
 export const decodeArray = (value: string) => value.split(",");
+export const encodeOneItemArray = (value: string[]): string => value[0] || "";
+export const decodeOneItemArray = (value: string): string[] => (value ? [value] : []);

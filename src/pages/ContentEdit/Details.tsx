@@ -20,10 +20,11 @@ import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Content } from "../../api/api";
-import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
-import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
+import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
+import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -76,19 +77,21 @@ interface DetailsProps {
   contentDetail: Content;
   uploadThumnail?: Function;
   formMethods: UseFormMethods<ContentDetailForm>;
-  mockOptions: MockOptions;
+  flattenedMockOptions: FlattenedMockOptions;
 }
 
 export default function Details(props: DetailsProps) {
   const {
     contentDetail,
     formMethods: { control, errors },
-    mockOptions,
+    flattenedMockOptions,
   } = props;
+
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
+
   const menuItemList = (list: MockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -208,16 +211,18 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.suggest_time}
         />
         <Controller
-          as={TextField}
+          as={FormattedTextField}
           select
-          SelectProps={{ multiple: true }}
           className={css.fieldset}
           label="Program"
           name="program"
+          encode={encodeOneItemArray}
+          decode={decodeOneItemArray}
+          required
           defaultValue={contentDetail.program}
           control={control}
         >
-          {menuItemList(mockOptions.program)}
+          {menuItemList(flattenedMockOptions.program)}
         </Controller>
         <Controller
           as={TextField}
@@ -229,29 +234,23 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.subject}
           control={control}
         >
-          {menuItemList(mockOptions.subject)}
+          {menuItemList(flattenedMockOptions.subject)}
         </Controller>
         <Box>
           <Controller
-            as={TextField}
+            as={FormattedTextField}
             name="developmental"
+            encode={encodeOneItemArray}
+            decode={decodeOneItemArray}
+            required
             defaultValue={contentDetail.developmental}
             control={control}
             select
-            SelectProps={{
-              multiple: true,
-              // renderValue:(selected:any)=>(<div >
-              //   {(selected as string[]).map((value) => (
-              //     <Chip key={value} label={value}  onDelete={(value)=>{delete selected[value]}}
-              //     />
-              //   ))}
-              // </div>)
-            }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Developmental"
           >
-            {menuItemList(mockOptions.developmental)}
+            {menuItemList(flattenedMockOptions.developmental)}
           </Controller>
           <Controller
             as={TextField}
@@ -264,7 +263,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Skills"
           >
-            {menuItemList(mockOptions.skills)}
+            {menuItemList(flattenedMockOptions.skills)}
           </Controller>
         </Box>
         <Box>
@@ -279,7 +278,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Age"
           >
-            {menuItemList(mockOptions.age)}
+            {menuItemList(flattenedMockOptions.age)}
           </Controller>
           <Controller
             as={TextField}
@@ -292,7 +291,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label="Grade"
           >
-            {menuItemList(mockOptions.grade)}
+            {menuItemList(flattenedMockOptions.grade)}
           </Controller>
         </Box>
         <Controller
@@ -308,7 +307,7 @@ export default function Details(props: DetailsProps) {
           error={errors.publish_scope ? true : false}
           helperText=""
         >
-          {menuItemList(mockOptions.visibility_settings)}
+          {menuItemList(flattenedMockOptions.visibility_settings)}
         </Controller>
         <Controller
           as={TextField}

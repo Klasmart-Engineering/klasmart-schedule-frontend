@@ -15,11 +15,12 @@ import {
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, FieldError, UseFormMethods } from "react-hook-form";
-import { ContentDetailForm } from "../../models/ModelContentDetailForm";
-import { SingleUploader } from "../../components/SingleUploader";
-import { apiResourcePathById, MockOptions, MockOptionsItem } from "../../api/extra";
-import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { Content } from "../../api/api";
+import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
+import { SingleUploader } from "../../components/SingleUploader";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -70,7 +71,7 @@ function AssetsDetails(props: AssetDetailsProps) {
   const css = useStyles();
   const {
     formMethods: { control, errors },
-    mockOptions,
+    flattenedMockOptions,
     handleChangeFile,
     fileType,
     contentDetail,
@@ -169,17 +170,18 @@ function AssetsDetails(props: AssetDetailsProps) {
           error={errorValidator(errors.name)}
         />
         <Controller
-          as={TextField}
+          as={FormattedTextField}
           select
           className={css.fieldset}
           label="Program"
           name="program"
+          encode={encodeOneItemArray}
+          decode={decodeOneItemArray}
           control={control}
-          SelectProps={{ multiple: true }}
           defaultValue={contentDetail.program}
           disabled={isIdExist()}
         >
-          {menuItemList(mockOptions.program)}
+          {menuItemList(flattenedMockOptions.program)}
         </Controller>
         <Controller
           as={TextField}
@@ -192,25 +194,26 @@ function AssetsDetails(props: AssetDetailsProps) {
           defaultValue={contentDetail.subject}
           disabled={isIdExist()}
         >
-          {menuItemList(mockOptions.subject)}
+          {menuItemList(flattenedMockOptions.subject)}
         </Controller>
         <Box>
           <Controller
-            as={TextField}
+            as={FormattedTextField}
             name="developmental"
+            encode={encodeOneItemArray}
+            decode={decodeOneItemArray}
             control={control}
             select
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label="Developmental"
-            SelectProps={{ multiple: true }}
             required
             rules={{ required: true }}
             error={errorValidator(errors.developmental)}
             defaultValue={contentDetail.developmental}
             disabled={isIdExist()}
           >
-            {menuItemList(mockOptions.developmental)}
+            {menuItemList(flattenedMockOptions.developmental)}
           </Controller>
           <Controller
             as={TextField}
@@ -227,7 +230,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.skills}
             disabled={isIdExist()}
           >
-            {menuItemList(mockOptions.skills)}
+            {menuItemList(flattenedMockOptions.skills)}
           </Controller>
         </Box>
         <Box>
@@ -246,7 +249,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.age}
             disabled={isIdExist()}
           >
-            {menuItemList(mockOptions.age)}
+            {menuItemList(flattenedMockOptions.age)}
           </Controller>
           <Controller
             as={TextField}
@@ -263,7 +266,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.grade}
             disabled={isIdExist()}
           >
-            {menuItemList(mockOptions.grade)}
+            {menuItemList(flattenedMockOptions.grade)}
           </Controller>
         </Box>
         <Controller
@@ -292,18 +295,18 @@ function AssetsDetails(props: AssetDetailsProps) {
 
 interface AssetDetailsProps {
   formMethods: UseFormMethods<ContentDetailForm>;
-  mockOptions: MockOptions;
+  flattenedMockOptions: FlattenedMockOptions;
   fileType: "image" | "video" | "audio" | "document";
   handleChangeFile: (type: "image" | "video" | "audio" | "document") => void;
   contentDetail: Content;
 }
 
 export default function AssetDetails(props: AssetDetailsProps) {
-  const { formMethods, mockOptions, fileType, handleChangeFile, contentDetail } = props;
+  const { formMethods, flattenedMockOptions, fileType, handleChangeFile, contentDetail } = props;
   return (
     <AssetsDetails
       formMethods={formMethods}
-      mockOptions={mockOptions}
+      flattenedMockOptions={flattenedMockOptions}
       fileType={fileType}
       handleChangeFile={handleChangeFile}
       contentDetail={contentDetail}
