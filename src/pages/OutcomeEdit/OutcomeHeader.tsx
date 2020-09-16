@@ -92,7 +92,7 @@ export interface OutcomeHeaderProps {
   publish_status: string | undefined;
   showPublish: boolean;
   finalData: any;
-  isSame: boolean;
+  isDirty: boolean;
   showEdit: boolean;
   handleEdit: ButtonProps["onClick"];
   status: string | undefined;
@@ -111,7 +111,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     handlePublish,
     handleApprove,
     publish_status,
-    isSame,
+    isDirty,
     showEdit,
     handleEdit,
     status,
@@ -150,7 +150,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       endIcon={<Publish />}
                       className={clsx(css.headerButton, css.greenButton)}
                       onClick={handlePublish}
-                      disabled={!isSame}
+                      disabled={isDirty}
                     >
                       Publish
                     </LButton>
@@ -181,7 +181,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                           color="primary"
                           className={css.headerButton}
                           onClick={handleSave}
-                          disabled={!isSame}
+                          disabled={isDirty}
                         >
                           Save
                         </LButton>
@@ -190,7 +190,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                           endIcon={<Publish />}
                           className={clsx(css.headerButton, css.greenButton)}
                           onClick={handlePublish}
-                          disabled={isSame}
+                          disabled={!isDirty}
                         >
                           Publish
                         </LButton>
@@ -211,7 +211,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   color="primary"
                   className={css.headerButton}
                   onClick={handleSave}
-                  disabled={isSame}
+                  disabled={!isDirty}
                 >
                   Save
                 </LButton>
@@ -220,7 +220,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   endIcon={<Publish />}
                   className={clsx(css.headerButton, css.greenButton)}
                   onClick={handlePublish}
-                  disabled={!isSame}
+                  disabled={isDirty}
                 >
                   Publish
                 </LButton>
@@ -270,7 +270,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   color="primary"
                   className={css.headerButton}
                   onClick={handleSave}
-                  disabled={isSame}
+                  disabled={!isDirty}
                 >
                   Save
                 </LButton>
@@ -279,7 +279,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   endIcon={<Publish />}
                   className={clsx(css.headerButton, css.greenButton)}
                   onClick={handlePublish}
-                  disabled={!isSame}
+                  disabled={isDirty}
                 >
                   Publish
                 </LButton>
@@ -325,7 +325,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
             )}
             {!showEdit && (
               <>
-                {isSame ? (
+                {!isDirty ? (
                   <LButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
                     <Publish fontSize="small" />
                   </LButton>

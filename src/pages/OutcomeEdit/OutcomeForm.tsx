@@ -1,18 +1,8 @@
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  Grid,
-  InputLabel,
-  makeStyles,
-  MenuItem,
-  Select,
-  SelectProps,
-  TextField,
-  TextFieldProps,
-} from "@material-ui/core";
+import { Box, Checkbox, Grid, makeStyles, MenuItem, SelectProps, TextField, TextFieldProps } from "@material-ui/core";
 import React from "react";
-import { MockOptionsItem } from "../../api/extra";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { LearningOutcomes } from "../../api/api";
+import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 
 const useStyles = makeStyles(() => ({
   outcomings_container: {
@@ -48,8 +38,6 @@ const useStyles = makeStyles(() => ({
 export interface OutcomeFormProps {
   mockOptions: any;
   outcome_id: string;
-  finalData: any;
-  setFinalData: any;
   handleInputChange: (name: string, event: React.ChangeEvent<{ value: any }>) => void;
   handleMultipleChange: (name: string, event: Parameters<NonNullable<SelectProps["onChange"]>>[0]) => void;
   handleKeywordsChange: TextFieldProps["onChange"];
@@ -57,28 +45,26 @@ export interface OutcomeFormProps {
   showCode: boolean;
   showEdit: boolean;
   isError: boolean;
+  formMethods: UseFormMethods<any>;
+  outcomeDetail: LearningOutcomes;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
   const {
-    mockOptions,
     outcome_id,
-    finalData,
-    handleInputChange,
-    handleMultipleChange,
-    handleKeywordsChange,
     showCode,
     showEdit,
-    isError,
+    formMethods: { control, errors },
+    outcomeDetail,
   } = props;
   const classes = useStyles();
 
-  const getItems = (list: MockOptionsItem[]) =>
-    list.map((item) => (
-      <MenuItem key={item.id} value={item.id}>
-        {item.name}
-      </MenuItem>
-    ));
+  // const getItems = (list: MockOptionsItem[]) =>
+  //   list.map((item) => (
+  //     <MenuItem key={item.id} value={item.id}>
+  //       {item.name}
+  //     </MenuItem>
+  //   ));
 
   const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
     const date = new Date(Number(timestamp) * 1000);
@@ -98,56 +84,108 @@ export function OutcomeForm(props: OutcomeFormProps) {
     <Box className={classes.outcomings_container}>
       <div className={classes.middleBox}>
         <Box style={{ borderBottom: "1px solid #d7d7d7", marginBottom: "40px" }}>
-          {finalData.publish_status && finalData.publish_status === "rejected" && (
+          {outcomeDetail.publish_status && outcomeDetail.publish_status === "rejected" && (
             <Grid container>
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                <TextField
-                  size="small"
-                  defaultValue={finalData.reject_reason}
+                <Controller
+                  name="reject_reason"
+                  control={control}
+                  as={TextField}
+                  defaultValue={outcomeDetail.reject_reason}
                   fullWidth
                   label="Reject Reason"
-                  disabled
-                  onChange={(event) => handleInputChange("reject_reason", event)}
                 />
               </Grid>
             </Grid>
           )}
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <TextField
-                size="small"
-                value={finalData.outcome_name}
+              <Controller
+                name="outcome_name"
+                as={TextField}
+                control={control}
                 fullWidth
                 label="Learning outcome Name"
-                onChange={(event) => handleInputChange("outcome_name", event)}
-                required
-                error={isError}
                 disabled={showEdit}
+                defaultValue={outcomeDetail.outcome_name}
+                rules={{ required: true }}
+                error={errors.outcome_name ? true : false}
               />
             </Grid>
             {(outcome_id || showCode) && (
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                <TextField size="small" value={finalData.shortcode} fullWidth label="Short Code" disabled />
+                {/* <TextField size="small" value={outcomeDetail.shortcode} fullWidth label="Short Code" disabled /> */}
+                <Controller
+                  name="shortcode"
+                  as={TextField}
+                  control={control}
+                  defaultValue={outcomeDetail.shortcode}
+                  fullWidth
+                  label="Short Code"
+                  disabled
+                />
               </Grid>
             )}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
-              <Checkbox
-                checked={finalData.assumed || false}
-                onChange={(event) => handleInputChange("assumed", event)}
+              <Controller
+                name="assumed"
+                control={control}
+                as={Checkbox}
+                defaultChecked={outcomeDetail.assumed}
                 disabled={showEdit}
+                // render={() => <Checkbox
+                //   defaultChecked={outcomeDetail.assumed}
+                //   disabled={showEdit}
+                //   onChange={(event) => {
+                //     setValue('assumed', event.target.checked)
+                //   }}
+                // />}
               />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
             {(outcome_id || showCode) && (
               <>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  <TextField value={finalData.organization_id} fullWidth label="Organization" disabled size="small" />
+                  {/* <TextField value={outcomeDetail.organization_id} fullWidth label="Organization" disabled size="small" /> */}
+                  <Controller
+                    name="organization_id"
+                    control={control}
+                    as={TextField}
+                    defaultValue={outcomeDetail.organization_id}
+                    fullWidth
+                    label="Organization"
+                    disabled
+                    size="small"
+                  />
                 </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  <TextField fullWidth value={timestampToTime(finalData.created_at)} disabled label="Create Time" size="small" />
+                  {/* <TextField fullWidth value={timestampToTime(outcomeDetail.created_at)} disabled label="Create Time" size="small" /> */}
+                  <Controller
+                    name="created_at"
+                    control={control}
+                    // as={TextField}
+                    defaultValue={timestampToTime(outcomeDetail.created_at)}
+                    fullWidth
+                    label="Create Time"
+                    disabled
+                    size="small"
+                    render={() => (
+                      <TextField value={timestampToTime(outcomeDetail.created_at)} fullWidth label="Create Time" disabled size="small" />
+                    )}
+                  />
                 </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  <TextField value={finalData.author_name} fullWidth size="small" disabled label="Author" />
+                  {/* <TextField value={outcomeDetail.author_name} fullWidth size="small" disabled label="Author" /> */}
+                  <Controller
+                    name="author_name"
+                    control={control}
+                    as={TextField}
+                    defaultValue={outcomeDetail.author_name}
+                    fullWidth
+                    label="Author"
+                    disabled
+                    size="small"
+                  />
                 </Grid>
               </>
             )}
@@ -156,139 +194,169 @@ export function OutcomeForm(props: OutcomeFormProps) {
         <Box style={{ paddingBottom: "10px", borderBottom: "1px solid #d7d7d7" }}>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="demo-mutiple-name-label">Program</InputLabel>
-                <Select
-                  labelId="demo-mutiple-name-label"
-                  id="demo-mutiple-name"
-                  multiple
-                  value={finalData.program?.map((item: any) => item.program_id)}
-                  onChange={(event) => handleMultipleChange("program", event)}
-                  label="Program"
-                  disabled={showEdit}
-                >
-                  {getItems(mockOptions.program)}
-                </Select>
-              </FormControl>
+              <Controller
+                as={TextField}
+                select
+                SelectProps={{ multiple: true }}
+                label="Program"
+                name="program"
+                defaultValue={outcomeDetail.program}
+                control={control}
+                disabled={showEdit}
+                fullWidth
+              >
+                {/* {getItems(mockOptions.program)} */}
+                <MenuItem value={0}>{"first"}</MenuItem>
+              </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="demo-mutiple-name-label">Subject</InputLabel>
-                <Select
-                  labelId="demo-mutiple-name-label"
-                  id="demo-mutiple-name"
-                  multiple
-                  value={finalData.subject?.map((item: any) => item.subject_id)}
-                  onChange={(event) => handleMultipleChange("subject", event)}
-                  label="Subject"
-                  disabled={showEdit}
-                >
-                  {getItems(mockOptions.subject)}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-          <Grid container justify="space-between">
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="demo-mutiple-name-label">Developmental</InputLabel>
-                <Select
-                  labelId="demo-mutiple-name-label"
-                  id="demo-mutiple-name"
-                  multiple
-                  value={finalData.developmental?.map((item: any) => item.developmental_id)}
-                  onChange={(event) => handleMultipleChange("developmental", event)}
-                  label="Developmental"
-                  disabled={showEdit}
-                >
-                  {getItems(mockOptions.developmental)}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="demo-mutiple-name-label">Skills</InputLabel>
-                <Select
-                  labelId="demo-mutiple-name-label"
-                  id="demo-mutiple-name"
-                  multiple
-                  value={finalData.skills?.map((item: any) => item.skill_id)}
-                  onChange={(event) => handleMultipleChange("skills", event)}
-                  label="Skills"
-                  disabled={showEdit}
-                >
-                  {getItems(mockOptions.skills)}
-                </Select>
-              </FormControl>
+              <Controller
+                as={TextField}
+                select
+                SelectProps={{ multiple: true }}
+                label="Subject"
+                name="subject"
+                defaultValue={outcomeDetail.subject}
+                control={control}
+                disabled={showEdit}
+                fullWidth
+              >
+                {/* {getItems(mockOptions.subject)} */}
+                <MenuItem value={0}>{"first"}</MenuItem>
+              </Controller>
             </Grid>
           </Grid>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="demo-mutiple-name-label">Age</InputLabel>
-                <Select
-                  labelId="demo-mutiple-name-label"
-                  id="demo-mutiple-name"
-                  multiple
-                  value={finalData.age?.map((item: any) => item.age_id)}
-                  onChange={(event) => handleMultipleChange("age", event)}
-                  label="Age"
-                  disabled={showEdit}
-                >
-                  {getItems(mockOptions.age)}
-                </Select>
-              </FormControl>
+              <Controller
+                as={TextField}
+                select
+                SelectProps={{ multiple: true }}
+                label="Developmental"
+                name="developmental"
+                defaultValue={outcomeDetail.developmental}
+                control={control}
+                disabled={showEdit}
+                fullWidth
+              >
+                {/* {getItems(mockOptions.developmental)} */}
+                <MenuItem value={0}>{"first"}</MenuItem>
+              </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="demo-mutiple-name-label">Grade</InputLabel>
-                <Select
-                  labelId="demo-mutiple-name-label"
-                  id="demo-mutiple-name"
-                  multiple
-                  value={finalData.grade?.map((item: any) => item.grade_id)}
-                  onChange={(event) => handleMultipleChange("grade", event)}
-                  label="Grade"
-                  disabled={showEdit}
-                >
-                  {getItems(mockOptions.grade)}
-                </Select>
-              </FormControl>
+              <Controller
+                as={TextField}
+                select
+                SelectProps={{ multiple: true }}
+                label="skills"
+                name="skills"
+                defaultValue={outcomeDetail.skills}
+                control={control}
+                disabled={showEdit}
+                fullWidth
+              >
+                {/* {getItems(mockOptions.skills)} */}
+                <MenuItem value={0}>{"first"}</MenuItem>
+              </Controller>
+            </Grid>
+          </Grid>
+          <Grid container justify="space-between">
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <Controller
+                as={TextField}
+                select
+                SelectProps={{ multiple: true }}
+                label="Age"
+                name="age"
+                defaultValue={outcomeDetail.age}
+                control={control}
+                disabled={showEdit}
+                fullWidth
+              >
+                {/* {getItems(mockOptions.age)} */}
+                <MenuItem value={0}>{"first"}</MenuItem>
+              </Controller>
+            </Grid>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <Controller
+                as={TextField}
+                select
+                SelectProps={{ multiple: true }}
+                label="Grade"
+                name="grade"
+                defaultValue={outcomeDetail.grade}
+                control={control}
+                disabled={showEdit}
+                fullWidth
+              >
+                {/* {getItems(mockOptions.grade)} */}
+                <MenuItem value={0}>{"first"}</MenuItem>
+              </Controller>
             </Grid>
           </Grid>
         </Box>
         <Box>
           <Grid container justify="space-between" style={{ marginTop: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <TextField
-                size="small"
-                fullWidth
-                value={finalData.estimated_time}
+              {/* <Controller
+                name="estimated_time"
+                as={TextField}
+                control={control}
+                defaultValue={outcomeDetail.estimated_time}
                 label="Estimated time"
-                onChange={(event) => handleInputChange("estimated_time", event)}
                 disabled={showEdit}
+                fullWidth
+                size="small"
+                rules={{pattern: /^[0-9]*$/}}
+                error={errors.estimated_time}
+              /> */}
+              <Controller
+                as={FormattedTextField}
+                control={control}
+                name="estimated_time"
+                decode={Number}
+                type="number"
+                label="Estimated time"
+                defaultValue={outcomeDetail.estimated_time}
+                fullWidth
+                rules={{ pattern: /^[0-9]*$ / }}
+                error={errors.estimated_time ? true : false}
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <TextField
-                value={finalData.keywords.map((item: any) => item)}
-                onChange={handleKeywordsChange}
-                size="small"
-                fullWidth
+              {/* <Controller
+                name="keywords"
+                as={TextField}
+                control={control}
+                defaultValue={[""]}
                 label="Keywords"
                 disabled={showEdit}
+                fullWidth
+                size="small"
+              /> */}
+              <Controller
+                as={FormattedTextField}
+                control={control}
+                name="keywords"
+                decode={decodeArray}
+                defaultValue={outcomeDetail.keywords}
+                label="Keywords"
+                helperText=""
+                fullWidth
               />
             </Grid>
           </Grid>
           <Grid container justify="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
-              <TextField
-                size="small"
-                value={finalData.description || ""}
-                fullWidth
+              <Controller
+                name="description"
+                as={TextField}
+                control={control}
+                defaultValue={outcomeDetail.description}
                 label="Description"
-                onChange={(event) => handleInputChange("description", event)}
                 disabled={showEdit}
+                fullWidth
+                size="small"
               />
             </Grid>
           </Grid>

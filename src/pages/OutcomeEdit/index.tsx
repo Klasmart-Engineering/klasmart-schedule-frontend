@@ -1,12 +1,13 @@
 import { Box, makeStyles } from "@material-ui/core";
 import React from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import ModalBox from "../../components/ModalBox";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject, save, updateOutcome } from "../../reducers/outcome";
+import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject } from "../../reducers/outcome";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
@@ -35,13 +36,13 @@ export default function CreateOutcomings() {
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [showCode, setShoeCode] = React.useState(false);
-  const [showPublish, setShowPublish] = React.useState(false);
+  const [showCode] = React.useState(false);
+  const [showPublish] = React.useState(false);
   const { outcomeDetail, lockOutcome_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [finalData, setFinalData] = React.useState(outcomeDetail);
-  const [finalDataTest, setFinalDataTest] = React.useState(outcomeDetail);
+  const [setFinalDataTest] = React.useState(outcomeDetail);
   const [showEdit, setShowEdit] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
+  const [isError] = React.useState(false);
   const [mulSelect, setMulselect] = React.useState({
     program: [],
     subject: [],
@@ -51,7 +52,20 @@ export default function CreateOutcomings() {
     grade: [],
   });
 
-  const isSame = JSON.stringify(finalData) === JSON.stringify(finalDataTest);
+  const formMethods = useForm();
+  const {
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+    watch,
+    setValue,
+    getValues,
+  } = formMethods;
+  watch();
+  console.log(isDirty, 1111);
+  console.log(getValues());
+
+  // const isSame = JSON.stringify(finalData) === JSON.stringify(finalDataTest);
 
   React.useEffect(() => {
     dispatch(onLoadContentEdit({ type: "material", id: null }));
@@ -71,71 +85,48 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     setFinalData(outcomeDetail);
     setFinalDataTest(outcomeDetail);
-  }, [outcomeDetail]);
+  }, [outcomeDetail, setFinalDataTest]);
 
-  React.useEffect(() => {
-    if (!outcome_id) {
-      setFinalData({
-        outcome_id: "",
-        ancestor_id: "",
-        shortcode: "",
-        assumed: true,
-        outcome_name: "",
-        program: [],
-        subject: [],
-        developmental: [],
-        skills: [],
-        age: [],
-        grade: [],
-        estimated_time: 1,
-        reject_reason: "",
-        keywords: [],
-        source_id: "",
-        locked_by: "",
-        author_id: "",
-        author_name: "",
-        organization_id: "",
-        organization_name: "",
-        publish_scope: "",
-        publish_status: "draft",
-        created_at: 0,
-        description: "",
-      });
-    }
-  }, [outcomeDetail, outcome_id]);
-
-  const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
-    if (!finalData.outcome_name) {
-      setIsError(true);
-      return;
-    }
-    const data = {
-      ...finalData,
-      ...mulSelect,
-    };
-    if (outcome_id) {
-      const result: any = await dispatch(updateOutcome({ outcome_id, value: data }));
-      if (result.payload === "ok") {
-        dispatch(actSuccess("Update Success"));
-        setShowPublish(true);
-        dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
-        setIsError(false);
-      }
-    } else {
-      const result: any = await dispatch(save(data));
-      setShoeCode(true);
-      if (result.payload?.outcome_id) {
-        history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
-        dispatch(actSuccess("Save Success"));
-        setShowPublish(true);
-        setIsError(false);
-      }
-    }
-  };
+  // const handleSave: OutcomeHeaderProps["handleSave"] = async () => {
+  //   if (!finalData.outcome_name) {
+  //     setIsError(true);
+  //     return;
+  //   }
+  //   const data = {
+  //     ...finalData,
+  //     ...mulSelect,
+  //   };
+  //   if (outcome_id) {
+  //     const result: any = await dispatch(updateOutcome({ outcome_id, value: data }));
+  //     if (result.payload === "ok") {
+  //       dispatch(actSuccess("Update Success"));
+  //       setShowPublish(true);
+  //       dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+  //       setIsError(false);
+  //     }
+  //   } else {
+  //     const result: any = await dispatch(save(data));
+  //     setShoeCode(true);
+  //     if (result.payload?.outcome_id) {
+  //       history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
+  //       dispatch(actSuccess("Save Success"));
+  //       setShowPublish(true);
+  //       setIsError(false);
+  //     }
+  //   }
+  // };
 
   const handleClose = () => {
     setOpenStatus(false);
   };
+
+  const handleSave = React.useMemo(
+    () =>
+      handleSubmit(async (value) => {
+        console.log(value);
+      }),
+    [handleSubmit]
+  );
 
   const [enableCustomization, setEnableCustomization] = React.useState(false);
 
@@ -215,10 +206,7 @@ export default function CreateOutcomings() {
 
   const handleKeywordsChange: OutcomeFormProps["handleKeywordsChange"] = (event) => {
     const keywords = event.target.value.split(",");
-    setFinalData({
-      ...finalData,
-      keywords,
-    });
+    setValue("keywords", keywords);
   };
 
   const handleMultipleChange: OutcomeFormProps["handleMultipleChange"] = (name, event) => {
@@ -304,19 +292,8 @@ export default function CreateOutcomings() {
     });
   };
 
-  React.useEffect(() => {
-    if (finalData.program?.length === 0) setFinalData({ ...finalData, program: [{ program_id: "", program_name: "" }] });
-    if (finalData.subject?.length === 0) setFinalData({ ...finalData, subject: [{ subject_id: "", subject_name: "" }] });
-    if (finalData.developmental?.length === 0)
-      setFinalData({ ...finalData, developmental: [{ developmental_id: "", developmental_name: "" }] });
-    if (finalData.skills?.length === 0) setFinalData({ ...finalData, skills: [{ skill_id: "", skill_name: "" }] });
-    if (finalData.age?.length === 0) setFinalData({ ...finalData, age: [{ age_id: "", age_name: "" }] });
-    if (finalData.grade?.length === 0) setFinalData({ ...finalData, grade: [{ grade_id: "", grade_name: "" }] });
-  }, [finalData]);
-
   const getKeywords = (keywords: string[] | undefined) => {
     if (!keywords || !keywords.length) return;
-    console.log(keywords);
     return keywords.map((item: string) => item);
   };
 
@@ -332,6 +309,10 @@ export default function CreateOutcomings() {
       history.push(`/assessments/outcome-edit?outcome_id=${lockOutcome_id}&before=published`);
     }
   }, [history, lockOutcome_id]);
+
+  React.useEffect(() => {
+    reset(outcomeDetail);
+  }, [outcomeDetail, reset]);
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
@@ -345,7 +326,7 @@ export default function CreateOutcomings() {
         publish_status={outcomeDetail.publish_status}
         showPublish={showPublish}
         finalData={finalData}
-        isSame={isSame}
+        isDirty={isDirty}
         showEdit={showEdit}
         handleEdit={handleEdit}
         status={status}
@@ -354,8 +335,6 @@ export default function CreateOutcomings() {
       <OutcomeForm
         outcome_id={outcome_id}
         mockOptions={mockOptions}
-        finalData={finalData}
-        setFinalData={setFinalData}
         handleInputChange={handleInputChange}
         handleMultipleChange={handleMultipleChange}
         handleKeywordsChange={handleKeywordsChange}
@@ -363,6 +342,8 @@ export default function CreateOutcomings() {
         showCode={showCode}
         showEdit={showEdit}
         isError={isError}
+        formMethods={formMethods}
+        outcomeDetail={outcomeDetail}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

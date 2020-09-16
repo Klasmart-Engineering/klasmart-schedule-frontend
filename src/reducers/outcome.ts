@@ -17,7 +17,7 @@ interface RootState {
   outcome: IOutcomeState;
 }
 
-const initialState: IOutcomeState = {
+export const initialState: IOutcomeState = {
   outcomeDetail: {
     outcome_id: "",
     ancestor_id: "",
