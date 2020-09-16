@@ -88,7 +88,7 @@ export default function ContentPreview(props: Content) {
   );
 
   const leftside = (
-    <Box style={{ padding: 12 }}>
+    <Box style={{ padding: 12 }} key={id}>
       <ContentPreviewHeader
         tab={tab}
         contentPreview={contentPreview}
@@ -120,7 +120,7 @@ export default function ContentPreview(props: Content) {
       const segment: Segment = JSON.parse(contentPreview.data || "{}");
       const h5pArray = ModelLessonPlan.toArray(segment);
       const h5ps: DataH5p[] = h5pArray.map((item, index) => {
-        return JSON.parse(item?.data || "");
+        return JSON.parse(item?.data || "{}");
       });
       return h5ps;
     } else {
@@ -133,7 +133,7 @@ export default function ContentPreview(props: Content) {
   };
   const rightside = (
     <Fragment>
-      <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>
+      <H5pPreview key={id} h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>
     </Fragment>
   );
   useEffect(() => {

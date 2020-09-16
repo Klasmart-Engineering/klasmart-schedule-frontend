@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ConfirmResult {
   isConfirmed: boolean;
-  value?: string;
-};
+  value?: string[];
+}
 
 export interface ConfirmRequest {
   title?: string;
@@ -19,22 +19,21 @@ export interface IConfirmState extends ConfirmRequest {
 }
 
 export enum ConfirmDialogType {
-  text = 'text',
-  textField = 'textField',
+  text = "text",
+  textField = "textField",
 }
 
 const initialState: IConfirmState = {
   open: false,
-  title: '',
-  content: '',
+  title: "",
+  content: "",
   type: ConfirmDialogType.text,
-  label: '',
-  confirmText: 'CONFIRM',
-  cancelText: 'CANCEL',
+  label: "",
+  confirmText: "CONFIRM",
+  cancelText: "CANCEL",
 };
 
 let resolve: (value?: ConfirmResult | PromiseLike<ConfirmResult>) => void;
-
 
 const { actions, reducer } = createSlice({
   name: "confirm",
@@ -50,10 +49,15 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const actAsyncConfirm = createAsyncThunk<ConfirmResult, ConfirmRequest>("confirm/actAsyncConfirm", async (confirmRequest, { dispatch }) => {
-  dispatch(actions.show(confirmRequest));
-  return new Promise<ConfirmResult>((r) => { resolve = r });
-});
+export const actAsyncConfirm = createAsyncThunk<ConfirmResult, ConfirmRequest>(
+  "confirm/actAsyncConfirm",
+  async (confirmRequest, { dispatch }) => {
+    dispatch(actions.show(confirmRequest));
+    return new Promise<ConfirmResult>((r) => {
+      resolve = r;
+    });
+  }
+);
 
 export const { actExitConfirm } = actions;
 export default reducer;

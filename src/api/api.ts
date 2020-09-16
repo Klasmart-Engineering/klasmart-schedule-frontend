@@ -49,7 +49,7 @@ export type PublishContentRequest = { scope?: string };
 
 export type ContentIDListRequest = { id?: string[] };
 
-export type RejectReasonRequest = { reject_reason?: string };
+export type RejectReasonRequest = { reject_reason?: string[] };
 
 export type LockContentResponse = { id?: string };
 
