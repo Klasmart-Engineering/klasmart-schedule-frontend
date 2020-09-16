@@ -132,6 +132,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           render={(props) => (
             <SingleUploader
+              accept={"image/*"}
               partition="thumbnail"
               {...props}
               render={({ uploady, item, btnRef, value, isUploading }) => (

@@ -141,6 +141,7 @@ function AssetEdit(props: AssetEditProps) {
             render={(props) => (
               <SingleUploader
                 partition="assets"
+                accept={`${fileType}/*`}
                 {...props}
                 render={({ uploady, item, btnRef, value, isUploading }) => (
                   <>
