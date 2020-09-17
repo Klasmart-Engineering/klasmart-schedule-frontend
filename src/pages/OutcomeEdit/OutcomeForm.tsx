@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
+import { Box, Checkbox, CheckboxProps, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { LearningOutcomes } from "../../api/api";
@@ -44,6 +44,9 @@ export interface OutcomeFormProps {
   showEdit: boolean;
   formMethods: UseFormMethods<any>;
   outcomeDetail: LearningOutcomes;
+  onChangeProgram: (value: NonNullable<string[]>) => any;
+  onChangeDevelopmental: (value: NonNullable<string[]>) => any;
+  handleCheckBoxChange: CheckboxProps["onChange"];
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -54,6 +57,9 @@ export function OutcomeForm(props: OutcomeFormProps) {
     formMethods: { control, errors },
     outcomeDetail,
     flattenedMockOptions,
+    onChangeProgram,
+    onChangeDevelopmental,
+    handleCheckBoxChange,
   } = props;
   const classes = useStyles();
 
@@ -105,7 +111,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 fullWidth
                 label="Learning outcome Name"
                 disabled={showEdit}
-                defaultValue={outcomeDetail.outcome_name}
+                defaultValue={outcome_id ? outcomeDetail.outcome_name : ""}
                 rules={{ required: true }}
                 error={errors.outcome_name ? true : false}
               />
@@ -125,7 +131,14 @@ export function OutcomeForm(props: OutcomeFormProps) {
               </Grid>
             )}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
-              <Controller name="assumed" control={control} as={Checkbox} defaultChecked={outcomeDetail.assumed} disabled={showEdit} />
+              <Controller
+                name="assumed"
+                control={control}
+                // as={Checkbox}
+                defaultChecked={outcomeDetail.assumed}
+                disabled={showEdit}
+                render={() => <Checkbox defaultChecked={outcomeDetail.assumed} disabled={showEdit} onChange={handleCheckBoxChange} />}
+              />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
             {(outcome_id || showCode) && (
@@ -179,7 +192,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
         <Box style={{ paddingBottom: "10px", borderBottom: "1px solid #d7d7d7" }}>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
+              {/* <Controller
                 as={FormattedTextField}
                 select
                 label="Program"
@@ -192,7 +205,30 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 fullWidth
               >
                 {getItems(flattenedMockOptions.program)}
-              </Controller>
+              </Controller> */}
+              <Controller
+                name="program"
+                defaultValue={outcomeDetail.program}
+                control={control}
+                render={(props) => (
+                  <FormattedTextField
+                    select
+                    label="Program"
+                    encode={encodeOneItemArray}
+                    decode={decodeOneItemArray}
+                    {...props}
+                    onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                      onChangeProgram(value);
+                      props.onChange(value);
+                    }}
+                    required
+                    fullWidth
+                    disabled={showEdit}
+                  >
+                    {getItems(flattenedMockOptions.program)}
+                  </FormattedTextField>
+                )}
+              />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
@@ -213,19 +249,28 @@ export function OutcomeForm(props: OutcomeFormProps) {
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
-                as={FormattedTextField}
-                select
-                label="Developmental"
                 name="developmental"
-                encode={encodeOneItemArray}
-                decode={decodeOneItemArray}
                 defaultValue={outcomeDetail.developmental}
                 control={control}
-                disabled={showEdit}
-                fullWidth
-              >
-                {getItems(flattenedMockOptions.developmental)}
-              </Controller>
+                render={(props) => (
+                  <FormattedTextField
+                    select
+                    label="Developmental"
+                    encode={encodeOneItemArray}
+                    decode={decodeOneItemArray}
+                    {...props}
+                    onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                      onChangeDevelopmental(value);
+                      props.onChange(value);
+                    }}
+                    fullWidth
+                    required
+                    disabled={showEdit}
+                  >
+                    {getItems(flattenedMockOptions.developmental)}
+                  </FormattedTextField>
+                )}
+              />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
@@ -286,7 +331,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 decode={Number}
                 type="number"
                 label="Estimated time"
-                defaultValue={outcomeDetail.estimated_time}
+                defaultValue={outcome_id ? outcomeDetail.estimated_time : 0}
                 fullWidth
                 disabled={showEdit}
                 // rules={{ pattern: /^[0-9]*$ / }}
@@ -299,7 +344,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 control={control}
                 name="keywords"
                 decode={decodeArray}
-                defaultValue={outcomeDetail.keywords}
+                defaultValue={outcome_id ? outcomeDetail.keywords : []}
                 label="Keywords"
                 helperText=""
                 fullWidth
@@ -313,7 +358,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="description"
                 as={TextField}
                 control={control}
-                defaultValue={outcomeDetail.description}
+                defaultValue={outcome_id ? outcomeDetail.description : ""}
                 label="Description"
                 disabled={showEdit}
                 fullWidth

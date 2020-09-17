@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import ModalBox from "../../components/ModalBox";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
+import { modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject, save, updateOutcome } from "../../reducers/outcome";
-import { OutcomeForm } from "./OutcomeForm";
+import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
 
@@ -38,10 +39,7 @@ export default function CreateOutcomings() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [showCode, setShoeCode] = React.useState(false);
-  const [showPublish, setShowPublish] = React.useState(false);
   const { outcomeDetail, lockOutcome_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
-  const [finalData, setFinalData] = React.useState(outcomeDetail);
-  const [setFinalDataTest] = React.useState(outcomeDetail);
   const [showEdit, setShowEdit] = React.useState(false);
 
   const formMethods = useForm();
@@ -51,20 +49,19 @@ export default function CreateOutcomings() {
     formState: { isDirty },
     watch,
     setValue,
-    getValues,
   } = formMethods;
 
   const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
 
-  React.useEffect(() => {
-    ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
-  }, [programId, mockOptions, reset, setValue]);
+  const handleChangeProgram = React.useMemo(
+    () => ([programId]: string[]) => {
+      ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+    },
+    [mockOptions, setValue]
+  );
 
-  React.useEffect(() => {
-    // 切换 developmentalId 的逻辑
-    if (developmentalId) setValue("skills", []);
-  }, [developmentalId, mockOptions, reset, getValues, setValue]);
+  const handleChangeDevelopmental = React.useCallback(() => setValue("skills", []), [setValue]);
 
   React.useEffect(() => {
     // 新建表单时，加载完 mockOptions 的逻辑
@@ -91,17 +88,13 @@ export default function CreateOutcomings() {
   }, [before, status]);
 
   React.useEffect(() => {
-    setFinalData(outcomeDetail);
-  }, [outcomeDetail, setFinalDataTest]);
-
-  React.useEffect(() => {
     if (lockOutcome_id) {
       history.push(`/assessments/outcome-edit?outcome_id=${lockOutcome_id}&before=published`);
     }
   }, [history, lockOutcome_id]);
 
   React.useEffect(() => {
-    reset(outcomeDetail);
+    reset(modelOutcomeDetail(outcomeDetail));
   }, [outcomeDetail, reset]);
 
   const handleClose = () => {
@@ -115,7 +108,7 @@ export default function CreateOutcomings() {
           const result: any = await dispatch(updateOutcome({ outcome_id, value }));
           if (result.payload === "ok") {
             dispatch(actSuccess("Update Success"));
-            setShowPublish(true);
+            dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
           }
         } else {
           const result: any = await dispatch(save(value));
@@ -123,7 +116,6 @@ export default function CreateOutcomings() {
           if (result.payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess("Save Success"));
-            setShowPublish(true);
           }
         }
       }),
@@ -212,6 +204,12 @@ export default function CreateOutcomings() {
     }
   };
 
+  const handleCheckBoxChange: OutcomeFormProps["handleCheckBoxChange"] = (event) => {
+    setValue("assumed", event.target.checked, {
+      shouldDirty: true,
+    });
+  };
+
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
@@ -223,8 +221,6 @@ export default function CreateOutcomings() {
         handlePublish={handlePublish}
         handleApprove={handleApprove}
         publish_status={outcomeDetail.publish_status}
-        showPublish={showPublish}
-        finalData={finalData}
         isDirty={isDirty}
         showEdit={showEdit}
         handleEdit={handleEdit}
@@ -238,6 +234,9 @@ export default function CreateOutcomings() {
         showEdit={showEdit}
         formMethods={formMethods}
         outcomeDetail={outcomeDetail}
+        onChangeProgram={handleChangeProgram}
+        onChangeDevelopmental={handleChangeDevelopmental}
+        handleCheckBoxChange={handleCheckBoxChange}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

@@ -90,8 +90,6 @@ export interface OutcomeHeaderProps {
   handlePublish: LButtonProps["onClick"];
   handleApprove: LButtonProps["onClick"];
   publish_status: string | undefined;
-  showPublish: boolean;
-  finalData: any;
   isDirty: boolean;
   showEdit: boolean;
   handleEdit: ButtonProps["onClick"];
