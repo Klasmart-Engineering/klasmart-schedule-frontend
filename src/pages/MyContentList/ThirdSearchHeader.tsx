@@ -114,7 +114,7 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      return [{ label: "delete", value: BulkAction.remove }];
+      return [{ label: "remove", value: BulkAction.remove }];
     case PublishStatus.pending:
       return [];
     case PublishStatus.archive:
