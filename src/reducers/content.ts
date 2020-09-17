@@ -266,7 +266,7 @@ export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>
 );
 type RejectContentParams = {
   id: Parameters<typeof api.contents.rejectContentReview>[0];
-  // reason: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
+  reason: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
 };
 type RejectContentResult = AsyncReturnType<typeof api.contents.rejectContentReview>;
 export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
