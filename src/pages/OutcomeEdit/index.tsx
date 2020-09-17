@@ -38,7 +38,7 @@ export default function CreateOutcomings() {
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { outcomeDetail, lockOutcome_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeDetail } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showEdit, setShowEdit] = React.useState(false);
 
   const formMethods = useForm();
@@ -88,12 +88,6 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     if (status || before) setShowEdit(false);
   }, [before, status]);
-
-  React.useEffect(() => {
-    if (lockOutcome_id) {
-      history.push(`/assessments/outcome-edit?outcome_id=${lockOutcome_id}&before=published`);
-    }
-  }, [history, lockOutcome_id]);
 
   React.useEffect(() => {
     reset(modelOutcomeDetail(outcomeDetail));
@@ -201,7 +195,10 @@ export default function CreateOutcomings() {
   const handleEdit: OutcomeHeaderProps["handleEdit"] = async () => {
     setShowEdit(!showEdit);
     if (outcomeDetail.publish_status === "published") {
-      await dispatch(lockOutcome(outcome_id));
+      const result: any = await dispatch(lockOutcome(outcome_id));
+      if (result.payload.outcome_id) {
+        history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&before=published`);
+      }
     }
   };
 
