@@ -89,7 +89,7 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={contentPreview.age?.join(",")}
+            value={contentPreview.age_name?.join(",")}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
