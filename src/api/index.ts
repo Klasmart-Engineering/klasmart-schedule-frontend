@@ -1,6 +1,6 @@
 import fetchIntercept from "fetch-intercept";
 import mitt from "mitt";
-import { Api } from "./api";
+import { Api } from "./api.auto";
 
 export enum ApiEvent {
   ResponseError = "ResponseError",
