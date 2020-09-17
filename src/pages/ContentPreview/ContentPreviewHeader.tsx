@@ -2,6 +2,7 @@ import { Box, Chip, makeStyles, Tab, Tabs, Theme, Typography } from "@material-u
 import CloseIcon from "@material-ui/icons/Close";
 import React, { Fragment } from "react";
 import { Content } from "../../api/api";
+import { ContentType } from "../../api/type";
 import { Thumbnail } from "../../components/Thumbnail";
 import { TabValue } from "./type";
 
@@ -50,7 +51,12 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
       <Typography className={css.text}>Title</Typography>
       <Box className={css.nameCon}>
         <Typography className={css.text}>{contentPreview.name}</Typography>
-        <Chip size="small" color="primary" label={contentPreview.content_type_name} />
+        <Chip
+          size="small"
+          color="primary"
+          style={{ color: "#fff", backgroundColor: contentPreview.content_type === ContentType.material ? "#3f51b5" : "#4caf50" }}
+          label={contentPreview.content_type_name}
+        />
       </Box>
       <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>
         <Thumbnail className={css.img} type={content_type} id={contentPreview?.thumbnail} key={contentPreview?.thumbnail} />

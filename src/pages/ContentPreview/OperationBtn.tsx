@@ -56,7 +56,7 @@ export function OperationBtn(props: ActionProps) {
           Delete
         </LButton>
       )}
-      {(publish_status === "rejected" || publish_status === "pending") && (
+      {publish_status === "pending" && (
         <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
           Reject
         </LButton>
