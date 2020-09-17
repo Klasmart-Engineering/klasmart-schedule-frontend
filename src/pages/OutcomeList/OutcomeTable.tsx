@@ -80,9 +80,9 @@ function OutomeRow(props: OutcomeProps) {
       )}
       <TableCell className={clsx(css.tableCell)}>{outcome.outcome_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.shortcode}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.program}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.subject}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.skills}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.program?.map((item) => item.program_name).join(",")}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.subject?.map((item) => item.subject_name).join(",")}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.skills?.map((item) => item.skill_name).join(",")}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.publish_scope}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? "Yes" : ""}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.created_at)}</TableCell>
