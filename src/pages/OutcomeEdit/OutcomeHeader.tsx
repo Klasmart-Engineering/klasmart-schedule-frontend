@@ -218,7 +218,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   endIcon={<Publish />}
                   className={clsx(css.headerButton, css.greenButton)}
                   onClick={handlePublish}
-                  disabled={isDirty}
+                  disabled={outcome_id ? isDirty : true}
                 >
                   Publish
                 </LButton>
