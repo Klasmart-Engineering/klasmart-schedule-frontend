@@ -230,9 +230,7 @@ export default function ContentEdit() {
     reset(ModelContentDetailForm.decode(contentDetail));
     if (lesson === "assets")
       Object.getOwnPropertyNames(type2File).forEach((key: string) => {
-        if (contentDetail.content_type === type2File[key as contentFileType]) {
-          setAssetsFileType(key as contentFileType);
-        }
+        if (contentDetail.content_type === type2File[key as contentFileType]) setAssetsFileType(key as contentFileType);
       });
   }, [contentDetail, lesson, reset]);
   useEffect(() => {

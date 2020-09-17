@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { getScheduleLiveToken } from "../../reducers/schedule";
 import { AsyncTrunkReturned, getContentLiveToken } from "../../reducers/content";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { apiLivePath } from "../../api/extra";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -12,9 +13,6 @@ const useQuery = () => {
   const schedule_id = query.get("schedule_id") as string;
   return { content_id, schedule_id };
 };
-
-const livePath = "/class-live/";
-const windowLocat = window.location;
 
 export default function Live() {
   const { content_id, schedule_id } = useQuery();
@@ -30,7 +28,7 @@ export default function Live() {
         tokenInfo = ((await dispatch(getContentLiveToken({ content_id, metaLoading: true }))) as unknown) as PayloadAction<
           AsyncTrunkReturned<typeof getContentLiveToken>
         >;
-      if (tokenInfo) windowLocat.href = windowLocat.protocol + "//" + windowLocat.host + `${livePath}?token=${tokenInfo?.payload.token}`;
+      if (tokenInfo) window.location.href = apiLivePath(tokenInfo?.payload.token);
     }
     asynsGetliveToken();
   }, [schedule_id, content_id, dispatch]);
