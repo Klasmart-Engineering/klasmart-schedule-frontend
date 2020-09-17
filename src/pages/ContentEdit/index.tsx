@@ -239,7 +239,10 @@ export default function ContentEdit() {
     const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
     const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
     if (!defaultDevelopmentalId || !defaultProgramId) return;
-    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId] });
+    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(
+      ModelMockOptions.toFlatten({ programId: defaultProgramId, developmentalId: defaultDevelopmentalId }, mockOptions)
+    );
+    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
   }, [mockOptions, reset, id]);
   const assetDetails = (
     <MediaAssetsLibrary>
@@ -250,6 +253,8 @@ export default function ContentEdit() {
         fileType={assetsFileType}
         handleChangeFile={handleChangeFile}
         contentDetail={contentDetail}
+        onChangeProgram={handleChangeProgram}
+        onChangeDevelopmental={handleChangeDevelopmental}
       />
     </MediaAssetsLibrary>
   );

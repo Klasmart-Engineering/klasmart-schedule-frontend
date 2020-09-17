@@ -75,6 +75,8 @@ function AssetsDetails(props: AssetDetailsProps) {
     handleChangeFile,
     fileType,
     contentDetail,
+    onChangeProgram,
+    onChangeDevelopmental,
   } = props;
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
@@ -169,24 +171,11 @@ function AssetsDetails(props: AssetDetailsProps) {
           disabled={isIdExist()}
           error={errorValidator(errors.name)}
         />
-        {/* <Controller
-          as={FormattedTextField}
-          select
-          className={css.fieldset}
-          label="Program"
-          name="program"
-          encode={encodeOneItemArray}
-          decode={decodeOneItemArray}
-          control={control}
-          defaultValue={contentDetail.program}
-          disabled={isIdExist()}
-        >
-          {menuItemList(flattenedMockOptions.program)}
-        </Controller> */}
         <Controller
           name="program"
           defaultValue={contentDetail.program}
           control={control}
+          rules={{ required: true }}
           render={(props) => (
             <FormattedTextField
               select
@@ -196,10 +185,12 @@ function AssetsDetails(props: AssetDetailsProps) {
               decode={decodeOneItemArray}
               {...props}
               onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-                // onChangeProgram(value);
+                onChangeProgram(value);
                 props.onChange(value);
               }}
               disabled={isIdExist()}
+              required
+              error={errorValidator(errors.program)}
             >
               {menuItemList(flattenedMockOptions.program)}
             </FormattedTextField>
@@ -220,24 +211,32 @@ function AssetsDetails(props: AssetDetailsProps) {
           {menuItemList(flattenedMockOptions.subject)}
         </Controller>
         <Box>
-          {/* <Controller
-            as={FormattedTextField}
+          <Controller
             name="developmental"
-            encode={encodeOneItemArray}
-            decode={decodeOneItemArray}
-            control={control}
-            select
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label="Developmental"
-            required
-            rules={{ required: true }}
-            error={errorValidator(errors.developmental)}
             defaultValue={contentDetail.developmental}
-            disabled={isIdExist()}
-          >
-            {menuItemList(flattenedMockOptions.developmental)}
-          </Controller> */}
+            control={control}
+            rules={{ required: true }}
+            render={(props) => (
+              <FormattedTextField
+                select
+                className={sm ? css.fieldset : css.halfFieldset}
+                label="Developmental"
+                encode={encodeOneItemArray}
+                decode={decodeOneItemArray}
+                {...props}
+                onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                  onChangeDevelopmental(value);
+                  props.onChange(value);
+                }}
+                fullWidth={sm}
+                required
+                error={errorValidator(errors.developmental)}
+                disabled={isIdExist()}
+              >
+                {menuItemList(flattenedMockOptions.developmental)}
+              </FormattedTextField>
+            )}
+          />
 
           <Controller
             as={TextField}
@@ -323,10 +322,12 @@ interface AssetDetailsProps {
   fileType: "image" | "video" | "audio" | "document";
   handleChangeFile: (type: "image" | "video" | "audio" | "document") => void;
   contentDetail: Content;
+  onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
+  onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
 }
 
 export default function AssetDetails(props: AssetDetailsProps) {
-  const { formMethods, flattenedMockOptions, fileType, handleChangeFile, contentDetail } = props;
+  const { formMethods, flattenedMockOptions, fileType, handleChangeFile, contentDetail, onChangeDevelopmental, onChangeProgram } = props;
   return (
     <AssetsDetails
       formMethods={formMethods}
@@ -334,6 +335,8 @@ export default function AssetDetails(props: AssetDetailsProps) {
       fileType={fileType}
       handleChangeFile={handleChangeFile}
       contentDetail={contentDetail}
+      onChangeProgram={onChangeProgram}
+      onChangeDevelopmental={onChangeDevelopmental}
     />
   );
 }

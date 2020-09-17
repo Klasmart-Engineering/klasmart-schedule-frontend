@@ -12,6 +12,10 @@ export interface FlattenedMockOptions extends Omit<MockOptions, "options">, Omit
   skills: MockOptionsItem[];
 }
 
+export type GetOnlyOneOptionValueResult = {
+  [Key in keyof FlattenedMockOptions]?: MockOptionsItem["id"][];
+};
+
 export class ModelMockOptions {
   static toFlatten(input: ToFlattenPropsInput, mockOptions: MockOptions): FlattenedMockOptions {
     const { options: originOptions, ...restMockOptions } = mockOptions;
@@ -45,6 +49,13 @@ export class ModelMockOptions {
     if (!defaultDevelopmentalId || !programId) return false;
     setValue("developmental", [defaultDevelopmentalId]);
     ["subject", "skills", "age", "grade"].forEach((name) => setValue(name, []));
+    const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId: defaultDevelopmentalId }, mockOptions);
+    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(flattenedMockOptions);
+    Object.keys(onlyOneOptionValue).forEach((item) => {
+      const value = onlyOneOptionValue[item as keyof FlattenedMockOptions];
+      if (value) setValue(item, value);
+    });
+
     return true;
   }
 
@@ -56,5 +67,14 @@ export class ModelMockOptions {
       age: [],
       grade: [],
     };
+  }
+
+  static getOnlyOneOptionValue(flattenedMockOptions: FlattenedMockOptions): GetOnlyOneOptionValueResult {
+    return Object.keys(flattenedMockOptions).reduce((result, key) => {
+      const name = key as keyof FlattenedMockOptions;
+      if (flattenedMockOptions[name].length !== 1) return result;
+      result[name] = flattenedMockOptions[name].map((item) => item.id);
+      return result;
+    }, {} as GetOnlyOneOptionValueResult);
   }
 }
