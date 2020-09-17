@@ -55,7 +55,7 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
           size="small"
           color="primary"
           style={{ color: "#fff", backgroundColor: contentPreview.content_type === ContentType.material ? "#3f51b5" : "#4caf50" }}
-          label={contentPreview.content_type_name}
+          label={`Lesson ${contentPreview.content_type_name}`}
         />
       </Box>
       <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>

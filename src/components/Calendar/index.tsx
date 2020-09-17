@@ -37,7 +37,7 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
-  const { modelView, timesTamp, changeTimesTamp } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive } = props;
   const history = useHistory();
   const [openStatus, setOpenStatus] = React.useState(false);
   const [scheduleInfoStatus, setScheduleInfoStatus] = React.useState(true);
@@ -122,7 +122,7 @@ function MyCalendar(props: CalendarProps) {
     openStatus: openStatus,
     enableCustomization: enableCustomization,
     customizeTemplate: scheduleInfoStatus ? (
-      <CustomizeTempalte handleDelete={handleDelete} handleClose={handleClose} scheduleInfo={scheduleInfo} />
+      <CustomizeTempalte handleDelete={handleDelete} handleClose={handleClose} scheduleInfo={scheduleInfo} toLive={toLive} />
     ) : (
       <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title="Delete" />
     ),
@@ -173,8 +173,9 @@ interface CalendarProps {
   modelView: any;
   timesTamp: timestampType;
   changeTimesTamp: (value: timestampType) => void;
+  toLive: (schedule_id: string) => void;
 }
 export default function KidsCalendar(props: CalendarProps) {
-  const { modelView, timesTamp, changeTimesTamp } = props;
-  return <MyCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} />;
+  const { modelView, timesTamp, changeTimesTamp, toLive } = props;
+  return <MyCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} toLive={toLive} />;
 }

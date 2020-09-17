@@ -28,7 +28,7 @@ function OutComeRow(props: OutcomeProps) {
     <TableRow>
       <TableCell className={css.tableCell}>{outcome.outcome_name}</TableCell>
       <TableCell className={css.tableCell}>{outcome.shortcode}</TableCell>
-      <TableCell className={css.tableCell}>{outcome.assumed}</TableCell>
+      <TableCell className={css.tableCell}>{outcome.assumed ? "Yes" : ""}</TableCell>
       <TableCell className={css.tableCell}>{outcome.author_name}</TableCell>
     </TableRow>
   );

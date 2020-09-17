@@ -5,14 +5,16 @@ import { useLocation, useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { contentLists } from "../../reducers/content";
-import { getScheduleInfo, getScheduleTimeViewData, getMockOptions } from "../../reducers/schedule";
+import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
+import { getScheduleInfo, getScheduleTimeViewData, getMockOptions, getScheduleLiveToken } from "../../reducers/schedule";
 import { modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { apiLivePath } from "../../api/extra";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -68,6 +70,14 @@ function ScheduleContent() {
     setTimesTamp(times);
   };
 
+  const toLive = async (schedule_id: string) => {
+    let tokenInfo: any;
+    tokenInfo = ((await dispatch(getScheduleLiveToken({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof getScheduleLiveToken>
+    >;
+    if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
+  };
+
   React.useEffect(() => {
     dispatch(
       getScheduleTimeViewData({
@@ -111,10 +121,11 @@ function ScheduleContent() {
               includeTable={includeTable}
               flattenedMockOptions={flattenedMockOptions}
               handleChangeProgramId={handleChangeProgramId}
+              toLive={toLive}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
-            {includeTable && <KidsCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} />}
+            {includeTable && <KidsCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} toLive={toLive} />}
             {includeList && <SearchList />}
           </Grid>
         </Grid>

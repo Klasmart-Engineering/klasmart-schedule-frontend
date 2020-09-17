@@ -28,6 +28,7 @@ export function Detail(props: ContentPreviewProps) {
         margin="normal"
         fullWidth
         multiline
+        disabled={true}
         rows={2}
         label="Description"
         variant="outlined"
@@ -39,54 +40,87 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label="Created On"
             fullWidth
+            disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
             value={formattedTime(contentPreview.created_at)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Author" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.author_name} />
+          <TextField
+            label="Author"
+            fullWidth
+            disabled={true}
+            variant="outlined"
+            InputProps={{ readOnly: true }}
+            value={contentPreview.author_name}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             label="Program"
             fullWidth
+            disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
             value={contentPreview.program_name?.join(",")}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Subject" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.subject_name} />
+          <TextField
+            label="Subject"
+            fullWidth
+            disabled={true}
+            variant="outlined"
+            InputProps={{ readOnly: true }}
+            value={contentPreview.subject_name}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             label="Development"
             fullWidth
+            disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
             value={contentPreview.developmental_name?.join(",")}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Skills" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.skills_name} />
+          <TextField
+            label="Skills"
+            fullWidth
+            disabled={true}
+            variant="outlined"
+            InputProps={{ readOnly: true }}
+            value={contentPreview.skills_name}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             label="Visibility Settings"
             fullWidth
+            disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
             value={contentPreview.publish_scope}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Duration" fullWidth variant="outlined" InputProps={{ readOnly: true }} value={contentPreview.suggest_time} />
+          <TextField
+            label="Duration"
+            fullWidth
+            disabled={true}
+            variant="outlined"
+            InputProps={{ readOnly: true }}
+            value={contentPreview.suggest_time}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             label="Suitable Age"
             fullWidth
+            disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
             value={contentPreview.age_name?.join(",")}
@@ -96,6 +130,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label="Grade"
             fullWidth
+            disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
             value={contentPreview.grade_name?.join(",")}
@@ -105,6 +140,7 @@ export function Detail(props: ContentPreviewProps) {
       <TextField
         margin="normal"
         fullWidth
+        disabled={true}
         label="Keywords"
         variant="outlined"
         InputProps={{

@@ -97,7 +97,7 @@ function EditBox(props: CalendarStateProps) {
 
   const defaults: CommonShort = { id: "", name: "" };
 
-  const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp, flattenedMockOptions, handleChangeProgramId } = props;
+  const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp, flattenedMockOptions, handleChangeProgramId, toLive } = props;
 
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -847,7 +847,7 @@ function EditBox(props: CalendarStateProps) {
             color="primary"
             style={{ width: "45%" }}
             onClick={() => {
-              window.open(`/#/live/?schedule_id=${scheduleId}`);
+              toLive(scheduleId as string);
             }}
           >
             Go Live
@@ -873,6 +873,7 @@ interface CalendarStateProps {
   includeTable?: boolean;
   flattenedMockOptions: FlattenedMockOptions;
   handleChangeProgramId: (value: string) => void;
+  toLive: (schedule_id: string) => void;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -890,6 +891,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     includeTable,
     flattenedMockOptions,
     handleChangeProgramId,
+    toLive,
   } = props;
   const template = (
     <Box>
@@ -905,6 +907,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           modelView={modelView}
           flattenedMockOptions={flattenedMockOptions}
           handleChangeProgramId={handleChangeProgramId}
+          toLive={toLive}
         />
       </Box>
       <Box
@@ -921,6 +924,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           includeTable={includeTable}
           flattenedMockOptions={flattenedMockOptions}
           handleChangeProgramId={handleChangeProgramId}
+          toLive={toLive}
         />
       </Box>
     </Box>
