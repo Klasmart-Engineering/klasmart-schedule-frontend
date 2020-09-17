@@ -20,6 +20,7 @@ import {
   save,
   searchOutcomeList,
 } from "../../reducers/content";
+import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
 import ContentHeader from "./ContentHeader";
@@ -32,7 +33,6 @@ import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import Outcomes, { OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
-import MyContentList from "../MyContentList";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -156,24 +156,41 @@ export default function ContentEdit() {
       history.replace({
         search: setQuery(history.location.search, { searchMedia }),
       });
+      dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", name: searchMedia }));
     },
-    [history]
+    [dispatch, history, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
     () => (searchOutcome = "") => {
       history.replace({
         search: setQuery(history.location.search, { searchOutcome }),
       });
+      dispatch(
+        searchOutcomeList({
+          publish_status: OutcomePublishStatus.published,
+          search_key: searchOutcome,
+          page_size: 10,
+          assumed: assumed === "true" ? 1 : -1,
+        })
+      );
     },
-    [history]
+    [assumed, dispatch, history]
   );
   const handleCheckAssumed = useMemo<OutcomesProps["onCheck"]>(
     () => (assumed = "") => {
       history.replace({
         search: setQuery(history.location.search, { assumed }),
       });
+      dispatch(
+        searchOutcomeList({
+          publish_status: OutcomePublishStatus.published,
+          search_key: searchOutcome,
+          page_size: 10,
+          assumed: assumed === "true" ? 1 : -1,
+        })
+      );
     },
-    [history]
+    [dispatch, history, searchOutcome]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -223,8 +240,8 @@ export default function ContentEdit() {
   );
   const handleChangeDevelopmental = useCallback(() => setValue("skills", []), [setValue]);
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true, searchOutcome, assumed }));
-  }, [id, lesson, dispatch, searchMedia, history, editindex, assumed, searchOutcome]);
+    dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
+  }, [id, lesson, dispatch, history, editindex]);
   useEffect(() => {
     // 编辑表单时 加载完 contentDetial 的逻辑
     reset(ModelContentDetailForm.decode(contentDetail));

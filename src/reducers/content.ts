@@ -184,6 +184,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     return { contentDetail, mediaList, outcomeList, mockOptions };
   }
 );
+
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
 type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
