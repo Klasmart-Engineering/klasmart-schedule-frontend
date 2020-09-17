@@ -14,10 +14,6 @@ import { useHistory } from "react-router";
 import { CommonShort, ScheduleCreate } from "../../api/api";
 import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import mockClass from "../../mocks/backendMock/class.json";
-import mockProgram from "../../mocks/backendMock/program.json";
-import mockSubject from "../../mocks/backendMock/subject.json";
-import mockTeacher from "../../mocks/backendMock/teacher.json";
 import { RootState } from "../../reducers";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
@@ -33,6 +29,10 @@ import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import { FlattenedMockOptions } from "../../models/ModelMockOptions";
+import { MockOptionsItem } from "../../api/extra";
+import { AsyncTrunkReturned } from "../../reducers/content";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -97,7 +97,7 @@ function EditBox(props: CalendarStateProps) {
 
   const defaults: CommonShort = { id: "", name: "" };
 
-  const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp } = props;
+  const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp, flattenedMockOptions, handleChangeProgramId } = props;
 
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -304,6 +304,8 @@ function EditBox(props: CalendarStateProps) {
       setSubjectItem(value);
     }
     if (name === "program_id") {
+      handleChangeProgramId(value.id);
+      setSubjectItem(defaults);
       setProgramItem(value);
     }
     setScheduleData(name, ids);
@@ -398,16 +400,20 @@ function EditBox(props: CalendarStateProps) {
       addData["repeat_edit_options"] = repeat_edit_options;
     }
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
-    await dispatch(saveScheduleData({ ...scheduleList, ...addData }));
-    dispatch(
-      getScheduleTimeViewData({
-        view_type: modelView,
-        time_at: timesTamp.start.toString(),
-        time_zone_offset: -new Date().getTimezoneOffset() * 60,
-      })
-    );
-    dispatch(actSuccess("Save successful"));
-    history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+    const { payload } = ((await dispatch(saveScheduleData({ ...scheduleList, ...addData }))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof saveScheduleData>
+    >;
+    if (payload) {
+      dispatch(
+        getScheduleTimeViewData({
+          view_type: modelView,
+          time_at: timesTamp.start.toString(),
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+        })
+      );
+      dispatch(actSuccess("Save successful"));
+      history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+    }
   };
 
   const isScheduleExpired = (): boolean => {
@@ -561,6 +567,13 @@ function EditBox(props: CalendarStateProps) {
     dispatchRepeat({ type: "changeData", data });
   };
 
+  const menuItemList = (list: MockOptionsItem[]) =>
+    list.map((item) => (
+      <MenuItem key={item.id} value={item.id}>
+        {item.name}
+      </MenuItem>
+    ));
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -611,7 +624,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={mockClass}
+          options={flattenedMockOptions.classes}
           getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
@@ -648,7 +661,7 @@ function EditBox(props: CalendarStateProps) {
           id="combo-box-demo"
           freeSolo
           multiple
-          options={mockTeacher}
+          options={flattenedMockOptions.teachers}
           getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "teacher_ids");
@@ -721,7 +734,28 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={mockSubject}
+          options={flattenedMockOptions.program}
+          getOptionLabel={(option: any) => option.name}
+          onChange={(e: any, newValue) => {
+            autocompleteChange(newValue, "program_id");
+          }}
+          value={programItem}
+          disabled={isScheduleExpired()}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className={css.fieldset}
+              label="Program"
+              variant="outlined"
+              error={validator.program_id}
+              value={scheduleList.program_id}
+              required
+            />
+          )}
+        />
+        <Autocomplete
+          id="combo-box-demo"
+          options={flattenedMockOptions.subject}
           getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "subject_id");
@@ -741,27 +775,6 @@ function EditBox(props: CalendarStateProps) {
             />
           )}
         />
-        <Autocomplete
-          id="combo-box-demo"
-          options={mockProgram}
-          getOptionLabel={(option: any) => option.name}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "program_id");
-          }}
-          value={programItem}
-          disabled={isScheduleExpired()}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={css.fieldset}
-              label="Program"
-              variant="outlined"
-              error={validator.program_id}
-              value={scheduleList.program_id}
-              required
-            />
-          )}
-        />
         <TextField
           className={css.fieldset}
           label="Class Type"
@@ -772,10 +785,7 @@ function EditBox(props: CalendarStateProps) {
           required
           disabled={isScheduleExpired()}
         >
-          <MenuItem value="OnlineClass">online class</MenuItem>
-          <MenuItem value="OfflineClass">offline class</MenuItem>
-          <MenuItem value="Homework">task</MenuItem>
-          <MenuItem value="Task">homework</MenuItem>
+          {menuItemList(flattenedMockOptions.class_types)}
         </TextField>
         <Box style={{ display: scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework" ? "block" : "none" }}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -861,6 +871,8 @@ interface CalendarStateProps {
   modelView: modeViewType;
   scheduleId?: string;
   includeTable?: boolean;
+  flattenedMockOptions: FlattenedMockOptions;
+  handleChangeProgramId: (value: string) => void;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -868,7 +880,18 @@ interface ScheduleEditProps extends CalendarStateProps {
 }
 
 export default function ScheduleEdit(props: ScheduleEditProps) {
-  const { includePreview, timesTamp, changeTimesTamp, repeatData, modelView, scheduleId, includeTable } = props;
+  const {
+    includePreview,
+    timesTamp,
+    changeTimesTamp,
+    repeatData,
+    modelView,
+    scheduleId,
+    includeTable,
+    flattenedMockOptions,
+    handleChangeProgramId,
+  } = props;
+  console.log(flattenedMockOptions);
   const template = (
     <Box>
       <Box
@@ -876,7 +899,14 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           display: includePreview ? "block" : "none",
         }}
       >
-        <SmallCalendar changeTimesTamp={changeTimesTamp} timesTamp={timesTamp} repeatData={repeatData} modelView={modelView} />
+        <SmallCalendar
+          changeTimesTamp={changeTimesTamp}
+          timesTamp={timesTamp}
+          repeatData={repeatData}
+          modelView={modelView}
+          flattenedMockOptions={flattenedMockOptions}
+          handleChangeProgramId={handleChangeProgramId}
+        />
       </Box>
       <Box
         style={{
@@ -890,6 +920,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           modelView={modelView}
           scheduleId={scheduleId}
           includeTable={includeTable}
+          flattenedMockOptions={flattenedMockOptions}
+          handleChangeProgramId={handleChangeProgramId}
         />
       </Box>
     </Box>

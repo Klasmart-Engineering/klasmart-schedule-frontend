@@ -1,13 +1,13 @@
 import { TextField, TextFieldProps } from "@material-ui/core";
 import React, { ChangeEvent, forwardRef, ForwardRefRenderFunction, useMemo } from "react";
 
-type FormatedTextFieldProps<T> = TextFieldProps & {
+interface FormatedTextFieldProps<T> extends Omit<TextFieldProps, "onChange" | "value" | "defaultValue" | "variant"> {
   decode: (value: string) => T;
   encode?: (value: T) => string;
   value?: T;
   defaultValue?: T;
   onChange?: (value: T) => any;
-};
+}
 
 type IRef<T> = Parameters<ForwardRefRenderFunction<T>>[1];
 // todo: 移除 any

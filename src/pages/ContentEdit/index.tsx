@@ -209,7 +209,13 @@ export default function ContentEdit() {
     },
     [history]
   );
-
+  const handleChangeProgram = useMemo(
+    () => ([programId]: string[]) => {
+      ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+    },
+    [mockOptions, setValue]
+  );
+  const handleChangeDevelopmental = useCallback(() => setValue("skills", []), [setValue]);
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, searchMedia, metaLoading: true, searchOutcome, assumed }));
   }, [id, lesson, dispatch, searchMedia, history, editindex, assumed, searchOutcome]);
@@ -217,13 +223,6 @@ export default function ContentEdit() {
     // 编辑表单时 加载完 contentDetial 的逻辑
     reset(ModelContentDetailForm.decode(contentDetail));
   }, [contentDetail, lesson, reset]);
-  useEffect(() => {
-    ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
-  }, [programId, mockOptions, reset, getValues, setValue]);
-  useEffect(() => {
-    // 切换 developmentalId 的逻辑
-    if (developmentalId) setValue("skills", []);
-  }, [developmentalId, mockOptions, reset, getValues, setValue]);
   useEffect(() => {
     // 新建表单时，加载完 mockOptions 的逻辑
     if (id) return;
@@ -246,7 +245,13 @@ export default function ContentEdit() {
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
-      <Details contentDetail={contentDetail} formMethods={formMethods} flattenedMockOptions={flattenedMockOptions} />
+      <Details
+        contentDetail={contentDetail}
+        formMethods={formMethods}
+        flattenedMockOptions={flattenedMockOptions}
+        onChangeProgram={handleChangeProgram}
+        onChangeDevelopmental={handleChangeDevelopmental}
+      />
       <Controller
         as={Outcomes}
         name="outcome_entities"

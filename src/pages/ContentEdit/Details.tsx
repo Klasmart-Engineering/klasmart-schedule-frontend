@@ -78,6 +78,8 @@ interface DetailsProps {
   uploadThumnail?: Function;
   formMethods: UseFormMethods<ContentDetailForm>;
   flattenedMockOptions: FlattenedMockOptions;
+  onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
+  onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
 }
 
 export default function Details(props: DetailsProps) {
@@ -85,6 +87,8 @@ export default function Details(props: DetailsProps) {
     contentDetail,
     formMethods: { control, errors },
     flattenedMockOptions,
+    onChangeDevelopmental,
+    onChangeProgram,
   } = props;
 
   const css = useStyles();
@@ -211,19 +215,27 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.suggest_time}
         />
         <Controller
-          as={FormattedTextField}
-          select
-          className={css.fieldset}
-          label="Program"
           name="program"
-          encode={encodeOneItemArray}
-          decode={decodeOneItemArray}
-          required
           defaultValue={contentDetail.program}
           control={control}
-        >
-          {menuItemList(flattenedMockOptions.program)}
-        </Controller>
+          render={(props) => (
+            <FormattedTextField
+              select
+              className={css.fieldset}
+              label="Program"
+              encode={encodeOneItemArray}
+              decode={decodeOneItemArray}
+              {...props}
+              onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                onChangeProgram(value);
+                props.onChange(value);
+              }}
+              required
+            >
+              {menuItemList(flattenedMockOptions.program)}
+            </FormattedTextField>
+          )}
+        />
         <Controller
           as={TextField}
           select
@@ -238,20 +250,29 @@ export default function Details(props: DetailsProps) {
         </Controller>
         <Box>
           <Controller
-            as={FormattedTextField}
             name="developmental"
-            encode={encodeOneItemArray}
-            decode={decodeOneItemArray}
-            required
             defaultValue={contentDetail.developmental}
             control={control}
-            select
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label="Developmental"
-          >
-            {menuItemList(flattenedMockOptions.developmental)}
-          </Controller>
+            render={(props) => (
+              <FormattedTextField
+                select
+                className={sm ? css.fieldset : css.halfFieldset}
+                label="Developmental"
+                encode={encodeOneItemArray}
+                decode={decodeOneItemArray}
+                {...props}
+                onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                  onChangeDevelopmental(value);
+                  props.onChange(value);
+                }}
+                fullWidth={sm}
+                required
+              >
+                {menuItemList(flattenedMockOptions.developmental)}
+              </FormattedTextField>
+            )}
+          />
+
           <Controller
             as={TextField}
             name="skills"

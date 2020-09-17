@@ -159,7 +159,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     if (publish_status === Assets.assets_type) {
       return onChangeAssets(Assets.assets_type);
     }
-    onChange({ publish_status, order_by: OrderBy._created_at, page: 1 });
+    onChange({ publish_status, order_by: OrderBy._created_at, page: 1, content_type: SearchContentsRequestContentType.materialandplan });
   };
   return (
     <div className={classes.root}>

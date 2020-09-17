@@ -1,16 +1,18 @@
 import { Grid } from "@material-ui/core";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { contentLists } from "../../reducers/content";
-import { getScheduleInfo, getScheduleTimeViewData } from "../../reducers/schedule";
+import { getScheduleInfo, getScheduleTimeViewData, getMockOptions } from "../../reducers/schedule";
 import { modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import { ModelMockOptions } from "../../models/ModelMockOptions";
+import { RootState } from "../../reducers";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -35,10 +37,17 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
+  const { mockOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
+  const [changeProgram, setChangeProgram] = React.useState<string>("");
+  const flattenedMockOptions = ModelMockOptions.toFlatten({ programId: changeProgram, developmentalId: "" }, mockOptions);
+
+  const handleChangeProgramId = (programId: string) => {
+    setChangeProgram(programId);
+  };
 
   /**
    * calendar model view change
@@ -70,6 +79,10 @@ function ScheduleContent() {
   }, [modelView, timesTamp, dispatch]);
 
   React.useEffect(() => {
+    dispatch(getMockOptions());
+  }, [dispatch]);
+
+  React.useEffect(() => {
     dispatch(contentLists({ org: "1", publish_status: "published", content_type: "2" }));
     if (scheduleId) dispatch(getScheduleInfo(scheduleId));
   }, [scheduleId, dispatch]);
@@ -96,6 +109,8 @@ function ScheduleContent() {
               modelView={modelView}
               scheduleId={scheduleId}
               includeTable={includeTable}
+              flattenedMockOptions={flattenedMockOptions}
+              handleChangeProgramId={handleChangeProgramId}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

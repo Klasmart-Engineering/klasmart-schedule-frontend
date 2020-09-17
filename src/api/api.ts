@@ -51,6 +51,8 @@ export type ContentIDListRequest = { id?: string[] };
 
 export type RejectReasonRequest = { reject_reason?: string };
 
+export type RejectCMSReasonRequest = { reject_reason?: string[] };
+
 export type LockContentResponse = { id?: string };
 
 export type ContentCondition = {
@@ -70,7 +72,7 @@ export type Content = {
   outcomes?: string[];
   subject?: string[];
   suggest_time?: number;
-  reject_reason?: string;
+  reject_reason?: string[];
   developmental?: string[];
   skills?: string[];
   age?: string[];
@@ -733,7 +735,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/contents/{content_id}/review/reject
      * @description Reject a content review by content_id
      */
-    rejectContentReview: (content_id: string, data: RejectReasonRequest, params?: RequestParams) =>
+    rejectContentReview: (content_id: string, data: RejectCMSReasonRequest, params?: RequestParams) =>
       this.request<any, any>(`/contents/${content_id}/review/reject`, "PUT", params, data),
 
     /**

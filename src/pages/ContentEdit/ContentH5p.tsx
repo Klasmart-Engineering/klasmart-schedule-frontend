@@ -34,7 +34,7 @@ export default function ContentH5p(props: ContentH5pProps) {
   }, [onChange]);
   return (
     <>
-      <iframe title="h5p" className={css.iframe} src={src} frameBorder="0" />
+      <iframe key={src} title="h5p" className={css.iframe} src={src} frameBorder="0" />
       {children}
     </>
   );

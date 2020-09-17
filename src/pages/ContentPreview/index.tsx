@@ -120,7 +120,7 @@ export default function ContentPreview(props: Content) {
       const segment: Segment = JSON.parse(contentPreview.data || "{}");
       const h5pArray = ModelLessonPlan.toArray(segment);
       const h5ps: DataH5p[] = h5pArray.map((item, index) => {
-        return JSON.parse(item?.data || "");
+        return JSON.parse(item?.data || "{}");
       });
       return h5ps;
     } else {

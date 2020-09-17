@@ -218,10 +218,7 @@ interface IQueryGetContentDetailByIdParams extends LoadingMetaPayload {
 type IQueryGetContentDetailByIdResult = AsyncReturnType<typeof api.contents.getContentById>;
 export const getContentDetailById = createAsyncThunk<IQueryGetContentDetailByIdResult, IQueryGetContentDetailByIdParams>(
   "content/getContentDetailById",
-  async ({ content_id }) => {
-    const res = await api.contents.getContentById(content_id);
-    return res;
-  }
+  ({ content_id }) => api.contents.getContentById(content_id)
 );
 
 export const deleteContent = createAsyncThunk<string, Required<Content>["id"]>("content/deleteContent", async (id, { dispatch }) => {
@@ -269,21 +266,18 @@ export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>
 );
 type RejectContentParams = {
   id: Parameters<typeof api.contents.rejectContentReview>[0];
-  // reason: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
+  reason?: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
 };
 type RejectContentResult = AsyncReturnType<typeof api.contents.rejectContentReview>;
 export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
   "content/rejectContent",
   async ({ id }, { dispatch }) => {
-    const content = `Are you sure you want to publish these contents?`;
+    const title = `Reject Reason`;
+    const content = `Please specify the reason of rejection`;
     const type = ConfirmDialogType.textField;
-    const { isConfirmed, value } = unwrapResult(await dispatch(actAsyncConfirm({ content, type })));
+    const { isConfirmed, value } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
     if (!isConfirmed) return Promise.reject();
-    if (value) {
-      return api.contents.rejectContentReview(id, { reject_reason: value });
-    } else {
-      return dispatch(actWarning("Reason is required"));
-    }
+    return api.contents.rejectContentReview(id, { reject_reason: value });
   }
 );
 export const lockContent = createAsyncThunk<
@@ -368,6 +362,10 @@ const { actions, reducer } = createSlice({
     },
     [searchOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
+    },
+    [getContentDetailById.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentPreview = initialState.contentPreview;
     },
     [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");

@@ -169,7 +169,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           disabled={isIdExist()}
           error={errorValidator(errors.name)}
         />
-        <Controller
+        {/* <Controller
           as={FormattedTextField}
           select
           className={css.fieldset}
@@ -182,7 +182,30 @@ function AssetsDetails(props: AssetDetailsProps) {
           disabled={isIdExist()}
         >
           {menuItemList(flattenedMockOptions.program)}
-        </Controller>
+        </Controller> */}
+        <Controller
+          name="program"
+          defaultValue={contentDetail.program}
+          control={control}
+          render={(props) => (
+            <FormattedTextField
+              select
+              className={css.fieldset}
+              label="Program"
+              encode={encodeOneItemArray}
+              decode={decodeOneItemArray}
+              {...props}
+              onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                // onChangeProgram(value);
+                props.onChange(value);
+              }}
+              disabled={isIdExist()}
+            >
+              {menuItemList(flattenedMockOptions.program)}
+            </FormattedTextField>
+          )}
+        />
+
         <Controller
           as={TextField}
           select
@@ -197,7 +220,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           {menuItemList(flattenedMockOptions.subject)}
         </Controller>
         <Box>
-          <Controller
+          {/* <Controller
             as={FormattedTextField}
             name="developmental"
             encode={encodeOneItemArray}
@@ -214,7 +237,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             disabled={isIdExist()}
           >
             {menuItemList(flattenedMockOptions.developmental)}
-          </Controller>
+          </Controller> */}
+
           <Controller
             as={TextField}
             name="skills"
