@@ -891,7 +891,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     flattenedMockOptions,
     handleChangeProgramId,
   } = props;
-  console.log(flattenedMockOptions);
   const template = (
     <Box>
       <Box

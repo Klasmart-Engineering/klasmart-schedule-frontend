@@ -42,3 +42,7 @@ export const apiGetH5pResourceById = (id: string) => {
 export const apiCreateH5pResource = () => {
   return `${process.env.REACT_APP_BASE_API}/h5p-www/new`;
 };
+
+export const apiLivePath = (token: string) => {
+  return `https://live.kidsloop.net/live?token${token}`;
+};
