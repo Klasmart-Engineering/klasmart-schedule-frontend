@@ -235,7 +235,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 SelectProps={{ multiple: true }}
                 label="Subject"
                 name="subject"
-                defaultValue={outcomeDetail.subject}
+                defaultValue={outcome_id ? outcomeDetail.subject : []}
                 control={control}
                 disabled={showEdit}
                 fullWidth
@@ -277,7 +277,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 SelectProps={{ multiple: true }}
                 label="skills"
                 name="skills"
-                defaultValue={outcomeDetail.skills}
+                defaultValue={outcome_id ? outcomeDetail.skills : []}
                 control={control}
                 disabled={showEdit}
                 fullWidth
@@ -294,7 +294,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 SelectProps={{ multiple: true }}
                 label="Age"
                 name="age"
-                defaultValue={outcomeDetail.age}
+                defaultValue={outcome_id ? outcomeDetail.age : []}
                 control={control}
                 disabled={showEdit}
                 fullWidth
@@ -309,7 +309,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 SelectProps={{ multiple: true }}
                 label="Grade"
                 name="grade"
-                defaultValue={outcomeDetail.grade}
+                defaultValue={outcome_id ? outcomeDetail.grade : []}
                 control={control}
                 disabled={showEdit}
                 fullWidth

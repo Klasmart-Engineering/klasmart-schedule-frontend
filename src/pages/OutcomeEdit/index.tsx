@@ -103,6 +103,7 @@ export default function CreateOutcomings() {
   const handleSave = React.useMemo(
     () =>
       handleSubmit(async (value) => {
+        console.log(value);
         if (outcome_id) {
           const result: any = await dispatch(updateOutcome({ outcome_id, value }));
           if (result.payload === "ok") {
@@ -170,7 +171,7 @@ export default function CreateOutcomings() {
   };
 
   const handleReset = () => {
-    history.push("/assessments/outcome-list");
+    history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
   };
 
   const handelReject = (): void => {
