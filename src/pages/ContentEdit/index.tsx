@@ -32,6 +32,7 @@ import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import Outcomes, { OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
+import MyContentList from "../MyContentList";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -124,9 +125,14 @@ export default function ContentEdit() {
         const contentDetail = ModelContentDetailForm.encode(input);
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
-          history.replace({
-            search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
-          });
+          if (lesson === "assets") {
+            // assets 创建直接返回列表
+            history.push(`${MyContentList.routeBasePath}?content_type=3&order_by=-created_at&page=1`);
+          } else {
+            history.replace({
+              search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
+            });
+          }
         }
       }),
     [handleSubmit, content_type, lesson, dispatch, history, editindex]
@@ -222,6 +228,12 @@ export default function ContentEdit() {
   useEffect(() => {
     // 编辑表单时 加载完 contentDetial 的逻辑
     reset(ModelContentDetailForm.decode(contentDetail));
+    if (lesson === "assets")
+      Object.getOwnPropertyNames(type2File).forEach((key: string) => {
+        if (contentDetail.content_type === type2File[key as contentFileType]) {
+          setAssetsFileType(key as contentFileType);
+        }
+      });
   }, [contentDetail, lesson, reset]);
   useEffect(() => {
     // 新建表单时，加载完 mockOptions 的逻辑
