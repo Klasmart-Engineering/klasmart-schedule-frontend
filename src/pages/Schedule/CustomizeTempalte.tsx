@@ -60,12 +60,13 @@ interface InfoProps {
   handleDelete: () => void;
   handleClose: () => void;
   scheduleInfo: scheduleInfoProps;
+  toLive: (schedule_id: string) => void;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
-  const { handleDelete, handleClose, scheduleInfo } = props;
+  const { handleDelete, handleClose, scheduleInfo, toLive } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -114,7 +115,8 @@ export default function CustomizeTempalte(props: InfoProps) {
           autoFocus
           className={classes.lastButton}
           onClick={() => {
-            window.open(`/#/live/?schedule_id=${scheduleInfo.id}`);
+            handleClose();
+            toLive(scheduleInfo.id as string);
           }}
         >
           Go Live

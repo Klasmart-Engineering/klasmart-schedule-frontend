@@ -13,6 +13,7 @@ import {
   AsyncTrunkReturned,
   deleteContent,
   getContentDetailById,
+  getContentLiveToken,
   lockContent,
   publishContent,
   rejectContent,
@@ -25,6 +26,7 @@ import { H5pPreview } from "./H5pPreview";
 import { LearningOutcome } from "./LeaningOutcomes";
 import { OperationBtn } from "./OperationBtn";
 import { DataH5p, TabValue } from "./type";
+import { apiLivePath } from "../../api/extra";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -128,8 +130,12 @@ export default function ContentPreview(props: Content) {
       return [h5pItem];
     }
   };
-  const handleGoLive = () => {
-    window.open(`/#/live/?content_id=${contentPreview.id}`, "_blank");
+  const handleGoLive = async () => {
+    let tokenInfo: any;
+    tokenInfo = ((await dispatch(
+      getContentLiveToken({ content_id: contentPreview.id as string, metaLoading: true })
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getContentLiveToken>>;
+    if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
   };
   const rightside = (
     <Fragment>
