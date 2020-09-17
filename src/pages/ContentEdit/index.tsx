@@ -316,7 +316,14 @@ export default function ContentEdit() {
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && (
-        <Controller name="data" as={ContentH5p} defaultValue={contentDetail.data} control={control} rules={{ required: true }} />
+        <Controller
+          name="data"
+          as={ContentH5p}
+          defaultValue={contentDetail.data}
+          control={control}
+          rules={{ required: true }}
+          isCreate={!id}
+        />
       )}
       {!includeH5p && includeAsset && (
         <MediaAssetsEdit
