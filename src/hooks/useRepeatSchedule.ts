@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import { stateProps } from "../types/scheduleTypes";
 
-const initialState: stateProps = {
+export const initialState: stateProps = {
   type: "daily",
   daily: {
     interval: 0,

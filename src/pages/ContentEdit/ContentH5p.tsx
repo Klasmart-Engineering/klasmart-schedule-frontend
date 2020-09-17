@@ -7,6 +7,7 @@ interface DataH5p {
 }
 interface ContentH5pProps {
   children?: ReactNode;
+  isCreate?: boolean;
   value?: DataH5p;
   onChange?: (value: DataH5p) => any;
 }
@@ -20,9 +21,9 @@ const useStyles = makeStyles({
 });
 
 export default function ContentH5p(props: ContentH5pProps) {
-  const { value, onChange, children } = props;
+  const { value, onChange, children, isCreate } = props;
   const css = useStyles();
-  const src = value?.source ? apiGetH5pResourceById(value.source) : apiCreateH5pResource();
+  const src = isCreate ? apiCreateH5pResource() : value?.source && apiGetH5pResourceById(value.source);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const { contentId } = event.data;
@@ -34,7 +35,7 @@ export default function ContentH5p(props: ContentH5pProps) {
   }, [onChange]);
   return (
     <>
-      <iframe key={src} title="h5p" className={css.iframe} src={src} frameBorder="0" />
+      {src && <iframe key={src} title="h5p" className={css.iframe} src={src} frameBorder="0" />}
       {children}
     </>
   );

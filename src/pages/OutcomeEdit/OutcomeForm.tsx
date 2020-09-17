@@ -135,7 +135,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 // as={Checkbox}
                 defaultChecked={outcomeDetail.assumed}
                 disabled={showEdit}
-                render={() => <Checkbox defaultChecked={outcomeDetail.assumed} disabled={showEdit} onChange={handleCheckBoxChange} />}
+                render={() => (
+                  <Checkbox
+                    defaultChecked={outcome_id ? outcomeDetail.assumed : true}
+                    disabled={showEdit}
+                    onChange={handleCheckBoxChange}
+                  />
+                )}
               />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>

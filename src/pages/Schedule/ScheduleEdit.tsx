@@ -8,13 +8,17 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { CommonShort, ScheduleCreate } from "../../api/api";
+import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
-import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
+import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
   getScheduleTimeViewData,
@@ -29,10 +33,6 @@ import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
-import { MockOptionsItem } from "../../api/extra";
-import { AsyncTrunkReturned } from "../../reducers/content";
-import { PayloadAction } from "@reduxjs/toolkit";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -412,6 +412,7 @@ function EditBox(props: CalendarStateProps) {
         })
       );
       dispatch(actSuccess("Save successful"));
+      dispatchRepeat({ type: "changeData", data: initialState });
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     }
   };

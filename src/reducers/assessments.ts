@@ -60,7 +60,8 @@ export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams
   "assessments/updateAssessment",
   async ({ id, data }, { dispatch }) => {
     const errorlist: IupdateAssessmentParams["data"]["outcome_attendance_maps"] =
-      data.outcome_attendance_maps && data.outcome_attendance_maps.filter((item) => !item.skip && !item.attendance_ids);
+      data.outcome_attendance_maps &&
+      data.outcome_attendance_maps.filter((item) => !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
     if (data.action === "complete" && errorlist && errorlist.length > 0)
       return Promise.reject(dispatch(actWarning("Please fill in all the information")));
     await api.assessments.updateAssessment(id, data);
@@ -86,6 +87,9 @@ const { reducer } = createSlice({
     },
     [actAssessmentList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
+    },
+    [getAssessment.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
+      // state.assessmentDetail = initialState.assessmentDetail;
     },
     [getAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       if (payload) {

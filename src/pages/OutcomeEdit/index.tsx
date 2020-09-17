@@ -68,7 +68,10 @@ export default function CreateOutcomings() {
     const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
     const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
     if (!defaultDevelopmentalId || !defaultProgramId) return;
-    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId] });
+    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(
+      ModelMockOptions.toFlatten({ programId: defaultProgramId, developmentalId: defaultDevelopmentalId }, mockOptions)
+    );
+    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
   }, [mockOptions, reset, outcome_id]);
 
   React.useEffect(() => {
