@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid, makeStyles, MenuItem, SelectProps, TextField, TextFieldProps } from "@material-ui/core";
+import { Box, Checkbox, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { LearningOutcomes } from "../../api/api";
@@ -40,13 +40,8 @@ const useStyles = makeStyles(() => ({
 export interface OutcomeFormProps {
   flattenedMockOptions: FlattenedMockOptions;
   outcome_id: string;
-  handleInputChange: (name: string, event: React.ChangeEvent<{ value: any }>) => void;
-  handleMultipleChange: (name: string, event: Parameters<NonNullable<SelectProps["onChange"]>>[0]) => void;
-  handleKeywordsChange: TextFieldProps["onChange"];
-  getKeywords: (keywords: string[] | undefined) => void;
   showCode: boolean;
   showEdit: boolean;
-  isError: boolean;
   formMethods: UseFormMethods<any>;
   outcomeDetail: LearningOutcomes;
 }
