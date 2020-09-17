@@ -319,6 +319,10 @@ const { actions, reducer } = createSlice({
       throw error;
       // alert(JSON.stringify(error));
     },
+    [onLoadContentEdit.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
+      const { contentDetail, MediaListTotal, mediaList, outcomeList, OutcomesListTotal } = initialState;
+      Object.assign(state, { contentDetail, MediaListTotal, mediaList, outcomeList, OutcomesListTotal });
+    },
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
       // debugger
       if (payload.contentDetail) {
