@@ -92,7 +92,7 @@ export interface OutcomeHeaderProps {
   publish_status: string | undefined;
   isDirty: boolean;
   showEdit: boolean;
-  handleEdit: ButtonProps["onClick"];
+  handleEdit: LButtonProps["onClick"];
   status: string | undefined;
   before: string | undefined;
 }
@@ -287,7 +287,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         )}
         {publish_status === "published" && (
           <>
-            <Button
+            <LButton
               variant="contained"
               endIcon={<Create />}
               color="primary"
@@ -296,7 +296,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
               style={{ marginRight: "30px" }}
             >
               Edit
-            </Button>
+            </LButton>
             <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
               Delete
             </Button>
