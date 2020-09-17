@@ -146,9 +146,7 @@ export function H5pPreview(props: H5pPreview) {
   return (
     <Box className={css.previewContainer}>
       {/* <Box className={css.h5pCon}>{JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />}</Box> */}
-      <Box className={css.h5pCon}>
-        <ContentH5p value={h5pItem} />
-      </Box>
+      <Box className={css.h5pCon}>{JSON.stringify(h5pItem) !== "{}" && <ContentH5p value={h5pItem} />}</Box>
       <Box className={css.btnCon}>
         {h5pArray.length > 1 && (
           <Box className={css.iconCon}>
