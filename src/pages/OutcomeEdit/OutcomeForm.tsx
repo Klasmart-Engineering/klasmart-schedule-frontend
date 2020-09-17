@@ -40,7 +40,6 @@ const useStyles = makeStyles(() => ({
 export interface OutcomeFormProps {
   flattenedMockOptions: FlattenedMockOptions;
   outcome_id: string;
-  showCode: boolean;
   showEdit: boolean;
   formMethods: UseFormMethods<any>;
   outcomeDetail: LearningOutcomes;
@@ -52,7 +51,6 @@ export interface OutcomeFormProps {
 export function OutcomeForm(props: OutcomeFormProps) {
   const {
     outcome_id,
-    showCode,
     showEdit,
     formMethods: { control, errors },
     outcomeDetail,
@@ -116,7 +114,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 error={errors.outcome_name ? true : false}
               />
             </Grid>
-            {(outcome_id || showCode) && (
+            {outcome_id && (
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                 {/* <TextField size="small" value={outcomeDetail.shortcode} fullWidth label="Short Code" disabled /> */}
                 <Controller
@@ -141,7 +139,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               />
               <p className={classes.checkLabel}>Assumed</p>
             </Grid>
-            {(outcome_id || showCode) && (
+            {outcome_id && (
               <>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                   {/* <TextField value={outcomeDetail.organization_id} fullWidth label="Organization" disabled size="small" /> */}

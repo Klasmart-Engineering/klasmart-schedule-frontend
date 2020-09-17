@@ -38,7 +38,6 @@ export default function CreateOutcomings() {
   const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [showCode, setShoeCode] = React.useState(false);
   const { outcomeDetail, lockOutcome_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showEdit, setShowEdit] = React.useState(false);
 
@@ -112,7 +111,6 @@ export default function CreateOutcomings() {
           }
         } else {
           const result: any = await dispatch(save(value));
-          setShoeCode(true);
           if (result.payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess("Save Success"));
@@ -153,7 +151,6 @@ export default function CreateOutcomings() {
           setOpenStatus(false);
           if (result.payload === "ok") {
             dispatch(actSuccess("Delete Success"));
-            // history.push("/assessments/outcome-list");
             history.go(-1);
           }
         },
@@ -230,7 +227,6 @@ export default function CreateOutcomings() {
       <OutcomeForm
         outcome_id={outcome_id}
         flattenedMockOptions={flattenedMockOptions}
-        showCode={showCode}
         showEdit={showEdit}
         formMethods={formMethods}
         outcomeDetail={outcomeDetail}
