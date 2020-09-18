@@ -1,6 +1,6 @@
-import { LearningOutcomes } from "../api/api";
+import { ApiOutcomeView } from "../api/api.auto";
 
-export const modelOutcomeDetail = (outcomeDetail: LearningOutcomes) => {
+export const modelOutcomeDetail = (outcomeDetail: ApiOutcomeView) => {
   const afterData = JSON.parse(JSON.stringify(outcomeDetail));
   const { program, subject, developmental, skills, age, grade } = outcomeDetail;
   if (program && program.length) {
