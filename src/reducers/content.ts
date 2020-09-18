@@ -4,7 +4,7 @@ import api from "../api";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import { ApiContentBulkOperateRequest, ApiOutcomeView, EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
-import { ContentType, OutcomePublishStatus } from "../api/type";
+import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -155,18 +155,19 @@ export const save = createAsyncThunk<EntityContentInfoWithDetails["id"], EntityC
   }
 );
 
-export const publish = createAsyncThunk<EntityContentInfoWithDetails, Required<EntityContentInfoWithDetails>["id"], { state: RootState }>(
-  "content/publish",
-  (id, { getState }) => {
-    const {
-      content: {
-        contentDetail: { publish_scope },
-      },
-    } = getState();
-    // debugger;
-    return api.contents.publishContent(id, { publish_scope: publish_scope });
-  }
-);
+export const publish = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.publishContent>,
+  Required<EntityContentInfoWithDetails>["id"],
+  { state: RootState }
+>("content/publish", (id, { getState }) => {
+  const {
+    content: {
+      contentDetail: { publish_scope },
+    },
+  } = getState();
+  // debugger;
+  return api.contents.publishContent(id, { scope: publish_scope });
+});
 
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
@@ -175,7 +176,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
       id ? api.contents.getContentById(id) : initialState.contentDetail,
       (type === "material" || type === "plan") &&
         api.contents.searchContents({
-          content_type: type === "material" ? ContentType.assets : ContentType.material,
+          content_type: type === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
           publish_status: "published",
           name: searchMedia,
         }),
