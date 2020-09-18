@@ -17,15 +17,6 @@ api.contents.updateContent == api.contents.updateContent
 api.contentsBulk.deleteContentBulk = x
 api.contentsBulk.publishContentBulk = x
 api.contentsResources.getContentResourceUploadPath = api.contentsResources.getContentResourceUploadPath
-api.learningOutcomes.approveLearningOutcomes = z
-api.learningOutcomes.createLearningOutcomes = z
-api.learningOutcomes.deleteLearningOutcome = z
-api.learningOutcomes.getLearningOutcomesById = z
-api.learningOutcomes.lockLearningOutcomes = z
-api.learningOutcomes.publishLearningOutcomes = z
-api.learningOutcomes.rejectLearningOutcomes = z
-api.learningOutcomes.searchLearningOutcomes == api.learningOutcomes.searchLearningOutcomes
-api.learningOutcomes.updateLearningOutcomes = x
 api.learningOutcomes.approveLearningOutcomes == api.learningOutcomes.approveLearningOutcomes
 api.learningOutcomes.createLearningOutcomes == api.learningOutcomes.createLearningOutcomes
 api.learningOutcomes.deleteLearningOutcome == api.learningOutcomes.deleteLearningOutcome
