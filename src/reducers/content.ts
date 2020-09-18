@@ -222,12 +222,20 @@ export const getContentDetailById = createAsyncThunk<IQueryGetContentDetailByIdR
   ({ content_id }) => api.contents.getContentById(content_id)
 );
 
-export const deleteContent = createAsyncThunk<string, Required<Content>["id"]>("content/deleteContent", async (id, { dispatch }) => {
-  const content = `Are you sure you want to delete this content?`;
-  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-  if (!isConfirmed) return Promise.reject();
-  return api.contents.deleteContent(id);
-});
+type IQueryDeleteContentParams = {
+  id: Parameters<typeof api.contents.deleteContent>[0];
+  type: string;
+};
+type IQueryDeleteContentResult = AsyncReturnType<typeof api.contents.deleteContent>;
+export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryDeleteContentParams>(
+  "content/deleteContent",
+  async ({ id, type }, { dispatch }) => {
+    const content = `Are you sure you want to ${type} this content?`;
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.contents.deleteContent(id);
+  }
+);
 export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publishContent", async (id, { dispatch }) => {
   const content = `Are you sure you want to publish this content?`;
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
@@ -236,11 +244,16 @@ export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>
 });
 
 // type BulkActionIds = Parameters<typeof>
-export const bulkDeleteContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
+type IQueryBulkDeleteParams = {
+  ids: Parameters<typeof api.contentsBulk.deleteContentBulk>[0]["id"];
+  type: string;
+};
+type IQueryBulkDeleteResult = AsyncReturnType<typeof api.contentsBulk.deleteContentBulk>;
+export const bulkDeleteContent = createAsyncThunk<IQueryBulkDeleteResult, IQueryBulkDeleteParams>(
   "content/bulkDeleteContent",
-  async (ids, { dispatch }) => {
-    if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
-    const content = `Are you sure you want to delete these contents?`;
+  async ({ ids, type }, { dispatch }) => {
+    if (!ids?.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
+    const content = `Are you sure you want to ${type} these contents?`;
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.contentsBulk.deleteContentBulk({ id: ids });

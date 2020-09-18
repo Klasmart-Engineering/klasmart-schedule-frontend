@@ -3,7 +3,8 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
+import noH5pUrl from "../../assets/icons/noh5p.svg";
 import ContentH5p from "../ContentEdit/ContentH5p";
 import { DataH5p, PreviewBaseProps } from "./type";
 
@@ -112,17 +113,17 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
 }));
 
-// function EmptyContent() {
-//   const css = useStyles();
-//   return (
-//     <Fragment>
-//       <img className={css.noH5p} src={noH5pUrl} />
-//       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-//         The file has been deleted
-//       </Typography>
-//     </Fragment>
-//   );
-// }
+function EmptyContent() {
+  const css = useStyles();
+  return (
+    <Fragment>
+      <img className={css.noH5p} src={noH5pUrl} alt="deleted" />
+      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+        The file has been deleted
+      </Typography>
+    </Fragment>
+  );
+}
 interface H5pPreview extends PreviewBaseProps {
   h5pArray: DataH5p[];
 }
@@ -131,6 +132,7 @@ export function H5pPreview(props: H5pPreview) {
   const [currIndex, setCurrIndex] = useState(0);
   const { h5pArray, onGoLive } = props;
   let h5pItem = h5pArray[currIndex];
+  console.log(h5pArray);
   const handlePrev = () => {
     if (currIndex > 0) {
       setCurrIndex(currIndex - 1);
@@ -145,8 +147,7 @@ export function H5pPreview(props: H5pPreview) {
   };
   return (
     <Box className={css.previewContainer}>
-      {/* <Box className={css.h5pCon}>{JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />}</Box> */}
-      <Box className={css.h5pCon}>{JSON.stringify(h5pItem) !== "{}" && <ContentH5p value={h5pItem} />}</Box>
+      <Box className={css.h5pCon}>{JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />}</Box>
       <Box className={css.btnCon}>
         {h5pArray.length > 1 && (
           <Box className={css.iconCon}>

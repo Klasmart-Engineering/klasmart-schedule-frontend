@@ -127,8 +127,8 @@ export const bulkPublishOutcome = createAsyncThunk<LearningOutcomes, Required<Ou
 
 export const lockOutcome = createAsyncThunk<
   AsyncReturnType<typeof api.learningOutcomes.lockLearningOutcomes>,
-  Parameters<typeof api.learningOutcomes.lockLearningOutcomes>[0]
->("outcome/lockOutcome", async (id) => {
+  { id: Parameters<typeof api.learningOutcomes.lockLearningOutcomes>[0] } & LoadingMetaPayload
+>("outcome/lockOutcome", async ({ id }) => {
   return await api.learningOutcomes.lockLearningOutcomes(id);
 });
 

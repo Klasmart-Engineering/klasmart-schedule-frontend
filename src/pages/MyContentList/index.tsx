@@ -86,12 +86,12 @@ export default function MyContentList() {
     const ids = getValues()[ContentListFormKey.CHECKED_CONTENT_IDS];
     return refreshWithDispatch(dispatch(bulkPublishContent(ids)));
   };
-  const handleDelete: ContentCardListProps["onDelete"] = (id) => {
-    return refreshWithDispatch(dispatch(deleteContent(id)));
+  const handleDelete: ContentCardListProps["onDelete"] = (id, type) => {
+    return refreshWithDispatch(dispatch(deleteContent({ id, type })));
   };
-  const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = () => {
+  const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = (type) => {
     const ids = getValues()[ContentListFormKey.CHECKED_CONTENT_IDS];
-    return refreshWithDispatch(dispatch(bulkDeleteContent(ids)));
+    return refreshWithDispatch(dispatch(bulkDeleteContent({ ids, type })));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
@@ -117,7 +117,7 @@ export default function MyContentList() {
       const page = 1;
       history.push({ search: toQueryString({ ...condition, page }) });
     }
-  }, [condition, contentsList, history, total]);
+  }, [condition, contentsList, contentsList.length, history, total]);
 
   useEffect(() => {
     reset();
