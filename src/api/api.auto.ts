@@ -678,7 +678,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description bulk delete learning outcomes
      */
     deleteOutcomeBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/bulk/learning_outcomes`, "DELETE", params, id_list),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk/learning_outcomes`,
+        "DELETE",
+        params,
+        id_list
+      ),
   };
   bulkPublish = {
     /**
@@ -689,7 +694,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description submit publish learning outcomes
      */
     publishLearningOutcomesBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/bulk_publish/learning_outcomes`, "PUT", params, id_list),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk_publish/learning_outcomes`,
+        "PUT",
+        params,
+        id_list
+      ),
   };
   contents = {
     /**
@@ -965,10 +975,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number;
         page_size?: number;
-        order_by?: "name" | "-name" | "create_at" | "-created_at";
+        order_by?: "name" | "-name" | "created_at" | "-created_at";
       },
       params?: RequestParams
-    ) => this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(`/learning_outcomes${this.addQueryParams(query)}`, "GET", params),
+    ) =>
+      this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags learning_outcomes
@@ -978,7 +993,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Create learning outcomes
      */
     createLearningOutcomes: (outcome: ApiOutcomeCreateView, params?: RequestParams) =>
-      this.request<ApiOutcomeCreateResponse, ApiErrorResponse>(`/learning_outcomes`, "POST", params, outcome),
+      this.request<ApiOutcomeCreateResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes`,
+        "POST",
+        params,
+        outcome
+      ),
 
     /**
      * @tags learning_outcomes
@@ -988,7 +1008,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description learning outcomes info
      */
     getLearningOutcomesById: (outcome_id: string, params?: RequestParams) =>
-      this.request<ApiOutcomeView, ApiErrorResponse>(`/learning_outcomes/${outcome_id}`, "GET", params),
+      this.request<ApiOutcomeView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags learning_outcomes
@@ -998,7 +1022,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update learning outcomes by id
      */
     updateLearningOutcomes: (outcome_id: string, outcome: ApiOutcomeCreateView, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}`, "PUT", params, outcome),
+      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}`,
+        "PUT",
+        params,
+        outcome
+      ),
 
     /**
      * @tags learning_outcomes
@@ -1008,7 +1037,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description delete learning outcomes by id
      */
     deleteLearningOutcome: (outcome_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}`, "DELETE", params),
+      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}`,
+        "DELETE",
+        params
+      ),
 
     /**
      * @tags learning_outcomes
@@ -1018,17 +1051,25 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description approve learning outcomes
      */
     approveLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/approve`, "PUT", params),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}/approve`,
+        "PUT",
+        params
+      ),
 
     /**
      * @tags learning_outcomes
      * @name lockLearningOutcomes
      * @summary lock learning outcome
      * @request PUT:/learning_outcomes/{outcome_id}/lock
-     * @description edit lock learning outcomes
+     * @description edit published learning outcomes
      */
     lockLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/lock`, "PUT", params),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}/lock`,
+        "PUT",
+        params
+      ),
 
     /**
      * @tags learning_outcomes
@@ -1038,7 +1079,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description submit publish learning outcomes
      */
     publishLearningOutcomes: (outcome_id: string, PublishOutcomeRequest: ApiPublishOutcomeReq, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/publish`, "PUT", params, PublishOutcomeRequest),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}/publish`,
+        "PUT",
+        params,
+        PublishOutcomeRequest
+      ),
 
     /**
      * @tags learning_outcomes
@@ -1048,7 +1094,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description reject learning outcomes
      */
     rejectLearningOutcomes: (outcome_id: string, OutcomeRejectReq: ApiOutcomeRejectReq, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/reject`, "PUT", params, OutcomeRejectReq),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/learning_outcomes/${outcome_id}/reject`,
+        "PUT",
+        params,
+        OutcomeRejectReq
+      ),
   };
   pendingLearningOutcomes = {
     /**
@@ -1070,10 +1121,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number;
         page_size?: number;
-        order_by?: "name" | "-name" | "create_at" | "-created_at";
+        order_by?: "name" | "-name" | "created_at" | "-created_at";
       },
       params?: RequestParams
-    ) => this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(`/pending_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
+    ) =>
+      this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/pending_learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   ping = {
     /**
@@ -1106,10 +1162,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number;
         page_size?: number;
-        order_by?: "name" | "-name" | "create_at" | "-created_at";
+        order_by?: "name" | "-name" | "created_at" | "-created_at";
       },
       params?: RequestParams
-    ) => this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(`/private_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
+    ) =>
+      this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/private_learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   schedules = {
     /**

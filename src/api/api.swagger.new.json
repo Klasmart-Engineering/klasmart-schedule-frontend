@@ -254,25 +254,25 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "403": {
             "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -307,25 +307,25 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "403": {
             "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1258,7 +1258,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "create_at", "-created_at"],
+            "enum": ["name", "-name", "created_at", "-created_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -1275,19 +1275,19 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1320,13 +1320,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1359,19 +1359,19 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1411,19 +1411,19 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1454,19 +1454,19 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1499,25 +1499,25 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "403": {
             "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1525,7 +1525,7 @@
     },
     "/learning_outcomes/{outcome_id}/lock": {
       "put": {
-        "description": "edit lock learning outcomes",
+        "description": "edit published learning outcomes",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["learning_outcomes"],
@@ -1550,25 +1550,25 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "403": {
             "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1609,25 +1609,25 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "403": {
             "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1669,25 +1669,25 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "403": {
             "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1764,7 +1764,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "create_at", "-created_at"],
+            "enum": ["name", "-name", "created_at", "-created_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -1781,19 +1781,19 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1906,7 +1906,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "create_at", "-created_at"],
+            "enum": ["name", "-name", "created_at", "-created_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -1923,19 +1923,19 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
