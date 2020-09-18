@@ -5,6 +5,7 @@ import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Content } from "../../api/api";
+import { apiLivePath } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { RootState } from "../../reducers";
@@ -26,7 +27,6 @@ import { H5pPreview } from "./H5pPreview";
 import { LearningOutcome } from "./LeaningOutcomes";
 import { OperationBtn } from "./OperationBtn";
 import { DataH5p, TabValue } from "./type";
-import { apiLivePath } from "../../api/extra";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -137,11 +137,7 @@ export default function ContentPreview(props: Content) {
     )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getContentLiveToken>>;
     if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
   };
-  const rightside = (
-    <Fragment>
-      <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>
-    </Fragment>
-  );
+  const rightside = <Fragment>{contentPreview.id && <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>}</Fragment>;
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
   }, [dispatch, id]);
