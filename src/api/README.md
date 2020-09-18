@@ -9,13 +9,13 @@ api.contents.approveContentReview = x
 api.contents.createContent == api.contents.createContent
 api.contents.getContentById == api.contents.getContentById
 api.contents.getLiveToken = getContentLiveToken
-api.contents.lockContent = x
-api.contents.publishContent = x
-api.contents.rejectContentReview = x
+api.contents.lockContent = z
+api.contents.publishContent = z
+api.contents.rejectContentReview = z
 api.contents.searchContents == api.contents.searchContents
 api.contents.updateContent == api.contents.updateContent
-api.contentsBulk.deleteContentBulk = x
-api.contentsBulk.publishContentBulk = x
+api.contentsBulk.deleteContentBulk = z
+api.contentsBulk.publishContentBulk = z
 api.contentsResources.getContentResourceUploadPath = api.contentsResources.getContentResourceUploadPath
 api.learningOutcomes.approveLearningOutcomes == api.learningOutcomes.approveLearningOutcomes
 api.learningOutcomes.createLearningOutcomes == api.learningOutcomes.createLearningOutcomes
@@ -38,12 +38,12 @@ api.schedulesTimeView.schedulesTimeView = getScheduleTimeView
 
 CommonShort = j
 Content = EntityContentInfoWithDetails
-ContentIDListRequest = x
+ContentIDListRequest = r
 CreateContentRequest = EntityCreateContentRequest
 CreateLearningOutComesRequest = ApiOutcomeCreateView
 CreateLearningOutcomesResponse = ApiOutcomeCreateResponse
 LearningOutcomes = ApiOutcomeView
-OutcomesIDListRequest = x
+OutcomesIDListRequest = r
 Schedule = j
 ScheduleCreate = EntityScheduleAddView
 ScheduleDetailed = EntityScheduleDetailsView
