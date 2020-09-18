@@ -38,12 +38,12 @@ api.schedulesTimeView.schedulesTimeView = getScheduleTimeView
 
 CommonShort = j
 Content = EntityContentInfoWithDetails
-ContentIDListRequest = r
+ContentIDListRequest = ApiContentBulkOperateRequest
 CreateContentRequest = EntityCreateContentRequest
 CreateLearningOutComesRequest = ApiOutcomeCreateView
 CreateLearningOutcomesResponse = ApiOutcomeCreateResponse
 LearningOutcomes = ApiOutcomeView
-OutcomesIDListRequest = r
+OutcomesIDListRequest = ApiOutcomeIDList
 Schedule = j
 ScheduleCreate = EntityScheduleAddView
 ScheduleDetailed = EntityScheduleDetailsView
