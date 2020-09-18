@@ -147,7 +147,7 @@ export default function ContentEdit() {
 
   const handleDelete = useCallback(async () => {
     if (!id) return;
-    await dispatch(deleteContent(id));
+    await dispatch(deleteContent({ id, type: "delete" }));
     history.goBack();
   }, [dispatch, id, history]);
 
