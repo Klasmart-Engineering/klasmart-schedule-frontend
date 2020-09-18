@@ -2,18 +2,21 @@
 
 api.assessments.getAssessment = r
 api.assessments.listAssessment = x
-api.assessments.updateAssessment = r
+api.assessments.updateAssessment == api.assessments.updateAssessment
 api.bulk.deleteOutcomeBulk = x
 api.bulkPublish.publishLearningOutcomesBulk = x
 api.contents.approveContentReview = x
 api.contents.createContent = r
 api.contents.getContentById = r
 api.contents.getLiveToken = getContentLiveToken
+api.contents.createContent == api.contents.createContent
+api.contents.getContentById == api.contents.getContentById
+api.contents.getLiveToken = j
 api.contents.lockContent = x
 api.contents.publishContent = x
 api.contents.rejectContentReview = x
-api.contents.searchContents = r
-api.contents.updateContent = r
+api.contents.searchContents == api.contents.searchContents
+api.contents.updateContent == api.contents.updateContent
 api.contentsBulk.deleteContentBulk = x
 api.contentsBulk.publishContentBulk = x
 api.contentsResources.getContentResourceUploadPath = q
@@ -34,15 +37,33 @@ api.schedules.querySchedules = querySchedule
 api.schedules.updateSchedule == updateSchedule
 api.schedulesTimeView.schedulesTimeView = getScheduleTimeView
 
+api.contentsResources.getContentResourceUploadPath = api.contentsResources.getContentResourceUploadPath
+api.learningOutcomes.approveLearningOutcomes == api.learningOutcomes.approveLearningOutcomes
+api.learningOutcomes.createLearningOutcomes == api.learningOutcomes.createLearningOutcomes
+api.learningOutcomes.deleteLearningOutcome == api.learningOutcomes.deleteLearningOutcome
+api.learningOutcomes.getLearningOutcomesById == api.learningOutcomes.getLearningOutcomesById
+api.learningOutcomes.lockLearningOutcomes == api.learningOutcomes.lockLearningOutcomes
+api.learningOutcomes.publishLearningOutcomes == api.learningOutcomes.publishLearningOutcomes
+api.learningOutcomes.rejectLearningOutcomes == api.learningOutcomes.rejectLearningOutcomes
+api.learningOutcomes.searchLearningOutcomes = api.learningOutcomes.searchLearningOutcomes
+api.learningOutcomes.updateLearningOutcomes == api.learningOutcomes.updateLearningOutcomes
+api.schedules.createSchedule = j
+api.schedules.deleteSchedule = j
+api.schedules.getLiveToken = j
+api.schedules.getSchedulesById = j
+api.schedules.querySchedules = j
+api.schedules.updateSchedule = j
+api.schedulesTimeView.schedulesTimeView = j
+
 ### 类型替换
 
 CommonShort = j
-Content = r
+Content = EntityContentInfoWithDetails
 ContentIDListRequest = x
-CreateContentRequest = r
-CreateLearningOutComesRequest = z
-CreateLearningOutcomesResponse = z
-LearningOutcomes = z
+CreateContentRequest = EntityCreateContentRequest
+CreateLearningOutComesRequest = ApiOutcomeCreateView
+CreateLearningOutcomesResponse = ApiOutcomeCreateResponse
+LearningOutcomes = ApiOutcomeView
 OutcomesIDListRequest = x
 Schedule = j
 ScheduleCreate = EntityScheduleAddView
