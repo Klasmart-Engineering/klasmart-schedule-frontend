@@ -26,17 +26,17 @@ api.learningOutcomes.publishLearningOutcomes == api.learningOutcomes.publishLear
 api.learningOutcomes.rejectLearningOutcomes == api.learningOutcomes.rejectLearningOutcomes
 api.learningOutcomes.searchLearningOutcomes = api.learningOutcomes.searchLearningOutcomes
 api.learningOutcomes.updateLearningOutcomes == api.learningOutcomes.updateLearningOutcomes
-api.schedules.createSchedule = addSchedule
-api.schedules.deleteSchedule == deleteSchedule
-api.schedules.getLiveToken = getScheduleLiveToken
-api.schedules.getSchedulesById = getScheduleById
-api.schedules.querySchedules = querySchedule
-api.schedules.updateSchedule == updateSchedule
-api.schedulesTimeView.schedulesTimeView = getScheduleTimeView
+api.schedules.createSchedule = api.schedules.addSchedule
+api.schedules.deleteSchedule == api.schedules.deleteSchedule
+api.schedules.getLiveToken = api.schedules.getScheduleLiveToken
+api.schedules.getSchedulesById = api.schedules.getScheduleById
+api.schedules.querySchedules = api.schedules.querySchedule
+api.schedules.updateSchedule == api.schedules.updateSchedule
+api.schedulesTimeView.schedulesTimeView = api.schedulesTimeView.getScheduleTimeView
 
 ### 类型替换
 
-CommonShort = j
+CommonShort = EntityAssessmentAttendanceView | EntityAssessmentProgram | EntityAssessmentSubject | EntityAssessmentTeacher | EntityScheduleShortInfo
 Content = EntityContentInfoWithDetails
 ContentIDListRequest = ApiContentBulkOperateRequest
 CreateContentRequest = EntityCreateContentRequest
@@ -44,7 +44,7 @@ CreateLearningOutComesRequest = ApiOutcomeCreateView
 CreateLearningOutcomesResponse = ApiOutcomeCreateResponse
 LearningOutcomes = ApiOutcomeView
 OutcomesIDListRequest = ApiOutcomeIDList
-Schedule = j
+Schedule = EntityScheduleSearchView
 ScheduleCreate = EntityScheduleAddView
 ScheduleDetailed = EntityScheduleDetailsView
 ScheduleTimeView = EntityScheduleListView
