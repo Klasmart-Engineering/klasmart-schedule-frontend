@@ -2,6 +2,7 @@ import { Box, fade, makeStyles } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import clsx from "clsx";
 import React from "react";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
 import { Assets } from "../MyContentList/types";
@@ -34,8 +35,8 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface ActionProps {
-  publish_status?: "published" | "pending" | "draft" | "archive" | "rejected";
-  content_type_name?: string;
+  publish_status: EntityContentInfoWithDetails["publish_status"];
+  content_type_name?: EntityContentInfoWithDetails["content_type_name"];
   onDelete: () => any;
   onPublish: () => any;
   onApprove: () => any;
