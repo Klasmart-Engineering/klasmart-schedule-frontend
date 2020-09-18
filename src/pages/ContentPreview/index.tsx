@@ -43,7 +43,7 @@ export default function ContentPreview(props: Content) {
   const { tab } = useParams();
   const history = useHistory();
   const handleDelete = async () => {
-    await dispatch(deleteContent(id));
+    await dispatch(deleteContent({ id, type: "delete" }));
     history.go(-1);
   };
   const handlePublish = async () => {

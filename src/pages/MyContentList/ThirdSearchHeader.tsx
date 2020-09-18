@@ -228,7 +228,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleClickActionItem = (event: any, bulkaction: BulkAction) => {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
-    if (bulkaction === BulkAction.remove) onBulkDelete();
+    if (event.target.value === BulkAction.delete) onBulkDelete(BulkAction.delete);
+    if (event.target.value === BulkAction.remove) onBulkDelete(BulkAction.remove);
   };
   const handleClose = () => {
     setAnchorElLeft(null);
