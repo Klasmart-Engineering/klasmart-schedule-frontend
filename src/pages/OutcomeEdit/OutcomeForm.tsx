@@ -137,7 +137,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 // as={Checkbox}
                 defaultChecked={outcomeDetail.assumed}
                 disabled={showEdit}
-                render={() => <Checkbox checked={assumed} disabled={showEdit} onChange={handleCheckBoxChange} />}
+                render={() => <Checkbox checked={outcome_id ? assumed : true} disabled={showEdit} onChange={handleCheckBoxChange} />}
               />
               <p className={classes.checkLabel} style={{ color: showEdit ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.8)" }}>
                 Assumed
