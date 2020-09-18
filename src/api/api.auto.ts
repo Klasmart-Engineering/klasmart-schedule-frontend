@@ -68,6 +68,7 @@ export interface ApiOutcomeCreateResponse {
   skills?: string[];
   source_id?: string;
   subject?: string[];
+  updated_at?: number;
 }
 
 export interface ApiOutcomeCreateView {
@@ -88,6 +89,10 @@ export interface ApiOutcomeCreateView {
 
 export interface ApiOutcomeIDList {
   outcome_ids?: string[];
+}
+
+export interface ApiOutcomeRejectReq {
+  reject_reason?: string;
 }
 
 export interface ApiOutcomeSearchResponse {
@@ -121,6 +126,7 @@ export interface ApiOutcomeView {
   skills?: ApiSkill[];
   source_id?: string;
   subject?: ApiSubject[];
+  update_at?: number;
 }
 
 export interface ApiProgram {
@@ -706,7 +712,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents${this.addQueryParams(query)}`,
         "GET",
         params
@@ -742,7 +748,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents/pending${this.addQueryParams(query)}`,
         "GET",
         params
@@ -768,7 +774,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents/private${this.addQueryParams(query)}`,
         "GET",
         params
@@ -1019,7 +1025,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @name lockLearningOutcomes
      * @summary lock learning outcome
      * @request PUT:/learning_outcomes/{outcome_id}/lock
-     * @description edit published learning outcomes
+     * @description edit lock learning outcomes
      */
     lockLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
       this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/lock`, "PUT", params),
@@ -1041,8 +1047,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/learning_outcomes/{outcome_id}/reject
      * @description reject learning outcomes
      */
-    rejectLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/reject`, "PUT", params),
+    rejectLearningOutcomes: (outcome_id: string, OutcomeRejectReq: ApiOutcomeRejectReq, params?: RequestParams) =>
+      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/reject`, "PUT", params, OutcomeRejectReq),
   };
   pendingLearningOutcomes = {
     /**

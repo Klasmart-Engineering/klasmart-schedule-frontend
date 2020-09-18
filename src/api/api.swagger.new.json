@@ -395,10 +395,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
-              }
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
             }
           },
           "400": {
@@ -519,10 +516,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
-              }
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
             }
           },
           "400": {
@@ -604,10 +598,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
-              }
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
             }
           },
           "400": {
@@ -1534,7 +1525,7 @@
     },
     "/learning_outcomes/{outcome_id}/lock": {
       "put": {
-        "description": "edit published learning outcomes",
+        "description": "edit lock learning outcomes",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["learning_outcomes"],
@@ -1657,6 +1648,15 @@
             "name": "outcome_id",
             "in": "path",
             "required": true
+          },
+          {
+            "description": "reject reason",
+            "name": "OutcomeRejectReq",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeRejectReq"
+            }
           }
         ],
         "responses": {
@@ -2484,6 +2484,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "updated_at": {
+          "type": "integer"
         }
       }
     },
@@ -2560,6 +2563,14 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "api.OutcomeRejectReq": {
+      "type": "object",
+      "properties": {
+        "reject_reason": {
+          "type": "string"
         }
       }
     },
@@ -2675,6 +2686,9 @@
           "items": {
             "$ref": "#/definitions/api.Subject"
           }
+        },
+        "update_at": {
+          "type": "integer"
         }
       }
     },
