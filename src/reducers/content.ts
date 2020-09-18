@@ -174,7 +174,11 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     const [contentDetail, mediaList, outcomeList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
       (type === "material" || type === "plan") &&
-        api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
+        api.contents.searchContents({
+          content_type: type === "material" ? ContentType.assets : ContentType.material,
+          publish_status: "published",
+          name: searchMedia,
+        }),
       (type === "material" || type === "plan") &&
         api.learningOutcomes.searchLearningOutcomes({
           publish_status: OutcomePublishStatus.published,
@@ -240,15 +244,15 @@ export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryD
     return api.contents.deleteContent(id);
   }
 );
-export const publishContent = createAsyncThunk<EntityContentInfoWithDetails, Required<EntityContentInfoWithDetails>["id"]>(
-  "content/publishContent",
-  async (id, { dispatch }) => {
-    const content = `Are you sure you want to publish this content?`;
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
-    return api.contents.publishContent(id, { scope: "" });
-  }
-);
+export const publishContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.publishContent>,
+  Required<EntityContentInfoWithDetails>["id"]
+>("content/publishContent", async (id, { dispatch }) => {
+  const content = `Are you sure you want to publish this content?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
+  return api.contents.publishContent(id, { scope: "" });
+});
 
 // type BulkActionIds = Parameters<typeof>
 type IQueryBulkDeleteParams = {
@@ -266,25 +270,26 @@ export const bulkDeleteContent = createAsyncThunk<IQueryBulkDeleteResult, IQuery
     return api.contentsBulk.deleteContentBulk({ id: ids });
   }
 );
-export const bulkPublishContent = createAsyncThunk<EntityContentInfoWithDetails, Required<ApiContentBulkOperateRequest>["id"]>(
-  "content/bulkPublishContent",
-  async (ids, { dispatch }) => {
-    if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
-    const content = `Are you sure you want to publish these contents?`;
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
-    return api.contentsBulk.publishContentBulk({ id: ids });
-  }
-);
-export const approveContent = createAsyncThunk<EntityContentInfoWithDetails, Required<EntityContentInfoWithDetails>["id"]>(
-  "content/approveContentReview",
-  async (id, { dispatch }) => {
-    const content = `Are you sure you want to approve this content?`;
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
-    return api.contents.approveContentReview(id);
-  }
-);
+export const bulkPublishContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contentsBulk.publishContentBulk>,
+  Required<ApiContentBulkOperateRequest>["id"]
+>("content/bulkPublishContent", async (ids, { dispatch }) => {
+  if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
+  const content = `Are you sure you want to publish these contents?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
+  return api.contentsBulk.publishContentBulk({ id: ids });
+});
+type aa = Required<EntityContentInfoWithDetails>["id"];
+export const approveContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.approveContentReview>,
+  Required<EntityContentInfoWithDetails>["id"]
+>("content/approveContentReview", async (content_id, { dispatch }) => {
+  const content = `Are you sure you want to approve this content?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
+  return api.contents.approveContentReview(content_id);
+});
 type RejectContentParams = {
   id: Parameters<typeof api.contents.rejectContentReview>[0];
   reason?: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
