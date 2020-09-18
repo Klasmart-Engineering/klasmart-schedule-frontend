@@ -15,13 +15,9 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  label?: "unknown";
-}
+export type ApiBadRequestResponse = ApiErrorResponse;
 
-export interface ApiConflictResponse {
-  label?: "unknown";
-}
+export type ApiConflictResponse = ApiErrorResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -36,22 +32,16 @@ export interface ApiErrorResponse {
   label?: "unknown";
 }
 
-export interface ApiForbiddenResponse {
-  label?: "unknown";
-}
+export type ApiForbiddenResponse = ApiErrorResponse;
 
 export interface ApiGrade {
   grade_id?: string;
   grade_name?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  label?: "unknown";
-}
+export type ApiInternalServerErrorResponse = ApiErrorResponse;
 
-export interface ApiNotFoundResponse {
-  label?: "unknown";
-}
+export type ApiNotFoundResponse = ApiErrorResponse;
 
 export interface ApiOutcomeCreateResponse {
   age?: string[];
@@ -245,6 +235,7 @@ export interface EntityContentInfoWithDetails {
   subject_name?: string[];
   suggest_time?: number;
   thumbnail?: string;
+  updated_at?: number;
   version?: number;
 }
 
@@ -377,7 +368,7 @@ export interface EntityRepeatYearly {
 export interface EntityScheduleAddView {
   attachment?: EntityScheduleShortInfo;
   class_id: string;
-  class_type?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
   end_at: number;
@@ -399,7 +390,7 @@ export interface EntityScheduleAddView {
 export interface EntityScheduleDetailsView {
   attachment?: EntityScheduleShortInfo;
   class?: EntityScheduleShortInfo;
-  class_type?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -451,7 +442,7 @@ export interface EntityScheduleShortInfo {
 export interface EntityScheduleUpdateView {
   attachment?: EntityScheduleShortInfo;
   class_id: string;
-  class_type?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
   end_at: number;
@@ -645,12 +636,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/assessments/{id}
      * @description update assessment
      */
-    updateAssessment: (id: number, id: EntityUpdateAssessmentCommand, params?: RequestParams) =>
+    updateAssessment: (id: number, update_assessment_command: EntityUpdateAssessmentCommand, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/assessments/${id}`,
         "PUT",
         params,
-        id,
+        update_assessment_command,
       ),
   };
   bulk = {
@@ -783,13 +774,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
-     * @name getContentsStatistics
-     * @summary contentDataCount
+     * @name deleteContent
+     * @summary deleteContent
      * @request DELETE:/contents/{content_id}
-     * @description get content data count
+     * @description delete a content
      */
-    getContentsStatistics: (content_id: string, params?: RequestParams) =>
-      this.request<EntityContentStatisticsInfo, ApiErrorResponse>(`/contents/${content_id}`, "DELETE", params),
+    deleteContent: (content_id: string, params?: RequestParams) =>
+      this.request<string, ApiErrorResponse>(`/contents/${content_id}`, "DELETE", params),
 
     /**
      * @tags content
@@ -850,6 +841,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         string,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/contents/${content_id}/review/reject`, "PUT", params),
+
+    /**
+     * @tags content
+     * @name getContentsStatistics
+     * @summary contentDataCount
+     * @request GET:/contents/{content_id}/statistics
+     * @description get content data count
+     */
+    getContentsStatistics: (content_id: string, params?: RequestParams) =>
+      this.request<EntityContentStatisticsInfo, ApiErrorResponse>(`/contents/${content_id}/statistics`, "GET", params),
   };
   contentsBulk = {
     /**
