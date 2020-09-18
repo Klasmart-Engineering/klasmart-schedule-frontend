@@ -33,7 +33,6 @@ const useStyles = makeStyles(() => ({
     transform: "translateY(-50%)",
     margin: 0,
     padding: 0,
-    color: "rgba(0, 0, 0, 0.8)",
   },
 }));
 
@@ -46,6 +45,7 @@ export interface OutcomeFormProps {
   onChangeProgram: (value: NonNullable<string[]>) => any;
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
   handleCheckBoxChange: CheckboxProps["onChange"];
+  assumed: boolean;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -58,6 +58,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onChangeProgram,
     onChangeDevelopmental,
     handleCheckBoxChange,
+    assumed,
   } = props;
   const classes = useStyles();
 
@@ -96,6 +97,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   defaultValue={outcomeDetail.reject_reason}
                   fullWidth
                   label="Reject Reason"
+                  disabled
                 />
               </Grid>
             </Grid>
@@ -135,15 +137,11 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 // as={Checkbox}
                 defaultChecked={outcomeDetail.assumed}
                 disabled={showEdit}
-                render={() => (
-                  <Checkbox
-                    defaultChecked={outcome_id ? outcomeDetail.assumed : true}
-                    disabled={showEdit}
-                    onChange={handleCheckBoxChange}
-                  />
-                )}
+                render={() => <Checkbox checked={assumed} disabled={showEdit} onChange={handleCheckBoxChange} />}
               />
-              <p className={classes.checkLabel}>Assumed</p>
+              <p className={classes.checkLabel} style={{ color: showEdit ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.8)" }}>
+                Assumed
+              </p>
             </Grid>
             {outcome_id && (
               <>

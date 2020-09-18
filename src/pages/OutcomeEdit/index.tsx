@@ -40,6 +40,7 @@ export default function CreateOutcomings() {
   const history = useHistory();
   const { outcomeDetail } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showEdit, setShowEdit] = React.useState(false);
+  const [isAssumed, setIsAssumed] = React.useState(false);
 
   const formMethods = useForm();
   const {
@@ -91,6 +92,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     reset(modelOutcomeDetail(outcomeDetail));
+    setIsAssumed(outcomeDetail.assumed as boolean);
   }, [outcomeDetail, reset]);
 
   const handleClose = () => {
@@ -188,14 +190,14 @@ export default function CreateOutcomings() {
   const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
       await dispatch(approve(outcome_id));
-      history.go(-1);
+      history.push("/assessments/outcome-list?publish_status=published&page=1&order_by=-created_at");
     }
   };
 
   const handleEdit: OutcomeHeaderProps["handleEdit"] = async () => {
     setShowEdit(!showEdit);
     if (outcomeDetail.publish_status === "published") {
-      const result: any = await dispatch(lockOutcome(outcome_id));
+      const result: any = await dispatch(lockOutcome({ id: outcome_id, metaLoading: true }));
       if (result.payload.outcome_id) {
         history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&before=published`);
       }
@@ -206,6 +208,7 @@ export default function CreateOutcomings() {
     setValue("assumed", event.target.checked, {
       shouldDirty: true,
     });
+    setIsAssumed(event.target.checked);
   };
 
   return (
@@ -234,6 +237,7 @@ export default function CreateOutcomings() {
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
         handleCheckBoxChange={handleCheckBoxChange}
+        assumed={isAssumed}
       />
       <ModalBox modalDate={modalDate} />
     </Box>
