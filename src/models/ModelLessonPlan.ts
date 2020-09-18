@@ -61,6 +61,17 @@ export class ModelLessonPlan {
     });
     return JSON.stringify(result);
   }
+  static toSegment(plan: string): Segment {
+    const newPlan = JSON.parse(plan) as Segment;
+    const result = produce(newPlan, (draft) => {
+      ModelLessonPlan.forEach(draft, (item) => {
+        if (item.material === null) {
+          item.material = {};
+        }
+      });
+    });
+    return result;
+  }
 
   static set(plan: Segment, segmentId: Segment["segmentId"], value: Partial<Segment>): Segment {
     const result = produce(plan, (draft) => {

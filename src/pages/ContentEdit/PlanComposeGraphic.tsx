@@ -215,12 +215,12 @@ interface MaterialCardProps {
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
   const css = useStyles();
-  if (props.material === null) {
+  if (JSON.stringify(props.material) === "{}" || !props.material) {
     return (
-      <Box position="relative">
+      <Card ref={ref}>
         <img src={blankImg} alt="qq" width={200} height={150} />
         <CancelRounded onClick={props.onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
-      </Box>
+      </Card>
     );
   } else {
     const { material = {}, onRemove } = props;

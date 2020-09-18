@@ -9,6 +9,7 @@ import { LearningOutcomes } from "../../api/api";
 import { ContentType, OutcomePublishStatus } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
+import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import {
@@ -335,7 +336,12 @@ export default function ContentEdit() {
         />
       )}
       {includePlanComposeGraphic && (
-        <Controller name="data" as={PlanComposeGraphic} defaultValue={JSON.parse(contentDetail.data || "{}")} control={control} />
+        <Controller
+          name="data"
+          as={PlanComposeGraphic}
+          defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
+          control={control}
+        />
       )}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
     </>
