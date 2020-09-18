@@ -1,6 +1,6 @@
 ### 下列 api 接口被引用，需要替换
 
-api.assessments.getAssessment = r
+api.assessments.getAssessment == api.assessments.getAssessment
 api.assessments.listAssessment = x
 api.assessments.updateAssessment == api.assessments.updateAssessment
 api.bulk.deleteOutcomeBulk = x
