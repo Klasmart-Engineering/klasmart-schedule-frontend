@@ -44,5 +44,5 @@ export const apiCreateH5pResource = () => {
 };
 
 export const apiLivePath = (token: string) => {
-  return `https://live.kidsloop.net/live/?token=${token}`;
+  return `https://live.kidsloop.net/class-live/?token=${token}`;
 };
