@@ -1,4 +1,5 @@
-### 下列api接口被引用，需要替换
+### 下列 api 接口被引用，需要替换
+
 api.assessments.getAssessment = r
 api.assessments.listAssessment = x
 api.assessments.updateAssessment = r
@@ -15,7 +16,7 @@ api.contents.searchContents = r
 api.contents.updateContent = r
 api.contentsBulk.deleteContentBulk = x
 api.contentsBulk.publishContentBulk = x
-api.contentsResources.getContentResourceUploadPath = q
+api.contentsResources.getContentResourceUploadPath = api.contentsResources.getContentResourceUploadPath
 api.learningOutcomes.approveLearningOutcomes = z
 api.learningOutcomes.createLearningOutcomes = z
 api.learningOutcomes.deleteLearningOutcome = z
@@ -33,8 +34,8 @@ api.schedules.querySchedules = j
 api.schedules.updateSchedule = j
 api.schedulesTimeView.schedulesTimeView = j
 
-
 ### 类型替换
+
 CommonShort = j
 Content = r
 ContentIDListRequest = x
