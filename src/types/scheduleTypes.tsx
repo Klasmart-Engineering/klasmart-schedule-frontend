@@ -8,7 +8,7 @@ export interface RouteParams {
   model: "edit" | "preview";
 }
 
-export type modeViewType = "month" | "day" | "workWeek" | "week";
+export type modeViewType = "month" | "day" | "work_week" | "week";
 
 export type repeatOptionsType = "only_current" | "with_following";
 

@@ -100,7 +100,7 @@ function MyCalendar(props: CalendarProps) {
     dispatch(
       getScheduleTimeViewData({
         view_type: modelView,
-        time_at: timesTamp.start.toString(),
+        time_at: timesTamp.start,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
