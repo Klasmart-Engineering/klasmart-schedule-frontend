@@ -1,7 +1,7 @@
 import { Chip, Grid, InputAdornment, TextField } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles(() => ({
@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface ContentPreviewProps {
-  contentPreview: Content;
+  contentPreview: EntityContentInfoWithDetails;
 }
 export function Detail(props: ContentPreviewProps) {
   const css = useStyles();

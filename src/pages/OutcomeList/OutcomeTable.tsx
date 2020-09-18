@@ -6,7 +6,7 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { LearningOutcomes } from "../../api/api";
+import { ApiOutcomeView } from "../../api/api.auto";
 import { OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
@@ -52,7 +52,7 @@ const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T
 };
 
 interface OutcomeProps extends OutcomeActionProps {
-  outcome: LearningOutcomes;
+  outcome: ApiOutcomeView;
   queryCondition: OutcomeQueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
   onClickOutcome: OutcomeTableProps["onClickOutcome"];
@@ -104,18 +104,18 @@ function OutomeRow(props: OutcomeProps) {
 }
 
 interface OutcomeActionProps {
-  onPublish: (id: NonNullable<LearningOutcomes["outcome_id"]>) => any;
-  onDelete: (id: NonNullable<LearningOutcomes["outcome_id"]>) => any;
+  onPublish: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
+  onDelete: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
 }
 
 export interface OutcomeTableProps extends OutcomeActionProps {
   formMethods: UseFormMethods<BulkListForm>;
   total: number;
   amountPerPage?: number;
-  list: LearningOutcomes[];
+  list: ApiOutcomeView[];
   queryCondition: OutcomeQueryCondition;
   onChangePage: (page: number) => void;
-  onClickOutcome: (id: LearningOutcomes["outcome_id"]) => any;
+  onClickOutcome: (id: ApiOutcomeView["outcome_id"]) => any;
 }
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();

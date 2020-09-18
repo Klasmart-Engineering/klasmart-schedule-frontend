@@ -1,7 +1,7 @@
 import { Box, createStyles, makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer/TableContainer";
 import React from "react";
-import { LearningOutcomes } from "../../api/api";
+import { ApiOutcomeView } from "../../api/api.auto";
 import { Empty } from "../ContentEdit/MediaAssets";
 
 const useStyles = makeStyles((theme) =>
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 interface OutcomeProps {
-  outcome: LearningOutcomes;
+  outcome: ApiOutcomeView;
 }
 function OutComeRow(props: OutcomeProps) {
   const css = useStyles();
@@ -34,7 +34,7 @@ function OutComeRow(props: OutcomeProps) {
   );
 }
 interface LearningOutcomeProps {
-  list: LearningOutcomes[];
+  list: ApiOutcomeView[];
 }
 export function LearningOutcome(props: LearningOutcomeProps) {
   const css = useStyles();

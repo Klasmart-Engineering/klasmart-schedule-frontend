@@ -1,7 +1,7 @@
 import { Box, Chip, makeStyles, Tab, Tabs, Theme, Typography } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { Fragment } from "react";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType } from "../../api/type";
 import { Thumbnail } from "../../components/Thumbnail";
 import { TabValue } from "./type";
@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 interface ContentPreviewProps {
   tab: string;
-  contentPreview: Content;
-  content_type: Content["content_type"];
+  contentPreview: EntityContentInfoWithDetails;
+  content_type: EntityContentInfoWithDetails["content_type"];
   onClose: () => any;
   onChangeTab: (value: TabValue) => any;
 }

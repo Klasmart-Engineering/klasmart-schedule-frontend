@@ -4,7 +4,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiLivePath } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
@@ -35,7 +35,7 @@ const useQuery = () => {
   const content_type: ContentType = Number(query.get("content_type"));
   return { id, content_type, search };
 };
-export default function ContentPreview(props: Content) {
+export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, content_type, search } = useQuery();
