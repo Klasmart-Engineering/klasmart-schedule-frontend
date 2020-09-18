@@ -7,7 +7,6 @@ import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Loading } from "./components/Loading";
 import { Locale } from "./components/Locale";
 import { Notification } from "./components/Notification";
-import { UIAppHeaderNavBar } from "./components/UIAppHeaderNavBar";
 import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit";
@@ -29,7 +28,7 @@ function App() {
           <Locale>
             <Loading />
             <SnackbarProvider>
-              <UIAppHeaderNavBar />
+              {/* <UIAppHeaderNavBar /> */}
               <Switch>
                 <Route path={Preview.routeBasePath}>
                   <Preview />
