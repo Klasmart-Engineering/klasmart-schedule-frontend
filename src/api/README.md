@@ -29,3 +29,11 @@ ScheduleTimeView = EntityScheduleListView
 | 函数名         | 地址                               | 原参数           | 现参数     | 说明 ｜  |
 | -------------- | ---------------------------------- | ---------------- | ---------- | -------- |
 | publishContent | PUT:/contents/{content_id}/publish | content_id, data | content_id | 漏了参数 |
+
+| 函数名                 | 地址                                         | 原参数           | 现参数     |
+| ---------------------- | -------------------------------------------- | ---------------- | ---------- |
+| rejectLearningOutcomes | PUT:/learning_outcomes/\${outcome_id}/reject | outcome_id, data | outcome_id |
+
+| 函数名                  | 地址                                          | 原参数           | 现参数     |
+| ----------------------- | --------------------------------------------- | ---------------- | ---------- |
+| publishLearningOutcomes | PUT:/learning_outcomes/\${outcome_id}/publish | outcome_id, data | outcome_id |
