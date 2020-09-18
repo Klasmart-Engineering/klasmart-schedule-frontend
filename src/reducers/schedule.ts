@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
-import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
+import { EntityScheduleSearchView, EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleListView } from "../api/api.auto";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 
@@ -15,9 +15,9 @@ interface scheduleViewData {
 
 export interface ScheduleState {
   total: number;
-  searchScheduleList: Schedule[];
+  searchScheduleList: EntityScheduleSearchView[];
   saveResult: number;
-  scheduleDetial: ScheduleDetailed;
+  scheduleDetial: EntityScheduleDetailsView;
   scheduleTimeViewData: scheduleViewData[];
   attachement_id: string;
   attachment_path: string;
@@ -29,7 +29,7 @@ interface Rootstate {
   schedule: ScheduleState;
 }
 
-export const initScheduleDetial: ScheduleDetailed = {
+export const initScheduleDetial: EntityScheduleDetailsView = {
   id: "",
   title: "",
   class: {},
@@ -69,13 +69,13 @@ const initialState: ScheduleState = {
   },
 };
 
-type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedules>[0] } & LoadingMetaPayload;
-type querySchedulesResult = ReturnType<typeof api.schedules.querySchedules>;
+type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedule>[0] } & LoadingMetaPayload;
+type querySchedulesResult = ReturnType<typeof api.schedules.querySchedule>;
 export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, querySchedulesParams>("schedule/scheduleList", ({ data }) => {
-  return api.schedules.querySchedules(data);
+  return api.schedules.querySchedule(data);
 });
 
-export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate, { state: Rootstate }>(
+export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntityScheduleAddView, { state: Rootstate }>(
   "schedule/save",
   async (payload, { getState }) => {
     let {
@@ -84,7 +84,7 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.createSchedule(payload)).id;
+      id = (await api.schedules.addSchedule(payload)).id;
     } else {
       id = (await api.schedules.updateSchedule(id, payload)).id;
     }
@@ -93,12 +93,12 @@ export const saveScheduleData = createAsyncThunk<ScheduleCreate, ScheduleCreate,
   }
 );
 
-type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.schedulesTimeView>[0] & LoadingMetaPayload;
-type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.schedulesTimeView>;
+type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeView>[0] & LoadingMetaPayload;
+type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
   "schedule/schedules_time_view",
   (query) => {
-    return api.schedulesTimeView.schedulesTimeView({ ...query });
+    return api.schedulesTimeView.getScheduleTimeView({ ...query });
   }
 );
 
@@ -114,10 +114,10 @@ export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSche
   }
 );
 
-type infoSchedulesParams = Parameters<typeof api.schedules.getSchedulesById>[0];
-type infoSchedulesResult = ReturnType<typeof api.schedules.getSchedulesById>;
+type infoSchedulesParams = Parameters<typeof api.schedules.getScheduleById>[0];
+type infoSchedulesResult = ReturnType<typeof api.schedules.getScheduleById>;
 export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedulesParams>("schedule/info", (schedule_id, query) => {
-  return api.schedules.getSchedulesById(schedule_id);
+  return api.schedules.getScheduleById(schedule_id);
 });
 
 type attachmentParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
@@ -133,11 +133,11 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
 );
 
 interface LiveSchedulePayload extends LoadingMetaPayload {
-  schedule_id: Parameters<typeof api.schedules.getLiveToken>[0];
+  schedule_id: Parameters<typeof api.schedules.getScheduleLiveToken>[0];
 }
-type LiveScheduleResult = ReturnType<typeof api.schedules.getLiveToken>;
+type LiveScheduleResult = ReturnType<typeof api.schedules.getScheduleLiveToken>;
 export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>("schedule/live", async ({ schedule_id }) => {
-  return api.schedules.getLiveToken(schedule_id);
+  return api.schedules.getScheduleLiveToken(schedule_id);
 });
 
 export const getMockOptions = createAsyncThunk("mock/options", async () => {
@@ -147,7 +147,7 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
 const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
   const newViewData: any = [];
   if (data.length > 0) {
-    data.forEach((item: ScheduleTimeView) => {
+    data.forEach((item: EntityScheduleListView) => {
       newViewData.push({
         ...item,
         end: new Date(Number(item.end_at) * 1000),
