@@ -14,10 +14,10 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { ArrowBack, Cancel, CancelOutlined, Publish, Save, DeleteOutlineOutlined } from "@material-ui/icons";
+import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 
@@ -89,7 +89,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
-  contentDetail?: Content;
+  contentDetail?: EntityContentInfoWithDetails;
   onCancel: ButtonProps["onClick"];
   onSave: LButtonProps["onClick"];
   onPublish: LButtonProps["onClick"];

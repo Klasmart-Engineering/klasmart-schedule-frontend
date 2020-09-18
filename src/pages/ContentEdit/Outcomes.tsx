@@ -20,7 +20,7 @@ import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { LearningOutcomes } from "../../api/api";
+import { ApiOutcomeView } from "../../api/api.auto";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
 import { Comingsoon, NoFiles } from "./MediaAssets";
 
@@ -104,16 +104,16 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 }));
 
 interface OutcomesTableProps {
-  list?: LearningOutcomes[];
-  value?: LearningOutcomes[];
-  onChange?: (value: LearningOutcomes[]) => any;
-  onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
+  list?: ApiOutcomeView[];
+  value?: ApiOutcomeView[];
+  onChange?: (value: ApiOutcomeView[]) => any;
+  onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
   open?: boolean;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
   const { list, value, onChange, onGoOutcomesDetail, open } = props;
   const css = useStyles();
-  const handleAction = (item: LearningOutcomes, type: "add" | "remove") => {
+  const handleAction = (item: ApiOutcomeView, type: "add" | "remove") => {
     const { outcome_id: id } = item;
     if (type === "add") {
       if (id && value) {
@@ -172,9 +172,9 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 };
 
 interface OutcomesInputProps {
-  value?: LearningOutcomes[];
-  onChange?: (value: LearningOutcomes[]) => any;
-  onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
+  value?: ApiOutcomeView[];
+  onChange?: (value: ApiOutcomeView[]) => any;
+  onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
@@ -214,7 +214,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
 
 export interface OutcomesProps {
   comingsoon?: boolean;
-  list: LearningOutcomes[];
+  list: ApiOutcomeView[];
   total: number;
   amountPerPage?: number;
   searchName: string;
@@ -222,9 +222,9 @@ export interface OutcomesProps {
   onSearch: (searchName: SearchcmsListProps["value"]) => any;
   onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
   onChangePage: (page: number) => any;
-  value?: LearningOutcomes[];
-  onChange?: (value: LearningOutcomes[]) => any;
-  onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
+  value?: ApiOutcomeView[];
+  onChange?: (value: ApiOutcomeView[]) => any;
+  onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
 }
 
 export default function Outcomes(props: OutcomesProps) {

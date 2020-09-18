@@ -2,14 +2,14 @@ import { Box, CircularProgress, CircularProgressProps, makeStyles, Typography } 
 import Button from "@material-ui/core/Button";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ContentDetailForm } from "../../models/ModelContentDetailForm";
-import { Content } from "../../api/api";
-import { SingleUploader } from "../../components/SingleUploader";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
-import AssetImg from "./AssetPreview/AssetImg";
-import AssetVideo from "./AssetPreview/AssetVideo";
+import { SingleUploader } from "../../components/SingleUploader";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import AssetAudio from "./AssetPreview/AssetAudio";
 import AssetFile from "./AssetPreview/AssetFile";
+import AssetImg from "./AssetPreview/AssetImg";
+import AssetVideo from "./AssetPreview/AssetVideo";
 
 const useStyles = makeStyles((theme) => ({
   uploadBox: {
@@ -117,7 +117,7 @@ function ProgressWithText(props: CircularProgressProps) {
 interface AssetEditProps {
   fileType: string;
   formMethods: UseFormMethods<ContentDetailForm>;
-  contentDetail: Content;
+  contentDetail: EntityContentInfoWithDetails;
 }
 
 function AssetEdit(props: AssetEditProps) {

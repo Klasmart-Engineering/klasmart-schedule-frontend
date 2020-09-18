@@ -58,7 +58,7 @@ interface AssessActionProps {
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
-  status?: "complete" | "in_progress";
+  status?: string;
 }
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
@@ -157,7 +157,7 @@ interface OutcomesTableProps {
   attendanceList: IAssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   formValue: UpdateAssessmentRequestDataOmitAction;
-  status?: "complete" | "in_progress";
+  status?: string;
   filterOutcomes: string;
 }
 export function OutcomesTable(props: OutcomesTableProps) {

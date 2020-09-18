@@ -15,7 +15,7 @@ import {
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, FieldError, UseFormMethods } from "react-hook-form";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
@@ -321,7 +321,7 @@ interface AssetDetailsProps {
   flattenedMockOptions: FlattenedMockOptions;
   fileType: "image" | "video" | "audio" | "document";
   handleChangeFile: (type: "image" | "video" | "audio" | "document") => void;
-  contentDetail: Content;
+  contentDetail: EntityContentInfoWithDetails;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
 }
