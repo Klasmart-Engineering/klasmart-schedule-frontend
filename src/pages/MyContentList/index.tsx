@@ -113,7 +113,7 @@ export default function MyContentList() {
   };
 
   useEffect(() => {
-    if (contentsList.length === 0 && total > 0) {
+    if (contentsList?.length === 0 && total > 0) {
       const page = 1;
       history.push({ search: toQueryString({ ...condition, page }) });
     }
