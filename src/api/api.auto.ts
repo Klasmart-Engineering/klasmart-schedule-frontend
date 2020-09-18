@@ -511,9 +511,7 @@ class HttpClient<SecurityDataType> {
   };
 
   private addQueryParam(query: RequestQueryParamsType, key: string) {
-    return (
-      encodeURIComponent(key) + "=" + encodeURIComponent(Array.isArray(query[key]) ? query[key].join(",") : query[key])
-    );
+    return encodeURIComponent(key) + "=" + encodeURIComponent(Array.isArray(query[key]) ? query[key].join(",") : query[key]);
   }
 
   protected addQueryParams(rawQuery?: RequestQueryParamsType): string {
@@ -524,7 +522,7 @@ class HttpClient<SecurityDataType> {
           .map((key) =>
             typeof query[key] === "object" && !Array.isArray(query[key])
               ? this.addQueryParams(query[key] as object).substring(1)
-              : this.addQueryParam(query, key),
+              : this.addQueryParam(query, key)
           )
           .join("&")}`
       : "";
@@ -559,7 +557,7 @@ class HttpClient<SecurityDataType> {
     { secure, ...params }: RequestParams = {},
     body?: any,
     bodyType?: BodyType,
-    secureByDefault?: boolean,
+    secureByDefault?: boolean
   ): Promise<T> =>
     fetch(`${this.baseUrl}${path}`, {
       // @ts-ignore
@@ -596,12 +594,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number;
         order_by?: "class_end_time" | "-class_end_time" | "complete_time" | "-complete_time";
       },
-      params?: RequestParams,
+      params?: RequestParams
     ) =>
-      this.request<
-        EntityListAssessmentsResult,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/assessments${this.addQueryParams(query)}`, "GET", params),
+      this.request<EntityListAssessmentsResult, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/assessments${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags assessments
@@ -611,10 +610,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add assessments
      */
     addAssessment: (assessment: EntityAddAssessmentCommand, params?: RequestParams) =>
-      this.request<
-        EntityAddAssessmentResult,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/assessments`, "POST", params, assessment),
+      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/assessments`,
+        "POST",
+        params,
+        assessment
+      ),
 
     /**
      * @tags assessments
@@ -624,10 +625,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get assessment detail
      */
     getAssessment: (id: number, params?: RequestParams) =>
-      this.request<
-        EntityAssessmentDetailView,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/assessments/${id}`, "GET", params),
+      this.request<EntityAssessmentDetailView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/assessments/${id}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags assessments
@@ -641,7 +643,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         `/assessments/${id}`,
         "PUT",
         params,
-        update_assessment_command,
+        update_assessment_command
       ),
   };
   bulk = {
@@ -677,20 +679,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchContents: (
       query?: {
         name?: string;
-        content_type?: 1 | 2 | 3;
+        content_type?: "1" | "2" | "3" | "1,2" | "1,3" | "2,3" | "1,2,3";
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "name" | "-name" | "create_at， -create_at";
         page_size?: number;
         page?: number;
       },
-      params?: RequestParams,
-    ) =>
-      this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(
-        `/contents${this.addQueryParams(query)}`,
-        "GET",
-        params,
-      ),
+      params?: RequestParams
+    ) => this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(`/contents${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags content
@@ -719,13 +716,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number;
         page?: number;
       },
-      params?: RequestParams,
-    ) =>
-      this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(
-        `/contents/pending${this.addQueryParams(query)}`,
-        "GET",
-        params,
-      ),
+      params?: RequestParams
+    ) => this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(`/contents/pending${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags content
@@ -744,13 +736,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number;
         page?: number;
       },
-      params?: RequestParams,
-    ) =>
-      this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(
-        `/contents/private${this.addQueryParams(query)}`,
-        "GET",
-        params,
-      ),
+      params?: RequestParams
+    ) => this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(`/contents/private${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags content
@@ -793,7 +780,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/live/token`,
         "GET",
-        params,
+        params
       ),
 
     /**
@@ -824,10 +811,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description approve content by id
      */
     approveContentReview: (content_id: string, params?: RequestParams) =>
-      this.request<
-        string,
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/contents/${content_id}/review/approve`, "PUT", params),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/contents/${content_id}/review/approve`,
+        "PUT",
+        params
+      ),
 
     /**
      * @tags content
@@ -837,10 +825,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description reject content by id
      */
     rejectContentReview: (content_id: string, params?: RequestParams) =>
-      this.request<
-        string,
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/contents/${content_id}/review/reject`, "PUT", params),
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/contents/${content_id}/review/reject`,
+        "PUT",
+        params
+      ),
 
     /**
      * @tags content
@@ -916,13 +905,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number;
         order_by?: "name" | "-name" | "create_at" | "-created_at";
       },
-      params?: RequestParams,
-    ) =>
-      this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(
-        `/learning_outcomes${this.addQueryParams(query)}`,
-        "GET",
-        params,
-      ),
+      params?: RequestParams
+    ) => this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(`/learning_outcomes${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags learning_outcomes
@@ -1026,13 +1010,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number;
         order_by?: "name" | "-name" | "create_at" | "-created_at";
       },
-      params?: RequestParams,
-    ) =>
-      this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(
-        `/pending_learning_outcomes${this.addQueryParams(query)}`,
-        "GET",
-        params,
-      ),
+      params?: RequestParams
+    ) => this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(`/pending_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
   };
   ping = {
     /**
@@ -1043,11 +1022,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description Ping and test service
      */
     ping: (params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/ping`,
-        "GET",
-        params,
-      ),
+      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/ping`, "GET", params),
   };
   privateLearningOutcomes = {
     /**
@@ -1071,13 +1046,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page_size?: number;
         order_by?: "name" | "-name" | "create_at" | "-created_at";
       },
-      params?: RequestParams,
-    ) =>
-      this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(
-        `/private_learning_outcomes${this.addQueryParams(query)}`,
-        "GET",
-        params,
-      ),
+      params?: RequestParams
+    ) => this.request<ApiOutcomeSearchResponse, ApiErrorResponse>(`/private_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
   };
   schedules = {
     /**
@@ -1096,12 +1066,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page?: number;
         page_size?: number;
       },
-      params?: RequestParams,
+      params?: RequestParams
     ) =>
-      this.request<
-        EntitySchedulePageView,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/schedules${this.addQueryParams(query)}`, "GET", params),
+      this.request<EntitySchedulePageView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags schedule
@@ -1115,7 +1086,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         `/schedules`,
         "POST",
         params,
-        scheduleData,
+        scheduleData
       ),
 
     /**
@@ -1126,10 +1097,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule by id
      */
     getScheduleById: (schedule_id: string, params?: RequestParams) =>
-      this.request<
-        EntityScheduleDetailsView,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/schedules/${schedule_id}`, "GET", params),
+      this.request<EntityScheduleDetailsView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags schedule
@@ -1139,10 +1111,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update a schedule data
      */
     updateSchedule: (schedule_id: string, scheduleData: EntityScheduleUpdateView, params?: RequestParams) =>
-      this.request<
-        EntityIDResponse,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
-      >(`/schedules/${schedule_id}`, "PUT", params, scheduleData),
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}`,
+        "PUT",
+        params,
+        scheduleData
+      ),
 
     /**
      * @tags schedule
@@ -1151,15 +1125,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request DELETE:/schedules/{schedule_id}
      * @description delete a schedule data
      */
-    deleteSchedule: (
-      schedule_id: string,
-      query: { repeat_edit_options: "only_current" | "with_following" },
-      params?: RequestParams,
-    ) =>
+    deleteSchedule: (schedule_id: string, query: { repeat_edit_options: "only_current" | "with_following" }, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}${this.addQueryParams(query)}`,
         "DELETE",
-        params,
+        params
       ),
 
     /**
@@ -1173,7 +1143,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/live/token`,
         "GET",
-        params,
+        params
       ),
   };
   schedulesTimeView = {
@@ -1186,11 +1156,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduleTimeView: (
       query: { view_type: "day" | "work_week" | "week" | "month"; time_at: number; time_zone_offset: number },
-      params?: RequestParams,
+      params?: RequestParams
     ) =>
-      this.request<
-        EntityScheduleListView,
-        ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/schedules_time_view${this.addQueryParams(query)}`, "GET", params),
+      this.request<EntityScheduleListView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
 }
