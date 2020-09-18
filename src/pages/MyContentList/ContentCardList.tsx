@@ -184,6 +184,10 @@ interface ContentProps extends ContentActionProps {
   selectedContentGroupContext: CheckboxGroupContext;
   onClickContent: ContentCardListProps["onClickContent"];
 }
+enum DeleteText {
+  delete = "delete",
+  remove = "remove",
+}
 function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
@@ -193,6 +197,11 @@ function ContentCard(props: ContentProps) {
     content?.publish_status === PublishStatus.published && content?.content_type_name !== Assets.assets_name
       ? RemoveCircleOutlineIcon
       : DeleteOutlineIcon;
+  const type =
+    content?.publish_status === PublishStatus.published && content?.content_type_name !== Assets.assets_name
+      ? DeleteText.remove
+      : DeleteText.delete;
+
   return (
     <Card className={css.card}>
       <Checkbox
@@ -239,7 +248,7 @@ function ContentCard(props: ContentProps) {
             </LButton>
           )}
           {queryCondition.publish_status !== PublishStatus.pending && (
-            <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string)}>
+            <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
               <DeleteIcon />
             </LButton>
           )}
@@ -251,7 +260,7 @@ function ContentCard(props: ContentProps) {
 
 interface ContentActionProps {
   onPublish: (id: NonNullable<Content["id"]>) => any;
-  onDelete: (id: NonNullable<Content["id"]>) => any;
+  onDelete: (id: NonNullable<Content["id"]>, type: string) => any;
 }
 
 export interface ContentCardListProps extends ContentActionProps {

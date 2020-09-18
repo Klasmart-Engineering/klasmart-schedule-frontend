@@ -100,6 +100,7 @@ function SubUnpublished(props: QueryConditionBaseProps) {
 enum BulkAction {
   publish = "publish",
   remove = "remove",
+  delete = "delete",
 }
 
 interface BulkActionOption {
@@ -110,7 +111,7 @@ interface BulkActionOption {
 function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
   if (condition.content_type === Assets.assets_type) {
-    return [{ label: "delete", value: BulkAction.remove }];
+    return [{ label: "delete", value: BulkAction.delete }];
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
@@ -123,7 +124,7 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
         { label: "delete", value: BulkAction.remove },
       ];
     default:
-      return unpublish ? [{ label: "delete", value: BulkAction.remove }] : [];
+      return unpublish ? [{ label: "delete", value: BulkAction.delete }] : [];
   }
 }
 
@@ -135,7 +136,7 @@ const sortOptions = [
 ];
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
-  onBulkDelete: () => any;
+  onBulkDelete: (type: string) => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
@@ -143,7 +144,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
-    if (event.target.value === BulkAction.remove) onBulkDelete();
+    if (event.target.value === BulkAction.delete) onBulkDelete(BulkAction.delete);
+    if (event.target.value === BulkAction.remove) onBulkDelete(BulkAction.remove);
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
