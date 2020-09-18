@@ -218,7 +218,7 @@ export default function CreateOutcomings() {
         handelReject={handelReject}
         handlePublish={handlePublish}
         handleApprove={handleApprove}
-        publish_status={outcomeDetail.publish_status}
+        publish_status={outcome_id ? outcomeDetail.publish_status : "draft"}
         isDirty={isDirty}
         showEdit={showEdit}
         handleEdit={handleEdit}
