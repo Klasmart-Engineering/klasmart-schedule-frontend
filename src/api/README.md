@@ -1,11 +1,11 @@
 ### 下列 api 接口被引用，需要替换
 
 api.assessments.getAssessment == api.assessments.getAssessment
-api.assessments.listAssessment = x
+api.assessments.listAssessment = api.assessments.listAssessment
 api.assessments.updateAssessment == api.assessments.updateAssessment
-api.bulk.deleteOutcomeBulk = x
-api.bulkPublish.publishLearningOutcomesBulk = x
-api.contents.approveContentReview = x
+api.bulk.deleteOutcomeBulk = api.bulk.deleteOutcomeBulk
+api.bulkPublish.publishLearningOutcomesBulk = api.bulkPublish.publishLearningOutcomesBulk
+api.contents.approveContentReview = api.contents.approveContentReview
 api.contents.createContent == api.contents.createContent
 api.contents.getContentById == api.contents.getContentById
 api.contents.getLiveToken = getContentLiveToken
