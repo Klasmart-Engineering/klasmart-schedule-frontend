@@ -257,7 +257,7 @@ interface SegmentBoxProps extends Segment {
   onChange: (value: Segment) => any;
 }
 function SegmentBox(props: SegmentBoxProps) {
-  const { first, material, materialId, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
+  const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
   const addPlan = useMemo(
     () => (item: DragItem) => {
@@ -313,7 +313,7 @@ function SegmentBox(props: SegmentBoxProps) {
     </Box>
   );
   // 既没选 material 也没选 condition 的情况
-  if (!material && !condition && !materialId)
+  if (!material && !condition)
     return (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary">
@@ -392,7 +392,8 @@ interface PlanComposeGraphicProps {
   onChange?: (value: Segment) => any;
 }
 export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
-  const { value: plan = {}, onChange = doNothing } = props;
+  const { value = {}, onChange = doNothing } = props;
+  const plan = ModelLessonPlan.toSegment(JSON.stringify(value));
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(plan);
