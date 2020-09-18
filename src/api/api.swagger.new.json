@@ -138,7 +138,7 @@
         "operationId": "getAssessment",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "assessment id",
             "name": "id",
             "in": "path",
@@ -181,7 +181,7 @@
         "operationId": "updateAssessment",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "assessment id",
             "name": "id",
             "in": "path",
@@ -347,8 +347,13 @@
             "in": "query"
           },
           {
-            "enum": [1, 2, 3],
-            "type": "integer",
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content type",
             "name": "content_type",
             "in": "query"
@@ -360,14 +365,14 @@
             "in": "query"
           },
           {
-            "enum": ["published", "draft", "pending", "rejected"],
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
             "type": "string",
             "description": "search content publish status",
             "name": "publish_status",
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "create_at， -create_at"],
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
             "type": "string",
             "description": "search content order by column name",
             "name": "order_by",
@@ -392,20 +397,20 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/entity.ContentInfoWithDetails"
+                "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
               }
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -438,13 +443,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -466,8 +471,13 @@
             "in": "query"
           },
           {
-            "enum": [1, 2, 3],
-            "type": "integer",
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content type",
             "name": "content_type",
             "in": "query"
@@ -511,20 +521,20 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/entity.ContentInfoWithDetails"
+                "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
               }
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -546,8 +556,13 @@
             "in": "query"
           },
           {
-            "enum": [1, 2, 3],
-            "type": "integer",
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content type",
             "name": "content_type",
             "in": "query"
@@ -591,20 +606,20 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/entity.ContentInfoWithDetails"
+                "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
               }
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -637,13 +652,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -683,13 +698,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -720,13 +735,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -804,13 +819,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -831,6 +846,15 @@
             "name": "content_id",
             "in": "path",
             "required": true
+          },
+          {
+            "description": "content publish data",
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.PublishContentRequest"
+            }
           }
         ],
         "responses": {
@@ -843,13 +867,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -921,6 +945,15 @@
             "name": "content_id",
             "in": "path",
             "required": true
+          },
+          {
+            "description": "reject_reason",
+            "name": "RejectReasonRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RejectReasonRequest"
+            }
           }
         ],
         "responses": {
@@ -984,13 +1017,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1025,13 +1058,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1066,13 +1099,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1112,13 +1145,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1151,13 +1184,13 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ErrorResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
             }
           }
         }
@@ -1565,6 +1598,14 @@
             "name": "outcome_id",
             "in": "path",
             "required": true
+          },
+          {
+            "description": "publish scope",
+            "name": "PublishOutcomeRequest",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/api.PublishOutcomeReq"
+            }
           }
         ],
         "responses": {
@@ -2648,6 +2689,33 @@
         }
       }
     },
+    "api.PublishContentRequest": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "api.PublishOutcomeReq": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "api.RejectReasonRequest": {
+      "type": "object",
+      "properties": {
+        "reject_reason": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "api.Skill": {
       "type": "object",
       "properties": {
@@ -2998,6 +3066,20 @@
           "type": "integer"
         },
         "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ContentInfoWithDetailsResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ContentInfoWithDetails"
+          }
+        },
+        "total": {
           "type": "integer"
         }
       }

@@ -128,6 +128,18 @@ export interface ApiProgram {
   program_name?: string;
 }
 
+export interface ApiPublishContentRequest {
+  scope?: string;
+}
+
+export interface ApiPublishOutcomeReq {
+  scope?: string;
+}
+
+export interface ApiRejectReasonRequest {
+  reject_reason?: string[];
+}
+
 export interface ApiSkill {
   skill_id?: string;
   skill_name?: string;
@@ -237,6 +249,11 @@ export interface EntityContentInfoWithDetails {
   thumbnail?: string;
   updated_at?: number;
   version?: number;
+}
+
+export interface EntityContentInfoWithDetailsResponse {
+  list?: EntityContentInfoWithDetails[];
+  total?: number;
 }
 
 export interface EntityContentStatisticsInfo {
@@ -624,7 +641,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/assessments/{id}
      * @description get assessment detail
      */
-    getAssessment: (id: number, params?: RequestParams) =>
+    getAssessment: (id: string, params?: RequestParams) =>
       this.request<EntityAssessmentDetailView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/assessments/${id}`,
         "GET",
@@ -638,7 +655,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/assessments/{id}
      * @description update assessment
      */
-    updateAssessment: (id: number, update_assessment_command: EntityUpdateAssessmentCommand, params?: RequestParams) =>
+    updateAssessment: (id: string, update_assessment_command: EntityUpdateAssessmentCommand, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/assessments/${id}`,
         "PUT",
@@ -679,15 +696,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchContents: (
       query?: {
         name?: string;
-        content_type?: "1" | "2" | "3" | "1,2" | "1,3" | "2,3" | "1,2,3";
+        author?: string;
+        content_type?: string;
         scope?: string;
-        publish_status?: "published" | "draft" | "pending" | "rejected";
-        order_by?: "name" | "-name" | "create_at， -create_at";
+        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
         page?: number;
       },
       params?: RequestParams
-    ) => this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(`/contents${this.addQueryParams(query)}`, "GET", params),
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags content
@@ -697,7 +720,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description create lesson plan, lesson material or assets
      */
     createContent: (content: EntityCreateContentRequest, params?: RequestParams) =>
-      this.request<ApiCreateContentResponse, ApiErrorResponse>(`/contents`, "POST", params, content),
+      this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents`, "POST", params, content),
 
     /**
      * @tags content
@@ -709,7 +732,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchPendingContents: (
       query?: {
         name?: string;
-        content_type?: 1 | 2 | 3;
+        author?: string;
+        content_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "name" | "-name" | "create_at， -create_at";
@@ -717,7 +741,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page?: number;
       },
       params?: RequestParams
-    ) => this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(`/contents/pending${this.addQueryParams(query)}`, "GET", params),
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/pending${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags content
@@ -729,7 +758,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     searchPrivateContents: (
       query?: {
         name?: string;
-        content_type?: 1 | 2 | 3;
+        author?: string;
+        content_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "name" | "-name" | "create_at， -create_at";
@@ -737,7 +767,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         page?: number;
       },
       params?: RequestParams
-    ) => this.request<EntityContentInfoWithDetails[], ApiErrorResponse>(`/contents/private${this.addQueryParams(query)}`, "GET", params),
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/private${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags content
@@ -747,7 +782,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get a content by id
      */
     getContentById: (content_id: string, params?: RequestParams) =>
-      this.request<EntityContentInfoWithDetails, ApiErrorResponse>(`/contents/${content_id}`, "GET", params),
+      this.request<EntityContentInfoWithDetails, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/${content_id}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags content
@@ -757,7 +796,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update a content data
      */
     updateContent: (content_id: string, contentData: EntityCreateContentRequest, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/contents/${content_id}`, "PUT", params, contentData),
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents/${content_id}`, "PUT", params, contentData),
 
     /**
      * @tags content
@@ -767,7 +806,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description delete a content
      */
     deleteContent: (content_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/contents/${content_id}`, "DELETE", params),
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents/${content_id}`, "DELETE", params),
 
     /**
      * @tags content
@@ -791,7 +830,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description lock a content to edit
      */
     lockContent: (content_id: string, params?: RequestParams) =>
-      this.request<ApiCreateContentResponse, ApiErrorResponse>(`/contents/${content_id}/lock`, "PUT", params),
+      this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/${content_id}/lock`,
+        "PUT",
+        params
+      ),
 
     /**
      * @tags content
@@ -800,8 +843,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/contents/{content_id}/publish
      * @description publish a content
      */
-    publishContent: (content_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/contents/${content_id}/publish`, "PUT", params),
+    publishContent: (content_id: string, data: ApiPublishContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents/${content_id}/publish`, "PUT", params, data),
 
     /**
      * @tags content
@@ -824,11 +867,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/contents/{content_id}/review/reject
      * @description reject content by id
      */
-    rejectContentReview: (content_id: string, params?: RequestParams) =>
+    rejectContentReview: (content_id: string, RejectReasonRequest: ApiRejectReasonRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/review/reject`,
         "PUT",
-        params
+        params,
+        RejectReasonRequest
       ),
 
     /**
@@ -839,7 +883,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get content data count
      */
     getContentsStatistics: (content_id: string, params?: RequestParams) =>
-      this.request<EntityContentStatisticsInfo, ApiErrorResponse>(`/contents/${content_id}/statistics`, "GET", params),
+      this.request<EntityContentStatisticsInfo, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/${content_id}/statistics`,
+        "GET",
+        params
+      ),
   };
   contentsBulk = {
     /**
@@ -850,7 +898,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description delete contents bulk
      */
     deleteContentBulk: (contentIds: ApiContentBulkOperateRequest, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/contents_bulk`, "DELETE", params, contentIds),
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_bulk`, "DELETE", params, contentIds),
 
     /**
      * @tags content
@@ -860,7 +908,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description publish contents bulk
      */
     publishContentBulk: (contentIds: ApiContentBulkOperateRequest, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/contents_bulk/publish`, "PUT", params, contentIds),
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_bulk/publish`, "PUT", params, contentIds),
   };
   contentsResources = {
     /**
@@ -871,7 +919,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get path to upload resource
      */
     getContentResourceUploadPath: (query: { partition: string; extension: string }, params?: RequestParams) =>
-      this.request<any, string | ApiErrorResponse>(`/contents_resources${this.addQueryParams(query)}`, "GET", params),
+      this.request<any, string | ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_resources${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags content
@@ -881,7 +933,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get the path of a resource
      */
     getContentResourcePath: (resource_id: string, params?: RequestParams) =>
-      this.request<any, string | ApiErrorResponse>(`/contents_resources/${resource_id}`, "GET", params),
+      this.request<any, string | ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_resources/${resource_id}`,
+        "GET",
+        params
+      ),
   };
   learningOutcomes = {
     /**
@@ -975,8 +1031,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/learning_outcomes/{outcome_id}/publish
      * @description submit publish learning outcomes
      */
-    publishLearningOutcomes: (outcome_id: string, params?: RequestParams) =>
-      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/publish`, "PUT", params),
+    publishLearningOutcomes: (outcome_id: string, PublishOutcomeRequest: ApiPublishOutcomeReq, params?: RequestParams) =>
+      this.request<string, ApiErrorResponse>(`/learning_outcomes/${outcome_id}/publish`, "PUT", params, PublishOutcomeRequest),
 
     /**
      * @tags learning_outcomes
