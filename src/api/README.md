@@ -26,6 +26,6 @@ ScheduleTimeView = EntityScheduleListView
 
 ### 函数接口冲突
 
-| 函数名         | 地址                               | 原参数           | 现参数     |
-| -------------- | ---------------------------------- | ---------------- | ---------- |
-| publishContent | PUT:/contents/{content_id}/publish | content_id, data | content_id |
+| 函数名         | 地址                               | 原参数           | 现参数     | 说明 ｜  |
+| -------------- | ---------------------------------- | ---------------- | ---------- | -------- |
+| publishContent | PUT:/contents/{content_id}/publish | content_id, data | content_id | 漏了参数 |
