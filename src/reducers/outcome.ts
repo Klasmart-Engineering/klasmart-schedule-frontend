@@ -104,7 +104,7 @@ export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOu
 
 // type BulkActionIds = Parameters<typeof>
 type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
-export const bulkDeleteOutcome = createAsyncThunk<BulkDeleteOutcomeResult, Required<ApiOutcomeIDList>["outcome_ids"]>(
+export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
     if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
@@ -114,7 +114,7 @@ export const bulkDeleteOutcome = createAsyncThunk<BulkDeleteOutcomeResult, Requi
     return api.bulk.deleteOutcomeBulk({ outcome_ids: ids });
   }
 );
-export const bulkPublishOutcome = createAsyncThunk<ApiOutcomeView, Required<ApiOutcomeIDList>["outcome_ids"]>(
+export const bulkPublishOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkPublishOutcome",
   async (ids, { dispatch }) => {
     if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
