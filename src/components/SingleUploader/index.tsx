@@ -37,7 +37,7 @@ function BaseUploader(props: BaseUploaderProps) {
 
 const parseExtension = (filename: string) => {
   if (!filename.includes(".")) return "";
-  return filename.split(".").pop();
+  return filename.split(".").pop() || "";
 };
 
 type FetchUploadUrlResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
