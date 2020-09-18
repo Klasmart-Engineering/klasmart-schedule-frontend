@@ -26,13 +26,15 @@ ScheduleTimeView = EntityScheduleListView
 
 ### 函数接口冲突
 
-| 函数名         | 地址                               | 原参数           | 现参数     | 说明 ｜  |
-| -------------- | ---------------------------------- | ---------------- | ---------- | -------- |
-| publishContent | PUT:/contents/{content_id}/publish | content_id, data | content_id | 漏了参数 |
-| rejectLearningOutcomes | PUT:/learning_outcomes/\${outcome_id}/reject | outcome_id, data | outcome_id |
+| 函数名                  | 地址                                          | 原参数           | 现参数     | 说明 ｜  |
+| ----------------------- | --------------------------------------------- | ---------------- | ---------- | -------- |
+| publishContent          | PUT:/contents/{content_id}/publish            | content_id, data | content_id | 漏了参数 |
+| rejectLearningOutcomes  | PUT:/learning_outcomes/\${outcome_id}/reject  | outcome_id, data | outcome_id |
 | publishLearningOutcomes | PUT:/learning_outcomes/\${outcome_id}/publish | outcome_id, data | outcome_id |
 
-| 函数名              | 地址                                     | 原参数            | 现参数      | 说明     | 原返回值 | 先返回值 |
-| ------------------- | ---------------------------------------- | ---------------- | ----------- | -------- | -------- | -------- |
-| searchContents      | GET:/contents                            |                  |             |          | rotal, list | list     |
-| rejectContentReview | PUT:/contents/{content_id}/review/reject | content_id, data | content_id  |
+| 函数名              | 地址                                     | 原参数           | 现参数     | 说明 | 原返回值    | 先返回值 |
+| ------------------- | ---------------------------------------- | ---------------- | ---------- | ---- | ----------- | -------- |
+| searchContents      | GET:/contents                            |                  |            |      | rotal, list | list     |
+| rejectContentReview | PUT:/contents/{content_id}/review/reject | content_id, data | content_id |
+| getAssessment       | GET:/assessments/{id}                    | id: string       | id: number |
+| updateAssessment    | PUT:/assessments/{id}                    | id: string       | id: number |
