@@ -32,10 +32,10 @@ export enum Author {
 export enum OrderBy {
   id = "id",
   _id = "-id",
-  created_at = "created_at",
-  _created_at = "-created_at",
-  updated_at = "updated_at",
-  _updated_at = "-updated_at",
+  created_at = "create_at",
+  _created_at = "-create_at",
+  updated_at = "update_at",
+  _updated_at = "-update_at",
   content_name = "content_name",
   _content_name = "-content_name",
 }
