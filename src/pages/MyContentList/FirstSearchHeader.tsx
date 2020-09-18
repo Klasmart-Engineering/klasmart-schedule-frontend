@@ -155,7 +155,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssets } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, publish_status: QueryCondition["publish_status"] | string) => {
+  const handleChange = (event: React.ChangeEvent<{}>, publish_status: QueryCondition["publish_status"] | Assets.assets_type) => {
     if (publish_status === Assets.assets_type) {
       return onChangeAssets(Assets.assets_type);
     }
