@@ -234,7 +234,7 @@ function EditBox(props: CalendarStateProps) {
 
   const currentTime = timestampInt(new Date().getTime() / 1000);
 
-  const initData = {
+  const initData: EntityScheduleAddView = {
     attachment: {},
     class_id: "",
     class_type: "OnlineClass",
@@ -245,12 +245,15 @@ function EditBox(props: CalendarStateProps) {
     is_force: true,
     is_repeat: false,
     lesson_plan_id: "",
+    org_id: "",
     program_id: "",
     repeat: {},
     start_at: currentTime,
     subject_id: "",
     teacher_ids: [],
+    time_zone_offset: 0,
     title: "",
+    version: 0,
   };
 
   const [scheduleList, setScheduleList] = React.useState<EntityScheduleAddView>(initData);
