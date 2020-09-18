@@ -108,9 +108,10 @@ interface OutcomesTableProps {
   value?: LearningOutcomes[];
   onChange?: (value: LearningOutcomes[]) => any;
   onGoOutcomesDetail: (id: LearningOutcomes["outcome_id"]) => any;
+  open?: boolean;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail } = props;
+  const { list, value, onChange, onGoOutcomesDetail, open } = props;
   const css = useStyles();
   const handleAction = (item: LearningOutcomes, type: "add" | "remove") => {
     const { outcome_id: id } = item;
@@ -131,9 +132,13 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     list &&
     list.map((item, idx) => (
       <TableRow key={item.outcome_id}>
-        <TableCell className={css.outcomeCursor} onClick={() => onGoOutcomesDetail(item.outcome_id) as any}>
-          {item.outcome_name}
-        </TableCell>
+        {open ? (
+          <TableCell>{item.outcome_name}</TableCell>
+        ) : (
+          <TableCell className={css.outcomeCursor} onClick={() => onGoOutcomesDetail(item.outcome_id) as any}>
+            {item.outcome_name}
+          </TableCell>
+        )}
         <TableCell>{item.shortcode}</TableCell>
         <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
         <TableCell>{item.author_name}</TableCell>
@@ -200,7 +205,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
+          <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} open={open} />
         </DialogContent>
       </Dialog>
     </Box>

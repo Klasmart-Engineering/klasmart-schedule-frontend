@@ -128,7 +128,7 @@ function PopupInput(props: PopupInputProps) {
   }, false);
   const attendanceString = useMemo(() => {
     const { attendances } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
-    return attendances?.map((item) => item.name).join(", ");
+    return attendances && attendances[0] ? attendances?.map((item) => item.name).join(", ") : "";
   }, [assessmentDetail, value]);
   const handleOk = useCallback(() => {
     const { attendance_ids } = formMethods.getValues();

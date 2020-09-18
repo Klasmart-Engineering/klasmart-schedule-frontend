@@ -89,7 +89,7 @@ const { reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getAssessment.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
-      // state.assessmentDetail = initialState.assessmentDetail;
+      state.assessmentDetail = initialState.assessmentDetail;
     },
     [getAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       if (payload) {
