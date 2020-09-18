@@ -1,79 +1,49 @@
-### 下列类型被引用
-
-src/models/ModelContentDetailForm.ts:import { Content, CreateContentRequest } from "../api/api";
-src/models/ModelLessonPlan.ts:import { Content } from "../api/api";
-src/models/ModelOutcomeDetailForm.ts:import { LearningOutcomes } from "../api/api";
-src/pages/OutcomeEdit/OutcomeForm.tsx:import { LearningOutcomes } from "../../api/api";
-src/pages/Schedule/ScheduleEdit.tsx:import { CommonShort, ScheduleCreate } from "../../api/api";
-src/pages/Schedule/SearchList.tsx:import { Schedule } from "../../api/api";
-src/pages/OutcomeList/types/index.ts:import { OutcomesIDListRequest } from "../../../api/api";
-src/pages/OutcomeList/OutcomeTable.tsx:import { LearningOutcomes } from "../../api/api";
-src/pages/OutcomeList/TableList.bak:import { LearningOutcomes } from "../../api/api";
-src/pages/AssesmentList/types/index.ts:import { OutcomesIDListRequest } from "../../../api/api";
-src/pages/MyContentList/types/index.ts:import { ContentIDListRequest } from "../../../api/api";
-src/pages/MyContentList/ContentCardList.tsx:import { Content } from "../../api/api";
-src/pages/ContentEdit/index.tsx:import { LearningOutcomes } from "../../api/api";
-src/pages/ContentEdit/Details.tsx:import { Content } from "../../api/api";
-src/pages/ContentEdit/Outcomes.tsx:import { LearningOutcomes } from "../../api/api";
-src/pages/ContentEdit/ContentHeader.tsx:import { Content } from "../../api/api";
-src/pages/ContentEdit/AssetDetails.tsx:import { Content } from "../../api/api";
-src/pages/ContentEdit/MediaAssets.tsx:import { Content } from "../../api/api";
-src/pages/ContentEdit/MediaAssetsEdit.tsx:import { Content } from "../../api/api";
-src/pages/ContentPreview/index.tsx:import { Content } from "../../api/api";
-src/pages/ContentPreview/ContentPreviewHeader.tsx:import { Content } from "../../api/api";
-src/pages/ContentPreview/LeaningOutcomes.tsx:import { LearningOutcomes } from "../../api/api";
-src/pages/ContentPreview/Detail.tsx:import { Content } from "../../api/api";
-src/reducers/schedule.ts:import { Schedule, ScheduleCreate, ScheduleDetailed, ScheduleTimeView } from "../api/api";
-src/reducers/content.ts:import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
-src/reducers/outcome.ts:import { CreateLearningOutComesRequest, CreateLearningOutcomesResponse, LearningOutcomes, OutcomesIDListRequest } from "../api/api";
-
-
 ### 下列api接口被引用，需要替换
-api.assessments.getAssessment =
-api.assessments.listAssessment =
-api.assessments.updateAssessment =
-api.bulk.deleteOutcomeBulk =
-api.bulkPublish.publishLearningOutcomesBulk =
-api.contents.approveContentReview =
-api.contents.createContent =
-api.contents.getContentById =
-api.contents.getLiveToken =
-api.contents.lockContent =
-api.contents.publishContent =
-api.contents.rejectContentReview =
-api.contents.searchContents =
-api.contents.updateContent =
-api.contentsBulk.deleteContentBulk =
-api.contentsBulk.publishContentBulk =
-api.contentsResources.getContentResourceUploadPath =
-api.learningOutcomes.approveLearningOutcomes =
-api.learningOutcomes.createLearningOutcomes =
-api.learningOutcomes.deleteLearningOutcome =
-api.learningOutcomes.getLearningOutcomesById =
-api.learningOutcomes.lockLearningOutcomes =
-api.learningOutcomes.publishLearningOutcomes =
-api.learningOutcomes.rejectLearningOutcomes =
-api.learningOutcomes.searchLearningOutcomes =
-api.learningOutcomes.updateLearningOutcomes =
-api.schedules.createSchedule =
-api.schedules.deleteSchedule =
-api.schedules.getLiveToken =
-api.schedules.getSchedulesById =
-api.schedules.querySchedules =
-api.schedules.updateSchedule =
-api.schedulesTimeView.schedulesTimeView =
+api.assessments.getAssessment = r
+api.assessments.listAssessment = x
+api.assessments.updateAssessment = r
+api.bulk.deleteOutcomeBulk = x
+api.bulkPublish.publishLearningOutcomesBulk = x
+api.contents.approveContentReview = x
+api.contents.createContent = r
+api.contents.getContentById = r
+api.contents.getLiveToken = j
+api.contents.lockContent = x
+api.contents.publishContent = x
+api.contents.rejectContentReview = x
+api.contents.searchContents = r
+api.contents.updateContent = r
+api.contentsBulk.deleteContentBulk = x
+api.contentsBulk.publishContentBulk = x
+api.contentsResources.getContentResourceUploadPath = q
+api.learningOutcomes.approveLearningOutcomes = z
+api.learningOutcomes.createLearningOutcomes = z
+api.learningOutcomes.deleteLearningOutcome = z
+api.learningOutcomes.getLearningOutcomesById = z
+api.learningOutcomes.lockLearningOutcomes = z
+api.learningOutcomes.publishLearningOutcomes = z
+api.learningOutcomes.rejectLearningOutcomes = z
+api.learningOutcomes.searchLearningOutcomes = r
+api.learningOutcomes.updateLearningOutcomes = x
+api.schedules.createSchedule = j
+api.schedules.deleteSchedule = j
+api.schedules.getLiveToken = j
+api.schedules.getSchedulesById = j
+api.schedules.querySchedules = j
+api.schedules.updateSchedule = j
+api.schedulesTimeView.schedulesTimeView = j
 
 
 ### 类型替换
-CommonShort = 
-Content = 
-ContentIDListRequest = 
-CreateContentRequest = 
-CreateLearningOutComesRequest = 
-CreateLearningOutcomesResponse = 
-LearningOutcomes = 
-OutcomesIDListRequest = 
-Schedule = 
-ScheduleCreate = 
-ScheduleDetailed = 
-ScheduleTimeView = 
+CommonShort = j
+Content = r
+ContentIDListRequest = x
+CreateContentRequest = r
+CreateLearningOutComesRequest = z
+CreateLearningOutcomesResponse = z
+LearningOutcomes = z
+OutcomesIDListRequest = x
+Schedule = j
+ScheduleCreate = j
+ScheduleDetailed = j
+ScheduleTimeView = j
