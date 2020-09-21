@@ -334,7 +334,7 @@ function SegmentBox(props: SegmentBoxProps) {
           <div className={clsx(computedCss.card, { [css.drappableBox]: !canDropCondition })}>
             <div ref={materialDropRef}>
               <Typography align="center" variant="body1" color="textSecondary">
-                Drop a lesson material here
+                "Drop a lesson material here"
               </Typography>
             </div>
           </div>

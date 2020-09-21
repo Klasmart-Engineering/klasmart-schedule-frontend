@@ -20,6 +20,7 @@ import React, { Fragment } from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
+import { d } from "../../locale/LocaleManager";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -116,11 +117,11 @@ function ContentHeader(props: HeaderProps) {
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
-          {sm ? "Create New Content" : "For Organizations"}
+          {sm ? d("Create New Content").t("library_label_create_new_content") : "For Organizations"}
         </Typography>
         <Hidden smDown>
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel}>
-            Cancel
+            {d("Cancel").t("library_label_cancel")}
           </Button>
           {lesson !== "assets" && (
             <LButton
@@ -131,7 +132,7 @@ function ContentHeader(props: HeaderProps) {
               onClick={onSave}
               disabled={contentDetail?.publish_status === "draft" && !isDirty}
             >
-              Save
+              {d("Save").t("library_label_save")}
             </LButton>
           )}
           {!(lesson === "assets" && id) && (
@@ -142,7 +143,7 @@ function ContentHeader(props: HeaderProps) {
               onClick={onPublish as any}
               disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
             >
-              Publish
+              {d("Publish").t("library_label_publish")}
             </LButton>
           )}
           {lesson === "assets" && id && (
@@ -153,7 +154,7 @@ function ContentHeader(props: HeaderProps) {
               className={clsx(css.headerButton, css.redOutlinedButton)}
               onClick={onDelete as any}
             >
-              Delete
+              {d("Delete").t("library_label_delete")}
             </LButton>
           )}
         </Hidden>
@@ -161,7 +162,7 @@ function ContentHeader(props: HeaderProps) {
       <Hidden smDown>
         <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
           <Typography variant="h6" className={css.title}>
-            Create New Content
+            {d("Create New Content").t("library_label_create_new_content")}
           </Typography>
         </Box>
       </Hidden>
@@ -219,19 +220,19 @@ function ContentHeader(props: HeaderProps) {
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="assets" />}
-            label={<Typography variant={radioTypography}>Assets</Typography>}
+            label={<Typography variant={radioTypography}>{d("Assets").t("library_label_assets")}</Typography>}
           />
           <FormControlLabel
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="material" />}
-            label={<Typography variant={radioTypography}>Lesson Material</Typography>}
+            label={<Typography variant={radioTypography}>{d("Lesson Material").t("library_label_lesson_material")}</Typography>}
           />
           <FormControlLabel
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value="plan" />}
-            label={<Typography variant={radioTypography}>Lesson Plan</Typography>}
+            label={<Typography variant={radioTypography}>{d("Lesson Plan").t("library_label_lesson_plan")}</Typography>}
           />
         </RadioGroup>
       </Box>

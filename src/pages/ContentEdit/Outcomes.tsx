@@ -22,6 +22,7 @@ import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
+import { d } from "../../locale/LocaleManager";
 import { Comingsoon, NoFiles } from "./MediaAssets";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -140,7 +141,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
           </TableCell>
         )}
         <TableCell>{item.shortcode}</TableCell>
-        <TableCell>{item.assumed ? "Yes" : ""}</TableCell>
+        <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
         <TableCell>{item.author_name}</TableCell>
         <TableCell>
           {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
@@ -157,10 +158,10 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>
             <TableRow>
-              <TableCell>Learning Outcomes</TableCell>
-              <TableCell>Short Code</TableCell>
-              <TableCell>Assumed</TableCell>
-              <TableCell>Author</TableCell>
+              <TableCell>{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
+              <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
+              <TableCell>{d("Assumed").t("assess_label_assumed")}</TableCell>
+              <TableCell>{d("Author").t("library_label_author")}</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>

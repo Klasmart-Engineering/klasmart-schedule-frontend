@@ -9,6 +9,7 @@ import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
@@ -121,7 +122,7 @@ export function Empty() {
     <Fragment>
       <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        Empty...
+        {d("Empty").t("library_label_empty") + "..."}
       </Typography>
     </Fragment>
   );
@@ -133,7 +134,7 @@ export function Comingsoon() {
     <Fragment>
       <img className={css.comingsoonImage} alt="comingsoon" src={comingsoonIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        Comingsoon...
+        {d("Coming soon...").t("library_msg_coming_soon")}
       </Typography>
     </Fragment>
   );
@@ -202,9 +203,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
           <TableHead className={css.tableHead}>
             <TableRow>
               <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>
-              <TableCell>{lesson === "plan" ? "Material" : "Plan"} Name</TableCell>
-              <TableCell>Author</TableCell>
-              {/* <TableCell className={css.cellAction}>Action</TableCell> */}
+              <TableCell>
+                {lesson === "plan" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}{" "}
+              </TableCell>
+              <TableCell>{d("Author").t("library_label_author")}</TableCell>
+              {/* <TableCell className={css.cellAction}>{d("Actions").t('assess_label_actions')}</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>{rows}</TableBody>

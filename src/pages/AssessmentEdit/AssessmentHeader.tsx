@@ -20,6 +20,7 @@ import React, { Fragment, useCallback, useReducer } from "react";
 import { GetAssessmentResult } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
+import { d } from "../../locale/LocaleManager";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -118,10 +119,10 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
         {assessmentDetail.status === "in_progress" && (
           <Hidden smDown>
             <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={toggleCancel}>
-              Cancel
+              {d("Cancel").t("assess_label_cancel")}
             </Button>
             <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
-              Save
+              {d("Save").t("assess_label_save")}
             </LButton>
             <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={toggle as any}>
               Compelete
@@ -157,10 +158,10 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
-            Cancel
+            {d("Cancel").t("assess_label_cancel")}
           </Button>
           <Button onClick={handleOk} color="primary">
-            Ok
+            {d("OK").t("assess_label_ok")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -170,7 +171,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggleCancel} color="primary">
-            Cancel
+            {d("Cancel").t("assess_label_cancel")}
           </Button>
           <Button onClick={handleDiscard} color="primary">
             Discard

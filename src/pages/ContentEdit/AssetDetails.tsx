@@ -19,6 +19,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
+import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
@@ -118,7 +119,7 @@ function AssetsDetails(props: AssetDetailsProps) {
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
         <TextField
-          label="Lesson Material"
+          label={d("Lesson Material").t("library_label_lesson_material")}
           required
           value={fileType}
           onChange={(e) => handleTopicListChange(e, "fileType")}
@@ -180,7 +181,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             <FormattedTextField
               select
               className={css.fieldset}
-              label="Program"
+              label={d("Program").t("library_label_program")}
               encode={encodeOneItemArray}
               decode={decodeOneItemArray}
               {...props}
@@ -201,7 +202,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           as={TextField}
           select
           className={css.fieldset}
-          label="Subject"
+          label={d("Subject").t("library_label_subject")}
           name="subject"
           control={control}
           SelectProps={{ multiple: true }}
@@ -246,7 +247,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Skills"
+            label={d("Skills").t("library_label_skills")}
             rules={{ required: true }}
             error={errorValidator(errors.skills)}
             SelectProps={{ multiple: true }}
@@ -265,7 +266,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Age"
+            label={d("Age").t("library_label_age")}
             rules={{ required: true }}
             error={errorValidator(errors.age)}
             SelectProps={{ multiple: true }}
@@ -282,7 +283,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Grade"
+            label={d("Grade").t("library_label_grade")}
             rules={{ required: true }}
             error={errorValidator(errors.grade)}
             SelectProps={{ multiple: true }}
@@ -297,7 +298,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           name="description"
           className={css.fieldset}
-          label="Description"
+          label={d("Description").t("library_label_description")}
           defaultValue={contentDetail.description}
           disabled={isIdExist()}
         />
@@ -307,7 +308,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           name="keywords"
           decode={decodeArray}
           className={css.fieldset}
-          label="Keywords"
+          label={d("Keywords").t("library_label_keywords")}
           defaultValue={contentDetail.keywords}
           disabled={isIdExist()}
         />

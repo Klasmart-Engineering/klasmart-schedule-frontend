@@ -23,6 +23,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
+import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
@@ -144,7 +145,7 @@ export default function Details(props: DetailsProps) {
           control={control}
           className={css.fieldset}
           name="name"
-          label={lesson === "material" ? "Material Name" : "Plan Name"}
+          label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required
           defaultValue={contentDetail.name}
           rules={{ required: true }}
@@ -171,7 +172,7 @@ export default function Details(props: DetailsProps) {
                     color="primary"
                     endIcon={<CloudUploadOutlined />}
                   >
-                    Thumbnail
+                    {d("Thumbnail").t("library_label_thumbnail")}
                   </Button>
                   {isUploading && <ProgressWithText value={item?.completed} />}
                   {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
@@ -190,7 +191,7 @@ export default function Details(props: DetailsProps) {
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled
-              label="Created on"
+              label={d("Created On").t("library_label_created_on")}
             ></Controller>
             <Controller
               as={TextField}
@@ -200,7 +201,7 @@ export default function Details(props: DetailsProps) {
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled
-              label="Author"
+              label={d("Author").t("library_label_author")}
             ></Controller>
           </Box>
         )}
@@ -222,7 +223,7 @@ export default function Details(props: DetailsProps) {
             <FormattedTextField
               select
               className={css.fieldset}
-              label="Program"
+              label={d("Program").t("library_label_program")}
               encode={encodeOneItemArray}
               decode={decodeOneItemArray}
               {...props}
@@ -241,7 +242,7 @@ export default function Details(props: DetailsProps) {
           select
           SelectProps={{ multiple: true }}
           className={css.fieldset}
-          label="Subject"
+          label={d("Subject").t("library_label_subject")}
           name="subject"
           defaultValue={contentDetail.subject}
           control={control}
@@ -282,7 +283,7 @@ export default function Details(props: DetailsProps) {
             SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Skills"
+            label={d("Skills").t("library_label_skills")}
           >
             {menuItemList(flattenedMockOptions.skills)}
           </Controller>
@@ -297,7 +298,7 @@ export default function Details(props: DetailsProps) {
             SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Age"
+            label={d("Age").t("library_label_age")}
           >
             {menuItemList(flattenedMockOptions.age)}
           </Controller>
@@ -310,7 +311,7 @@ export default function Details(props: DetailsProps) {
             SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Grade"
+            label={d("Grade").t("library_label_grade")}
           >
             {menuItemList(flattenedMockOptions.grade)}
           </Controller>
@@ -319,7 +320,7 @@ export default function Details(props: DetailsProps) {
           as={TextField}
           select
           className={css.fieldset}
-          label="Visibility Settings"
+          label={d("Visibility Settings").t("library_label_visibility_settings")}
           name="publish_scope"
           required
           defaultValue={contentDetail.publish_scope}
@@ -337,7 +338,7 @@ export default function Details(props: DetailsProps) {
           multiline
           defaultValue={contentDetail.description}
           className={css.fieldset}
-          label="Description"
+          label={d("Description").t("library_label_description")}
         />
         <Controller
           as={FormattedTextField}
@@ -346,7 +347,7 @@ export default function Details(props: DetailsProps) {
           decode={decodeArray}
           defaultValue={contentDetail.keywords}
           className={css.fieldset}
-          label="Keywords"
+          label={d("Keywords").t("library_label_keywords")}
           helperText=""
         />
       </Box>

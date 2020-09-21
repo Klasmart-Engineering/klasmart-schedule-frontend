@@ -3,6 +3,7 @@ import { TabContext } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Children, ReactNode } from "react";
 import { useParams } from "react-router-dom";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   tabs: {
@@ -60,8 +61,8 @@ export default function ContentTabs(props: ContentTabsProps) {
           textColor="primary"
           onChange={(e, value) => onChangeTab(value)}
         >
-          <Tab className={css.tab} label="Details" value={VALUES[0]} />
-          <Tab className={css.tab} label="Learning Outcomes" value={VALUES[1]} />
+          <Tab className={css.tab} label={d("Details").t("library_label_details")} value={VALUES[0]} />
+          <Tab className={css.tab} label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />
           <Tab className={css.tab} label={lesson === "material" ? "Media Assets" : "Media Material"} value={VALUES[2]} />
         </Tabs>
         {tabPanels}
