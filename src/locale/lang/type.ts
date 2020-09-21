@@ -4,6 +4,7 @@ type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMes
 export type LangName = "en" | "k" | "cn";
 
 type LangRecord<T = string> =
+  | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
   | { id: "library_label_save"; description: "Save"; values: undefined }

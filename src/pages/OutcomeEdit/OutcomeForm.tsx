@@ -97,7 +97,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   as={TextField}
                   defaultValue={outcomeDetail.reject_reason}
                   fullWidth
-                  label="Reject Reason"
+                  label={d("Reject Reason").t("assess_label__reject_reason")}
                   disabled
                 />
               </Grid>
@@ -119,7 +119,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
             </Grid>
             {outcome_id && (
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                {/* <TextField size="small" value={outcomeDetail.shortcode} fullWidth label="Short Code" disabled /> */}
                 <Controller
                   name="shortcode"
                   as={TextField}
@@ -147,7 +146,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
             {outcome_id && (
               <>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  {/* <TextField value={outcomeDetail.organization_id} fullWidth label="Organization" disabled size="small" /> */}
                   <Controller
                     name="organization_id"
                     control={control}
@@ -160,7 +158,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   />
                 </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  {/* <TextField fullWidth value={timestampToTime(outcomeDetail.created_at)} disabled label="Create Time" size="small" /> */}
                   <Controller
                     name="created_at"
                     control={control}
@@ -176,7 +173,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   />
                 </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                  {/* <TextField value={outcomeDetail.author_name} fullWidth size="small" disabled label="Author" /> */}
                   <Controller
                     name="author_name"
                     control={control}
@@ -195,20 +191,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
         <Box style={{ paddingBottom: "10px", borderBottom: "1px solid #d7d7d7" }}>
           <Grid container justify="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              {/* <Controller
-                as={FormattedTextField}
-                select
-                label="Program"
-                name="program"
-                encode={encodeOneItemArray}
-                decode={decodeOneItemArray}
-                defaultValue={outcomeDetail.program}
-                control={control}
-                disabled={showEdit}
-                fullWidth
-              >
-                {getItems(flattenedMockOptions.program)}
-              </Controller> */}
               <Controller
                 name="program"
                 defaultValue={outcomeDetail.program}
