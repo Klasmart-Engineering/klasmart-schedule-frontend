@@ -545,6 +545,7 @@ function EditBox(props: CalendarStateProps) {
     const scheduleListOld = JSON.stringify(initScheduleList);
     const scheduleListNew = JSON.stringify(scheduleList);
     if (scheduleListNew === scheduleListOld && !checkedStatus.allDayCheck && !checkedStatus.repeatCheck && !checkedStatus.dueDateCheck) {
+      changeTimesTamp({ start: currentTime, end: currentTime });
       history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       return;
     }
@@ -700,7 +701,7 @@ function EditBox(props: CalendarStateProps) {
                   required
                   error={validator.start_at}
                   value={timestampToTime(scheduleList.start_at)}
-                  disabled={isScheduleExpired()}
+                  disabled={isScheduleExpired() || checkedStatus.allDayCheck}
                   onChange={(e) => handleTopicListChange(e, "start_at")}
                 />
               </Grid>
@@ -716,7 +717,7 @@ function EditBox(props: CalendarStateProps) {
                   required
                   error={validator.end_at}
                   value={timestampToTime(scheduleList.end_at)}
-                  disabled={isScheduleExpired()}
+                  disabled={isScheduleExpired() || checkedStatus.allDayCheck}
                   onChange={(e) => handleTopicListChange(e, "end_at")}
                 />
               </Grid>
