@@ -12,7 +12,7 @@ import {
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
 type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecordValuesByDesc<Desc> extends undefined
   ? {
-      (id: LangRecordIdByDescription<Desc>, values: any): FormatMessageReturn;
+      (id: LangRecordIdByDescription<Desc>): FormatMessageReturn;
     }
   : {
       <Id extends LangRecordIdByDescription<Desc>>(id: Id, values: LangeRecordValuesById<Id>): FormatMessageReturn;
