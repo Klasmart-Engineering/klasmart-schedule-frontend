@@ -16,6 +16,7 @@ import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { d } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { IAssessmentState } from "../../reducers/assessments";
 
@@ -196,10 +197,10 @@ export function OutcomesTable(props: OutcomesTableProps) {
         <TableHead className={css.tableHead}>
           <TableRow>
             <TableCell width={150} align="center">
-              Learning Outcomes
+              {d("Learning Outcomes").t("library_label_learning_outcomes")}
             </TableCell>
             <TableCell width={80} align="center">
-              Assumed
+              {d("Assumed").t("assess_label_assumed")}
             </TableCell>
             <TableCell align="center">Assessing Actions</TableCell>
           </TableRow>

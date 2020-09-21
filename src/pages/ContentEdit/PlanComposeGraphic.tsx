@@ -20,6 +20,7 @@ import { NavLink } from "react-router-dom";
 import blankImg from "../../assets/icons/deleted.jpg";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
 import { Thumbnail } from "../../components/Thumbnail";
+import { d } from "../../locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
@@ -186,7 +187,15 @@ const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) 
   const { type, ...restConditionBtnUIProps } = props;
   switch (type) {
     case "start":
-      return <ConditionBtnUI Icon={FlagOutlined} color="primary" label="START" {...restConditionBtnUIProps} ref={ref} />;
+      return (
+        <ConditionBtnUI
+          Icon={FlagOutlined}
+          color="primary"
+          label={d("START").t("library_label_start_uppercase")}
+          {...restConditionBtnUIProps}
+          ref={ref}
+        />
+      );
     case "ifCorrect":
       return <ConditionBtnUI Icon={Done} color="success" label="If Correct" {...restConditionBtnUIProps} ref={ref} />;
     case "ifWrong":
@@ -317,7 +326,7 @@ function SegmentBox(props: SegmentBoxProps) {
     return (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary">
-          Drop a condition or a lesson material here
+          {d("Drop a condition or a lesson material here").t("library_label_drop_condition_or_material")}
         </Typography>
       </div>
     );
@@ -334,7 +343,7 @@ function SegmentBox(props: SegmentBoxProps) {
           <div className={clsx(computedCss.card, { [css.drappableBox]: !canDropCondition })}>
             <div ref={materialDropRef}>
               <Typography align="center" variant="body1" color="textSecondary">
-                "Drop a lesson material here"
+                {d("Drop a lesson material here").t("library_label_drop_material")}
               </Typography>
             </div>
           </div>

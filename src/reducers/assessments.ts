@@ -1,6 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
+import { d } from "../locale/LocaleManager";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 
@@ -62,7 +63,7 @@ export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams
       data.outcome_attendance_maps &&
       data.outcome_attendance_maps.filter((item) => !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
     if (data.action === "completed" && errorlist && errorlist.length > 0)
-      return Promise.reject(dispatch(actWarning("Please fill in all the information")));
+      return Promise.reject(dispatch(actWarning(d("Please fill in all the information").t("assess_label_fill_all_information"))));
     await api.assessments.updateAssessment(id, data);
     return id;
   }

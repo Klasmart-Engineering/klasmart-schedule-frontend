@@ -114,7 +114,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
-          {sm ? name : "For Organizations"}
+          {sm ? name : d("For Organizations").t("library_label_for_organizations")}
         </Typography>
         {assessmentDetail.status === "in_progress" && (
           <Hidden smDown>
@@ -125,7 +125,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
               {d("Save").t("assess_label_save")}
             </LButton>
             <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={toggle as any}>
-              Compelete
+              {d("Compelete").t("assess_label_complete")}
             </Button>
           </Hidden>
         )}
@@ -154,7 +154,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
       )}
       <Dialog open={open} onClose={toggle} className={css.dialog}>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
-          You cannot change the assessment after clicking Complete.
+          {d("You cannot change the assessment after clicking Complete.").t("assess_label_conform_complete")}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
@@ -167,14 +167,14 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
       </Dialog>
       <Dialog open={openCancel} onClose={toggleCancel}>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
-          Discard unsaved changes?
+          {d("Discard unsaved changes?").t("assess_label_isdiscard")}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggleCancel} color="primary">
             {d("Cancel").t("assess_label_cancel")}
           </Button>
           <Button onClick={handleDiscard} color="primary">
-            Discard
+            {d("Discard").t("assess_label_discard")}
           </Button>
         </DialogActions>
       </Dialog>

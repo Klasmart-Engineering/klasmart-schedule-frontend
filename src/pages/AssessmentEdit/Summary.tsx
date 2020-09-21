@@ -20,6 +20,7 @@ import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { IAssessmentState } from "../../reducers/assessments";
@@ -158,7 +159,7 @@ function PopupInput(props: PopupInputProps) {
             Cancel
           </Button>
           <Button onClick={handleOk} color="primary">
-            Ok
+            OK
           </Button>
         </DialogActions>
       </Dialog>
@@ -207,7 +208,7 @@ export function Summary(props: SummaryProps) {
             name="subject.name"
             value={assessmentDetail.subject?.name || ""}
             className={css.fieldset}
-            label="Subject"
+            label={d("Subject").t("library_label_subject")}
           />
           <TextField
             fullWidth

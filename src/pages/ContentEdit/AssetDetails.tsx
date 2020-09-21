@@ -126,10 +126,10 @@ function AssetsDetails(props: AssetDetailsProps) {
           disabled={isIdExist()}
           select
         >
-          <MenuItem value="image">Image</MenuItem>
-          <MenuItem value="video">Video</MenuItem>
-          <MenuItem value="audio">Audio</MenuItem>
-          <MenuItem value="document">Document</MenuItem>
+          <MenuItem value="image">{d("Image").t("library_label_image")}</MenuItem>
+          <MenuItem value="video">{d("Video").t("library_label_video")}</MenuItem>
+          <MenuItem value="audio">{d("Audio").t("library_label_audio")}</MenuItem>
+          <MenuItem value="document">{d("Document").t("library_label_document")}</MenuItem>
         </TextField>
         <Controller
           name="thumbnail"
@@ -151,7 +151,7 @@ function AssetsDetails(props: AssetDetailsProps) {
                     style={{ visibility: isIdExist() ? "hidden" : "visible" }}
                     endIcon={<CloudUploadOutlined />}
                   >
-                    Thumbnail
+                    {d("Thumbnail").t("library_label_thumbnail")}
                   </Button>
                   {isUploading && <ProgressWithText value={item?.completed} />}
                   {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
@@ -165,7 +165,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           className={css.fieldset}
           name="name"
-          label={"Assets Name"}
+          label={d("Assets Name").t("library_label_asssets_name")}
           required
           rules={{ required: true }}
           defaultValue={contentDetail.name}
@@ -221,7 +221,7 @@ function AssetsDetails(props: AssetDetailsProps) {
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
-                label="Developmental"
+                label={d("Developmental").t("library_label_developmental")}
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}

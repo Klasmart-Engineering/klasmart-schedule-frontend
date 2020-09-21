@@ -145,7 +145,7 @@ export function NoFiles() {
     <Fragment>
       <img className={css.noFilesImage} alt="noFiles" src={noFilesIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        No file was found
+        {d("No file was found").t("library_label_no_files")}
       </Typography>
     </Fragment>
   );
@@ -202,7 +202,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>
             <TableRow>
-              <TableCell className={css.cellThumnbnail}>Thumbnail</TableCell>
+              <TableCell className={css.cellThumnbnail}>{d("Thumbnail").t("library_label_thumbnail")}</TableCell>
               <TableCell>
                 {lesson === "plan" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}{" "}
               </TableCell>

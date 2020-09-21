@@ -136,7 +136,7 @@ export default function Details(props: DetailsProps) {
               error
               id="rejectReason"
               value={contentDetail.reject_reason}
-              label="Reject Reason"
+              label={d("Reject Reason").t("library_label_reject_reson")}
             ></OutlinedInput>
           </FormControl>
         )}
@@ -212,7 +212,7 @@ export default function Details(props: DetailsProps) {
           decode={Number}
           type="number"
           className={css.fieldset}
-          label="Suggested Duration (min)"
+          label={d("Suggested Duration (min)").t("library_label_suggested_duration")}
           defaultValue={contentDetail.suggest_time}
         />
         <Controller
@@ -258,7 +258,7 @@ export default function Details(props: DetailsProps) {
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
-                label="Developmental"
+                label={d("Developmental").t("library_label_developmental")}
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}

@@ -63,7 +63,15 @@ export default function ContentTabs(props: ContentTabsProps) {
         >
           <Tab className={css.tab} label={d("Details").t("library_label_details")} value={VALUES[0]} />
           <Tab className={css.tab} label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />
-          <Tab className={css.tab} label={lesson === "material" ? "Media Assets" : "Media Material"} value={VALUES[2]} />
+          <Tab
+            className={css.tab}
+            label={
+              lesson === "material"
+                ? d("Media Assets").t("library_label_media_assets")
+                : d("Media Material").t("library_label_media_material")
+            }
+            value={VALUES[2]}
+          />
         </Tabs>
         {tabPanels}
       </TabContext>

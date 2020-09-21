@@ -5,6 +5,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { SingleUploader } from "../../components/SingleUploader";
+import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import AssetAudio from "./AssetPreview/AssetAudio";
 import AssetFile from "./AssetPreview/AssetFile";
@@ -76,7 +77,7 @@ function AssetPreview(props: PreviewProps) {
       {fileType === "audio" && <AssetAudio src={path} />}
       {fileType === "document" && <AssetFile src={path} />}
       <Typography variant="body1" style={{ marginTop: "12px" }}>
-        Content type: {getSuffix(source)}
+        {d("Content type").t("library_label_content_type")} : {getSuffix(source)}
       </Typography>
     </Box>
   );
@@ -131,7 +132,7 @@ function AssetEdit(props: AssetEditProps) {
   };
   return (
     <Box className={css.uploadBox} boxShadow={3}>
-      <p className={css.title}>Upload a file</p>
+      <p className={css.title}>{d("Upload a file").t("library_label_upload_a_file")}</p>
       <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
         <div className={css.uploadBtn}>
           <Controller
@@ -149,7 +150,7 @@ function AssetEdit(props: AssetEditProps) {
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
                     {!isUploading && !contentDetail.id && (
                       <Button variant="contained" color="primary" ref={btnRef}>
-                        Upload Files
+                        {d("Upload Files").t("library_label_upload_files")}
                       </Button>
                     )}
                     {isUploading && <ProgressWithText value={item?.completed} />}
@@ -166,7 +167,7 @@ function AssetEdit(props: AssetEditProps) {
 
 export function MediaAssetsEditHeader() {
   const css = useStyles();
-  return <Box className={css.assetsHeader}>Asset Details</Box>;
+  return <Box className={css.assetsHeader}>{d("Asset Details").t("library_label_asset_details")}</Box>;
 }
 
 function AssetPreviewOverlay() {

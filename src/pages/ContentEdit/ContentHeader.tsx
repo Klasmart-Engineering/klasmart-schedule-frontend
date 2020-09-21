@@ -117,7 +117,7 @@ function ContentHeader(props: HeaderProps) {
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
-          {sm ? d("Create New Content").t("library_label_create_new_content") : "For Organizations"}
+          {sm ? d("Create New Content").t("library_label_create_new_content") : d("For Organizations").t("library_label_for_organizations")}
         </Typography>
         <Hidden smDown>
           <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel}>
