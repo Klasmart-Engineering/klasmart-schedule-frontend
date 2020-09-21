@@ -75,7 +75,7 @@ export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, quer
   return api.schedules.querySchedule(data);
 });
 
-export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntityScheduleAddView, { state: Rootstate }>(
+export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntityScheduleAddView & LoadingMetaPayload, { state: Rootstate }>(
   "schedule/save",
   async (payload, { getState }) => {
     let {
@@ -89,7 +89,7 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       id = (await api.schedules.updateSchedule(id, payload)).id;
     }
     // @ts-ignore
-    return await api.schedules.getSchedulesById(id);
+    return await api.schedules.getScheduleById(id);
   }
 );
 

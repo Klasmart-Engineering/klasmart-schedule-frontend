@@ -386,15 +386,13 @@ function EditBox(props: CalendarStateProps) {
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
-      // @ts-ignore
       if (dueDateTimestamp <= scheduleList.end_at) {
         dispatch(actError("The due date cannot be earlier than the scheduled class end time."));
         return;
       }
       addData["due_at"] = dueDateTimestamp;
     }
-    // @ts-ignore
-    if (scheduleList.end_at < scheduleList.start_at) {
+    if (scheduleList.end_at <= scheduleList.start_at) {
       dispatch(actError("End time cannot be earlier than start time"));
       return;
     }
@@ -406,9 +404,9 @@ function EditBox(props: CalendarStateProps) {
       addData["repeat_edit_options"] = repeat_edit_options;
     }
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
-    const { payload } = ((await dispatch(saveScheduleData({ ...scheduleList, ...addData }))) as unknown) as PayloadAction<
-      AsyncTrunkReturned<typeof saveScheduleData>
-    >;
+    const { payload } = ((await dispatch(
+      saveScheduleData({ ...scheduleList, ...addData, metaLoading: true })
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
     if (payload) {
       dispatch(
         getScheduleTimeViewData({
