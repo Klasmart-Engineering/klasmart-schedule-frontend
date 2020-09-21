@@ -2,6 +2,7 @@ import { Chip, Grid, InputAdornment, TextField } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles(() => ({
@@ -30,7 +31,7 @@ export function Detail(props: ContentPreviewProps) {
         multiline
         disabled={true}
         rows={2}
-        label="Description"
+        label={d("Description").t("library_label_description")}
         variant="outlined"
         InputProps={{ readOnly: true }}
         value={contentPreview.description}
@@ -38,7 +39,7 @@ export function Detail(props: ContentPreviewProps) {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Created On"
+            label={d("Created On").t("library_label_created_on")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -48,7 +49,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Author"
+            label={d("Author").t("library_label_author")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -58,7 +59,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Program"
+            label={d("Program").t("library_label_program")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -68,7 +69,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Subject"
+            label={d("Subject").t("library_label_subject")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -78,7 +79,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Development"
+            label={d("Development").t("library_label_development")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -88,7 +89,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Skills"
+            label={d("Skills").t("library_label_skills")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -98,7 +99,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Visibility Settings"
+            label={d("Visibility Settings").t("library_label_visibility_settings")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -108,7 +109,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Duration"
+            label={d("Duration(Minutes)").t("library_label_duration")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -118,7 +119,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Suitable Age"
+            label={d("Suitable Age").t("library_label_suitable_age")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -128,7 +129,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Grade"
+            label={d("Grade").t("library_label_grade")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -141,7 +142,7 @@ export function Detail(props: ContentPreviewProps) {
         margin="normal"
         fullWidth
         disabled={true}
-        label="Keywords"
+        label={d("Keywords").t("library_label_keywords")}
         variant="outlined"
         InputProps={{
           readOnly: true,

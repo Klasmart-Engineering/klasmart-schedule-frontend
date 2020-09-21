@@ -5,6 +5,7 @@ import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutli
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
+import { d } from "../../locale/LocaleManager";
 import ContentH5p from "../ContentEdit/ContentH5p";
 import { DataH5p, PreviewBaseProps } from "./type";
 
@@ -119,7 +120,7 @@ function EmptyContent() {
     <Fragment>
       <img className={css.noH5p} src={noH5pUrl} alt="deleted" />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        The file has been deleted
+        {d("The file has been deleted").t("library_msg_file_deleted")}
       </Typography>
     </Fragment>
   );
@@ -161,14 +162,14 @@ export function H5pPreview(props: H5pPreview) {
         )}
         <Hidden only={["xs", "sm"]}>
           <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-            <Box style={{ fontSize: 18 }}>View in</Box>
-            <Typography style={{ fontSize: 24 }}>KidsLoop Live</Typography>
+            <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
+            <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
           </Box>
         </Hidden>
         <Hidden only={["md", "lg", "xl"]}>
           <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
-            <Box style={{ fontSize: 12 }}>View in</Box>
-            <Typography style={{ fontSize: 12 }}>KidsLoop Live</Typography>
+            <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>
+            <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
           </Box>
         </Hidden>
       </Box>

@@ -4,6 +4,7 @@ import React, { Fragment } from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType } from "../../api/type";
 import { Thumbnail } from "../../components/Thumbnail";
+import { d } from "../../locale/LocaleManager";
 import { TabValue } from "./type";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -48,7 +49,7 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
       <Box className={css.closeIconCon}>
         <CloseIcon style={{ cursor: "pointer" }} onClick={onClose} />
       </Box>
-      <Typography className={css.text}>Title</Typography>
+      <Typography className={css.text}>{d("Title").t("library_label_title")}</Typography>
       <Box className={css.nameCon}>
         <Typography className={css.text}>{contentPreview.name}</Typography>
         <Chip

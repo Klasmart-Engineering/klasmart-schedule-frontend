@@ -5,6 +5,7 @@ import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
+import { d } from "../../locale/LocaleManager";
 import { Assets } from "../MyContentList/types";
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -50,7 +51,7 @@ export function OperationBtn(props: ActionProps) {
     <Box display="flex" justifyContent="flex-end">
       {publish_status === PublishStatus.published && (
         <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
-          Remove
+          {d("Remove").t("library_label_remove")}
         </LButton>
       )}
       {(publish_status === PublishStatus.draft ||
@@ -58,12 +59,12 @@ export function OperationBtn(props: ActionProps) {
         publish_status === PublishStatus.rejected ||
         publish_status === PublishStatus.archive) && (
         <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
-          Delete
+          {d("Delete").t("library_label_delete")}
         </LButton>
       )}
       {publish_status === PublishStatus.pending && (
         <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
-          Reject
+          {d("Reject").t("library_label_reject")}
         </LButton>
       )}
       {(publish_status === PublishStatus.published ||
@@ -71,17 +72,17 @@ export function OperationBtn(props: ActionProps) {
         publish_status === PublishStatus.rejected ||
         content_type_name === Assets.assets_name) && (
         <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
-          Edit
+          {d("Edit").t("library_label_edit")}
         </LButton>
       )}
       {publish_status === PublishStatus.pending && (
         <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
-          Approve
+          {d("Approve").t("library_label_approve")}
         </LButton>
       )}
       {publish_status === PublishStatus.archive && (
         <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
-          Republish
+          {d("Republish").t("library_label_republish")}
         </LButton>
       )}
     </Box>

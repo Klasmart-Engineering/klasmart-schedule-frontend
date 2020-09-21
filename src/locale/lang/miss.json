@@ -1,3 +1,7 @@
 {
-  "assess_label__reject_reason": "Reject Reason"
+  "assess_label__reject_reason": "Reject Reason",
+  "library_label_title": "Title",
+  "library_label_suitable_age": "Suitable Age",
+  "library_label_view_in": "View in",
+  "library_label_kidsloop_live": "KidsLoop Live"
 }

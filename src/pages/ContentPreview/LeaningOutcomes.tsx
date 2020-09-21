@@ -2,6 +2,7 @@ import { Box, createStyles, makeStyles, Table, TableBody, TableCell, TableHead, 
 import TableContainer from "@material-ui/core/TableContainer/TableContainer";
 import React from "react";
 import { EntityOutcome } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 import { Empty } from "../ContentEdit/MediaAssets";
 
 const useStyles = makeStyles((theme) =>
@@ -46,10 +47,10 @@ export function LearningOutcome(props: LearningOutcomeProps) {
           <Table>
             <TableHead className={css.tableHead}>
               <TableRow>
-                <TableCell className={css.tableCell}>Learning Outcomes</TableCell>
-                <TableCell className={css.tableCell}>Short Code</TableCell>
-                <TableCell className={css.tableCell}>Assumed</TableCell>
-                <TableCell className={css.tableCell}>Author</TableCell>
+                <TableCell className={css.tableCell}>{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
+                <TableCell className={css.tableCell}>{d("Short Code").t("assess_label_short_code")}</TableCell>
+                <TableCell className={css.tableCell}>{d("Assumed").t("assess_label_assumed")}</TableCell>
+                <TableCell className={css.tableCell}>{d("Author").t("library_label_author")}</TableCell>
               </TableRow>
             </TableHead>
 
