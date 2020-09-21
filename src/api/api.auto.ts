@@ -425,6 +425,7 @@ export interface EntityScheduleDetailsView {
   program?: EntityScheduleShortInfo;
   repeat?: EntityRepeatOptions;
   start_at?: number;
+  status?: "NotStart" | "Started" | "Closed";
   subject?: EntityScheduleShortInfo;
   teachers?: EntityScheduleShortInfo[];
   title?: string;
@@ -437,6 +438,7 @@ export interface EntityScheduleListView {
   is_repeat?: boolean;
   lesson_plan_id?: string;
   start_at?: number;
+  status?: "NotStart" | "Started" | "Closed";
   title?: string;
 }
 
@@ -487,7 +489,7 @@ export interface EntityScheduleUpdateView {
 }
 
 export interface EntityUpdateAssessmentCommand {
-  action?: "save" | "completed";
+  action?: "save" | "complete";
   attendance_ids?: string[];
   id?: string;
   outcome_attendance_maps?: EntityOutcomeAttendanceMap[];

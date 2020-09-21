@@ -62,7 +62,7 @@ export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams
     const errorlist: IupdateAssessmentParams["data"]["outcome_attendance_maps"] =
       data.outcome_attendance_maps &&
       data.outcome_attendance_maps.filter((item) => !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
-    if (data.action === "completed" && errorlist && errorlist.length > 0)
+    if (data.action === "complete" && errorlist && errorlist.length > 0)
       return Promise.reject(dispatch(actWarning(d("Please fill in all the information").t("assess_label_fill_all_information"))));
     await api.assessments.updateAssessment(id, data);
     return id;

@@ -58,7 +58,7 @@ export function AssessmentsEdit() {
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const data: UpdateAssessmentRequestData = { ...value, action: "completed" };
+          const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
