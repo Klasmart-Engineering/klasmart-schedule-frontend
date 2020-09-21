@@ -55,6 +55,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "syncapi": "curl https://swagger-ui.kidsloop.net/config/api.swagger.json -so src/api/api.swagger.json && sta -p src/api/api.swagger.json -o ./src/api -n api.ts",
+    "syncLangMiss": "node ./scripts/syncLangType",
     "lint": "eslint --max-warnings=0 --ext .jsx,.js,.ts,.tsx src/",
     "eject": "react-scripts eject"
   },
