@@ -9,6 +9,9 @@ type LangRecord<T = string> =
   | { id: "library_label_suitable_age"; description: "Suitable Age"; values: undefined }
   | { id: "library_label_view_in"; description: "View in"; values: undefined }
   | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
+  | { id: "library_label_display_by"; description: "Display By"; values: undefined }
+  | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
+  | { id: "library_label_archive"; description: "Archive"; values: undefined }
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
   | { id: "library_label_save"; description: "Save"; values: undefined }

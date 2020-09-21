@@ -15,6 +15,7 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
+import { d } from "../../locale/LocaleManager";
 
 const PAGE_SIZE = 16;
 
@@ -157,7 +158,7 @@ export default function MyContentList() {
         <div style={{ margin: "0 auto", textAlign: "center" }}>
           <img src={emptyIconUrl} alt="" />
           <Typography variant="body1" color="textSecondary">
-            Empty...
+            {d("Empty").t("library_label_empty")}...
           </Typography>
         </div>
       )}

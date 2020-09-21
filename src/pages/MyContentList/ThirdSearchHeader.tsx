@@ -11,6 +11,7 @@ import { OrderBy, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { isUnpublish } from "./FirstSearchHeader";
 import { Assets, QueryCondition, QueryConditionBaseProps } from "./types";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,9 +91,9 @@ function SubUnpublished(props: QueryConditionBaseProps) {
       textColor="primary"
       centered
     >
-      <Tab value={PublishStatus.draft} label="Draft" />
-      <Tab value={PublishStatus.pending} label="Waiting for Approval" />
-      <Tab value={PublishStatus.rejected} label="Rejected" />
+      <Tab value={PublishStatus.draft} label={d("Draft").t("library_label_draft")} />
+      <Tab value={PublishStatus.pending} label={d("Waiting for Approval").t("library_label_waiting_for_approval")} />
+      <Tab value={PublishStatus.rejected} label={d("Rejected").t("library_label_rejected")} />
     </Tabs>
   );
 }
@@ -111,28 +112,28 @@ interface BulkActionOption {
 function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
   if (condition.content_type === Assets.assets_type) {
-    return [{ label: "delete", value: BulkAction.delete }];
+    return [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }];
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      return [{ label: "remove", value: BulkAction.remove }];
+      return [{ label: d("Remove").t("library_label_remove"), value: BulkAction.remove }];
     case PublishStatus.pending:
       return [];
     case PublishStatus.archive:
       return [
-        { label: "republish", value: BulkAction.publish },
-        { label: "delete", value: BulkAction.remove },
+        { label: d("Republish").t("library_label_republish"), value: BulkAction.publish },
+        { label: d("Delete").t("library_label_delete"), value: BulkAction.remove },
       ];
     default:
-      return unpublish ? [{ label: "delete", value: BulkAction.delete }] : [];
+      return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
   }
 }
 
 const sortOptions = [
-  { label: "Name(A-Z)", value: OrderBy.content_name },
-  { label: "Name(Z-A)", value: OrderBy._content_name },
-  { label: "Created On(New-Old)", value: OrderBy._created_at },
-  { label: "Created On(Old-New)", value: OrderBy.created_at },
+  { label: d("Name(A-Z)").t("assess_label_name_atoz"), value: OrderBy.content_name },
+  { label: d("Name(Z-A)").t("assess_label_name_ztoa"), value: OrderBy._content_name },
+  { label: d("Created On(New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._created_at },
+  { label: d("Created On(Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.created_at },
 ];
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
@@ -178,7 +179,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   style={{ width: 200 }}
                   size="small"
                   onChange={handleChangeBulkAction}
-                  label="Bulk Actions"
+                  label={d("Bulk Actions").t("library_label_bulk_actions")}
                   value=""
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -201,7 +202,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
-                label="Display By"
+                label={d("Display By").t("library_label_display_by")}
                 value={value.order_by}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

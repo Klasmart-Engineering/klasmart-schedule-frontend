@@ -9,6 +9,7 @@ import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Assets, QueryCondition, QueryConditionBaseProps } from "./types";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,7 +106,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
               <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
-                Create +
+                {d("Create").t("library_label_create")} +
               </Button>
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
@@ -114,35 +115,35 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
                 startIcon={<PublishOutlined />}
               >
-                Published
+                {d("Published").t("library_label_published")}
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.pending)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
                 startIcon={<HourglassEmptyOutlined />}
               >
-                Pending
+                {d("Pending").t("library_label_pending")}
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.draft)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
                 startIcon={<PublishOutlined />}
               >
-                Unpublished
+                {d("Unpublished").t("library_label_unpublished")}
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.archive)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "archive" })}
                 startIcon={<ArchiveOutlined />}
               >
-                Archived
+                {d("Archived").t("library_label_archived")}
               </Button>
               <Button
                 onClick={assetsHandleClick(Assets.assets_type)}
                 className={clsx(css.nav, { [css.actives]: value?.content_type === Assets.assets_type })}
                 startIcon={<PermMediaOutlined />}
               >
-                Assets
+                {d("Assets").t("library_label_assets")}
               </Button>
             </Grid>
           </Grid>
@@ -174,13 +175,13 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
-                aria-label="scrollable force tabs example"
+                aria-label={d("scrollable force tabs example").t("library_label_scrollable_tabs")}
               >
-                <Tab value={PublishStatus.published} label="Published" className={classes.capitalize} />
-                <Tab value={PublishStatus.pending} label="Pending" className={classes.capitalize} />
-                <Tab value={PublishStatus.draft} label="Unpublished" className={classes.capitalize} />
-                <Tab value={PublishStatus.archive} label="Archive" className={classes.capitalize} />
-                <Tab value={Assets.assets_type} label="Assets" className={classes.capitalize} />
+                <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
+                <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
+                <Tab value={PublishStatus.draft} label={d("Unpublished").t("library_label_unpublished")} className={classes.capitalize} />
+                <Tab value={PublishStatus.archive} label={d("Archive").t("library_label_archive")} className={classes.capitalize} />
+                <Tab value={Assets.assets_type} label={d("Assets").t("library_label_assets")} className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>
