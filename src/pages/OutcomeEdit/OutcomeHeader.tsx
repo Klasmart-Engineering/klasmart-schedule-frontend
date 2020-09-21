@@ -6,6 +6,7 @@ import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
+import { d } from "../../locale/LocaleManager";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -138,10 +139,10 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       className={clsx(css.headerButton, css.redButton)}
                       onClick={handleReset}
                     >
-                      Cancel
+                      {d("Cancel").t("assess_label_cancel")}
                     </Button>
                     <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={handleSave}>
-                      Save
+                      {d("Save").t("assess_label_save")}
                     </LButton>
                     <LButton
                       variant="contained"
@@ -150,13 +151,13 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       onClick={handlePublish}
                       disabled={isDirty}
                     >
-                      Publish
+                      {d("Publish").t("assess_label_publish")}
                     </LButton>
                   </>
                 ) : (
                   <>
                     <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                      Delete
+                      {d("Delete").t("assess_label_delete")}
                     </Button>
                     {/* <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
                         Cancel
@@ -169,7 +170,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                         className={clsx(css.headerButton, css.editButton)}
                         onClick={handleEdit}
                       >
-                        Edit
+                        {d("Edit").t("library_label_edit")}
                       </Button>
                     ) : (
                       <>
@@ -181,7 +182,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                           onClick={handleSave}
                           disabled={isDirty}
                         >
-                          Save
+                          {d("Save").t("assess_label_save")}
                         </LButton>
                         <LButton
                           variant="contained"
@@ -190,7 +191,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                           onClick={handlePublish}
                           disabled={!isDirty}
                         >
-                          Publish
+                          {d("Publish").t("assess_label_publish")}
                         </LButton>
                       </>
                     )}
@@ -201,7 +202,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
             {!showEdit && (
               <>
                 <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
-                  Cancel
+                  {d("Cancel").t("assess_label_cancel")}
                 </Button>
                 <LButton
                   variant="contained"
@@ -211,7 +212,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   onClick={handleSave}
                   disabled={!isDirty}
                 >
-                  Save
+                  {d("Save").t("assess_label_save")}
                 </LButton>
                 <LButton
                   variant="contained"
@@ -220,7 +221,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   onClick={handlePublish}
                   disabled={outcome_id ? isDirty : true}
                 >
-                  Publish
+                  {d("Publish").t("assess_label_publish")}
                 </LButton>
               </>
             )}
@@ -229,10 +230,10 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         {publish_status === "pending" && (
           <>
             <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-              Delete
+              {d("Delete").t("assess_label_delete")}
             </Button>
             <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
-              Reject
+              {d("Reject").t("assess_label_reject")}
             </Button>
             <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={handleApprove}>
               Approve
@@ -244,7 +245,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
             {showEdit && (
               <>
                 <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                  Delete
+                  {d("Delete").t("assess_label_delete")}
                 </Button>
                 <Button
                   variant="contained"
@@ -253,14 +254,14 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   className={clsx(css.headerButton, css.editButton)}
                   onClick={handleEdit}
                 >
-                  Edit
+                  {d("Edit").t("library_label_edit")}
                 </Button>
               </>
             )}
             {!showEdit && (
               <>
                 <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={handleReset}>
-                  Cancel
+                  {d("Cancel").t("assess_label_cancel")}
                 </Button>
                 <LButton
                   variant="contained"
@@ -270,7 +271,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   onClick={handleSave}
                   disabled={!isDirty}
                 >
-                  Save
+                  {d("Save").t("assess_label_save")}
                 </LButton>
                 <LButton
                   variant="contained"
@@ -279,7 +280,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   onClick={handlePublish}
                   disabled={isDirty}
                 >
-                  Publish
+                  {d("Publish").t("assess_label_publish")}
                 </LButton>
               </>
             )}
@@ -295,10 +296,10 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
               onClick={handleEdit}
               style={{ marginRight: "30px" }}
             >
-              Edit
+              {d("Edit").t("library_label_edit")}
             </Button>
             <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-              Delete
+              {d("Delete").t("assess_label_delete")}
             </Button>
           </>
         )}

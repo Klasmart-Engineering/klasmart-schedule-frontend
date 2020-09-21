@@ -4,6 +4,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { MockOptionsItem } from "../../api/extra";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
+import { d } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
 const useStyles = makeStyles(() => ({
@@ -109,7 +110,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 control={control}
                 fullWidth
-                label="Learning outcome Name"
+                label={d("Learning Outcome Name").t("assess_label_learning_outcome_name")}
                 disabled={showEdit}
                 defaultValue={outcome_id ? outcomeDetail.outcome_name : ""}
                 rules={{ required: true }}
@@ -125,7 +126,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   control={control}
                   defaultValue={outcomeDetail.shortcode}
                   fullWidth
-                  label="Short Code"
+                  label={d("Short Code").t("assess_label_short_code")}
                   disabled
                 />
               </Grid>
@@ -140,7 +141,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 render={() => <Checkbox checked={outcome_id ? assumed : true} disabled={showEdit} onChange={handleCheckBoxChange} />}
               />
               <p className={classes.checkLabel} style={{ color: showEdit ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.8)" }}>
-                Assumed
+                {d("Assumed").t("assess_label_assumed")}
               </p>
             </Grid>
             {outcome_id && (
@@ -153,7 +154,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     as={TextField}
                     defaultValue={outcomeDetail.organization_id}
                     fullWidth
-                    label="Organization"
+                    label={d("Organization").t("assess_label_organization")}
                     disabled
                     size="small"
                   />
@@ -166,7 +167,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     // as={TextField}
                     defaultValue={timestampToTime(outcomeDetail.created_at)}
                     fullWidth
-                    label="Create Time"
+                    label={d("Created On").t("assess_label_created_on")}
                     disabled
                     size="small"
                     render={() => (
@@ -182,7 +183,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     as={TextField}
                     defaultValue={outcomeDetail.author_name}
                     fullWidth
-                    label="Author"
+                    label={d("Author").t("assess_label_author")}
                     disabled
                     size="small"
                   />
@@ -215,7 +216,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 render={(props) => (
                   <FormattedTextField
                     select
-                    label="Program"
+                    label={d("Program").t("assess_label_program")}
                     encode={encodeOneItemArray}
                     decode={decodeOneItemArray}
                     {...props}
@@ -237,7 +238,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
-                label="Subject"
+                label={d("Subject").t("assess_label_subject")}
                 name="subject"
                 defaultValue={outcome_id ? outcomeDetail.subject : []}
                 control={control}
@@ -257,7 +258,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 render={(props) => (
                   <FormattedTextField
                     select
-                    label="Developmental"
+                    label={d("Development").t("assess_label_development")}
                     encode={encodeOneItemArray}
                     decode={decodeOneItemArray}
                     {...props}
@@ -279,7 +280,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
-                label="skills"
+                label={d("Skills").t("assess_label_skills")}
                 name="skills"
                 defaultValue={outcome_id ? outcomeDetail.skills : []}
                 control={control}
@@ -296,7 +297,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
-                label="Age"
+                label={d("Age").t("assess_label_age")}
                 name="age"
                 defaultValue={outcome_id ? outcomeDetail.age : []}
                 control={control}
@@ -311,7 +312,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
-                label="Grade"
+                label={d("Grade").t("assess_label_grade")}
                 name="grade"
                 defaultValue={outcome_id ? outcomeDetail.grade : []}
                 control={control}
@@ -332,7 +333,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="estimated_time"
                 decode={Number}
                 type="number"
-                label="Estimated time"
+                label={d("Estimated Time(Minutes)").t("assess_label_estimated_time")}
                 defaultValue={outcome_id ? outcomeDetail.estimated_time : 0}
                 fullWidth
                 disabled={showEdit}
@@ -347,7 +348,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="keywords"
                 decode={decodeArray}
                 defaultValue={outcome_id ? outcomeDetail.keywords : []}
-                label="Keywords"
+                label={d("Keywords").t("assess_label_keywords")}
                 helperText=""
                 fullWidth
                 disabled={showEdit}
@@ -361,7 +362,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 control={control}
                 defaultValue={outcome_id ? outcomeDetail.description : ""}
-                label="Description"
+                label={d("Description").t("assess_label_description")}
                 disabled={showEdit}
                 fullWidth
                 size="small"

@@ -1,5 +1,6 @@
 import { Button, TextField, useMediaQuery, useTheme } from "@material-ui/core";
 import React from "react";
+import { d } from "../../locale/LocaleManager";
 
 interface CustomizeRejectTemplateProps {
   handleClose: () => any;
@@ -18,8 +19,8 @@ export default function CustomizeRejectTemplate(props: CustomizeRejectTemplatePr
 
   return (
     <div style={{ width: sm ? "auto" : "400px", padding: "0px 30px 0px 0px" }}>
-      <h2 style={{ fontSize: "20px" }}>Edit recurring event</h2>
-      <p>Please specify the reason of rejection.</p>
+      <h2 style={{ fontSize: "20px" }}>Reject Reason</h2>
+      <p>{d("Please specify the reason for rejection.").t("assess_msg_reject_reason")}</p>
       <div>
         <TextField
           id="standard-basic"
@@ -35,10 +36,10 @@ export default function CustomizeRejectTemplate(props: CustomizeRejectTemplatePr
       </div>
       <div style={{ marginTop: "20px", textAlign: "right" }}>
         <Button color="primary" onClick={handleClose}>
-          Cancel
+          {d("Cancel").t("assess_label_cancel")}
         </Button>
         <Button color="primary" onClick={() => handleReject(reason)}>
-          Ok
+          {d("OK").t("assess_label_ok")}
         </Button>
       </div>
     </div>

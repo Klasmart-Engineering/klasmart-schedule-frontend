@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import ModalBox from "../../components/ModalBox";
+import { d } from "../../locale/LocaleManager";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
@@ -134,18 +135,18 @@ export default function CreateOutcomings() {
 
   const modalDate: any = {
     title: "",
-    text: "Are you sure you want to delete this learning outcome?",
+    text: d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content"),
     openStatus: openStatus,
     enableCustomization: enableCustomization,
     buttons: [
       {
-        label: "Cancel",
+        label: d("Cancel").t("assess_label_cancel"),
         event: () => {
           setOpenStatus(false);
         },
       },
       {
-        label: "Delete",
+        label: d("Delete").t("assess_label_delete"),
         event: async () => {
           const result: any = await dispatch(deleteOutcome(outcome_id));
           setOpenStatus(false);
