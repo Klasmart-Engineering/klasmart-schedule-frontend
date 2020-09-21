@@ -1,16 +1,16 @@
-import { Content, CreateContentRequest } from "../api/api";
+import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
 import { ContentType } from "../api/type";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 interface MyExtendedDetailForm {
-  outcome_entities?: Content["outcome_entities"];
+  outcome_entities?: EntityContentInfoWithDetails["outcome_entities"];
 }
-export interface ContentDetailPlanType extends Omit<CreateContentRequest, "data">, MyExtendedDetailForm {
+export interface ContentDetailPlanType extends Omit<EntityCreateContentRequest, "data">, MyExtendedDetailForm {
   data: Segment;
   created_at?: string;
 }
 let time: number | undefined = 0;
-export interface ContentDetailMaterialType extends Omit<CreateContentRequest, "data">, MyExtendedDetailForm {
+export interface ContentDetailMaterialType extends Omit<EntityCreateContentRequest, "data">, MyExtendedDetailForm {
   data: { source: string };
   created_at?: string;
 }
@@ -22,13 +22,13 @@ function isPlan(contentDetail: ContentDetailForm): contentDetail is ContentDetai
 }
 
 export class ModelContentDetailForm {
-  static encode(value: ContentDetailForm): Content {
+  static encode(value: ContentDetailForm): EntityContentInfoWithDetails {
     const data = isPlan(value) ? ModelLessonPlan.toString(value.data) : JSON.stringify(value.data);
     const created_at = time;
     return { ...value, data, created_at };
   }
 
-  static decode(contentDetail: Content): ContentDetailForm {
+  static decode(contentDetail: EntityContentInfoWithDetails): ContentDetailForm {
     const data = contentDetail.data ? JSON.parse(contentDetail.data) : {};
     time = contentDetail.created_at;
     const created_at = formattedTime(contentDetail.created_at);

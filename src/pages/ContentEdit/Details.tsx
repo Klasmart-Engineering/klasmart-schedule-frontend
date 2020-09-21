@@ -19,7 +19,7 @@ import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
@@ -74,7 +74,7 @@ function ProgressWithText(props: CircularProgressProps) {
   );
 }
 interface DetailsProps {
-  contentDetail: Content;
+  contentDetail: EntityContentInfoWithDetails;
   uploadThumnail?: Function;
   formMethods: UseFormMethods<ContentDetailForm>;
   flattenedMockOptions: FlattenedMockOptions;

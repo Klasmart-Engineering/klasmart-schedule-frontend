@@ -5,8 +5,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { LearningOutcomes } from "../../api/api";
-import { ContentType, OutcomePublishStatus } from "../../api/type";
+import { ApiOutcomeView } from "../../api/api.auto";
+import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -157,7 +157,13 @@ export default function ContentEdit() {
       history.replace({
         search: setQuery(history.location.search, { searchMedia }),
       });
-      dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", name: searchMedia }));
+      dispatch(
+        contentLists({
+          content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
+          publish_status: "published",
+          name: searchMedia,
+        })
+      );
     },
     [dispatch, history, lesson]
   );
@@ -208,7 +214,14 @@ export default function ContentEdit() {
   const handleChangePage = useMemo(
     () => (page: number) => {
       setPage(page);
-      dispatch(contentLists({ content_type: lesson === "material" ? "3" : "1", publish_status: "published", page, name: searchMedia }));
+      dispatch(
+        contentLists({
+          content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
+          publish_status: "published",
+          page,
+          name: searchMedia,
+        })
+      );
     },
     [dispatch, lesson, searchMedia]
   );
@@ -228,7 +241,7 @@ export default function ContentEdit() {
     [assumed, dispatch, searchOutcome]
   );
   const handleGoOutcomeDetail = useMemo(
-    () => (id: LearningOutcomes["outcome_id"]) => {
+    () => (id: ApiOutcomeView["outcome_id"]) => {
       history.push(`/assessments/outcome-edit?outcome_id=${id}`);
     },
     [history]

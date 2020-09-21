@@ -1,0 +1,3802 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "\"KidsLoop 2.0 backend rest api",
+    "title": "KidsLoop 2.0 REST API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {},
+    "license": {},
+    "version": "1.0.0"
+  },
+  "host": "https://kl2-test.kidsloop.net/v1",
+  "paths": {
+    "/assessments": {
+      "get": {
+        "description": "list assessments",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "list assessments",
+        "operationId": "listAssessment",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "status search",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher name fuzzy search",
+            "name": "teacher_name",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "default": 10,
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["class_end_time", "-class_end_time", "complete_time", "-complete_time"],
+            "type": "string",
+            "default": "-class_end_time",
+            "description": "list order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ListAssessmentsResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "add assessments",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "add assessments",
+        "operationId": "addAssessment",
+        "parameters": [
+          {
+            "description": "add assessment command",
+            "name": "assessment",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.AddAssessmentCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AddAssessmentResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/assessments/{id}": {
+      "get": {
+        "description": "get assessment detail",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "get assessment detail",
+        "operationId": "getAssessment",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "assessment id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AssessmentDetailView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update assessment",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "update assessment",
+        "operationId": "updateAssessment",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "assessment id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "update assessment assessment command",
+            "name": "update_assessment_command",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UpdateAssessmentCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bulk/learning_outcomes": {
+      "delete": {
+        "description": "bulk delete learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "bulk delete learning outcome",
+        "operationId": "deleteOutcomeBulk",
+        "parameters": [
+          {
+            "description": "outcome id list",
+            "name": "id_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeIDList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bulk_publish/learning_outcomes": {
+      "put": {
+        "description": "submit publish learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "publish bulk learning outcome",
+        "operationId": "publishLearningOutcomesBulk",
+        "parameters": [
+          {
+            "description": "outcome id list",
+            "name": "id_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeIDList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents": {
+      "get": {
+        "description": "query content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryContent",
+        "operationId": "searchContents",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content scope",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
+            "type": "string",
+            "description": "search content publish status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "create lesson plan, lesson material or assets",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "createContent",
+        "operationId": "createContent",
+        "parameters": [
+          {
+            "description": "create request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CreateContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateContentResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/pending": {
+      "get": {
+        "description": "query pending content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryPendingContent",
+        "operationId": "searchPendingContents",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content scope",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "enum": ["published", "draft", "pending", "rejected"],
+            "type": "string",
+            "description": "search content publish status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "create_at， -create_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/private": {
+      "get": {
+        "description": "query private content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryPrivateContent",
+        "operationId": "searchPrivateContents",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content scope",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "enum": ["published", "draft", "pending", "rejected"],
+            "type": "string",
+            "description": "search content publish status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "create_at， -create_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}": {
+      "get": {
+        "description": "get a content by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getContent",
+        "operationId": "getContentById",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "get content id",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetails"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update a content data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "updateContent",
+        "operationId": "updateContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id to publish",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "content data to update",
+            "name": "contentData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CreateContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete a content",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "deleteContent",
+        "operationId": "deleteContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id to delete",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}/live/token": {
+      "get": {
+        "description": "get content live token",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getContentLiveToken",
+        "operationId": "getContentLiveToken",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.LiveTokenView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}/lock": {
+      "put": {
+        "description": "lock a content to edit",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "lockContent",
+        "operationId": "lockContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id to lock",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateContentResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}/publish": {
+      "put": {
+        "description": "publish a content",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "publishContent",
+        "operationId": "publishContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id to publish",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "content publish data",
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.PublishContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}/review/approve": {
+      "put": {
+        "description": "approve content by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "approve content",
+        "operationId": "approveContentReview",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}/review/reject": {
+      "put": {
+        "description": "reject content by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "reject content",
+        "operationId": "rejectContentReview",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "reject_reason",
+            "name": "RejectReasonRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RejectReasonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/{content_id}/statistics": {
+      "get": {
+        "description": "get content data count",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "contentDataCount",
+        "operationId": "getContentsStatistics",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id to get count",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentStatisticsInfo"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_bulk": {
+      "delete": {
+        "description": "delete contents bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "deleteContentBulk",
+        "operationId": "deleteContentBulk",
+        "parameters": [
+          {
+            "description": "content bulk id list",
+            "name": "contentIds",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.contentBulkOperateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_bulk/publish": {
+      "put": {
+        "description": "publish contents bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "publishContentBulk",
+        "operationId": "publishContentBulk",
+        "parameters": [
+          {
+            "description": "content bulk id list",
+            "name": "contentIds",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.contentBulkOperateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_resources": {
+      "get": {
+        "description": "get path to upload resource",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getContentResourceUploadPath",
+        "operationId": "getContentResourceUploadPath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Resource partition",
+            "name": "partition",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Resource extension",
+            "name": "extension",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_resources/{resource_id}": {
+      "get": {
+        "description": "get the path of a resource",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getContentResourcePath",
+        "operationId": "getContentResourcePath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Resource id",
+            "name": "resource_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/learning_outcomes": {
+      "get": {
+        "description": "search learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "search learning outcome",
+        "operationId": "searchLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "outcome_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by keywords",
+            "name": "keywords",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by author_name",
+            "name": "author_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search by assumed: 1 true, 0 false, -1 all",
+            "name": "assumed",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "pending", "published", "rejected"],
+            "type": "string",
+            "description": "search by publish_status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeSearchResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "createOutcome",
+        "operationId": "createLearningOutcomes",
+        "parameters": [
+          {
+            "description": "create outcome",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeCreateView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeCreateResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/learning_outcomes/{outcome_id}": {
+      "get": {
+        "description": "learning outcomes info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "getLearningOutcome",
+        "operationId": "getLearningOutcomesById",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update learning outcomes by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "update learning outcome",
+        "operationId": "updateLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "learning outcome",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeCreateView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete learning outcomes by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "delete learning outcome",
+        "operationId": "deleteLearningOutcome",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/learning_outcomes/{outcome_id}/approve": {
+      "put": {
+        "description": "approve learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "approve learning outcome",
+        "operationId": "approveLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/learning_outcomes/{outcome_id}/lock": {
+      "put": {
+        "description": "edit published learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "lock learning outcome",
+        "operationId": "lockLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/learning_outcomes/{outcome_id}/publish": {
+      "put": {
+        "description": "submit publish learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "publish learning outcome",
+        "operationId": "publishLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "publish scope",
+            "name": "PublishOutcomeRequest",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/api.PublishOutcomeReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/learning_outcomes/{outcome_id}/reject": {
+      "put": {
+        "description": "reject learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "reject learning outcome",
+        "operationId": "rejectLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "outcome id",
+            "name": "outcome_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "reject reason",
+            "name": "OutcomeRejectReq",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeRejectReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/pending_learning_outcomes": {
+      "get": {
+        "description": "search pending learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "search pending learning outcome",
+        "operationId": "searchPendingLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "outcome_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by keywords",
+            "name": "keywords",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by author_name",
+            "name": "author_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search by assumed: 1 true, 0 false, -1 all",
+            "name": "assumed",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "pending", "published", "rejected"],
+            "type": "string",
+            "description": "search by publish_status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeSearchResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "description": "Ping and test service",
+        "consumes": ["application/json"],
+        "produces": ["text/plain"],
+        "tags": ["common"],
+        "summary": "Ping",
+        "operationId": "ping",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/private_learning_outcomes": {
+      "get": {
+        "description": "search private learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "search private learning outcome",
+        "operationId": "searchPrivateLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "outcome_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by keywords",
+            "name": "keywords",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by author_name",
+            "name": "author_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search by assumed: 1 true, 0 false, -1 all",
+            "name": "assumed",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "pending", "published", "rejected"],
+            "type": "string",
+            "description": "search by publish_status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeSearchResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules": {
+      "get": {
+        "description": "query schedule",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "querySchedule",
+        "operationId": "querySchedule",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "teacher name",
+            "name": "teacher_name",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "time zone offset",
+            "name": "time_zone_offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "search schedules by start_at",
+            "name": "start_at",
+            "in": "query"
+          },
+          {
+            "enum": ["create_at", "-create_at", "start_at", "-start_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page index, not paging if page <=0",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "records per page, not paging if page_size <= 0",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.SchedulePageView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "add a schedule data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "addSchedule",
+        "operationId": "addSchedule",
+        "parameters": [
+          {
+            "description": "schedule data to add",
+            "name": "scheduleData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleAddView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}": {
+      "get": {
+        "description": "get schedule by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduleByID",
+        "operationId": "getScheduleByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleDetailsView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update a schedule data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "updateSchedule",
+        "operationId": "updateSchedule",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "schedule data to update",
+            "name": "scheduleData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleUpdateView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete a schedule data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "deleteSchedule",
+        "operationId": "deleteSchedule",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": ["only_current", "with_following"],
+            "type": "string",
+            "description": "repeat edit options",
+            "name": "repeat_edit_options",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/live/token": {
+      "get": {
+        "description": "get schedule live token",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduleLiveToken",
+        "operationId": "getScheduleLiveToken",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.LiveTokenView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_time_view": {
+      "get": {
+        "description": "get schedule time view",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduleTimeView",
+        "operationId": "getScheduleTimeView",
+        "parameters": [
+          {
+            "enum": ["day", "work_week", "week", "month"],
+            "type": "string",
+            "description": "search schedules by view_type",
+            "name": "view_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "search schedules by time_at",
+            "name": "time_at",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "time zone offset",
+            "name": "time_zone_offset",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleListView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "api.Age": {
+      "type": "object",
+      "properties": {
+        "age_id": {
+          "type": "string"
+        },
+        "age_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.BadRequestResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.ConflictResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.CreateContentResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "api.Developmental": {
+      "type": "object",
+      "properties": {
+        "developmental_id": {
+          "type": "string"
+        },
+        "developmental_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": ["unknown"],
+          "example": "unknown"
+        }
+      }
+    },
+    "api.ForbiddenResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.Grade": {
+      "type": "object",
+      "properties": {
+        "grade_id": {
+          "type": "string"
+        },
+        "grade_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.InternalServerErrorResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.NotFoundResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.OutcomeCreateResponse": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "organization_name": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updated_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.OutcomeCreateView": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "api.OutcomeIDList": {
+      "type": "object",
+      "properties": {
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "api.OutcomeRejectReq": {
+      "type": "object",
+      "properties": {
+        "reject_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "api.OutcomeSearchResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.OutcomeView"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.OutcomeView": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.Age"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.Developmental"
+          }
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.Grade"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "organization_name": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.Program"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.Skill"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.Subject"
+          }
+        },
+        "update_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.Program": {
+      "type": "object",
+      "properties": {
+        "program_id": {
+          "type": "string"
+        },
+        "program_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.PublishContentRequest": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "api.PublishOutcomeReq": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "api.RejectReasonRequest": {
+      "type": "object",
+      "properties": {
+        "reject_reason": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "api.Skill": {
+      "type": "object",
+      "properties": {
+        "skill_id": {
+          "type": "string"
+        },
+        "skill_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.Subject": {
+      "type": "object",
+      "properties": {
+        "subject_id": {
+          "type": "string"
+        },
+        "subject_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.contentBulkOperateRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.AddAssessmentCommand": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_end_time": {
+          "type": "integer"
+        },
+        "class_length": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AddAssessmentResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentAttendanceView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentDetailView": {
+      "type": "object",
+      "properties": {
+        "attendances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentAttendanceView"
+          }
+        },
+        "class_end_time": {
+          "type": "integer"
+        },
+        "class_length": {
+          "type": "integer"
+        },
+        "complete_time": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "number_of_activities": {
+          "type": "integer"
+        },
+        "number_of_outcomes": {
+          "type": "integer"
+        },
+        "outcome_attendance_maps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.OutcomeAttendanceMapView"
+          }
+        },
+        "status": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentSubject"
+        },
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentTeacher"
+          }
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentListView": {
+      "type": "object",
+      "properties": {
+        "class_end_time": {
+          "type": "integer"
+        },
+        "complete_time": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "program": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentProgram"
+        },
+        "status": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentSubject"
+        },
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentTeacher"
+          }
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentProgram": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentSubject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentTeacher": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ContentInfoWithDetails": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "age_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "author": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "content_type_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "developmental_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extra": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grade_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "org": {
+          "type": "string"
+        },
+        "org_name": {
+          "type": "string"
+        },
+        "outcome_entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.Outcome"
+          }
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "program_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suggest_time": {
+          "type": "integer"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ContentInfoWithDetailsResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ContentInfoWithDetails"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ContentStatisticsInfo": {
+      "type": "object",
+      "properties": {
+        "outcomes_count": {
+          "type": "integer"
+        },
+        "subcontent_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.CreateContentRequest": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extra": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suggest_time": {
+          "type": "integer"
+        },
+        "thumbnail": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.IDResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ListAssessmentsResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentListView"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.LiveTokenView": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.Outcome": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "string"
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "deleted_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "string"
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.OutcomeAttendanceMap": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
+    "entity.OutcomeAttendanceMapView": {
+      "type": "object",
+      "properties": {
+        "assumed": {
+          "type": "boolean"
+        },
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
+    "entity.RepeatDaily": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatEnd"
+        },
+        "interval": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.RepeatEnd": {
+      "type": "object",
+      "properties": {
+        "after_count": {
+          "type": "integer"
+        },
+        "after_time": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["never", "after_count", "after_time"]
+        }
+      }
+    },
+    "entity.RepeatMonthly": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatEnd"
+        },
+        "interval": {
+          "type": "integer"
+        },
+        "on_date_day": {
+          "type": "integer"
+        },
+        "on_type": {
+          "type": "string",
+          "enum": ["date", "week"]
+        },
+        "on_week": {
+          "type": "string",
+          "enum": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        },
+        "on_week_seq": {
+          "type": "string",
+          "enum": ["first", "second", "third", "fourth", "last"]
+        }
+      }
+    },
+    "entity.RepeatOptions": {
+      "type": "object",
+      "properties": {
+        "daily": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatDaily"
+        },
+        "monthly": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatMonthly"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["daily", "weekly", "monthly", "yearly"]
+        },
+        "weekly": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatWeekly"
+        },
+        "yearly": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatYearly"
+        }
+      }
+    },
+    "entity.RepeatWeekly": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatEnd"
+        },
+        "interval": {
+          "type": "integer"
+        },
+        "on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+          }
+        }
+      }
+    },
+    "entity.RepeatYearly": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatEnd"
+        },
+        "interval": {
+          "type": "integer"
+        },
+        "on_date_day": {
+          "type": "integer"
+        },
+        "on_date_month": {
+          "type": "integer"
+        },
+        "on_type": {
+          "type": "string",
+          "enum": ["date", "week"]
+        },
+        "on_week": {
+          "type": "string",
+          "enum": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        },
+        "on_week_month": {
+          "type": "integer"
+        },
+        "on_week_seq": {
+          "type": "string",
+          "enum": ["first", "second", "third", "fourth", "last"]
+        }
+      }
+    },
+    "entity.ScheduleAddView": {
+      "type": "object",
+      "required": ["class_id", "end_at", "lesson_plan_id", "program_id", "start_at", "subject_id", "teacher_ids", "title"],
+      "properties": {
+        "attachment": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "is_all_day": {
+          "type": "boolean"
+        },
+        "is_force": {
+          "type": "boolean"
+        },
+        "is_repeat": {
+          "type": "boolean"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "repeat": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatOptions"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_zone_offset": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleDetailsView": {
+      "type": "object",
+      "properties": {
+        "attachment": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "class": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_all_day": {
+          "type": "boolean"
+        },
+        "is_repeat": {
+          "type": "boolean"
+        },
+        "lesson_plan": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "program": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "repeat": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatOptions"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "subject": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleListView": {
+      "type": "object",
+      "properties": {
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_repeat": {
+          "type": "boolean"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.SchedulePageView": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleSearchView"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleSearchView": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "lesson_plan": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "program": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "subject": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleShortInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleUpdateView": {
+      "type": "object",
+      "required": ["class_id", "end_at", "lesson_plan_id", "program_id", "start_at", "subject_id", "teacher_ids", "title"],
+      "properties": {
+        "attachment": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_all_day": {
+          "type": "boolean"
+        },
+        "is_force": {
+          "type": "boolean"
+        },
+        "is_repeat": {
+          "type": "boolean"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "repeat": {
+          "type": "object",
+          "$ref": "#/definitions/entity.RepeatOptions"
+        },
+        "repeat_edit_options": {
+          "type": "string",
+          "enum": ["only_current", "with_following"]
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_zone_offset": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.UpdateAssessmentCommand": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["save", "completed"]
+        },
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "outcome_attendance_maps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.OutcomeAttendanceMap"
+          }
+        }
+      }
+    }
+  }
+}

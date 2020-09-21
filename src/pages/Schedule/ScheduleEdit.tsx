@@ -12,7 +12,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { CommonShort, ScheduleCreate } from "../../api/api";
+import { EntityScheduleShortInfo, EntityScheduleAddView } from "../../api/api.auto";
 import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
@@ -95,7 +95,7 @@ function EditBox(props: CalendarStateProps) {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const defaults: CommonShort = { id: "", name: "" };
+  const defaults: EntityScheduleShortInfo = { id: "", name: "" };
 
   const { timesTamp, modelView, scheduleId, includeTable, changeTimesTamp, flattenedMockOptions, handleChangeProgramId, toLive } = props;
 
@@ -104,13 +104,13 @@ function EditBox(props: CalendarStateProps) {
 
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [openStatus, setOpenStatus] = React.useState(false);
-  const [classItem, setClassItem] = React.useState<CommonShort | undefined>(defaults);
-  const [lessonPlan, setLessonPlan] = React.useState<CommonShort | undefined>(defaults);
-  const [subjectItem, setSubjectItem] = React.useState<CommonShort | undefined>(defaults);
-  const [programItem, setProgramItem] = React.useState<CommonShort | undefined>(defaults);
+  const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [lessonPlan, setLessonPlan] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [teacherItem, setTeacherItem] = React.useState<any[] | undefined>([]);
   const [customizeTemplateType, setCustomizeTemplateType] = React.useState<"update" | "delete">("update");
-  const [contentsListSelect, setContentsListSelect] = React.useState<CommonShort[]>([defaults]);
+  const [contentsListSelect, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [enableCustomization, setEnableCustomization] = React.useState(true);
@@ -128,9 +128,9 @@ function EditBox(props: CalendarStateProps) {
   }, [scheduleDetial, scheduleDetial.attachment, scheduleId]);
 
   React.useEffect(() => {
-    const newContentsData: CommonShort[] = [];
+    const newContentsData: EntityScheduleShortInfo[] = [];
     if (contentsList.length > 0) {
-      contentsList.forEach((item: CommonShort) => {
+      contentsList.forEach((item: EntityScheduleShortInfo) => {
         newContentsData.push({ id: item.id, name: item.name });
       });
     }
@@ -138,7 +138,7 @@ function EditBox(props: CalendarStateProps) {
   }, [contentsList]);
 
   React.useEffect(() => {
-    const defaults: CommonShort = { id: "", name: "" };
+    const defaults: EntityScheduleShortInfo = { id: "", name: "" };
     const timesTampDada = {
       start_at: timesTamp.start,
       end_at: timesTamp.end,
@@ -177,7 +177,7 @@ function EditBox(props: CalendarStateProps) {
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: string[] = [];
-    teacherIds.forEach((val: CommonShort | any) => {
+    teacherIds.forEach((val: EntityScheduleShortInfo | any) => {
       ids.push(val.id.toString());
     });
     return ids;
@@ -185,23 +185,23 @@ function EditBox(props: CalendarStateProps) {
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) {
-      const newData: ScheduleCreate = {
+      const newData: EntityScheduleAddView = {
         attachment: scheduleDetial.attachment,
-        class_id: scheduleDetial.class!.id,
+        class_id: scheduleDetial.class!.id || "",
         class_type: scheduleDetial.class_type,
         description: scheduleDetial.description,
         due_at: scheduleDetial.due_at,
-        end_at: scheduleDetial.end_at,
+        end_at: scheduleDetial.end_at || 0,
         is_all_day: scheduleDetial.is_all_day,
         is_force: true,
         is_repeat: true,
-        lesson_plan_id: scheduleDetial.lesson_plan!.id,
-        program_id: scheduleDetial.program!.id,
+        lesson_plan_id: scheduleDetial.lesson_plan!.id || "",
+        program_id: scheduleDetial.program!.id || "",
         repeat: {},
-        start_at: scheduleDetial.start_at,
-        subject_id: scheduleDetial.subject!.id,
+        start_at: scheduleDetial.start_at || 0,
+        subject_id: scheduleDetial.subject!.id || "",
         teacher_ids: formatTeahcerId(scheduleDetial.teachers),
-        title: scheduleDetial.title,
+        title: scheduleDetial.title || "",
       };
       setStatus({
         allDayCheck: newData.is_all_day ? true : false,
@@ -233,7 +233,8 @@ function EditBox(props: CalendarStateProps) {
   }, [dispatchRepeat, scheduleDetial]);
 
   const currentTime = timestampInt(new Date().getTime() / 1000);
-  const [scheduleList, setScheduleList] = React.useState<ScheduleCreate>({
+
+  const initData: EntityScheduleAddView = {
     attachment: {},
     class_id: "",
     class_type: "OnlineClass",
@@ -244,15 +245,20 @@ function EditBox(props: CalendarStateProps) {
     is_force: true,
     is_repeat: false,
     lesson_plan_id: "",
+    org_id: "",
     program_id: "",
     repeat: {},
     start_at: currentTime,
     subject_id: "",
     teacher_ids: [],
+    time_zone_offset: 0,
     title: "",
-  });
+    version: 0,
+  };
 
-  const [initScheduleList, setInitScheduleList] = React.useState<ScheduleCreate>({});
+  const [scheduleList, setScheduleList] = React.useState<EntityScheduleAddView>(initData);
+
+  const [initScheduleList, setInitScheduleList] = React.useState<EntityScheduleAddView>(initData);
 
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
@@ -333,7 +339,7 @@ function EditBox(props: CalendarStateProps) {
       ...scheduleList,
       [name]: value as string | number | object | null,
     };
-    setScheduleList((newTopocList as unknown) as { [key in keyof ScheduleCreate]: ScheduleCreate[key] });
+    setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
   };
 
   /**
@@ -407,7 +413,7 @@ function EditBox(props: CalendarStateProps) {
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
-          time_at: timesTamp.start.toString(),
+          time_at: timesTamp.start,
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
         })
       );
@@ -445,7 +451,7 @@ function EditBox(props: CalendarStateProps) {
         start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
         end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
-      setScheduleList((newTopocList as unknown) as { [key in keyof ScheduleCreate]: ScheduleCreate[key] });
+      setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
   };
@@ -465,7 +471,7 @@ function EditBox(props: CalendarStateProps) {
     dispatch(
       getScheduleTimeViewData({
         view_type: modelView,
-        time_at: timesTamp.start.toString(),
+        time_at: timesTamp.start,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );

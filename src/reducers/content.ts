@@ -1,22 +1,23 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api from "../api";
-import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
+// import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
+import { ApiContentBulkOperateRequest, ApiOutcomeView, EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
-import { ContentType, OutcomePublishStatus } from "../api/type";
+import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
-  contentDetail: Content;
-  mediaList: Content[];
-  outcomeList: LearningOutcomes[];
+  contentDetail: EntityContentInfoWithDetails;
+  mediaList: EntityContentInfoWithDetails[];
+  outcomeList: ApiOutcomeView[];
   mockOptions: MockOptions;
   total: number;
-  contentsList: Content[];
-  contentPreview: Content;
+  contentsList: EntityContentInfoWithDetails[];
+  contentPreview: EntityContentInfoWithDetails;
   MediaListTotal: number;
   OutcomesListTotal: number;
 }
@@ -123,7 +124,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 interface onLoadContentEditPayload extends LoadingMetaPayload {
-  id: Content["id"] | null;
+  id: EntityContentInfoWithDetails["id"] | null;
   type: "assets" | "material" | "plan";
   searchMedia?: string;
   searchOutcome?: string;
@@ -137,7 +138,7 @@ interface onLoadContentEditResult {
   mockOptions?: MockOptions;
 }
 
-export const save = createAsyncThunk<Content["id"], CreateContentRequest, { state: RootState }>(
+export const save = createAsyncThunk<EntityContentInfoWithDetails["id"], EntityCreateContentRequest, { state: RootState }>(
   "content/save",
   async (payload, { getState }) => {
     const {
@@ -154,7 +155,11 @@ export const save = createAsyncThunk<Content["id"], CreateContentRequest, { stat
   }
 );
 
-export const publish = createAsyncThunk<Content, Required<Content>["id"], { state: RootState }>("content/publish", (id, { getState }) => {
+export const publish = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.publishContent>,
+  Required<EntityContentInfoWithDetails>["id"],
+  { state: RootState }
+>("content/publish", (id, { getState }) => {
   const {
     content: {
       contentDetail: { publish_scope },
@@ -170,7 +175,11 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     const [contentDetail, mediaList, outcomeList, mockOptions] = await Promise.all([
       id ? api.contents.getContentById(id) : initialState.contentDetail,
       (type === "material" || type === "plan") &&
-        api.contents.searchContents({ content_type: type === "material" ? "3" : "1", publish_status: "published", name: searchMedia }),
+        api.contents.searchContents({
+          content_type: type === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
+          publish_status: "published",
+          name: searchMedia,
+        }),
       (type === "material" || type === "plan") &&
         api.learningOutcomes.searchLearningOutcomes({
           publish_status: OutcomePublishStatus.published,
@@ -223,7 +232,7 @@ export const getContentDetailById = createAsyncThunk<IQueryGetContentDetailByIdR
 );
 
 type IQueryDeleteContentParams = {
-  id: Parameters<typeof api.contents.deleteContent>[0];
+  id: Parameters<typeof api.contents.updateContent>[0];
   type: string;
 };
 type IQueryDeleteContentResult = AsyncReturnType<typeof api.contents.deleteContent>;
@@ -236,7 +245,10 @@ export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryD
     return api.contents.deleteContent(id);
   }
 );
-export const publishContent = createAsyncThunk<Content, Required<Content>["id"]>("content/publishContent", async (id, { dispatch }) => {
+export const publishContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.publishContent>,
+  Required<EntityContentInfoWithDetails>["id"]
+>("content/publishContent", async (id, { dispatch }) => {
   const content = `Are you sure you want to publish this content?`;
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
   if (!isConfirmed) return Promise.reject();
@@ -259,25 +271,26 @@ export const bulkDeleteContent = createAsyncThunk<IQueryBulkDeleteResult, IQuery
     return api.contentsBulk.deleteContentBulk({ id: ids });
   }
 );
-export const bulkPublishContent = createAsyncThunk<Content, Required<ContentIDListRequest>["id"]>(
-  "content/bulkPublishContent",
-  async (ids, { dispatch }) => {
-    if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
-    const content = `Are you sure you want to publish these contents?`;
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
-    return api.contentsBulk.publishContentBulk({ id: ids });
-  }
-);
-export const approveContent = createAsyncThunk<Content, Required<Content>["id"]>(
-  "content/approveContentReview",
-  async (id, { dispatch }) => {
-    const content = `Are you sure you want to approve this content?`;
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
-    return api.contents.approveContentReview(id);
-  }
-);
+export const bulkPublishContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contentsBulk.publishContentBulk>,
+  Required<ApiContentBulkOperateRequest>["id"]
+>("content/bulkPublishContent", async (ids, { dispatch }) => {
+  if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
+  const content = `Are you sure you want to publish these contents?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
+  return api.contentsBulk.publishContentBulk({ id: ids });
+});
+type aa = Required<EntityContentInfoWithDetails>["id"];
+export const approveContent = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.approveContentReview>,
+  Required<EntityContentInfoWithDetails>["id"]
+>("content/approveContentReview", async (content_id, { dispatch }) => {
+  const content = `Are you sure you want to approve this content?`;
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
+  return api.contents.approveContentReview(content_id);
+});
 type RejectContentParams = {
   id: Parameters<typeof api.contents.rejectContentReview>[0];
   reason?: Parameters<typeof api.contents.rejectContentReview>[1]["reject_reason"];
@@ -302,11 +315,11 @@ export const lockContent = createAsyncThunk<
 });
 
 interface LiveContentPayload extends LoadingMetaPayload {
-  content_id: Parameters<typeof api.contents.getLiveToken>[0];
+  content_id: Parameters<typeof api.contents.getContentLiveToken>[0];
 }
-type LiveContentResult = ReturnType<typeof api.contents.getLiveToken>;
+type LiveContentResult = ReturnType<typeof api.contents.getContentLiveToken>;
 export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>("contents/live", async ({ content_id }) => {
-  return api.contents.getLiveToken(content_id);
+  return api.contents.getContentLiveToken(content_id);
 });
 
 const { actions, reducer } = createSlice({

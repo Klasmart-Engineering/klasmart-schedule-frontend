@@ -82,7 +82,7 @@ function ScheduleContent() {
     dispatch(
       getScheduleTimeViewData({
         view_type: modelView,
-        time_at: timesTamp.start.toString(),
+        time_at: timesTamp.start,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
@@ -93,7 +93,7 @@ function ScheduleContent() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(contentLists({ org: "1", publish_status: "published", content_type: "2" }));
+    dispatch(contentLists({ publish_status: "published", content_type: "2" }));
     if (scheduleId) dispatch(getScheduleInfo(scheduleId));
   }, [scheduleId, dispatch]);
 

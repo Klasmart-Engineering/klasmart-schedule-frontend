@@ -1,5 +1,5 @@
 import api from "../../../api";
-import { OutcomesIDListRequest } from "../../../api/api";
+import { ApiOutcomeIDList } from "../../../api/api.auto";
 
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
@@ -25,7 +25,7 @@ export enum BulkListFormKey {
 }
 
 export interface BulkListForm {
-  [BulkListFormKey.CHECKED_BULK_IDS]: NonNullable<OutcomesIDListRequest["outcome_ids"]>;
+  [BulkListFormKey.CHECKED_BULK_IDS]: NonNullable<ApiOutcomeIDList["outcome_ids"]>;
 }
 
 export enum HeaderCategory {

@@ -3,7 +3,7 @@ import { Pagination } from "@material-ui/lab";
 import React, { Fragment, useCallback } from "react";
 import { useDrag } from "react-dnd";
 import { useParams } from "react-router-dom";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
@@ -152,7 +152,7 @@ export function NoFiles() {
 
 interface DraggableItemProps {
   type: string;
-  item: Content;
+  item: EntityContentInfoWithDetails;
 }
 function DraggableImage(props: DraggableItemProps) {
   const { type, item } = props;
@@ -162,7 +162,7 @@ function DraggableImage(props: DraggableItemProps) {
 }
 
 export interface MediaAssetsProps {
-  list: Content[];
+  list: EntityContentInfoWithDetails[];
   total: number;
   amountPerPage?: number;
   comingsoon?: boolean;

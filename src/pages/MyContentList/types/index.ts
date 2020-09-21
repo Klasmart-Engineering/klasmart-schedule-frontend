@@ -1,5 +1,5 @@
 import api from "../../../api";
-import { ContentIDListRequest } from "../../../api/api";
+import { ApiContentBulkOperateRequest } from "../../../api/api.auto";
 
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
@@ -17,7 +17,7 @@ export enum ContentListFormKey {
 }
 
 export interface ContentListForm {
-  [ContentListFormKey.CHECKED_CONTENT_IDS]: NonNullable<ContentIDListRequest["id"]>;
+  [ContentListFormKey.CHECKED_CONTENT_IDS]: NonNullable<ApiContentBulkOperateRequest["id"]>;
 }
 
 export enum Assets {

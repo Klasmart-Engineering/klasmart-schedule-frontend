@@ -20,7 +20,7 @@ import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { Content } from "../../api/api";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
@@ -179,7 +179,7 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   transform: props.open ? "rotate(180deg)" : "none",
 }));
 interface ContentProps extends ContentActionProps {
-  content: Content;
+  content: EntityContentInfoWithDetails;
   queryCondition: QueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
   onClickContent: ContentCardListProps["onClickContent"];
@@ -259,18 +259,18 @@ function ContentCard(props: ContentProps) {
 }
 
 interface ContentActionProps {
-  onPublish: (id: NonNullable<Content["id"]>) => any;
-  onDelete: (id: NonNullable<Content["id"]>, type: string) => any;
+  onPublish: (id: NonNullable<EntityContentInfoWithDetails["id"]>) => any;
+  onDelete: (id: NonNullable<EntityContentInfoWithDetails["id"]>, type: string) => any;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
   formMethods: UseFormMethods<ContentListForm>;
   total: number;
   amountPerPage?: number;
-  list: Content[];
+  list: EntityContentInfoWithDetails[];
   queryCondition: QueryCondition;
   onChangePage: (page: number) => void;
-  onClickContent: (id: Content["id"], content_type: Content["content_type"]) => any;
+  onClickContent: (id: EntityContentInfoWithDetails["id"], content_type: EntityContentInfoWithDetails["content_type"]) => any;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();

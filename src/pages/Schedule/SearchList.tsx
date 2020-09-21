@@ -5,7 +5,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import emptyBox from "../../../src/assets/icons/empty.svg";
-import { Schedule } from "../../api/api";
+import { EntityScheduleSearchView } from "../../api/api.auto";
 import { RootState } from "../../reducers";
 import { getSearchScheduleList } from "../../reducers/schedule";
 
@@ -135,11 +135,11 @@ export default function SearchList() {
 
   let flag: boolean;
 
-  function isTitleSame(date: Schedule, number: number) {
+  function isTitleSame(date: EntityScheduleSearchView, number: number) {
     if (number === 0) {
       flag = true;
     } else {
-      searchScheduleList.forEach((item: Schedule, index: number) => {
+      searchScheduleList.forEach((item: EntityScheduleSearchView, index: number) => {
         if (index < number) {
           if (timeFormat(item.start_at as number, "dateDay") === timeFormat(date.start_at as number, "dateDay")) {
             flag = false;
@@ -177,7 +177,7 @@ export default function SearchList() {
     <Box className={classes.listContainer}>
       {searchScheduleList && searchScheduleList.length > 0 ? (
         <>
-          {searchScheduleList.map((item: Schedule, index: number) => (
+          {searchScheduleList.map((item: EntityScheduleSearchView, index: number) => (
             <div key={item.id} className={classes.partItem}>
               {isTitleSame(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at as number, "dateDay")}</h1>}
               <Card className={classes.cardItem} onClick={() => previewSchedule((item.id as unknown) as number)}>

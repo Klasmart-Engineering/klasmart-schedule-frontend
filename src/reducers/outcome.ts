@@ -1,15 +1,15 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api from "../api";
-import { CreateLearningOutComesRequest, CreateLearningOutcomesResponse, LearningOutcomes, OutcomesIDListRequest } from "../api/api";
+import { ApiOutcomeCreateResponse, ApiOutcomeCreateView, ApiOutcomeIDList, ApiOutcomeView } from "../api/api.auto";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 
 interface IOutcomeState {
-  outcomeDetail: LearningOutcomes;
+  outcomeDetail: ApiOutcomeView;
   total: number;
-  outcomeList: LearningOutcomes[];
-  createOutcome: CreateLearningOutComesRequest;
+  outcomeList: ApiOutcomeView[];
+  createOutcome: ApiOutcomeCreateView;
   lockOutcome_id: string;
 }
 
@@ -48,14 +48,10 @@ export const initialState: IOutcomeState = {
   outcomeList: [],
   createOutcome: {
     outcome_name: "",
-    author_id: "",
-    author_name: "",
     assumed: false,
-    shortcode: "",
     organization_id: "",
     program: [],
     subject: [],
-    reject_reason: "",
     developmental: [],
     skills: [],
     age: [],
@@ -84,7 +80,7 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
   }
 );
 
-export const deleteOutcome = createAsyncThunk<string, Required<LearningOutcomes>["outcome_id"]>(
+export const deleteOutcome = createAsyncThunk<string, Required<ApiOutcomeView>["outcome_id"]>(
   "outcome/deleteOutcome",
   async (id, { dispatch }) => {
     const content = `Are you sure you want to delete this outcome?`;
@@ -93,7 +89,10 @@ export const deleteOutcome = createAsyncThunk<string, Required<LearningOutcomes>
     return api.learningOutcomes.deleteLearningOutcome(id);
   }
 );
-export const publishOutcome = createAsyncThunk<LearningOutcomes, Required<LearningOutcomes>["outcome_id"]>(
+
+type publishOutcomeResponse = ReturnType<typeof api.learningOutcomes.publishLearningOutcomes>;
+type publishOutcomeRequest = Parameters<typeof api.learningOutcomes.publishLearningOutcomes>[0];
+export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOutcomeRequest>(
   "outcome/publishOutcome",
   async (id, { dispatch }) => {
     // const content = `Are you sure you want to publish this outcome?`;
@@ -104,7 +103,8 @@ export const publishOutcome = createAsyncThunk<LearningOutcomes, Required<Learni
 );
 
 // type BulkActionIds = Parameters<typeof>
-export const bulkDeleteOutcome = createAsyncThunk<LearningOutcomes, Required<OutcomesIDListRequest>["outcome_ids"]>(
+type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
+export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
     if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
@@ -114,7 +114,7 @@ export const bulkDeleteOutcome = createAsyncThunk<LearningOutcomes, Required<Out
     return api.bulk.deleteOutcomeBulk({ outcome_ids: ids });
   }
 );
-export const bulkPublishOutcome = createAsyncThunk<LearningOutcomes, Required<OutcomesIDListRequest>["outcome_ids"]>(
+export const bulkPublishOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkPublishOutcome",
   async (ids, { dispatch }) => {
     if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
@@ -132,7 +132,7 @@ export const lockOutcome = createAsyncThunk<
   return await api.learningOutcomes.lockLearningOutcomes(id);
 });
 
-export const save = createAsyncThunk<CreateLearningOutcomesResponse, CreateLearningOutComesRequest, { state: RootState }>(
+export const save = createAsyncThunk<ApiOutcomeCreateResponse, ApiOutcomeCreateView, { state: RootState }>(
   "outcome/save",
   async (payload, { getState }) => {
     return await api.learningOutcomes.createLearningOutcomes(payload);
@@ -150,7 +150,7 @@ export const updateOutcome = createAsyncThunk<ResultUpdateOutcome, ParamsUpdateO
 
 type ResuleGetOutcomeDetail = ReturnType<typeof api.learningOutcomes.getLearningOutcomesById>;
 type ParamsGetOutcomeDetail = { id: Parameters<typeof api.learningOutcomes.getLearningOutcomesById>[0] } & LoadingMetaPayload;
-export const getOutcomeDetail = createAsyncThunk<LearningOutcomes, ParamsGetOutcomeDetail>("outcome/getOutcomeDetail", ({ id }) => {
+export const getOutcomeDetail = createAsyncThunk<ApiOutcomeView, ParamsGetOutcomeDetail>("outcome/getOutcomeDetail", ({ id }) => {
   return api.learningOutcomes.getLearningOutcomesById(id);
 });
 

@@ -1,11 +1,11 @@
 import produce from "immer";
 import cloneDeep from "lodash/cloneDeep";
-import { Content } from "../api/api";
+import { EntityContentInfoWithDetails } from "../api/api.auto";
 
 export interface Segment {
   segmentId?: string;
   condition?: "ifCorrect" | "ifWrong" | "ifScoreUp60" | "ifScoreDown60" | "start";
-  material?: Content;
+  material?: EntityContentInfoWithDetails;
   materialId?: string;
   next?: Segment[];
 }

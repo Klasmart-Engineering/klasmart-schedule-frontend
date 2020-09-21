@@ -1,7 +1,7 @@
 import { Box, Checkbox, CheckboxProps, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { LearningOutcomes } from "../../api/api";
+import { ApiOutcomeView } from "../../api/api.auto";
 import { MockOptionsItem } from "../../api/extra";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
@@ -41,7 +41,7 @@ export interface OutcomeFormProps {
   outcome_id: string;
   showEdit: boolean;
   formMethods: UseFormMethods<any>;
-  outcomeDetail: LearningOutcomes;
+  outcomeDetail: ApiOutcomeView;
   onChangeProgram: (value: NonNullable<string[]>) => any;
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
   handleCheckBoxChange: CheckboxProps["onChange"];
