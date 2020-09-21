@@ -1,8 +1,23 @@
 import mitt from "mitt";
 import { createIntl, createIntlCache, IntlFormatters, IntlShape } from "react-intl";
-import { LangeFormatMessageValues, LangMessageDescriptor, LangName } from "./lang/type";
+import {
+  LangeRecordValuesByDesc,
+  LangeRecordValuesById,
+  LangName,
+  LangRecodeDescription,
+  LangRecordId,
+  LangRecordIdByDescription,
+} from "./lang/type";
 
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
+type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecordValuesByDesc<Desc> extends undefined
+  ? {
+      (id: LangRecordIdByDescription<Desc>): FormatMessageReturn;
+    }
+  : {
+      <Id extends LangRecordIdByDescription<Desc>>(id: Id, values: LangeRecordValuesById<Id>): FormatMessageReturn;
+    };
+
 export interface ChangeHandler {
   (intl?: IntlShape): any;
 }
@@ -22,8 +37,12 @@ class LocaleManager {
     this.emitter.emit("change", this.intl);
   }
 
-  // formatMessage<M extends LangMessageDescriptor>(message: M, values?: LangeFormatMessageValues<M['id']>): FormatMessageReturn;
-  formatMessage<Id extends LangMessageDescriptor["id"]>(id: Id, values?: LangeFormatMessageValues<Id>): FormatMessageReturn {
+  dscribe<Desc extends LangRecodeDescription>(desc: Desc) {
+    const formatMessage = ((id: any, values: any) => this.formatMessage(id, values)) as FormatMessageByDescription<Desc>;
+    return { t: formatMessage };
+  }
+
+  formatMessage<Id extends LangRecordId>(id: Id, values?: LangeRecordValuesById<Id>): FormatMessageReturn {
     if (!this.intl) return id;
     return this.intl.formatMessage({ id }, values);
   }
@@ -34,4 +53,5 @@ class LocaleManager {
 }
 
 export const localeManager = new LocaleManager("en");
-export const formatMessage = localeManager.formatMessage.bind(localeManager);
+export const t = localeManager.formatMessage.bind(localeManager);
+export const d = localeManager.dscribe.bind(localeManager);
