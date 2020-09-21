@@ -477,6 +477,14 @@ function EndRepeat(props: ExtendsProps) {
   };
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
+  React.useEffect(() => {
+    if (!end.type) {
+      _state[type].end.type = "after_count";
+      _state[type].end.after_count = 1;
+      handleRepeatData(_state);
+    }
+  }, [_state, end, handleRepeatData, type]);
+
   return (
     <div>
       <h3>End Repeat</h3>
@@ -594,6 +602,13 @@ function RepeatHeader(props: ExtendsProps) {
   };
 
   const endAdornment = type === "daily" ? "day(s)" : type === "weekly" ? "week(s)" : type === "monthly" ? "month(s)" : "year(s)";
+
+  React.useEffect(() => {
+    if (!interval) {
+      _state[type].interval = 1;
+      handleRepeatData(_state);
+    }
+  }, [_state, handleRepeatData, interval, type]);
 
   return (
     <div>
