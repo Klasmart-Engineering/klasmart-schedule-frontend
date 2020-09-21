@@ -8,9 +8,9 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Author, PublishStatus } from "../../api/type";
+import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Assets, QueryConditionBaseProps } from "./types";
+import { QueryConditionBaseProps } from "./types";
 import { d } from "../../locale/LocaleManager";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
@@ -123,7 +123,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               </Button>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
-              {value.publish_status === PublishStatus.published || value.content_type === Assets.assets_type ? (
+              {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (
                 <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
               ) : (
                 ""
@@ -210,7 +210,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status === PublishStatus.published || value.content_type === Assets.assets_type ? (
+              {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}

@@ -6,7 +6,8 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
-import { Assets } from "../MyContentList/types";
+const ASSETS_NAME = "Assets";
+
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
   backgroundColor: paletteColor.main,
@@ -70,7 +71,7 @@ export function OperationBtn(props: ActionProps) {
       {(publish_status === PublishStatus.published ||
         publish_status === PublishStatus.draft ||
         publish_status === PublishStatus.rejected ||
-        content_type_name === Assets.assets_name) && (
+        content_type_name === ASSETS_NAME) && (
         <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
           {d("Edit").t("library_label_edit")}
         </LButton>

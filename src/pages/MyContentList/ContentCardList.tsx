@@ -26,8 +26,10 @@ import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGr
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { Thumbnail } from "../../components/Thumbnail";
-import { Assets, ContentListForm, ContentListFormKey, QueryCondition } from "./types";
+import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
+
+const ASSETS_NAME = "Assets";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -194,11 +196,11 @@ function ContentCard(props: ContentProps) {
   const { content, queryCondition, selectedContentGroupContext, onDelete, onPublish, onClickContent } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
   const DeleteIcon =
-    content?.publish_status === PublishStatus.published && content?.content_type_name !== Assets.assets_name
+    content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
       ? RemoveCircleOutlineIcon
       : DeleteOutlineIcon;
   const type =
-    content?.publish_status === PublishStatus.published && content?.content_type_name !== Assets.assets_name
+    content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
       ? DeleteText.remove
       : DeleteText.delete;
 

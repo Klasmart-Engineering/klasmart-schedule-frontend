@@ -7,11 +7,11 @@ import { MoreHoriz } from "@material-ui/icons";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
-import { OrderBy, PublishStatus } from "../../api/type";
+import { OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { isUnpublish } from "./FirstSearchHeader";
-import { Assets, QueryCondition, QueryConditionBaseProps } from "./types";
 import { d } from "../../locale/LocaleManager";
+import { isUnpublish } from "./FirstSearchHeader";
+import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -111,7 +111,7 @@ interface BulkActionOption {
 
 function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
-  if (condition.content_type === Assets.assets_type) {
+  if (condition.content_type === SearchContentsRequestContentType.assets) {
     return [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }];
   }
   switch (condition.publish_status) {

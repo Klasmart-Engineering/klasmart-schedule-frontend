@@ -8,8 +8,8 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Assets, QueryCondition, QueryConditionBaseProps } from "./types";
 import { d } from "../../locale/LocaleManager";
+import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -139,8 +139,8 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 {d("Archived").t("library_label_archived")}
               </Button>
               <Button
-                onClick={assetsHandleClick(Assets.assets_type)}
-                className={clsx(css.nav, { [css.actives]: value?.content_type === Assets.assets_type })}
+                onClick={assetsHandleClick(SearchContentsRequestContentType.assets)}
+                className={clsx(css.nav, { [css.actives]: value?.content_type === SearchContentsRequestContentType.assets })}
                 startIcon={<PermMediaOutlined />}
               >
                 {d("Assets").t("library_label_assets")}
@@ -156,9 +156,12 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssets } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, publish_status: QueryCondition["publish_status"] | Assets.assets_type) => {
-    if (publish_status === Assets.assets_type) {
-      return onChangeAssets(Assets.assets_type);
+  const handleChange = (
+    event: React.ChangeEvent<{}>,
+    publish_status: QueryCondition["publish_status"] | SearchContentsRequestContentType.assets
+  ) => {
+    if (publish_status === SearchContentsRequestContentType.assets) {
+      return onChangeAssets(SearchContentsRequestContentType.assets);
     }
     onChange({ publish_status, order_by: OrderBy._created_at, page: 1, content_type: SearchContentsRequestContentType.materialandplan });
   };
@@ -181,7 +184,11 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
                 <Tab value={PublishStatus.draft} label={d("Unpublished").t("library_label_unpublished")} className={classes.capitalize} />
                 <Tab value={PublishStatus.archive} label={d("Archive").t("library_label_archive")} className={classes.capitalize} />
-                <Tab value={Assets.assets_type} label={d("Assets").t("library_label_assets")} className={classes.capitalize} />
+                <Tab
+                  value={SearchContentsRequestContentType.assets}
+                  label={d("Assets").t("library_label_assets")}
+                  className={classes.capitalize}
+                />
               </Tabs>
             </AppBar>
           </Grid>
