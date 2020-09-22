@@ -643,7 +643,7 @@ function EditBox(props: CalendarStateProps) {
               {...params}
               error={validator.class_id}
               className={css.fieldset}
-              label={d("Add Class").t("schedule_button_add_class")}
+              label={d("Add Class").t("schedule_detail_add_class")}
               required
               variant="outlined"
             />
@@ -737,7 +737,7 @@ function EditBox(props: CalendarStateProps) {
             <FormControlLabel
               disabled={isScheduleExpired()}
               control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
-              label={d("All Day").t("schedule_label_all_day")}
+              label={d("All day").t("schedule_detail_all_day")}
             />
             <FormControlLabel
               disabled={isScheduleExpired()}
@@ -808,7 +808,7 @@ function EditBox(props: CalendarStateProps) {
                 <FormControlLabel
                   disabled={isScheduleExpired()}
                   control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
-                  label={d("Due Date").t("schedule_detail_due date")}
+                  label={d("Due Date").t("schedule_detail_due_date")}
                 />
               </Grid>
               <Grid item xs={6}>

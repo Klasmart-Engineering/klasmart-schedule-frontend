@@ -107,7 +107,7 @@
   "library_label_inappropriate_content": "内容不适宜",
   "library_label_quality_of_lesson": "课程质量差",
   "library_label_no_permissions_use_assets": "没有权限使用资源库",
-  "library_label_add_remove_learning_outcomes": "添加/移除学习成果",
+  "library_add_remove_learning_outcomes": "添加/移除学习成果",
   "library_label_other": "其他",
   "library_msg_reject_content": "确定要拒绝这个内容吗？",
   "library_msg_reject_reason": "请输入拒绝理由。",
@@ -238,7 +238,7 @@
   "schedule_detail_offline_class": "线下课堂",
   "schedule_detail_homework": "家庭作业",
   "schedule_detail_task": "课程任务",
-  "schedule_detail_due date": "截止日期",
+  "schedule_detail_due_date": "截止日期",
   "schedule_detail_pick_time": "选择时间",
   "schedule_detail_description": "课堂描述",
   "schedule_detail_attachment": "附件",
@@ -309,5 +309,11 @@
   "schedule_msg_delete_overlap": "当前事件已经被删除。",
   "schedule_msg_attachment": "您上传的附件不符合要求",
   "schedule_msg_no_result": "没有搜索结果",
-  "schedule_schedule_msg_edit_all": "这是一系列事件中的其中一个，您确定要编辑整个序列吗？"
+  "schedule_schedule_msg_edit_all": "这是一系列事件中的其中一个，您确定要编辑整个序列吗？",
+  "schedule_msg_delete_success": "删除成功",
+  "schedule_msg_upload_format": "请上传正确的格式",
+  "schedule_label_teacher_name": "老师姓名",
+  "schedule_msg_start_current": "开始时间不能早于当前时间",
+  "schedule_msg_due_date_earlier": "截止日期不能早于课程结束事件",
+  "schedule_msg_end_time_earlier": "结束事件不能早于开始时间"
 }

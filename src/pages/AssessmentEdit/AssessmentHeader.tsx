@@ -125,7 +125,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
               {d("Save").t("assess_label_save")}
             </LButton>
             <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={toggle as any}>
-              {d("Compelete").t("assess_label_complete")}
+              {d("Complete").t("assess_button_complete")}
             </Button>
           </Hidden>
         )}

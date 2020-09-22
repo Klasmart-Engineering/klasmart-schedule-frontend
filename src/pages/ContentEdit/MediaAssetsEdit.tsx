@@ -132,7 +132,7 @@ function AssetEdit(props: AssetEditProps) {
   };
   return (
     <Box className={css.uploadBox} boxShadow={3}>
-      <p className={css.title}>{d("Upload a file").t("library_label_upload_a_file")}</p>
+      <p className={css.title}>{d("Upload").t("library_label_upload")}</p>
       <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
         <div className={css.uploadBtn}>
           <Controller

@@ -5,23 +5,13 @@ export type LangName = "en" | "ko" | "cn" | "vi";
 
 type LangRecord<T = string> =
   | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
-  | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
-  | { id: "library_label_view_in"; description: "View in"; values: undefined }
-  | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
   | { id: "library_label_archive"; description: "Archive"; values: undefined }
   | { id: "library_label_media_assets"; description: "Media Assets"; values: undefined }
   | { id: "library_label_media_material"; description: "Media Material"; values: undefined }
-  | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
-  | { id: "library_label_image"; description: "Image"; values: undefined }
-  | { id: "library_label_video"; description: "Video"; values: undefined }
-  | { id: "library_label_audio"; description: "Audio"; values: undefined }
-  | { id: "library_label_document"; description: "Document"; values: undefined }
   | { id: "library_label_asssets_name"; description: "Assets Name"; values: undefined }
   | { id: "library_label_content_type"; description: "Content type"; values: undefined }
-  | { id: "library_label_upload_a"; description: "Upload a () here"; values: undefined }
   | { id: "library_label_upload_files"; description: "Upload Files"; values: undefined }
-  | { id: "library_label_upload_a_file"; description: "Upload a file"; values: undefined }
   | { id: "library_label_asset_details"; description: "Asset Details"; values: undefined }
   | { id: "library_label_add_learning_outcomes"; description: "Added Learning Outcomes"; values: undefined }
   | { id: "library_label_drop_condition_or_material"; description: "Drop a condition or a lesson material here"; values: undefined }
@@ -52,6 +42,7 @@ type LangRecord<T = string> =
   | { id: "assess_label_award_all"; description: "Award All"; values: undefined }
   | { id: "assess_label_skip"; description: "Skip"; values: undefined }
   | { id: "assess_label_assessing_actions"; description: "Assessing Actions"; values: undefined }
+  | { id: "assess_label_display_by"; description: "Display By"; values: undefined }
   | { id: "library_label_program1"; description: "Badanamu ESL"; values: undefined }
   | { id: "library_label_program2"; description: "Bada Math"; values: undefined }
   | { id: "library_label_program3"; description: "Bada STEM"; values: undefined }
@@ -175,23 +166,14 @@ type LangRecord<T = string> =
   | { id: "schedule_label_student8"; description: "student eight"; values: undefined }
   | { id: "schedule_label_student9"; description: "student nine"; values: undefined }
   | { id: "schedule_label_student10"; description: "student ten"; values: undefined }
-  | { id: "schedule_msg_delete_success"; description: "Delete sucessfully"; values: undefined }
-  | { id: "schedule_msg_upload_format"; description: "Please upload the file in the correct format"; values: undefined }
-  | { id: "schedule_label_teacher_name"; description: "teacher name"; values: undefined }
   | { id: "schedule_label_work_week"; description: "Work Week"; values: undefined }
-  | { id: "schedule_msg_start_current"; description: "Start time cannot be earlier than current time"; values: undefined }
-  | {
-      id: "schedule_msg_due_date_earlier";
-      description: "The due date cannot be earlier than the scheduled class end time.";
-      values: undefined;
-    }
-  | { id: "schedule_msg_end_time_earlier"; description: "End time cannot be earlier than start time"; values: undefined }
   | { id: "schedule_button_add_class"; description: "Add Class"; values: undefined }
   | { id: "schedule_label_all_day"; description: "All Day"; values: undefined }
   | { id: "schedule_label_continue"; description: "Continue"; values: undefined }
   | { id: "schedule_label_edit"; description: "Edit"; values: undefined }
   | { id: "schedule_label_beyond_two_years"; description: "You cannot schedule a class beyond two years"; values: undefined }
   | { id: "schedule_label_on"; description: "On"; values: undefined }
+  | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -202,8 +184,8 @@ type LangRecord<T = string> =
   | { id: "assess_display_by"; description: "Display By"; values: undefined }
   | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
   | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }
-  | { id: "assess_complete_time_new_old"; description: "Complete (New-Old)"; values: undefined }
-  | { id: "assess_complete_time_old_new"; description: "Complete (Old-New)"; values: undefined }
+  | { id: "assess_complete_time_new_old"; description: "Complete Time(New-Old)"; values: undefined }
+  | { id: "assess_complete_time_old_new"; description: "Complete Time(Old-New)"; values: undefined }
   | { id: "assess_column_title"; description: "Assessment Title"; values: undefined }
   | { id: "assess_column_subject"; description: "Subject"; values: undefined }
   | { id: "assess_column_program"; description: "Program"; values: undefined }
@@ -219,7 +201,7 @@ type LangRecord<T = string> =
   | { id: "assess_button_edit"; description: "Edit"; values: undefined }
   | { id: "assess_detail_class_length"; description: "Class Length"; values: undefined }
   | { id: "assess_detail_minutes"; description: "Minutes"; values: undefined }
-  | { id: "assess_detail_number_activity"; description: "Number of Activity"; values: undefined }
+  | { id: "assess_detail_number_activity"; description: "Number of Activities"; values: undefined }
   | { id: "assess_detail_number_lo"; description: "Number of Learning Outcomes"; values: undefined }
   | { id: "assess_detail_assessment_complete_time"; description: "Assessment Complete Time"; values: undefined }
   | { id: "assess_popup_edit_attendance"; description: "Edit Attendance"; values: undefined }
@@ -239,6 +221,7 @@ type LangRecord<T = string> =
   | { id: "assess_msg_save_successfully"; description: "Save Successfully."; values: undefined }
   | { id: "assess_msg_compete_successfully"; description: "Complete Successfully."; values: undefined }
   | { id: "library_label_create"; description: "Create"; values: undefined }
+  | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
   | { id: "library_label_save"; description: "Save"; values: undefined }
   | { id: "library_label_publish"; description: "Publish"; values: undefined }
@@ -249,6 +232,7 @@ type LangRecord<T = string> =
   | { id: "library_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
   | { id: "library_label_details"; description: "Details"; values: undefined }
   | { id: "library_label_learning_outcomes"; description: "Learning Outcomes"; values: undefined }
+  | { id: "library_label_added_learning_outcomes"; description: "Added Learning Outcomes"; values: undefined }
   | { id: "library_msg_coming_soon"; description: "Coming soon..."; values: undefined }
   | { id: "library_label_assets"; description: "Assets"; values: undefined }
   | { id: "library_label_material_name"; description: "Material Name"; values: undefined }
@@ -295,12 +279,14 @@ type LangRecord<T = string> =
   | { id: "library_label_created_on"; description: "Created On"; values: undefined }
   | { id: "library_label_author"; description: "Author"; values: undefined }
   | { id: "library_label_edit"; description: "Edit"; values: undefined }
+  | { id: "library_label_view_in"; description: "View in"; values: undefined }
+  | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "library_label_approve"; description: "Approve"; values: undefined }
   | { id: "library_label_reject"; description: "Reject"; values: undefined }
   | { id: "library_label_inappropriate_content"; description: "Inappropriate Content"; values: undefined }
   | { id: "library_label_quality_of_lesson"; description: "Quality of Lesson is Poor"; values: undefined }
   | { id: "library_label_no_permissions_use_assets"; description: "No Permissions to Use Assets"; values: undefined }
-  | { id: "library_label_add_remove_learning_outcomes"; description: "Add/Remove Learning Outcomes"; values: undefined }
+  | { id: "library_add_remove_learning_outcomes"; description: "Add/Remove Learning Outcomes"; values: undefined }
   | { id: "library_label_other"; description: "Other"; values: undefined }
   | { id: "library_msg_reject_content"; description: "Are you sure you want to reject this content?"; values: undefined }
   | { id: "library_msg_reject_reason"; description: "Please specify the reason for rejection."; values: undefined }
@@ -312,6 +298,15 @@ type LangRecord<T = string> =
   | { id: "library_error_no_permissions"; description: "No permissions"; values: undefined }
   | { id: "library_error_no_network_connection"; description: "No network connection"; values: undefined }
   | { id: "library_error_unknown_error"; description: "Unknown error"; values: undefined }
+  | { id: "library_label_image"; description: "Image"; values: undefined }
+  | { id: "library_label_video"; description: "Video"; values: undefined }
+  | { id: "library_label_audio"; description: "Audio"; values: undefined }
+  | { id: "library_label_document"; description: "Document"; values: undefined }
+  | { id: "library_label_asset_name"; description: "Asset Name"; values: undefined }
+  | { id: "library_label_upload_a_file"; description: "Upload"; values: undefined }
+  | { id: "library_label_upload_a"; description: "Upload a () here"; values: undefined }
+  | { id: "library_label_upload"; description: "Upload"; values: undefined }
+  | { id: "library_label_file_type"; description: "File Type"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
   | { id: "assess_label_save"; description: "Save"; values: undefined }
@@ -414,7 +409,7 @@ type LangRecord<T = string> =
   | { id: "schedule_calendar_sa"; description: "Sa"; values: undefined }
   | { id: "schedule_calendar_su"; description: "Su"; values: undefined }
   | { id: "schedule_detail_lesson_name"; description: "Lesson Name"; values: undefined }
-  | { id: "schedule_detail_add_class"; description: "Add class"; values: undefined }
+  | { id: "schedule_detail_add_class"; description: "Add Class"; values: undefined }
   | { id: "schedule_detail_lesson_plan"; description: "Lesson plan"; values: undefined }
   | { id: "schedule_detail_teacher"; description: "Teacher"; values: undefined }
   | { id: "schedule_detail_start_time"; description: "Start Time"; values: undefined }
@@ -431,7 +426,7 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_offline_class"; description: "Offline Class"; values: undefined }
   | { id: "schedule_detail_homework"; description: "Homework"; values: undefined }
   | { id: "schedule_detail_task"; description: "Task"; values: undefined }
-  | { id: "schedule_detail_due date"; description: "Due Date"; values: undefined }
+  | { id: "schedule_detail_due_date"; description: "Due Date"; values: undefined }
   | { id: "schedule_detail_pick_time"; description: "Pick Time"; values: undefined }
   | { id: "schedule_detail_description"; description: "Description"; values: undefined }
   | { id: "schedule_detail_attachment"; description: "Attachment"; values: undefined }
@@ -510,7 +505,17 @@ type LangRecord<T = string> =
       id: "schedule_schedule_msg_edit_all";
       description: "This is an event in a series. Are you sure you want to edit this and following events?";
       values: undefined;
-    };
+    }
+  | { id: "schedule_msg_delete_success"; description: "Delete sucessfully"; values: undefined }
+  | { id: "schedule_msg_upload_format"; description: "Please upload the file in the correct format"; values: undefined }
+  | { id: "schedule_label_teacher_name"; description: "teacher name"; values: undefined }
+  | { id: "schedule_msg_start_current"; description: "Start time cannot be earlier than current time"; values: undefined }
+  | {
+      id: "schedule_msg_due_date_earlier";
+      description: "The due date cannot be earlier than the scheduled class end time.";
+      values: undefined;
+    }
+  | { id: "schedule_msg_end_time_earlier"; description: "End time cannot be earlier than start time"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
