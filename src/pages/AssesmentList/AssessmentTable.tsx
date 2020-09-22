@@ -2,7 +2,7 @@ import { createStyles, Table, TableBody, TableCell, TableContainer, TableHead, T
 import { makeStyles } from "@material-ui/core/styles";
 import { Pagination } from "@material-ui/lab";
 import React from "react";
-import { ListAssessmentResultItem } from "../../api/type";
+import { AssessmentStatus, ListAssessmentResultItem } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentQueryCondition } from "./types";
@@ -36,6 +36,11 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
+const mapStatus = (status: string | undefined) => {
+  if (status === AssessmentStatus.complete) return "Complete";
+  if (status === AssessmentStatus.in_progress) return "In Progress";
+};
+
 interface AssessmentProps {
   assessment: ListAssessmentResultItem;
   onClickAssessment: AssessmentTableProps["onClickAssessment"];
@@ -47,7 +52,7 @@ function AssessmentRow(props: AssessmentProps) {
       <TableCell align="center">{assessment.title}</TableCell>
       <TableCell align="center">{assessment.subject?.name}</TableCell>
       <TableCell align="center">{assessment.program?.name}</TableCell>
-      <TableCell align="center">{assessment.status}</TableCell>
+      <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
       <TableCell align="center">{assessment.teachers?.map((v) => v.name)}</TableCell>
       <TableCell align="center">{formattedTime(assessment.class_end_time)}</TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_time)}</TableCell>
