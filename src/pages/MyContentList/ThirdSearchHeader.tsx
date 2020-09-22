@@ -129,7 +129,7 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
   }
 }
 
-const sortOptions = [
+const sortOptions = () => [
   { label: d("Content Name(A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
   { label: d("Content Name(Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
   { label: d("Created On(New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
@@ -162,7 +162,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       {item.label}
     </MenuItem>
   ));
-  const orderbyOptions = sortOptions.map((item) => (
+  const orderbyOptions = sortOptions().map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
     </MenuItem>
@@ -270,7 +270,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               </Menu>
               <ImportExportIcon onClick={showSort} />
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleSortClose}>
-                {sortOptions.map((item, index) => (
+                {sortOptions().map((item, index) => (
                   <MenuItem
                     key={item.label}
                     selected={value.order_by === item.value}

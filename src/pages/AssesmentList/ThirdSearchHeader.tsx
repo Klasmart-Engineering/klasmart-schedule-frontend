@@ -7,6 +7,7 @@ import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { AssessmentOrderBy, AssessmentStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import { AssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,16 +75,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const sortOptions = [
-  { label: "Class End Time(New-Old)", value: AssessmentOrderBy._class_end_time },
-  { label: "Class End Time(Old-New)", value: AssessmentOrderBy.class_end_time },
+const sortOptions = () => [
+  { label: d("Class End Time (New-Old)").t("assess_class_end_time_new_old"), value: AssessmentOrderBy._class_end_time },
+  { label: d("Class End Time (Old -New)").t("assess_class_end_time_old_new"), value: AssessmentOrderBy.class_end_time },
   { label: "Complete Time(New-Old)", value: AssessmentOrderBy._complete_time },
   { label: "Complete Time(Old-New)", value: AssessmentOrderBy.complete_time },
 ];
-const assessmentStatusOptions = [
-  { label: "All", value: AssessmentStatus.all },
-  { label: "Complete", value: AssessmentStatus.complete },
-  { label: "In Progress", value: AssessmentStatus.in_progress },
+const assessmentStatusOptions = () => [
+  { label: d("All").t("assess_filter_all"), value: AssessmentStatus.all },
+  { label: d("Complete").t("assess_filter_complete"), value: AssessmentStatus.complete },
+  { label: d("In Progress").t("assess_filter_in_progress"), value: AssessmentStatus.in_progress },
 ];
 
 export interface ThirdSearchHeaderProps extends AssessmentQueryConditionBaseProps {}
@@ -106,12 +107,12 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       })
     );
   };
-  const orderbyOptions = sortOptions.map((item) => (
+  const orderbyOptions = sortOptions().map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
     </MenuItem>
   ));
-  const statusOptions = assessmentStatusOptions.map((item) => (
+  const statusOptions = assessmentStatusOptions().map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
     </MenuItem>
@@ -128,7 +129,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 fullWidth
                 onChange={handleChangeStatus}
                 value={value.status || AssessmentStatus.all}
-                label="Status"
+                label={d("Status").t("assess_filter_column_status")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
@@ -144,7 +145,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 fullWidth
                 onChange={handleChangeOrder}
                 value={value.order_by || AssessmentOrderBy._class_end_time}
-                label="Display By"
+                label={d("Display By").t("assess_display_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
@@ -201,7 +202,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
               <GestureIcon onClick={showStatus} />
               <Menu anchorEl={anchorStatusEl} keepMounted open={Boolean(anchorStatusEl)} onClose={handleStatusClose}>
-                {assessmentStatusOptions.map((item, index) => (
+                {assessmentStatusOptions().map((item, index) => (
                   <MenuItem key={item.label} selected={value.status === item.value} onClick={(e) => handleClickStatusbyItem(e, item.value)}>
                     {item.label}
                   </MenuItem>
@@ -209,7 +210,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               </Menu>
               <ImportExportIcon onClick={showSort} />
               <Menu anchorEl={anchorSortEl} keepMounted open={Boolean(anchorSortEl)} onClose={handleSortClose}>
-                {sortOptions.map((item, index) => (
+                {sortOptions().map((item, index) => (
                   <MenuItem
                     key={item.label}
                     selected={value.order_by === item.value}

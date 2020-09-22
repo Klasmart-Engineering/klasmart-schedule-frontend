@@ -167,7 +167,7 @@ function AssetEdit(props: AssetEditProps) {
 
 export function MediaAssetsEditHeader() {
   const css = useStyles();
-  return <Box className={css.assetsHeader}>{d("Asset Details").t("library_label_asset_details")}</Box>;
+  return <Box className={css.assetsHeader}>{d("Details").t("library_label_details")}</Box>;
 }
 
 function AssetPreviewOverlay() {

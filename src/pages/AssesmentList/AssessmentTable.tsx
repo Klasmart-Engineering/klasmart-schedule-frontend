@@ -4,6 +4,7 @@ import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { AssessmentStatus, ListAssessmentResultItem } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AssessmentQueryCondition } from "./types";
 
@@ -78,13 +79,13 @@ export function AssessmentTable(props: AssessmentTableProps) {
         <Table>
           <TableHead className={css.tableHead}>
             <TableRow>
-              <TableCell align="center">Title</TableCell>
-              <TableCell align="center">Subject</TableCell>
-              <TableCell align="center">Program</TableCell>
-              <TableCell align="center">Status</TableCell>
-              <TableCell align="center">Teacher</TableCell>
-              <TableCell align="center">Class End Time</TableCell>
-              <TableCell align="center">Complete Time</TableCell>
+              <TableCell align="center">{d("Assessment Title").t("assess_column_title")}</TableCell>
+              <TableCell align="center">{d("Subject").t("assess_column_subject")}</TableCell>
+              <TableCell align="center">{d("Program").t("assess_column_program")}</TableCell>
+              <TableCell align="center">{d("Status").t("assess_filter_column_status")}</TableCell>
+              <TableCell align="center">{d("Teacher").t("assess_column_teacher")}</TableCell>
+              <TableCell align="center">{d("Class End Time").t("assess_column_class_end_time")}</TableCell>
+              <TableCell align="center">{d("Complete Time").t("assess_column_complete_time")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

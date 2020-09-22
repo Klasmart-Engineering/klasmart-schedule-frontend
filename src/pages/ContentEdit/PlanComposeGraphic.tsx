@@ -192,7 +192,7 @@ const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) 
         <ConditionBtnUI
           Icon={FlagOutlined}
           color="primary"
-          label={d("START").t("library_label_start_uppercase")}
+          label={d("Start").t("library_label_start")}
           {...restConditionBtnUIProps}
           ref={ref}
         />

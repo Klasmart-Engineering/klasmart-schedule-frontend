@@ -145,7 +145,7 @@ export function NoFiles() {
     <Fragment>
       <img className={css.noFilesImage} alt="noFiles" src={noFilesIconUrl} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        {d("No file was found").t("library_label_no_files")}
+        {d("No results found").t("library_msg_no_results_found")}
       </Typography>
     </Fragment>
   );
