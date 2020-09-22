@@ -202,7 +202,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
-                label={d("Display By").t("library_label_display_by")}
+                label={d("Sort By").t("library_label_sort_by")}
                 value={value.order_by}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

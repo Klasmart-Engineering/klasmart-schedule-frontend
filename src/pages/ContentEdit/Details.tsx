@@ -135,7 +135,7 @@ export default function Details(props: DetailsProps) {
         {contentDetail.publish_status === "rejected" && (
           <FormControl variant="outlined">
             <InputLabel error variant="outlined" htmlFor="rejectReason">
-              {d("Reject Reason").t("library_label_reject_reson")}
+              {d("Reason").t("library_label_reason")}
             </InputLabel>
             <OutlinedInput
               readOnly
@@ -144,7 +144,7 @@ export default function Details(props: DetailsProps) {
               id="rejectReason"
               multiline
               value={contentDetail.reject_reason}
-              label={d("Reject Reason").t("library_label_reject_reson")}
+              label={d("Reason").t("library_label_reason")}
             ></OutlinedInput>
           </FormControl>
         )}
@@ -220,7 +220,7 @@ export default function Details(props: DetailsProps) {
           decode={Number}
           type="number"
           className={css.fieldset}
-          label={d("Suggested Duration (min)").t("library_label_suggested_duration")}
+          label={d("Duration(Minutes)").t("library_label_duration")}
           defaultValue={contentDetail.suggest_time}
         />
         <Controller

@@ -5,16 +5,11 @@ export type LangName = "en" | "ko" | "cn" | "vi";
 
 type LangRecord<T = string> =
   | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
-  | { id: "library_label_title"; description: "Title"; values: undefined }
   | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
   | { id: "library_label_view_in"; description: "View in"; values: undefined }
   | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
-  | { id: "library_label_display_by"; description: "Display By"; values: undefined }
   | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
   | { id: "library_label_archive"; description: "Archive"; values: undefined }
-  | { id: "library_label_suggested_duration"; description: "Suggested Duration (min)"; values: undefined }
-  | { id: "library_label_reject_reson"; description: "Reject Reason"; values: undefined }
-  | { id: "library_label_developmental"; description: "developmental"; values: undefined }
   | { id: "library_label_media_assets"; description: "Media Assets"; values: undefined }
   | { id: "library_label_media_material"; description: "Media Material"; values: undefined }
   | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
@@ -30,7 +25,6 @@ type LangRecord<T = string> =
   | { id: "library_label_asset_details"; description: "Asset Details"; values: undefined }
   | { id: "library_label_add_learning_outcomes"; description: "Added Learning Outcomes"; values: undefined }
   | { id: "library_label_drop_condition_or_material"; description: "Drop a condition or a lesson material here"; values: undefined }
-  | { id: "library_label_drop_material"; description: "Drop a lesson material here"; values: undefined }
   | { id: "library_label_start_uppercase"; description: "START"; values: undefined }
   | { id: "library_label_no_files"; description: "No file was found"; values: undefined }
   | { id: "assess_label_complete"; description: "Compelete"; values: undefined }
