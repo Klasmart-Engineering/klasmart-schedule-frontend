@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="338px" height="161px" viewBox="0 0 338 161" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="338px" height="190px" viewBox="0 0 338 190" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>doc</title>
     <g id="home-没有list" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="thumbnail-默认" transform="translate(-186.000000, -799.000000)">
             <g id="doc" transform="translate(186.000000, 799.000000)">
                 <g id="编组-10">
-                    <rect id="矩形备份-15" fill="#4054B2" x="0" y="0" width="338" height="161"></rect>
+                    <rect id="矩形备份-15" fill="#4054B2" x="0" y="0" width="338" height="190"></rect>
                     <rect id="矩形" x="129" y="41" width="80" height="80"></rect>
                 </g>
-                <g id="text_snippet-24px" transform="translate(129.000000, 41.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                <g id="text_snippet-24px" transform="translate(129.000000, 55.000000)" fill="#FFFFFF" fill-rule="nonzero">
                     <path d="M47.2333333,16.6666667 L63.3333333,32.7666667 L63.3333333,63.3333333 L16.6666667,63.3333333 L16.6666667,16.6666667 L47.2333333,16.6666667 L47.2333333,16.6666667 M47.2333333,10 L16.6666667,10 C13,10 10,13 10,16.6666667 L10,63.3333333 C10,67 13,70 16.6666667,70 L63.3333333,70 C67,70 70,67 70,63.3333333 L70,32.7666667 C70,31 69.3,29.3 68.0333333,28.0666667 L51.9333333,11.9666667 C50.7,10.7 49,10 47.2333333,10 L47.2333333,10 Z M23.3333333,50 L56.6666667,50 L56.6666667,56.6666667 L23.3333333,56.6666667 L23.3333333,50 Z M23.3333333,36.6666667 L56.6666667,36.6666667 L56.6666667,43.3333333 L23.3333333,43.3333333 L23.3333333,36.6666667 Z M23.3333333,23.3333333 L46.6666667,23.3333333 L46.6666667,30 L23.3333333,30 L23.3333333,23.3333333 Z" id="形状"></path>
                 </g>
             </g>
