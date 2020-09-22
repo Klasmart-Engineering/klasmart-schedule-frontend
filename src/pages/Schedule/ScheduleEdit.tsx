@@ -33,6 +33,7 @@ import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -326,7 +327,7 @@ function EditBox(props: CalendarStateProps) {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
     const currentTime = Math.floor(new Date().getTime() / 1000);
     if (name === "start_at" && value < currentTime) {
-      dispatch(actError("Start time cannot be earlier than current time"));
+      dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
     if (name === "title" && (event.target.value as string).length > 20) return;
@@ -387,13 +388,13 @@ function EditBox(props: CalendarStateProps) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
       if (dueDateTimestamp <= scheduleList.end_at) {
-        dispatch(actError("The due date cannot be earlier than the scheduled class end time."));
+        dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
       }
       addData["due_at"] = dueDateTimestamp;
     }
     if (scheduleList.end_at <= scheduleList.start_at) {
-      dispatch(actError("End time cannot be earlier than start time"));
+      dispatch(actError(d("End time cannot be earlier than start time").t("schedule_msg_end_time_earlier")));
       return;
     }
     addData["is_all_day"] = checkedStatus.allDayCheck;
@@ -415,7 +416,7 @@ function EditBox(props: CalendarStateProps) {
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
         })
       );
-      dispatch(actSuccess("Save successful"));
+      dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({ type: "changeData", data: initialState });
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     }
@@ -473,7 +474,7 @@ function EditBox(props: CalendarStateProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
-    dispatch(actSuccess("Delete sucessfully"));
+    dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),
@@ -498,9 +499,9 @@ function EditBox(props: CalendarStateProps) {
     enableCustomization: enableCustomization,
     customizeTemplate:
       customizeTemplateType === "update" ? (
-        <ConfilctTestTemplate handleDelete={saveSchedule} handleClose={handleClose} title={"Edit"} />
+        <ConfilctTestTemplate handleDelete={saveSchedule} handleClose={handleClose} title={d("Edit").t("assess_button_edit")} />
       ) : (
-        <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title={"Delete"} />
+        <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title={d("Delete").t("assess_label_delete")} />
       ),
     openStatus: openStatus,
     buttons: buttons,
@@ -519,20 +520,20 @@ function EditBox(props: CalendarStateProps) {
       setEnableCustomization(false);
       const button = [
         {
-          label: "Cancel",
+          label: d("Cancel").t("assess_label_cancel"),
           event: () => {
             setOpenStatus(false);
           },
         },
         {
-          label: "Delete",
+          label: d("Delete").t("assess_label_delete"),
           event: () => {
             deleteScheduleByid();
           },
         },
       ];
       setOpenStatus(true);
-      setModalText("Are you sure you want to delete this event?");
+      setModalText(d("Are you sure you want to delete this event?").t("schedule_msg_delete"));
       setButtons(button);
     }
   };
@@ -551,13 +552,13 @@ function EditBox(props: CalendarStateProps) {
     }
     const button = [
       {
-        label: "Cancel",
+        label: d("Cancel").t("assess_label_cancel"),
         event: () => {
           setOpenStatus(false);
         },
       },
       {
-        label: "Discard",
+        label: d("Discard").t("assess_button_discard"),
         event: () => {
           setOpenStatus(false);
           history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
@@ -565,7 +566,7 @@ function EditBox(props: CalendarStateProps) {
       },
     ];
     setOpenStatus(true);
-    setModalText("Discard unsave changes?");
+    setModalText(d("Discard unsave changes?").t("schedule_msg_discard"));
     setButtons(button);
   };
 
@@ -620,7 +621,7 @@ function EditBox(props: CalendarStateProps) {
           <TextField
             error={validator.title}
             className={css.fieldset}
-            label="Lesson Name"
+            label={d("Lesson Name").t("schedule_detail_lesson_name")}
             value={scheduleList.title}
             onChange={(e) => handleTopicListChange(e, "title")}
             required
@@ -638,7 +639,14 @@ function EditBox(props: CalendarStateProps) {
           value={classItem}
           disabled={isScheduleExpired()}
           renderInput={(params) => (
-            <TextField {...params} error={validator.class_id} className={css.fieldset} label="Add Class" required variant="outlined" />
+            <TextField
+              {...params}
+              error={validator.class_id}
+              className={css.fieldset}
+              label={d("Add Class").t("schedule_button_add_class")}
+              required
+              variant="outlined"
+            />
           )}
         />
         <Autocomplete
@@ -655,7 +663,7 @@ function EditBox(props: CalendarStateProps) {
             <TextField
               {...params}
               className={css.fieldset}
-              label="Lesson Plan"
+              label={d("Lesson Plan").t("library_label_lesson_plan")}
               error={validator.lesson_plan_id}
               value={scheduleList.lesson_plan_id}
               variant="outlined"
@@ -678,7 +686,7 @@ function EditBox(props: CalendarStateProps) {
             <TextField
               {...params}
               className={css.fieldset}
-              label="Teacher"
+              label={d("Teacher").t("schedule_detail_teacher")}
               error={validator.teacher_ids}
               value={scheduleList.teacher_ids}
               variant="outlined"
@@ -692,7 +700,7 @@ function EditBox(props: CalendarStateProps) {
               <Grid item xs={12}>
                 <TextField
                   id="datetime-local"
-                  label="Start Time"
+                  label={d("Start Time").t("schedule_detail_start_time")}
                   type="datetime-local"
                   className={css.fieldset}
                   InputLabelProps={{
@@ -708,7 +716,7 @@ function EditBox(props: CalendarStateProps) {
               <Grid item xs={12}>
                 <TextField
                   id="datetime-local"
-                  label="End Time"
+                  label={d("End Time").t("schedule_detail_end_time")}
                   type="datetime-local"
                   className={css.fieldset}
                   InputLabelProps={{
@@ -729,12 +737,12 @@ function EditBox(props: CalendarStateProps) {
             <FormControlLabel
               disabled={isScheduleExpired()}
               control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
-              label="All Day"
+              label={d("All Day").t("schedule_label_all_day")}
             />
             <FormControlLabel
               disabled={isScheduleExpired()}
               control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
-              label="Repeat"
+              label={d("Repeat").t("schedule_detail_repeat")}
             />
           </FormGroup>
         </Box>
@@ -751,7 +759,7 @@ function EditBox(props: CalendarStateProps) {
             <TextField
               {...params}
               className={css.fieldset}
-              label="Program"
+              label={d("Program").t("assess_label_program")}
               variant="outlined"
               error={validator.program_id}
               value={scheduleList.program_id}
@@ -772,7 +780,7 @@ function EditBox(props: CalendarStateProps) {
             <TextField
               {...params}
               className={css.fieldset}
-              label="Subject"
+              label={d("Subject").t("assess_label_subject")}
               error={validator.subject_id}
               variant="outlined"
               value={scheduleList.subject_id}
@@ -783,7 +791,7 @@ function EditBox(props: CalendarStateProps) {
         />
         <TextField
           className={css.fieldset}
-          label="Class Type"
+          label={d("Class Type").t("schedule_detail_class_type")}
           value={scheduleList.class_type}
           onChange={(e) => handleTopicListChange(e, "class_type")}
           error={validator.class_type}
@@ -800,7 +808,7 @@ function EditBox(props: CalendarStateProps) {
                 <FormControlLabel
                   disabled={isScheduleExpired()}
                   control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
-                  label="Due Date"
+                  label={d("Due Date").t("schedule_detail_due date")}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -810,7 +818,7 @@ function EditBox(props: CalendarStateProps) {
                   format="MM/dd/yyyy"
                   margin="normal"
                   id="date-picker-inline"
-                  label="Pick Time"
+                  label={d("Pick Time").t("schedule_detail_pick_time")}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
@@ -825,7 +833,7 @@ function EditBox(props: CalendarStateProps) {
         <TextField
           id="outlined-multiline-static"
           className={css.fieldset}
-          label="Description"
+          label={d("Description").t("assess_label_description")}
           multiline
           rows={4}
           variant="outlined"
@@ -846,7 +854,7 @@ function EditBox(props: CalendarStateProps) {
             style={{ width: "45%", marginRight: "10%" }}
             href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}`}
           >
-            Preview
+            {d("Preview").t("schedule_button_preview")}
           </Button>
           <Button
             variant="contained"
@@ -856,7 +864,7 @@ function EditBox(props: CalendarStateProps) {
               toLive(scheduleId as string);
             }}
           >
-            Go Live
+            {d("Go Live").t("schedule_button_go_live")}
           </Button>
         </Box>
         {checkedStatus.repeatCheck && (

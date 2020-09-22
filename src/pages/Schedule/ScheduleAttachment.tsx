@@ -6,6 +6,7 @@ import React from "react";
 import { apiResourcePathById } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { SingleUploader } from "../../components/SingleUploader";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(() => ({
   fieldset: {
@@ -111,12 +112,12 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
 
   const modalDate: any = {
     title: "",
-    text: "Please upload the file in the correct format",
+    text: d("Please upload the file in the correct format").t("schedule_msg_upload_format"),
     openStatus: openStatus,
     enableCustomization: false,
     buttons: [
       {
-        label: "OK",
+        label: d("OK").t("schedule_button_ok"),
         event: () => {
           setOpenStatus(false);
         },
@@ -137,7 +138,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             <TextField
               disabled
               className={css.fieldset}
-              placeholder="Attachment"
+              placeholder={d("Attachment").t("schedule_detail_attachment")}
               value={item ? getFileName(item.file.name) : attachmentName}
             ></TextField>
             <HtmlTooltip title={tipsText}>

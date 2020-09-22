@@ -11,6 +11,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
 import { modeViewType, timestampType } from "../../types/scheduleTypes";
+import { d } from "../../locale/LocaleManager";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -117,7 +118,7 @@ function Tool(props: ToolProps) {
                 toolRouter("create");
               }}
             >
-              Schedule Class
+              {d("Schedule Class").t("schedue_button_schedule_class")}
             </Button>
           )}
         </Grid>
@@ -134,7 +135,7 @@ function Tool(props: ToolProps) {
             <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
             <BootstrapInput
               id="demo-customized-textbox"
-              placeholder={"teacher name"}
+              placeholder={d("teacher name").t("schedule_label_teacher_name")}
               value={teacherName}
               onChange={(event) => setTeacherName(event.target.value)}
               onKeyDown={handleKeyDown}
@@ -149,22 +150,22 @@ function Tool(props: ToolProps) {
               toolRouter("search");
             }}
           >
-            Search
+            {d("Search").t("schedule_button_search")}
           </Button>
         </Grid>
         <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
           {!includeList && (
             <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }} onClick={selectToday}>
-              Today
+              {d("Today").t("schedule_button_today")}
             </Button>
           )}
           {!includeList && (
             <FormControl>
               <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
-                <option value="work_week">Work Week</option>
-                <option value="day">Day</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
+                <option value="work_week">{d("Work Week").t("schedule_label_work_week")}</option>
+                <option value="day">{d("Day").t("schedule_option_day")}</option>
+                <option value="week">{d("Week").t("schedule_option_week")}</option>
+                <option value="month">{d("Month").t("schedule_detail_month")}</option>
               </NativeSelect>
             </FormControl>
           )}

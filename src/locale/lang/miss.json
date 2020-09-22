@@ -167,5 +167,14 @@
   "schedule_label_student7": "student senven",
   "schedule_label_student8": "student eight",
   "schedule_label_student9": "student nine",
-  "schedule_label_student10": "student ten"
+  "schedule_label_student10": "student ten",
+  "schedule_msg_delete_success": "Delete sucessfully",
+  "schedule_msg_upload_format": "Please upload the file in the correct format",
+  "schedule_label_teacher_name": "teacher name",
+  "schedule_label_work_week": "Work Week",
+  "schedule_msg_start_current": "Start time cannot be earlier than current time",
+  "schedule_msg_due_date_earlier": "The due date cannot be earlier than the scheduled class end time.",
+  "schedule_msg_end_time_earlier": "End time cannot be earlier than start time",
+  "schedule_button_add_class": "Add Class",
+  "schedule_label_all_day": "All Day"
 }

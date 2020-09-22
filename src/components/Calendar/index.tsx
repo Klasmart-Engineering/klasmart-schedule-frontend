@@ -13,6 +13,7 @@ import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule
 import { timestampType, repeatOptionsType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import { actSuccess } from "../../reducers/notify";
+import { d } from "../../locale/LocaleManager";
 
 interface scheduleInfoProps {
   end: Date;
@@ -106,7 +107,7 @@ function MyCalendar(props: CalendarProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
-    dispatch(actSuccess("Delete sucessfully"));
+    dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
     changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),
@@ -120,23 +121,23 @@ function MyCalendar(props: CalendarProps) {
 
   const modalDate: any = {
     title: "",
-    text: "Are you sure you want to delete this event?",
+    text: d("Are you sure you want to delete this event?").t("schedule_msg_delete"),
     openStatus: openStatus,
     enableCustomization: enableCustomization,
     customizeTemplate: scheduleInfoStatus ? (
       <CustomizeTempalte handleDelete={handleDelete} handleClose={handleClose} scheduleInfo={scheduleInfo} toLive={toLive} />
     ) : (
-      <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title="Delete" />
+      <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={handleClose} title={d("Delete").t("assess_label_delete")} />
     ),
     buttons: [
       {
-        label: "Cancel",
+        label: d("Cancel").t("assess_label_cancel"),
         event: () => {
           setOpenStatus(false);
         },
       },
       {
-        label: "Delete",
+        label: d("Delete").t("assess_label_delete"),
         event: () => {
           deleteScheduleByid();
         },
