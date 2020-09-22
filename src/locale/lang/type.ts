@@ -19,32 +19,6 @@ type LangRecord<T = string> =
   | { id: "library_label_drop_condition_or_material"; description: "Drop a condition or a lesson material here"; values: undefined }
   | { id: "library_label_start_uppercase"; description: "START"; values: undefined }
   | { id: "library_label_no_files"; description: "No file was found"; values: undefined }
-  | { id: "assess_label_complete"; description: "Compelete"; values: undefined }
-  | { id: "assess_label_conform_complete"; description: "You cannot change the assessment after clicking Complete."; values: undefined }
-  | { id: "assess_label_isdiscard"; description: "Discard unsaved changes?"; values: undefined }
-  | { id: "assess_label_discard"; description: "Discard"; values: undefined }
-  | { id: "assess_label_fill_all_information"; description: "Please fill in all the information"; values: undefined }
-  | { id: "assess_label_no_learningoutcomes"; description: "No learning outcome is available."; values: undefined }
-  | { id: "assess_label_all"; description: "All"; values: undefined }
-  | { id: "assess_label_unassumed"; description: "Unassumed"; values: undefined }
-  | { id: "assess_label_assessment_details"; description: "Assessment Details"; values: undefined }
-  | { id: "assess_label_must_choose_last_one"; description: "You must choose at least one student."; values: undefined }
-  | { id: "assess_label_attendance"; description: "Attendance"; values: undefined }
-  | { id: "assess_label_edit"; description: "Edit"; values: undefined }
-  | { id: "assess_label_edit_attendence"; description: "Edit Attendance"; values: undefined }
-  | { id: "assess_label_summary"; description: "Class Summary"; values: undefined }
-  | { id: "assess_label_assessment_title"; description: "Assessment Title"; values: undefined }
-  | { id: "assess_label_teacher"; description: "Teacher"; values: undefined }
-  | { id: "assess_label_class_endtime"; description: "Class End Time"; values: undefined }
-  | { id: "assess_label_class_length"; description: "Class Length"; values: undefined }
-  | { id: "assess_label_number_of_actives"; description: "Number of Activities"; values: undefined }
-  | { id: "assess_label_number_of_outcomes"; description: "Number of Learning Outcomes"; values: undefined }
-  | { id: "assess_label_assessment_complete_time"; description: "Assessment Complete Time"; values: undefined }
-  | { id: "assess_label_minutes"; description: "Minutes"; values: undefined }
-  | { id: "assess_label_award_all"; description: "Award All"; values: undefined }
-  | { id: "assess_label_skip"; description: "Skip"; values: undefined }
-  | { id: "assess_label_assessing_actions"; description: "Assessing Actions"; values: undefined }
-  | { id: "assess_label_display_by"; description: "Display By"; values: undefined }
   | { id: "library_label_program1"; description: "Badanamu ESL"; values: undefined }
   | { id: "library_label_program2"; description: "Bada Math"; values: undefined }
   | { id: "library_label_program3"; description: "Bada STEM"; values: undefined }

@@ -30,7 +30,7 @@ export function NoOutComesList() {
     <Box display="flex" flexDirection="column" alignItems="center" position="relative">
       <img className={css.noOutComesImage} alt="empty" src={noOutcomes} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        {d("No learning outcome is available.").t("assess_label_no_learningoutcomes")}
+        {d("No learning outcome is available.").t("assess_msg_no_lo")}
       </Typography>
     </Box>
   );
@@ -52,9 +52,9 @@ export function OutcomesFilter(props: OutcomesFilterProps) {
     <Box display="flex" justifyContent="flex-end" mb={2}>
       <FormControl variant="outlined" size="small" className={css.selectButton}>
         <Select native defaultValue={value} onChange={handleChange}>
-          <option value="all">{d("All").t("assess_label_all")} </option>
+          <option value="all">{d("All").t("assess_filter_all")} </option>
           <option value="assumed">{d("Assumed").t("assess_label_assumed")} </option>
-          <option value="unassumed">Unassumed </option>
+          <option value="unassumed">{d("Unassumed").t("assess_filter_unassumed")}</option>
         </Select>
       </FormControl>
     </Box>

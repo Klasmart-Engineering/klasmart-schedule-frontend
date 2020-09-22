@@ -46,7 +46,7 @@ export function AssessmentsEdit() {
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
-            dispatch(actSuccess("Save successfully"));
+            dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
             history.replace({
               search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
             });
@@ -64,7 +64,7 @@ export function AssessmentsEdit() {
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
-            dispatch(actSuccess("Complete successfully"));
+            dispatch(actSuccess(d("Complete Successfully.").t("assess_msg_compete_successfully")));
             history.replace({
               search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
             });
@@ -115,7 +115,7 @@ export function AssessmentsEdit() {
   return (
     <>
       <AssessmentHeader
-        name={d("Assessment Details").t("assess_label_assessment_details")}
+        name={d("Assessment Details").t("assess_assessment_details")}
         onSave={handleAssessmentSave}
         onBack={handleGoBack}
         onComplete={handleAssessmentComplete}

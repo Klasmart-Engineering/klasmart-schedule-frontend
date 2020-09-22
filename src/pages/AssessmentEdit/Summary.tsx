@@ -133,13 +133,20 @@ function PopupInput(props: PopupInputProps) {
   }, [assessmentDetail, value]);
   const handleOk = useCallback(() => {
     const { attendance_ids } = formMethods.getValues();
-    if (!attendance_ids?.length) return Promise.reject(dispatch(actWarning("You must choose at least one student.")));
+    if (!attendance_ids?.length)
+      return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
     toggle();
     if (onChange) return onChange(attendance_ids || []);
   }, [dispatch, formMethods, onChange]);
   return (
     <Box className={css.editBox}>
-      <TextField fullWidth disabled value={attendanceString || ""} className={clsx(css.fieldset, css.nowarp)} label="Attendance" />
+      <TextField
+        fullWidth
+        disabled
+        value={attendanceString || ""}
+        className={clsx(css.fieldset, css.nowarp)}
+        label={d("Attendance").t("assess_detail_attendance")}
+      />
       <Button
         className={css.editButton}
         color="primary"
@@ -147,10 +154,10 @@ function PopupInput(props: PopupInputProps) {
         onClick={toggle}
         disabled={assessmentDetail.status === "complete"}
       >
-        {d("Edit").t("assess_label_edit")}
+        {d("Edit").t("assess_button_edit")}
       </Button>
       <Dialog open={open} onClose={toggle}>
-        <DialogTitle>{d("Edit Attendance").t("assess_label_edit_attendence")}</DialogTitle>
+        <DialogTitle>{d("Edit Attendance").t("assess_popup_edit_attendance")}</DialogTitle>
         <DialogContent dividers>
           <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
         </DialogContent>
@@ -184,7 +191,7 @@ export function Summary(props: SummaryProps) {
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
-          <Typography variant="h6">{d("Class Summary").t("assess_label_summary")}</Typography>
+          <Typography variant="h6">{d("Class Summary").t("assess_class_summary")}</Typography>
         </Box>
         <Box px={5} py={5}>
           <TextField
@@ -193,7 +200,7 @@ export function Summary(props: SummaryProps) {
             name="title"
             value={assessmentDetail.title || ""}
             className={css.fieldset}
-            label={d("Assessment Title").t("assess_label_assessment_title")}
+            label={d("Assessment Title").t("assess_column_title")}
           />
           <Controller
             as={PopupInput}
@@ -216,7 +223,7 @@ export function Summary(props: SummaryProps) {
             name="teacher.name"
             value={assessmentDetail.teachers?.map((v) => v.name)}
             className={css.fieldset}
-            label={d("Teacher").t("assess_label_teacher")}
+            label={d("Teacher").t("assess_column_teacher")}
           />
           <TextField
             fullWidth
@@ -224,7 +231,7 @@ export function Summary(props: SummaryProps) {
             name="classEndTime"
             value={formattedTime(assessmentDetail.class_end_time)}
             className={css.fieldset}
-            label={d("Class End Time").t("assess_label_class_endtime")}
+            label={d("Class End Time").t("assess_column_class_end_time")}
           />
           <Box className={css.editBox}>
             <TextField
@@ -233,9 +240,9 @@ export function Summary(props: SummaryProps) {
               name="classLength"
               value={assessmentDetail.class_length || ""}
               className={css.fieldset}
-              label={d("Class Length").t("assess_label_class_length")}
+              label={d("Class Length").t("assess_detail_class_length")}
             />
-            <Typography className={css.minutes}>{d("Minutes").t("assess_label_minutes")}</Typography>
+            <Typography className={css.minutes}>{d("Minutes").t("assess_detail_minutes")}</Typography>
           </Box>
           <TextField
             fullWidth
@@ -243,7 +250,7 @@ export function Summary(props: SummaryProps) {
             name="numberofActivities"
             value={assessmentDetail.number_of_activities || ""}
             className={css.fieldset}
-            label={d("Number of Activities").t("assess_label_number_of_actives")}
+            label="Number of Activities"
           />
           <TextField
             fullWidth
@@ -251,7 +258,7 @@ export function Summary(props: SummaryProps) {
             name="numberofLearningOutcomes"
             value={assessmentDetail.number_of_outcomes || ""}
             className={css.fieldset}
-            label={d("Number of Learning Outcomes").t("assess_label_number_of_outcomes")}
+            label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
           />
           <TextField
             fullWidth
@@ -259,7 +266,7 @@ export function Summary(props: SummaryProps) {
             name="completeTime"
             value={formattedTime(assessmentDetail.complete_time) || ""}
             className={css.fieldset}
-            label={d("Assessment Complete Time").t("assess_label_assessment_complete_time")}
+            label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
           />
         </Box>
       </Paper>

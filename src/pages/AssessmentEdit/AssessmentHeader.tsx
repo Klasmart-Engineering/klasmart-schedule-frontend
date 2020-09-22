@@ -154,7 +154,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
       )}
       <Dialog open={open} onClose={toggle} className={css.dialog}>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
-          {d("You cannot change the assessment after clicking Complete.").t("assess_label_conform_complete")}
+          {d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete")}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
@@ -167,14 +167,14 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
       </Dialog>
       <Dialog open={openCancel} onClose={toggleCancel}>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
-          {d("Discard unsaved changes?").t("assess_label_isdiscard")}
+          {d("Discard unsaved changes?").t("assess_msg_discard")}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggleCancel} color="primary">
             {d("Cancel").t("assess_label_cancel")}
           </Button>
           <Button onClick={handleDiscard} color="primary">
-            {d("Discard").t("assess_label_discard")}
+            {d("Discard").t("assess_button_discard")}
           </Button>
         </DialogActions>
       </Dialog>

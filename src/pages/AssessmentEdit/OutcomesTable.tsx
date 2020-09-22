@@ -93,7 +93,7 @@ const AssessAction = (props: AssessActionProps) => {
           {...props}
           render={(selectedContentGroupContext) => (
             <Box display="flex" alignItems="center" className={css.cellError} p={2} pb={0}>
-              <Box width={300} fontSize={14}>
+              <Box width={400} fontSize={14}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -103,7 +103,7 @@ const AssessAction = (props: AssessActionProps) => {
                       color="primary"
                     />
                   }
-                  label="Award All"
+                  label={d("Award All").t("assess_option_award all")}
                   disabled={skip || status === "complete"}
                 />
                 <Controller
@@ -112,7 +112,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={handleChangeSkip} color="primary" />}
-                      label="Skip"
+                      label={d("Skip").t("assess_option_skip")}
                       disabled={status === "complete"}
                     />
                   )}
@@ -202,7 +202,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
             <TableCell width={80} align="center">
               {d("Assumed").t("assess_label_assumed")}
             </TableCell>
-            <TableCell align="center">Assessing Actions</TableCell>
+            <TableCell align="center">{d("Assessing Actions").t("assess_option_assessing_actions")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{rows}</TableBody>
