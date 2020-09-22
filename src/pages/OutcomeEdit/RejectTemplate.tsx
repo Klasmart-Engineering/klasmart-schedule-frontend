@@ -19,7 +19,7 @@ export default function CustomizeRejectTemplate(props: CustomizeRejectTemplatePr
 
   return (
     <div style={{ width: sm ? "auto" : "400px", padding: "0px 30px 0px 0px" }}>
-      <h2 style={{ fontSize: "20px" }}>{d("Reject Reason").t("assess_label__reject_reason")}</h2>
+      <h2 style={{ fontSize: "20px" }}>{d("Reason").t("assess_label_reason")}</h2>
       <p>{d("Please specify the reason for rejection.").t("assess_msg_reject_reason")}</p>
       <div>
         <TextField

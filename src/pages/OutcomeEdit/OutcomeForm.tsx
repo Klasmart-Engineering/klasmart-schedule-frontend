@@ -99,7 +99,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   as={TextField}
                   defaultValue={outcomeDetail.reject_reason}
                   fullWidth
-                  label={d("Reject Reason").t("assess_label__reject_reason")}
+                  label={d("Reason").t("assess_label_reason")}
                   disabled
                 />
               </Grid>
