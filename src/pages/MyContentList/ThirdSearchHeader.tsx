@@ -130,8 +130,8 @@ function getBulkAction(condition: QueryCondition): BulkActionOption[] {
 }
 
 const sortOptions = [
-  { label: d("Name(A-Z)").t("assess_label_name_atoz"), value: OrderBy.content_name },
-  { label: d("Name(Z-A)").t("assess_label_name_ztoa"), value: OrderBy._content_name },
+  { label: d("Content Name(A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
+  { label: d("Content Name(Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
   { label: d("Created On(New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._created_at },
   { label: d("Created On(Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.created_at },
 ];
