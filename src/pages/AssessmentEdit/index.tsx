@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { UpdateAssessmentRequestData } from "../../api/type";
+import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
@@ -114,7 +115,7 @@ export function AssessmentsEdit() {
   return (
     <>
       <AssessmentHeader
-        name="Assessment Details"
+        name={d("Assessment Details").t("assess_label_assessment_details")}
         onSave={handleAssessmentSave}
         onBack={handleGoBack}
         onComplete={handleAssessmentComplete}

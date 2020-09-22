@@ -1,6 +1,7 @@
 import { Box, FormControl, makeStyles, Select, Typography } from "@material-ui/core";
 import React, { useCallback } from "react";
 import noOutcomes from "../../assets/icons/noLearningOutcomes.svg";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ palette, shadows }) => ({
   noOutComesImage: {
@@ -29,7 +30,7 @@ export function NoOutComesList() {
     <Box display="flex" flexDirection="column" alignItems="center" position="relative">
       <img className={css.noOutComesImage} alt="empty" src={noOutcomes} />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        No learning outcome is available.
+        {d("No learning outcome is available.").t("assess_label_no_learningoutcomes")}
       </Typography>
     </Box>
   );
@@ -51,8 +52,8 @@ export function OutcomesFilter(props: OutcomesFilterProps) {
     <Box display="flex" justifyContent="flex-end" mb={2}>
       <FormControl variant="outlined" size="small" className={css.selectButton}>
         <Select native defaultValue={value} onChange={handleChange}>
-          <option value="all">All </option>
-          <option value="assumed">Assumed </option>
+          <option value="all">{d("All").t("assess_label_all")} </option>
+          <option value="assumed">{d("Assumed").t("assess_label_assumed")} </option>
           <option value="unassumed">Unassumed </option>
         </Select>
       </FormControl>

@@ -147,19 +147,19 @@ function PopupInput(props: PopupInputProps) {
         onClick={toggle}
         disabled={assessmentDetail.status === "complete"}
       >
-        Edit
+        {d("Edit").t("assess_label_edit")}
       </Button>
       <Dialog open={open} onClose={toggle}>
-        <DialogTitle>Edit Attendance</DialogTitle>
+        <DialogTitle>{d("Edit Attendance").t("assess_label_edit_attendence")}</DialogTitle>
         <DialogContent dividers>
           <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
-            Cancel
+            {d("Cancel").t("assess_label_cancel")}
           </Button>
           <Button onClick={handleOk} color="primary">
-            OK
+            {d("OK").t("assess_label_ok")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -184,7 +184,7 @@ export function Summary(props: SummaryProps) {
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
-          <Typography variant="h6">Class Summary</Typography>
+          <Typography variant="h6">{d("Class Summary").t("assess_label_summary")}</Typography>
         </Box>
         <Box px={5} py={5}>
           <TextField
@@ -193,7 +193,7 @@ export function Summary(props: SummaryProps) {
             name="title"
             value={assessmentDetail.title || ""}
             className={css.fieldset}
-            label="Assessment Title"
+            label={d("Assessment Title").t("assess_label_assessment_title")}
           />
           <Controller
             as={PopupInput}
@@ -216,7 +216,7 @@ export function Summary(props: SummaryProps) {
             name="teacher.name"
             value={assessmentDetail.teachers?.map((v) => v.name)}
             className={css.fieldset}
-            label="Teacher"
+            label={d("Teacher").t("assess_label_teacher")}
           />
           <TextField
             fullWidth
@@ -224,7 +224,7 @@ export function Summary(props: SummaryProps) {
             name="classEndTime"
             value={formattedTime(assessmentDetail.class_end_time)}
             className={css.fieldset}
-            label="Class End Time"
+            label={d("Class End Time").t("assess_label_class_endtime")}
           />
           <Box className={css.editBox}>
             <TextField
@@ -233,9 +233,9 @@ export function Summary(props: SummaryProps) {
               name="classLength"
               value={assessmentDetail.class_length || ""}
               className={css.fieldset}
-              label="Class Length"
+              label={d("Class Length").t("assess_label_class_length")}
             />
-            <Typography className={css.minutes}>Minutes</Typography>
+            <Typography className={css.minutes}>{d("Minutes").t("assess_label_minutes")}</Typography>
           </Box>
           <TextField
             fullWidth
@@ -243,7 +243,7 @@ export function Summary(props: SummaryProps) {
             name="numberofActivities"
             value={assessmentDetail.number_of_activities || ""}
             className={css.fieldset}
-            label="Number of Activities"
+            label={d("Number of Activities").t("assess_label_number_of_actives")}
           />
           <TextField
             fullWidth
@@ -251,7 +251,7 @@ export function Summary(props: SummaryProps) {
             name="numberofLearningOutcomes"
             value={assessmentDetail.number_of_outcomes || ""}
             className={css.fieldset}
-            label="Number of Learning Outcomes"
+            label={d("Number of Learning Outcomes").t("assess_label_number_of_outcomes")}
           />
           <TextField
             fullWidth
@@ -259,7 +259,7 @@ export function Summary(props: SummaryProps) {
             name="completeTime"
             value={formattedTime(assessmentDetail.complete_time) || ""}
             className={css.fieldset}
-            label="Assessment Complete Time"
+            label={d("Assessment Complete Time").t("assess_label_assessment_complete_time")}
           />
         </Box>
       </Paper>
