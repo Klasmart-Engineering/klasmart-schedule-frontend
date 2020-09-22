@@ -1,26 +1,11 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  CircularProgressProps,
-  createMuiTheme,
-  FormControl,
-  InputLabel,
-  makeStyles,
-  MenuItem,
-  OutlinedInput,
-  TextField,
-  ThemeProvider,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Button, CircularProgress, CircularProgressProps, createMuiTheme, FormControl, InputLabel, makeStyles, MenuItem, OutlinedInput, TextField, ThemeProvider, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
+import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
@@ -165,28 +150,31 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.thumbnail}
           control={control}
           render={(props) => (
-            <SingleUploader
-              partition="thumbnail"
-              accept="image/*"
-              {...props}
-              render={({ uploady, item, btnRef, value, isUploading }) => (
-                <Box className={css.fieldset} display="flex">
-                  <Button
-                    className={css.thumbnailButton}
-                    ref={btnRef}
-                    size={sm ? "medium" : "large"}
-                    variant="contained"
-                    component="span"
-                    color="primary"
-                    endIcon={<CloudUploadOutlined />}
-                  >
-                    {d("Thumbnail").t("library_label_thumbnail")}
-                  </Button>
-                  {isUploading && <ProgressWithText value={item?.completed} />}
-                  {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
-                </Box>
-              )}
-            />
+            <CropImage render={({ crop }) => (
+              <SingleUploader
+                partition="thumbnail"
+                accept="image/*"
+                transformFile={crop}
+                {...props}
+                render={({ uploady, item, btnRef, value, isUploading }) => (
+                  <Box className={css.fieldset} display="flex">
+                    <Button
+                      className={css.thumbnailButton}
+                      ref={btnRef}
+                      size={sm ? "medium" : "large"}
+                      variant="contained"
+                      component="span"
+                      color="primary"
+                      endIcon={<CloudUploadOutlined />}
+                    >
+                      {d("Thumbnail").t("library_label_thumbnail")}
+                    </Button>
+                    {isUploading && <ProgressWithText value={item?.completed} />}
+                    {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
+                  </Box>
+                )}
+              />
+            )}/>
           )}
         />
         {contentDetail.id && (

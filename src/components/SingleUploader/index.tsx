@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { BatchItem } from "@rpldy/shared";
+import { BatchItem, FileLike } from "@rpldy/shared";
 import { PreSendData, UploadyContextType, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
 import { UPLOADER_EVENTS } from "@rpldy/uploader";
 import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
@@ -44,30 +44,27 @@ type FetchUploadUrlResult = ReturnType<typeof api.contentsResources.getContentRe
 interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   partition: NonNullable<Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0]>["partition"];
   value?: string;
+  transformFile?: (file: FileLike) => Promise<FileLike>;
   onChange?: (value?: string) => any;
 }
 export function SingleUploader(props: SingleUploaderProps) {
-  const { value, onChange, render, partition, ...uploadyProps } = props;
+  const { value, onChange, render, partition, transformFile, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
   const listeners = useMemo(
     () => ({
-      [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>> {
-        const {
-          items: [{ file }],
-        } = props;
-        const extension = parseExtension(file.name);
-        return ((dispatch(getContentResourceUploadPath({ partition, extension })) as unknown) as Promise<
-          PayloadAction<AsyncTrunkReturned<typeof getContentResourceUploadPath>>
-        >)
-          .then(({ payload }) => {
-            const { path, resource_id } = payload;
-            setRid(resource_id);
-            return { options: { destination: { url: path } } };
-          })
-          .catch((err) => {
-            return false;
-          });
+      async [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>> {
+        const { items } = props;
+        try {
+          const file = transformFile ? await transformFile(items[0].file) : items[0].file;
+          const extension = parseExtension(file.name);
+          const { payload } = await dispatch(getContentResourceUploadPath({ partition, extension })) as unknown as PayloadAction<AsyncTrunkReturned<typeof getContentResourceUploadPath>>;
+          const { path, resource_id } = payload;
+          setRid(resource_id);
+          return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
+        } catch(err) {
+          return false;
+        }
       },
       [UPLOADER_EVENTS.ITEM_FINISH]() {
         if (onChange) onChange(rid);
