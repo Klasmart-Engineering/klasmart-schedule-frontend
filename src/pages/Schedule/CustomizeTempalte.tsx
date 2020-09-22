@@ -39,6 +39,11 @@ const useStyles = makeStyles({
     marginLeft: "25px",
     cursor: "pointer",
   },
+  disableLastIcon: {
+    color: "gray",
+    marginLeft: "25px",
+    cursor: "no-drop",
+  },
   lastButton: {
     margin: "0 20px !important",
   },
@@ -54,6 +59,7 @@ type scheduleInfoProps = {
   start: Date;
   title: string;
   lesson_plan_id: string;
+  status: string;
 };
 
 interface InfoProps {
@@ -103,10 +109,16 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       <div className={classes.iconPart}>
         <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />
-        <DeleteOutlined className={classes.lastIcon} onClick={handleDelete} />
+        {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+        {scheduleInfo.status === "NotStart" && <DeleteOutlined className={classes.lastIcon} onClick={handleDelete} />}
       </div>
       <div className={classes.buttonPart}>
-        <Button color="primary" variant="contained" href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}>
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={scheduleInfo.status !== "NotStart"}
+          href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}
+        >
           Preview
         </Button>
         <Button
@@ -114,6 +126,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           variant="contained"
           autoFocus
           className={classes.lastButton}
+          disabled={scheduleInfo.status !== "NotStart"}
           onClick={() => {
             handleClose();
             toLive(scheduleInfo.id as string);

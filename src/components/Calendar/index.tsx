@@ -21,6 +21,7 @@ interface scheduleInfoProps {
   title: string;
   is_repeat: boolean;
   lesson_plan_id: string;
+  status: string;
 }
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -48,6 +49,7 @@ function MyCalendar(props: CalendarProps) {
     title: "",
     is_repeat: false,
     lesson_plan_id: "",
+    status: "",
   });
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);

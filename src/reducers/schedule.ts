@@ -11,6 +11,7 @@ interface scheduleViewData {
   title: string;
   is_repeat: boolean;
   lesson_plan_id: string;
+  status: "NotStart" | "Started" | "Closed";
 }
 
 export interface ScheduleState {
