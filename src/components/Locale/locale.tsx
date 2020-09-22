@@ -9,6 +9,7 @@ export function Locale(props: LocaleProps) {
   const { children } = props;
   const [locale, setLocale] = useState(localeManager.intl?.locale);
   useEffect(() => {
+    if (localeManager.intl?.locale) setLocale(localeManager.intl.locale);
     localeManager.on("change", (intl) => {
       if (!intl) return;
       setLocale(intl.locale);
