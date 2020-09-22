@@ -9,7 +9,7 @@ import clsx from "clsx";
 import React from "react";
 import { AssessmentStatus, Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { AssessmentsBlueIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/icons";
+import { AssessmentsBlueIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({

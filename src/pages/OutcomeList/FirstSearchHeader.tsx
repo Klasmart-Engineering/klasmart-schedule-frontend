@@ -10,7 +10,7 @@ import React from "react";
 import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import CreateOutcomings from "../OutcomeEdit";
-import { AssessmentsIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "./icons";
+import { AssessmentsIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "./Icons";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
   root: {

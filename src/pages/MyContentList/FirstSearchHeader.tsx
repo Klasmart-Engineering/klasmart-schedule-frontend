@@ -3,12 +3,13 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import { ArchiveOutlined, HourglassEmptyOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
+import { ArchiveOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
+import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -120,14 +121,14 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Button
                 onClick={createHandleClick(PublishStatus.pending)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
-                startIcon={<HourglassEmptyOutlined />}
+                startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
               >
                 {d("Pending").t("library_label_pending")}
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.draft)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
-                startIcon={<PublishOutlined />}
+                startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
               >
                 {d("Unpublished").t("library_label_unpublished")}
               </Button>
