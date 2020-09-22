@@ -128,7 +128,7 @@ export default function CreateOutcomings() {
     const result: any = await dispatch(reject({ id: outcome_id, reject_reason: reason }));
     if (result.payload === "ok") {
       dispatch(actSuccess("Reject Success"));
-      history.go(-1);
+      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-created_at");
     }
     setOpenStatus(false);
   };
@@ -191,7 +191,7 @@ export default function CreateOutcomings() {
   const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
       await dispatch(approve(outcome_id));
-      history.push("/assessments/outcome-list?publish_status=published&page=1&order_by=-created_at");
+      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-created_at");
     }
   };
 
