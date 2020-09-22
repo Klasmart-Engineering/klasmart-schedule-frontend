@@ -1,29 +1,32 @@
-import { Box, Button, Checkbox, FormControlLabel, makeStyles, TextField, TextFieldProps } from "@material-ui/core";
+import { Box, Button, Checkbox, FormControlLabel, Hidden, InputAdornment, makeStyles, TextField, TextFieldProps } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { d } from "../../locale/LocaleManager";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ breakpoints }) => ({
   searchField: {
     flexGrow: 1,
     flexShrink: 0.5,
     marginLeft: 40,
+    marginRight: 20,
+    [breakpoints.down("sm")]: {
+      marginLeft: 16,
+    },
   },
-
   checkField: (props: SearchcmsListProps) => ({
     flexShrink: 0.5,
     marginRight: 100,
-    opacity: props.searchName === "searchMedia" ? 0 : 1,
+    opacity: props.searchName === "searchOutcome" ? 1 : 0,
   }),
   fieldset: {
     minWidth: 110,
     "&:not(:first-child)": {
-      marginLeft: 16,
       marginRight: 50,
     },
   },
-});
+}));
 
 export interface SearchcmsListProps {
   searchName: "searchMedia" | "searchOutcome";
@@ -54,24 +57,57 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
 
   return (
     <Box display="flex" pt={3} pb={1} width="100%">
-      <Controller
-        as={TextField}
-        control={control}
-        onKeyPress={handleKeyPress}
-        name="searchName"
-        defaultValue={value}
-        size="small"
-        className={clsx(css.fieldset, css.searchField)}
-        placeholder="Search"
-      />
-      <Button color="primary" variant="contained" size="small" className={css.fieldset} startIcon={<Search />} onClick={handleClickSearch}>
-        Search
-      </Button>
-      <FormControlLabel
-        className={css.checkField}
-        control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
-        label="Assumed"
-      />
+      <Hidden smDown>
+        <Controller
+          as={TextField}
+          control={control}
+          onKeyPress={handleKeyPress}
+          name="searchName"
+          defaultValue={value}
+          size="small"
+          className={clsx(css.fieldset, css.searchField)}
+          placeholder={d("Search").t("library_label_search")}
+        />
+        <Button
+          color="primary"
+          variant="contained"
+          size="small"
+          className={css.fieldset}
+          startIcon={<Search />}
+          onClick={handleClickSearch}
+        >
+          {d("Search").t("library_label_search")}
+        </Button>
+        <FormControlLabel
+          className={css.checkField}
+          control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
+          label="Assumed"
+        />
+      </Hidden>
+      <Hidden mdUp>
+        <Controller
+          as={TextField}
+          control={control}
+          onKeyPress={handleKeyPress}
+          name="searchName"
+          defaultValue={value}
+          size="small"
+          className={clsx(css.fieldset, css.searchField)}
+          placeholder={d("Search").t("library_label_search")}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search style={{ cursor: "pointer" }} onClick={handleClickSearch} />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <FormControlLabel
+          className={css.checkField}
+          control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
+          label="Assumed"
+        />
+      </Hidden>
     </Box>
   );
 };

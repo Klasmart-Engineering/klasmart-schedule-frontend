@@ -82,6 +82,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
       marginLeft: 64,
     },
     [breakpoints.down("sm")]: {
+      marginLeft: "0 !important",
       marginRight: 0,
     },
   },
@@ -105,8 +106,9 @@ function ContentHeader(props: HeaderProps) {
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
+  const xs = useMediaQuery(breakpoints.down("xs"));
   const size = sm ? "small" : "medium";
-  const radioTypography = sm ? "subtitle2" : "h6";
+  const radioTypography = sm ? (xs ? "caption" : "subtitle2") : "h6";
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
