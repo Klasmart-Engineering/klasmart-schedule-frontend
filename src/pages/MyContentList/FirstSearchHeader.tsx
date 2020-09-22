@@ -97,9 +97,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const { value, onChange, onCreateContent } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, content_type: SearchContentsRequestContentType.materialandplan, order_by: OrderBy._created_at, page: 1 });
+    onChange({ publish_status, content_type: SearchContentsRequestContentType.materialandplan, order_by: OrderBy._updated_at, page: 1 });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
-    onChange({ content_type, order_by: OrderBy._created_at, page: 1 });
+    onChange({ content_type, order_by: OrderBy._updated_at, page: 1 });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -164,7 +164,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     if (publish_status === SearchContentsRequestContentType.assets) {
       return onChangeAssets(SearchContentsRequestContentType.assets);
     }
-    onChange({ publish_status, order_by: OrderBy._created_at, page: 1, content_type: SearchContentsRequestContentType.materialandplan });
+    onChange({ publish_status, order_by: OrderBy._updated_at, page: 1, content_type: SearchContentsRequestContentType.materialandplan });
   };
   return (
     <div className={classes.root}>

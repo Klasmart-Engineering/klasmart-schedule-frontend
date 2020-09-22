@@ -15,7 +15,7 @@ import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } fro
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { AssessmentQueryCondition } from "./types";
 
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 20;
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {

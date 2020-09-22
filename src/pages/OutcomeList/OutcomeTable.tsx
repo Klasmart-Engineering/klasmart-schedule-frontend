@@ -82,8 +82,8 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{outcome.shortcode}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.program?.map((item) => item.program_name).join(",")}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.subject?.map((item) => item.subject_name).join(",")}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.skills?.map((item) => item.skill_name).join(",")}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.publish_scope}</TableCell>
+      <TableCell className={clsx(css.tableCell)}></TableCell>
+      <TableCell className={clsx(css.tableCell)}></TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? "Yes" : ""}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.created_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
@@ -119,7 +119,7 @@ export interface OutcomeTableProps extends OutcomeActionProps {
 }
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();
-  const { formMethods, list, total, amountPerPage = 16, queryCondition, onPublish, onDelete, onChangePage, onClickOutcome } = props;
+  const { formMethods, list, total, amountPerPage = 20, queryCondition, onPublish, onDelete, onChangePage, onClickOutcome } = props;
   const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);

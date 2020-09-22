@@ -70,7 +70,7 @@ export interface AssessmentTableProps {
 }
 export function AssessmentTable(props: AssessmentTableProps) {
   const css = useStyles();
-  const { list, total, amountPerPage = 16, queryCondition, onChangePage, onClickAssessment } = props;
+  const { list, total, amountPerPage = 20, queryCondition, onChangePage, onClickAssessment } = props;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX={"scroll"}>

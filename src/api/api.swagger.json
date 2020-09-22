@@ -493,7 +493,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "create_at， -create_at"],
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
             "type": "string",
             "description": "search content order by column name",
             "name": "order_by",
@@ -575,7 +575,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "create_at， -create_at"],
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
             "type": "string",
             "description": "search content order by column name",
             "name": "order_by",
@@ -1258,7 +1258,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "created_at", "-created_at"],
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -1764,7 +1764,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "created_at", "-created_at"],
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -1906,7 +1906,7 @@
             "in": "query"
           },
           {
-            "enum": ["name", "-name", "created_at", "-created_at"],
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",

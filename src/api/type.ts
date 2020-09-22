@@ -52,6 +52,8 @@ export enum OutcomeOrderBy {
   _name = "-name",
   created_at = "created_at",
   _created_at = "-created_at",
+  updated_at = "updated_at",
+  _updated_at = "-updated_at",
 }
 
 export enum AssessmentStatus {

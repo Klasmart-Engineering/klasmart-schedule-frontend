@@ -96,7 +96,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const { value, onChange, onChangeCategory } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._created_at });
+    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -152,7 +152,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     if (publish_status === HeaderCategory.assessment) {
       return onChangeCategory(HeaderCategory.assessment);
     }
-    onChange({ publish_status: publish_status as OutcomePublishStatus, page: 1, order_by: OutcomeOrderBy._created_at });
+    onChange({ publish_status: publish_status as OutcomePublishStatus, page: 1, order_by: OutcomeOrderBy._updated_at });
   };
 
   return (

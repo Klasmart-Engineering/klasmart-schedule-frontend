@@ -754,7 +754,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
-        order_by?: "name" | "-name" | "create_at， -create_at";
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
         page?: number;
       },
@@ -780,7 +780,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
-        order_by?: "name" | "-name" | "create_at， -create_at";
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
         page?: number;
       },
@@ -977,7 +977,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number;
         page_size?: number;
-        order_by?: "name" | "-name" | "created_at" | "-created_at";
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
       },
       params?: RequestParams
     ) =>
@@ -1123,7 +1123,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number;
         page_size?: number;
-        order_by?: "name" | "-name" | "created_at" | "-created_at";
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
       },
       params?: RequestParams
     ) =>
@@ -1164,7 +1164,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         publish_status?: "draft" | "pending" | "published" | "rejected";
         page?: number;
         page_size?: number;
-        order_by?: "name" | "-name" | "created_at" | "-created_at";
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
       },
       params?: RequestParams
     ) =>

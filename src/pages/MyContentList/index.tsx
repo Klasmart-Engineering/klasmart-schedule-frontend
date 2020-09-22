@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
+import { d } from "../../locale/LocaleManager";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
@@ -15,9 +16,8 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
-import { d } from "../../locale/LocaleManager";
 
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 20;
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -104,7 +104,7 @@ export default function MyContentList() {
   };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type) =>
-    history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._created_at }) });
+    history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at }) });
   const handleCreateContent = () => {
     if (condition.content_type === SearchContentsRequestContentType.assets) {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
@@ -167,4 +167,4 @@ export default function MyContentList() {
 }
 
 MyContentList.routeBasePath = "/library/my-content-list";
-MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._created_at}&content_type=${SearchContentsRequestContentType.materialandplan}`;
+MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._updated_at}&content_type=${SearchContentsRequestContentType.materialandplan}`;

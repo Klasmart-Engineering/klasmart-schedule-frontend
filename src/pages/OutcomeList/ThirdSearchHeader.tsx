@@ -123,8 +123,8 @@ function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
 const sortOptions = [
   { label: "Learning Outcome Name(A-Z)", value: OutcomeOrderBy.name },
   { label: "Learning Outcome Name(Z-A)", value: OutcomeOrderBy._name },
-  { label: "Created On(New-Old)", value: OutcomeOrderBy._created_at },
-  { label: "Created On(Old-New)", value: OutcomeOrderBy.created_at },
+  { label: "Created On(New-Old)", value: OutcomeOrderBy._updated_at },
+  { label: "Created On(Old-New)", value: OutcomeOrderBy.updated_at },
 ];
 export interface ThirdSearchHeaderProps extends OutcomeQueryConditionBaseProps {
   onBulkPublish: () => any;
@@ -192,7 +192,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
-                value={value.order_by || OutcomeOrderBy._created_at}
+                value={value.order_by || OutcomeOrderBy._updated_at}
                 label="Display By"
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

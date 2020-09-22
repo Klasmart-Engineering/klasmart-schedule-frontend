@@ -276,7 +276,7 @@ export interface ContentCardListProps extends ContentActionProps {
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
-  const { formMethods, list, total, amountPerPage = 16, queryCondition, onPublish, onDelete, onChangePage, onClickContent } = props;
+  const { formMethods, list, total, amountPerPage = 20, queryCondition, onPublish, onDelete, onChangePage, onClickContent } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (

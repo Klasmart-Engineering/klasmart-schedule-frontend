@@ -112,21 +112,21 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
-                onClick={createHandleClick(OutcomePublishStatus.published, OutcomeOrderBy._created_at)}
+                onClick={createHandleClick(OutcomePublishStatus.published, OutcomeOrderBy._updated_at)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
                 startIcon={value?.publish_status === "published" ? <LoBlueIcon /> : <LoIcon />}
               >
                 Learning Outcomes
               </Button>
               <Button
-                onClick={createHandleClick(OutcomePublishStatus.pending, OutcomeOrderBy._created_at)}
+                onClick={createHandleClick(OutcomePublishStatus.pending, OutcomeOrderBy._updated_at)}
                 className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
                 startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
               >
                 Pending
               </Button>
               <Button
-                onClick={createHandleClick(OutcomePublishStatus.draft, OutcomeOrderBy._created_at)}
+                onClick={createHandleClick(OutcomePublishStatus.draft, OutcomeOrderBy._updated_at)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
                 startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
               >
@@ -148,7 +148,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const { value, onChange } = props;
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: OutcomePublishStatus | HeaderCategory) => {
     if (!publish_status) return;
-    return onChange({ ...value, publish_status: publish_status as OutcomePublishStatus, order_by: OutcomeOrderBy._created_at });
+    return onChange({ ...value, publish_status: publish_status as OutcomePublishStatus, order_by: OutcomeOrderBy._updated_at });
   };
 
   return (
