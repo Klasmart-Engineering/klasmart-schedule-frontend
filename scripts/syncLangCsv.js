@@ -47,3 +47,6 @@ function createMissJson(en, originMissJson) {
 
 writeLangJson(readAllCsv(csvDir));
 
+console.log(`Successfully updated ${langDir}/{en, cn, ko, vi, miss}.json`);
+
+require('./syncLangType');
