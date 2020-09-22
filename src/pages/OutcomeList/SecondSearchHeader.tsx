@@ -182,7 +182,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
-          <Grid container style={{ marginTop: "6px" }}>
+          <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
               <Controller
                 as={TextField}
