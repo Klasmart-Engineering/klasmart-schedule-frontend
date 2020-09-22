@@ -9,6 +9,7 @@ import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import { isUnpublish } from "./FirstSearchHeader";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
@@ -91,9 +92,9 @@ function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
       textColor="primary"
       centered
     >
-      <Tab value={OutcomePublishStatus.draft} label="Draft" />
-      <Tab value={OutcomePublishStatus.pending} label="Waiting for Approval" />
-      <Tab value={OutcomePublishStatus.rejected} label="Rejected" />
+      <Tab value={OutcomePublishStatus.draft} label={d("Draft").t("assess_label_draft")} />
+      <Tab value={OutcomePublishStatus.pending} label={d("Waiting for Approval").t("assess_label_waiting_for_approval")} />
+      <Tab value={OutcomePublishStatus.rejected} label={d("Rejected").t("assess_label_rejected")} />
     </Tabs>
   );
 }
@@ -112,20 +113,23 @@ function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
   switch (condition.publish_status) {
     case OutcomePublishStatus.published:
-      return [{ label: "delete", value: BulkAction.remove }];
+      return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
     case OutcomePublishStatus.pending:
       return [];
     default:
-      return unpublish ? [{ label: "delete", value: BulkAction.remove }] : [];
+      return unpublish ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
   }
 }
 
-const sortOptions = [
-  { label: "Learning Outcome Name(A-Z)", value: OutcomeOrderBy.name },
-  { label: "Learning Outcome Name(Z-A)", value: OutcomeOrderBy._name },
-  { label: "Created On(New-Old)", value: OutcomeOrderBy._updated_at },
-  { label: "Created On(Old-New)", value: OutcomeOrderBy.updated_at },
-];
+const sortOptions = () => {
+  return [
+    { label: d("Name(A-Z)").t("assess_label_name_atoz"), value: OutcomeOrderBy.name },
+    { label: d("Name(Z-A)").t("assess_label_name_ztoa"), value: OutcomeOrderBy._name },
+    { label: d("Created On(New-Old)").t("assess_label_created_on_newtoold"), value: OutcomeOrderBy._updated_at },
+    { label: d("Created On(Old-New)").t("assess_label_created_on_oldtonew"), value: OutcomeOrderBy.updated_at },
+  ];
+};
+
 export interface ThirdSearchHeaderProps extends OutcomeQueryConditionBaseProps {
   onBulkPublish: () => any;
   onBulkDelete: () => any;
@@ -152,7 +156,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       {item.label}
     </MenuItem>
   ));
-  const orderbyOptions = sortOptions.map((item) => (
+  const orderbyOptions = sortOptions().map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
     </MenuItem>
@@ -169,7 +173,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   size="small"
                   style={{ width: 200 }}
                   onChange={handleChangeBulkAction}
-                  label="Bulk Action"
+                  label={d("Bulk Action").t("assess_label_bulk_actions")}
                   value=""
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -193,7 +197,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
                 value={value.order_by || OutcomeOrderBy._updated_at}
-                label="Display By"
+                label={d("Display By").t("assess_label_display_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
@@ -253,13 +257,13 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
                 {actions.map((item, index) => (
                   <MenuItem key={item.label} onClick={(event) => handleClickActionItem(event, item.value)}>
-                    {item.value}
+                    {item.label}
                   </MenuItem>
                 ))}
               </Menu>
               <ImportExportIcon onClick={showSort} />
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleSortClose}>
-                {sortOptions.map((item, index) => (
+                {sortOptions().map((item, index) => (
                   <MenuItem
                     key={item.label}
                     selected={value.order_by === item.value}

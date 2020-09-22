@@ -175,13 +175,13 @@ export function H5pPreview(props: H5pPreview) {
         )}
         <Hidden only={["xs", "sm"]}>
           <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-            <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
+            {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>}
             <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
           </Box>
         </Hidden>
         <Hidden only={["md", "lg", "xl"]}>
           <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
-            <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>
+            {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
             <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
           </Box>
         </Hidden>

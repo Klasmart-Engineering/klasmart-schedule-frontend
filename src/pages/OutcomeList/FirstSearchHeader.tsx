@@ -9,6 +9,7 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import CreateOutcomings from "../OutcomeEdit";
 import { AssessmentsIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "./Icons";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
@@ -104,38 +105,37 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
           <Grid container>
             <Grid item md={3} lg={5} xl={7}>
               <Button href={`#${CreateOutcomings.routeBasePath}`} variant="contained" color="primary" className={css.createBtn}>
-                Create +
+                {d("Create").t("assess_label_create")} +
               </Button>
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.published)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
-                // startIcon={<SvgIcon style={{color: "#0E78D5"}} component={LOIcon} />}
-                startIcon={value?.publish_status === "published" ? <LoBlueIcon /> : <LoIcon />}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.published })}
+                startIcon={value?.publish_status === OutcomePublishStatus.published ? <LoBlueIcon /> : <LoIcon />}
               >
-                Learning Outcomes
+                {d("Learning Outcome").t("assess_label_learning_outcome")}
               </Button>
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.pending)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
-                startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.pending })}
+                startIcon={value?.publish_status === OutcomePublishStatus.pending ? <PendingBlueIcon /> : <PendingIcon />}
               >
-                Pending
+                {d("Pending").t("assess_label_pending")}
               </Button>
               <Button
                 onClick={createHandleClick(OutcomePublishStatus.draft)}
                 className={clsx(css.nav, { [css.actives]: unpublish })}
                 startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
               >
-                Unpublished
+                {d("Unpublished").t("assess_label_unpublished")}
               </Button>
               <Button
                 onClick={() => onChangeCategory(HeaderCategory.assessment)}
                 className={clsx(css.nav, { [css.actives]: false })}
                 startIcon={<AssessmentsIcon />}
               >
-                Assessments
+                {d("Assessments").t("assess_label_assessments")}
               </Button>
             </Grid>
           </Grid>
@@ -170,10 +170,22 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab value={OutcomePublishStatus.published} label="Published" className={classes.capitalize} />
-                <Tab value={OutcomePublishStatus.pending} label="Pending" className={classes.capitalize} />
-                <Tab value={OutcomePublishStatus.draft} label="Unpublished" className={classes.capitalize} />
-                <Tab value={HeaderCategory.assessment} label="Assesment" className={classes.capitalize} />
+                <Tab
+                  value={OutcomePublishStatus.published}
+                  label={d("Learning Outcome").t("assess_label_learning_outcome")}
+                  className={classes.capitalize}
+                />
+                <Tab value={OutcomePublishStatus.pending} label={d("Pending").t("assess_label_pending")} className={classes.capitalize} />
+                <Tab
+                  value={OutcomePublishStatus.draft}
+                  label={d("Unpublished").t("assess_label_unpublished")}
+                  className={classes.capitalize}
+                />
+                <Tab
+                  value={HeaderCategory.assessment}
+                  label={d("Assessments").t("assess_label_assessments")}
+                  className={classes.capitalize}
+                />
               </Tabs>
             </AppBar>
           </Grid>

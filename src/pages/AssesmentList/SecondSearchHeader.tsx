@@ -7,6 +7,7 @@ import { Search } from "@material-ui/icons";
 import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import { AssessmentQueryCondition, AssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -95,7 +96,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 className={classes.createBtn}
                 href="/library/content-edit/lesson/material/tab/details/rightside/contentH5p"
               >
-                Create +
+                {d("Create").t("assess_label_create")} +
               </Button>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}></Grid>
@@ -105,7 +106,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 value={searchText}
                 onChange={handleChangeSearchText}
                 onBlur={handleClickSearch}
-                label="Search"
+                label={d("Search").t("assess_label_search")}
                 variant="outlined"
                 size="small"
                 InputProps={{
@@ -152,11 +153,11 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 className={classes.searchText}
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
-                placeholder={"Search"}
+                placeholder={d("Search").t("assess_label_search")}
                 defaultValue={value.teacher_name}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
-                <Search /> Search
+                <Search /> {d("Search").t("assess_label_search")}
               </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}></Grid>

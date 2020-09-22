@@ -11,6 +11,7 @@ import { OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
+import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
@@ -85,7 +86,7 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}></TableCell>
       <TableCell className={clsx(css.tableCell)}></TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? "Yes" : ""}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.created_at)}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {queryCondition.publish_status !== OutcomePublishStatus.pending && (
@@ -151,16 +152,16 @@ export function OutcomeTable(props: OutcomeTableProps) {
                           />
                         </TableCell>
                       )}
-                      <TableCell className={clsx(css.tableCell)}>Learning Outcomes</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Short Code</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Program</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Subject</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Milestone</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Standard</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Assumed</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Created On</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Author</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>Actions</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Learning Outcome").t("assess_label_learning_outcome")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Short Code").t("assess_label_short_code")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Program").t("assess_label_program")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Subject").t("assess_label_subject")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Milestone").t("assess_label_milestone")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Standard").t("assess_label_Standard")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Assumed").t("assess_label_assumed")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Created On").t("library_label_created_on")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Author").t("library_label_author")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Actions").t("assess_label_actions")}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

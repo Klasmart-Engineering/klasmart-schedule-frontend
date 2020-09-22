@@ -44,7 +44,7 @@ export function Detail(props: ContentPreviewProps) {
             disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={formattedTime(contentPreview.created_at)}
+            value={formattedTime(contentPreview.updated_at)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>

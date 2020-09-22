@@ -10,6 +10,8 @@ import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "reac
 import { Controller, useForm } from "react-hook-form";
 import { Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
+import CreateOutcomings from "../OutcomeEdit";
 import { OutcomeQueryConditionBaseProps } from "./types";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
@@ -107,20 +109,15 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.createBtn}
-                href="/library/content-edit/lesson/material/tab/details/rightside/contentH5p"
-              >
-                Create +
+              <Button variant="contained" color="primary" className={classes.createBtn} href={`#${CreateOutcomings.routeBasePath}`}>
+                {d("Create").t("assess_label_create")} +
               </Button>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem selected={value.author_name === Author.self} onClick={handleItemClick}>
-                  My Only
+                  {d("My Only").t("assess_label_my_only")}
                 </MenuItem>
               </Menu>
             </Grid>
@@ -131,7 +128,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 control={control}
                 style={{ width: "100%", height: "100%" }}
                 onBlur={handleClickSearch}
-                label="Search"
+                label={d("Search").t("assess_label_search")}
                 variant="outlined"
                 size="small"
                 defaultValue={value.search_key || ""}
@@ -192,10 +189,10 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 className={classes.searchText}
                 onKeyPress={handleKeyPress}
                 defaultValue={value.search_key || ""}
-                placeholder={"Search"}
+                placeholder={d("Search").t("assess_label_search")}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
-                <Search /> Search
+                <Search /> {d("Search").t("assess_label_search")}
               </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
@@ -203,7 +200,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author_name === Author.self} onChange={handleChangeMyonly} />}
-                  label="My Only"
+                  label={d("My Only").t("assess_label_my_only")}
                   labelPlacement="end"
                 />
               ) : (
