@@ -78,8 +78,8 @@ const useStyles = makeStyles((theme) => ({
 const sortOptions = () => [
   { label: d("Class End Time (New-Old)").t("assess_class_end_time_new_old"), value: AssessmentOrderBy._class_end_time },
   { label: d("Class End Time (Old -New)").t("assess_class_end_time_old_new"), value: AssessmentOrderBy.class_end_time },
-  { label: "Complete Time(New-Old)", value: AssessmentOrderBy._complete_time },
-  { label: "Complete Time(Old-New)", value: AssessmentOrderBy.complete_time },
+  { label: d("Complete Time(New-Old)").t("assess_complete_time_new_old"), value: AssessmentOrderBy._complete_time },
+  { label: d("Complete Time(Old-New)").t("assess_complete_time_old_new"), value: AssessmentOrderBy.complete_time },
 ];
 const assessmentStatusOptions = () => [
   { label: d("All").t("assess_filter_all"), value: AssessmentStatus.all },

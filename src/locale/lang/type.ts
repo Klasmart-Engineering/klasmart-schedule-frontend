@@ -5,6 +5,8 @@ export type LangName = "en" | "ko" | "cn" | "vi";
 
 type LangRecord<T = string> =
   | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
+  | { id: "library_label_view_in"; description: "View in"; values: undefined }
+  | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
   | { id: "library_label_archive"; description: "Archive"; values: undefined }
   | { id: "library_label_media_assets"; description: "Media Assets"; values: undefined }

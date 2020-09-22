@@ -163,13 +163,13 @@ export function H5pPreview(props: H5pPreview) {
               <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
                 <ArrowBackIosOutlinedIcon />
               </IconButton>
-              <Typography>Previous</Typography>
+              <Typography>{d("Previous").t("library_label_previous")}</Typography>
             </Box>
             <Box className={css.optionCon}>
               <IconButton disabled={currIndex >= h5pArray.length - 1} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handleNext}>
                 <ArrowForwardIosOutlinedIcon />
               </IconButton>
-              <Typography>Next</Typography>
+              <Typography>{d("Next").t("library_label_next")}</Typography>
             </Box>
           </Box>
         )}
