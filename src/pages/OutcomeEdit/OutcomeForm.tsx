@@ -46,7 +46,7 @@ export interface OutcomeFormProps {
   onChangeProgram: (value: NonNullable<string[]>) => any;
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
   handleCheckBoxChange: CheckboxProps["onChange"];
-  assumed: boolean;
+  isAssumed: boolean;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -59,7 +59,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onChangeProgram,
     onChangeDevelopmental,
     handleCheckBoxChange,
-    assumed,
+    isAssumed,
   } = props;
   const classes = useStyles();
 
@@ -135,9 +135,9 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="assumed"
                 control={control}
                 // as={Checkbox}
-                defaultChecked={outcomeDetail.assumed}
+                // defaultChecked={outcomeDetail.assumed}
                 disabled={showEdit}
-                render={() => <Checkbox checked={outcome_id ? assumed : true} disabled={showEdit} onChange={handleCheckBoxChange} />}
+                render={() => <Checkbox checked={isAssumed} disabled={showEdit} onChange={handleCheckBoxChange} />}
               />
               <p className={classes.checkLabel} style={{ color: showEdit ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.8)" }}>
                 {d("Assumed").t("assess_label_assumed")}

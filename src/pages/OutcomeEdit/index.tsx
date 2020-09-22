@@ -238,7 +238,7 @@ export default function CreateOutcomings() {
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
         handleCheckBoxChange={handleCheckBoxChange}
-        assumed={isAssumed}
+        isAssumed={isAssumed}
       />
       <ModalBox modalDate={modalDate} />
     </Box>
