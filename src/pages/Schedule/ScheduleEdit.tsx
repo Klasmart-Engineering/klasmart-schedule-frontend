@@ -12,10 +12,11 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { EntityScheduleShortInfo, EntityScheduleAddView } from "../../api/api.auto";
+import { EntityScheduleAddView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { d } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
@@ -33,7 +34,6 @@ import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
-import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -115,6 +115,7 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [enableCustomization, setEnableCustomization] = React.useState(true);
+  const [, setIsRepeatSame] = React.useState(true);
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -225,6 +226,14 @@ function EditBox(props: CalendarStateProps) {
     type,
     [type]: state[type],
   };
+
+  React.useEffect(() => {
+    if (scheduleId && scheduleDetial.repeat) {
+      // @ts-ignore
+      const isSame = JSON.stringify(state[type]) === JSON.stringify(scheduleDetial.repeat[type]);
+      setIsRepeatSame(isSame);
+    }
+  }, [scheduleDetial.repeat, scheduleId, state, type]);
 
   React.useEffect(() => {
     if (scheduleDetial?.repeat?.type) {

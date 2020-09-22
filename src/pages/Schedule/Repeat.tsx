@@ -195,18 +195,6 @@ function RepeatCycle(props: ExtendsProps) {
       pureMonth: d("December").t("schedule_calendar_december"),
       odMonth: d("of December").t("schedule_yearly_of_dec"),
     },
-    // ,
-    // "February",
-    // "March",
-    // "April",
-    // "May",
-    // "June",
-    // "July",
-    // "August",
-    // "September",
-    // "October",
-    // "November",
-    // "December",
   ];
   const [weekends, setWeekends] = React.useState(weekendList);
   const { on_type, on, on_week, on_week_seq, on_date_day, on_week_month, on_date_month } = state[state.type];
@@ -679,7 +667,7 @@ function RepeatHeader(props: ExtendsProps) {
 
   return (
     <div>
-      <h2>Repeat</h2>
+      <h2>{d("Repeat").t("schedule_detail_repeat")}</h2>
       <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`} size="small">
         <InputLabel id="demo-simple-select-outlined-label">
           {/* {type} */}
