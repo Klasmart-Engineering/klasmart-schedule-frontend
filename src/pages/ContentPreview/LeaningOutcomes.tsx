@@ -4,6 +4,7 @@ import React from "react";
 import { EntityOutcome } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { Empty } from "../ContentEdit/MediaAssets";
+import CreateOutcomings from "../OutcomeEdit";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -25,9 +26,14 @@ interface OutcomeProps {
 function OutComeRow(props: OutcomeProps) {
   const css = useStyles();
   const { outcome } = props;
+  const handleClickOutcome = () => {
+    window.open(`#${CreateOutcomings.routeBasePath}?outcome_id=${outcome.outcome_id}`);
+  };
   return (
     <TableRow>
-      <TableCell className={css.tableCell}>{outcome.outcome_name}</TableCell>
+      <TableCell className={css.tableCell} onClick={handleClickOutcome}>
+        {outcome.outcome_name}
+      </TableCell>
       <TableCell className={css.tableCell}>{outcome.shortcode}</TableCell>
       <TableCell className={css.tableCell}>{outcome.assumed ? "Yes" : ""}</TableCell>
       <TableCell className={css.tableCell}>{outcome.author_name}</TableCell>
