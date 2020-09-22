@@ -240,7 +240,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 render={(props) => (
                   <FormattedTextField
                     select
-                    label={d("Development").t("assess_label_development")}
+                    label={"Category"}
                     encode={encodeOneItemArray}
                     decode={decodeOneItemArray}
                     {...props}
@@ -262,7 +262,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
-                label={d("Skills").t("assess_label_skills")}
+                label={"Subcategory"}
                 name="skills"
                 defaultValue={outcome_id ? outcomeDetail.skills : []}
                 control={control}
