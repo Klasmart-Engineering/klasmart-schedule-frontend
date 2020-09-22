@@ -2,7 +2,7 @@ const header = `
 import { IntlFormatters, MessageDescriptor } from "react-intl";
 
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "cn" | "vi";
+export type LangName = "en" | "ko" | "zh" | "vi";
 
 type LangRecord<T = string> =
 `

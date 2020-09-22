@@ -15,13 +15,13 @@ function readAllCsv(csvDir) {
   return []
     .concat(...csvFileNames.map(fileName => csvToJson.fieldDelimiter(',').getJsonFromCsv(path.resolve(csvDir, fileName))))
     .reduce((result, item) => {
-      const { Label: id, English: en, Chinese: cn, Korean: ko, Vietnamese: vi } = item;
+      const { Label: id, English: en, Chinese: zh, Korean: ko, Vietnamese: vi } = item;
       if (en) result.en[id] = en;
-      if (cn) result.cn[id] = cn;
+      if (zh) result.zh[id] = zh;
       if (ko) result.ko[id] = ko;
       if (vi) result.vi[id] = vi;
       return result;
-    }, { en: {}, ko: {}, cn: {}, vi: {} })
+    }, { en: {}, ko: {}, zh: {}, vi: {} })
 
 }
 
@@ -31,7 +31,7 @@ function format(json) {
 
 function writeLangJson(langDef) {
   fs.writeFileSync(missJsonPath, format(createMissJson(langDef.en, originMissJson)));
-  ['en', 'cn', 'vi', 'ko'].forEach(name => {
+  ['en', 'zh', 'vi', 'ko'].forEach(name => {
     fs.writeFileSync(path.resolve(langDir, `${name}.json`), format(langDef[name]))
   });
 }
@@ -47,6 +47,6 @@ function createMissJson(en, originMissJson) {
 
 writeLangJson(readAllCsv(csvDir));
 
-console.log(`Successfully updated ${langDir}/{en, cn, ko, vi, miss}.json`);
+console.log(`Successfully updated ${langDir}/{en, zh, ko, vi, miss}.json`);
 
 require('./syncLangType');

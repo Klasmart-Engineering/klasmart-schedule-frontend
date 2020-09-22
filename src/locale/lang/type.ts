@@ -1,12 +1,10 @@
 import { IntlFormatters, MessageDescriptor } from "react-intl";
 
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "cn" | "vi";
+export type LangName = "en" | "ko" | "zh" | "vi";
 
 type LangRecord<T = string> =
   | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
-  | { id: "library_label_view_in"; description: "View in"; values: undefined }
-  | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
   | { id: "library_label_archive"; description: "Archive"; values: undefined }
   | { id: "library_label_media_assets"; description: "Media Assets"; values: undefined }
@@ -19,6 +17,7 @@ type LangRecord<T = string> =
   | { id: "library_label_drop_condition_or_material"; description: "Drop a condition or a lesson material here"; values: undefined }
   | { id: "library_label_start_uppercase"; description: "START"; values: undefined }
   | { id: "library_label_no_files"; description: "No file was found"; values: undefined }
+  | { id: "assess_label_display_by"; description: "Display By"; values: undefined }
   | { id: "library_label_program1"; description: "Badanamu ESL"; values: undefined }
   | { id: "library_label_program2"; description: "Bada Math"; values: undefined }
   | { id: "library_label_program3"; description: "Bada STEM"; values: undefined }
