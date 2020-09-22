@@ -34,7 +34,7 @@ const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
 });
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   mediaAssets: {
-    minHeight: 722,
+    minHeight: 900,
     [breakpoints.down("sm")]: {
       minHeight: 698,
     },

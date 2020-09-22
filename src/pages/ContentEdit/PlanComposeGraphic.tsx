@@ -25,9 +25,10 @@ import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
   planComposeGraphic: {
-    minHeight: "100%",
+    height: 950,
     display: "flex",
     flexDirection: "column",
+    overflow: "scroll",
   },
   bgImage: {
     background: `url(${lessonPlanBgUrl}) center repeat`,
@@ -148,14 +149,14 @@ const useSegmentComputedStyles = makeStyles({
 
 const useGraphicComputedStyles = makeStyles({
   composeArea: (props: Segment) => ({
-    display: "flex",
-    width: "100%",
-    overflowX: "scroll",
+    // display: "flex",
+    // width: "100%",
+    // overflowX: "scroll",
     paddingTop: 40,
     paddingBottom: 80,
     // todo: 将来加入了条件，会出现需要左右滚动当场景，需要 justifycontent: start
     // justifyContent: props.material ? "start" : "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     position: "relative",
     flexGrow: 1,
   }),
@@ -464,15 +465,15 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
           noCurves
           key={archerRepaintKey}
         >
-          <Box display="flex" flexDirection="column" alignItems="center">
+          <Box className="Box1" display="flex" flexDirection="column" alignItems="center">
             <ArcherElement id="start" relations={startRelations}>
               <div>
                 <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
               </div>
             </ArcherElement>
-            <Box position="relative">
+            <Box className="box2" position="relative">
               <ArcherElement id="startTarget">
-                <Box position="absolute" mt={5} width={0} />
+                <Box className="box3" position="absolute" mt={5} width={0} />
               </ArcherElement>
             </Box>
             <SegmentBox {...{ ...plan, canDropMaterial, canDropCondition }} first plan={plan} onChange={onChange} />
@@ -482,17 +483,3 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
     </Box>
   );
 }
-
-// interface PlanComposeGraphicInputProps {
-//   defaultValue: Segment;
-//   control: Control<CreateContentRequest>;
-//   name: string;
-// }
-// export function PlanComposeGraphicInput(props: PlanComposeGraphicInputProps) {
-//   const { name, defaultValue, control: { register, getValues, setValue } } = props;
-//   const { data = defaultValue } = getValues();
-//   const handleChange = useMemo<PlanComposeGraphicProps["onChange"]>(() => (plan) => setValue(name, plan), [setValue, name]);
-//   useEffect(() => register(name), [register, name]);
-//   return <PlanComposeGraphic plan={data} onChange={handleChange} />
-
-// }

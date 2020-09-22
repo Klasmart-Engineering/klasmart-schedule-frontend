@@ -28,11 +28,18 @@ import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetai
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
+  details: {
+    minHeight: 800,
+    [breakpoints.down("sm")]: {
+      minHeight: 698,
+    },
+  },
   fieldset: {
     marginTop: 32,
   },
   fieldsetReject: {
     color: palette.error.main,
+    marginBottom: 32,
   },
   halfFieldset: {
     marginTop: 32,
@@ -124,7 +131,7 @@ export default function Details(props: DetailsProps) {
   });
   return (
     <ThemeProvider theme={theme}>
-      <Box component="form" p="7.8% 8.5%">
+      <Box component="form" p="7.8% 8.5%" className={css.details}>
         {contentDetail.publish_status === "rejected" && (
           <FormControl variant="outlined">
             <InputLabel error variant="outlined" htmlFor="rejectReason">
@@ -135,6 +142,7 @@ export default function Details(props: DetailsProps) {
               className={css.fieldsetReject}
               error
               id="rejectReason"
+              multiline
               value={contentDetail.reject_reason}
               label={d("Reject Reason").t("library_label_reject_reson")}
             ></OutlinedInput>
@@ -143,7 +151,7 @@ export default function Details(props: DetailsProps) {
         <Controller
           as={TextField}
           control={control}
-          className={css.fieldset}
+          // className={css.fieldset}
           name="name"
           label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required

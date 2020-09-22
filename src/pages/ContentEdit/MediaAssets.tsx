@@ -13,7 +13,7 @@ import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   mediaAssets: {
-    minHeight: 722,
+    minHeight: 900,
     [breakpoints.down("sm")]: {
       minHeight: 698,
     },
