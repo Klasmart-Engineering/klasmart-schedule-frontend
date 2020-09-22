@@ -94,6 +94,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     width: 48,
     height: 48,
   },
+  optionCon: {
+    display: "flex",
+    alignItems: "center",
+    color: "#fff",
+    flexDirection: "column",
+    fontSize: 16,
+  },
   iconCon: {
     width: 180,
     [breakpoints.down("sm")]: {
@@ -152,12 +159,18 @@ export function H5pPreview(props: H5pPreview) {
       <Box className={css.btnCon}>
         {h5pArray.length > 1 && (
           <Box className={css.iconCon}>
-            <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
-              <ArrowBackIosOutlinedIcon />
-            </IconButton>
-            <IconButton disabled={currIndex >= h5pArray.length - 1} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handleNext}>
-              <ArrowForwardIosOutlinedIcon />
-            </IconButton>
+            <Box className={css.optionCon}>
+              <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
+                <ArrowBackIosOutlinedIcon />
+              </IconButton>
+              <Typography>Previous</Typography>
+            </Box>
+            <Box className={css.optionCon}>
+              <IconButton disabled={currIndex >= h5pArray.length - 1} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handleNext}>
+                <ArrowForwardIosOutlinedIcon />
+              </IconButton>
+              <Typography>Next</Typography>
+            </Box>
           </Box>
         )}
         <Hidden only={["xs", "sm"]}>
