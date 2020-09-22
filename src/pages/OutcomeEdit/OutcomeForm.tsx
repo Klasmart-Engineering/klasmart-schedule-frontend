@@ -84,6 +84,8 @@ export function OutcomeForm(props: OutcomeFormProps) {
     return `${Y}-${M}-${D} ${h}:${m}`;
   };
 
+  // console.log(isAssumed)
+
   return (
     <Box className={classes.outcomings_container}>
       <div className={classes.middleBox}>
