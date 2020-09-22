@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) =>
     },
     cardMedia: {
       width: "100%",
-      paddingTop: "47.6%",
+      paddingTop: "56.25%",
       position: "relative",
     },
     cardImg: {

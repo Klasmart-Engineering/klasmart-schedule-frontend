@@ -23,7 +23,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     alignItems: "center",
   },
+  imgCon: {
+    width: "100%",
+    paddingTop: "56.25%",
+    margin: "10px 0 20px 0",
+    textAlign: "center",
+    position: "relative",
+  },
   img: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     height: "100%",
     width: "100%",
   },
@@ -59,7 +69,7 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
           label={`Lesson ${contentPreview.content_type_name}`}
         />
       </Box>
-      <Box style={{ width: "100%", height: "196px", margin: "10px 0 20px 0", textAlign: "center" }}>
+      <Box className={css.imgCon}>
         <Thumbnail className={css.img} type={content_type} id={contentPreview?.thumbnail} key={contentPreview?.thumbnail} />
       </Box>
       <Tabs
