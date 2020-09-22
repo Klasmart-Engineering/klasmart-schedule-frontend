@@ -169,5 +169,9 @@
   "schedule_msg_due_date_earlier": "The due date cannot be earlier than the scheduled class end time.",
   "schedule_msg_end_time_earlier": "End time cannot be earlier than start time",
   "schedule_button_add_class": "Add Class",
-  "schedule_label_all_day": "All Day"
+  "schedule_label_all_day": "All Day",
+  "schedule_label_continue": "Continue",
+  "schedule_label_edit": "Edit",
+  "schedule_label_beyond_two_years": "You cannot schedule a class beyond two years",
+  "schedule_label_on": "On"
 }

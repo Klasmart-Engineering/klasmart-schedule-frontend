@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
+import { d } from "../../locale/LocaleManager";
 import ContentPreview from "../ContentPreview";
 
 const useStyles = makeStyles({
@@ -99,11 +100,11 @@ export default function CustomizeTempalte(props: InfoProps) {
       <div>
         <p className={classes.title}>{scheduleInfo.title}</p>
         <p className={classes.date}>
-          <span className={classes.time}>Start Time: </span>
+          <span className={classes.time}>{d("Start Time").t("schedule_detail_start_time")}: </span>
           {timestampToTime(scheduleInfo.start)}
         </p>
         <p className={classes.date}>
-          <span className={classes.time}>End Time: </span>
+          <span className={classes.time}>{d("End Time").t("schedule_detail_end_time")}: </span>
           {timestampToTime(scheduleInfo.end)}
         </p>
       </div>
@@ -119,7 +120,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           disabled={scheduleInfo.status !== "NotStart"}
           href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}
         >
-          Preview
+          {d("Preview").t("schedule_button_preview")}
         </Button>
         <Button
           color="primary"
@@ -132,7 +133,7 @@ export default function CustomizeTempalte(props: InfoProps) {
             toLive(scheduleInfo.id as string);
           }}
         >
-          Go Live
+          {d("Go Live").t("schedule_button_go_live")}
         </Button>
       </div>
     </div>

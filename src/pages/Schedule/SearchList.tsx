@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import emptyBox from "../../../src/assets/icons/empty.svg";
 import { EntityScheduleSearchView } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getSearchScheduleList } from "../../reducers/schedule";
 
@@ -218,7 +219,7 @@ export default function SearchList() {
       ) : (
         <div style={{ textAlign: "center" }}>
           <img src={emptyBox} alt="" />
-          <p>No results found.</p>
+          <p>{d("No results found.").t("schedule_msg_no_result")}</p>
         </div>
       )}
       <div style={{ textAlign: "center" }}>

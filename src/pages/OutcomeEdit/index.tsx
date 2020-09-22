@@ -171,7 +171,7 @@ export default function CreateOutcomings() {
   };
 
   const handleReset = () => {
-    history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
+    history.go(-1);
   };
 
   const handelReject = (): void => {

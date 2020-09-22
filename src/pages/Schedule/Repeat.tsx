@@ -17,6 +17,7 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import ModalBox from "../../components/ModalBox";
+import { d } from "../../locale/LocaleManager";
 import { actError } from "../../reducers/notify";
 import { stateProps } from "../../types/scheduleTypes";
 
@@ -112,45 +113,100 @@ function RepeatCycle(props: ExtendsProps) {
     {
       day: "Sunday",
       selected: false,
+      translationDay: d("Sun").t("schedule_calendar_sun"),
     },
     {
       day: "Monday",
       selected: false,
+      translationDay: d("Mon").t("schedule_calendar_mon"),
     },
     {
       day: "Tuesday",
       selected: false,
+      translationDay: d("Tue").t("schedule_calendar_tue"),
     },
     {
       day: "Wednesday",
       selected: false,
+      translationDay: d("Wed").t("schedule_calendar_wed"),
     },
     {
       day: "Thursday",
       selected: false,
+      translationDay: d("Thu").t("schedule_calendar_thu"),
     },
     {
       day: "Friday",
       selected: false,
+      translationDay: d("Fri").t("schedule_calendar_fri"),
     },
     {
       day: "Saturday",
       selected: false,
+      translationDay: d("Sat").t("schedule_calendar_sat"),
     },
   ];
   const monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    {
+      pureMonth: d("January").t("schedule_calendar_january"),
+      odMonth: d("of January").t("schedule_yearly_of_jan"),
+    },
+    {
+      pureMonth: d("February").t("schedule_calendar_february"),
+      odMonth: d("of Febuary").t("schedule_yearly_of_feb"),
+    },
+    {
+      pureMonth: d("March").t("schedule_calendar_march"),
+      odMonth: d("of March").t("schedule_yearly_of_mar"),
+    },
+    {
+      pureMonth: d("April").t("schedule_calendar_april"),
+      odMonth: d("of April").t("schedule_yearly_of_apr"),
+    },
+    {
+      pureMonth: d("May").t("schedule_calendar_may"),
+      odMonth: d("of May").t("schedule_yearly_of_may"),
+    },
+    {
+      pureMonth: d("June").t("schedule_calendar_june"),
+      odMonth: d("of June").t("schedule_yearly_of_jun"),
+    },
+    {
+      pureMonth: d("July").t("schedule_calendar_july"),
+      odMonth: d("of July").t("schedule_yearly_of_jul"),
+    },
+    {
+      pureMonth: d("August").t("schedule_calendar_august"),
+      odMonth: d("of August").t("schedule_yearly_of_aug"),
+    },
+    {
+      pureMonth: d("September").t("schedule_calendar_september"),
+      odMonth: d("of September").t("schedule_yearly_of_sep"),
+    },
+    {
+      pureMonth: d("October").t("schedule_calendar_october"),
+      odMonth: d("of October").t("schedule_yearly_of_oct"),
+    },
+    {
+      pureMonth: d("November").t("schedule_calendar_november"),
+      odMonth: d("of November").t("schedule_yearly_of_nov"),
+    },
+    {
+      pureMonth: d("December").t("schedule_calendar_december"),
+      odMonth: d("of December").t("schedule_yearly_of_dec"),
+    },
+    // ,
+    // "February",
+    // "March",
+    // "April",
+    // "May",
+    // "June",
+    // "July",
+    // "August",
+    // "September",
+    // "October",
+    // "November",
+    // "December",
   ];
   const [weekends, setWeekends] = React.useState(weekendList);
   const { on_type, on, on_week, on_week_seq, on_date_day, on_week_month, on_date_month } = state[state.type];
@@ -250,7 +306,7 @@ function RepeatCycle(props: ExtendsProps) {
     <>
       {type === "weekly" && (
         <div className={classes.repeatItem}>
-          <h3>On</h3>
+          <h3>{d("On").t("schedule_label_on")}</h3>
           <div className={classes.weeklyDayBox}>
             {weekends.map((item, index) => {
               return (
@@ -259,7 +315,8 @@ function RepeatCycle(props: ExtendsProps) {
                   className={`${classes.weeklyDay} ${item.selected ? `${classes.currentSelected}` : ""}`}
                   onClick={() => handleWeekdaySelect(index)}
                 >
-                  {item.day.substr(0, 3)}
+                  {/* {item.day.substr(0, 3)} */}
+                  {item.translationDay}
                 </span>
               );
             })}
@@ -274,10 +331,10 @@ function RepeatCycle(props: ExtendsProps) {
                 <FormControlLabel
                   value="date"
                   control={<Radio />}
-                  label={type === "monthly" ? "On" : "Every"}
+                  label={type === "monthly" ? d("On").t("schedule_repeat_on") : d("Every").t("schedule_yearly_every")}
                   className={classes.repeatItem}
                 />
-                <FormControlLabel value="week" control={<Radio />} label="The" />
+                <FormControlLabel value="week" control={<Radio />} label={d("The").t("schedule_month_the")} />
               </RadioGroup>
             </Grid>
             <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={classes.positionInput}>
@@ -298,7 +355,7 @@ function RepeatCycle(props: ExtendsProps) {
                         value={on_date_day}
                       />
                     </FormControl>
-                    <span className={classes.positionText}>of every month</span>
+                    <span className={classes.positionText}>{d("of every month").t("schedule_frequency_month")}</span>
                   </Grid>
                 )}
                 {type === "yearly" && (
@@ -317,7 +374,7 @@ function RepeatCycle(props: ExtendsProps) {
                           >
                             {monthList.map((item, index) => (
                               <MenuItem key={index} value={index + 1}>
-                                {item}
+                                {item.pureMonth}
                               </MenuItem>
                             ))}
                           </Select>
@@ -399,7 +456,7 @@ function RepeatCycle(props: ExtendsProps) {
                   >
                     {monthList.map((item, index) => (
                       <MenuItem key={index} value={index + 1}>
-                        of {item}
+                        {item.odMonth}
                       </MenuItem>
                     ))}
                   </Select>
@@ -487,16 +544,26 @@ function EndRepeat(props: ExtendsProps) {
 
   return (
     <div>
-      <h3>End Repeat</h3>
+      <h3>{d("End Repeat").t("schedule_end_repeat")}</h3>
       <Grid container className={`${classes.repeatItem} ${classes.specialFar}`}>
-        <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
+        <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
           <RadioGroup aria-label="gender" name="gender1" value={end.type} onChange={handleEndType}>
-            <FormControlLabel value="never" control={<Radio />} label="Never" className={classes.repeatItem} />
-            <FormControlLabel value="after_count" control={<Radio />} label="After" className={classes.repeatItem} />
-            <FormControlLabel value="after_time" control={<Radio />} label="After" />
+            <FormControlLabel
+              value="never"
+              control={<Radio />}
+              label={d("Never").t("schedule_repeat_never")}
+              className={classes.repeatItem}
+            />
+            <FormControlLabel
+              value="after_count"
+              control={<Radio />}
+              label={d("After").t("schedule_repeat_after")}
+              className={classes.repeatItem}
+            />
+            <FormControlLabel value="after_time" control={<Radio />} label={d("After").t("schedule_repeat_after")} />
           </RadioGroup>
         </Grid>
-        <Grid item xs={8} sm={8} md={8} lg={8} xl={8} className={`${classes.positionInput} ${classes.specialContainer}`}>
+        <Grid item xs={7} sm={7} md={7} lg={7} xl={7} className={`${classes.positionInput} ${classes.specialContainer}`}>
           <Grid container alignItems="flex-end">
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
               <FormControl variant="outlined" style={{ width: "100%" }} size="small">
@@ -512,7 +579,7 @@ function EndRepeat(props: ExtendsProps) {
                   disabled={end.type !== "after_count"}
                 />
               </FormControl>
-              <span className={classes.positionText}>occurrence(s)</span>
+              <span className={classes.positionText}>{d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}</span>
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
               <TextField
@@ -601,7 +668,7 @@ function RepeatHeader(props: ExtendsProps) {
     handleRepeatData(_state);
   };
 
-  const endAdornment = type === "daily" ? "day(s)" : type === "weekly" ? "week(s)" : type === "monthly" ? "month(s)" : "year(s)";
+  // const endAdornment = type === "daily" ? "day(s)" : type === "weekly" ? "week(s)" : type === "monthly" ? "month(s)" : "year(s)";
 
   React.useEffect(() => {
     if (!interval) {
@@ -614,7 +681,13 @@ function RepeatHeader(props: ExtendsProps) {
     <div>
       <h2>Repeat</h2>
       <FormControl variant="outlined" className={`${classes.formControl} ${classes.repeatItem}`} size="small">
-        <InputLabel id="demo-simple-select-outlined-label">{type}</InputLabel>
+        <InputLabel id="demo-simple-select-outlined-label">
+          {/* {type} */}
+          {type === "daily" && d("Daily").t("schedule_repeat_daily")}
+          {type === "weekly" && d("Weekly").t("schedule_repeat_weekly")}
+          {type === "monthly" && d("Monthly").t("schedule_repeat_monthly")}
+          {type === "yearly" && d("Yearly").t("schedule_repeat_yearly")}
+        </InputLabel>
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
@@ -623,15 +696,15 @@ function RepeatHeader(props: ExtendsProps) {
           label={type}
           required
         >
-          <MenuItem value={"daily"}>Daily</MenuItem>
-          <MenuItem value={"weekly"}>Weekly</MenuItem>
-          <MenuItem value={"monthly"}>Monthly</MenuItem>
-          <MenuItem value={"yearly"}>Yearly</MenuItem>
+          <MenuItem value={"daily"}>{d("Daily").t("schedule_repeat_daily")}</MenuItem>
+          <MenuItem value={"weekly"}>{d("Weekly").t("schedule_repeat_weekly")}</MenuItem>
+          <MenuItem value={"monthly"}>{d("Monthly").t("schedule_repeat_monthly")}</MenuItem>
+          <MenuItem value={"yearly"}>{d("Yearly").t("schedule_repeat_yearly")}</MenuItem>
         </Select>
       </FormControl>
       <Grid container alignItems="center" className={classes.repeatItem}>
         <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
-          <div className={classes.every}>Repeat every </div>
+          <div className={classes.every}>{d("Repeat every").t("schedule_repeat_every")} </div>
         </Grid>
         <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
           <FormControl variant="outlined" style={{ width: "100%" }} size="small">
@@ -639,7 +712,16 @@ function RepeatHeader(props: ExtendsProps) {
               id="outlined-adornment-weight"
               value={interval}
               onChange={handleChangeInterval}
-              endAdornment={endAdornment}
+              // endAdornment={endAdornment}
+              endAdornment={
+                type === "daily"
+                  ? d("day(s)").t("schedule_repeat_day")
+                  : type === "weekly"
+                  ? d("week(s)").t("schedule_repeat_week")
+                  : type === "monthly"
+                  ? d("month(s)").t("schedule_repeat_month")
+                  : d("year(s)").t("schedule_repeat_year")
+              }
               aria-describedby="outlined-weight-helper-text"
               inputProps={{
                 "aria-label": "weight",
@@ -672,12 +754,12 @@ export default function RepeatSchedule(props: RepeatScheduleProps) {
 
   const modalData: any = {
     title: "",
-    text: "You cannot schedule a class beyond two years.",
+    text: d("You cannot schedule a class beyond two years").t("schedule_label_beyond_two_years"),
     openStatus: openStatus,
     enableCustomization: false,
     buttons: [
       {
-        label: "OK",
+        label: d("OK").t("schedule_button_ok"),
         event: () => {
           setOpenStatus(false);
         },

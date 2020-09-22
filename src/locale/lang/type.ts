@@ -5,7 +5,6 @@ export type LangName = "en" | "ko" | "cn" | "vi";
 
 type LangRecord<T = string> =
   | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
-  | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
   | { id: "library_label_view_in"; description: "View in"; values: undefined }
   | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
@@ -188,6 +187,10 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_end_time_earlier"; description: "End time cannot be earlier than start time"; values: undefined }
   | { id: "schedule_button_add_class"; description: "Add Class"; values: undefined }
   | { id: "schedule_label_all_day"; description: "All Day"; values: undefined }
+  | { id: "schedule_label_continue"; description: "Continue"; values: undefined }
+  | { id: "schedule_label_edit"; description: "Edit"; values: undefined }
+  | { id: "schedule_label_beyond_two_years"; description: "You cannot schedule a class beyond two years"; values: undefined }
+  | { id: "schedule_label_on"; description: "On"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }

@@ -4,6 +4,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import React from "react";
+import { d } from "../../locale/LocaleManager";
 import { repeatOptionsType } from "../../types/scheduleTypes";
 
 interface InfoProps {
@@ -22,7 +23,12 @@ export default function AlertDialog(props: InfoProps) {
 
   return (
     <div style={{ width: "400px", padding: "0px 30px 0px 30px" }}>
-      <p style={{ fontSize: "20px" }}>{title} recurring event</p>
+      <p style={{ fontSize: "20px" }}>
+        {/* {title} recurring event */}
+        {title === "Edit"
+          ? d("Edit recurring event").t("schedule_msg_edit_recurring")
+          : d("Delete recurring event").t("schedule_msg_delete_recurring")}
+      </p>
       <div style={{ paddingLeft: "20px" }}>
         <FormControl component="fieldset">
           <RadioGroup
@@ -31,17 +37,22 @@ export default function AlertDialog(props: InfoProps) {
             value={radioValue}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => setRadioValue(event.target.value as repeatOptionsType)}
           >
-            <FormControlLabel value="only_current" control={<Radio />} label="This event" />
-            <FormControlLabel value="with_following" control={<Radio />} label="This and following events" />
+            <FormControlLabel value="only_current" control={<Radio />} label={d("This event").t("schedule_option_this_event")} />
+            <FormControlLabel
+              value="with_following"
+              control={<Radio />}
+              label={d("This and following events").t("schedule_option_all_events")}
+            />
           </RadioGroup>
         </FormControl>
       </div>
       <div style={{ marginTop: "20px", textAlign: "right" }}>
         <Button color="primary" onClick={handleClose}>
-          Cancel
+          {d("Cancel").t("assess_label_cancel")}
         </Button>
         <Button color="primary" onClick={deleteSchedule}>
-          {title === "Edit" ? "Continue" : title}
+          {/* {title === "Edit" ? "Continue" : title} */}
+          {title === "Edit" ? d("Continue").t("schedule_label_continue") : d("Edit").t("schedule_label_edit")}
         </Button>
       </div>
     </div>
