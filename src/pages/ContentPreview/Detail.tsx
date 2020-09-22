@@ -119,7 +119,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label={d("Suitable Age").t("library_label_suitable_age")}
+            label={d("Suitable age").t("library_label_suitable_age")}
             fullWidth
             disabled={true}
             variant="outlined"
