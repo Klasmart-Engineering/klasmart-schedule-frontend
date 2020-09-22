@@ -221,7 +221,7 @@ function AssetsDetails(props: AssetDetailsProps) {
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
-                label={d("Developmental").t("library_label_developmental")}
+                label="Category"
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}
@@ -247,7 +247,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label={d("Skills").t("library_label_skills")}
+            label="Subcategory"
             rules={{ required: true }}
             error={errorValidator(errors.skills)}
             SelectProps={{ multiple: true }}

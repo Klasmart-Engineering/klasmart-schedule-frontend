@@ -128,7 +128,7 @@ export default function Details(props: DetailsProps) {
         {contentDetail.publish_status === "rejected" && (
           <FormControl variant="outlined">
             <InputLabel error variant="outlined" htmlFor="rejectReason">
-              Reject Reason
+              {d("Reject Reason").t("library_label_reject_reson")}
             </InputLabel>
             <OutlinedInput
               readOnly
@@ -186,7 +186,7 @@ export default function Details(props: DetailsProps) {
             <Controller
               as={TextField}
               name="created_at"
-              defaultValue={formattedTime(contentDetail.created_at)}
+              defaultValue={formattedTime(contentDetail.updated_at)}
               control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
@@ -258,7 +258,7 @@ export default function Details(props: DetailsProps) {
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
-                label={d("Developmental").t("library_label_developmental")}
+                label="Category"
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}
@@ -283,7 +283,7 @@ export default function Details(props: DetailsProps) {
             SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label={d("Skills").t("library_label_skills")}
+            label="Subcategory"
           >
             {menuItemList(flattenedMockOptions.skills)}
           </Controller>
