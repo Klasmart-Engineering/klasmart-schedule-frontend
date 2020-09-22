@@ -52,6 +52,6 @@ class LocaleManager {
   }
 }
 
-export const localeManager = new LocaleManager("en");
+export const localeManager = new LocaleManager("cn");
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
