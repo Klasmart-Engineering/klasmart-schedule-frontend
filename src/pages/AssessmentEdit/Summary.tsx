@@ -250,7 +250,7 @@ export function Summary(props: SummaryProps) {
             name="numberofActivities"
             value={assessmentDetail.number_of_activities || ""}
             className={css.fieldset}
-            label="Number of Activities"
+            label={d("Number of Activities").t("assess_detail_number_activity")}
           />
           <TextField
             fullWidth

@@ -81,7 +81,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
         <FormControlLabel
           className={css.checkField}
           control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
-          label="Assumed"
+          label={d("Assumed").t("assess_filter_assumed")}
         />
       </Hidden>
       <Hidden mdUp>
@@ -105,7 +105,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
         <FormControlLabel
           className={css.checkField}
           control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
-          label="Assumed"
+          label={d("Assumed").t("assess_filter_assumed")}
         />
       </Hidden>
     </Box>

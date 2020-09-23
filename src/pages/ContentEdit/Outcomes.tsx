@@ -192,7 +192,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
     <Box className={css.outcomsInput}>
       <Box color="primary" className={css.addOutcomesButton} boxShadow={3} onClick={handleClickOpen}>
         <Typography component="h6" className={css.addText}>
-          {d("Added Learning Outcomes").t("library_label_add_learning_outcomes")}
+          {d("Added Learning Outcomes").t("library_label_added_learning_outcomes")}
         </Typography>
         <Box mr={2} className={css.indexUI}>
           <Typography variant="h6">{value && value.length}</Typography>
@@ -200,7 +200,7 @@ export const OutComesInput = (props: OutcomesInputProps) => {
       </Box>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <DialogTitle id="customized-dialog-title">
-          {d("Added Learning Outcomes").t("library_label_add_learning_outcomes")}
+          {d("Added Learning Outcomes").t("library_label_added_learning_outcomes")}
           <IconButton aria-label="close" className={css.closeButton} onClick={handleClose}>
             <CloseIcon />
           </IconButton>

@@ -327,7 +327,7 @@ function SegmentBox(props: SegmentBoxProps) {
     return (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary">
-          {d("Drop a condition or a lesson material here").t("library_label_drop_condition_or_material")}
+          {d("Drag and drop a lesson material here").t("library_msg_drag_lesson_material")}
         </Typography>
       </div>
     );
