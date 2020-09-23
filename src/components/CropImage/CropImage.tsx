@@ -3,6 +3,7 @@ import { FileLike } from "@rpldy/shared";
 import "cropperjs/dist/cropper.css";
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import Cropper from "react-cropper";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   cropper: {
@@ -84,7 +85,7 @@ export function CropImage(props: CropImageProps) {
   return (
     <>
       <Dialog maxWidth="md" fullWidth open={!!src}>
-        <DialogTitle>{"Crop Images"}</DialogTitle>
+        <DialogTitle>{d("Clip Image").t("library_label_clip_image")}</DialogTitle>
         <DialogContent classes={{ root: css.dialogContent }}>
           <Cropper
             className={css.cropper}
@@ -105,10 +106,10 @@ export function CropImage(props: CropImageProps) {
         </DialogContent>
         <DialogActions classes={{ root: css.dialogActions }}>
           <Button className={css.button} variant="contained" onClick={handleConfirm} color="primary">
-            Ok
+            {d("Ok").t("assess_button_ok")}
           </Button>
           <Button className={css.button} variant="contained" onClick={handleCancel} color="primary">
-            Cancel
+            {d("Cancel").t("library_label_cancel")}
           </Button>
         </DialogActions>
       </Dialog>
