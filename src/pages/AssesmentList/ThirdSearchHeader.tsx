@@ -1,15 +1,14 @@
-import { Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Divider, Grid, Menu, MenuItem, SvgIcon, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import GestureIcon from "@material-ui/icons/Gesture";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { AssessmentOrderBy, AssessmentStatus } from "../../api/type";
+import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentQueryConditionBaseProps } from "./types";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -200,7 +199,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
             <Grid item sm={10} xs={10}></Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
-              <GestureIcon onClick={showStatus} />
+              <SvgIcon component={StatusIcon} onClick={showStatus} />
               <Menu anchorEl={anchorStatusEl} keepMounted open={Boolean(anchorStatusEl)} onClose={handleStatusClose}>
                 {assessmentStatusOptions().map((item, index) => (
                   <MenuItem key={item.label} selected={value.status === item.value} onClick={(e) => handleClickStatusbyItem(e, item.value)}>
