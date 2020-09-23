@@ -4,7 +4,6 @@ type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMes
 export type LangName = "en" | "ko" | "zh" | "vi";
 
 type LangRecord<T = string> =
-  | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
   | { id: "library_label_archive"; description: "Archive"; values: undefined }
   | { id: "library_label_asssets_name"; description: "Assets Name"; values: undefined }
   | { id: "library_label_content_type"; description: "Content type"; values: undefined }
@@ -210,11 +209,13 @@ type LangRecord<T = string> =
   | { id: "library_label_duration"; description: "Duration(Minutes)"; values: undefined }
   | { id: "library_label_program"; description: "Program"; values: undefined }
   | { id: "library_label_subject"; description: "Subject"; values: undefined }
-  | { id: "library_label_development"; description: "Development"; values: undefined }
-  | { id: "library_label_skills"; description: "Skills"; values: undefined }
+  | { id: "library_label_category"; description: "Category"; values: undefined }
+  | { id: "library_label_subcategory"; description: "Subcategory"; values: undefined }
   | { id: "library_label_age"; description: "Age"; values: undefined }
   | { id: "library_label_grade"; description: "Grade"; values: undefined }
   | { id: "library_label_visibility_settings"; description: "Visibility Settings"; values: undefined }
+  | { id: "library_label_visibility_settings1"; description: "School"; values: undefined }
+  | { id: "library_label_visibility_settings2"; description: "Organization"; values: undefined }
   | { id: "library_label_description"; description: "Description"; values: undefined }
   | { id: "library_label_keywords"; description: "Keywords"; values: undefined }
   | { id: "library_label_plan_name"; description: "Plan Name"; values: undefined }
@@ -342,7 +343,7 @@ type LangRecord<T = string> =
   | { id: "schedule_option_week"; description: "Week"; values: undefined }
   | { id: "schedule_option_day"; description: "Day"; values: undefined }
   | { id: "schedule_option_year"; description: "Year"; values: undefined }
-  | { id: "schedule_option-workweek"; description: "Workweek"; values: undefined }
+  | { id: "schedule_option_workweek"; description: "Workweek"; values: undefined }
   | { id: "schedule_calendar_january"; description: "January"; values: undefined }
   | { id: "schedule_calendar_february"; description: "February"; values: undefined }
   | { id: "schedule_calendar_march"; description: "March"; values: undefined }
@@ -457,7 +458,7 @@ type LangRecord<T = string> =
   | { id: "schedule_button_cancel"; description: "CANCEL"; values: undefined }
   | { id: "schedule_msg_discard"; description: "Discard unsave changes?"; values: undefined }
   | { id: "schedule_button_discard"; description: "DISCARD"; values: undefined }
-  | { id: "schedule_msg_two_year"; description: "You cannot schedule a class after two years."; values: undefined }
+  | { id: "schedule_msg_two_year"; description: "You cannot schedule a class beyond two years."; values: undefined }
   | { id: "schedule_button_ok"; description: "OK"; values: undefined }
   | {
       id: "schedule_msg_overlap";
@@ -487,7 +488,8 @@ type LangRecord<T = string> =
       description: "The due date cannot be earlier than the scheduled class end time.";
       values: undefined;
     }
-  | { id: "schedule_msg_end_time_earlier"; description: "End time cannot be earlier than start time"; values: undefined };
+  | { id: "schedule_msg_end_time_earlier"; description: "End time cannot be earlier than start time"; values: undefined }
+  | { id: "schedule_button_edit"; description: "Edit"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

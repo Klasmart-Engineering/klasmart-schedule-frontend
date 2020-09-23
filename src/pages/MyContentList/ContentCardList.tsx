@@ -21,11 +21,12 @@ import { Pagination } from "@material-ui/lab";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { PublishStatus } from "../../api/type";
+import { ContentType, PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { Thumbnail } from "../../components/Thumbnail";
+import { d } from "../../locale/LocaleManager";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
@@ -237,7 +238,12 @@ function ContentCard(props: ContentProps) {
         </Collapse>
       </CardContent>
       <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
-        {content?.content_type_name}
+        {content?.content_type === ContentType.material && d("Material").t("library_label_material")}
+        {content?.content_type === ContentType.plan && d("Plan").t("library_label_plan")}
+        {content?.content_type === ContentType.image && d("Image").t("library_label_image")}
+        {content?.content_type === ContentType.video && d("Video").t("library_label_video")}
+        {content?.content_type === ContentType.audio && d("Audio").t("library_label_audio")}
+        {content?.content_type === ContentType.doc && d("Document").t("library_label_document")}
       </Typography>
       <CardActions className={css.cardActions}>
         <Typography className={css.body2} variant="body2">
