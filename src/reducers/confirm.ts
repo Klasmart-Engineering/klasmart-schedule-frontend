@@ -29,8 +29,8 @@ const initialState: IConfirmState = {
   content: "",
   type: ConfirmDialogType.text,
   label: "",
-  confirmText: "CONFIRM",
-  cancelText: "CANCEL",
+  confirmText: "",
+  cancelText: "",
 };
 
 let resolve: (value?: ConfirmResult | PromiseLike<ConfirmResult>) => void;
