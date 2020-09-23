@@ -94,6 +94,8 @@ export default function ContentEdit() {
   const { lesson, tab, rightside } = useParams();
   const { id, searchMedia, search, editindex, searchOutcome, assumed } = useQuery();
   const history = useHistory();
+  const [mediaPage, setMediaPage] = React.useState(1);
+  const [outcomePage, setOutcomePage] = React.useState(1);
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
@@ -164,6 +166,7 @@ export default function ContentEdit() {
           name: searchMedia,
         })
       );
+      setMediaPage(1);
     },
     [dispatch, history, lesson]
   );
@@ -180,6 +183,7 @@ export default function ContentEdit() {
           assumed: assumed === "true" ? 1 : -1,
         })
       );
+      setOutcomePage(1);
     },
     [assumed, dispatch, history]
   );
@@ -196,14 +200,13 @@ export default function ContentEdit() {
           assumed: assumed === "true" ? 1 : -1,
         })
       );
+      setOutcomePage(1);
     },
     [dispatch, history, searchOutcome]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
-
-  const [, setPage] = React.useState(0);
 
   const handleChangeFile = (type: contentFileType) => {
     const formValues: object = getValues();
@@ -213,7 +216,7 @@ export default function ContentEdit() {
 
   const handleChangePage = useMemo(
     () => (page: number) => {
-      setPage(page);
+      setMediaPage(page);
       dispatch(
         contentLists({
           content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
@@ -227,7 +230,7 @@ export default function ContentEdit() {
   );
   const handleChangePageOutCome = useMemo(
     () => (page: number) => {
-      setPage(page);
+      setOutcomePage(page);
       dispatch(
         searchOutcomeList({
           page,
@@ -311,6 +314,7 @@ export default function ContentEdit() {
         total={OutcomesListTotal}
         onChangePage={handleChangePageOutCome}
         onGoOutcomesDetail={handleGoOutcomeDetail}
+        outcomePage={outcomePage}
       />
       <MediaAssets
         list={mediaList}
@@ -319,6 +323,7 @@ export default function ContentEdit() {
         value={searchMedia}
         onChangePage={handleChangePage}
         total={MediaListTotal}
+        mediaPage={mediaPage}
       />
     </ContentTabs>
   );

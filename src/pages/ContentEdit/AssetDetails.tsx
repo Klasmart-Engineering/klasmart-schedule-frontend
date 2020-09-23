@@ -165,7 +165,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           className={css.fieldset}
           name="name"
-          label={d("Assets Name").t("library_label_asssets_name")}
+          label={d("Asset Name").t("library_label_asset_name")}
           required
           rules={{ required: true }}
           defaultValue={contentDetail.name}
@@ -221,7 +221,7 @@ function AssetsDetails(props: AssetDetailsProps) {
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
-                label="Category"
+                label={d("Category").t("library_label_category")}
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}
@@ -247,7 +247,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Subcategory"
+            label={d("Subcategory").t("library_label_subcategory")}
             rules={{ required: true }}
             error={errorValidator(errors.skills)}
             SelectProps={{ multiple: true }}

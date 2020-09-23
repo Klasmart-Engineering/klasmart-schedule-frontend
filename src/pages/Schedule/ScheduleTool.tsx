@@ -10,8 +10,8 @@ import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
-import { modeViewType, timestampType } from "../../types/scheduleTypes";
 import { d } from "../../locale/LocaleManager";
+import { modeViewType, timestampType } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -162,7 +162,7 @@ function Tool(props: ToolProps) {
           {!includeList && (
             <FormControl>
               <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
-                <option value="work_week">{d("Work Week").t("schedule_label_work_week")}</option>
+                <option value="work_week">{d("Workweek").t("schedule_option_workweek")}</option>
                 <option value="day">{d("Day").t("schedule_option_day")}</option>
                 <option value="week">{d("Week").t("schedule_option_week")}</option>
                 <option value="month">{d("Month").t("schedule_detail_month")}</option>

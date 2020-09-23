@@ -118,7 +118,7 @@ export default function MyContentList() {
       const page = 1;
       history.push({ search: toQueryString({ ...condition, page }) });
     }
-  }, [condition, contentsList, contentsList.length, history, total]);
+  }, [condition, contentsList, history, total]);
 
   useEffect(() => {
     reset();

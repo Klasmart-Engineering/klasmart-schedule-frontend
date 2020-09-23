@@ -170,11 +170,12 @@ export interface MediaAssetsProps {
   value?: string;
   onSearch: (searchText: MediaAssetsProps["value"]) => any;
   onChangePage: (page: number) => any;
+  mediaPage: number;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
-  const { list, comingsoon, value, onSearch, total, amountPerPage = 10, onChangePage } = props;
+  const { list, comingsoon, value, onSearch, total, amountPerPage = 10, onChangePage, mediaPage } = props;
   const handChangePage = useCallback(
     (event: object, page: number) => {
       onChangePage(page);
@@ -182,7 +183,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     [onChangePage]
   );
 
-  const rows = list.map((item, idx) => (
+  const rows = list?.map((item, idx) => (
     <TableRow key={idx}>
       <TableCell className={css.cellThumnbnail}>
         <DraggableImage type="LIBRARY_ITEM" item={item} />
@@ -214,6 +215,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
         </Table>
       </TableContainer>
       <Pagination
+        page={mediaPage}
         className={css.pagination}
         classes={{ ul: css.paginationUl }}
         onChange={handChangePage}

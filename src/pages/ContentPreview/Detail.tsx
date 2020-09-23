@@ -79,7 +79,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label={d("Development").t("library_label_development")}
+            label={d("Category").t("library_label_category")}
             fullWidth
             disabled={true}
             variant="outlined"
@@ -89,7 +89,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label={d("Skills").t("library_label_skills")}
+            label={d("Subcategory").t("library_label_subcategory")}
             fullWidth
             disabled={true}
             variant="outlined"

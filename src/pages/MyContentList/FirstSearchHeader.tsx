@@ -179,6 +179,10 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
+<<<<<<< HEAD
+=======
+                aria-label="scrollable force tabs example"
+>>>>>>> feat :syncLangOnline and fix some error
               >
                 <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
                 <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />

@@ -1,4 +1,20 @@
-import { Box, Button, CircularProgress, CircularProgressProps, createMuiTheme, FormControl, InputLabel, makeStyles, MenuItem, OutlinedInput, TextField, ThemeProvider, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  CircularProgressProps,
+  createMuiTheme,
+  FormControl,
+  InputLabel,
+  makeStyles,
+  MenuItem,
+  OutlinedInput,
+  TextField,
+  ThemeProvider,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
@@ -150,31 +166,33 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.thumbnail}
           control={control}
           render={(props) => (
-            <CropImage render={({ crop }) => (
-              <SingleUploader
-                partition="thumbnail"
-                accept="image/*"
-                transformFile={crop}
-                {...props}
-                render={({ uploady, item, btnRef, value, isUploading }) => (
-                  <Box className={css.fieldset} display="flex">
-                    <Button
-                      className={css.thumbnailButton}
-                      ref={btnRef}
-                      size={sm ? "medium" : "large"}
-                      variant="contained"
-                      component="span"
-                      color="primary"
-                      endIcon={<CloudUploadOutlined />}
-                    >
-                      {d("Thumbnail").t("library_label_thumbnail")}
-                    </Button>
-                    {isUploading && <ProgressWithText value={item?.completed} />}
-                    {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
-                  </Box>
-                )}
-              />
-            )}/>
+            <CropImage
+              render={({ crop }) => (
+                <SingleUploader
+                  partition="thumbnail"
+                  accept="image/*"
+                  transformFile={crop}
+                  {...props}
+                  render={({ uploady, item, btnRef, value, isUploading }) => (
+                    <Box className={css.fieldset} display="flex">
+                      <Button
+                        className={css.thumbnailButton}
+                        ref={btnRef}
+                        size={sm ? "medium" : "large"}
+                        variant="contained"
+                        component="span"
+                        color="primary"
+                        endIcon={<CloudUploadOutlined />}
+                      >
+                        {d("Thumbnail").t("library_label_thumbnail")}
+                      </Button>
+                      {isUploading && <ProgressWithText value={item?.completed} />}
+                      {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
+                    </Box>
+                  )}
+                />
+              )}
+            />
           )}
         />
         {contentDetail.id && (
@@ -254,7 +272,7 @@ export default function Details(props: DetailsProps) {
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
-                label="Category"
+                label={d("Category").t("library_label_category")}
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}
@@ -279,7 +297,7 @@ export default function Details(props: DetailsProps) {
             SelectProps={{ multiple: true }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
-            label="Subcategory"
+            label={d("Subcategory").t("library_label_subcategory")}
           >
             {menuItemList(flattenedMockOptions.skills)}
           </Controller>

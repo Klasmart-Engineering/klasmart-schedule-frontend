@@ -77,7 +77,7 @@ function AssetPreview(props: PreviewProps) {
       {fileType === "audio" && <AssetAudio src={path} />}
       {fileType === "document" && <AssetFile src={path} />}
       <Typography variant="body1" style={{ marginTop: "12px" }}>
-        {d("Content type").t("library_label_content_type")} : {getSuffix(source)}
+        {d("File Type").t("library_label_file_type")} : {getSuffix(source)}
       </Typography>
     </Box>
   );
@@ -90,13 +90,19 @@ interface FileTypeProps {
 function FileText(props: FileTypeProps) {
   const { fileType, fileFormat } = props;
   const format = fileFormat[fileType];
+  const fillfileType = `${fileType}(
+    ${format.map((item: String, index: number) => {
+      return `${item.substr(1)}`;
+    })}
+    )`;
   return (
     <p style={{ color: "#666666" }}>
-      Upload a {fileType} (
+      {/* Upload a {fileType} (
       {format.map((item: String, index: number) => {
         return `${item.substr(1)}${index + 1 < format.length ? "," : ""}`;
       })}
-      ) here
+      ) here */}
+      Upload a {fillfileType} here
     </p>
   );
 }

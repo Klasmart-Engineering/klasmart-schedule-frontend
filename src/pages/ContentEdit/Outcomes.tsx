@@ -226,6 +226,7 @@ export interface OutcomesProps {
   value?: ApiOutcomeView[];
   onChange?: (value: ApiOutcomeView[]) => any;
   onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
+  outcomePage: number;
 }
 
 export default function Outcomes(props: OutcomesProps) {
@@ -243,6 +244,7 @@ export default function Outcomes(props: OutcomesProps) {
     onChangePage,
     total,
     onGoOutcomesDetail,
+    outcomePage,
   } = props;
   const { lesson } = useParams();
   const handChangePage = useCallback(
@@ -259,6 +261,7 @@ export default function Outcomes(props: OutcomesProps) {
       onChange={handChangePage}
       count={Math.ceil(total / amountPerPage)}
       color="primary"
+      page={outcomePage}
     />
   );
   return (
