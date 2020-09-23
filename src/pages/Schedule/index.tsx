@@ -54,7 +54,7 @@ function ScheduleContent() {
     setChangeProgram(programId);
   };
 
-  const [modalDate, setModalDate] = React.useState<AlertDialogProps>({
+  const initModalDate: AlertDialogProps = {
     handleChange: function (p1: number) {},
     radioValue: 0,
     radios: undefined,
@@ -67,7 +67,9 @@ function ScheduleContent() {
     handleClose: () => {
       changeModalDate({ openStatus: false });
     },
-  });
+  };
+
+  const [modalDate, setModalDate] = React.useState<AlertDialogProps>(initModalDate);
 
   const changeModalDate = useCallback(
     (data: object) => {
@@ -120,7 +122,19 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
     if (scheduleId) dispatch(getScheduleInfo(scheduleId));
-  }, [scheduleId, dispatch]);
+    setModalDate({
+      handleChange: function (p1: number) {},
+      radioValue: 0,
+      radios: undefined,
+      title: "",
+      text: "",
+      enableCustomization: false,
+      customizeTemplate: <></>,
+      openStatus: false,
+      buttons: [],
+      handleClose: () => {},
+    });
+  }, [scheduleId, setModalDate, dispatch]);
 
   return (
     <>

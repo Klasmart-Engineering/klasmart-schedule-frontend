@@ -42,21 +42,12 @@ function MyCalendar(props: CalendarProps) {
   const css = useStyles();
   const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate } = props;
   const history = useHistory();
-  const [scheduleInfo, setscheduleInfo] = React.useState<scheduleInfoProps>({
-    end: new Date(new Date().getTime()),
-    id: "",
-    start: new Date(new Date().getTime()),
-    title: "",
-    is_repeat: false,
-    lesson_plan_id: "",
-    status: "",
-  });
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
 
   const deleteScheduleByid = useCallback(
-    async (repeat_edit_options: repeatOptionsType = "only_current") => {
+    async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
       const { payload } = ((await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
@@ -78,54 +69,78 @@ function MyCalendar(props: CalendarProps) {
         history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       }
     },
-    [scheduleInfo, changeModalDate, changeTimesTamp, dispatch, history, modelView, timesTamp]
+    [changeModalDate, changeTimesTamp, dispatch, history, modelView, timesTamp]
   );
 
   /**
    * close Customization template && show delete template
    */
-  const handleDelete = useCallback(() => {
-    if (scheduleInfo.is_repeat) {
-      changeModalDate({
-        openStatus: true,
-        enableCustomization: true,
-        customizeTemplate: (
-          <ConfilctTestTemplate handleDelete={deleteScheduleByid} handleClose={() => {}} title={d("Delete").t("assess_label_delete")} />
-        ),
-      });
-    } else {
-      changeModalDate({
-        openStatus: true,
-        enableCustomization: false,
-        text: d("Are you sure you want to delete this event?").t("schedule_msg_delete"),
-        buttons: [
-          {
-            label: d("Cancel").t("assess_label_cancel"),
-            event: () => {
-              changeModalDate({ openStatus: false, enableCustomization: false });
+  const handleDelete = useCallback(
+    (scheduleInfo: scheduleInfoProps) => {
+      if (scheduleInfo.is_repeat) {
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: true,
+          customizeTemplate: (
+            <ConfilctTestTemplate
+              handleDelete={() => {
+                deleteScheduleByid("only_current", scheduleInfo);
+              }}
+              handleClose={() => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              }}
+              title={d("Delete").t("assess_label_delete")}
+            />
+          ),
+        });
+      } else {
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: false,
+          text: d("Are you sure you want to delete this event?").t("schedule_msg_delete"),
+          buttons: [
+            {
+              label: d("Cancel").t("assess_label_cancel"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
             },
-          },
-          {
-            label: d("Delete").t("assess_label_delete"),
-            event: () => {
-              deleteScheduleByid();
+            {
+              label: d("Delete").t("assess_label_delete"),
+              event: () => {
+                deleteScheduleByid("only_current", scheduleInfo);
+              },
             },
-          },
-        ],
-      });
-    }
-  }, [scheduleInfo, changeModalDate, deleteScheduleByid]);
+          ],
+        });
+      }
+    },
+    [changeModalDate, deleteScheduleByid]
+  );
 
   /**
    * click current schedule
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
-    await setscheduleInfo(event);
     changeModalDate({
       enableCustomization: true,
-      customizeTemplate: <CustomizeTempalte handleDelete={handleDelete} handleClose={() => {}} scheduleInfo={event} toLive={toLive} />,
+      customizeTemplate: (
+        <CustomizeTempalte
+          handleDelete={() => {
+            handleDelete(event);
+          }}
+          handleClose={() => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          }}
+          scheduleInfo={event}
+          toLive={toLive}
+        />
+      ),
       openStatus: true,
+      handleClose: () => {
+        changeModalDate({ openStatus: false });
+      },
     });
   };
 

@@ -64,7 +64,7 @@ type scheduleInfoProps = {
 };
 
 interface InfoProps {
-  handleDelete: () => void;
+  handleDelete: (scheduleInfo: scheduleInfoProps) => void;
   handleClose: () => void;
   scheduleInfo: scheduleInfoProps;
   toLive: (schedule_id: string) => void;
@@ -111,7 +111,14 @@ export default function CustomizeTempalte(props: InfoProps) {
       <div className={classes.iconPart}>
         <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />
         {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
-        {scheduleInfo.status === "NotStart" && <DeleteOutlined className={classes.lastIcon} onClick={handleDelete} />}
+        {scheduleInfo.status === "NotStart" && (
+          <DeleteOutlined
+            className={classes.lastIcon}
+            onClick={() => {
+              handleDelete(scheduleInfo);
+            }}
+          />
+        )}
       </div>
       <div className={classes.buttonPart}>
         <Button
