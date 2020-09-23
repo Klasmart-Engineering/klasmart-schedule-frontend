@@ -228,6 +228,7 @@ type LangRecord<T = string> =
   | { id: "library_label_bulk_actions"; description: "Bulk Actions"; values: undefined }
   | { id: "library_label_remove"; description: "Remove"; values: undefined }
   | { id: "library_msg_remove_content"; description: "Are you sure you want to remove this content?"; values: undefined }
+  | { id: "library_msg_remove_select_one"; description: "At least one content should be selected."; values: undefined }
   | { id: "library_label_sort_by"; description: "Sort By"; values: undefined }
   | { id: "library_label_content_name_atoz"; description: "Content Name(A-Z)"; values: undefined }
   | { id: "library_label_content_name_ztoa"; description: "Content Name(Z-A)"; values: undefined }
@@ -304,6 +305,7 @@ type LangRecord<T = string> =
   | { id: "assess_label_bulk_actions"; description: "Bulk Actions"; values: undefined }
   | { id: "assess_label_delete"; description: "Delete"; values: undefined }
   | { id: "assess_msg_delete_content"; description: "Are you sure you want to delete this learning outcome?"; values: undefined }
+  | { id: "assess_msg_remove_select_one"; description: "At least one learning outcome should be selected."; values: undefined }
   | { id: "assess_label_sort_by"; description: "Sort By"; values: undefined }
   | { id: "assess_label_name_atoz"; description: "Name(A-Z)"; values: undefined }
   | { id: "assess_label_name_ztoa"; description: "Name(Z-A)"; values: undefined }
