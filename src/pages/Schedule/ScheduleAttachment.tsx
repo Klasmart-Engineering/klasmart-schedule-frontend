@@ -35,17 +35,17 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
 const tipsText = (
   <div style={{ paddingBottom: "8px" }}>
     <div style={{ color: "#000000", fontWeight: "bold" }}>
-      <p>Max: 10MB</p>
-      <span>Support files In:</span>
+      <p>{d("Max").t("schedule_detail_max")}: 10MB</p>
+      <span>{d("Support files in").t("schedule_detail_support_files_in")}:</span>
     </div>
     <div style={{ color: "#666666" }}>
-      <span>Video (avi, mov,mp4)</span>
+      <span>{d("Video").t("schedule_detail_video")} (avi, mov,mp4)</span>
       <br />
-      <span>Audio (mp3, wav)</span>
+      <span>{d("Audio").t("schedule_detail_audio")} (mp3, wav)</span>
       <br />
-      <span>Image (jpg, jpeg, png, gif, bmp)</span>
+      <span>{d("Image").t("schedule_detail_image")} (jpg, jpeg, png, gif, bmp)</span>
       <br />
-      <span>Document (doc, docx, ppt, pptx, xls, xlsx, pdf)</span>
+      <span>{d("Document").t("schedule_detail_document")} (doc, docx, ppt, pptx, xls, xlsx, pdf)</span>
     </div>
   </div>
 );
