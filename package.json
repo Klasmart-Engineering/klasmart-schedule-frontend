@@ -56,7 +56,7 @@
     "test": "react-scripts test",
     "syncapi": "curl https://swagger-ui.kidsloop.net/config/api.swagger.json -so src/api/api.swagger.json && sta -p src/api/api.swagger.json -o ./src/api -n api.auto.ts",
     "syncLangMiss": "node ./scripts/syncLangType",
-    "syncLangOnline": "curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=0' -Lso src/locale/lang/csv/library.csv && curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=1481075788' -Lso src/locale/lang/csv/assessment.csv && curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=1270100120' -Lso src/locale/lang/csv/outcome.csv && curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=2004441755' -Lso src/locale/lang/csv/schedule.csv && node ./scripts/syncLangCsv.js",
+    "syncLangOnline": "bash -c \"curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=0' -Lso src/locale/lang/csv/library.csv && curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=1481075788' -Lso src/locale/lang/csv/assessment.csv && curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=1270100120' -Lso src/locale/lang/csv/outcome.csv && curl 'https://docs.google.com/spreadsheets/d/1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA/export?exportFormat=csv&gid=2004441755' -Lso src/locale/lang/csv/schedule.csv && node ./scripts/syncLangCsv.js\"",
     "lint": "eslint --max-warnings=0 --ext .jsx,.js,.ts,.tsx src/",
     "eject": "react-scripts eject"
   },
@@ -95,6 +95,7 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.1.5",
     "convert-csv-to-json": "^1.0.0",
+    "cross-env": "^7.0.2",
     "eslint": "^6.6.0",
     "fetch-intercept": "^2.3.1",
     "http-proxy-middleware": "^1.0.5",

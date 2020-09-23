@@ -98,7 +98,7 @@ function SubUnpublished(props: QueryConditionBaseProps) {
   );
 }
 
-enum BulkAction {
+export enum BulkAction {
   publish = "publish",
   remove = "remove",
   delete = "delete",

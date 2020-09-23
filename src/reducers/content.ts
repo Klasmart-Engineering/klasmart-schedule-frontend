@@ -115,7 +115,10 @@ const initialState: IContentState = {
     outcome_entities: [],
   },
 };
-
+enum Action {
+  remove = "remove",
+  delete = "delete",
+}
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
   ? U
@@ -239,7 +242,8 @@ type IQueryDeleteContentResult = AsyncReturnType<typeof api.contents.deleteConte
 export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryDeleteContentParams>(
   "content/deleteContent",
   async ({ id, type }, { dispatch }) => {
-    const content = `Are you sure you want to ${type} this content?`;
+    const content =
+      type === Action.remove ? "Are you sure you want to remove this content?" : "Are you sure you want to delete this content?";
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.contents.deleteContent(id);
@@ -258,14 +262,15 @@ export const publishContent = createAsyncThunk<
 // type BulkActionIds = Parameters<typeof>
 type IQueryBulkDeleteParams = {
   ids: Parameters<typeof api.contentsBulk.deleteContentBulk>[0]["id"];
-  type: string;
+  type: Action;
 };
 type IQueryBulkDeleteResult = AsyncReturnType<typeof api.contentsBulk.deleteContentBulk>;
 export const bulkDeleteContent = createAsyncThunk<IQueryBulkDeleteResult, IQueryBulkDeleteParams>(
   "content/bulkDeleteContent",
   async ({ ids, type }, { dispatch }) => {
     if (!ids?.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
-    const content = `Are you sure you want to ${type} these contents?`;
+    const content =
+      type === Action.remove ? "Are you sure you want to remove these contents?" : "Are you sure you want to delete these contents?";
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.contentsBulk.deleteContentBulk({ id: ids });

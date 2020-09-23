@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "18px",
   },
 }));
+
 interface ContentPreviewProps {
   tab: string;
   contentPreview: EntityContentInfoWithDetails;
@@ -66,7 +67,11 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
           size="small"
           color="primary"
           style={{ color: "#fff", backgroundColor: contentPreview.content_type === ContentType.material ? "#3f51b5" : "#4caf50" }}
-          label={`Lesson ${contentPreview.content_type_name}`}
+          label={
+            contentPreview.content_type === ContentType.material
+              ? d("Lesson Material").t("library_label_lesson_material")
+              : d(`Lesson Plan`).t("library_label_lesson_plan")
+          }
         />
       </Box>
       <Box className={css.imgCon}>
@@ -81,8 +86,8 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
         variant="fullWidth"
         aria-label="full width tabs example"
       >
-        <Tab label="Details" value={TabValue.details} />
-        <Tab label="Leaning Outcomes" value={TabValue.leaningoutcomes} />
+        <Tab label={d("Details").t("library_label_details")} value={TabValue.details} />
+        <Tab label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={TabValue.leaningoutcomes} />
       </Tabs>
     </Fragment>
   );
