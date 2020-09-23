@@ -109,7 +109,7 @@
   "library_label_inappropriate_content": "内容不适宜",
   "library_label_quality_of_lesson": "课程质量差",
   "library_label_no_permissions_use_assets": "没有权限使用资源库",
-  "library_add_remove_learning_outcomes": "添加/移除学习成果",
+  "library_label_add_remove_learning_outcomes": "添加/移除学习成果",
   "library_label_other": "其他",
   "library_msg_reject_content": "确定要拒绝这个内容吗？",
   "library_msg_reject_reason": "请输入拒绝理由。",

@@ -257,7 +257,7 @@ type LangRecord<T = string> =
   | { id: "library_label_inappropriate_content"; description: "Inappropriate Content"; values: undefined }
   | { id: "library_label_quality_of_lesson"; description: "Quality of Lesson is Poor"; values: undefined }
   | { id: "library_label_no_permissions_use_assets"; description: "No Permissions to Use Assets"; values: undefined }
-  | { id: "library_add_remove_learning_outcomes"; description: "Add/Remove Learning Outcomes"; values: undefined }
+  | { id: "library_label_add_remove_learning_outcomes"; description: "Add/Remove Learning Outcomes"; values: undefined }
   | { id: "library_label_other"; description: "Other"; values: undefined }
   | { id: "library_msg_reject_content"; description: "Are you sure you want to reject this content?"; values: undefined }
   | { id: "library_msg_reject_reason"; description: "Please specify the reason for rejection."; values: undefined }

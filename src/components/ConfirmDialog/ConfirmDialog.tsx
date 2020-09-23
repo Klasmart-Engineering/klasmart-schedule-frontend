@@ -28,7 +28,10 @@ const REJECT_REASON_VALUES = () => [
     label: d("No Permissions to Use Assets").t("library_label_no_permissions_use_assets"),
     value: "library_label_no_permissions_use_assets",
   },
-  { label: d("Add/Remove Learning Outcomes").t("library_add_remove_learning_outcomes"), value: "library_add_remove_learning_outcomes" },
+  {
+    label: d("Add/Remove Learning Outcomes").t("library_label_add_remove_learning_outcomes"),
+    value: "library_label_add_remove_learning_outcomes",
+  },
   // "library_label_inappropriate_content",
   // "library_label_quality_of_lesson",
   // "library_label_no_permissions_use_assets",
