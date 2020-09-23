@@ -1,7 +1,7 @@
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -120,29 +120,14 @@ function MyCalendar(props: CalendarProps) {
    * click current schedule
    * @param event
    */
-  const scheduleSelected = (event: scheduleInfoProps) => {
-    if (event.id === scheduleInfo.id) {
-      changeModalDate({
-        enableCustomization: true,
-        customizeTemplate: (
-          <CustomizeTempalte handleDelete={handleDelete} handleClose={() => {}} scheduleInfo={scheduleInfo} toLive={toLive} />
-        ),
-        openStatus: true,
-      });
-    } else {
-      setscheduleInfo(event);
-    }
-  };
-
-  useEffect(() => {
+  const scheduleSelected = async (event: scheduleInfoProps) => {
+    await setscheduleInfo(event);
     changeModalDate({
       enableCustomization: true,
-      customizeTemplate: (
-        <CustomizeTempalte handleDelete={handleDelete} handleClose={() => {}} scheduleInfo={scheduleInfo} toLive={toLive} />
-      ),
+      customizeTemplate: <CustomizeTempalte handleDelete={handleDelete} handleClose={() => {}} scheduleInfo={event} toLive={toLive} />,
       openStatus: true,
     });
-  }, [scheduleInfo, handleDelete, toLive, changeModalDate]);
+  };
 
   /**
    * crete schedule

@@ -121,7 +121,7 @@ function EditBox(props: CalendarStateProps) {
   const [contentsListSelect, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
-  const [, setIsRepeatSame] = React.useState(true);
+  const [isRepeatSame, setIsRepeatSame] = React.useState(true);
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -444,19 +444,43 @@ function EditBox(props: CalendarStateProps) {
 
   const saveTheTest = () => {
     if (scheduleId && scheduleDetial.is_repeat && checkedStatus.repeatCheck) {
-      changeModalDate({
-        openStatus: true,
-        enableCustomization: true,
-        customizeTemplate: (
-          <ConfilctTestTemplate
-            handleDelete={saveSchedule}
-            handleClose={() => {
-              changeModalDate({ openStatus: false });
-            }}
-            title={d("Edit").t("assess_button_edit")}
-          />
-        ),
-      });
+      if (isRepeatSame) {
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: true,
+          customizeTemplate: (
+            <ConfilctTestTemplate
+              handleDelete={saveSchedule}
+              handleClose={() => {
+                changeModalDate({ openStatus: false });
+              }}
+              title={d("Edit").t("assess_button_edit")}
+            />
+          ),
+        });
+      } else {
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: false,
+          text: d("This is an event in a series. Are you sure you want to edit this and following events?").t(
+            "schedule_schedule_msg_edit_all"
+          ),
+          buttons: [
+            {
+              label: d("CANCEL").t("schedule_button_cancel"),
+              event: () => {
+                changeModalDate({ openStatus: false });
+              },
+            },
+            {
+              label: d("CONFIRM").t("schedule_button_confirm"),
+              event: () => {
+                saveSchedule("with_following");
+              },
+            },
+          ],
+        });
+      }
     } else {
       saveSchedule();
     }
@@ -529,7 +553,7 @@ function EditBox(props: CalendarStateProps) {
         text: d("Are you sure you want to delete this event?").t("schedule_msg_delete"),
         buttons: [
           {
-            label: d("Cancel").t("assess_label_cancel"),
+            label: d("CANCEL").t("schedule_button_cancel"),
             event: () => {
               changeModalDate({ openStatus: false });
             },
@@ -563,13 +587,13 @@ function EditBox(props: CalendarStateProps) {
       text: d("Discard unsave changes?").t("schedule_msg_discard"),
       buttons: [
         {
-          label: d("Cancel").t("assess_label_cancel"),
+          label: d("CANCEL").t("schedule_button_cancel"),
           event: () => {
             changeModalDate({ openStatus: false });
           },
         },
         {
-          label: d("Discard").t("assess_button_discard"),
+          label: d("DISCARD").t("schedule_button_discard"),
           event: () => {
             changeModalDate({ openStatus: false });
             history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
