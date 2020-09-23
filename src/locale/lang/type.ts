@@ -17,8 +17,6 @@ type LangRecord<T = string> =
   | { id: "schedule_label_beyond_two_years"; description: "You cannot schedule a class beyond two years"; values: undefined }
   | { id: "schedule_label_on"; description: "On"; values: undefined }
   | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
-  | { id: "assess_label_category"; description: "Category"; values: undefined }
-  | { id: "assess_label_subcategory"; description: "Subcategory"; values: undefined }
   | { id: "assess_label_create_time"; description: "Create Time"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
@@ -153,7 +151,7 @@ type LangRecord<T = string> =
   | { id: "library_label_document"; description: "Document"; values: undefined }
   | { id: "library_label_asset_name"; description: "Asset Name"; values: undefined }
   | { id: "library_label_upload_a_file"; description: "Upload"; values: undefined }
-  | { id: "library_label_upload_a"; description: "Upload a () here"; values: undefined }
+  | { id: "library_label_upload_a"; description: "Upload a {fillfileType} here"; values: { fillfileType: string | number } }
   | { id: "library_label_upload"; description: "Upload"; values: undefined }
   | { id: "library_label_file_type"; description: "File Type"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
@@ -168,8 +166,8 @@ type LangRecord<T = string> =
   | { id: "assess_label_assumed"; description: "Assumed"; values: undefined }
   | { id: "assess_label_program"; description: "Program"; values: undefined }
   | { id: "assess_label_subject"; description: "Subject"; values: undefined }
-  | { id: "assess_label_development"; description: "Development"; values: undefined }
-  | { id: "assess_label_skills"; description: "Skills"; values: undefined }
+  | { id: "assess_label_category"; description: "Category"; values: undefined }
+  | { id: "assess_label_subcategory"; description: "Subcategory"; values: undefined }
   | { id: "assess_label_age"; description: "Age"; values: undefined }
   | { id: "assess_label_grade"; description: "Grade"; values: undefined }
   | { id: "assess_label_estimated_time"; description: "Estimated Time(Minutes)"; values: undefined }

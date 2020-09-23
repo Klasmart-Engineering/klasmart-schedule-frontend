@@ -102,7 +102,7 @@ function FileText(props: FileTypeProps) {
         return `${item.substr(1)}${index + 1 < format.length ? "," : ""}`;
       })}
       ) here */}
-      Upload a {fillfileType} here
+      {d("Upload a {fillfileType} here").t("library_label_upload_a", { fillfileType })}
     </p>
   );
 }
@@ -156,7 +156,7 @@ function AssetEdit(props: AssetEditProps) {
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
                     {!isUploading && !contentDetail.id && (
                       <Button variant="contained" color="primary" ref={btnRef}>
-                        {d("Upload Files").t("library_label_upload_files")}
+                        {d("Upload").t("library_label_upload")}
                       </Button>
                     )}
                     {isUploading && <ProgressWithText value={item?.completed} />}
