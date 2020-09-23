@@ -424,7 +424,9 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
       <Hidden smDown>
         <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
           <Typography variant="h6" className={css.title}>
-            {outcome_id ? d("Details").t("assess_label_details") : d("Create a New Learning Outcome").t("assess_label_create_outcome")}
+            {outcome_id
+              ? d("Details").t("assess_label_details")
+              : d("Create New Learning Outcome").t("assess_label_create_new_learning_outcome")}
           </Typography>
         </Box>
       </Hidden>

@@ -17,9 +17,6 @@ type LangRecord<T = string> =
   | { id: "schedule_label_beyond_two_years"; description: "You cannot schedule a class beyond two years"; values: undefined }
   | { id: "schedule_label_on"; description: "On"; values: undefined }
   | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
-  | { id: "assess_label_create_time"; description: "Create Time"; values: undefined }
-  | { id: "assess_label_create_outcome"; description: "Create a New Learning Outcome"; values: undefined }
-  | { id: "assess_label_for_org"; description: "For Organizations"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
