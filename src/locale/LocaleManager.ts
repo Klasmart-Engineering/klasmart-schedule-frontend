@@ -1,13 +1,6 @@
 import mitt from "mitt";
 import { createIntl, createIntlCache, IntlFormatters, IntlShape } from "react-intl";
-import {
-  LangeRecordValuesByDesc,
-  LangeRecordValuesById,
-  LangName,
-  LangRecodeDescription,
-  LangRecordId,
-  LangRecordIdByDescription,
-} from "./lang/type";
+import { LangeRecordValuesByDesc, LangeRecordValuesById, LangName, LangRecodeDescription, LangRecordId, LangRecordIdByDescription } from "./lang/type";
 
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
 type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecordValuesByDesc<Desc> extends undefined
@@ -17,6 +10,20 @@ type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecor
   : {
       <Id extends LangRecordIdByDescription<Desc>>(id: Id, values: LangeRecordValuesById<Id>): FormatMessageReturn;
     };
+
+function getDefaultLocale(availableLanguages: string[]) {
+  const languages = navigator.languages || [
+    navigator.language,
+    (navigator as any).browserLanguage,
+    (navigator as any).userLanguage,
+    (navigator as any).systemLanguage
+  ]
+  for (const language of languages) {
+    const locale = language.slice(0, 2);
+    if (availableLanguages.includes(locale)) return locale;
+  }
+  return 'en';
+}
 
 export interface ChangeHandler {
   (intl?: IntlShape): any;
@@ -52,6 +59,6 @@ class LocaleManager {
   }
 }
 
-export const localeManager = new LocaleManager("zh");
+export const localeManager = new LocaleManager("en");
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
