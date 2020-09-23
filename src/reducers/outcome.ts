@@ -1,6 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api from "../api";
 import { ApiOutcomeCreateResponse, ApiOutcomeCreateView, ApiOutcomeIDList, ApiOutcomeView } from "../api/api.auto";
+import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -83,7 +84,7 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
 export const deleteOutcome = createAsyncThunk<string, Required<ApiOutcomeView>["outcome_id"]>(
   "outcome/deleteOutcome",
   async (id, { dispatch }) => {
-    const content = `Are you sure you want to delete this outcome?`;
+    const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.learningOutcomes.deleteLearningOutcome(id);
@@ -108,7 +109,7 @@ export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDL
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
     if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to delete!")));
-    const content = `Are you sure you want to delete these contents?`;
+    const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.bulk.deleteOutcomeBulk({ outcome_ids: ids });
@@ -118,7 +119,7 @@ export const bulkPublishOutcome = createAsyncThunk<string, Required<ApiOutcomeID
   "outcome/bulkPublishOutcome",
   async (ids, { dispatch }) => {
     if (!ids.length) return Promise.reject(dispatch(actWarning("You have select any plan or material to publish!")));
-    const content = `Are you sure you want to publish these contents?`;
+    const content = "Are you sure you want to publish these contents?";
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.bulkPublish.publishLearningOutcomesBulk({ outcome_ids: ids });

@@ -5,6 +5,7 @@ import api from "../api";
 import { ApiContentBulkOperateRequest, ApiOutcomeView, EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
+import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -243,7 +244,9 @@ export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryD
   "content/deleteContent",
   async ({ id, type }, { dispatch }) => {
     const content =
-      type === Action.remove ? "Are you sure you want to remove this content?" : "Are you sure you want to delete this content?";
+      type === Action.remove
+        ? d("Are you sure you want to remove this content?").t("library_msg_remove_content")
+        : d("Are you sure you want to delete this content?").t("library_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.contents.deleteContent(id);
@@ -253,7 +256,7 @@ export const publishContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.publishContent>,
   Required<EntityContentInfoWithDetails>["id"]
 >("content/publishContent", async (id, { dispatch }) => {
-  const content = `Are you sure you want to publish this content?`;
+  const content = d("Are you sure you want to publish this content?").t("library_msg_publish_content");
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
   if (!isConfirmed) return Promise.reject();
   return api.contents.publishContent(id, { scope: "" });
@@ -304,8 +307,8 @@ type RejectContentResult = AsyncReturnType<typeof api.contents.rejectContentRevi
 export const rejectContent = createAsyncThunk<RejectContentResult, RejectContentParams>(
   "content/rejectContent",
   async ({ id }, { dispatch }) => {
-    const title = `Reject Reason`;
-    const content = `Please specify the reason of rejection`;
+    const title = d("Reason").t("library_label_reason");
+    const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
     const type = ConfirmDialogType.textField;
     const { isConfirmed, value } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
     if (!isConfirmed) return Promise.reject();

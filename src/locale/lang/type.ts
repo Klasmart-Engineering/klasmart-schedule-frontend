@@ -4,19 +4,11 @@ type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMes
 export type LangName = "en" | "ko" | "zh" | "vi";
 
 type LangRecord<T = string> =
-  | { id: "assess_label__reject_reason"; description: "Reject Reason"; values: undefined }
   | { id: "library_label_scrollable_tabs"; description: "scrollable force tabs example"; values: undefined }
   | { id: "library_label_archive"; description: "Archive"; values: undefined }
-  | { id: "library_label_media_assets"; description: "Media Assets"; values: undefined }
-  | { id: "library_label_media_material"; description: "Media Material"; values: undefined }
   | { id: "library_label_asssets_name"; description: "Assets Name"; values: undefined }
   | { id: "library_label_content_type"; description: "Content type"; values: undefined }
   | { id: "library_label_upload_files"; description: "Upload Files"; values: undefined }
-  | { id: "library_label_asset_details"; description: "Asset Details"; values: undefined }
-  | { id: "library_label_add_learning_outcomes"; description: "Added Learning Outcomes"; values: undefined }
-  | { id: "library_label_drop_condition_or_material"; description: "Drop a condition or a lesson material here"; values: undefined }
-  | { id: "library_label_start_uppercase"; description: "START"; values: undefined }
-  | { id: "library_label_no_files"; description: "No file was found"; values: undefined }
   | { id: "assess_label_display_by"; description: "Display By"; values: undefined }
   | { id: "library_label_program1"; description: "Badanamu ESL"; values: undefined }
   | { id: "library_label_program2"; description: "Bada Math"; values: undefined }
