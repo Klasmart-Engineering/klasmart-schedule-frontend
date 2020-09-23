@@ -6,8 +6,21 @@ import Cropper from "react-cropper";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   cropper: {
-    width: 1280,
-    height: 720,
+    width: "100%",
+  },
+  dialogContent: {
+    display: "flex",
+  },
+  dialogActions: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 40,
+  },
+  button: {
+    "&:not(:first-child)": {
+      marginLeft: 40,
+    },
   },
 }));
 
@@ -61,36 +74,40 @@ export function CropImage(props: CropImageProps) {
     if (!cropper || !file) return;
     const canvas = cropper.getCroppedCanvas();
     const resultFile = await getFileFromCanvas(canvas, file);
+    setCropState([]);
     if (resolve) resolve(resultFile);
   }, [resolve, cropper, file]);
-  const handleCancel = useCallback(() => reject && reject(), [reject]);
+  const handleCancel = useCallback(() => {
+    setCropState([]);
+    reject && reject();
+  }, [reject]);
   return (
     <>
-      <Dialog maxWidth="lg" fullWidth open={!!src}>
+      <Dialog maxWidth="md" fullWidth open={!!src}>
         <DialogTitle>{"Crop Images"}</DialogTitle>
-        <DialogContent>
+        <DialogContent classes={{ root: css.dialogContent }}>
           <Cropper
             className={css.cropper}
             aspectRatio={16 / 9}
-            src="https%3A%2F%2Fkl2-test.kidsloop.net%2Fv1/contents_resources/thumbnail-5f69ad4f89f8d0ba359ba915.jpeg"
-            viewMode={1}
+            src={src}
+            viewMode={2}
             dragMode="none"
             zoomable={false}
             guides
-            minCropBoxHeight={360}
-            minCropBoxWidth={640}
+            // minCropBoxHeight={360}
+            // minCropBoxWidth={640}
             background
             responsive
-            autoCropArea={1}
+            autoCropArea={0.9}
             checkOrientation={false}
             onInitialized={setCropper}
           />
         </DialogContent>
-        <DialogActions>
-          <Button variant="contained" autoFocus onClick={handleConfirm} color="primary">
+        <DialogActions classes={{ root: css.dialogActions }}>
+          <Button className={css.button} variant="contained" onClick={handleConfirm} color="primary">
             Ok
           </Button>
-          <Button variant="contained" autoFocus onClick={handleCancel} color="primary">
+          <Button className={css.button} variant="contained" onClick={handleCancel} color="primary">
             Cancel
           </Button>
         </DialogActions>
