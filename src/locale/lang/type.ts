@@ -18,6 +18,8 @@ type LangRecord<T = string> =
   | { id: "schedule_label_on"; description: "On"; values: undefined }
   | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
   | { id: "assess_label_create_time"; description: "Create Time"; values: undefined }
+  | { id: "assess_label_create_outcome"; description: "Create a New Learning Outcome"; values: undefined }
+  | { id: "assess_label_for_org"; description: "For Organizations"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -155,12 +157,14 @@ type LangRecord<T = string> =
   | { id: "library_label_upload"; description: "Upload"; values: undefined }
   | { id: "library_label_file_type"; description: "File Type"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
+  | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
   | { id: "assess_label_save"; description: "Save"; values: undefined }
   | { id: "assess_label_publish"; description: "Publish"; values: undefined }
   | { id: "assess_msg_publish_content"; description: "Are you sure you want to publish this learning outcome?"; values: undefined }
   | { id: "assess_label_ok"; description: "OK"; values: undefined }
   | { id: "assess_label_create_new_learning_outcome"; description: "Create New Learning Outcome"; values: undefined }
+  | { id: "assess_label_details"; description: "Details"; values: undefined }
   | { id: "assess_label_learning_outcome_name"; description: "Learning Outcome Name"; values: undefined }
   | { id: "assess_label_short_code"; description: "Short Code"; values: undefined }
   | { id: "assess_label_assumed"; description: "Assumed"; values: undefined }

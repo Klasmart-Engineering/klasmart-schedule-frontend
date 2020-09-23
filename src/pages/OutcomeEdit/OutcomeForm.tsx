@@ -166,14 +166,14 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     // as={TextField}
                     defaultValue={timestampToTime(outcomeDetail.update_at)}
                     fullWidth
-                    label={d("Created On").t("assess_label_created_on")}
+                    // label={d("Created On").t("assess_label_created_on")}
                     disabled
                     size="small"
                     render={() => (
                       <TextField
                         value={timestampToTime(outcomeDetail.update_at)}
                         fullWidth
-                        label={d("Create Time").t("assess_label_create_time")}
+                        label={d("Created On").t("assess_label_created_on")}
                         disabled
                         size="small"
                       />
@@ -248,7 +248,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 render={(props) => (
                   <FormattedTextField
                     select
-                    label={d("Category").t("assess_label_category")}
+                    label={d("Category").t("library_label_category")}
                     encode={encodeOneItemArray}
                     decode={decodeOneItemArray}
                     {...props}
@@ -270,7 +270,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
-                label={d("Subcategory").t("assess_label_subcategory")}
+                label={d("Subcategory").t("library_label_subcategory")}
                 name="skills"
                 defaultValue={outcome_id ? outcomeDetail.skills : []}
                 control={control}

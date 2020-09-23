@@ -415,14 +415,16 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
-          {sm ? "Create a New Learning Outcome" : "For Organizations"}
+          {sm
+            ? d("Create New Learning Outcome").t("assess_label_create_new_learning_outcome")
+            : d("For Organizations").t("assess_label_for_organizations")}
         </Typography>
         <Hidden smDown>{getHeaderButtons()}</Hidden>
       </Box>
       <Hidden smDown>
         <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
           <Typography variant="h6" className={css.title}>
-            {outcome_id ? "Details" : "Create a New Learning Outcome"}
+            {outcome_id ? d("Details").t("assess_label_details") : d("Create a New Learning Outcome").t("assess_label_create_outcome")}
           </Typography>
         </Box>
       </Hidden>

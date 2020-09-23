@@ -1,11 +1,13 @@
 Label,English,Chinese,Korean,Vietnamese
 assess_label_create,Create,新建,,
+assess_label_for_organizations,For Organizations,机构,,
 assess_label_cancel,Cancel,取消,,
 assess_label_save,Save,保存,,
 assess_label_publish,Publish,发布,,
 assess_msg_publish_content,Are you sure you want to publish this learning outcome?,确定要发布这个学习成果吗？,,
 assess_label_ok,OK,确定,,
 assess_label_create_new_learning_outcome,Create New Learning Outcome,新建学习成果,,
+assess_label_details,Details,详情,,
 assess_label_learning_outcome_name,Learning Outcome Name,学习成果名称,,
 assess_label_short_code,Short Code,短代码,,
 assess_label_assumed,Assumed,假定达标,,
