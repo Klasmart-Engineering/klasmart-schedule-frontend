@@ -58,11 +58,13 @@ export function SingleUploader(props: SingleUploaderProps) {
         try {
           const file = transformFile ? await transformFile(items[0].file) : items[0].file;
           const extension = parseExtension(file.name);
-          const { payload } = await dispatch(getContentResourceUploadPath({ partition, extension })) as unknown as PayloadAction<AsyncTrunkReturned<typeof getContentResourceUploadPath>>;
+          const { payload } = ((await dispatch(getContentResourceUploadPath({ partition, extension }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof getContentResourceUploadPath>
+          >;
           const { path, resource_id } = payload;
           setRid(resource_id);
           return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
-        } catch(err) {
+        } catch (err) {
           return false;
         }
       },
@@ -70,7 +72,7 @@ export function SingleUploader(props: SingleUploaderProps) {
         if (onChange) onChange(rid);
       },
     }),
-    [rid, partition, onChange, dispatch]
+    [rid, partition, onChange, dispatch, transformFile]
   );
   return (
     <Uploady {...uploadyProps} method="PUT" sendWithFormData={false} listeners={listeners}>
