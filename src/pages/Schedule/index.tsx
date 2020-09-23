@@ -1,5 +1,5 @@
 import { Grid } from "@material-ui/core";
-import React from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import KidsCalendar from "../../components/Calendar";
@@ -7,7 +7,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
 import { getScheduleInfo, getScheduleTimeViewData, getMockOptions, getScheduleLiveToken } from "../../reducers/schedule";
-import { modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
@@ -15,6 +15,9 @@ import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { apiLivePath } from "../../api/extra";
+import ConfilctTestTemplate from "./ConfilctTestTemplate";
+import { d } from "../../locale/LocaleManager";
+import ModalBox from "../../components/ModalBox";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -50,6 +53,28 @@ function ScheduleContent() {
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
   };
+
+  const [modalDate, setModalDate] = React.useState<AlertDialogProps>({
+    handleChange: function (p1: number) {},
+    radioValue: 0,
+    radios: undefined,
+    title: "",
+    text: "",
+    enableCustomization: false,
+    customizeTemplate: <ConfilctTestTemplate handleDelete={() => {}} handleClose={() => {}} title={d("Edit").t("assess_button_edit")} />,
+    openStatus: false,
+    buttons: [],
+    handleClose: () => {
+      changeModalDate({ openStatus: false });
+    },
+  });
+
+  const changeModalDate = useCallback(
+    (data: object) => {
+      setModalDate({ ...modalDate, ...data });
+    },
+    [modalDate]
+  );
 
   /**
    * calendar model view change
@@ -95,7 +120,8 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
     if (scheduleId) dispatch(getScheduleInfo(scheduleId));
-  }, [scheduleId, dispatch]);
+    changeModalDate({ openStatus: false });
+  }, [scheduleId, changeModalDate, dispatch]);
 
   return (
     <>
@@ -122,14 +148,24 @@ function ScheduleContent() {
               flattenedMockOptions={flattenedMockOptions}
               handleChangeProgramId={handleChangeProgramId}
               toLive={toLive}
+              changeModalDate={changeModalDate}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
-            {includeTable && <KidsCalendar modelView={modelView} timesTamp={timesTamp} changeTimesTamp={changeTimesTamp} toLive={toLive} />}
+            {includeTable && (
+              <KidsCalendar
+                modelView={modelView}
+                timesTamp={timesTamp}
+                changeTimesTamp={changeTimesTamp}
+                toLive={toLive}
+                changeModalDate={changeModalDate}
+              />
+            )}
             {includeList && <SearchList />}
           </Grid>
         </Grid>
       </LayoutBox>
+      <ModalBox modalDate={modalDate} />
     </>
   );
 }

@@ -56,3 +56,16 @@ export interface stateProps {
   monthly: monthlyType;
   yearly: yearlyType;
 }
+
+export interface AlertDialogProps {
+  title?: string;
+  text?: string;
+  radios?: Array<any>;
+  buttons: Array<any>;
+  openStatus: boolean;
+  handleClose: (text: string) => any;
+  handleChange: (value: number) => any;
+  radioValue?: number;
+  customizeTemplate?: any;
+  enableCustomization?: boolean;
+}
