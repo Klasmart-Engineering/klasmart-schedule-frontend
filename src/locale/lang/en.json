@@ -62,6 +62,7 @@
   "library_label_assets": "Assets",
   "library_label_material_name": "Material Name",
   "library_label_thumbnail": "Thumbnail",
+  "library_label_clip_image": "Clip Image",
   "library_label_duration": "Duration(Minutes)",
   "library_label_program": "Program",
   "library_label_subject": "Subject",

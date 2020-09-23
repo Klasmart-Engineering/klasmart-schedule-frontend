@@ -80,6 +80,7 @@ type LangRecord<T = string> =
   | { id: "library_label_assets"; description: "Assets"; values: undefined }
   | { id: "library_label_material_name"; description: "Material Name"; values: undefined }
   | { id: "library_label_thumbnail"; description: "Thumbnail"; values: undefined }
+  | { id: "library_label_clip_image"; description: "Clip Image"; values: undefined }
   | { id: "library_label_duration"; description: "Duration(Minutes)"; values: undefined }
   | { id: "library_label_program"; description: "Program"; values: undefined }
   | { id: "library_label_subject"; description: "Subject"; values: undefined }
