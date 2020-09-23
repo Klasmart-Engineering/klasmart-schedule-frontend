@@ -10,6 +10,7 @@ import React, { ChangeEvent } from "react";
 import { OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
+import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
@@ -137,7 +138,7 @@ const sortOptions = () => [
 ];
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
-  onBulkDelete: (type: string) => any;
+  onBulkDelete: (type: Action) => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
@@ -145,8 +146,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
-    if (event.target.value === BulkAction.delete) onBulkDelete(BulkAction.delete);
-    if (event.target.value === BulkAction.remove) onBulkDelete(BulkAction.remove);
+    if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
+    if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
@@ -229,8 +230,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleClickActionItem = (event: any, bulkaction: BulkAction) => {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
-    if (event.target.value === BulkAction.delete) onBulkDelete(BulkAction.delete);
-    if (event.target.value === BulkAction.remove) onBulkDelete(BulkAction.remove);
+    if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
+    if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
   };
   const handleClose = () => {
     setAnchorElLeft(null);

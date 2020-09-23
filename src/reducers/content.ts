@@ -116,7 +116,7 @@ const initialState: IContentState = {
     outcome_entities: [],
   },
 };
-enum Action {
+export enum Action {
   remove = "remove",
   delete = "delete",
 }

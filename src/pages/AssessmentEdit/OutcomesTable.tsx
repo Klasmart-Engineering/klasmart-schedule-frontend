@@ -177,7 +177,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
           {outcome.outcome_name}
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
-          {outcome.assumed ? "Yes" : ""}
+          {outcome.assumed ? d("Yes").t("assess_label_yes") : ""}
         </TableCell>
         <TableCell className={css.tablecellError}>
           <AssessAction
