@@ -179,7 +179,6 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
-                aria-label={d("scrollable force tabs example").t("library_label_scrollable_tabs")}
               >
                 <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
                 <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
