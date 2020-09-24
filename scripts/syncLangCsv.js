@@ -42,15 +42,19 @@ function readAllLocaleCsv() {
 };
 
 function readMissCsv() {
-  return csvToJson.fieldDelimiter(',').getJsonFromCsv(csvFilePath(missSpreadSheet.name));
+  return csvToJson.fieldDelimiter(',').getJsonFromCsv(csvFilePath(missSpreadSheet.name))
+    .map(item => {
+      const { Label: id, English: en, ActionType: type,	ActionContent: content } = item;
+      return { id, en, type, content };
+    })
+    .reduce((result, item) => {
+      result[item.id] = item;
+      return result;
+    }, {});
 }
 
 function format(json) {
   return prettier.format(JSON.stringify(json), { ...prettierConfig, parser: 'json'})
-    .map(item => {
-      const { Label: id, English: en, ActionType: type,	ActionContent: content } = item;
-      return { id, en, type, content };
-    });
 }
 
 function writeLangJson(langDef) {
@@ -61,9 +65,9 @@ function writeLangJson(langDef) {
 }
 
 function createMissJson(en, originMissJson) {
-  const reportedIds = readMissCsv().map(item => item.id);
+  const reportedMiss = readMissCsv();
   return Object.keys(originMissJson)
-    .filter(id => !en[id])
+    .filter(id => !en[id] && !reportedMiss[id])
     .reduce((result, id) => {
       result[id] = originMissJson[id];
       return result;
