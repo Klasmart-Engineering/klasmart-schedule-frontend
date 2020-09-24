@@ -80,6 +80,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   editButton: {
     marginRight: "10px",
   },
+  saveButton: {
+    width: "32px !important",
+    height: "32px",
+    borderRadius: "50%",
+    backgroundColor: "green",
+    minWidth: "32px",
+  },
 }));
 
 export interface OutcomeHeaderProps {
@@ -319,40 +326,44 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                     <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
                       <CancelOutlined fontSize="small" />
                     </IconButton>
-                    <LButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
+                    <LButton className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)} color="primary" onClick={handleSave}>
                       <Save fontSize="small" />
                     </LButton>
-                    <LButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
+                    <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
                       <Publish fontSize="small" />
-                    </LButton>
+                    </IconButton>
                   </>
                 ) : (
                   <>
-                    <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                    <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
                       <Delete fontSize="small" />
-                    </Button>
+                    </IconButton>
                     {!status ? (
-                      <Button variant="contained" color="primary" className={clsx(css.headerButton, css.editButton)} onClick={handleEdit}>
+                      <IconButton
+                        color="primary"
+                        className={clsx(css.iconButton, css.editButton, css.greenButton)}
+                        onClick={handleEdit as any}
+                      >
                         <Create fontSize="small" />
-                      </Button>
+                      </IconButton>
                     ) : (
                       <>
                         <LButton
-                          className={clsx(css.iconButton, css.primaryIconButton)}
+                          className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
                           color="primary"
                           disabled={isDirty}
                           onClick={handleSave}
                         >
                           <Save fontSize="small" />
                         </LButton>
-                        <LButton
+                        <IconButton
                           className={clsx(css.iconButton, css.greenButton)}
                           color="primary"
                           disabled={!isDirty}
                           onClick={handlePublish}
                         >
                           <Publish fontSize="small" />
-                        </LButton>
+                        </IconButton>
                       </>
                     )}
                   </>
@@ -364,44 +375,49 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
                   <CancelOutlined fontSize="small" />
                 </IconButton>
-                <LButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" disabled={!isDirty} onClick={handleSave}>
+                <LButton
+                  className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
+                  color="primary"
+                  disabled={!isDirty}
+                  onClick={handleSave}
+                >
                   <Save fontSize="small" />
                 </LButton>
-                <LButton
+                <IconButton
                   className={clsx(css.iconButton, css.greenButton)}
                   color="primary"
                   disabled={outcome_id ? isDirty : true}
                   onClick={handlePublish}
                 >
                   <Publish fontSize="small" />
-                </LButton>
+                </IconButton>
               </>
             )}
           </>
         )}
         {publish_status === "pending" && (
           <>
-            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
               <Delete fontSize="small" />
-            </Button>
-            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
+            </IconButton>
+            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
               <ClearSharp fontSize="small" />
-            </Button>
-            <LButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
+            </IconButton>
+            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
               <Check fontSize="small" />
-            </LButton>
+            </IconButton>
           </>
         )}
         {publish_status === "rejected" && (
           <>
             {showEdit && (
               <>
-                <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
                   <Delete fontSize="small" />
-                </Button>
-                <Button variant="contained" color="primary" className={clsx(css.headerButton, css.editButton)} onClick={handleEdit}>
+                </IconButton>
+                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={handleEdit}>
                   <Create fontSize="small" />
-                </Button>
+                </IconButton>
               </>
             )}
             {!showEdit && (
@@ -409,24 +425,29 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
                   <CancelOutlined fontSize="small" />
                 </IconButton>
-                <LButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" disabled={!isDirty} onClick={handleSave}>
+                <LButton
+                  className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
+                  color="primary"
+                  disabled={!isDirty}
+                  onClick={handleSave}
+                >
                   <Save fontSize="small" />
                 </LButton>
-                <LButton className={clsx(css.iconButton, css.greenButton)} color="primary" disabled={isDirty} onClick={handlePublish}>
+                <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" disabled={isDirty} onClick={handlePublish}>
                   <Publish fontSize="small" />
-                </LButton>
+                </IconButton>
               </>
             )}
           </>
         )}
         {publish_status === "published" && (
           <>
-            <Button variant="contained" color="primary" className={clsx(css.headerButton, css.editButton)} onClick={handleEdit}>
+            <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={handleEdit}>
               <Create fontSize="small" />
-            </Button>
-            <Button className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+            </IconButton>
+            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
               <Delete fontSize="small" />
-            </Button>
+            </IconButton>
           </>
         )}
       </>
