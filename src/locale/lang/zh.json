@@ -336,5 +336,7 @@
   "schedule_msg_start_current": "开始时间不能早于当前时间",
   "schedule_msg_due_date_earlier": "截止日期不能早于课程结束事件",
   "schedule_msg_end_time_earlier": "结束事件不能早于开始时间",
-  "schedule_button_edit": "编辑"
+  "schedule_button_edit": "编辑",
+  "schedule_popup_fillin": "请填写此字段",
+  "schedule_popup_valid": "请输入有效的日期"
 }

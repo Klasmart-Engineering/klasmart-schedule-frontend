@@ -255,11 +255,11 @@ function RepeatCycle(props: ExtendsProps) {
   const handleOnDateDay = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (isNaN(+event.target.value)) return;
     if ((+event.target.value < 1 || +event.target.value > getDateInfo(on_date_month)) && type === "yearly") {
-      dispatch(actError("Please enter a valid date"));
+      dispatch(actError(d("Please enter a valid date").t("schedule_popup_valid")));
       return;
     }
     if ((+event.target.value < 1 || +event.target.value > 31) && type === "monthly") {
-      dispatch(actError("Please enter a valid date"));
+      dispatch(actError(d("Please enter a valid date").t("schedule_popup_valid")));
       return;
     }
     _state[type].on_date_day = +event.target.value;
@@ -283,7 +283,7 @@ function RepeatCycle(props: ExtendsProps) {
 
   const handleOnDateMonth = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (on_date_day && on_date_day > getDateInfo(event.target.value as number)) {
-      dispatch(actError("Please enter a valid date"));
+      dispatch(actError(d("Please enter a valid date").t("schedule_popup_valid")));
       return;
     }
     _state[type].on_date_month = event.target.value;
@@ -294,7 +294,7 @@ function RepeatCycle(props: ExtendsProps) {
     <>
       {type === "weekly" && (
         <div className={classes.repeatItem}>
-          <h3>{d("On").t("schedule_label_on")}</h3>
+          <h3>{d("On").t("schedule_repeat_on")}</h3>
           <div className={classes.weeklyDayBox}>
             {weekends.map((item, index) => {
               return (
@@ -742,7 +742,7 @@ export default function RepeatSchedule(props: RepeatScheduleProps) {
 
   const modalData: any = {
     title: "",
-    text: d("You cannot schedule a class beyond two years").t("schedule_label_beyond_two_years"),
+    text: d("You cannot schedule a class beyond two years.").t("schedule_msg_two_year"),
     openStatus: openStatus,
     enableCustomization: false,
     buttons: [

@@ -355,7 +355,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 label={d("Description").t("assess_label_description")}
                 disabled={showEdit}
                 fullWidth
-                size="small"
+                multiline
               />
             </Grid>
           </Grid>

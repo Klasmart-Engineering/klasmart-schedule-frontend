@@ -138,7 +138,8 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             <TextField
               disabled
               className={css.fieldset}
-              placeholder={d("Attachment").t("schedule_detail_attachment")}
+              // placeholder={d("Attachment").t("schedule_detail_attachment")}
+              label={d("Attachment").t("schedule_detail_attachment")}
               value={item ? getFileName(item.file.name) : attachmentName}
             ></TextField>
             <HtmlTooltip title={tipsText}>

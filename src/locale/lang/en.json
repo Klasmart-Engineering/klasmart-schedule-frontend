@@ -336,5 +336,7 @@
   "schedule_msg_start_current": "Start time cannot be earlier than current time",
   "schedule_msg_due_date_earlier": "The due date cannot be earlier than the scheduled class end time.",
   "schedule_msg_end_time_earlier": "End time cannot be earlier than start time",
-  "schedule_button_edit": "Edit"
+  "schedule_button_edit": "Edit",
+  "schedule_popup_fillin": "Please fill out this field",
+  "schedule_popup_valid": "Please enter a valid date"
 }
