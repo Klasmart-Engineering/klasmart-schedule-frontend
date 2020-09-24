@@ -80,6 +80,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   editButton: {
     marginRight: "10px",
   },
+  saveButton: {
+    width: "32px !important",
+    height: "32px",
+    borderRadius: "50%",
+    backgroundColor: "green",
+    minWidth: "32px",
+  },
 }));
 
 export interface OutcomeHeaderProps {
@@ -319,9 +326,9 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                     <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
                       <CancelOutlined fontSize="small" />
                     </IconButton>
-                    <IconButton className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={handleSave}>
+                    <LButton className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)} color="primary" onClick={handleSave}>
                       <Save fontSize="small" />
-                    </IconButton>
+                    </LButton>
                     <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handlePublish}>
                       <Publish fontSize="small" />
                     </IconButton>
@@ -341,14 +348,14 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       </IconButton>
                     ) : (
                       <>
-                        <IconButton
-                          className={clsx(css.iconButton, css.primaryIconButton)}
+                        <LButton
+                          className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
                           color="primary"
                           disabled={isDirty}
                           onClick={handleSave}
                         >
                           <Save fontSize="small" />
-                        </IconButton>
+                        </LButton>
                         <IconButton
                           className={clsx(css.iconButton, css.greenButton)}
                           color="primary"
@@ -368,14 +375,14 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
                   <CancelOutlined fontSize="small" />
                 </IconButton>
-                <IconButton
-                  className={clsx(css.iconButton, css.primaryIconButton)}
+                <LButton
+                  className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
                   color="primary"
                   disabled={!isDirty}
                   onClick={handleSave}
                 >
                   <Save fontSize="small" />
-                </IconButton>
+                </LButton>
                 <IconButton
                   className={clsx(css.iconButton, css.greenButton)}
                   color="primary"
@@ -418,14 +425,14 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleReset}>
                   <CancelOutlined fontSize="small" />
                 </IconButton>
-                <IconButton
-                  className={clsx(css.iconButton, css.primaryIconButton)}
+                <LButton
+                  className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
                   color="primary"
                   disabled={!isDirty}
                   onClick={handleSave}
                 >
                   <Save fontSize="small" />
-                </IconButton>
+                </LButton>
                 <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" disabled={isDirty} onClick={handlePublish}>
                   <Publish fontSize="small" />
                 </IconButton>
