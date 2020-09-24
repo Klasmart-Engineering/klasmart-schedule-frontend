@@ -438,8 +438,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const isScheduleExpired = (): boolean => {
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-    return scheduleId ? Number(scheduleDetial.end_at) < currentTime : false;
+    return scheduleId ? scheduleDetial.status !== "NotStart" : false;
   };
 
   const saveTheTest = () => {
@@ -520,10 +519,10 @@ function EditBox(props: CalendarStateProps) {
       })
     );
     dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
-    changeTimesTamp({
+    /*    changeTimesTamp({
       start: Math.floor(new Date().getTime() / 1000),
       end: Math.floor(new Date().getTime() / 1000),
-    });
+    });*/
     changeModalDate({ openStatus: false });
     history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
@@ -885,6 +884,7 @@ function EditBox(props: CalendarStateProps) {
             variant="contained"
             color="primary"
             style={{ width: "45%", marginRight: "10%" }}
+            disabled={scheduleDetial.status !== "NotStart"}
             href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}`}
           >
             {d("Preview").t("schedule_button_preview")}
@@ -896,6 +896,7 @@ function EditBox(props: CalendarStateProps) {
             onClick={() => {
               toLive(scheduleId as string);
             }}
+            disabled={scheduleDetial.status !== "NotStart"}
           >
             {d("Go Live").t("schedule_button_go_live")}
           </Button>
