@@ -394,7 +394,7 @@ function EditBox(props: CalendarStateProps) {
   /**
    * save schedule data
    */
-  const saveSchedule = async (repeat_edit_options: repeatOptionsType = "only_current") => {
+  const saveSchedule = async (repeat_edit_options: repeatOptionsType = "only_current", is_force: boolean = true) => {
     if (!validatorFun()) return;
     changeModalDate({ OpenStatus: false });
     const addData: any = {};
@@ -420,10 +420,12 @@ function EditBox(props: CalendarStateProps) {
       addData["repeat_edit_options"] = repeat_edit_options;
     }
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
-    const { payload } = ((await dispatch(
-      saveScheduleData({ ...scheduleList, ...addData, metaLoading: true })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
-    if (payload) {
+    addData["is_force"] = is_force;
+    let resultInfo: any;
+    resultInfo = ((await dispatch(saveScheduleData({ ...scheduleList, ...addData, metaLoading: true }))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof saveScheduleData>
+    >;
+    if (resultInfo.payload) {
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
@@ -434,6 +436,26 @@ function EditBox(props: CalendarStateProps) {
       dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({ type: "changeData", data: initialState });
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+    } else if (resultInfo.error.message === "schedule_msg_overlap") {
+      changeModalDate({
+        openStatus: true,
+        enableCustomization: false,
+        text: d("You already have a class scheduled during this time. Confirm to schedule?").t("schedule_msg_overlap"),
+        buttons: [
+          {
+            label: d("CANCEL").t("schedule_button_cancel"),
+            event: () => {
+              changeModalDate({ openStatus: false });
+            },
+          },
+          {
+            label: d("CONFIRM").t("schedule_button_confirm"),
+            event: () => {
+              saveSchedule("with_following", false);
+            },
+          },
+        ],
+      });
     }
   };
 
