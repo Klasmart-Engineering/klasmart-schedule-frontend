@@ -182,7 +182,15 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
               >
                 <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
                 <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
-                <Tab value={PublishStatus.draft} label={d("Unpublished").t("library_label_unpublished")} className={classes.capitalize} />
+                {value?.publish_status === PublishStatus.rejected ? (
+                  <Tab
+                    value={PublishStatus.rejected}
+                    label={d("Unpublished").t("library_label_unpublished")}
+                    className={classes.capitalize}
+                  />
+                ) : (
+                  <Tab value={PublishStatus.draft} label={d("Unpublished").t("library_label_unpublished")} className={classes.capitalize} />
+                )}
                 <Tab value={PublishStatus.archive} label={d("Archived").t("library_label_archived")} className={classes.capitalize} />
                 <Tab
                   value={SearchContentsRequestContentType.assets}
