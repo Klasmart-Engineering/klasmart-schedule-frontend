@@ -62,14 +62,14 @@ function MyCalendar(props: CalendarProps) {
             time_zone_offset: -new Date().getTimezoneOffset() * 60,
           })
         );
-        changeTimesTamp({
+        /*        changeTimesTamp({
           start: Math.floor(new Date().getTime() / 1000),
           end: Math.floor(new Date().getTime() / 1000),
-        });
+        });*/
         history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       }
     },
-    [changeModalDate, changeTimesTamp, dispatch, history, modelView, timesTamp]
+    [changeModalDate, dispatch, history, modelView, timesTamp]
   );
 
   /**
@@ -83,8 +83,8 @@ function MyCalendar(props: CalendarProps) {
           enableCustomization: true,
           customizeTemplate: (
             <ConfilctTestTemplate
-              handleDelete={() => {
-                deleteScheduleByid("only_current", scheduleInfo);
+              handleDelete={(repeat_edit_options: repeatOptionsType = "only_current") => {
+                deleteScheduleByid(repeat_edit_options, scheduleInfo);
               }}
               handleClose={() => {
                 changeModalDate({ openStatus: false, enableCustomization: false });

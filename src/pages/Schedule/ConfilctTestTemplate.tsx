@@ -52,7 +52,7 @@ export default function AlertDialog(props: InfoProps) {
         </Button>
         <Button color="primary" onClick={deleteSchedule}>
           {/* {title === "Edit" ? "Continue" : title} */}
-          {title === "Edit" ? d("Continue").t("schedule_label_continue") : d("Edit").t("schedule_label_edit")}
+          {title === "Edit" ? d("CONFIRM").t("schedule_button_confirm") : d("Delete").t("assess_label_delete")}
         </Button>
       </div>
     </div>
