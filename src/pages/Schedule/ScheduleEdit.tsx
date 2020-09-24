@@ -481,7 +481,7 @@ function EditBox(props: CalendarStateProps) {
         });
       }
     } else {
-      saveSchedule();
+      saveSchedule(checkedStatus.repeatCheck ? "with_following" : "only_current");
     }
   };
 

@@ -24,6 +24,7 @@ export interface ScheduleState {
   attachment_path: string;
   searchFlag: boolean;
   mockOptions: MockOptions;
+  errorLable: string;
 }
 
 interface Rootstate {
@@ -68,6 +69,7 @@ const initialState: ScheduleState = {
     students: [],
     users: [],
   },
+  errorLable: "",
 };
 
 type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedule>[0] } & LoadingMetaPayload;
@@ -85,12 +87,12 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.addSchedule(payload)).id;
+      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).id;
     } else {
-      id = (await api.schedules.updateSchedule(id, payload)).id;
+      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).id;
     }
     // @ts-ignore
-    return await api.schedules.getScheduleById(id);
+    return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
   }
 );
 
@@ -138,7 +140,7 @@ interface LiveSchedulePayload extends LoadingMetaPayload {
 }
 type LiveScheduleResult = ReturnType<typeof api.schedules.getScheduleLiveToken>;
 export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>("schedule/live", async ({ schedule_id }) => {
-  return api.schedules.getScheduleLiveToken(schedule_id);
+  return api.schedules.getScheduleLiveToken(schedule_id).catch((err) => Promise.reject(err.label));
 });
 
 export const getMockOptions = createAsyncThunk("mock/options", async () => {
@@ -178,13 +180,16 @@ const { actions, reducer } = createSlice({
       state.scheduleDetial = payload;
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
-      console.log(JSON.stringify(error));
+      state.errorLable = error.message;
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = initScheduleDetial;
+    },
+    [removeSchedule.rejected.type]: (state, { error }: any) => {
+      state.errorLable = error.message;
     },
     [getScheduleInfo.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = payload;
