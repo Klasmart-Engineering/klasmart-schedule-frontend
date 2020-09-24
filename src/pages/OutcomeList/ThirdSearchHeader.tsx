@@ -197,7 +197,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
                 value={value.order_by || OutcomeOrderBy._updated_at}
-                label={d("Display By").t("assess_display_by")}
+                label={d("Sort By").t("assess_label_sort_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >

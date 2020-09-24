@@ -174,7 +174,7 @@ export function H5pPreview(props: H5pPreview) {
         )}
         <Hidden only={["xs", "sm"]}>
           <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-            {d("View in").t("library_label_view_in") !== "library_label_view_in" && (
+            {d("View in").t("library_label_view_in") !== "-" && (
               <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
             )}
             <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>

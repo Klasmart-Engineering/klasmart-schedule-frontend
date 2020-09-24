@@ -4,11 +4,9 @@ type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMes
 export type LangName = "en" | "ko" | "zh" | "vi";
 
 type LangRecord<T = string> =
-  | { id: "library_label_archive"; description: "Archive"; values: undefined }
   | { id: "library_label_asssets_name"; description: "Assets Name"; values: undefined }
   | { id: "library_label_content_type"; description: "Content type"; values: undefined }
   | { id: "library_label_upload_files"; description: "Upload Files"; values: undefined }
-  | { id: "assess_label_display_by"; description: "Display By"; values: undefined }
   | { id: "library_label_visibility settings1"; description: "School"; values: undefined }
   | { id: "library_label_visibility settings2"; description: "Orgnization"; values: undefined }
   | { id: "schedule_label_all_day"; description: "All Day"; values: undefined }
@@ -16,7 +14,6 @@ type LangRecord<T = string> =
   | { id: "schedule_label_edit"; description: "Edit"; values: undefined }
   | { id: "schedule_label_beyond_two_years"; description: "You cannot schedule a class beyond two years"; values: undefined }
   | { id: "schedule_label_on"; description: "On"; values: undefined }
-  | { id: "library_label_suitable_age"; description: "Suitable age"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -24,7 +21,7 @@ type LangRecord<T = string> =
   | { id: "assess_filter_all"; description: "All"; values: undefined }
   | { id: "assess_filter_complete"; description: "Complete"; values: undefined }
   | { id: "assess_filter_in_progress"; description: "In Progress"; values: undefined }
-  | { id: "assess_display_by"; description: "Display By"; values: undefined }
+  | { id: "assess_sort_by"; description: "Sort By"; values: undefined }
   | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
   | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }
   | { id: "assess_complete_time_new_old"; description: "Complete Time(New-Old)"; values: undefined }

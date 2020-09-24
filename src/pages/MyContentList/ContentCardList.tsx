@@ -250,7 +250,7 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {content?.publish_status === "archive" && (
+          {content?.publish_status === PublishStatus.archive && (
             <LButton as={IconButton} replace className={css.rePublishColor} onClick={() => onPublish(content.id as string)}>
               <PublishOutlinedIcon />
             </LButton>

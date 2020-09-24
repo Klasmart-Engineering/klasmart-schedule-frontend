@@ -6,7 +6,7 @@
   "assess_filter_all": "查看所有",
   "assess_filter_complete": "仅查看已完成的",
   "assess_filter_in_progress": "仅查看未完成的",
-  "assess_display_by": "排序",
+  "assess_sort_by": "排序",
   "assess_class_end_time_new_old": "课程结束时间 (新到旧）",
   "assess_class_end_time_old_new": "课程结束时间 (旧到新）",
   "assess_complete_time_new_old": "评估时间 (新到旧）",

@@ -1,15 +1,12 @@
 {
-  "library_label_archive": "Archive",
   "library_label_asssets_name": "Assets Name",
   "library_label_content_type": "Content type",
   "library_label_upload_files": "Upload Files",
-  "assess_label_display_by": "Display By",
   "library_label_visibility settings1": "School",
   "library_label_visibility settings2": "Orgnization",
   "schedule_label_all_day": "All Day",
   "schedule_label_continue": "Continue",
   "schedule_label_edit": "Edit",
   "schedule_label_beyond_two_years": "You cannot schedule a class beyond two years",
-  "schedule_label_on": "On",
-  "library_label_suitable_age": "Suitable age"
+  "schedule_label_on": "On"
 }

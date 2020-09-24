@@ -125,7 +125,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid item sm={6} xs={6} md={3}>
               <TextField
                 size="small"
-                fullWidth
+                style={{ width: 200 }}
                 onChange={handleChangeStatus}
                 value={value.status || AssessmentStatus.all}
                 label={d("Status").t("assess_filter_column_status")}
@@ -141,10 +141,10 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <TextField
                 size="small"
-                fullWidth
+                style={{ width: 200 }}
                 onChange={handleChangeOrder}
                 value={value.order_by || AssessmentOrderBy._class_end_time}
-                label={d("Display By").t("assess_display_by")}
+                label={d("Sort By").t("assess_sort_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >

@@ -113,14 +113,14 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(PublishStatus.published)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "published" })}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.published })}
                 startIcon={<PublishOutlined />}
               >
                 {d("Published").t("library_label_published")}
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.pending)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "pending" })}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.pending })}
                 startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
               >
                 {d("Pending").t("library_label_pending")}
@@ -134,7 +134,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               </Button>
               <Button
                 onClick={createHandleClick(PublishStatus.archive)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === "archive" })}
+                className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.archive })}
                 startIcon={<ArchiveOutlined />}
               >
                 {d("Archived").t("library_label_archived")}
