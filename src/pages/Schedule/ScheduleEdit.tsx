@@ -15,7 +15,7 @@ import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem } from "../../api/extra";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
@@ -605,11 +605,15 @@ function EditBox(props: CalendarStateProps) {
   const handleRepeatData = (data: any) => {
     dispatchRepeat({ type: "changeData", data });
   };
-
-  const menuItemList = (list: MockOptionsItem[]) =>
+  type classTypeLabel =
+    | "schedule_detail_online_class"
+    | "schedule_detail_offline_class"
+    | "schedule_detail_homework"
+    | "schedule_detail_task";
+  const menuItemListClassType = (list: MockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
-        {item.name}
+        {t(item.name as classTypeLabel)}
       </MenuItem>
     ));
 
@@ -831,7 +835,7 @@ function EditBox(props: CalendarStateProps) {
           required
           disabled={isScheduleExpired()}
         >
-          {menuItemList(flattenedMockOptions.class_types)}
+          {menuItemListClassType(flattenedMockOptions.class_types)}
         </TextField>
         <Box style={{ display: scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework" ? "block" : "none" }}>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>

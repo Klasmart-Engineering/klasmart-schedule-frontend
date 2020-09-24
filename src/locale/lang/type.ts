@@ -86,8 +86,8 @@ type LangRecord<T = string> =
   | { id: "library_label_age"; description: "Age"; values: undefined }
   | { id: "library_label_grade"; description: "Grade"; values: undefined }
   | { id: "library_label_visibility_settings"; description: "Visibility Settings"; values: undefined }
-  | { id: "library_label_visibility_settings1"; description: "School"; values: undefined }
-  | { id: "library_label_visibility_settings2"; description: "Organization"; values: undefined }
+  | { id: "library_label_visibility_school"; description: "School"; values: undefined }
+  | { id: "library_label_visibility_organization"; description: "Organization"; values: undefined }
   | { id: "library_label_description"; description: "Description"; values: undefined }
   | { id: "library_label_keywords"; description: "Keywords"; values: undefined }
   | { id: "library_label_plan_name"; description: "Plan Name"; values: undefined }

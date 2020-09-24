@@ -24,7 +24,7 @@ import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
@@ -106,11 +106,17 @@ export default function Details(props: DetailsProps) {
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
 
   const menuItemList = (list: MockOptionsItem[]) =>
-    list.map((item) => (
-      <MenuItem key={item.id} value={item.id}>
-        {item.name}
-      </MenuItem>
-    ));
+    list.map((item) =>
+      item.id === "visibility settings1" || item.id === "visibility settings2" ? (
+        <MenuItem key={item.id} value={item.id}>
+          {t(item.name as "library_label_visibility_school" | "library_label_visibility_organization")}
+        </MenuItem>
+      ) : (
+        <MenuItem key={item.id} value={item.id}>
+          {item.name}
+        </MenuItem>
+      )
+    );
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
