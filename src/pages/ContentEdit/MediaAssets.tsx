@@ -189,7 +189,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
         <DraggableImage type="LIBRARY_ITEM" item={item} />
       </TableCell>
       <TableCell>{item.name}</TableCell>
-      <TableCell>{item.author}</TableCell>
+      <TableCell>{item.author_name}</TableCell>
       {/* <TableCell className={css.cellAction}>
         <Button color="primary" variant="contained">
           Select
