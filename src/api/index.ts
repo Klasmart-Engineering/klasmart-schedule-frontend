@@ -21,6 +21,7 @@ fetchIntercept.register({
   response: function (response) {
     if (response.ok) return response;
     response
+      .clone()
       .json()
       .then((result) => {
         const { msg, label } = result;
