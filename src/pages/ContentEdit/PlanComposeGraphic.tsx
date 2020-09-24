@@ -106,7 +106,7 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
   },
   cardMedia: {
     width: "100%",
-    height: 96,
+    height: 112,
   },
   cardContent: {
     padding: 6,
