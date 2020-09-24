@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const glob = require('glob');
 const { execSync } = require('child_process');
 const csvToJson = require('convert-csv-to-json');
 const prettier = require("prettier");
@@ -8,6 +9,9 @@ const prettierConfig = prettier.resolveConfig.sync(path.resolve(__dirname, '../.
 const csvDir = path.resolve(__dirname, '../src/locale/lang/csv');
 const langDir = path.resolve(__dirname, '../src/locale/lang');
 const missJsonPath = path.resolve(langDir, 'miss.json');
+const projectDir = path.resolve(__dirname, '..');
+const srcFileGlob =  'src/**/*.{js,jsx,ts,tsx}';
+const ignoreGlob = 'src/locale/**/*.*';
 const localeSpreadSheets = [
   {name: 'library', gid: '0', key: '1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA'},
   {name: 'assessment', gid: '1481075788', key: '1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA'},
@@ -53,6 +57,26 @@ function readMissCsv() {
     }, {});
 }
 
+function forEachFile(fileGlob, handler) {
+  return glob.sync(fileGlob, { cwd: projectDir, absolute: true, ignore: ignoreGlob }).forEach(filePath => {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    handler(content, filePath);
+  });
+}
+
+function filterReferenced(fileGlob, keywords) {
+  const regex = new RegExp('(?:' + keywords.map(key => `['"\`]${key}['"\`]`).join('|') + ')')
+  console.log('regex = ', regex)
+  if (keywords.length === 0) return keywords;
+  let result = [];
+  forEachFile(fileGlob, (content) => {
+    const match = content.match(regex);
+    if (!match) return;
+    result = result.concat(match.map(x => x.slice(1, -1)));
+  });
+  return result;
+}
+
 function format(json) {
   return prettier.format(JSON.stringify(json), { ...prettierConfig, parser: 'json'})
 }
@@ -66,8 +90,9 @@ function writeLangJson(langDef) {
 
 function createMissJson(en, originMissJson) {
   const reportedMiss = readMissCsv();
-  return Object.keys(originMissJson)
+  const idsOfFilterEnAndReported = Object.keys(originMissJson)
     .filter(id => !en[id] && !reportedMiss[id])
+  return filterReferenced(srcFileGlob, idsOfFilterEnAndReported)
     .reduce((result, id) => {
       result[id] = originMissJson[id];
       return result;
