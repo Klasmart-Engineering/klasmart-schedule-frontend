@@ -591,7 +591,7 @@ class HttpClient<SecurityDataType> {
       body: body ? this.bodyFormatters[bodyType || BodyType.Json](body) : null,
     }).then(async (response) => {
       const data = await this.safeParseResponse<T, E>(response);
-      if (!response.ok) throw response;
+      if (!response.ok) throw data;
       return data;
     });
 }

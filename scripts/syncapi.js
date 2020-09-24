@@ -21,13 +21,5 @@ function downloadAndGenerateApi() {
   format(apiAutoFilePath, 'typescript');
 }
 
-function adjustApi(apiFilePath) {
-  const content = fs.readFileSync(apiFilePath, 'utf-8');
-  const adjustedContent = content.replace('if (!response.ok) throw data;', 'if (!response.ok) throw response;');
-  fs.writeFileSync(apiFilePath, adjustedContent);
-}
-
 downloadAndGenerateApi();
-adjustApi(apiAutoFilePath);
-
 console.log(`Successfully create ${apiAutoFilePath}`)
