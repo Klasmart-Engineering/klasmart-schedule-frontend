@@ -45,6 +45,8 @@ export const apiCreateH5pResource = () => {
 
 export const apiLivePath = (token: string) => {
   const { hostname } = window.location;
-  const lastDomainDotName = hostname !== "localhost" ? hostname.split(".").pop() : "net";
-  return `https://live.kidsloop.${lastDomainDotName}/class-live/?token=${token}`;
+  const lastDomainDotName = hostname !== "localhost" ? hostname.split(".").pop() : "cn";
+  // 地址修改后需要再改
+  const cl = hostname.split(".").pop() === "net" ? "/class-live/" : "";
+  return `https://live.kidsloop.${lastDomainDotName}${cl}?token=${token}`;
 };
