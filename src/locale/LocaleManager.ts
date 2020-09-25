@@ -1,6 +1,13 @@
 import mitt from "mitt";
 import { createIntl, createIntlCache, IntlFormatters, IntlShape } from "react-intl";
-import { LangeRecordValuesByDesc, LangeRecordValuesById, LangName, LangRecodeDescription, LangRecordId, LangRecordIdByDescription } from "./lang/type";
+import {
+  LangeRecordValuesByDesc,
+  LangeRecordValuesById,
+  LangName,
+  LangRecodeDescription,
+  LangRecordId,
+  LangRecordIdByDescription,
+} from "./lang/type";
 
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
 type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecordValuesByDesc<Desc> extends undefined
@@ -29,10 +36,10 @@ export interface ChangeHandler {
   (intl?: IntlShape): any;
 }
 
-function getValueNamesByDescription(description: string): string[] | undefined{
+function getValueNamesByDescription(description: string): string[] | undefined {
   const result = description.match(/{.*?}/g);
   if (result == null) return;
-  return result.map(x => x.slice(1, -1));
+  return result.map((x) => x.slice(1, -1));
 }
 
 class LocaleManager {
@@ -51,13 +58,14 @@ class LocaleManager {
   }
 
   reportMiss<T extends string, M extends string>(
-    description: M & ( M extends LangRecodeDescription ? never : {}),
+    description: M & (M extends LangRecodeDescription ? never : {}),
     id: T & (T extends LangRecordId ? never : {}),
     values?: Record<string, number | string>
   ): string {
     const valueNames = getValueNamesByDescription(description);
     if (!valueNames) {
-      if (values) console.error(`reportMiss Error: description "${description}" does not defined any values, but reportMiss provide values`);
+      if (values)
+        console.error(`reportMiss Error: description "${description}" does not defined any values, but reportMiss provide values`);
       return description;
     }
     if (!values) {
@@ -66,11 +74,13 @@ class LocaleManager {
     }
     const providedValueNames = Object.keys(values);
     if (providedValueNames.sort().toString() !== valueNames.sort().toString()) {
-      console.error(`reportMiss Error: description "${description}" defined value names: ${valueNames}, but reportMiss provide value names: ${providedValueNames}`);
+      console.error(
+        `reportMiss Error: description "${description}" defined value names: ${valueNames}, but reportMiss provide value names: ${providedValueNames}`
+      );
     }
-    let result = description;
+    // let result = description;
     return providedValueNames.reduce((result, name) => {
-      return result.replace(new RegExp(`\\{${name}\\}`, 'g'), String(values[name]));
+      return result.replace(new RegExp(`\\{${name}\\}`, "g"), String(values[name]));
     }, description);
   }
 
