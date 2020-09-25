@@ -120,7 +120,7 @@ function AssetsDetails(props: AssetDetailsProps) {
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
         <TextField
-          label={d("Lesson Material").t("library_label_lesson_material")}
+          label="Asset Type"
           required
           value={fileType}
           onChange={(e) => handleTopicListChange(e, "fileType")}

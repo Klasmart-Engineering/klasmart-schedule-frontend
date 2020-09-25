@@ -3,5 +3,6 @@
   "schedule_label_continue": "Continue",
   "schedule_label_edit": "Edit",
   "schedule_label_beyond_two_years": "You cannot schedule a class beyond two years",
-  "schedule_label_on": "On"
+  "schedule_label_on": "On",
+  "library_label_asset_type": "Asset Type"
 }

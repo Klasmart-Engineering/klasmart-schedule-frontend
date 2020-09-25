@@ -7,13 +7,16 @@ import {
   Hidden,
   IconButton,
   makeStyles,
+  MenuItem,
   Radio,
   RadioGroup,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
+import shadows from "@material-ui/core/styles/shadows";
 import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
@@ -75,7 +78,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   radioGroup: {
     flexDirection: "row",
     padding: "7px 0",
-    marginTop: 16,
+    // marginTop: 16,
   },
   radio: {
     "&:not(:first-child)": {
@@ -85,6 +88,15 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
       marginLeft: "0 !important",
       marginRight: 0,
     },
+  },
+  selectLesson: {
+    backgroundColor: "white",
+    borderRadius: 4,
+    boxShadow: shadows[3],
+    color: palette.text.primary,
+  },
+  selectLessonItem: {
+    fontSize: 18,
   },
 }));
 
@@ -101,7 +113,7 @@ interface HeaderProps {
   id: string | null;
 }
 
-function ContentHeader(props: HeaderProps) {
+export function ContentHeader(props: HeaderProps) {
   const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, onBack, onDelete, id } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
@@ -169,7 +181,7 @@ function ContentHeader(props: HeaderProps) {
         </Box>
       </Hidden>
       <Hidden mdUp>
-        <Box display="flex" justifyContent="flex-end" pt={3}>
+        <Box display="flex" justifyContent="flex-end" p={2}>
           <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
             <CancelOutlined fontSize="small" />
           </IconButton>
@@ -210,36 +222,102 @@ function ContentHeader(props: HeaderProps) {
           )}
         </Box>
       </Hidden>
-      <Box display="flex" justifyContent="center">
-        <RadioGroup
-          className={css.radioGroup}
-          value={lesson}
-          onChange={(e) => {
-            onChangeLesson(e.target.value);
-          }}
-        >
-          <FormControlLabel
-            className={css.radio}
-            color="primary"
-            control={<Radio size={size} color="primary" value="assets" />}
-            label={<Typography variant={radioTypography}>{d("Assets").t("library_label_assets")}</Typography>}
-          />
-          <FormControlLabel
-            className={css.radio}
-            color="primary"
-            control={<Radio size={size} color="primary" value="material" />}
-            label={<Typography variant={radioTypography}>{d("Lesson Material").t("library_label_lesson_material")}</Typography>}
-          />
-          <FormControlLabel
-            className={css.radio}
-            color="primary"
-            control={<Radio size={size} color="primary" value="plan" />}
-            label={<Typography variant={radioTypography}>{d("Lesson Plan").t("library_label_lesson_plan")}</Typography>}
-          />
-        </RadioGroup>
-      </Box>
+      {false && (
+        <Box display="flex" justifyContent="center">
+          <RadioGroup
+            className={css.radioGroup}
+            value={lesson}
+            onChange={(e) => {
+              onChangeLesson(e.target.value);
+            }}
+          >
+            <FormControlLabel
+              className={css.radio}
+              color="primary"
+              control={<Radio size={size} color="primary" value="assets" />}
+              label={<Typography variant={radioTypography}>{d("Assets").t("library_label_assets")}</Typography>}
+            />
+            <FormControlLabel
+              className={css.radio}
+              color="primary"
+              control={<Radio size={size} color="primary" value="material" />}
+              label={<Typography variant={radioTypography}>{d("Lesson Material").t("library_label_lesson_material")}</Typography>}
+            />
+            <FormControlLabel
+              className={css.radio}
+              color="primary"
+              control={<Radio size={size} color="primary" value="plan" />}
+              label={<Typography variant={radioTypography}>{d("Lesson Plan").t("library_label_lesson_plan")}</Typography>}
+            />
+          </RadioGroup>
+        </Box>
+      )}
     </Fragment>
   );
 }
 
-export default ContentHeader;
+interface SelectLessonProps {
+  lesson: string;
+  onChangeLesson: (value: string) => any;
+}
+export function SelectLesson(props: SelectLessonProps) {
+  const css = useStyles();
+  const { lesson, onChangeLesson } = props;
+  return (
+    <Box mb={4}>
+      <TextField
+        fullWidth
+        select
+        className={css.selectLesson}
+        value={lesson}
+        onChange={(e) => onChangeLesson(e.target.value)}
+        InputProps={{ style: { fontSize: 18, fontWeight: 700 } }}
+      >
+        <MenuItem value="assets" className={css.selectLessonItem}>
+          {d("Assets").t("library_label_assets")}
+        </MenuItem>
+        <MenuItem value="material" className={css.selectLessonItem}>
+          {d("Lesson Material").t("library_label_lesson_material")}
+        </MenuItem>
+        <MenuItem value="plan" className={css.selectLessonItem}>
+          {d("Lesson Plan").t("library_label_lesson_plan")}
+        </MenuItem>
+      </TextField>
+    </Box>
+  );
+}
+
+interface SelectH5PRadioProps {
+  value: string;
+  onChangeH5P: (value: string) => any;
+}
+export function SelectH5PRadio(props: SelectH5PRadioProps) {
+  const { value, onChangeH5P } = props;
+  const css = useStyles();
+  const { breakpoints } = useTheme();
+  const sm = useMediaQuery(breakpoints.down("sm"));
+  const size = sm ? "small" : "medium";
+  return (
+    <Box display="flex" justifyContent={sm ? "center" : "start"}>
+      <RadioGroup
+        className={css.radioGroup}
+        value={value}
+        onChange={(e) => {
+          onChangeH5P(e.target.value);
+        }}
+      >
+        <FormControlLabel
+          color="primary"
+          control={<Radio size={size} color="primary" value="H5P" />}
+          label={<Typography variant="h6">H5P</Typography>}
+        />
+        <FormControlLabel
+          className={css.radio}
+          color="primary"
+          control={<Radio size={size} color="primary" value="NonH5P" />}
+          label={<Typography variant="h6">Non H5P</Typography>}
+        />
+      </RadioGroup>
+    </Box>
+  );
+}

@@ -205,7 +205,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
             <TableRow>
               <TableCell className={css.cellThumnbnail}>{d("Thumbnail").t("library_label_thumbnail")}</TableCell>
               <TableCell>
-                {lesson === "plan" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}{" "}
+                {lesson === "plan" ? d("Material Name").t("library_label_material_name") : d("Asset Name").t("library_label_asset_name")}
               </TableCell>
               <TableCell>{d("Author").t("library_label_author")}</TableCell>
               {/* <TableCell className={css.cellAction}>{d("Actions").t('assess_label_actions')}</TableCell> */}

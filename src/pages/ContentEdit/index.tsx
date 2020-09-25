@@ -24,7 +24,7 @@ import {
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
-import ContentHeader from "./ContentHeader";
+import { ContentHeader, SelectH5PRadio, SelectLesson } from "./ContentHeader";
 import ContentTabs from "./ContentTabs";
 import Details from "./Details";
 import LayoutPair from "./Layout";
@@ -96,6 +96,7 @@ export default function ContentEdit() {
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
+  const [selectH5Pvalue, setSelectH5Pvalue] = React.useState("H5P");
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
@@ -109,6 +110,12 @@ export default function ContentEdit() {
       history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
     },
     [history, routeBasePath]
+  );
+  const handleChangeH5P = useMemo(
+    () => (value: string) => {
+      setSelectH5Pvalue(value);
+    },
+    []
   );
 
   const handleChangeTab = useMemo(
@@ -318,7 +325,6 @@ export default function ContentEdit() {
       />
       <MediaAssets
         list={mediaList}
-        comingsoon
         onSearch={handleSearchMedia}
         value={searchMedia}
         onChangePage={handleChangePage}
@@ -335,14 +341,18 @@ export default function ContentEdit() {
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && (
-        <Controller
-          name="data"
-          as={ContentH5p}
-          defaultValue={contentDetail.data}
-          control={control}
-          rules={{ required: true }}
-          isCreate={!id}
-        />
+        <>
+          {" "}
+          <SelectH5PRadio value={selectH5Pvalue} onChangeH5P={handleChangeH5P} />
+          <Controller
+            name="data"
+            as={ContentH5p}
+            defaultValue={contentDetail.data}
+            control={control}
+            rules={{ required: true }}
+            isCreate={!id}
+          />
+        </>
       )}
       {!includeH5p && includeAsset && (
         <MediaAssetsEdit
@@ -380,7 +390,12 @@ export default function ContentEdit() {
         id={id}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        {leftsideArea}
+        {
+          <>
+            <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} />
+            {leftsideArea}{" "}
+          </>
+        }
         {rightsideArea}
       </LayoutPair>
     </DndProvider>
