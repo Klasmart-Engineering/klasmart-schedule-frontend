@@ -44,5 +44,7 @@ export const apiCreateH5pResource = () => {
 };
 
 export const apiLivePath = (token: string) => {
-  return `https://live.kidsloop.net/class-live/?token=${token}`;
+  const { hostname } = window.location;
+  const lastDomainDotName = hostname === "localhost" ? "net" : hostname.split(".").pop();
+  return `https://live.kidsloop.${lastDomainDotName}/class-live/?token=${token}`;
 };
