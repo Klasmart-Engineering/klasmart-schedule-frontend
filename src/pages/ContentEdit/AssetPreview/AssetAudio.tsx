@@ -1,25 +1,18 @@
-import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
-import MusicVideoOutlinedIcon from "@material-ui/icons/MusicVideoOutlined";
+import Slider from "@material-ui/core/Slider";
+import { makeStyles } from "@material-ui/core/styles";
 import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
-import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
-import Slider from "@material-ui/core/Slider";
+import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
+import React, { useEffect } from "react";
+import audioUrl from "../../../assets/icons/music.svg";
 const useStyles = makeStyles({
   wrap: {
     width: "100%",
     height: "494px",
   },
   audioCon: {
-    background: "#009688",
-    color: "#fff",
-    width: "32%",
-    height: "33%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     margin: "137px auto",
   },
   audioImg: {
@@ -69,7 +62,6 @@ export default function AssetAudio(props: Audio) {
     isplay ? audio.pause() : audio.play();
   };
   useEffect(() => {
-    // const audio = document.getElementById('audio') as HTMLAudioElement
     const audio = document.getElementById("audio") as HTMLAudioElement;
     const timer = setInterval(() => {
       isplay ? setValue((audio.currentTime / audio.duration) * 100) : clearInterval(timer);
@@ -77,9 +69,7 @@ export default function AssetAudio(props: Audio) {
   });
   return (
     <Box className={classes.wrap}>
-      <Box className={classes.audioCon}>
-        <MusicVideoOutlinedIcon className={classes.audioImg} />
-      </Box>
+      <img className={classes.audioCon} src={audioUrl} alt="" />
       <Box className={classes.controls}>
         <Box className={classes.tools}>
           <FastRewindOutlinedIcon className={classes.itemTool} />
