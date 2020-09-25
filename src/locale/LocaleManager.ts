@@ -1,13 +1,6 @@
 import mitt from "mitt";
 import { createIntl, createIntlCache, IntlFormatters, IntlShape } from "react-intl";
-import {
-  LangeRecordValuesByDesc,
-  LangeRecordValuesById,
-  LangName,
-  LangRecodeDescription,
-  LangRecordId,
-  LangRecordIdByDescription,
-} from "./lang/type";
+import { LangeRecordValuesByDesc, LangeRecordValuesById, LangName, LangRecodeDescription, LangRecordId, LangRecordIdByDescription } from "./lang/type";
 
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
 type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecordValuesByDesc<Desc> extends undefined
@@ -36,6 +29,12 @@ export interface ChangeHandler {
   (intl?: IntlShape): any;
 }
 
+function getValueNamesByDescription(description: string): string[] | undefined{
+  const result = description.match(/{.*?}/g);
+  if (result == null) return;
+  return result.map(x => x.slice(1, -1));
+}
+
 class LocaleManager {
   intl?: IntlShape;
   emitter = mitt();
@@ -49,6 +48,30 @@ class LocaleManager {
     const cache = createIntlCache();
     this.intl = createIntl({ locale, messages }, cache);
     this.emitter.emit("change", this.intl);
+  }
+
+  reportMiss<T extends string, M extends string>(
+    description: M & ( M extends LangRecodeDescription ? never : {}),
+    id: T & (T extends LangRecordId ? never : {}),
+    values?: Record<string, number | string>
+  ): string {
+    const valueNames = getValueNamesByDescription(description);
+    if (!valueNames) {
+      if (values) console.error(`reportMiss Error: description "${description}" does not defined any values, but reportMiss provide values`);
+      return description;
+    }
+    if (!values) {
+      console.error(`reportMiss Error: description "${description}" defined values, but reportMiss did not provide values`);
+      return description;
+    }
+    const providedValueNames = Object.keys(values);
+    if (providedValueNames.sort().toString() !== valueNames.sort().toString()) {
+      console.error(`reportMiss Error: description "${description}" defined value names: ${valueNames}, but reportMiss provide value names: ${providedValueNames}`);
+    }
+    let result = description;
+    return providedValueNames.reduce((result, name) => {
+      return result.replace(new RegExp(`\\{${name}\\}`, 'g'), String(values[name]));
+    }, description);
   }
 
   dscribe<Desc extends LangRecodeDescription>(desc: Desc) {
@@ -69,3 +92,4 @@ class LocaleManager {
 export const localeManager = new LocaleManager("en");
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
+export const reportMiss = localeManager.reportMiss.bind(localeManager);
