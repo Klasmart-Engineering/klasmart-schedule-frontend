@@ -96,7 +96,7 @@ export default function ContentEdit() {
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
-  const [selectH5Pvalue, setSelectH5Pvalue] = React.useState("H5P");
+  const [selectH5Pvalue, setSelectH5Pvalue] = React.useState("NonH5P");
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
@@ -342,16 +342,19 @@ export default function ContentEdit() {
       )}
       {includeH5p && !includeAsset && (
         <>
-          {" "}
           <SelectH5PRadio value={selectH5Pvalue} onChangeH5P={handleChangeH5P} />
-          <Controller
-            name="data"
-            as={ContentH5p}
-            defaultValue={contentDetail.data}
-            control={control}
-            rules={{ required: true }}
-            isCreate={!id}
-          />
+          {selectH5Pvalue === "H5P" ? (
+            <Controller
+              name="data"
+              as={ContentH5p}
+              defaultValue={contentDetail.data}
+              control={control}
+              rules={{ required: true }}
+              isCreate={!id}
+            />
+          ) : (
+            <MediaAssetsEdit readonly={readonly} overlay={false} formMethods={formMethods} contentDetail={contentDetail} />
+          )}
         </>
       )}
       {!includeH5p && includeAsset && (

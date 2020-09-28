@@ -159,7 +159,7 @@ function DraggableImage(props: DraggableItemProps) {
   const { type, item } = props;
   const css = useStyles();
   const [, dragRef] = useDrag({ item: { type, data: item } });
-  return <Thumbnail ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={item.content_type} />;
+  return <Thumbnail key={item.id} ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={item.content_type} />;
 }
 
 export interface MediaAssetsProps {

@@ -210,7 +210,7 @@ const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) 
   }
 });
 
-interface DragItem {
+export interface DragItem {
   type: string;
   data: any;
 }
@@ -252,7 +252,7 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
   }
 });
 
-interface mapDropSegmentPropsReturn {
+export interface mapDropSegmentPropsReturn {
   canDrop: boolean;
 }
 const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({

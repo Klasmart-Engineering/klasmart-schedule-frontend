@@ -1,6 +1,8 @@
 import { Box, CircularProgress, CircularProgressProps, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import React from "react";
+import clsx from "clsx";
+import React, { useMemo } from "react";
+import { DropTargetMonitor, useDrop } from "react-dnd";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
@@ -11,16 +13,22 @@ import AssetAudio from "./AssetPreview/AssetAudio";
 import AssetFile from "./AssetPreview/AssetFile";
 import AssetImg from "./AssetPreview/AssetImg";
 import AssetVideo from "./AssetPreview/AssetVideo";
+import { DragItem, mapDropSegmentPropsReturn } from "./PlanComposeGraphic";
 
-const useStyles = makeStyles((theme) => ({
-  uploadBox: {
-    height: "calc(100% - 36px)",
-    padding: "6px 20px 30px 20px",
-  },
+const useStyles = makeStyles(({ palette }) => ({
   uploadTool: {
     border: "2px dotted gray",
     height: "calc(100% - 50px)",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
+  canDropFile: {
+    borderStyle: "dashed",
+    borderColor: palette.primary.main,
+  },
+
   uploadBtn: {
     textAlign: "center",
     width: "100%",
@@ -56,11 +64,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const useUploadBoxStyles = makeStyles({
+  uploadBox: (props: AssetEditProps) => ({
+    height: props.fileType ? "calc(100% - 36px)" : "calc(100% - 116px)",
+    padding: "6px 20px 30px 20px",
+  }),
+});
+
+const fileFormat: any = {
+  video: [".avi", ".mov", ".mp4"],
+  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
+  document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
+  audio: [".mp3", ".wav"],
+};
+
 interface PreviewProps {
-  fileType: string;
+  fileType?: string;
   resourceId: string | undefined;
 }
-
 function AssetPreview(props: PreviewProps) {
   const css = useStyles();
   const { fileType, resourceId } = props;
@@ -72,10 +93,10 @@ function AssetPreview(props: PreviewProps) {
   };
   return (
     <Box display="flex" flexDirection="column" alignItems="center" className={css.assetPreviewBox}>
-      {fileType === "image" && <AssetImg src={path} />}
-      {fileType === "video" && <AssetVideo src={path} />}
-      {fileType === "audio" && <AssetAudio src={path} />}
-      {fileType === "document" && <AssetFile src={path} />}
+      {(fileType === "image" || fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetImg src={path} />}
+      {(fileType === "video" || fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetVideo src={path} />}
+      {(fileType === "audio" || fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetAudio src={path} />}
+      {(fileType === "document" || fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetFile src={path} />}
       <Typography variant="body1" style={{ marginTop: "12px" }}>
         {d("File Type").t("library_label_file_type")} : {getSuffix(source)}
       </Typography>
@@ -85,26 +106,26 @@ function AssetPreview(props: PreviewProps) {
 
 interface FileTypeProps {
   fileFormat: any;
-  fileType: string;
+  fileType?: string;
 }
 function FileText(props: FileTypeProps) {
   const { fileType, fileFormat } = props;
-  const format = fileFormat[fileType];
-  const fillfileType = `${fileType}(
+  if (!fileType) {
+    return (
+      <>
+        <p>Drag from Asset Library</p>
+        <p>or</p>
+      </>
+    );
+  } else {
+    const format = fileFormat[fileType];
+    const fillfileType = `${fileType}(
     ${format.map((item: String, index: number) => {
       return `${item.substr(1)}`;
     })}
     )`;
-  return (
-    <p style={{ color: "#666666" }}>
-      {/* Upload a {fileType} (
-      {format.map((item: String, index: number) => {
-        return `${item.substr(1)}${index + 1 < format.length ? "," : ""}`;
-      })}
-      ) here */}
-      {d("Upload a {fillfileType} here").t("library_label_upload_a", { fillfileType })}
-    </p>
-  );
+    return <p style={{ color: "#666666" }}>{d("Upload a {fillfileType} here").t("library_label_upload_a", { fillfileType })}</p>;
+  }
 }
 
 function ProgressWithText(props: CircularProgressProps) {
@@ -121,28 +142,42 @@ function ProgressWithText(props: CircularProgressProps) {
   );
 }
 
+const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
+  canDrop: monitor.canDrop(),
+});
 interface AssetEditProps {
-  fileType: string;
+  fileType?: string;
   formMethods: UseFormMethods<ContentDetailForm>;
   contentDetail: EntityContentInfoWithDetails;
 }
 
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
+  const uploadCss = useUploadBoxStyles(props);
   const { fileType, formMethods, contentDetail } = props;
-  const fileFormat: any = {
-    video: [".avi", ".mov", ".mp4"],
-    image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
-    document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
-    audio: [".mp3", ".wav"],
-  };
+  const { setValue } = formMethods;
+  const setFile = useMemo(
+    () => (item: DragItem) => {
+      const source = JSON.parse(item.data.data).source;
+      setValue("data.source", source, { shouldDirty: true });
+    },
+    [setValue]
+  );
+  const [{ canDrop: canDropfile }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: "LIBRARY_ITEM",
+    collect: mapDropContainerProps,
+  });
+  const [, fileRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
+    accept: "LIBRARY_ITEM",
+    drop: setFile,
+  });
   return (
-    <Box className={css.uploadBox} boxShadow={3}>
-      <p className={css.title}>{d("Upload").t("library_label_upload")}</p>
-      <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" className={css.uploadTool}>
+    <Box className={uploadCss.uploadBox} boxShadow={3}>
+      <p className={css.title}>{fileType ? d("Upload").t("library_label_upload") : "Select a file"}</p>
+      <div ref={fileRef} className={clsx(css.uploadTool, { [css.canDropFile]: canDropfile })}>
         <div className={css.uploadBtn}>
           <Controller
-            name="data"
+            name={fileType ? "data" : "data.source"}
             control={formMethods.control}
             defaultValue={JSON.parse(contentDetail.data || "{}")}
             render={(props) => (
@@ -156,7 +191,7 @@ function AssetEdit(props: AssetEditProps) {
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
                     {!isUploading && !contentDetail.id && (
                       <Button variant="contained" color="primary" ref={btnRef}>
-                        {d("Upload").t("library_label_upload")}
+                        {fileType ? d("Upload").t("library_label_upload") : "Upload from Device"}
                       </Button>
                     )}
                     {isUploading && <ProgressWithText value={item?.completed} />}
@@ -166,7 +201,7 @@ function AssetEdit(props: AssetEditProps) {
             )}
           />
         </div>
-      </Box>
+      </div>
     </Box>
   );
 }

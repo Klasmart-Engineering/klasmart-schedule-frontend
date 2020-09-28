@@ -264,7 +264,7 @@ export function SelectLesson(props: SelectLessonProps) {
   const css = useStyles();
   const { lesson, onChangeLesson } = props;
   return (
-    <Box mb={4}>
+    <Box mb={3}>
       <TextField
         fullWidth
         select
@@ -298,7 +298,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
   const sm = useMediaQuery(breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   return (
-    <Box display="flex" justifyContent={sm ? "center" : "start"}>
+    <Box display="flex" mb={3} justifyContent={sm ? "center" : "start"}>
       <RadioGroup
         className={css.radioGroup}
         value={value}
