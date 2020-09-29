@@ -189,11 +189,18 @@ function AssetEdit(props: AssetEditProps) {
                   <>
                     {(JSON.stringify(value) === "{}" || !value) && !isUploading && <FileText fileFormat={fileFormat} fileType={fileType} />}
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
-                    {!isUploading && !contentDetail.id && (
-                      <Button variant="contained" color="primary" ref={btnRef}>
-                        {fileType ? d("Upload").t("library_label_upload") : "Upload from Device"}
-                      </Button>
-                    )}
+                    {fileType
+                      ? !isUploading &&
+                        !contentDetail.id && (
+                          <Button variant="contained" color="primary" ref={btnRef}>
+                            {d("Upload").t("library_label_upload")}
+                          </Button>
+                        )
+                      : !isUploading && (
+                          <Button variant="contained" color="primary" ref={btnRef}>
+                            Upload from Device
+                          </Button>
+                        )}
                     {isUploading && <ProgressWithText value={item?.completed} />}
                   </>
                 )}

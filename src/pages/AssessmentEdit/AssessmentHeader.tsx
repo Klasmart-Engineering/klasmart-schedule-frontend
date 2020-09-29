@@ -72,7 +72,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   redOutlinedButton: createOutlinedColor(palette.error, palette),
   greenButton: createContainedColor(palette.success, palette),
   primaryIconButton: createContainedColor(palette.primary, palette),
-  dialog: {},
   dialogContentRemoveborder: {
     borderBottom: "none",
   },
@@ -152,7 +151,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           </Box>
         </Hidden>
       )}
-      <Dialog open={open} onClose={toggle} className={css.dialog}>
+      <Dialog open={open} onClose={toggle}>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
           {d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete")}
         </DialogContent>

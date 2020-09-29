@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
@@ -78,15 +78,7 @@ const type2File = {
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  const {
-    reset,
-    handleSubmit,
-    control,
-    getValues,
-    setValue,
-    watch,
-    formState: { isDirty },
-  } = formMethods;
+  const { reset, handleSubmit, control, getValues, setValue, watch } = formMethods;
   const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
     RootState,
     RootState["content"]
@@ -96,13 +88,13 @@ export default function ContentEdit() {
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
-  const [selectH5Pvalue, setSelectH5Pvalue] = React.useState("NonH5P");
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? type2File[assetsFileType] : ContentType.plan;
   const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
+  const isH5pWatch = watch("isH5p", contentDetail.isH5p || "h5p");
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -110,12 +102,6 @@ export default function ContentEdit() {
       history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
     },
     [history, routeBasePath]
-  );
-  const handleChangeH5P = useMemo(
-    () => (value: string) => {
-      setSelectH5Pvalue(value);
-    },
-    []
   );
 
   const handleChangeTab = useMemo(
@@ -334,16 +320,16 @@ export default function ContentEdit() {
     </ContentTabs>
   );
   const rightsideArea = (
-    <>
+    <Fragment>
       {includeH5p && includeAsset && (
         <ContentH5p>
           <MediaAssetsEdit readonly={readonly} overlay fileType={assetsFileType} formMethods={formMethods} contentDetail={contentDetail} />
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && (
-        <>
-          <SelectH5PRadio value={selectH5Pvalue} onChangeH5P={handleChangeH5P} />
-          {selectH5Pvalue === "H5P" ? (
+        <Fragment>
+          <Controller name="isH5p" as={SelectH5PRadio} defaultValue={contentDetail.isH5p} control={control} formMethods={formMethods} />
+          {isH5pWatch === "h5p" ? (
             <Controller
               name="data"
               as={ContentH5p}
@@ -353,9 +339,9 @@ export default function ContentEdit() {
               isCreate={!id}
             />
           ) : (
-            <MediaAssetsEdit readonly={readonly} overlay={false} formMethods={formMethods} contentDetail={contentDetail} />
+            <MediaAssetsEdit readonly={false} overlay={false} formMethods={formMethods} contentDetail={contentDetail} />
           )}
-        </>
+        </Fragment>
       )}
       {!includeH5p && includeAsset && (
         <MediaAssetsEdit
@@ -375,29 +361,30 @@ export default function ContentEdit() {
         />
       )}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
-    </>
+    </Fragment>
   );
   const leftsideArea = tab === "assetDetails" ? assetDetails : contentTabs;
   return (
     <DndProvider backend={HTML5Backend}>
       <ContentHeader
         contentDetail={contentDetail}
+        formMethods={formMethods}
         lesson={lesson}
         onChangeLesson={handleChangeLesson}
         onCancel={handleGoBack}
         onSave={handleSave}
         onPublish={handlePublish}
-        isDirty={isDirty}
         onBack={handleGoBack}
         onDelete={handleDelete}
         id={id}
+        isH5pWatch={isH5pWatch}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {
-          <>
+          <Fragment>
             <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} />
-            {leftsideArea}{" "}
-          </>
+            {leftsideArea}
+          </Fragment>
         }
         {rightsideArea}
       </LayoutPair>

@@ -2,6 +2,10 @@ import {
   Box,
   Button,
   ButtonProps,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   fade,
   FormControlLabel,
   Hidden,
@@ -19,11 +23,13 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import shadows from "@material-ui/core/styles/shadows";
 import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { Fragment } from "react";
-import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import React, { Fragment, useCallback, useReducer } from "react";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -78,7 +84,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   radioGroup: {
     flexDirection: "row",
     padding: "7px 0",
-    // marginTop: 16,
   },
   radio: {
     "&:not(:first-child)": {
@@ -94,9 +99,15 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     borderRadius: 4,
     boxShadow: shadows[3],
     color: palette.text.primary,
+    [breakpoints.down("sm")]: {
+      boxShadow: "none",
+    },
   },
   selectLessonItem: {
     fontSize: 18,
+  },
+  dialogContentRemoveborder: {
+    borderBottom: "none",
   },
 }));
 
@@ -104,23 +115,36 @@ interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
   contentDetail?: EntityContentInfoWithDetails;
+  formMethods: UseFormMethods<ContentDetailForm>;
   onCancel: ButtonProps["onClick"];
   onSave: LButtonProps["onClick"];
-  onPublish: LButtonProps["onClick"];
-  isDirty: boolean;
+  onPublish: () => any;
   onBack: ButtonProps["onClick"];
   onDelete: ButtonProps["onClick"];
   id: string | null;
+  isH5pWatch: EntityCreateContentRequest["isH5p"];
 }
 
 export function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetail, onCancel, onPublish, onSave, isDirty, onBack, onDelete, id } = props;
+  const { lesson, onChangeLesson, contentDetail, formMethods, onCancel, onPublish, onSave, onBack, onDelete, id, isH5pWatch } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
+  const {
+    control,
+    formState: { isDirty },
+  } = formMethods;
   const sm = useMediaQuery(breakpoints.down("sm"));
   const xs = useMediaQuery(breakpoints.down("xs"));
   const size = sm ? "small" : "medium";
   const radioTypography = sm ? (xs ? "caption" : "subtitle2") : "h6";
+  const [open, toggle] = useReducer((open) => {
+    return !open;
+  }, false);
+  const handleOk = useCallback(() => {
+    debugger;
+    toggle();
+    onPublish();
+  }, [onPublish]);
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -149,17 +173,28 @@ export function ContentHeader(props: HeaderProps) {
               {d("Save").t("library_label_save")}
             </LButton>
           )}
-          {!(lesson === "assets" && id) && (
-            <LButton
-              variant="contained"
-              endIcon={<Publish />}
-              className={clsx(css.headerButton, css.greenButton)}
-              onClick={onPublish as any}
-              disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
-            >
-              {d("Publish").t("library_label_publish")}
-            </LButton>
-          )}
+          {!(lesson === "assets" && id) &&
+            (isH5pWatch === "nonH5p" ? (
+              <Button
+                variant="contained"
+                endIcon={<Publish />}
+                className={clsx(css.headerButton, css.greenButton)}
+                onClick={toggle}
+                disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+              >
+                {d("Publish").t("library_label_publish")}
+              </Button>
+            ) : (
+              <LButton
+                variant="contained"
+                endIcon={<Publish />}
+                className={clsx(css.headerButton, css.greenButton)}
+                onClick={onPublish as any}
+                disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+              >
+                {d("Publish").t("library_label_publish")}
+              </LButton>
+            ))}
           {lesson === "assets" && id && (
             <LButton
               variant="outlined"
@@ -197,18 +232,27 @@ export function ContentHeader(props: HeaderProps) {
               <Save fontSize="small" />
             </LButton>
           )}
-          {!(lesson === "assets" && id) && (
-            <LButton
-              as={IconButton}
-              className={clsx(css.iconButton, css.greenButton)}
-              color="primary"
-              onClick={onPublish}
-              replace
-              disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
-            >
-              <Publish fontSize="small" />
-            </LButton>
-          )}
+          {!(lesson === "assets" && id) &&
+            (isH5pWatch === "nonH5p" ? (
+              <IconButton
+                className={clsx(css.iconButton, css.greenButton)}
+                onClick={toggle}
+                disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+              >
+                <Publish fontSize="small" />
+              </IconButton>
+            ) : (
+              <LButton
+                as={IconButton}
+                className={clsx(css.iconButton, css.greenButton)}
+                color="primary"
+                onClick={onPublish}
+                replace
+                disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+              >
+                <Publish fontSize="small" />
+              </LButton>
+            ))}
           {lesson === "assets" && id && (
             <LButton
               as={IconButton}
@@ -252,7 +296,54 @@ export function ContentHeader(props: HeaderProps) {
           </RadioGroup>
         </Box>
       )}
+      <Dialog open={open} onClose={toggle}>
+        <DialogTitle className={css.dialogContentRemoveborder}>How would you like to publish?</DialogTitle>
+        <DialogContent dividers className={css.dialogContentRemoveborder}>
+          <Controller name="isOnlyMaterial" as={SelectPublishType} control={control} defaultValue="onlyMaterial" />
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={toggle} color="primary">
+            {d("Cancel").t("assess_label_cancel")}
+          </Button>
+          <Button onClick={handleOk} color="primary">
+            {d("OK").t("assess_label_ok")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
+  );
+}
+interface SelectPublishTypeProps {
+  value?: string;
+  onChange?: (value: SelectPublishTypeProps["value"]) => any;
+}
+export function SelectPublishType(props: SelectPublishTypeProps) {
+  const { value = "onlyMaterial", onChange } = props;
+  const css = useStyles();
+  const { breakpoints } = useTheme();
+  const sm = useMediaQuery(breakpoints.down("sm"));
+  const xs = useMediaQuery(breakpoints.down("xs"));
+  const size = sm ? "small" : "medium";
+  const radioTypography = xs ? "subtitle2" : "h6";
+  return (
+    <RadioGroup
+      className={css.radioGroup}
+      value={value}
+      onChange={(e) => {
+        onChange && onChange(e.target.value);
+      }}
+    >
+      <FormControlLabel
+        color="primary"
+        control={<Radio size={size} color="primary" value="onlyMaterial" />}
+        label={<Typography variant={radioTypography}>Only publish as a Lesson Material</Typography>}
+      />
+      <FormControlLabel
+        color="primary"
+        control={<Radio size={size} color="primary" value="assetAndMaterial" />}
+        label={<Typography variant={radioTypography}>Publish as a Lesson Material, and add to Media Asset</Typography>}
+      />
+    </RadioGroup>
   );
 }
 
@@ -288,34 +379,38 @@ export function SelectLesson(props: SelectLessonProps) {
 }
 
 interface SelectH5PRadioProps {
-  value: string;
-  onChangeH5P: (value: string) => any;
+  value?: string;
+  onChange?: (value: SelectH5PRadioProps["value"]) => any;
+  formMethods: UseFormMethods<ContentDetailForm>;
 }
 export function SelectH5PRadio(props: SelectH5PRadioProps) {
-  const { value, onChangeH5P } = props;
+  const { value = "h5p", onChange } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const size = sm ? "small" : "medium";
+  const xs = useMediaQuery(breakpoints.down("xs"));
+  const size = xs ? "small" : "medium";
+  const radioTypography = xs ? "subtitle2" : "h6";
   return (
     <Box display="flex" mb={3} justifyContent={sm ? "center" : "start"}>
       <RadioGroup
         className={css.radioGroup}
         value={value}
         onChange={(e) => {
-          onChangeH5P(e.target.value);
+          // setValue("data.source", '',  { shouldDirty: true })
+          onChange && onChange(e.target.value);
         }}
       >
         <FormControlLabel
           color="primary"
-          control={<Radio size={size} color="primary" value="H5P" />}
-          label={<Typography variant="h6">H5P</Typography>}
+          control={<Radio size={size} color="primary" value="h5p" />}
+          label={<Typography variant={radioTypography}>H5P</Typography>}
         />
         <FormControlLabel
           className={css.radio}
           color="primary"
-          control={<Radio size={size} color="primary" value="NonH5P" />}
-          label={<Typography variant="h6">Non H5P</Typography>}
+          control={<Radio size={size} color="primary" value="nonH5p" />}
+          label={<Typography variant={radioTypography}>Non H5P</Typography>}
         />
       </RadioGroup>
     </Box>
