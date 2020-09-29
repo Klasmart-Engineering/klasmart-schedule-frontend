@@ -255,6 +255,7 @@ export interface EntityContentInfoWithDetails {
   thumbnail?: string;
   updated_at?: number;
   version?: number;
+  isH5p?: string;
 }
 
 export interface EntityContentInfoWithDetailsResponse {
@@ -284,6 +285,7 @@ export interface EntityCreateContentRequest {
   subject?: string[];
   suggest_time?: number;
   thumbnail?: string;
+  isH5p?: string;
 }
 
 export interface EntityIDResponse {

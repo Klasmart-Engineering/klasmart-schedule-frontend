@@ -62,6 +62,7 @@ const initialState: IContentState = {
     org_name: "",
     outcomes: [],
     outcome_entities: [],
+    isH5p: "h5p",
   },
   mediaList: [],
   MediaListTotal: 0,
@@ -361,7 +362,6 @@ const { actions, reducer } = createSlice({
       Object.assign(state, { contentDetail, MediaListTotal, mediaList, outcomeList, OutcomesListTotal });
     },
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
-      // debugger
       if (payload.contentDetail) {
         // debug
         // state.contentDetail = require('../mocks/contentDetial.json');
