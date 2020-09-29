@@ -1,9 +1,10 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
-    width: "100%",
+    maxWidth: "100%",
+    maxHeight: "100%",
     marginTop: "30px",
   },
 }));

@@ -71,7 +71,7 @@ const useUploadBoxStyles = makeStyles({
   }),
 });
 
-const fileFormat: any = {
+export const fileFormat: any = {
   video: [".avi", ".mov", ".mp4"],
   image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
   document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],

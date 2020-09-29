@@ -26,7 +26,7 @@ import { Detail } from "./Detail";
 import { H5pPreview } from "./H5pPreview";
 import { LearningOutcome } from "./LeaningOutcomes";
 import { OperationBtn } from "./OperationBtn";
-import { DataH5p, TabValue } from "./type";
+import { TabValue } from "./type";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -89,19 +89,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     [history, routeBasePath, search]
   );
 
-  const planRes = (): DataH5p[] => {
-    if (contentPreview.content_type === ContentType.plan) {
-      const segment: Segment = JSON.parse(contentPreview.data || "{}");
-      const h5pArray = ModelLessonPlan.toArray(segment);
-      const h5ps: DataH5p[] = h5pArray.map((item, index) => {
-        return JSON.parse(item?.data || "{}");
-      });
-      return h5ps;
-    } else {
-      const h5pItem = JSON.parse(contentPreview.data || "{}");
-      return [h5pItem];
-    }
-  };
   const handleGoLive = async () => {
     let tokenInfo: any;
     tokenInfo = ((await dispatch(
@@ -136,6 +123,29 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       )}
     </Box>
   );
+  const getFileInfo = () => {
+    // const source = JSON.parse(contentPreview.data || "{}}").source
+    // if (JSON.stringify(source) === "{}") return;
+    if (contentPreview.content_type === ContentType.plan) {
+      const segment: Segment = JSON.parse(contentPreview.data || "{}");
+      const h5pArray = ModelLessonPlan.toArray(segment);
+      console.log(h5pArray);
+    }
+  };
+  getFileInfo();
+  const planRes = (): any[] => {
+    if (contentPreview.content_type === ContentType.plan) {
+      const segment: Segment = JSON.parse(contentPreview.data || "{}");
+      const h5pArray = ModelLessonPlan.toArray(segment);
+      const h5ps: any[] = h5pArray.map((item, index) => {
+        return JSON.parse(item?.data || "{}");
+      });
+      return h5ps;
+    } else {
+      const h5pItem = JSON.parse(contentPreview.data || "{}");
+      return [h5pItem];
+    }
+  };
   const rightside = <Fragment>{contentPreview.id && <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>}</Fragment>;
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));

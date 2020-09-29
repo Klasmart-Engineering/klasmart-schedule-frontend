@@ -4,10 +4,16 @@ import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
+import { apiResourcePathById } from "../../api/extra";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
 import { d } from "../../locale/LocaleManager";
+import AssetAudio from "../ContentEdit/AssetPreview/AssetAudio";
+import AssetFile from "../ContentEdit/AssetPreview/AssetFile";
+import AssetImg from "../ContentEdit/AssetPreview/AssetImg";
+import AssetVideo from "../ContentEdit/AssetPreview/AssetVideo";
 import ContentH5p from "../ContentEdit/ContentH5p";
-import { DataH5p, PreviewBaseProps } from "./type";
+import { fileFormat } from "../ContentEdit/MediaAssetsEdit";
+import { PreviewBaseProps } from "./type";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -133,7 +139,7 @@ function EmptyContent() {
   );
 }
 interface H5pPreview extends PreviewBaseProps {
-  h5pArray: DataH5p[];
+  h5pArray: any[];
 }
 export function H5pPreview(props: H5pPreview) {
   const css = useStyles();
@@ -152,9 +158,20 @@ export function H5pPreview(props: H5pPreview) {
       h5pItem = h5pArray[currIndex];
     }
   };
+  const getSuffix = (source: string | undefined) => {
+    if (source?.split(".").length === 1) return false;
+    return source?.split(".").pop();
+  };
+  const path = apiResourcePathById(h5pItem.source);
   return (
     <Box className={css.previewContainer}>
-      <Box className={css.h5pCon}>{JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />}</Box>
+      <Box className={css.h5pCon}>
+        {fileFormat.image.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetImg src={path} />}
+        {fileFormat.video.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetVideo src={path} />}
+        {fileFormat.audio.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetAudio src={path} />}
+        {fileFormat.document.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetFile src={path} />}
+        {!getSuffix(h5pItem.source) && (JSON.stringify(h5pItem) === "{}" ? <EmptyContent /> : <ContentH5p value={h5pItem} />)}
+      </Box>
       <Box className={css.btnCon}>
         {h5pArray.length > 1 && (
           <Box className={css.iconCon}>
