@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   iframe: {
     border: "none",
     width: "100%",
-    height: "100%",
+    height: "calc(100% - 80px)",
   },
 });
 

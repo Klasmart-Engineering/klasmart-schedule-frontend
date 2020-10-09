@@ -138,7 +138,7 @@ export default function ContentEdit() {
     if (lesson === "assets") await handleSave();
     if (!id) return;
     await dispatch(publish(id));
-    history.replace("/");
+    history.replace("/ ");
   }, [lesson, handleSave, id, dispatch, history]);
 
   const handleDelete = useCallback(async () => {
@@ -328,7 +328,14 @@ export default function ContentEdit() {
       )}
       {includeH5p && !includeAsset && (
         <Fragment>
-          <Controller name="isH5p" as={SelectH5PRadio} defaultValue={contentDetail.isH5p} control={control} formMethods={formMethods} />
+          <Controller
+            name="isH5p"
+            as={SelectH5PRadio}
+            defaultValue={contentDetail.isH5p}
+            control={control}
+            formMethods={formMethods}
+            disabled={!!id}
+          />
           {isH5pWatch === "h5p" ? (
             <Controller
               name="data"

@@ -382,9 +382,10 @@ interface SelectH5PRadioProps {
   value?: string;
   onChange?: (value: SelectH5PRadioProps["value"]) => any;
   formMethods: UseFormMethods<ContentDetailForm>;
+  disabled: boolean;
 }
 export function SelectH5PRadio(props: SelectH5PRadioProps) {
-  const { value = "h5p", onChange } = props;
+  const { value = "h5p", onChange, disabled = true } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -405,12 +406,14 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
           color="primary"
           control={<Radio size={size} color="primary" value="h5p" />}
           label={<Typography variant={radioTypography}>H5P</Typography>}
+          disabled={disabled}
         />
         <FormControlLabel
           className={css.radio}
           color="primary"
           control={<Radio size={size} color="primary" value="nonH5p" />}
           label={<Typography variant={radioTypography}>Non H5P</Typography>}
+          disabled={disabled}
         />
       </RadioGroup>
     </Box>

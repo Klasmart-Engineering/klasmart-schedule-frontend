@@ -73,7 +73,7 @@ const useUploadBoxStyles = makeStyles({
 
 export const fileFormat: any = {
   video: [".avi", ".mov", ".mp4"],
-  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
+  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"],
   document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
   audio: [".mp3", ".wav"],
 };
@@ -183,7 +183,7 @@ function AssetEdit(props: AssetEditProps) {
             render={(props) => (
               <SingleUploader
                 partition="assets"
-                accept={`${fileType}/*`}
+                accept={fileType ? `${fileType}/*` : "image/*,audio/*,video/*"}
                 {...props}
                 render={({ uploady, item, btnRef, value, isUploading }) => (
                   <>

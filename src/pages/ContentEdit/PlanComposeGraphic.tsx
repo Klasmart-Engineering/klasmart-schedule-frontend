@@ -25,7 +25,7 @@ import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 
 const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
   planComposeGraphic: {
-    height: 950,
+    height: 1000,
     display: "flex",
     flexDirection: "column",
     overflow: "scroll",
