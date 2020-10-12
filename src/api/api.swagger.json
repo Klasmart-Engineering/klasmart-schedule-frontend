@@ -870,6 +870,54 @@
         }
       }
     },
+    "/contents/{content_id}/publish/assets": {
+      "put": {
+        "description": "publish a content with assets",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "publishContentWithAssets",
+        "operationId": "publishContentWithAssets",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id to publish",
+            "name": "content_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "content publish data",
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.PublishContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/contents/{content_id}/review/approve": {
       "put": {
         "description": "approve content by id",
@@ -2051,6 +2099,59 @@
             "description": "Conflict",
             "schema": {
               "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/:schedule_id/status": {
+      "put": {
+        "description": "update schedule status",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "updateStatus",
+        "operationId": "updateStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": ["NotStart", "Started", "Closed"],
+            "type": "string",
+            "description": "schedule status",
+            "name": "status",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {

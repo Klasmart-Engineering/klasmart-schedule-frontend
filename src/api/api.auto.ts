@@ -255,7 +255,6 @@ export interface EntityContentInfoWithDetails {
   thumbnail?: string;
   updated_at?: number;
   version?: number;
-  isH5p?: string;
 }
 
 export interface EntityContentInfoWithDetailsResponse {
@@ -285,7 +284,6 @@ export interface EntityCreateContentRequest {
   subject?: string[];
   suggest_time?: number;
   thumbnail?: string;
-  isH5p?: string;
 }
 
 export interface EntityIDResponse {
@@ -868,6 +866,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
+     * @name publishContentWithAssets
+     * @summary publishContentWithAssets
+     * @request PUT:/contents/{content_id}/publish/assets
+     * @description publish a content with assets
+     */
+    publishContentWithAssets: (content_id: string, data: ApiPublishContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/${content_id}/publish/assets`,
+        "PUT",
+        params,
+        data
+      ),
+
+    /**
+     * @tags content
      * @name approveContentReview
      * @summary approve content
      * @request PUT:/contents/{content_id}/review/approve
@@ -1214,6 +1227,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         scheduleData
+      ),
+
+    /**
+     * @tags schedule
+     * @name updateStatus
+     * @summary updateStatus
+     * @request PUT:/schedules/:schedule_id/status
+     * @description update schedule status
+     */
+    updateStatus: (query: { status: "NotStart" | "Started" | "Closed" }, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/:schedule_id/status${this.addQueryParams(query)}`,
+        "PUT",
+        params
       ),
 
     /**

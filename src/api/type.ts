@@ -15,6 +15,11 @@ export enum ContentType {
   plan = 2,
   material = 1,
 }
+export enum MaterialType {
+  h5p = 1,
+  fromFile = 2,
+  fromAssets = 3,
+}
 
 export enum PublishStatus {
   published = "published",
