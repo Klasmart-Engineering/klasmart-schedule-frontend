@@ -119,19 +119,21 @@ function AssetsDetails(props: AssetDetailsProps) {
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
-        <TextField
-          label="Asset Type"
-          required
-          value={fileType}
-          onChange={(e) => handleTopicListChange(e, "fileType")}
-          disabled={isIdExist()}
-          select
-        >
-          <MenuItem value="image">{d("Image").t("library_label_image")}</MenuItem>
-          <MenuItem value="video">{d("Video").t("library_label_video")}</MenuItem>
-          <MenuItem value="audio">{d("Audio").t("library_label_audio")}</MenuItem>
-          <MenuItem value="document">{d("Document").t("library_label_document")}</MenuItem>
-        </TextField>
+        {true && (
+          <TextField
+            label="Asset Type"
+            required
+            value={fileType}
+            onChange={(e) => handleTopicListChange(e, "fileType")}
+            disabled={isIdExist()}
+            select
+          >
+            <MenuItem value="image">{d("Image").t("library_label_image")}</MenuItem>
+            <MenuItem value="video">{d("Video").t("library_label_video")}</MenuItem>
+            <MenuItem value="audio">{d("Audio").t("library_label_audio")}</MenuItem>
+            <MenuItem value="document">{d("Document").t("library_label_document")}</MenuItem>
+          </TextField>
+        )}
         <Controller
           name="thumbnail"
           control={control}
@@ -144,7 +146,7 @@ function AssetsDetails(props: AssetDetailsProps) {
                   transformFile={crop}
                   {...props}
                   render={({ uploady, item, btnRef, value, isUploading }) => (
-                    <Box className={css.fieldset} display="flex">
+                    <Box display="flex" className={css.fieldset}>
                       <Button
                         className={css.thumbnailButton}
                         ref={btnRef}

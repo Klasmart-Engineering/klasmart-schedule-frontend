@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
-import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -18,6 +18,7 @@ import {
   deleteContent,
   onLoadContentEdit,
   publish,
+  publishWidthAssets,
   save,
   searchOutcomeList,
 } from "../../reducers/content";
@@ -94,7 +95,10 @@ export default function ContentEdit() {
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? type2File[assetsFileType] : ContentType.plan;
   const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
-  const isH5pWatch = watch("isH5p", contentDetail.isH5p || "h5p");
+  const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
+  const inputSourceWatch = watch("data.input_source", inputSource);
+  // console.log(inputSourceWatch);
+
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -133,13 +137,17 @@ export default function ContentEdit() {
       }),
     [handleSubmit, content_type, lesson, dispatch, history, editindex]
   );
-
+  //  console.log(watch());
   const handlePublish = useCallback(async () => {
     if (lesson === "assets") await handleSave();
     if (!id) return;
-    await dispatch(publish(id));
+    if (watch("isOnlyMaterial") === "assetAndMaterial") {
+      await dispatch(publishWidthAssets(id));
+    } else {
+      await dispatch(publish(id));
+    }
     history.replace("/ ");
-  }, [lesson, handleSave, id, dispatch, history]);
+  }, [lesson, handleSave, id, watch, history, dispatch]);
 
   const handleDelete = useCallback(async () => {
     if (!id) return;
@@ -329,14 +337,14 @@ export default function ContentEdit() {
       {includeH5p && !includeAsset && (
         <Fragment>
           <Controller
-            name="isH5p"
+            name="data.input_source"
             as={SelectH5PRadio}
-            defaultValue={contentDetail.isH5p}
+            defaultValue={inputSourceWatch}
             control={control}
             formMethods={formMethods}
             disabled={!!id}
           />
-          {isH5pWatch === "h5p" ? (
+          {inputSourceWatch === 1 ? (
             <Controller
               name="data"
               as={ContentH5p}
@@ -384,7 +392,7 @@ export default function ContentEdit() {
         onBack={handleGoBack}
         onDelete={handleDelete}
         id={id}
-        isH5pWatch={isH5pWatch}
+        inputSourceWatch={inputSourceWatch}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {

@@ -5,14 +5,10 @@ import React, { useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
 import { SingleUploader } from "../../components/SingleUploader";
+import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
-import AssetAudio from "./AssetPreview/AssetAudio";
-import AssetFile from "./AssetPreview/AssetFile";
-import AssetImg from "./AssetPreview/AssetImg";
-import AssetVideo from "./AssetPreview/AssetVideo";
 import { DragItem, mapDropSegmentPropsReturn } from "./PlanComposeGraphic";
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -73,36 +69,10 @@ const useUploadBoxStyles = makeStyles({
 
 export const fileFormat: any = {
   video: [".avi", ".mov", ".mp4"],
-  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"],
+  image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
   document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
   audio: [".mp3", ".wav"],
 };
-
-interface PreviewProps {
-  fileType?: string;
-  resourceId: string | undefined;
-}
-function AssetPreview(props: PreviewProps) {
-  const css = useStyles();
-  const { fileType, resourceId } = props;
-  const source = typeof resourceId === "object" ? resourceId["source"] : resourceId;
-  const path = apiResourcePathById(source);
-  const getSuffix = (source: string | undefined) => {
-    if (JSON.stringify(source) === "{}" || !source) return;
-    return source.substring(source.lastIndexOf(".") + 1, source.length);
-  };
-  return (
-    <Box display="flex" flexDirection="column" alignItems="center" className={css.assetPreviewBox}>
-      {(fileType === "image" || fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetImg src={path} />}
-      {(fileType === "video" || fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetVideo src={path} />}
-      {(fileType === "audio" || fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetAudio src={path} />}
-      {(fileType === "document" || fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetFile src={path} />}
-      <Typography variant="body1" style={{ marginTop: "12px" }}>
-        {d("File Type").t("library_label_file_type")} : {getSuffix(source)}
-      </Typography>
-    </Box>
-  );
-}
 
 interface FileTypeProps {
   fileFormat: any;
@@ -156,10 +126,14 @@ function AssetEdit(props: AssetEditProps) {
   const uploadCss = useUploadBoxStyles(props);
   const { fileType, formMethods, contentDetail } = props;
   const { setValue } = formMethods;
+  const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
+  // console.log(isPreview);
+
   const setFile = useMemo(
     () => (item: DragItem) => {
       const source = JSON.parse(item.data.data).source;
       setValue("data.source", source, { shouldDirty: true });
+      setValue("data.input_source", 3, { shouldDirty: true });
     },
     [setValue]
   );
@@ -171,9 +145,18 @@ function AssetEdit(props: AssetEditProps) {
     accept: "LIBRARY_ITEM",
     drop: setFile,
   });
+  const previewHeader = (
+    <Box>
+      {typeof isPreview === "string" && isPreview ? (
+        <p className={css.title}>preview</p>
+      ) : (
+        <p className={css.title}>{fileType ? d("Upload").t("library_label_upload") : "Select a file"}</p>
+      )}
+    </Box>
+  );
   return (
     <Box className={uploadCss.uploadBox} boxShadow={3}>
-      <p className={css.title}>{fileType ? d("Upload").t("library_label_upload") : "Select a file"}</p>
+      {previewHeader}
       <div ref={fileRef} className={clsx(css.uploadTool, { [css.canDropFile]: canDropfile })}>
         <div className={css.uploadBtn}>
           <Controller
@@ -188,7 +171,9 @@ function AssetEdit(props: AssetEditProps) {
                 render={({ uploady, item, btnRef, value, isUploading }) => (
                   <>
                     {(JSON.stringify(value) === "{}" || !value) && !isUploading && <FileText fileFormat={fileFormat} fileType={fileType} />}
-                    {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview fileType={fileType} resourceId={value} />}
+                    {!(JSON.stringify(value) === "{}" || !value) && (
+                      <AssetPreview className={css.assetPreviewBox} fileType={fileType} resourceId={value} />
+                    )}
                     {fileType
                       ? !isUploading &&
                         !contentDetail.id && (

@@ -62,7 +62,6 @@ const initialState: IContentState = {
     org_name: "",
     outcomes: [],
     outcome_entities: [],
-    isH5p: "h5p",
   },
   mediaList: [],
   MediaListTotal: 0,
@@ -170,8 +169,21 @@ export const publish = createAsyncThunk<
       contentDetail: { publish_scope },
     },
   } = getState();
-  // debugger;
+
   return api.contents.publishContent(id, { scope: publish_scope });
+});
+
+export const publishWidthAssets = createAsyncThunk<
+  AsyncReturnType<typeof api.contents.publishContentWithAssets>,
+  Required<EntityContentInfoWithDetails>["id"],
+  { state: RootState }
+>("content/publish", (id, { getState }) => {
+  const {
+    content: {
+      contentDetail: { publish_scope },
+    },
+  } = getState();
+  return api.contents.publishContentWithAssets(id, { scope: publish_scope });
 });
 
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(

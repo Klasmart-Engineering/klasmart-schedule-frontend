@@ -25,7 +25,7 @@ import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save
 import clsx from "clsx";
 import React, { Fragment, useCallback, useReducer } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../../api/api.auto";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
@@ -122,11 +122,11 @@ interface HeaderProps {
   onBack: ButtonProps["onClick"];
   onDelete: ButtonProps["onClick"];
   id: string | null;
-  isH5pWatch: EntityCreateContentRequest["isH5p"];
+  inputSourceWatch: any;
 }
 
 export function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetail, formMethods, onCancel, onPublish, onSave, onBack, onDelete, id, isH5pWatch } = props;
+  const { lesson, onChangeLesson, contentDetail, formMethods, onCancel, onPublish, onSave, onBack, onDelete, id, inputSourceWatch } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const {
@@ -141,7 +141,6 @@ export function ContentHeader(props: HeaderProps) {
     return !open;
   }, false);
   const handleOk = useCallback(() => {
-    debugger;
     toggle();
     onPublish();
   }, [onPublish]);
@@ -174,7 +173,7 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (isH5pWatch === "nonH5p" ? (
+            (inputSourceWatch === 2 ? (
               <Button
                 variant="contained"
                 endIcon={<Publish />}
@@ -233,7 +232,7 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (isH5pWatch === "nonH5p" ? (
+            (inputSourceWatch === 2 ? (
               <IconButton
                 className={clsx(css.iconButton, css.greenButton)}
                 onClick={toggle}
@@ -379,13 +378,13 @@ export function SelectLesson(props: SelectLessonProps) {
 }
 
 interface SelectH5PRadioProps {
-  value?: string;
+  value?: number;
   onChange?: (value: SelectH5PRadioProps["value"]) => any;
   formMethods: UseFormMethods<ContentDetailForm>;
   disabled: boolean;
 }
 export function SelectH5PRadio(props: SelectH5PRadioProps) {
-  const { value = "h5p", onChange, disabled = true } = props;
+  const { value, onChange, disabled = true } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -399,22 +398,32 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
         value={value}
         onChange={(e) => {
           // setValue("data.source", '',  { shouldDirty: true })
-          onChange && onChange(e.target.value);
+          onChange && onChange(Number(e.target.value));
         }}
       >
         <FormControlLabel
           color="primary"
-          control={<Radio size={size} color="primary" value="h5p" />}
+          control={<Radio size={size} color="primary" value={1} />}
           label={<Typography variant={radioTypography}>H5P</Typography>}
           disabled={disabled}
         />
-        <FormControlLabel
-          className={css.radio}
-          color="primary"
-          control={<Radio size={size} color="primary" value="nonH5p" />}
-          label={<Typography variant={radioTypography}>Non H5P</Typography>}
-          disabled={disabled}
-        />
+        {value === 3 ? (
+          <FormControlLabel
+            className={css.radio}
+            color="primary"
+            control={<Radio size={size} color="primary" value={3} />}
+            label={<Typography variant={radioTypography}>Non H5P</Typography>}
+            disabled={disabled}
+          />
+        ) : (
+          <FormControlLabel
+            className={css.radio}
+            color="primary"
+            control={<Radio size={size} color="primary" value={2} />}
+            label={<Typography variant={radioTypography}>Non H5P</Typography>}
+            disabled={disabled}
+          />
+        )}
       </RadioGroup>
     </Box>
   );
