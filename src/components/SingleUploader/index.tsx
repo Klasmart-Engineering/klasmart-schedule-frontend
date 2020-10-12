@@ -46,9 +46,10 @@ interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   value?: string;
   transformFile?: (file: FileLike) => Promise<FileLike>;
   onChange?: (value?: string) => any;
+  onChangeFileType?: () => any;
 }
 export function SingleUploader(props: SingleUploaderProps) {
-  const { value, onChange, render, partition, transformFile, ...uploadyProps } = props;
+  const { value, onChange, render, partition, transformFile, onChangeFileType, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
   const listeners = useMemo(
@@ -70,9 +71,10 @@ export function SingleUploader(props: SingleUploaderProps) {
       },
       [UPLOADER_EVENTS.ITEM_FINISH]() {
         if (onChange) onChange(rid);
+        if (onChangeFileType) onChangeFileType();
       },
     }),
-    [rid, partition, onChange, dispatch, transformFile]
+    [transformFile, dispatch, partition, onChange, rid, onChangeFileType]
   );
   return (
     <Uploady {...uploadyProps} method="PUT" sendWithFormData={false} listeners={listeners}>

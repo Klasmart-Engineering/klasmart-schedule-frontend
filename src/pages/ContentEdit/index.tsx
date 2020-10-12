@@ -137,7 +137,7 @@ export default function ContentEdit() {
       }),
     [handleSubmit, content_type, lesson, dispatch, history, editindex]
   );
-  //  console.log(watch());
+  //  console.log(watch("data"));
   const handlePublish = useCallback(async () => {
     if (lesson === "assets") await handleSave();
     if (!id) return;
@@ -342,17 +342,19 @@ export default function ContentEdit() {
             defaultValue={inputSourceWatch}
             control={control}
             formMethods={formMethods}
-            disabled={!!id}
           />
           {inputSourceWatch === 1 ? (
-            <Controller
-              name="data"
-              as={ContentH5p}
-              defaultValue={contentDetail.data}
-              control={control}
-              rules={{ required: true }}
-              isCreate={!id}
-            />
+            <>
+              11111
+              <Controller
+                name="data"
+                as={ContentH5p}
+                defaultValue={contentDetail.data}
+                control={control}
+                rules={{ required: true }}
+                isCreate={!id}
+              />
+            </>
           ) : (
             <MediaAssetsEdit readonly={false} overlay={false} formMethods={formMethods} contentDetail={contentDetail} />
           )}

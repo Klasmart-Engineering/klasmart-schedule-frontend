@@ -1,7 +1,7 @@
 import { Box, CircularProgress, CircularProgressProps, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
@@ -145,6 +145,11 @@ function AssetEdit(props: AssetEditProps) {
     accept: "LIBRARY_ITEM",
     drop: setFile,
   });
+  const handleChangeFileType = useCallback(
+    () => setValue("data.input_source", 2, { shouldDirty: true }),
+
+    [setValue]
+  );
   const previewHeader = (
     <Box>
       {typeof isPreview === "string" && isPreview ? (
@@ -166,6 +171,7 @@ function AssetEdit(props: AssetEditProps) {
             render={(props) => (
               <SingleUploader
                 partition="assets"
+                onChangeFileType={handleChangeFileType}
                 accept={fileType ? `${fileType}/*` : "image/*,audio/*,video/*"}
                 {...props}
                 render={({ uploady, item, btnRef, value, isUploading }) => (
