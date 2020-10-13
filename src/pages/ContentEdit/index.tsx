@@ -277,9 +277,11 @@ export default function ContentEdit() {
     const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
     const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
     if (!defaultDevelopmentalId || !defaultProgramId) return;
-    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(
-      ModelMockOptions.toFlatten({ programId: defaultProgramId, developmentalId: defaultDevelopmentalId }, mockOptions)
+    const { program, subject, developmental, skills, grade, age } = ModelMockOptions.toFlatten(
+      { programId: defaultProgramId, developmentalId: defaultDevelopmentalId },
+      mockOptions
     );
+    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
     reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
   }, [mockOptions, reset, id]);
   const assetDetails = (
