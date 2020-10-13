@@ -347,6 +347,7 @@ export default function ContentEdit() {
             defaultValue={inputSourceWatch}
             control={control}
             formMethods={formMethods}
+            disabled={!!id}
           />
           {inputSourceWatch === 1 ? (
             <>
@@ -403,7 +404,7 @@ export default function ContentEdit() {
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {
           <Fragment>
-            <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} />
+            <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />
             {leftsideArea}
           </Fragment>
         }

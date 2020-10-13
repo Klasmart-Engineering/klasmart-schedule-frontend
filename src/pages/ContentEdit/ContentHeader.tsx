@@ -349,16 +349,18 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
 interface SelectLessonProps {
   lesson: string;
   onChangeLesson: (value: string) => any;
+  disabled: boolean;
 }
 export function SelectLesson(props: SelectLessonProps) {
   const css = useStyles();
-  const { lesson, onChangeLesson } = props;
+  const { lesson, onChangeLesson, disabled } = props;
   return (
     <Box mb={3}>
       <TextField
         fullWidth
         select
         className={css.selectLesson}
+        disabled={disabled}
         value={lesson}
         onChange={(e) => onChangeLesson(e.target.value)}
         InputProps={{ style: { fontSize: 18, fontWeight: 700 } }}
@@ -381,9 +383,10 @@ interface SelectH5PRadioProps {
   value?: number;
   onChange?: (value: SelectH5PRadioProps["value"]) => any;
   formMethods: UseFormMethods<ContentDetailForm>;
+  disabled: boolean;
 }
 export function SelectH5PRadio(props: SelectH5PRadioProps) {
-  const { value, onChange, formMethods } = props;
+  const { value, onChange, formMethods, disabled } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -404,6 +407,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
           color="primary"
           control={<Radio size={size} color="primary" value={1} />}
           label={<Typography variant={radioTypography}>H5P</Typography>}
+          disabled={disabled}
         />
         {value === 3 ? (
           <FormControlLabel
@@ -411,6 +415,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
             color="primary"
             control={<Radio size={size} color="primary" value={3} />}
             label={<Typography variant={radioTypography}>Non H5P</Typography>}
+            disabled={disabled}
           />
         ) : (
           <FormControlLabel
@@ -418,6 +423,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
             color="primary"
             control={<Radio size={size} color="primary" value={2} />}
             label={<Typography variant={radioTypography}>Non H5P</Typography>}
+            disabled={disabled}
           />
         )}
       </RadioGroup>
