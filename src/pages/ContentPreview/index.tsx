@@ -123,16 +123,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       )}
     </Box>
   );
-  const getFileInfo = () => {
-    // const source = JSON.parse(contentPreview.data || "{}}").source
-    // if (JSON.stringify(source) === "{}") return;
-    if (contentPreview.content_type === ContentType.plan) {
-      const segment: Segment = JSON.parse(contentPreview.data || "{}");
-      const h5pArray = ModelLessonPlan.toArray(segment);
-      console.log(h5pArray);
-    }
-  };
-  getFileInfo();
   const planRes = (): any[] => {
     if (contentPreview.content_type === ContentType.plan) {
       const segment: Segment = JSON.parse(contentPreview.data || "{}");
