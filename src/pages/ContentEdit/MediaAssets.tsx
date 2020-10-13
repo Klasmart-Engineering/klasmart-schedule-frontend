@@ -154,12 +154,17 @@ export function NoFiles() {
 interface DraggableItemProps {
   type: string;
   item: EntityContentInfoWithDetails;
+  lesson?: "assets" | "material" | "plan";
 }
 function DraggableImage(props: DraggableItemProps) {
-  const { type, item } = props;
+  const { type, item, lesson } = props;
   const css = useStyles();
   const [, dragRef] = useDrag({ item: { type, data: item } });
-  return <Thumbnail key={item.id} ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={item.content_type} />;
+  const contentType =
+    lesson === "material"
+      ? item.content_type && item.content_type * 10 + JSON.parse(item.data || JSON.stringify({ file_type: "" })).file_type
+      : item.content_type;
+  return <Thumbnail key={item.id} ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={contentType} />;
 }
 
 export interface MediaAssetsProps {
@@ -186,7 +191,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   const rows = list?.map((item, idx) => (
     <TableRow key={idx}>
       <TableCell className={css.cellThumnbnail}>
-        <DraggableImage type="LIBRARY_ITEM" item={item} />
+        <DraggableImage type="LIBRARY_ITEM" item={item} lesson={lesson} />
       </TableCell>
       <TableCell>{item.name}</TableCell>
       <TableCell>{item.author_name}</TableCell>

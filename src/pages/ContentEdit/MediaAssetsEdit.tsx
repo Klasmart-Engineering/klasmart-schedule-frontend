@@ -1,5 +1,6 @@
-import { Box, CircularProgress, CircularProgressProps, makeStyles, Typography } from "@material-ui/core";
+import { Box, CircularProgress, CircularProgressProps, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import React, { useCallback, useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
@@ -19,6 +20,8 @@ const useStyles = makeStyles(({ palette }) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: 20,
+    boxSizing: "border-box",
   },
   canDropFile: {
     borderStyle: "dashed",
@@ -58,11 +61,17 @@ const useStyles = makeStyles(({ palette }) => ({
   assetPreviewBox: {
     marginBottom: "5%",
   },
+  closeButton: {
+    position: "absolute",
+    right: 14,
+    top: -11,
+    color: palette.grey[500],
+  },
 }));
 
 const useUploadBoxStyles = makeStyles({
   uploadBox: (props: AssetEditProps) => ({
-    height: props.fileType ? "calc(100% - 36px)" : "calc(100% - 116px)",
+    height: props.isAsset ? "calc(100% - 36px)" : "calc(100% - 116px)",
     padding: "6px 20px 30px 20px",
   }),
 });
@@ -74,29 +83,29 @@ export const fileFormat: any = {
   audio: [".mp3", ".wav"],
 };
 
-interface FileTypeProps {
-  fileFormat: any;
-  fileType?: string;
-}
-function FileText(props: FileTypeProps) {
-  const { fileType, fileFormat } = props;
-  if (!fileType) {
-    return (
-      <>
-        <p>Drag from Asset Library</p>
-        <p>or</p>
-      </>
-    );
-  } else {
-    const format = fileFormat[fileType];
-    const fillfileType = `${fileType}(
-    ${format.map((item: String, index: number) => {
-      return `${item.substr(1)}`;
-    })}
-    )`;
-    return <p style={{ color: "#666666" }}>{d("Upload a {fillfileType} here").t("library_label_upload_a", { fillfileType })}</p>;
-  }
-}
+// interface FileTypeProps {
+//   fileFormat: any;
+//   fileType?: string;
+// }
+// function FileText(props: FileTypeProps) {
+//   const { fileType, fileFormat } = props;
+//   if (!fileType) {
+//     return (
+//       <>
+//         <p>Drag from Asset Library</p>
+//         <p>or</p>
+//       </>
+//     );
+//   } else {
+//     const format = fileFormat[fileType];
+//     const fillfileType = `${fileType}(
+//     ${format.map((item: String, index: number) => {
+//       return `${item.substr(1)}`;
+//     })}
+//     )`;
+//     return <p style={{ color: "#666666" }}>{d("Upload a {fillfileType} here").t("library_label_upload_a", { fillfileType })}</p>;
+//   }
+// }
 
 function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
@@ -116,15 +125,16 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
   canDrop: monitor.canDrop(),
 });
 interface AssetEditProps {
-  fileType?: string;
+  isAsset?: boolean;
   formMethods: UseFormMethods<ContentDetailForm>;
   contentDetail: EntityContentInfoWithDetails;
+  onclosePreview?: () => any;
 }
 
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { fileType, formMethods, contentDetail } = props;
+  const { isAsset, formMethods, contentDetail, onclosePreview } = props;
   const { setValue } = formMethods;
   const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
   // console.log(isPreview);
@@ -150,12 +160,18 @@ function AssetEdit(props: AssetEditProps) {
 
     [setValue]
   );
+
   const previewHeader = (
-    <Box>
-      {typeof isPreview === "string" && isPreview ? (
-        <p className={css.title}>preview</p>
+    <Box position="relative">
+      {typeof isPreview === "string" && isPreview && !isAsset ? (
+        <>
+          <p className={css.title}>preview</p>
+          <IconButton aria-label="close" className={css.closeButton} onClick={onclosePreview}>
+            <CloseIcon />
+          </IconButton>
+        </>
       ) : (
-        <p className={css.title}>{fileType ? d("Upload").t("library_label_upload") : "Select a file"}</p>
+        <p className={css.title}>{isAsset ? d("Upload").t("library_label_upload") : "Select a file"}</p>
       )}
     </Box>
   );
@@ -165,26 +181,29 @@ function AssetEdit(props: AssetEditProps) {
       <div ref={fileRef} className={clsx(css.uploadTool, { [css.canDropFile]: canDropfile })}>
         <div className={css.uploadBtn}>
           <Controller
-            name={fileType ? "data" : "data.source"}
+            name="data.source"
             control={formMethods.control}
             defaultValue={JSON.parse(contentDetail.data || "{}")}
             render={(props) => (
               <SingleUploader
                 partition="assets"
                 onChangeFileType={handleChangeFileType}
-                accept={fileType ? `${fileType}/*` : "image/*,audio/*,video/*"}
+                accept={"image/*,audio/*,video/*"}
                 {...props}
                 render={({ uploady, item, btnRef, value, isUploading }) => (
                   <>
-                    {(JSON.stringify(value) === "{}" || !value) && !isUploading && <FileText fileFormat={fileFormat} fileType={fileType} />}
-                    {!(JSON.stringify(value) === "{}" || !value) && (
-                      <AssetPreview className={css.assetPreviewBox} fileType={fileType} resourceId={value} />
+                    {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
+                      <>
+                        <p>Drag from Asset Library</p>
+                        <p>or</p>
+                      </>
                     )}
-                    {fileType
+                    {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
+                    {isAsset
                       ? !isUploading &&
                         !contentDetail.id && (
                           <Button variant="contained" color="primary" ref={btnRef}>
-                            {d("Upload").t("library_label_upload")}
+                            Upload from Device
                           </Button>
                         )
                       : !isUploading && (
@@ -220,9 +239,9 @@ interface MediaAssetsEditProps extends AssetEditProps {
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
-    const { readonly, overlay, fileType, formMethods, contentDetail } = this.props;
+    const { readonly, overlay, isAsset, formMethods, contentDetail, onclosePreview } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
-    if (readonly) return <AssetPreview fileType={fileType} resourceId={JSON.parse(contentDetail.data || "{}")} />;
-    return <AssetEdit fileType={fileType} formMethods={formMethods} contentDetail={contentDetail} />;
+    if (readonly) return <AssetPreview resourceId={JSON.parse(contentDetail.data || "{}")} />;
+    return <AssetEdit isAsset={isAsset} formMethods={formMethods} contentDetail={contentDetail} onclosePreview={onclosePreview} />;
   }
 }

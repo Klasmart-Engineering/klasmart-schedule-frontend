@@ -173,13 +173,13 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (inputSourceWatch === 2 ? (
+            (inputSourceWatch === 2 && lesson === "material" ? (
               <Button
                 variant="contained"
                 endIcon={<Publish />}
                 className={clsx(css.headerButton, css.greenButton)}
                 onClick={toggle}
-                disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
+                disabled={!(contentDetail?.publish_status === "draft" && !isDirty)}
               >
                 {d("Publish").t("library_label_publish")}
               </Button>

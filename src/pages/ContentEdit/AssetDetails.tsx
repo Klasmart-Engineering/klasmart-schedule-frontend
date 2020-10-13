@@ -119,7 +119,7 @@ function AssetsDetails(props: AssetDetailsProps) {
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
-        {true && (
+        {false && (
           <TextField
             label="Asset Type"
             required
@@ -134,6 +134,17 @@ function AssetsDetails(props: AssetDetailsProps) {
             <MenuItem value="document">{d("Document").t("library_label_document")}</MenuItem>
           </TextField>
         )}
+        <Controller
+          as={TextField}
+          control={control}
+          name="name"
+          label={d("Asset Name").t("library_label_asset_name")}
+          required
+          rules={{ required: true }}
+          defaultValue={contentDetail.name}
+          disabled={isIdExist()}
+          error={errorValidator(errors.name)}
+        />
         <Controller
           name="thumbnail"
           control={control}
@@ -168,18 +179,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             />
           )}
         />
-        <Controller
-          as={TextField}
-          control={control}
-          className={css.fieldset}
-          name="name"
-          label={d("Asset Name").t("library_label_asset_name")}
-          required
-          rules={{ required: true }}
-          defaultValue={contentDetail.name}
-          disabled={isIdExist()}
-          error={errorValidator(errors.name)}
-        />
+
         <Controller
           name="program"
           defaultValue={contentDetail.program}

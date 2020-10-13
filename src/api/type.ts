@@ -7,9 +7,9 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 export enum ContentType {
-  image = 10,
-  video = 11,
-  audio = 12,
+  image = 31,
+  video = 32,
+  audio = 33,
   doc = 13,
   assets = 3,
   plan = 2,

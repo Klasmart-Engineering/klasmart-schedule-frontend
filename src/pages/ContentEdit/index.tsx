@@ -92,13 +92,14 @@ export default function ContentEdit() {
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
-  const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? type2File[assetsFileType] : ContentType.plan;
+  const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
   const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
   const inputSourceWatch = watch("data.input_source", inputSource);
   // console.log(inputSourceWatch);
-
+  //  console.log(watch("data"));
+  //  console.log("isDirty=", formMethods.formState.isDirty);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -121,7 +122,6 @@ export default function ContentEdit() {
         const { outcome_entities, ...restValues } = value;
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
         const input = { ...restValues, content_type, outcomes };
-        if (lesson === "assets") Object.assign(input, { data: { source: value.data.toString() } });
         const contentDetail = ModelContentDetailForm.encode(input);
         const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
@@ -137,7 +137,6 @@ export default function ContentEdit() {
       }),
     [handleSubmit, content_type, lesson, dispatch, history, editindex]
   );
-  //  console.log(watch("data"));
   const handlePublish = useCallback(async () => {
     if (lesson === "assets") await handleSave();
     if (!id) return;
@@ -250,6 +249,10 @@ export default function ContentEdit() {
     },
     []
   );
+
+  const handleClosePreview = useCallback(() => {
+    setValue("data.source", "", { shouldDirty: true });
+  }, [setValue]);
   const handleChangeProgram = useMemo(
     () => ([programId]: string[]) => {
       ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
@@ -331,7 +334,7 @@ export default function ContentEdit() {
     <Fragment>
       {includeH5p && includeAsset && (
         <ContentH5p>
-          <MediaAssetsEdit readonly={readonly} overlay fileType={assetsFileType} formMethods={formMethods} contentDetail={contentDetail} />
+          <MediaAssetsEdit readonly={readonly} overlay isAsset={true} formMethods={formMethods} contentDetail={contentDetail} />
         </ContentH5p>
       )}
       {includeH5p && !includeAsset && (
@@ -345,29 +348,28 @@ export default function ContentEdit() {
           />
           {inputSourceWatch === 1 ? (
             <>
-              11111
               <Controller
                 name="data"
                 as={ContentH5p}
                 defaultValue={contentDetail.data}
                 control={control}
                 rules={{ required: true }}
-                isCreate={!id}
+                // isCreate={!id}
               />
             </>
           ) : (
-            <MediaAssetsEdit readonly={false} overlay={false} formMethods={formMethods} contentDetail={contentDetail} />
+            <MediaAssetsEdit
+              readonly={false}
+              overlay={false}
+              formMethods={formMethods}
+              contentDetail={contentDetail}
+              onclosePreview={handleClosePreview}
+            />
           )}
         </Fragment>
       )}
       {!includeH5p && includeAsset && (
-        <MediaAssetsEdit
-          readonly={readonly}
-          overlay={includeH5p}
-          fileType={assetsFileType}
-          formMethods={formMethods}
-          contentDetail={contentDetail}
-        />
+        <MediaAssetsEdit readonly={readonly} overlay={includeH5p} isAsset={true} formMethods={formMethods} contentDetail={contentDetail} />
       )}
       {includePlanComposeGraphic && (
         <Controller
