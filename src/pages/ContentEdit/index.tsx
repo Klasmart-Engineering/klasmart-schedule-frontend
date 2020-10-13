@@ -282,7 +282,7 @@ export default function ContentEdit() {
       mockOptions
     );
     const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
-    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
+    reset({ ...onlyOneOptionValue, program: [defaultProgramId], developmental: [defaultDevelopmentalId] });
   }, [mockOptions, reset, id]);
   const assetDetails = (
     <MediaAssetsLibrary>

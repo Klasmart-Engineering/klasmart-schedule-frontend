@@ -6,12 +6,12 @@ interface MyExtendedDetailForm {
   outcome_entities?: EntityContentInfoWithDetails["outcome_entities"];
 }
 export interface ContentDetailPlanType extends Omit<EntityCreateContentRequest, "data">, MyExtendedDetailForm {
-  data: Segment;
+  data?: Segment;
   created_at?: string;
 }
 let time: number | undefined = 0;
 export interface ContentDetailMaterialType extends Omit<EntityCreateContentRequest, "data">, MyExtendedDetailForm {
-  data: { source: string; input_source: string; file_type: number };
+  data?: { source: string; input_source: string; file_type: number };
   created_at?: string;
 }
 
@@ -23,7 +23,7 @@ function isPlan(contentDetail: ContentDetailForm): contentDetail is ContentDetai
 
 export class ModelContentDetailForm {
   static encode(value: ContentDetailForm): EntityContentInfoWithDetails {
-    const data = isPlan(value) ? ModelLessonPlan.toString(value.data) : JSON.stringify(value.data);
+    const data = isPlan(value) && value.data ? ModelLessonPlan.toString(value.data) : JSON.stringify(value.data);
     const created_at = time;
     return { ...value, data, created_at };
   }
