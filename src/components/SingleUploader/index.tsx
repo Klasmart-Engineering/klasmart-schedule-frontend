@@ -31,7 +31,7 @@ function BaseUploader(props: BaseUploaderProps) {
     const btn = btnRef.current;
     btn?.addEventListener("click", handleClick);
     return () => btn?.removeEventListener("click", handleClick);
-  }, [uploady]);
+  }, [uploady, btnRef.current]);
   return <>{render({ uploady, item, btnRef, value, isUploading })}</>;
 }
 
