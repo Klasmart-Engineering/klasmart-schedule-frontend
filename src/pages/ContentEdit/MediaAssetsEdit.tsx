@@ -199,18 +199,11 @@ function AssetEdit(props: AssetEditProps) {
                       </>
                     )}
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
-                    {isAsset
-                      ? !isUploading &&
-                        !contentDetail.id && (
-                          <Button variant="contained" color="primary" ref={btnRef}>
-                            Upload from Device
-                          </Button>
-                        )
-                      : !isUploading && (
-                          <Button variant="contained" color="primary" ref={btnRef}>
-                            Upload from Device
-                          </Button>
-                        )}
+                    {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
+                      <Button variant="contained" color="primary" ref={btnRef}>
+                        Upload from Device
+                      </Button>
+                    )}
                     {isUploading && <ProgressWithText value={item?.completed} />}
                   </>
                 )}

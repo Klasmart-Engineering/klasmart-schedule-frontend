@@ -1,3 +1,4 @@
+import { Box } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { Fragment, useCallback, useEffect, useMemo } from "react";
 import { DndProvider } from "react-dnd";
@@ -349,18 +350,17 @@ export default function ContentEdit() {
             formMethods={formMethods}
             disabled={!!id}
           />
-          {inputSourceWatch === 1 ? (
-            <>
-              <Controller
-                name="data"
-                as={ContentH5p}
-                defaultValue={contentDetail.data}
-                control={control}
-                rules={{ required: true }}
-                // isCreate={!id}
-              />
-            </>
-          ) : (
+          <Box hidden={inputSourceWatch !== 1} height="100%" width="100%">
+            <Controller
+              name="data"
+              as={ContentH5p}
+              defaultValue={contentDetail.data}
+              control={control}
+              rules={{ required: true }}
+              isCreate={!id}
+            />
+          </Box>
+          <Box hidden={inputSourceWatch === 1} height="100%" width="100%">
             <MediaAssetsEdit
               readonly={false}
               overlay={false}
@@ -368,7 +368,7 @@ export default function ContentEdit() {
               contentDetail={contentDetail}
               onclosePreview={handleClosePreview}
             />
-          )}
+          </Box>
         </Fragment>
       )}
       {!includeH5p && includeAsset && (

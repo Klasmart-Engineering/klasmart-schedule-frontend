@@ -21,10 +21,10 @@ const useStyles = makeStyles({
 });
 
 export default function ContentH5p(props: ContentH5pProps) {
-  const { value, onChange, children } = props;
+  const { value, onChange, children, isCreate } = props;
   const css = useStyles();
-  // const src = isCreate ? apiCreateH5pResource() : value?.source && apiGetH5pResourceById(value.source);
-  const src = value?.source ? apiGetH5pResourceById(value.source) : apiCreateH5pResource();
+  const src = isCreate ? apiCreateH5pResource() : value?.source && apiGetH5pResourceById(value.source);
+  // const src = value?.source ? apiGetH5pResourceById(value.source) : apiCreateH5pResource();
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const { contentId } = event.data;
