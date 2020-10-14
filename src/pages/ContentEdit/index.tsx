@@ -99,7 +99,7 @@ export default function ContentEdit() {
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
   const inputSourceWatch = watch("data.input_source", inputSource);
   // console.log(inputSourceWatch);
-  //  console.log(watch("data"));
+  console.log(watch("data"));
   //  console.log("isDirty=", formMethods.formState.isDirty);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
@@ -352,9 +352,9 @@ export default function ContentEdit() {
           />
           <Box hidden={inputSourceWatch !== 1} height="100%" width="100%">
             <Controller
-              name="data"
+              name="data.source"
               as={ContentH5p}
-              defaultValue={contentDetail.data}
+              defaultValue={JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source}
               control={control}
               rules={{ required: true }}
               isCreate={!id}
