@@ -3,7 +3,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { d } from "../../locale/LocaleManager";
@@ -44,6 +44,10 @@ const useQuery = (): QueryCondition => {
 const toQueryString = (hash: Record<string, any>): string => {
   const search = new URLSearchParams(hash);
   return `?${search.toString()}`;
+};
+
+const toFullUrl = (location: RouteProps["location"]) => {
+  return `${location?.pathname}${location?.search}${location?.hash}`;
 };
 
 interface RefreshWithDispatch {
@@ -109,7 +113,7 @@ export default function MyContentList() {
     if (condition.content_type === SearchContentsRequestContentType.assets) {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
     } else {
-      history.push({ pathname: ContentEdit.routeRedirectDefault });
+      history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
     }
   };
 

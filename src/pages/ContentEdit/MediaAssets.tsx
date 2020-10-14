@@ -162,7 +162,7 @@ function DraggableImage(props: DraggableItemProps) {
   const [, dragRef] = useDrag({ item: { type, data: item } });
   const contentType =
     lesson === "material"
-      ? item.content_type && item.content_type * 10 + JSON.parse(item.data || JSON.stringify({ file_type: "" })).file_type
+      ? item.content_type && Number(item.content_type * 10 + (JSON.parse(item.data || JSON.stringify({ file_type: "" })).file_type || 1))
       : item.content_type;
   return <Thumbnail key={item.id} ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={contentType} />;
 }
