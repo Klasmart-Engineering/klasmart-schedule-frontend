@@ -21,6 +21,7 @@ const useStyles = makeStyles(({ palette }) => ({
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 20,
+    paddingTop: 20,
     boxSizing: "border-box",
   },
   canDropFile: {
@@ -35,6 +36,7 @@ const useStyles = makeStyles(({ palette }) => ({
   title: {
     color: "#000000",
     fontSize: "18px",
+    fontWeight: 500,
   },
   assetsHeader: {
     fontSize: "20px",
@@ -65,7 +67,7 @@ const useStyles = makeStyles(({ palette }) => ({
     position: "absolute",
     right: 14,
     top: -11,
-    color: palette.grey[500],
+    color: palette.text.primary,
   },
 }));
 
@@ -137,8 +139,6 @@ function AssetEdit(props: AssetEditProps) {
   const { isAsset, formMethods, contentDetail, onclosePreview } = props;
   const { setValue } = formMethods;
   const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
-  // console.log(isPreview);
-
   const setFile = useMemo(
     () => (item: DragItem) => {
       const source = JSON.parse(item.data.data).source;
@@ -165,7 +165,7 @@ function AssetEdit(props: AssetEditProps) {
     <Box position="relative">
       {typeof isPreview === "string" && isPreview && !isAsset ? (
         <>
-          <p className={css.title}>preview</p>
+          <p className={css.title}>Preview</p>
           <IconButton aria-label="close" className={css.closeButton} onClick={onclosePreview}>
             <CloseIcon />
           </IconButton>

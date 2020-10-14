@@ -109,6 +109,9 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   dialogContentRemoveborder: {
     borderBottom: "none",
   },
+  h5pRadio: {
+    fontWeight: 700,
+  },
 }));
 
 interface HeaderProps {
@@ -363,7 +366,7 @@ export function SelectLesson(props: SelectLessonProps) {
         disabled={disabled}
         value={lesson}
         onChange={(e) => onChangeLesson(e.target.value)}
-        InputProps={{ style: { fontSize: 18, fontWeight: 700 } }}
+        InputProps={{ style: { fontSize: 20, fontWeight: 700 } }}
       >
         <MenuItem value="assets" className={css.selectLessonItem}>
           {d("Assets").t("library_label_assets")}
@@ -406,7 +409,11 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
         <FormControlLabel
           color="primary"
           control={<Radio size={size} color="primary" value={1} />}
-          label={<Typography variant={radioTypography}>H5P</Typography>}
+          label={
+            <Typography variant={radioTypography} className={css.h5pRadio}>
+              H5P
+            </Typography>
+          }
           disabled={disabled}
         />
         {value === 3 ? (
@@ -414,7 +421,11 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value={3} />}
-            label={<Typography variant={radioTypography}>Non H5P</Typography>}
+            label={
+              <Typography variant={radioTypography} className={css.h5pRadio}>
+                Non H5P
+              </Typography>
+            }
             disabled={disabled}
           />
         ) : (
@@ -422,7 +433,11 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
             className={css.radio}
             color="primary"
             control={<Radio size={size} color="primary" value={2} />}
-            label={<Typography variant={radioTypography}>Non H5P</Typography>}
+            label={
+              <Typography variant={radioTypography} className={css.h5pRadio}>
+                Non H5P
+              </Typography>
+            }
             disabled={disabled}
           />
         )}
