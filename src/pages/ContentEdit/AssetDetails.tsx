@@ -147,6 +147,7 @@ function AssetsDetails(props: AssetDetailsProps) {
         />
         <Controller
           name="thumbnail"
+          defaultValue={contentDetail.thumbnail}
           control={control}
           render={(props) => (
             <CropImage
