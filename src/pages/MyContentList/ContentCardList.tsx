@@ -195,6 +195,7 @@ function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
   const { content, queryCondition, selectedContentGroupContext, onDelete, onPublish, onClickContent } = props;
+  const file_type: number = JSON.parse(content.data || "").file_type;
   const { registerChange, hashValue } = selectedContentGroupContext;
   const DeleteIcon =
     content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
@@ -219,7 +220,12 @@ function ContentCard(props: ContentProps) {
       ></Checkbox>
       <CardActionArea onClick={(e) => onClickContent(content.id, content.content_type)}>
         <CardMedia className={css.cardMedia}>
-          <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
+          {content.content_type === ContentType.assets && (
+            <Thumbnail className={css.cardImg} type={content.content_type * 10 + file_type} id={content.thumbnail}></Thumbnail>
+          )}
+          {content.content_type !== ContentType.assets && (
+            <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
+          )}
         </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
@@ -240,9 +246,9 @@ function ContentCard(props: ContentProps) {
       <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
         {content?.content_type === ContentType.material && d("Material").t("library_label_material")}
         {content?.content_type === ContentType.plan && d("Plan").t("library_label_plan")}
-        {content?.content_type === ContentType.image && d("Image").t("library_label_image")}
-        {content?.content_type === ContentType.video && d("Video").t("library_label_video")}
-        {content?.content_type === ContentType.audio && d("Audio").t("library_label_audio")}
+        {content?.content_type === ContentType.assets && file_type === ContentType.image % 10 && d("Image").t("library_label_image")}
+        {content?.content_type === ContentType.assets && file_type === ContentType.video % 10 && d("Video").t("library_label_video")}
+        {content?.content_type === ContentType.assets && file_type === ContentType.audio % 10 && d("Audio").t("library_label_audio")}
         {content?.content_type === ContentType.doc && d("Document").t("library_label_document")}
       </Typography>
       <CardActions className={css.cardActions}>
