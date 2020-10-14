@@ -31,6 +31,7 @@ function BaseUploader(props: BaseUploaderProps) {
     const btn = btnRef.current;
     btn?.addEventListener("click", handleClick);
     return () => btn?.removeEventListener("click", handleClick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploady, btnRef.current]);
   return <>{render({ uploady, item, btnRef, value, isUploading })}</>;
 }
