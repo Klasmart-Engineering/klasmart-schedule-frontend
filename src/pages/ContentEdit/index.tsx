@@ -1,4 +1,3 @@
-import { Box } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { Fragment, useCallback, useEffect, useMemo } from "react";
 import { DndProvider } from "react-dnd";
@@ -98,9 +97,7 @@ export default function ContentEdit() {
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
   const inputSourceWatch = watch("data.input_source", inputSource);
-  // console.log(inputSourceWatch);
-  console.log(watch("data"));
-  //  console.log("isDirty=", formMethods.formState.isDirty);
+  // console.log(watch("data"));
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -350,7 +347,7 @@ export default function ContentEdit() {
             formMethods={formMethods}
             disabled={!!id}
           />
-          <Box hidden={inputSourceWatch !== 1} height="100%" width="100%">
+          {inputSourceWatch === 1 ? (
             <Controller
               name="data.source"
               as={ContentH5p}
@@ -359,8 +356,7 @@ export default function ContentEdit() {
               rules={{ required: true }}
               isCreate={!id}
             />
-          </Box>
-          <Box hidden={inputSourceWatch === 1} height="100%" width="100%">
+          ) : (
             <MediaAssetsEdit
               readonly={false}
               overlay={false}
@@ -368,7 +364,7 @@ export default function ContentEdit() {
               contentDetail={contentDetail}
               onclosePreview={handleClosePreview}
             />
-          </Box>
+          )}
         </Fragment>
       )}
       {!includeH5p && includeAsset && (
