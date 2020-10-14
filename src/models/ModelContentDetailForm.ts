@@ -29,7 +29,7 @@ export class ModelContentDetailForm {
   }
 
   static decode(contentDetail: EntityContentInfoWithDetails): ContentDetailForm {
-    const data = contentDetail.data ? JSON.parse(contentDetail.data) : {};
+    const data = contentDetail.data ? JSON.parse(contentDetail.data) : { input_source: 1 };
     time = contentDetail.created_at;
     const created_at = formattedTime(contentDetail.created_at);
     return { ...contentDetail, data, created_at };

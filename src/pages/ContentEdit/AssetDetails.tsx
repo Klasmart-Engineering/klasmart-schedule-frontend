@@ -147,6 +147,7 @@ function AssetsDetails(props: AssetDetailsProps) {
         />
         <Controller
           name="thumbnail"
+          defaultValue={contentDetail.thumbnail}
           control={control}
           render={(props) => (
             <CropImage
@@ -252,7 +253,6 @@ function AssetsDetails(props: AssetDetailsProps) {
             name="skills"
             control={control}
             select
-            required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Subcategory").t("library_label_subcategory")}
@@ -271,7 +271,6 @@ function AssetsDetails(props: AssetDetailsProps) {
             name="age"
             control={control}
             select
-            required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Age").t("library_label_age")}
@@ -288,7 +287,6 @@ function AssetsDetails(props: AssetDetailsProps) {
             name="grade"
             control={control}
             select
-            required
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Grade").t("library_label_grade")}

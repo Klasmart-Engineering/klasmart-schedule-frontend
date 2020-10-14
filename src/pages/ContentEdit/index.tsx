@@ -52,7 +52,8 @@ const useQuery = () => {
   const searchOutcome = query.get("searchOutcome") || "";
   const assumed = query.get("assumed") || "";
   const editindex: number = Number(query.get("editindex") || 0);
-  return { id, searchMedia, searchOutcome, search, editindex, assumed };
+  const back = query.get("back") || "";
+  return { id, searchMedia, searchOutcome, search, editindex, assumed, back };
 };
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
@@ -85,7 +86,7 @@ export default function ContentEdit() {
     RootState["content"]
   >((state) => state.content);
   const { lesson, tab, rightside } = useParams();
-  const { id, searchMedia, search, editindex, searchOutcome, assumed } = useQuery();
+  const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQuery();
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
@@ -97,9 +98,6 @@ export default function ContentEdit() {
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
   const inputSourceWatch = watch("data.input_source", inputSource);
-  // console.log(inputSourceWatch);
-  //  console.log(watch("data"));
-  //  console.log("isDirty=", formMethods.formState.isDirty);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -205,8 +203,8 @@ export default function ContentEdit() {
     [dispatch, history, searchOutcome]
   );
   const handleGoBack = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    back ? history.push(back) : history.goBack();
+  }, [back, history]);
 
   const handleChangeFile = (type: contentFileType) => {
     const formValues: object = getValues();
@@ -350,16 +348,14 @@ export default function ContentEdit() {
             disabled={!!id}
           />
           {inputSourceWatch === 1 ? (
-            <>
-              <Controller
-                name="data"
-                as={ContentH5p}
-                defaultValue={contentDetail.data}
-                control={control}
-                rules={{ required: true }}
-                // isCreate={!id}
-              />
-            </>
+            <Controller
+              name="data.source"
+              as={ContentH5p}
+              defaultValue={JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source}
+              control={control}
+              rules={{ required: true }}
+              isCreate={!id}
+            />
           ) : (
             <MediaAssetsEdit
               readonly={false}

@@ -8,8 +8,9 @@ interface DataH5p {
 interface ContentH5pProps {
   children?: ReactNode;
   isCreate?: boolean;
-  value?: DataH5p;
-  onChange?: (value: DataH5p) => any;
+  value?: string;
+  onChange?: (value: ContentH5pProps["value"]) => any;
+  error?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -21,15 +22,15 @@ const useStyles = makeStyles({
 });
 
 export default function ContentH5p(props: ContentH5pProps) {
-  const { value, onChange, children } = props;
+  const { value, onChange, children, isCreate } = props;
   const css = useStyles();
-  // const src = isCreate ? apiCreateH5pResource() : value?.source && apiGetH5pResourceById(value.source);
-  const src = value?.source ? apiGetH5pResourceById(value.source) : apiCreateH5pResource();
+  const src = isCreate ? apiCreateH5pResource() : value && apiGetH5pResourceById(value);
+  // const src = value ? apiGetH5pResourceById(value) : apiCreateH5pResource();
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const { contentId } = event.data;
       if (!contentId) return;
-      if (onChange) onChange({ source: contentId });
+      if (onChange) onChange(contentId);
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
