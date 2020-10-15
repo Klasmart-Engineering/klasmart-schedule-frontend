@@ -21,9 +21,13 @@ const useStyles = makeStyles({
     verticalAlign: "middle",
   },
   controls: {
+    width: "80%",
+    height: 50,
     display: "flex",
-    color: "#009688",
+    color: "#fff",
     alignItems: "center",
+    background: "#009688",
+    margin: "0 auto",
   },
   tools: {
     width: "100px",
@@ -37,7 +41,7 @@ const useStyles = makeStyles({
     flex: 1,
     marginLeft: "10px",
     marginRight: "10px",
-    color: "#009688",
+    color: "#fff",
   },
 });
 

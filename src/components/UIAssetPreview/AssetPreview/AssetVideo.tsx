@@ -1,26 +1,28 @@
-import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
-import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
-import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
-import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
-import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import Box from "@material-ui/core/Box";
 import Slider from "@material-ui/core/Slider";
+import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
+import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
+import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
+import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
+import React, { useEffect } from "react";
 
 const useStyles = makeStyles({
   wrap: {
     width: "100%",
+    height: "100%",
     position: "relative",
   },
   video: {
-    width: "100%",
+    width: "80%",
     marginTop: "36px",
   },
   controls: {
-    width: "100%",
+    width: "80%",
     height: "50px",
     backgroundColor: "#0e78d5",
     marginTop: "-4px",
+    marginLeft: "10%",
     display: "flex",
     alignItems: "center",
   },

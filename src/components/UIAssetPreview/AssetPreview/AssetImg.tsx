@@ -4,7 +4,7 @@ import React from "react";
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
     maxWidth: "100%",
-    maxHeight: "100%",
+    maxHeight: "80%",
     marginTop: "30px",
   },
 }));

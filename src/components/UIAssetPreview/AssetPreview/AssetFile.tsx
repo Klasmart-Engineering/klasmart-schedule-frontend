@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
     minHeight: "554px",
-    width: "100%",
+    width: "80%",
   },
 }));
 
