@@ -269,9 +269,9 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_subject"; description: "Subject"; values: undefined }
   | { id: "schedule_detail_program"; description: "Program"; values: undefined }
   | { id: "schedule_detail_class_type"; description: "Class Type"; values: undefined }
-  | { id: "schedule_detail_online_class"; description: "Online Class"; values: undefined }
-  | { id: "schedule_detail_offline_class"; description: "Offline Class"; values: undefined }
-  | { id: "schedule_detail_homework"; description: "Homework"; values: undefined }
+  | { id: "schedule_detail_online_class"; description: "Live"; values: undefined }
+  | { id: "schedule_detail_offline_class"; description: "Class"; values: undefined }
+  | { id: "schedule_detail_homework"; description: "Study"; values: undefined }
   | { id: "schedule_detail_task"; description: "Task"; values: undefined }
   | { id: "schedule_detail_due_date"; description: "Due Date"; values: undefined }
   | { id: "schedule_detail_pick_time"; description: "Pick Time"; values: undefined }

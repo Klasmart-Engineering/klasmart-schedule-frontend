@@ -387,6 +387,7 @@ function EditBox(props: CalendarStateProps) {
         }
       }
     }
+    isValidator.lesson_plan_id = scheduleList.class_type !== "Task";
     setValidator({ ...isValidator });
     return verificaPath;
   };
@@ -725,7 +726,7 @@ function EditBox(props: CalendarStateProps) {
               error={validator.lesson_plan_id}
               value={scheduleList.lesson_plan_id}
               variant="outlined"
-              required
+              required={scheduleList.class_type !== "Task"}
             />
           )}
         />

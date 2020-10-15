@@ -121,12 +121,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
       </div>
       <div className={classes.buttonPart}>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={scheduleInfo.status !== "NotStart"}
-          href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}
-        >
+        <Button color="primary" variant="contained" href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}>
           {d("Preview").t("schedule_button_preview")}
         </Button>
         <Button
@@ -134,7 +129,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           variant="contained"
           autoFocus
           className={classes.lastButton}
-          disabled={scheduleInfo.status !== "NotStart"}
+          disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
           onClick={() => {
             handleClose();
             toLive(scheduleInfo.id as string);
