@@ -79,11 +79,6 @@ export default function AssetVideo(props: video) {
 
   return (
     <Box className={classes.wrap}>
-      {/* {
-        isplay
-        ? <PauseCircleOutlineIcon className={classes.videoTool} />
-        : <PlayCircleFilledIcon className={classes.videoTool} />
-      } */}
       <video id="video" className={classes.video} src={props.src} onClick={handlePlay}></video>
       <Box className={classes.controls}>
         <Box className={classes.tools}>
