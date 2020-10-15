@@ -26,6 +26,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.9",
     "@types/redux": "^3.6.0",
+    "@types/react-router-dom": "^5.1.5",
     "axios": "^0.19.2",
     "clsx": "^1.1.1",
     "date-fns": "^2.15.0",
@@ -46,10 +47,11 @@
     "react-intl": "^5.8.1",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
+    "react-hook-form": "^6.5.0",
     "react-scripts": "3.4.1",
     "react-visibility-sensor": "^5.1.1",
     "redux": "^4.0.5",
-    "typescript": "~3.8.0"
+    "typescript": "~3.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -99,11 +101,9 @@
     "@babel/template": "^7.10.4",
     "@babel/traverse": "^7.11.5",
     "@babel/types": "^7.11.5",
-    "@types/react-router-dom": "^5.1.5",
     "convert-csv-to-json": "^1.0.0",
     "cross-env": "^7.0.2",
     "eslint": "^6.6.0",
-    "fetch-intercept": "^2.3.1",
     "glob": "^7.1.6",
     "google-spreadsheet": "^3.0.13",
     "http-proxy-middleware": "^1.0.5",
@@ -112,7 +112,6 @@
     "msw": "^0.20.5",
     "openapi-backend": "^3.5.1",
     "prettier": "^2.0.5",
-    "react-hook-form": "^6.5.0",
     "swagger-typescript-api": "^1.12.0"
   }
 }
