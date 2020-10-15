@@ -163,12 +163,14 @@ function AssetEdit(props: AssetEditProps) {
 
   const previewHeader = (
     <Box position="relative">
-      {typeof isPreview === "string" && isPreview && !isAsset ? (
+      {typeof isPreview === "string" && isPreview ? (
         <>
           <p className={css.title}>Preview</p>
-          <IconButton aria-label="close" className={css.closeButton} onClick={onclosePreview}>
-            <CloseIcon />
-          </IconButton>
+          {!isAsset && (
+            <IconButton aria-label="close" className={css.closeButton} onClick={onclosePreview}>
+              <CloseIcon />
+            </IconButton>
+          )}
         </>
       ) : (
         <p className={css.title}>{isAsset ? d("Upload").t("library_label_upload") : "Select a file"}</p>
