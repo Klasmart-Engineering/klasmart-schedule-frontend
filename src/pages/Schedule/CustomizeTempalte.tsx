@@ -121,7 +121,11 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
       </div>
       <div className={classes.buttonPart}>
-        <Button color="primary" variant="contained" href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}`}>
+        <Button
+          color="primary"
+          variant="contained"
+          href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}`}
+        >
           {d("Preview").t("schedule_button_preview")}
         </Button>
         <Button

@@ -912,7 +912,7 @@ function EditBox(props: CalendarStateProps) {
             color="primary"
             style={{ width: "45%", marginRight: "10%" }}
             disabled={scheduleDetial.status !== "NotStart"}
-            href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}`}
+            href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}`}
           >
             {d("Preview").t("schedule_button_preview")}
           </Button>
