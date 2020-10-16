@@ -1,10 +1,12 @@
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   CircularProgressProps,
   createMuiTheme,
   FormControl,
+  FormControlLabel,
   InputLabel,
   makeStyles,
   MenuItem,
@@ -89,6 +91,7 @@ interface DetailsProps {
   flattenedMockOptions: FlattenedMockOptions;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
+  onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
 }
 
 export default function Details(props: DetailsProps) {
@@ -98,6 +101,7 @@ export default function Details(props: DetailsProps) {
     flattenedMockOptions,
     onChangeDevelopmental,
     onChangeProgram,
+    onDrawingActivity,
   } = props;
 
   const css = useStyles();
@@ -351,6 +355,67 @@ export default function Details(props: DetailsProps) {
         >
           {menuItemList(flattenedMockOptions.visibility_settings)}
         </Controller>
+        {lesson === "material" && (
+          <Controller
+            as={TextField}
+            select
+            className={css.fieldset}
+            label="Lesson Type"
+            name="lesson_type"
+            defaultValue={contentDetail.lesson_type || ""}
+            control={control}
+          >
+            <MenuItem value="1">Test</MenuItem>
+            <MenuItem value="2">Not Test</MenuItem>
+          </Controller>
+        )}
+        <Controller
+          name="self_study"
+          defaultValue={contentDetail.self_study}
+          render={(props) => (
+            <Box className={css.fieldset} style={{ position: "relative" }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    style={{ position: "absolute", right: 0 }}
+                    checked={props.value || false}
+                    onChange={(e) => onDrawingActivity(e, "self_study")}
+                    color="primary"
+                  />
+                }
+                label="Suitable for self-study"
+                style={{ color: "rgba(0,0,0,0.6)" }}
+                labelPlacement="start"
+              />
+            </Box>
+          )}
+          control={control}
+        />
+        {lesson === "material" && (
+          <Controller
+            name="draw_activity"
+            defaultValue={contentDetail.draw_activity}
+            render={(props) => (
+              <Box className={css.fieldset} style={{ position: "relative" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      style={{ position: "absolute", right: 0 }}
+                      checked={props.value || false}
+                      onChange={(e) => onDrawingActivity(e, "draw_activity")}
+                      color="primary"
+                    />
+                  }
+                  label="Drawing Activity"
+                  style={{ color: "rgba(0,0,0,0.6)" }}
+                  labelPlacement="start"
+                />
+              </Box>
+            )}
+            control={control}
+          />
+        )}
+
         <Controller
           as={TextField}
           control={control}

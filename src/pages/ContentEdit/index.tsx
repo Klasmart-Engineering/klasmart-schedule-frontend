@@ -106,7 +106,6 @@ export default function ContentEdit() {
     },
     [history, routeBasePath]
   );
-
   const handleChangeTab = useMemo(
     () => (tab: string) => {
       history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}${search}`);
@@ -251,6 +250,14 @@ export default function ContentEdit() {
   const handleClosePreview = useCallback(() => {
     setValue("data.source", "", { shouldDirty: true });
   }, [setValue]);
+
+  const handleDrawingActivity = useMemo(
+    () => (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
+      setValue(name, e.target.checked, { shouldDirty: true });
+    },
+    [setValue]
+  );
+
   const handleChangeProgram = useMemo(
     () => ([programId]: string[]) => {
       ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
@@ -304,6 +311,7 @@ export default function ContentEdit() {
         flattenedMockOptions={flattenedMockOptions}
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
+        onDrawingActivity={handleDrawingActivity}
       />
       <Controller
         as={Outcomes}
