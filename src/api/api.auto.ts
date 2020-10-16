@@ -255,6 +255,9 @@ export interface EntityContentInfoWithDetails {
   thumbnail?: string;
   updated_at?: number;
   version?: number;
+  self_study?: boolean;
+  draw_activity?: boolean;
+  lesson_type?: number;
 }
 
 export interface EntityContentInfoWithDetailsResponse {
@@ -284,6 +287,9 @@ export interface EntityCreateContentRequest {
   subject?: string[];
   suggest_time?: number;
   thumbnail?: string;
+  self_study?: boolean;
+  draw_activity?: boolean;
+  lesson_type?: number;
 }
 
 export interface EntityIDResponse {

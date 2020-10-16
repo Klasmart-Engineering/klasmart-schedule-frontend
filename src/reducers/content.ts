@@ -114,6 +114,9 @@ const initialState: IContentState = {
     org_name: "",
     outcomes: [],
     outcome_entities: [],
+    self_study: false,
+    draw_activity: false,
+    lesson_type: 0,
   },
 };
 export enum Action {

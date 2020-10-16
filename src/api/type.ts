@@ -10,7 +10,7 @@ export enum ContentType {
   image = 31,
   video = 32,
   audio = 33,
-  doc = 13,
+  doc = 34,
   assets = 3,
   plan = 2,
   material = 1,
