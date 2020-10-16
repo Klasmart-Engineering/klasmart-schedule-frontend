@@ -20,6 +20,7 @@ import {
   rejectContent,
 } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
+import { getScheduleInfo } from "../../reducers/schedule";
 import LayoutPair from "../ContentEdit/Layout";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
@@ -33,13 +34,15 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id") || "";
   const content_type: ContentType = Number(query.get("content_type"));
-  return { id, content_type, search };
+  const sid = query.get("sid") || "";
+  return { id, content_type, search, sid };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, content_type, search } = useQuery();
+  const { id, content_type, search, sid } = useQuery();
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
   const history = useHistory();
   const handleDelete = async () => {
@@ -136,10 +139,15 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       return [h5pItem];
     }
   };
-  const rightside = <Fragment>{contentPreview.id && <H5pPreview h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>}</Fragment>;
+  const rightside = (
+    <Fragment>
+      {contentPreview.id && <H5pPreview classType={scheduleDetial.class_type} h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>}
+    </Fragment>
+  );
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
-  }, [dispatch, id]);
+    if (sid) dispatch(getScheduleInfo(sid));
+  }, [dispatch, id, sid]);
   return (
     <Fragment>
       <LayoutPair breakpoint="md" leftWidth={434} rightWidth={1400} spacing={0} basePadding={0} padding={0}>

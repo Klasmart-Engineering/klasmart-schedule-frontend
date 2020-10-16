@@ -4,6 +4,7 @@ import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
+import { EntityScheduleDetailsView } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
@@ -139,11 +140,12 @@ function EmptyContent() {
 }
 interface H5pPreview extends PreviewBaseProps {
   h5pArray: any[];
+  classType: EntityScheduleDetailsView["class_type"];
 }
 export function H5pPreview(props: H5pPreview) {
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
-  const { h5pArray, onGoLive } = props;
+  const { h5pArray, onGoLive, classType } = props;
   let h5pItem = h5pArray[currIndex];
   const handlePrev = () => {
     if (currIndex > 0) {
@@ -194,13 +196,23 @@ export function H5pPreview(props: H5pPreview) {
             {d("View in").t("library_label_view_in") !== "-" && (
               <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
             )}
-            <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            {classType === "OnlineClass" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            )}
+            {classType === "OfflineClass" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Class"}</Typography>}
+            {classType === "Homework" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Study"}</Typography>}
+            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Live"}</Typography>}
           </Box>
         </Hidden>
         <Hidden only={["md", "lg", "xl"]}>
           <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
             {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
-            <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            {classType === "OnlineClass" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            )}
+            {classType === "OfflineClass" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Class"}</Typography>}
+            {classType === "Homework" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Study"}</Typography>}
+            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Live"}</Typography>}
           </Box>
         </Hidden>
       </Box>
