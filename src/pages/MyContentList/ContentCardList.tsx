@@ -249,7 +249,7 @@ function ContentCard(props: ContentProps) {
         {content?.content_type === ContentType.assets && file_type === ContentType.image % 10 && d("Image").t("library_label_image")}
         {content?.content_type === ContentType.assets && file_type === ContentType.video % 10 && d("Video").t("library_label_video")}
         {content?.content_type === ContentType.assets && file_type === ContentType.audio % 10 && d("Audio").t("library_label_audio")}
-        {content?.content_type === ContentType.doc && d("Document").t("library_label_document")}
+        {content?.content_type === ContentType.assets && file_type === ContentType.doc % 10 && d("Document").t("library_label_document")}
       </Typography>
       <CardActions className={css.cardActions}>
         <Typography className={css.body2} variant="body2">

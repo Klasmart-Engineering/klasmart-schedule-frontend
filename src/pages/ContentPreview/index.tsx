@@ -33,17 +33,18 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id") || "";
-  const content_type: ContentType = Number(query.get("content_type"));
+  // const content_type: ContentType = Number(query.get("content_type"));
   const sid = query.get("sid") || "";
-  return { id, content_type, search, sid };
+  return { id, search, sid };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, content_type, search, sid } = useQuery();
+  const { id, search, sid } = useQuery();
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
+  const content_type = contentPreview.content_type;
   const history = useHistory();
   const handleDelete = async () => {
     await dispatch(deleteContent({ id, type: "delete" }));
