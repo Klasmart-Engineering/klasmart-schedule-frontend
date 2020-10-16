@@ -50,7 +50,7 @@ async function getOnlineLocale() {
 }
 
 /**
- * @return {Array<{id: string, en: string, type: string, content: string}>}
+ * @return {{ miss: {[key: string]: { id: string, en: string }}, reuse: {[key: string]: { id: string, en: string }} }}
  */
 async function getOnlineMiss() {
   const { key, gid } = missSpreadSheet;
@@ -62,9 +62,14 @@ async function getOnlineMiss() {
       return { id, en, type, content };
     })
     .reduce((result, item) => {
-      result[item.id] = item;
+      const { id, en, content } = item;
+      if (item.content) {
+        result.reuse[item.id] = { id: content, en };
+      } else {
+        result.miss[item.id] = { id, en };
+      }
       return result;
-    }, {});
+    }, { miss: {}, reuse: {} });
 }
 
 /**
@@ -73,7 +78,7 @@ async function getOnlineMiss() {
 async function addOnlineMiss(missData) {
   const { key, gid } = missSpreadSheet;
   const doc = await createDoc(key);
-  const originOnlineMiss = await getOnlineMiss();
+  const { miss: originOnlineMiss } = await getOnlineMiss();
   const messages = [];
   const rows = Object.entries(missData)
     .filter(([id]) => !originOnlineMiss[id])
@@ -85,6 +90,19 @@ async function addOnlineMiss(missData) {
   console.log('Successfully reportMiss to online:\n' + messages.join('\n'));
 }
 
+async function clearMissByOnlineLocale() {
+  const { key, gid } = missSpreadSheet;
+  const doc = await createDoc(key);
+  const rows = await doc.sheetsById[gid].getRows();
+  const { en } = await getOnlineLocale();
+  for(let idx = rows.length; idx >= 0; --idx) {
+    if(!rows[idx] || !en[rows[idx].Label]) continue;
+    const { Label, English } = rows[idx];
+    await rows[idx].delete();
+    console.log(`Successfully clear online spread miss of Label: ${Label}, English: ${English}`);
+  }
+}
+
 module.exports = {
-  getOnlineLocale, getOnlineMiss, addOnlineMiss
+  getOnlineLocale, getOnlineMiss, addOnlineMiss, clearMissByOnlineLocale
 }

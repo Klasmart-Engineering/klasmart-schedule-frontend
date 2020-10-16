@@ -33,20 +33,8 @@ function getValuesByDescription(description) {
   return '{ ' + result.map(x => `${x.slice(1, -1)}: string | number`).join(', ') + ' }';
 }
 
-function checkIds(enJson, missJson) {
-  const duplicateIds = [];
-  const enKeys = Object.keys(enJson);
-  Object.keys(missJson).forEach((id) => {
-    if (enKeys.includes(id)) duplicateIds.push(id);
-  })
-  if (duplicateIds.length > 0) throw new Error(`My Error: duplicate id in file both en.json and miss.json: ${duplicateIds.join(', ')}`);
-  return true;
-}
-
-function genLangTypeFileContent (enJson, missJson) {
-  checkIds(enJson, missJson);
-  const body = Object.entries(missJson)
-    .concat(Object.entries(enJson))
+function genLangTypeFileContent (enJson) {
+  const body = Object.entries(enJson)
     .map(([id, description]) => `| { id: "${id}"; description: "${description}"; values: ${getValuesByDescription(description)} }`)
     .concat(';')
     .join('\n')
