@@ -24,6 +24,7 @@ interface scheduleInfoProps {
   is_repeat: boolean;
   lesson_plan_id: string;
   status: string;
+  class_type: string;
 }
 
 const useStyles = makeStyles(({ shadows }) => ({

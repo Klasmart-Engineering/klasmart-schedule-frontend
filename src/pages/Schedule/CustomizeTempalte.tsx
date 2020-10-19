@@ -61,6 +61,7 @@ type scheduleInfoProps = {
   title: string;
   lesson_plan_id: string;
   status: string;
+  class_type: string;
 };
 
 interface InfoProps {
@@ -124,6 +125,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         <Button
           color="primary"
           variant="contained"
+          disabled={scheduleInfo.class_type === "Task"}
           href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}`}
         >
           {d("Preview").t("schedule_button_preview")}

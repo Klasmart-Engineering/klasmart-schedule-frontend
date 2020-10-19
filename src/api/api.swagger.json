@@ -3069,6 +3069,9 @@
             "type": "string"
           }
         },
+        "draw_activity": {
+          "type": "boolean"
+        },
         "extra": {
           "type": "string"
         },
@@ -3095,6 +3098,9 @@
         },
         "latest_id": {
           "type": "string"
+        },
+        "lesson_type": {
+          "type": "integer"
         },
         "locked_by": {
           "type": "string"
@@ -3143,6 +3149,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "self_study": {
+          "type": "boolean"
         },
         "skills": {
           "type": "array",
@@ -3234,6 +3243,9 @@
             "type": "string"
           }
         },
+        "draw_activity": {
+          "type": "boolean"
+        },
         "extra": {
           "type": "string"
         },
@@ -3248,6 +3260,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "lesson_type": {
+          "type": "integer"
         },
         "name": {
           "type": "string"
@@ -3266,6 +3281,9 @@
         },
         "publish_scope": {
           "type": "string"
+        },
+        "self_study": {
+          "type": "boolean"
         },
         "skills": {
           "type": "array",
@@ -3576,7 +3594,7 @@
     },
     "entity.ScheduleAddView": {
       "type": "object",
-      "required": ["class_id", "end_at", "lesson_plan_id", "program_id", "start_at", "subject_id", "teacher_ids", "title"],
+      "required": ["class_id", "end_at", "start_at", "teacher_ids", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -3719,6 +3737,10 @@
     "entity.ScheduleListView": {
       "type": "object",
       "properties": {
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+        },
         "end_at": {
           "type": "integer"
         },
@@ -3809,7 +3831,7 @@
     },
     "entity.ScheduleUpdateView": {
       "type": "object",
-      "required": ["class_id", "end_at", "lesson_plan_id", "program_id", "start_at", "subject_id", "teacher_ids", "title"],
+      "required": ["class_id", "end_at", "start_at", "teacher_ids", "title"],
       "properties": {
         "attachment": {
           "type": "object",

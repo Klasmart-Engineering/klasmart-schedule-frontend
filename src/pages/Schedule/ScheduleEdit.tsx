@@ -15,7 +15,7 @@ import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem } from "../../api/extra";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { d, t } from "../../locale/LocaleManager";
+import { d, reportMiss, t } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
@@ -387,7 +387,7 @@ function EditBox(props: CalendarStateProps) {
         }
       }
     }
-    isValidator.lesson_plan_id = scheduleList.class_type !== "Task";
+    isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = scheduleList.class_type !== "Task";
     setValidator({ ...isValidator });
     return verificaPath;
   };
@@ -708,28 +708,30 @@ function EditBox(props: CalendarStateProps) {
             />
           )}
         />
-        <Autocomplete
-          id="combo-box-demo"
-          freeSolo
-          options={contentsListSelect}
-          getOptionLabel={(option: any) => option.name}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "lesson_plan_id");
-          }}
-          value={lessonPlan}
-          disabled={isScheduleExpired()}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={css.fieldset}
-              label={d("Lesson Plan").t("library_label_lesson_plan")}
-              error={validator.lesson_plan_id}
-              value={scheduleList.lesson_plan_id}
-              variant="outlined"
-              required={scheduleList.class_type !== "Task"}
-            />
-          )}
-        />
+        {scheduleList.class_type !== "Task" && (
+          <Autocomplete
+            id="combo-box-demo"
+            freeSolo
+            options={contentsListSelect}
+            getOptionLabel={(option: any) => option.name}
+            onChange={(e: any, newValue) => {
+              autocompleteChange(newValue, "lesson_plan_id");
+            }}
+            value={lessonPlan}
+            disabled={isScheduleExpired()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={css.fieldset}
+                label={d("Lesson Plan").t("library_label_lesson_plan")}
+                error={validator.lesson_plan_id}
+                value={scheduleList.lesson_plan_id}
+                variant="outlined"
+                required={scheduleList.class_type !== "Task"}
+              />
+            )}
+          />
+        )}
         <Autocomplete
           id="combo-box-demo"
           freeSolo
@@ -745,7 +747,7 @@ function EditBox(props: CalendarStateProps) {
             <TextField
               {...params}
               className={css.fieldset}
-              label={d("Teacher").t("schedule_detail_teacher")}
+              label={reportMiss("Add Participants", "schedule_detail_participants")}
               error={validator.teacher_ids}
               value={scheduleList.teacher_ids}
               variant="outlined"
@@ -805,49 +807,53 @@ function EditBox(props: CalendarStateProps) {
             />
           </FormGroup>
         </Box>
-        <Autocomplete
-          id="combo-box-demo"
-          options={flattenedMockOptions.program}
-          getOptionLabel={(option: any) => option.name}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "program_id");
-          }}
-          value={programItem}
-          disabled={isScheduleExpired()}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={css.fieldset}
-              label={d("Program").t("assess_label_program")}
-              variant="outlined"
-              error={validator.program_id}
-              value={scheduleList.program_id}
-              required
-            />
-          )}
-        />
-        <Autocomplete
-          id="combo-box-demo"
-          options={flattenedMockOptions.subject}
-          getOptionLabel={(option: any) => option.name}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "subject_id");
-          }}
-          value={subjectItem}
-          disabled={isScheduleExpired()}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={css.fieldset}
-              label={d("Subject").t("assess_label_subject")}
-              error={validator.subject_id}
-              variant="outlined"
-              value={scheduleList.subject_id}
-              disabled={isScheduleExpired()}
-              required
-            />
-          )}
-        />
+        {scheduleList.class_type !== "Task" && (
+          <Autocomplete
+            id="combo-box-demo"
+            options={flattenedMockOptions.program}
+            getOptionLabel={(option: any) => option.name}
+            onChange={(e: any, newValue) => {
+              autocompleteChange(newValue, "program_id");
+            }}
+            value={programItem}
+            disabled={isScheduleExpired()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={css.fieldset}
+                label={d("Program").t("assess_label_program")}
+                variant="outlined"
+                error={validator.program_id}
+                value={scheduleList.program_id}
+                required
+              />
+            )}
+          />
+        )}
+        {scheduleList.class_type !== "Task" && (
+          <Autocomplete
+            id="combo-box-demo"
+            options={flattenedMockOptions.subject}
+            getOptionLabel={(option: any) => option.name}
+            onChange={(e: any, newValue) => {
+              autocompleteChange(newValue, "subject_id");
+            }}
+            value={subjectItem}
+            disabled={isScheduleExpired()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={css.fieldset}
+                label={d("Subject").t("assess_label_subject")}
+                error={validator.subject_id}
+                variant="outlined"
+                value={scheduleList.subject_id}
+                disabled={isScheduleExpired()}
+                required
+              />
+            )}
+          />
+        )}
         <TextField
           className={css.fieldset}
           label={d("Class Type").t("schedule_detail_class_type")}
@@ -911,7 +917,7 @@ function EditBox(props: CalendarStateProps) {
             variant="contained"
             color="primary"
             style={{ width: "45%", marginRight: "10%" }}
-            disabled={scheduleDetial.status !== "NotStart"}
+            disabled={scheduleList.class_type === "Task"}
             href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}`}
           >
             {d("Preview").t("schedule_button_preview")}
@@ -923,7 +929,6 @@ function EditBox(props: CalendarStateProps) {
             onClick={() => {
               toLive(scheduleId as string);
             }}
-            disabled={scheduleDetial.status !== "NotStart"}
           >
             {d("Go Live").t("schedule_button_go_live")}
           </Button>
