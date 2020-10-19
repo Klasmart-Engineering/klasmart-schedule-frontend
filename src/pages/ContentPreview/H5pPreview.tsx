@@ -172,7 +172,7 @@ export function H5pPreview(props: H5pPreview) {
         {fileFormat.audio.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetAudio src={path} />}
         {fileFormat.document.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetFile src={path} />}
         {!getSuffix(h5pItem.source) &&
-          (JSON.stringify(h5pItem) === JSON.stringify({ source: "" }) ? <EmptyContent /> : <ContentH5p value={h5pItem.source} />)}
+          (JSON.stringify(h5pItem) === JSON.stringify({}) ? <EmptyContent /> : <ContentH5p value={h5pItem.source} />)}
       </Box>
       <Box className={css.btnCon}>
         {h5pArray.length > 1 && (
