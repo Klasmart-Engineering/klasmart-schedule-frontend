@@ -80,7 +80,7 @@ const type2File = {
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  const { reset, handleSubmit, control, getValues, setValue, watch } = formMethods;
+  const { reset, handleSubmit, control, getValues, setValue, watch, errors } = formMethods;
   const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
     RootState,
     RootState["content"]
@@ -304,7 +304,7 @@ export default function ContentEdit() {
     </MediaAssetsLibrary>
   );
   const contentTabs = (
-    <ContentTabs tab={tab} onChangeTab={handleChangeTab}>
+    <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.publish_scope || errors.name}>
       <Details
         contentDetail={contentDetail}
         formMethods={formMethods}

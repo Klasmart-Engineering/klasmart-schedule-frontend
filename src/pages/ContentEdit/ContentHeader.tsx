@@ -299,7 +299,9 @@ export function ContentHeader(props: HeaderProps) {
         </Box>
       )}
       <Dialog open={open} onClose={toggle}>
-        <DialogTitle className={css.dialogContentRemoveborder}>How would you like to publish?</DialogTitle>
+        <DialogTitle className={css.dialogContentRemoveborder}>
+          {d("How would you like to publish?").t("library_msg_publish_lesson_material")}
+        </DialogTitle>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
           <Controller name="isOnlyMaterial" as={SelectPublishType} control={control} defaultValue="onlyMaterial" />
         </DialogContent>
@@ -338,12 +340,20 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
       <FormControlLabel
         color="primary"
         control={<Radio size={size} color="primary" value="onlyMaterial" />}
-        label={<Typography variant={radioTypography}>Only publish as a Lesson Material</Typography>}
+        label={
+          <Typography variant={radioTypography}>
+            {d("Only publish as a lesson material").t("library_msg_only_publish_lesson_material")}
+          </Typography>
+        }
       />
       <FormControlLabel
         color="primary"
         control={<Radio size={size} color="primary" value="assetAndMaterial" />}
-        label={<Typography variant={radioTypography}>Publish as a Lesson Material, and add to Media Asset</Typography>}
+        label={
+          <Typography variant={radioTypography}>
+            {d("Publish as a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")}
+          </Typography>
+        }
       />
     </RadioGroup>
   );
@@ -411,7 +421,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
           control={<Radio size={size} color="primary" value={1} />}
           label={
             <Typography variant={radioTypography} className={css.h5pRadio}>
-              H5P
+              {d("H5P").t("library_label_h5p")}
             </Typography>
           }
           disabled={disabled}

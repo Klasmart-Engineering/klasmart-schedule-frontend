@@ -2,6 +2,7 @@ import { makeStyles, Paper, Tab, Tabs, useMediaQuery, useTheme } from "@material
 import { TabContext } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Children, ReactNode } from "react";
+import { FieldError } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { d } from "../../locale/LocaleManager";
 
@@ -25,6 +26,9 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
       letterSpacing: 0,
     },
   },
+  errorTab: {
+    color: palette.error.main,
+  },
 }));
 
 const VALUES = ["details", "outcomes", "media"];
@@ -33,9 +37,10 @@ interface ContentTabsProps {
   tab: string;
   onChangeTab: (tab: string) => any;
   children: ReactNode;
+  error?: FieldError;
 }
 export default function ContentTabs(props: ContentTabsProps) {
-  const { tab, children, onChangeTab } = props;
+  const { tab, children, onChangeTab, error } = props;
   const css = useStyles();
   const { lesson } = useParams();
   const { breakpoints } = useTheme();
@@ -61,7 +66,7 @@ export default function ContentTabs(props: ContentTabsProps) {
           textColor="primary"
           onChange={(e, value) => onChangeTab(value)}
         >
-          <Tab className={css.tab} label={d("Details").t("library_label_details")} value={VALUES[0]} />
+          <Tab className={clsx(css.tab, error && css.errorTab)} label={d("Details").t("library_label_details")} value={VALUES[0]} />
           <Tab className={css.tab} label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />
           <Tab
             className={css.tab}

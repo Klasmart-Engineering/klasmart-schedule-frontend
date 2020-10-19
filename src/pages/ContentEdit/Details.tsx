@@ -26,7 +26,7 @@ import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
-import { d, t } from "../../locale/LocaleManager";
+import { d, reportMiss, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
@@ -360,7 +360,7 @@ export default function Details(props: DetailsProps) {
             as={TextField}
             select
             className={css.fieldset}
-            label="Lesson Type"
+            label={reportMiss("Lesson Type", "library_label_lesson_type")}
             name="lesson_type"
             defaultValue={contentDetail.lesson_type || ""}
             control={control}
@@ -382,7 +382,7 @@ export default function Details(props: DetailsProps) {
                     color="primary"
                   />
                 }
-                label="Suitable for self-study"
+                label={reportMiss("Suitable for self-study", "library_label_self_study")}
                 style={{ color: "rgba(0,0,0,0.6)" }}
                 labelPlacement="start"
               />
@@ -405,7 +405,7 @@ export default function Details(props: DetailsProps) {
                       color="primary"
                     />
                   }
-                  label="Drawing Activity"
+                  label={reportMiss("Drawing Activity", "library_label_draw_activity")}
                   style={{ color: "rgba(0,0,0,0.6)" }}
                   labelPlacement="start"
                 />
