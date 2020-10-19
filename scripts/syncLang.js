@@ -14,7 +14,7 @@ const typeFilePath = path.resolve(langDir, './type.ts');
 function syncLangType(enJson) {
   const code = genLangTypeFileContent(enJson);
   fs.writeFileSync(typeFilePath, formatTs(code));
-  console.log(g('Successfully'), ` create file: ${g(typeFilePath)}`);
+  console.log(g('Successfully'), ` update file: ${g(typeFilePath)}`);
 }
 
 function writeLangJson(langDef) {
@@ -22,7 +22,7 @@ function writeLangJson(langDef) {
     const filePath = path.resolve(langDir, `${name}.json`)
     fs.writeFileSync(filePath, formatJson(langDef[name]));
   });
-  console.log(g('Successfully'), ` create file: `, g(`${langDir}/{en, zh, vi, ko}.json`));
+  console.log(g('Successfully'), ` update file: `, g(`${langDir}/{en, zh, vi, ko}.json`));
 }
 
 async function syncLang() {
