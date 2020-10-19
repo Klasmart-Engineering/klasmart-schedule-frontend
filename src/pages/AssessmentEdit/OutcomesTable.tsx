@@ -1,7 +1,6 @@
 import {
   Box,
   Checkbox,
-  CheckboxProps,
   FormControlLabel,
   makeStyles,
   Table,
@@ -16,7 +15,7 @@ import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { IAssessmentState } from "../../reducers/assessments";
 
@@ -48,10 +47,14 @@ const useStyles = makeStyles({
     padding: 0,
     paddingBottom: 16,
   },
-  cellError: {
-    // border: '1px solid red',
-  },
 });
+
+interface mergeHandlerProps<T> extends Array<(arg: T) => any> {}
+const mergeHanlder = <T extends unknown>(handlers: mergeHandlerProps<T>): any => {
+  return function (arg: T) {
+    handlers.forEach((handler) => handler(arg));
+  };
+};
 
 interface AssessActionProps {
   outcome: GetAssessmentResultOutcomeAttendanceMap;
@@ -72,14 +75,26 @@ const AssessAction = (props: AssessActionProps) => {
     status,
   } = props;
   const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
+  const none_achieved: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].none_achieved) || false;
   const allValue = useMemo(() => attendanceList?.map((item) => item.id as string), [attendanceList]);
-  const handleChangeSkip: CheckboxProps["onChange"] = (e) => {
-    const skip = e.target.checked;
-    if (skip) {
-      setValue(`outcome_attendance_maps[${index}].attendance_ids`, []);
-      setValue(`outcome_attendance_maps[${index}].skip`, true);
-    } else {
-      setValue(`outcome_attendance_maps[${index}].skip`, false);
+  const funSetValue = useMemo(
+    () => (name: string, value: boolean | string[]) => {
+      setValue(`outcome_attendance_maps[${index}].${name}`, value);
+    },
+    [index, setValue]
+  );
+  const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
+    funSetValue(name, e.target.checked);
+    if (e.target.checked) {
+      if (name === "skip") {
+        funSetValue("none_achieved", false);
+      }
+      funSetValue("attendance_ids", []);
+    }
+  };
+  const handleChangeStudent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      funSetValue("none_achieved", false);
     }
   };
   return (
@@ -92,31 +107,43 @@ const AssessAction = (props: AssessActionProps) => {
           allValue={allValue}
           {...props}
           render={(selectedContentGroupContext) => (
-            <Box display="flex" alignItems="center" className={css.cellError} p={2} pb={0}>
-              <Box width={400} fontSize={14}>
+            <Box display="flex" alignItems="center" p={2} pb={0}>
+              <Box width={500} fontSize={14}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={selectedContentGroupContext.isAllvalue || false}
-                      onChange={selectedContentGroupContext.registerAllChange}
+                      onChange={mergeHanlder([selectedContentGroupContext.registerAllChange, handleChangeStudent])}
                       name="award"
                       color="primary"
                     />
                   }
-                  label={d("Award All").t("assess_option_award all")}
+                  label={reportMiss("All Achieved", "assess_option_all_achieved")}
                   disabled={skip || status === "complete"}
+                />
+                <Controller
+                  name={`outcome_attendance_maps[${index}].none_achieved`}
+                  defaultValue={none_achieved || false}
+                  control={control}
+                  render={(props) => (
+                    <FormControlLabel
+                      control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "none_achieved")} color="primary" />}
+                      label={reportMiss("None Achieved", "assess_option_none_achieved")}
+                      disabled={skip || status === "complete"}
+                    />
+                  )}
                 />
                 <Controller
                   name={`outcome_attendance_maps[${index}].skip`}
                   defaultValue={skip || false}
+                  control={control}
                   render={(props) => (
                     <FormControlLabel
-                      control={<Checkbox checked={props.value} onChange={handleChangeSkip} color="primary" />}
-                      label={d("Skip").t("assess_option_skip")}
+                      control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
+                      label={reportMiss("Not Attempted", "assess_option_none_achieved")}
                       disabled={status === "complete"}
                     />
                   )}
-                  control={control}
                 />
               </Box>
               <Box px={3} className={css.assessActionline}>
@@ -128,7 +155,7 @@ const AssessAction = (props: AssessActionProps) => {
                           color="primary"
                           value={item.id}
                           checked={selectedContentGroupContext.hashValue[item.id as string] || false}
-                          onChange={selectedContentGroupContext.registerChange}
+                          onChange={mergeHanlder([selectedContentGroupContext.registerChange, handleChangeStudent])}
                         />
                       }
                       label={item.name}

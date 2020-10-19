@@ -229,12 +229,14 @@ export interface EntityContentInfoWithDetails {
   description?: string;
   developmental?: string[];
   developmental_name?: string[];
+  draw_activity?: boolean;
   extra?: string;
   grade?: string[];
   grade_name?: string[];
   id?: string;
   keywords?: string[];
   latest_id?: string;
+  lesson_type?: number;
   locked_by?: string;
   name?: string;
   org?: string;
@@ -246,6 +248,7 @@ export interface EntityContentInfoWithDetails {
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string[];
+  self_study?: boolean;
   skills?: string[];
   skills_name?: string[];
   source_id?: string;
@@ -255,9 +258,6 @@ export interface EntityContentInfoWithDetails {
   thumbnail?: string;
   updated_at?: number;
   version?: number;
-  self_study?: boolean;
-  draw_activity?: boolean;
-  lesson_type?: number;
 }
 
 export interface EntityContentInfoWithDetailsResponse {
@@ -276,20 +276,20 @@ export interface EntityCreateContentRequest {
   data?: string;
   description?: string;
   developmental?: string[];
+  draw_activity?: boolean;
   extra?: string;
   grade?: string[];
   keywords?: string[];
+  lesson_type?: number;
   name?: string;
   outcomes?: string[];
   program?: string[];
   publish_scope?: string;
+  self_study?: boolean;
   skills?: string[];
   subject?: string[];
   suggest_time?: number;
   thumbnail?: string;
-  self_study?: boolean;
-  draw_activity?: boolean;
-  lesson_type?: number;
 }
 
 export interface EntityIDResponse {
@@ -337,6 +337,7 @@ export interface EntityOutcome {
 
 export interface EntityOutcomeAttendanceMap {
   attendance_ids?: string[];
+  none_achieved?: boolean;
   outcome_id?: string;
   skip?: boolean;
 }
@@ -344,6 +345,7 @@ export interface EntityOutcomeAttendanceMap {
 export interface EntityOutcomeAttendanceMapView {
   assumed?: boolean;
   attendance_ids?: string[];
+  none_achieved?: boolean;
   outcome_id?: string;
   outcome_name?: string;
   skip?: boolean;
@@ -404,12 +406,12 @@ export interface EntityScheduleAddView {
   is_all_day?: boolean;
   is_force?: boolean;
   is_repeat?: boolean;
-  lesson_plan_id: string;
+  lesson_plan_id?: string;
   org_id?: string;
-  program_id: string;
+  program_id?: string;
   repeat?: EntityRepeatOptions;
   start_at: number;
-  subject_id: string;
+  subject_id?: string;
   teacher_ids: string[];
   time_zone_offset?: number;
   title: string;
@@ -439,6 +441,7 @@ export interface EntityScheduleDetailsView {
 }
 
 export interface EntityScheduleListView {
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   end_at?: number;
   id?: string;
   is_repeat?: boolean;
@@ -481,13 +484,13 @@ export interface EntityScheduleUpdateView {
   is_all_day?: boolean;
   is_force?: boolean;
   is_repeat?: boolean;
-  lesson_plan_id: string;
+  lesson_plan_id?: string;
   org_id?: string;
-  program_id: string;
+  program_id?: string;
   repeat?: EntityRepeatOptions;
   repeat_edit_options?: "only_current" | "with_following";
   start_at: number;
-  subject_id: string;
+  subject_id?: string;
   teacher_ids: string[];
   time_zone_offset?: number;
   title: string;

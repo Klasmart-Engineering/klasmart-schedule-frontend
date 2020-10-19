@@ -1,9 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
-import { d } from "../locale/LocaleManager";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { actWarning } from "./notify";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -52,22 +50,14 @@ export const actAssessmentList = createAsyncThunk<ListAssessmentResult, IQueryAs
   }
 );
 
-interface IupdateAssessmentParams {
+export interface IupdateAssessmentParams {
   id: Parameters<typeof api.assessments.updateAssessment>[0];
   data: Parameters<typeof api.assessments.updateAssessment>[1];
 }
-export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams>(
-  "assessments/updateAssessment",
-  async ({ id, data }, { dispatch }) => {
-    const errorlist: IupdateAssessmentParams["data"]["outcome_attendance_maps"] =
-      data.outcome_attendance_maps &&
-      data.outcome_attendance_maps.filter((item) => !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
-    if (data.action === "complete" && errorlist && errorlist.length > 0)
-      return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-    await api.assessments.updateAssessment(id, data);
-    return id;
-  }
-);
+export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams>("assessments/updateAssessment", async ({ id, data }) => {
+  await api.assessments.updateAssessment(id, data);
+  return id;
+});
 export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string } & LoadingMetaPayload>(
   "assessments/getAssessment",
   async ({ id }) => {

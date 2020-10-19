@@ -3430,6 +3430,9 @@
             "type": "string"
           }
         },
+        "none_achieved": {
+          "type": "boolean"
+        },
         "outcome_id": {
           "type": "string"
         },
@@ -3449,6 +3452,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "none_achieved": {
+          "type": "boolean"
         },
         "outcome_id": {
           "type": "string"

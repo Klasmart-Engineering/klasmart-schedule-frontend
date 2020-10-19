@@ -3,13 +3,14 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { EntityOutcomeAttendanceMap } from "../../api/api.auto";
 import { UpdateAssessmentRequestData } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
-import { actSuccess } from "../../reducers/notify";
+import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
 import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
@@ -60,6 +61,13 @@ export function AssessmentsEdit() {
       handleSubmit(async (value) => {
         if (id) {
           const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
+          const errorlist: EntityOutcomeAttendanceMap[] | undefined =
+            data.outcome_attendance_maps &&
+            data.outcome_attendance_maps.filter(
+              (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
+            );
+          if (data.action === "complete" && errorlist && errorlist.length > 0)
+            return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
