@@ -199,9 +199,13 @@ export function H5pPreview(props: H5pPreview) {
             {classType === "OnlineClass" && (
               <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
             )}
-            {classType === "OfflineClass" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Class"}</Typography>}
-            {classType === "Homework" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Study"}</Typography>}
-            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Live"}</Typography>}
+            {classType === "OfflineClass" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+            )}
+            {classType === "Homework" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+            )}
+            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
           </Box>
         </Hidden>
         <Hidden only={["md", "lg", "xl"]}>
@@ -210,9 +214,13 @@ export function H5pPreview(props: H5pPreview) {
             {classType === "OnlineClass" && (
               <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
             )}
-            {classType === "OfflineClass" && <Typography style={{ fontSize: 12 }}>{"KidsLoop Class"}</Typography>}
-            {classType === "Homework" && <Typography style={{ fontSize: 12 }}>{"KidsLoop Study"}</Typography>}
-            {classType === "Task" && <Typography style={{ fontSize: 12 }}>{"KidsLoop Live"}</Typography>}
+            {classType === "OfflineClass" && (
+              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+            )}
+            {classType === "Homework" && (
+              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+            )}
+            {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
           </Box>
         </Hidden>
       </Box>
