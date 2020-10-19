@@ -141,7 +141,7 @@ function AssetEdit(props: AssetEditProps) {
     <Box position="relative">
       {typeof isPreview === "string" && isPreview ? (
         <>
-          <p className={css.title}>Preview</p>
+          <p className={css.title}>{d("Preview").t("library_label_preview")}</p>
           {!isAsset && (
             <IconButton aria-label="close" className={css.closeButton} onClick={onclosePreview}>
               <CloseIcon />
