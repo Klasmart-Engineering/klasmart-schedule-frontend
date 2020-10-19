@@ -28,7 +28,6 @@ function writeLangJson(langDef) {
 async function syncLang() {
   await clearMissByOnlineLocale();
   const langDef = await getOnlineLocale();
-  debugger;
   const { reuse: onlineReuseData } = await getOnlineMiss();
   writeLangJson(langDef);
   syncLangType(langDef.en);
