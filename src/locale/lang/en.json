@@ -347,5 +347,8 @@
   "schedule_msg_end_time_earlier": "End time cannot be earlier than start time",
   "schedule_button_edit": "Edit",
   "schedule_popup_fillin": "Please fill out this field",
-  "schedule_popup_valid": "Please enter a valid date"
+  "schedule_popup_valid": "Please enter a valid date",
+  "schedule_preview_live": "KidsLoop Live",
+  "schedule_preview_class": "KidsLoop Class",
+  "schedule_preview_study": "KidsLoop Study"
 }

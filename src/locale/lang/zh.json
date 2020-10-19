@@ -347,5 +347,8 @@
   "schedule_msg_end_time_earlier": "结束事件不能早于开始时间",
   "schedule_button_edit": "编辑",
   "schedule_popup_fillin": "请填写此字段",
-  "schedule_popup_valid": "请输入有效的日期"
+  "schedule_popup_valid": "请输入有效的日期",
+  "schedule_preview_live": "进入在线课堂",
+  "schedule_preview_class": "进入线下课堂",
+  "schedule_preview_study": "进入家庭作业"
 }

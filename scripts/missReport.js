@@ -7,6 +7,7 @@ const fs  = require('fs');
 const path = require('path');
 const glob = require('glob');
 const { formatTs } = require('./format');
+const chalk = require('chalk');
 
 const projectDir = path.resolve(__dirname, '..');
 const srcFileGlob =  'src/**/*.{js,jsx,ts,tsx}';
@@ -16,6 +17,9 @@ const DEFINE_FN_NAME = 'd';
 const TRANSLATE_FN_NAME = 't';
 const REPORT_MISS_REGEX = new RegExp(`\\b${REPORT_MISS_FN_NAME}\\b`);
 const REPORT_MISS_FILE_PATH_REGEX = /\/locale\/LocaleManager\b/;
+const r = chalk.bold.red;
+const g = chalk.bold.green;
+const y = chalk.bold.yellow;
 
 /**
  * @param {string} filePath 
@@ -52,7 +56,7 @@ function syncSingleMissReport(filePath, filter) {
       reportMissReferenceCount += 1;
       const [{ value: originId, loc: { start } }] = translateArgs;
       const { value: en } = originDescription;
-      const loc = `${path}:${start.line}:${start.column}`;
+      const loc = `${filePath}:${start.line}:${start.column}`;
       const { id, en: description } = filter({ id: originId, en, loc }) || {};
       if (!id) return;
       const memberExpressionTranslate = template.expression('d(%%description%%).t')({ description: stringLiteral(description) });
@@ -79,7 +83,7 @@ function syncSingleMissReport(filePath, filter) {
   }
   const { code } = generate(ast);
   fs.writeFileSync(filePath, formatTs(code));
-  console.log(`Successfully updated file: ${filePath}`);
+  console.log(g('Successfully'), ` updated file: ${g(filePath)}`);
 }
 
 /**
@@ -107,16 +111,22 @@ function syncMissReport({ onlineEnData, onlineReuseData }) {
   glob.sync(srcFileGlob, { cwd: projectDir, absolute: true, ignore: ignoreGlob }).forEach(filePath => {
     syncSingleMissReport(filePath, (info) => {
       const { id, en, loc } = info;
-      if (onlineEnData.hasOwnProperty(id)) return { id, en: onlineEnData[id] };
+      if (onlineEnData.hasOwnProperty(id)) {
+        if (onlineEnData[id] !== en) {
+          console.warn(y('Warning: '), `Online locale English: ${y(onlineEnData[id])} is different with your reported English: ${y(en)} for Label: ${y(id)} File: ${y(loc)}`);
+          return false;
+        }
+        return { id, en: onlineEnData[id] };
+      }
       if (descriptions.includes(en)) {
         const alreadyExistIds = Object.keys(onlineEnData).filter(id => onlineEnData[id] === en);
-        console.error(`Your reported new Id ${id} has the same Description with online Id ${alreadyExistIds.join(', ')}, the description is: ${en}`);
+        console.error(r('Error: '), `Your reported new Label ${r(id)} has the same English with online Label ${alreadyExistIds.map(x => r(x)).join(', ')}, the English is: ${r(en)}`);
         return false;
       }
       if (onlineReuseData.hasOwnProperty(id)) {
         const reuseId = onlineReuseData[id].id;
         if (!onlineEnData.hasOwnProperty(reuseId)) {
-          console.error(`ReuseId ${reuseId} for Id ${id} doest not exist in online google spreadsheet!`);
+          console.error(r('Error: '), `Reuse Label ${r(reuseId)} for Label ${r(id)} doest not exist in online google spreadsheet!`);
           return false;
         }
         return { id: reuseId, en: onlineEnData[reuseId] };
@@ -129,8 +139,9 @@ function syncMissReport({ onlineEnData, onlineReuseData }) {
   const missCollect = Object.values(missCollectMap);
   const conflictCollect = checkConflict(missCollect);
   if (conflictCollect.length > 0) {
-    const msg = 'Conflict Id and Description by MissReport: \n' + conflictCollect.map(info => `\tid: ${info.id}, description: ${info.en} file: ${info.loc}`).join('\n');
-    throw new Error(msg)
+    const msg = `Conflict Label and English by MissReport: \n` + conflictCollect.map(info => `\tLabel: ${r(info.id)}, English: ${r(info.en)} File: ${r(info.loc)}`).join('\n');
+    console.error(r('Error: '), msg);
+    throw new Error('Conflict');
   }
   return missCollect;
 }

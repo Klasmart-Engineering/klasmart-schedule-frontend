@@ -1,12 +1,15 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const HttpsProxyAgent = require('https-proxy-agent');
+const memorize = require('lodash/memoize');
 const credentials = require('./credentials.json');
+const chalk = require('chalk');
 
 const cache = {};
+const g = chalk.bold.green;
 
 const localeSpreadSheets = {
   key: '1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA',
-  gids: [ '0', '1481075788', '1270100120', '2004441755'],
+  gids: ['0', '1481075788', '1270100120', '2004441755'],
 }
 
 const missSpreadSheet = {
@@ -30,7 +33,7 @@ async function createDoc(key) {
   return cache[key];
 }
 
-async function getOnlineLocale() {
+const getOnlineLocale = memorize(async function () {
   const { key, gids } = localeSpreadSheets;
   const doc = await createDoc(key);
   return []
@@ -47,12 +50,12 @@ async function getOnlineLocale() {
       if (vi) result.vi[id] = vi;
       return result;
     }, { en: {}, ko: {}, zh: {}, vi: {} })
-}
+})
 
 /**
  * @return {{ miss: {[key: string]: { id: string, en: string }}, reuse: {[key: string]: { id: string, en: string }} }}
  */
-async function getOnlineMiss() {
+const getOnlineMiss = async function getOnlineMiss() {
   const { key, gid } = missSpreadSheet;
   const doc = await createDoc(key);
   const rows = await doc.sheetsById[gid].getRows();
@@ -73,21 +76,25 @@ async function getOnlineMiss() {
 }
 
 /**
- * @param {{[key: string]: { id: string, en: string, loc: string }}} missData 
+ * @param {Array<{ id: string, en: string, loc: string }>} missData 
  */
 async function addOnlineMiss(missData) {
   const { key, gid } = missSpreadSheet;
   const doc = await createDoc(key);
   const { miss: originOnlineMiss } = await getOnlineMiss();
   const messages = [];
-  const rows = Object.entries(missData)
-    .filter(([id]) => !originOnlineMiss[id])
-    .map(([id, { en, loc }]) => {
-      messages.push(`\tid: ${id}, file: ${loc}`);
+  const rows = missData
+    .filter(({ id }) => !originOnlineMiss[id])
+    .map(({ id, en, loc  }) => {
+      messages.push(`\tLabel: ${g(id)}, English: ${g(en)}, File: ${g(loc)}`);
       return { Label: id, English: en, ActionType: '',	ActionContent: '' };
     })
+  if (rows.length === 0) {
+    console.log('Nothing to report.')
+    return;
+  };
   await doc.sheetsById[gid].addRows(rows);
-  console.log('Successfully reportMiss to online:\n' + messages.join('\n'));
+  console.log(g('Successfully'), ' reportMiss to online:\n' + messages.join('\n'));
 }
 
 async function clearMissByOnlineLocale() {
@@ -99,7 +106,7 @@ async function clearMissByOnlineLocale() {
     if(!rows[idx] || !en[rows[idx].Label]) continue;
     const { Label, English } = rows[idx];
     await rows[idx].delete();
-    console.log(`Successfully clear online spread miss of Label: ${Label}, English: ${English}`);
+    console.log(g('Successfully'), ` clear online spread miss of Label: ${g(Label)}", English: ${g(English)}`);
   }
 }
 
