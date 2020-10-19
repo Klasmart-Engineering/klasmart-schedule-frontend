@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
-import { EntityScheduleSearchView, EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleListView } from "../api/api.auto";
-import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleListView, EntityScheduleSearchView } from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface scheduleViewData {
   end: Date;
@@ -62,6 +62,7 @@ const initialState: ScheduleState = {
   mockOptions: {
     options: [],
     visibility_settings: [],
+    lesson_types: [],
     classes: [],
     class_types: [],
     organizations: [],

@@ -70,6 +70,7 @@ const initialState: IContentState = {
   mockOptions: {
     options: [],
     visibility_settings: [],
+    lesson_types: [],
     classes: [],
     class_types: [],
     organizations: [],

@@ -365,8 +365,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.lesson_type || ""}
             control={control}
           >
-            <MenuItem value="1">Test</MenuItem>
-            <MenuItem value="2">Not Test</MenuItem>
+            {menuItemList(flattenedMockOptions.lesson_types)}
           </Controller>
         )}
         <Controller

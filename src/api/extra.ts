@@ -22,6 +22,7 @@ export interface MockOptionsOptionsItem {
 export interface MockOptions {
   options: MockOptionsOptionsItem[];
   visibility_settings: MockOptionsItem[];
+  lesson_types: MockOptionsItem[];
   classes: MockOptionsItem[];
   class_types: MockOptionsItem[];
   organizations: MockOptionsItem[];
