@@ -4,62 +4,6 @@ type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMes
 export type LangName = "en" | "ko" | "zh" | "vi";
 
 type LangRecord<T = string> =
-  | { id: "library_label_asssets_name"; description: "Assets Name"; values: undefined }
-  | { id: "library_label_content_type"; description: "Content type"; values: undefined }
-  | { id: "library_label_upload_files"; description: "Upload Files"; values: undefined }
-  | { id: "library_label_visibility settings1"; description: "School"; values: undefined }
-  | { id: "library_label_visibility settings2"; description: "Orgnization"; values: undefined }
-  | { id: "schedule_label_all_day"; description: "All Day"; values: undefined }
-  | { id: "schedule_label_continue"; description: "Continue"; values: undefined }
-  | { id: "schedule_label_edit"; description: "Edit"; values: undefined }
-  | { id: "schedule_label_beyond_two_years"; description: "You cannot schedule a class beyond two years"; values: undefined }
-  | { id: "schedule_label_on"; description: "On"; values: undefined }
-  | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
-  | { id: "assess_button_search"; description: "Search"; values: undefined }
-  | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
-  | { id: "assess_filter_column_status"; description: "Status"; values: undefined }
-  | { id: "assess_filter_all"; description: "All"; values: undefined }
-  | { id: "assess_filter_complete"; description: "Complete"; values: undefined }
-  | { id: "assess_filter_in_progress"; description: "In Progress"; values: undefined }
-  | { id: "assess_sort_by"; description: "Sort By"; values: undefined }
-  | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
-  | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }
-  | { id: "assess_complete_time_new_old"; description: "Complete Time(New-Old)"; values: undefined }
-  | { id: "assess_complete_time_old_new"; description: "Complete Time(Old-New)"; values: undefined }
-  | { id: "assess_column_title"; description: "Assessment Title"; values: undefined }
-  | { id: "assess_column_subject"; description: "Subject"; values: undefined }
-  | { id: "assess_column_program"; description: "Program"; values: undefined }
-  | { id: "assess_column_teacher"; description: "Teacher"; values: undefined }
-  | { id: "assess_column_class_end_time"; description: "Class End Time"; values: undefined }
-  | { id: "assess_column_complete_time"; description: "Complete Time"; values: undefined }
-  | { id: "assess_button_cancel"; description: "Cancel"; values: undefined }
-  | { id: "assess_button_save"; description: "Save"; values: undefined }
-  | { id: "assess_button_complete"; description: "Complete"; values: undefined }
-  | { id: "assess_assessment_details"; description: "Assessment Details"; values: undefined }
-  | { id: "assess_class_summary"; description: "Class Summary"; values: undefined }
-  | { id: "assess_detail_attendance"; description: "Attendance"; values: undefined }
-  | { id: "assess_button_edit"; description: "Edit"; values: undefined }
-  | { id: "assess_detail_class_length"; description: "Class Length"; values: undefined }
-  | { id: "assess_detail_minutes"; description: "Minutes"; values: undefined }
-  | { id: "assess_detail_number_activity"; description: "Number of Activities"; values: undefined }
-  | { id: "assess_detail_number_lo"; description: "Number of Learning Outcomes"; values: undefined }
-  | { id: "assess_detail_assessment_complete_time"; description: "Assessment Complete Time"; values: undefined }
-  | { id: "assess_popup_edit_attendance"; description: "Edit Attendance"; values: undefined }
-  | { id: "assess_button_ok"; description: "Ok"; values: undefined }
-  | { id: "assess_filter_assumed"; description: "Assumed"; values: undefined }
-  | { id: "assess_filter_unassumed"; description: "Unassumed"; values: undefined }
-  | { id: "assess_column_lo"; description: "Learning Outcomes"; values: undefined }
-  | { id: "assess_option_award all"; description: "Award All"; values: undefined }
-  | { id: "assess_option_skip"; description: "Skip"; values: undefined }
-  | { id: "assess_option_assessing_actions"; description: "Assessing Actions"; values: undefined }
-  | { id: "assess_msg_discard"; description: "Discard unsaved changes?"; values: undefined }
-  | { id: "assess_msg_cannot_delete"; description: "You cannot change the assessment after clicking Complete."; values: undefined }
-  | { id: "assess_msg_ one_student"; description: "You must choose at least one student."; values: undefined }
-  | { id: "assess_button_discard"; description: "Discard"; values: undefined }
-  | { id: "assess_msg_no_lo"; description: "No learning outcome is available."; values: undefined }
-  | { id: "assess_msg_missing_infor"; description: "Please fill in all the information."; values: undefined }
-  | { id: "assess_msg_save_successfully"; description: "Save Successfully."; values: undefined }
-  | { id: "assess_msg_compete_successfully"; description: "Complete Successfully."; values: undefined }
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
@@ -147,10 +91,69 @@ type LangRecord<T = string> =
   | { id: "library_label_audio"; description: "Audio"; values: undefined }
   | { id: "library_label_document"; description: "Document"; values: undefined }
   | { id: "library_label_asset_name"; description: "Asset Name"; values: undefined }
-  | { id: "library_label_upload_a_file"; description: "Upload"; values: undefined }
+  | { id: "library_label_upload_a_file"; description: "Upload a File"; values: undefined }
   | { id: "library_label_upload_a"; description: "Upload a {fillfileType} here"; values: { fillfileType: string | number } }
   | { id: "library_label_upload"; description: "Upload"; values: undefined }
   | { id: "library_label_file_type"; description: "File Type"; values: undefined }
+  | { id: "library_label_h5p"; description: "H5P"; values: undefined }
+  | { id: "library_label_non_h5p"; description: "Non H5P"; values: undefined }
+  | { id: "library_label_select_a_file"; description: "Select a File"; values: undefined }
+  | { id: "library_msg_drag_asset"; description: "Drag from Assets Library"; values: undefined }
+  | { id: "library_label_upload_from_device"; description: "Upload from Device"; values: undefined }
+  | { id: "library_label_preview"; description: "Preview"; values: undefined }
+  | { id: "library_msg_publish_lesson_material"; description: "How would you like to publish?"; values: undefined }
+  | { id: "library_msg_only_publish_lesson_material"; description: "Only publish as a lesson material"; values: undefined }
+  | {
+      id: "library_msg_publish_lesson_material_and_asset";
+      description: "Publish as a lesson material, and add to assets library";
+      values: undefined;
+    }
+  | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
+  | { id: "assess_button_search"; description: "Search"; values: undefined }
+  | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
+  | { id: "assess_filter_column_status"; description: "Status"; values: undefined }
+  | { id: "assess_filter_all"; description: "All"; values: undefined }
+  | { id: "assess_filter_complete"; description: "Complete"; values: undefined }
+  | { id: "assess_filter_in_progress"; description: "In Progress"; values: undefined }
+  | { id: "assess_sort_by"; description: "Sort By"; values: undefined }
+  | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
+  | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }
+  | { id: "assess_complete_time_new_old"; description: "Complete Time(New-Old)"; values: undefined }
+  | { id: "assess_complete_time_old_new"; description: "Complete Time(Old-New)"; values: undefined }
+  | { id: "assess_column_title"; description: "Assessment Title"; values: undefined }
+  | { id: "assess_column_subject"; description: "Subject"; values: undefined }
+  | { id: "assess_column_program"; description: "Program"; values: undefined }
+  | { id: "assess_column_teacher"; description: "Teacher"; values: undefined }
+  | { id: "assess_column_class_end_time"; description: "Class End Time"; values: undefined }
+  | { id: "assess_column_complete_time"; description: "Complete Time"; values: undefined }
+  | { id: "assess_button_cancel"; description: "Cancel"; values: undefined }
+  | { id: "assess_button_save"; description: "Save"; values: undefined }
+  | { id: "assess_button_complete"; description: "Complete"; values: undefined }
+  | { id: "assess_assessment_details"; description: "Assessment Details"; values: undefined }
+  | { id: "assess_class_summary"; description: "Class Summary"; values: undefined }
+  | { id: "assess_detail_attendance"; description: "Attendance"; values: undefined }
+  | { id: "assess_button_edit"; description: "Edit"; values: undefined }
+  | { id: "assess_detail_class_length"; description: "Class Length"; values: undefined }
+  | { id: "assess_detail_minutes"; description: "Minutes"; values: undefined }
+  | { id: "assess_detail_number_activity"; description: "Number of Activities"; values: undefined }
+  | { id: "assess_detail_number_lo"; description: "Number of Learning Outcomes"; values: undefined }
+  | { id: "assess_detail_assessment_complete_time"; description: "Assessment Complete Time"; values: undefined }
+  | { id: "assess_popup_edit_attendance"; description: "Edit Attendance"; values: undefined }
+  | { id: "assess_button_ok"; description: "Ok"; values: undefined }
+  | { id: "assess_filter_assumed"; description: "Assumed"; values: undefined }
+  | { id: "assess_filter_unassumed"; description: "Unassumed"; values: undefined }
+  | { id: "assess_column_lo"; description: "Learning Outcomes"; values: undefined }
+  | { id: "assess_option_award all"; description: "Award All"; values: undefined }
+  | { id: "assess_option_skip"; description: "Skip"; values: undefined }
+  | { id: "assess_option_assessing_actions"; description: "Assessing Actions"; values: undefined }
+  | { id: "assess_msg_discard"; description: "Discard unsaved changes?"; values: undefined }
+  | { id: "assess_msg_cannot_delete"; description: "You cannot change the assessment after clicking Complete."; values: undefined }
+  | { id: "assess_msg_ one_student"; description: "You must choose at least one student."; values: undefined }
+  | { id: "assess_button_discard"; description: "Discard"; values: undefined }
+  | { id: "assess_msg_no_lo"; description: "No learning outcome is available."; values: undefined }
+  | { id: "assess_msg_missing_infor"; description: "Please fill in all the information."; values: undefined }
+  | { id: "assess_msg_save_successfully"; description: "Save Successfully."; values: undefined }
+  | { id: "assess_msg_compete_successfully"; description: "Complete Successfully."; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }

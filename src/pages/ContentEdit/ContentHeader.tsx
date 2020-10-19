@@ -423,7 +423,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
             control={<Radio size={size} color="primary" value={3} />}
             label={
               <Typography variant={radioTypography} className={css.h5pRadio}>
-                Non H5P
+                {d("Non H5P").t("library_label_non_h5p")}
               </Typography>
             }
             disabled={disabled}
@@ -435,7 +435,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
             control={<Radio size={size} color="primary" value={2} />}
             label={
               <Typography variant={radioTypography} className={css.h5pRadio}>
-                Non H5P
+                {d("Non H5P").t("library_label_non_h5p")}
               </Typography>
             }
             disabled={disabled}

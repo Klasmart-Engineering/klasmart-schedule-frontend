@@ -85,30 +85,6 @@ export const fileFormat: any = {
   audio: [".mp3", ".wav"],
 };
 
-// interface FileTypeProps {
-//   fileFormat: any;
-//   fileType?: string;
-// }
-// function FileText(props: FileTypeProps) {
-//   const { fileType, fileFormat } = props;
-//   if (!fileType) {
-//     return (
-//       <>
-//         <p>Drag from Asset Library</p>
-//         <p>or</p>
-//       </>
-//     );
-//   } else {
-//     const format = fileFormat[fileType];
-//     const fillfileType = `${fileType}(
-//     ${format.map((item: String, index: number) => {
-//       return `${item.substr(1)}`;
-//     })}
-//     )`;
-//     return <p style={{ color: "#666666" }}>{d("Upload a {fillfileType} here").t("library_label_upload_a", { fillfileType })}</p>;
-//   }
-// }
-
 function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
   return (
@@ -173,7 +149,7 @@ function AssetEdit(props: AssetEditProps) {
           )}
         </>
       ) : (
-        <p className={css.title}>{isAsset ? d("Upload").t("library_label_upload") : "Select a file"}</p>
+        <p className={css.title}>{isAsset ? d("Upload").t("library_label_upload") : d("Select a File").t("library_label_select_a_file")}</p>
       )}
     </Box>
   );
@@ -196,14 +172,14 @@ function AssetEdit(props: AssetEditProps) {
                   <>
                     {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
                       <>
-                        <p>Drag from Asset Library</p>
+                        <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
                         <p>or</p>
                       </>
                     )}
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
                     {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
                       <Button variant="contained" color="primary" ref={btnRef}>
-                        Upload from Device
+                        {d("Upload from Device").t("library_label_upload_from_device")}
                       </Button>
                     )}
                     {isUploading && <ProgressWithText value={item?.completed} />}

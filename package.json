@@ -58,8 +58,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "syncapi": "node ./scripts/syncapi.js",
-    "syncLangMiss": "node ./scripts/syncLangType",
-    "syncLangOnline": "node ./scripts/syncLangCsv.js",
+    "syncLang": "node ./scripts/syncLangType",
     "lint": "eslint --max-warnings=0 --ext .jsx,.js,.ts,.tsx src/",
     "eject": "react-scripts eject"
   },
