@@ -208,11 +208,11 @@ export function H5pPreview(props: H5pPreview) {
           <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
             {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
             {classType === "OnlineClass" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
             )}
-            {classType === "OfflineClass" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Class"}</Typography>}
-            {classType === "Homework" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Study"}</Typography>}
-            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{"KidsLoop Live"}</Typography>}
+            {classType === "OfflineClass" && <Typography style={{ fontSize: 12 }}>{"KidsLoop Class"}</Typography>}
+            {classType === "Homework" && <Typography style={{ fontSize: 12 }}>{"KidsLoop Study"}</Typography>}
+            {classType === "Task" && <Typography style={{ fontSize: 12 }}>{"KidsLoop Live"}</Typography>}
           </Box>
         </Hidden>
       </Box>
