@@ -110,17 +110,13 @@ export default function Details(props: DetailsProps) {
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
 
   const menuItemList = (list: MockOptionsItem[]) =>
-    list.map((item) =>
-      item.id === "visibility settings1" || item.id === "visibility settings2" ? (
-        <MenuItem key={item.id} value={item.id}>
-          {t(item.name as "library_label_visibility_school" | "library_label_visibility_organization")}
-        </MenuItem>
-      ) : (
-        <MenuItem key={item.id} value={item.id}>
-          {item.name}
-        </MenuItem>
-      )
-    );
+    list.map((item) => (
+      <MenuItem key={item.id} value={item.id}>
+        {item.id === "visibility settings1" || item.id === "visibility settings2"
+          ? t(item.name as "library_label_visibility_school" | "library_label_visibility_organization")
+          : item.name}
+      </MenuItem>
+    ));
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
