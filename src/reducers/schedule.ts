@@ -149,7 +149,7 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
   return apiGetMockOptions();
 });
 
-const scheduleTimeViewDataFormat = (data: scheduleViewData[]) => {
+const scheduleTimeViewDataFormat = (data: EntityScheduleListView[]) => {
   const newViewData: any = [];
   if (data.length > 0) {
     data.forEach((item: EntityScheduleListView) => {
