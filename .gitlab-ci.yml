@@ -23,6 +23,7 @@ variables:
   testCnDeployBucketPath: "/"
   releaseGlobalDeployBucketPath: "/"
   releaseCnDeployBucketPath: "/"
+  NODE_OPTIONS: "--max-old-space-size=3000"
 
 buildAndUploadBucketTencent:
   rules:
