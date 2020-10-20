@@ -371,7 +371,8 @@ type LangRecord<T = string> =
   | { id: "schedule_popup_valid"; description: "Please enter a valid date"; values: undefined }
   | { id: "schedule_preview_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "schedule_preview_class"; description: "KidsLoop Class"; values: undefined }
-  | { id: "schedule_preview_study"; description: "KidsLoop Study"; values: undefined };
+  | { id: "schedule_preview_study"; description: "KidsLoop Study"; values: undefined }
+  | { id: "schedule_detail_participants"; description: "Add Participants"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

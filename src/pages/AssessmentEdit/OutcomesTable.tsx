@@ -140,7 +140,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
-                      label={reportMiss("Not Attempted", "assess_option_none_achieved")}
+                      label={reportMiss("Not Attempted", "assess_option_not_attempted")}
                       disabled={status === "complete"}
                     />
                   )}

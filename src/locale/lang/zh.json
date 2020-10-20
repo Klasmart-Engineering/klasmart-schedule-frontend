@@ -350,5 +350,6 @@
   "schedule_popup_valid": "请输入有效的日期",
   "schedule_preview_live": "进入在线课堂",
   "schedule_preview_class": "进入线下课堂",
-  "schedule_preview_study": "进入家庭作业"
+  "schedule_preview_study": "进入家庭作业",
+  "schedule_detail_participants": "添加参与者"
 }

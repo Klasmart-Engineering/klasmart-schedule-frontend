@@ -350,5 +350,6 @@
   "schedule_popup_valid": "Please enter a valid date",
   "schedule_preview_live": "KidsLoop Live",
   "schedule_preview_class": "KidsLoop Class",
-  "schedule_preview_study": "KidsLoop Study"
+  "schedule_preview_study": "KidsLoop Study",
+  "schedule_detail_participants": "Add Participants"
 }
