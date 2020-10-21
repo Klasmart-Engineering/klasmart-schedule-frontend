@@ -13,6 +13,7 @@ import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import ProgramSearchHeader from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -36,8 +37,9 @@ const useQuery = (): QueryCondition => {
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
+    const program = query.get("program");
 
-    return clearNull({ name, publish_status, author, page, order_by, content_type });
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program });
   }, [search]);
 };
 
@@ -131,18 +133,23 @@ export default function MyContentList() {
 
   return (
     <div>
-      <FirstSearchHeader
-        value={condition}
-        onChange={handleChange}
-        onChangeAssets={handleChangeAssets}
-        onCreateContent={handleCreateContent}
-      />
-      <FirstSearchHeaderMb
-        value={condition}
-        onChange={handleChange}
-        onChangeAssets={handleChangeAssets}
-        onCreateContent={handleCreateContent}
-      />
+      {condition.program && <ProgramSearchHeader value={condition} onChange={handleChange} />}
+      {!condition.program && (
+        <FirstSearchHeader
+          value={condition}
+          onChange={handleChange}
+          onChangeAssets={handleChangeAssets}
+          onCreateContent={handleCreateContent}
+        />
+      )}
+      {!condition.program && (
+        <FirstSearchHeaderMb
+          value={condition}
+          onChange={handleChange}
+          onChangeAssets={handleChangeAssets}
+          onCreateContent={handleCreateContent}
+        />
+      )}
       <SecondSearchHeader value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
       <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
