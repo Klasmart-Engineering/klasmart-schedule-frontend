@@ -2,13 +2,12 @@ import { AppBar, Grid, Tab, Tabs } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import { PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
-import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
+import { BadaEslBlueIcon, BadaEslIcon, BadaMathBlueIcon, BadaMathIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -91,27 +90,20 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}></Grid>
-            <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
+            <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(Program.badaEsl)}
                 className={clsx(css.nav, { [css.actives]: value?.program === Program.badaEsl })}
-                startIcon={<PublishOutlined />}
+                startIcon={value?.program === Program.badaEsl ? <BadaEslBlueIcon /> : <BadaEslIcon />}
               >
                 {reportMiss("Badanamu ESL", "library_label_program_esl")}
               </Button>
               <Button
                 onClick={createHandleClick(Program.badamath)}
                 className={clsx(css.nav, { [css.actives]: value?.program === Program.badamath })}
-                startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
+                startIcon={value?.program === Program.badamath ? <BadaMathBlueIcon /> : <BadaMathIcon />}
               >
                 {reportMiss("Badanamu Math", "library_label_program_math")}
-              </Button>
-              <Button
-                onClick={createHandleClick(Program.badasteam)}
-                className={clsx(css.nav, { [css.actives]: value?.program === Program.badasteam })}
-                startIcon={value?.program === Program.badasteam ? <UnPubBlueIcon /> : <UnPubIcon />}
-              >
-                {reportMiss("Badanamu STEAM", "library_label_program_steam")}
               </Button>
             </Grid>
           </Grid>
@@ -134,7 +126,7 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={value?.publish_status || value.content_type}
+                value={value?.program}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
@@ -149,11 +141,6 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
                 <Tab
                   value={Program.badamath}
                   label={reportMiss("Badanamu Math", "library_label_program_math")}
-                  className={classes.capitalize}
-                />
-                <Tab
-                  value={Program.badasteam}
-                  label={reportMiss("Badanamu STEAM", "library_label_program_steam")}
                   className={classes.capitalize}
                 />
               </Tabs>

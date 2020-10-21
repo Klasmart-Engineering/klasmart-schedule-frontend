@@ -13,7 +13,7 @@ import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import ProgramSearchHeader from "./ProgramSearchHeader";
+import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -134,6 +134,7 @@ export default function MyContentList() {
   return (
     <div>
       {condition.program && <ProgramSearchHeader value={condition} onChange={handleChange} />}
+      {condition.program && <ProgramSearchHeaderMb value={condition} onChange={handleChange} />}
       {!condition.program && (
         <FirstSearchHeader
           value={condition}
