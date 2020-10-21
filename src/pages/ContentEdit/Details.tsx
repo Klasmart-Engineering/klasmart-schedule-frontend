@@ -26,6 +26,7 @@ import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
+import { LangRecordId } from "../../locale/lang/type";
 import { d, reportMiss, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
@@ -117,6 +118,9 @@ export default function Details(props: DetailsProps) {
           : item.name}
       </MenuItem>
     ));
+  const rejectReasonTransilation = (reson?: string[]) => {
+    return reson && reson.map((item) => t(item as LangRecordId));
+  };
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
@@ -150,7 +154,7 @@ export default function Details(props: DetailsProps) {
               error
               id="rejectReason"
               multiline
-              value={contentDetail.reject_reason}
+              value={rejectReasonTransilation(contentDetail.reject_reason)}
               label={d("Reason").t("library_label_reason")}
             ></OutlinedInput>
           </FormControl>
