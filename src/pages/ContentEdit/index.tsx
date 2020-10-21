@@ -94,7 +94,7 @@ export default function ContentEdit() {
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
+  const { program: programId = "", developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
   const inputSourceWatch = watch("data.input_source", inputSource);
@@ -259,7 +259,7 @@ export default function ContentEdit() {
   );
 
   const handleChangeProgram = useMemo(
-    () => ([programId]: string[]) => {
+    () => (programId: string) => {
       ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
     },
     [mockOptions, setValue]
@@ -287,7 +287,7 @@ export default function ContentEdit() {
       mockOptions
     );
     const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
-    reset({ ...onlyOneOptionValue, program: [defaultProgramId], developmental: [defaultDevelopmentalId] });
+    reset({ ...onlyOneOptionValue, program: defaultProgramId, developmental: [defaultDevelopmentalId] });
   }, [mockOptions, reset, id]);
   const assetDetails = (
     <MediaAssetsLibrary>

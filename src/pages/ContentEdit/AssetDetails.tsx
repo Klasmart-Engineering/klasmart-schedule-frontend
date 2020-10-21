@@ -187,23 +187,21 @@ function AssetsDetails(props: AssetDetailsProps) {
           control={control}
           rules={{ required: true }}
           render={(props) => (
-            <FormattedTextField
+            <TextField
               select
               className={css.fieldset}
               label={d("Program").t("library_label_program")}
-              encode={encodeOneItemArray}
-              decode={decodeOneItemArray}
               {...props}
-              onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-                onChangeProgram(value);
-                props.onChange(value);
+              onChange={(e) => {
+                onChangeProgram(e.target.value);
+                props.onChange(e.target.value);
               }}
               disabled={isIdExist()}
               required
               error={errorValidator(errors.program)}
             >
               {menuItemList(flattenedMockOptions.program)}
-            </FormattedTextField>
+            </TextField>
           )}
         />
 

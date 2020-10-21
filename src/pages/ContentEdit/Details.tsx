@@ -240,21 +240,19 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.program}
           control={control}
           render={(props) => (
-            <FormattedTextField
+            <TextField
               select
               className={css.fieldset}
               label={d("Program").t("library_label_program")}
-              encode={encodeOneItemArray}
-              decode={decodeOneItemArray}
               {...props}
-              onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-                onChangeProgram(value);
-                props.onChange(value);
+              onChange={(e) => {
+                onChangeProgram(e.target.value);
+                props.onChange(e.target.value);
               }}
               required
             >
               {menuItemList(flattenedMockOptions.program)}
-            </FormattedTextField>
+            </TextField>
           )}
         />
         <Controller
