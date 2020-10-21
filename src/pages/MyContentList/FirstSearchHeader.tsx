@@ -74,12 +74,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: any;
-  value: any;
-}
-
 export const isUnpublish = (value: QueryCondition): boolean => {
   return (
     (value.publish_status === PublishStatus.pending && value.author === Author.self) ||

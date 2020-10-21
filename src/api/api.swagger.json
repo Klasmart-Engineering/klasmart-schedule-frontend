@@ -365,6 +365,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
+            "in": "query"
+          },
+          {
             "enum": ["published", "draft", "pending", "rejected", "archive"],
             "type": "string",
             "description": "search content publish status",
@@ -486,6 +492,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
+            "in": "query"
+          },
+          {
             "enum": ["published", "draft", "pending", "rejected"],
             "type": "string",
             "description": "search content publish status",
@@ -559,6 +571,12 @@
             "type": "string",
             "description": "search content type",
             "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
             "in": "query"
           },
           {
@@ -2392,6 +2410,36 @@
             "name": "time_zone_offset",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "org id,separated by comma",
+            "name": "org_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher id,separated by comma",
+            "name": "teacher_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class id,separated by comma",
+            "name": "class_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "subject id,separated by comma",
+            "name": "subject_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "program id,separated by comma",
+            "name": "program_ids",
+            "in": "query"
           }
         ],
         "responses": {
@@ -3127,16 +3175,10 @@
           }
         },
         "program": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "program_name": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "publish_scope": {
           "type": "string"
@@ -3274,10 +3316,7 @@
           }
         },
         "program": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "publish_scope": {
           "type": "string"

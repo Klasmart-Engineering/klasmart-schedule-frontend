@@ -64,7 +64,7 @@ export function Detail(props: ContentPreviewProps) {
             disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={contentPreview.program_name?.join(",")}
+            value={contentPreview.program_name}
           />
         </Grid>
         <Grid item xs={12} sm={6}>

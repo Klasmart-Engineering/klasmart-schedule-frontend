@@ -243,8 +243,8 @@ export interface EntityContentInfoWithDetails {
   org_name?: string;
   outcome_entities?: EntityOutcome[];
   outcomes?: string[];
-  program?: string[];
-  program_name?: string[];
+  program?: string;
+  program_name?: string;
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string[];
@@ -283,7 +283,7 @@ export interface EntityCreateContentRequest {
   lesson_type?: number;
   name?: string;
   outcomes?: string[];
-  program?: string[];
+  program?: string;
   publish_scope?: string;
   self_study?: boolean;
   skills?: string[];
@@ -726,6 +726,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         scope?: string;
+        program?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
@@ -762,6 +763,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         scope?: string;
+        program?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
@@ -787,6 +789,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         name?: string;
         author?: string;
         content_type?: string;
+        program?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1318,7 +1321,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule time view
      */
     getScheduleTimeView: (
-      query: { view_type: "day" | "work_week" | "week" | "month"; time_at: number; time_zone_offset: number },
+      query: {
+        view_type: "day" | "work_week" | "week" | "month";
+        time_at: number;
+        time_zone_offset: number;
+        org_ids?: string;
+        teacher_ids?: string;
+        class_ids?: string;
+        subject_ids?: string;
+        program_ids?: string;
+      },
       params?: RequestParams
     ) =>
       this.request<EntityScheduleListView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
