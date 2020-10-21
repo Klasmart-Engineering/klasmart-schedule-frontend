@@ -28,6 +28,19 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   },
   errorTab: {
     color: palette.error.main,
+    // border:`1px solid ${palette.error.main}`,
+    animation: `$errorFlash 1000ms ease-in-out`,
+  },
+  "@keyframes errorFlash": {
+    "10%": { transform: "translate3d(-1px, 0, 0)" },
+    "20%": { transform: "translate3d(+2px, 0, 0)" },
+    "30%": { transform: "translate3d(-4px, 0, 0)" },
+    "40%": { transform: "translate3d(+4px, 0, 0)" },
+    "50%": { transform: "translate3d(-4px, 0, 0)" },
+    "60%": { transform: "translate3d(+4px, 0, 0)" },
+    "70%": { transform: "translate3d(-4px, 0, 0)" },
+    "80%": { transform: "translate3d(+2px, 0, 0)" },
+    "90%": { transform: "translate3d(-1px, 0, 0)" },
   },
 }));
 
