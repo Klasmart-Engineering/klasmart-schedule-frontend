@@ -1,4 +1,5 @@
 import { Box, makeStyles } from "@material-ui/core";
+import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +11,17 @@ import { modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
 import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { approve, deleteOutcome, getOutcomeDetail, lockOutcome, publishOutcome, reject, save, updateOutcome } from "../../reducers/outcome";
+import {
+  approve,
+  AsyncTrunkReturned,
+  deleteOutcome,
+  getOutcomeDetail,
+  lockOutcome,
+  publishOutcome,
+  reject,
+  save,
+  updateOutcome,
+} from "../../reducers/outcome";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
@@ -105,15 +116,17 @@ export default function CreateOutcomings() {
       handleSubmit(async (value) => {
         console.log(value);
         if (outcome_id) {
-          const result: any = await dispatch(updateOutcome({ outcome_id, value }));
-          if (result.payload === "ok") {
+          const { payload } = ((await dispatch(updateOutcome({ outcome_id, value }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof updateOutcome>
+          >;
+          if (payload === "ok") {
             dispatch(actSuccess("Update Success"));
             dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
           }
         } else {
-          const result: any = await dispatch(save(value));
-          if (result.payload?.outcome_id) {
-            history.push(`/assessments/outcome-edit?outcome_id=${result.payload.outcome_id}&status=createDfaft`);
+          const { payload } = ((await dispatch(save(value))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
+          if (payload?.outcome_id) {
+            history.push(`/assessments/outcome-edit?outcome_id=${payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess("Save Success"));
           }
         }
@@ -125,8 +138,10 @@ export default function CreateOutcomings() {
 
   const handleReject = async (reason: string) => {
     if (!reason) return;
-    const result: any = await dispatch(reject({ id: outcome_id, reject_reason: reason }));
-    if (result.payload === "ok") {
+    const { payload } = ((await dispatch(reject({ id: outcome_id, reject_reason: reason }))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof reject>
+    >;
+    if (payload === "ok") {
       dispatch(actSuccess("Reject Success"));
       history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-created_at");
     }
@@ -148,9 +163,11 @@ export default function CreateOutcomings() {
       {
         label: d("Delete").t("assess_label_delete"),
         event: async () => {
-          const result: any = await dispatch(deleteOutcome(outcome_id));
+          const { payload } = ((await dispatch(deleteOutcome(outcome_id))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof deleteOutcome>
+          >;
           setOpenStatus(false);
-          if (result.payload === "ok") {
+          if (payload === "ok") {
             dispatch(actSuccess("Delete Success"));
             history.go(-1);
           }
@@ -162,9 +179,9 @@ export default function CreateOutcomings() {
   };
 
   const handleDelete = async () => {
-    const result: any = await dispatch(deleteOutcome(outcome_id));
+    const { payload } = ((await dispatch(deleteOutcome(outcome_id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteOutcome>>;
     setOpenStatus(false);
-    if (result.payload === "ok") {
+    if (payload === "ok") {
       dispatch(actSuccess("Delete Success"));
       history.go(-1);
     }
@@ -181,8 +198,10 @@ export default function CreateOutcomings() {
 
   const handlePublish: OutcomeHeaderProps["handlePublish"] = async () => {
     if (outcomeDetail.publish_status === "draft") {
-      const result: any = await dispatch(publishOutcome(outcomeDetail.outcome_id as string));
-      if (result.payload === "ok") {
+      const { payload } = ((await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown) as PayloadAction<
+        AsyncTrunkReturned<typeof publishOutcome>
+      >;
+      if (payload === "ok") {
         history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
       }
     }

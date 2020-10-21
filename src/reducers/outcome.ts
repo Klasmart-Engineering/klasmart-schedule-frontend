@@ -91,7 +91,7 @@ export const deleteOutcome = createAsyncThunk<string, Required<ApiOutcomeView>["
   }
 );
 
-type publishOutcomeResponse = ReturnType<typeof api.learningOutcomes.publishLearningOutcomes>;
+type publishOutcomeResponse = AsyncReturnType<typeof api.learningOutcomes.publishLearningOutcomes>;
 type publishOutcomeRequest = Parameters<typeof api.learningOutcomes.publishLearningOutcomes>[0];
 export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOutcomeRequest>(
   "outcome/publishOutcome",
@@ -142,7 +142,7 @@ export const save = createAsyncThunk<ApiOutcomeCreateResponse, ApiOutcomeCreateV
   }
 );
 
-export type ResultUpdateOutcome = ReturnType<typeof api.learningOutcomes.updateLearningOutcomes>;
+export type ResultUpdateOutcome = AsyncReturnType<typeof api.learningOutcomes.updateLearningOutcomes>;
 type ParamsUpdateOutcome = {
   outcome_id: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[0];
   value: Parameters<typeof api.learningOutcomes.updateLearningOutcomes>[1];
@@ -157,7 +157,7 @@ export const getOutcomeDetail = createAsyncThunk<ApiOutcomeView, ParamsGetOutcom
   return api.learningOutcomes.getLearningOutcomesById(id);
 });
 
-type ResultRejectOutcome = ReturnType<typeof api.learningOutcomes.rejectLearningOutcomes>;
+type ResultRejectOutcome = AsyncReturnType<typeof api.learningOutcomes.rejectLearningOutcomes>;
 type ParamsRejectOutcome = {
   id: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[0];
   reject_reason: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[1]["reject_reason"];
