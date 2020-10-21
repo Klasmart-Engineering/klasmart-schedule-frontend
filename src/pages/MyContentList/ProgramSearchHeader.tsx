@@ -8,7 +8,7 @@ import { OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
 import { BadaEslBlueIcon, BadaEslIcon, BadaMathBlueIcon, BadaMathIcon } from "../OutcomeList/Icons";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,7 +83,13 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const createHandleClick = (program: QueryCondition["program"]) => () =>
-    onChange({ program, content_type: SearchContentsRequestContentType.materialandplan, order_by: OrderBy._updated_at, page: 1 });
+    onChange({
+      program,
+      content_type: SearchContentsRequestContentType.materialandplan,
+      order_by: OrderBy._updated_at,
+      page: 1,
+      scope: PublishScope.all,
+    });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -117,7 +123,13 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const handleChange = (event: React.ChangeEvent<{}>, program: QueryCondition["program"]) => {
-    onChange({ program, order_by: OrderBy._updated_at, page: 1, content_type: SearchContentsRequestContentType.materialandplan });
+    onChange({
+      program,
+      order_by: OrderBy._updated_at,
+      page: 1,
+      content_type: SearchContentsRequestContentType.materialandplan,
+      scope: PublishScope.all,
+    });
   };
   return (
     <div className={classes.root}>

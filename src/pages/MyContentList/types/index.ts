@@ -19,3 +19,8 @@ export enum ContentListFormKey {
 export interface ContentListForm {
   [ContentListFormKey.CHECKED_CONTENT_IDS]: NonNullable<ApiContentBulkOperateRequest["id"]>;
 }
+
+export enum PublishScope {
+  organization = "1,2",
+  all = "3",
+}

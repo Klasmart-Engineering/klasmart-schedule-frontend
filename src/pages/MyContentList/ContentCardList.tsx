@@ -256,12 +256,12 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {content?.publish_status === PublishStatus.archive && (
+          {!queryCondition.program && content?.publish_status === PublishStatus.archive && (
             <LButton as={IconButton} replace className={css.rePublishColor} onClick={() => onPublish(content.id as string)}>
               <PublishOutlinedIcon />
             </LButton>
           )}
-          {queryCondition.publish_status !== PublishStatus.pending && (
+          {!queryCondition.program && queryCondition.publish_status !== PublishStatus.pending && (
             <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
               <DeleteIcon />
             </LButton>

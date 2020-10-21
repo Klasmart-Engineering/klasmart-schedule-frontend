@@ -16,7 +16,7 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
-import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
+import { ContentListForm, ContentListFormKey, PublishScope, QueryCondition } from "./types";
 
 const PAGE_SIZE = 20;
 
@@ -38,8 +38,8 @@ const useQuery = (): QueryCondition => {
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
     const program = query.get("program");
-
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program });
+    const scope = query.get("scope") || PublishScope.organization;
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program, scope });
   }, [search]);
 };
 
@@ -179,4 +179,4 @@ export default function MyContentList() {
 }
 
 MyContentList.routeBasePath = "/library/my-content-list";
-MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._updated_at}&content_type=${SearchContentsRequestContentType.materialandplan}`;
+MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._updated_at}&content_type=${SearchContentsRequestContentType.materialandplan}&scope=${PublishScope.organization}`;

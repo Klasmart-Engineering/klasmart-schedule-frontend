@@ -10,7 +10,7 @@ import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +91,13 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const { value, onChange, onCreateContent } = props;
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, content_type: SearchContentsRequestContentType.materialandplan, order_by: OrderBy._updated_at, page: 1 });
+    onChange({
+      publish_status,
+      content_type: SearchContentsRequestContentType.materialandplan,
+      order_by: OrderBy._updated_at,
+      page: 1,
+      scope: PublishScope.organization,
+    });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
     onChange({ content_type, order_by: OrderBy._updated_at, page: 1 });
   return (
@@ -158,7 +164,13 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     if (publish_status === SearchContentsRequestContentType.assets) {
       return onChangeAssets(SearchContentsRequestContentType.assets);
     }
-    onChange({ publish_status, order_by: OrderBy._updated_at, page: 1, content_type: SearchContentsRequestContentType.materialandplan });
+    onChange({
+      publish_status,
+      order_by: OrderBy._updated_at,
+      page: 1,
+      content_type: SearchContentsRequestContentType.materialandplan,
+      scope: PublishScope.organization,
+    });
   };
   return (
     <div className={classes.root}>
