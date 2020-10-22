@@ -175,7 +175,7 @@ export function H5pPreview(props: H5pPreview) {
           (JSON.stringify(h5pItem) === JSON.stringify({}) ? (
             <EmptyContent />
           ) : (
-            <ContentH5p value={{ contentId: h5pItem.source.contentId as string }} />
+            <ContentH5p value={{ contentId: h5pItem.source as string }} />
           ))}
       </Box>
       <Box className={css.btnCon}>

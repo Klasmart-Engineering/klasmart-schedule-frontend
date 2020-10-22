@@ -261,11 +261,14 @@ export default function ContentEdit() {
 
   const handleH5pChange = useMemo(
     () => (value: ContentH5pProps["value"]) => {
+      console.log("h5pValue=", value);
       setValue("data.source", value.contentId, { shouldDirty: true });
       setValue("source_type", value.source_type, { shouldDirty: true });
     },
     [setValue]
   );
+  console.log(watch());
+
   const handleChangeProgram = useMemo(
     () => (programId: string) => {
       ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
