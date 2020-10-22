@@ -24,7 +24,7 @@ import {
 } from "../../reducers/content";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
-import ContentH5p from "./ContentH5p";
+import ContentH5p, { ContentH5pProps } from "./ContentH5p";
 import { ContentHeader, SelectH5PRadio, SelectLesson } from "./ContentHeader";
 import ContentTabs from "./ContentTabs";
 import Details from "./Details";
@@ -97,6 +97,7 @@ export default function ContentEdit() {
   const { program: programId = "", developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
+  const h5pSource = JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source;
   const inputSourceWatch = watch("data.input_source", inputSource);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
@@ -258,6 +259,13 @@ export default function ContentEdit() {
     [setValue]
   );
 
+  const handleH5pChange = useMemo(
+    () => (value: ContentH5pProps["value"]) => {
+      setValue("data.source", value.contentId, { shouldDirty: true });
+      setValue("source_type", value.source_type, { shouldDirty: true });
+    },
+    [setValue]
+  );
   const handleChangeProgram = useMemo(
     () => (programId: string) => {
       ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
@@ -340,11 +348,6 @@ export default function ContentEdit() {
   );
   const rightsideArea = (
     <Fragment>
-      {includeH5p && includeAsset && (
-        <ContentH5p>
-          <MediaAssetsEdit readonly={readonly} overlay isAsset={true} formMethods={formMethods} contentDetail={contentDetail} />
-        </ContentH5p>
-      )}
       {includeH5p && !includeAsset && (
         <Fragment>
           <Controller
@@ -356,12 +359,13 @@ export default function ContentEdit() {
             disabled={!!id}
           />
           {inputSourceWatch === 1 ? (
-            <Controller
-              name="data.source"
-              as={ContentH5p}
-              defaultValue={JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source}
-              control={control}
-              rules={{ required: true }}
+            <ContentH5p
+              // name="data.source"
+              // defaultValue={JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source}
+              // control={control}
+              // rules={{ required: true }}
+              value={{ contentId: h5pSource, source_type: contentDetail.source_type }}
+              onChange={handleH5pChange}
               isCreate={!id}
             />
           ) : (

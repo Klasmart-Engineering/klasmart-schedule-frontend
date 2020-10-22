@@ -371,6 +371,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
+            "in": "query"
+          },
+          {
             "enum": ["published", "draft", "pending", "rejected", "archive"],
             "type": "string",
             "description": "search content publish status",
@@ -498,6 +504,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
+            "in": "query"
+          },
+          {
             "enum": ["published", "draft", "pending", "rejected"],
             "type": "string",
             "description": "search content publish status",
@@ -577,6 +589,12 @@
             "type": "string",
             "description": "search content program",
             "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
             "in": "query"
           },
           {
@@ -2380,6 +2398,33 @@
         }
       }
     },
+    "/schedules_participate/class": {
+      "get": {
+        "description": "get participate Class",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getParticipateClass",
+        "operationId": "getParticipateClass",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/external.Class"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules_time_view": {
       "get": {
         "description": "get schedule time view",
@@ -3153,6 +3198,9 @@
         "lesson_type": {
           "type": "integer"
         },
+        "lesson_type_name": {
+          "type": "string"
+        },
         "locked_by": {
           "type": "string"
         },
@@ -3217,6 +3265,9 @@
           }
         },
         "source_id": {
+          "type": "string"
+        },
+        "source_type": {
           "type": "string"
         },
         "subject": {
@@ -3338,6 +3389,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "source_type": {
+          "type": "string"
         },
         "subject": {
           "type": "array",
@@ -3980,6 +4034,17 @@
           "items": {
             "$ref": "#/definitions/entity.OutcomeAttendanceMap"
           }
+        }
+      }
+    },
+    "external.Class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
     }

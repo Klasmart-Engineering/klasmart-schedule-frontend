@@ -238,6 +238,7 @@ export interface EntityContentInfoWithDetails {
   keywords?: string[];
   latest_id?: string;
   lesson_type?: number;
+  lesson_type_name?: string;
   locked_by?: string;
   name?: string;
   org?: string;
@@ -255,6 +256,7 @@ export interface EntityContentInfoWithDetails {
   skills?: string[];
   skills_name?: string[];
   source_id?: string;
+  source_type?: string;
   subject?: string[];
   subject_name?: string[];
   suggest_time?: number;
@@ -290,6 +292,7 @@ export interface EntityCreateContentRequest {
   publish_scope?: string;
   self_study?: boolean;
   skills?: string[];
+  source_type?: string;
   subject?: string[];
   suggest_time?: number;
   thumbnail?: string;
@@ -505,6 +508,11 @@ export interface EntityUpdateAssessmentCommand {
   attendance_ids?: string[];
   id?: string;
   outcome_attendance_maps?: EntityOutcomeAttendanceMap[];
+}
+
+export interface ExternalClass {
+  id?: string;
+  name?: string;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -730,6 +738,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
@@ -767,6 +776,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
@@ -793,6 +803,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         program?: string;
+        source_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1314,6 +1325,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "GET",
         params
       ),
+  };
+  schedulesParticipate = {
+    /**
+     * @tags schedule
+     * @name getParticipateClass
+     * @summary getParticipateClass
+     * @request GET:/schedules_participate/class
+     * @description get participate Class
+     */
+    getParticipateClass: (params?: RequestParams) =>
+      this.request<ExternalClass[], ApiInternalServerErrorResponse>(`/schedules_participate/class`, "GET", params),
   };
   schedulesTimeView = {
     /**

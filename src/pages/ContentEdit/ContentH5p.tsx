@@ -2,13 +2,10 @@ import { makeStyles } from "@material-ui/core";
 import React, { ReactNode, useEffect } from "react";
 import { apiCreateH5pResource, apiGetH5pResourceById } from "../../api/extra";
 
-interface DataH5p {
-  source?: string;
-}
-interface ContentH5pProps {
+export interface ContentH5pProps {
   children?: ReactNode;
   isCreate?: boolean;
-  value?: string;
+  value: { contentId: string; source_type?: string };
   onChange?: (value: ContentH5pProps["value"]) => any;
   error?: boolean;
 }
@@ -24,13 +21,12 @@ const useStyles = makeStyles({
 export default function ContentH5p(props: ContentH5pProps) {
   const { value, onChange, children, isCreate } = props;
   const css = useStyles();
-  const src = isCreate ? apiCreateH5pResource() : value && apiGetH5pResourceById(value);
-  // const src = value ? apiGetH5pResourceById(value) : apiCreateH5pResource();
+  const src = isCreate ? apiCreateH5pResource() : value && apiGetH5pResourceById(value.contentId);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      const { contentId } = event.data;
+      const { contentId, source_type = "" } = event.data;
       if (!contentId) return;
-      if (onChange) onChange(contentId);
+      if (onChange) onChange({ contentId, source_type });
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);

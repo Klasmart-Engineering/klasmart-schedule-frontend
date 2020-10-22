@@ -119,6 +119,7 @@ const initialState: IContentState = {
     draw_activity: false,
     lesson_type: 0,
     publish_scope_name: "",
+    source_type: "",
   },
 };
 export enum Action {
