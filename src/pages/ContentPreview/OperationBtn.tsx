@@ -50,7 +50,6 @@ export interface ActionProps {
 export function OperationBtn(props: ActionProps) {
   const css = useStyles();
   const { scope, publish_status, content_type_name, onDelete, onPublish, onApprove, onReject, onEdit } = props;
-  console.log(scope);
   return (
     <Box display="flex" justifyContent="flex-end">
       {scope === PublishScope.organization && publish_status === PublishStatus.published && (

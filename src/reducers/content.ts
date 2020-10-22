@@ -118,6 +118,7 @@ const initialState: IContentState = {
     self_study: false,
     draw_activity: false,
     lesson_type: 0,
+    publish_scope_name: "",
   },
 };
 export enum Action {

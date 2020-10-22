@@ -1,8 +1,9 @@
-import { Chip, Grid, InputAdornment, TextField } from "@material-ui/core";
+import { Box, Checkbox, Chip, FormControlLabel, Grid, InputAdornment, TextField } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { d } from "../../locale/LocaleManager";
+import { ContentType } from "../../api/type";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyles = makeStyles(() => ({
@@ -12,6 +13,10 @@ const useStyles = makeStyles(() => ({
     "& .MuiInputBase-root": {
       height: "100%",
     },
+  },
+  fieldset: {
+    marginTop: 32,
+    marginBottom: 32,
   },
 }));
 
@@ -138,6 +143,45 @@ export function Detail(props: ContentPreviewProps) {
           />
         </Grid>
       </Grid>
+      {contentPreview.content_type === ContentType.material && (
+        <TextField
+          margin="normal"
+          fullWidth
+          disabled={true}
+          rows={2}
+          label={reportMiss("Lesson Type", "library_label_lesson_type")}
+          variant="outlined"
+          InputProps={{ readOnly: true }}
+          value={contentPreview.lesson_type}
+        />
+      )}
+      <Box className={css.fieldset} style={{ position: "relative" }}>
+        <FormControlLabel
+          control={
+            <Checkbox style={{ position: "absolute", right: 0 }} disabled checked={contentPreview.self_study || false} color="primary" />
+          }
+          label={reportMiss("Suitable for self-study", "library_label_self_study")}
+          style={{ color: "rgba(0,0,0,0.6)" }}
+          labelPlacement="start"
+        />
+      </Box>
+      {contentPreview.content_type === ContentType.material && (
+        <Box className={css.fieldset} style={{ position: "relative" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                style={{ position: "absolute", right: 0 }}
+                disabled
+                checked={contentPreview.draw_activity || false}
+                color="primary"
+              />
+            }
+            label={reportMiss("Drawing Activity", "library_label_draw_activity")}
+            style={{ color: "rgba(0,0,0,0.6)" }}
+            labelPlacement="start"
+          />
+        </Box>
+      )}
       <TextField
         margin="normal"
         fullWidth
