@@ -33,6 +33,7 @@ import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import ScheduleFilter from "./ScheduleFilter";
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
     marginTop: 20,
@@ -72,10 +73,15 @@ const useStyles = makeStyles(({ shadows }) => ({
     boxShadow: shadows[3],
     zIndex: 999,
   },
+  smallCalendarBox: {
+    boxShadow: shadows[3],
+    width: "310px",
+    margin: "0 auto",
+  },
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp } = props;
+  const { timesTamp, changeTimesTamp, flattenedMockOptions } = props;
 
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
@@ -86,12 +92,17 @@ function SmallCalendar(props: CalendarStateProps) {
     });
   };
 
+  const css = useStyles();
+
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <Grid container justify="space-around">
-        <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
-      </Grid>
-    </MuiPickersUtilsProvider>
+    <Box className={css.smallCalendarBox}>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <Grid container justify="space-around">
+          <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
+        </Grid>
+        <ScheduleFilter flattenedMockOptions={flattenedMockOptions} />
+      </MuiPickersUtilsProvider>
+    </Box>
   );
 }
 
@@ -396,18 +407,28 @@ function EditBox(props: CalendarStateProps) {
   const validatorFun = () => {
     let verificaPath = true;
 
+    const taskValidator = {
+      title: false,
+      class_id: false,
+      teacher_ids: false,
+      start_at: false,
+      end_at: false,
+      class_type: false,
+    };
+
+    const validator = scheduleList.class_type === "Task" ? taskValidator : isValidator;
+
     for (let name in scheduleList) {
-      if (isValidator.hasOwnProperty(name)) {
+      if (validator.hasOwnProperty(name)) {
         // @ts-ignore
         const result = scheduleList[name].toString().length > 0;
         // @ts-ignore
-        isValidator[name] = !result;
+        validator[name] = !result;
         if (!result) {
           verificaPath = false;
         }
       }
     }
-
     isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = scheduleList.class_type !== "Task";
     setValidator({ ...isValidator });
     return verificaPath;
@@ -423,7 +444,6 @@ function EditBox(props: CalendarStateProps) {
     });
     const addData: any = {};
     addData["due_at"] = 0;
-
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
@@ -1065,7 +1085,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     changeModalDate,
   } = props;
   const template = (
-    <Box>
+    <>
       <Box
         style={{
           display: includePreview ? "block" : "none",
@@ -1100,7 +1120,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           changeModalDate={changeModalDate}
         />
       </Box>
-    </Box>
+    </>
   );
   return template;
 }

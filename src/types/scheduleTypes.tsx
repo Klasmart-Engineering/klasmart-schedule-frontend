@@ -12,6 +12,8 @@ export type modeViewType = "month" | "day" | "work_week" | "week";
 
 export type repeatOptionsType = "only_current" | "with_following";
 
+export type FilterType = "Schools" | "Teacher" | "Classes" | "Subjects" | "Programs";
+
 type endType = {
   type: string;
   after_count: number;
