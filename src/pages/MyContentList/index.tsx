@@ -105,7 +105,10 @@ export default function MyContentList() {
     if (content_type !== ContentType.material && content_type !== ContentType.plan) {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
     } else {
-      history.push({ pathname: ContentPreview.routeRedirectDefault, search: toQueryString({ id: id, content_type: content_type }) });
+      history.push({
+        pathname: ContentPreview.routeRedirectDefault,
+        search: toQueryString({ id: id, content_type: content_type, scope: condition.scope }),
+      });
     }
   };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });

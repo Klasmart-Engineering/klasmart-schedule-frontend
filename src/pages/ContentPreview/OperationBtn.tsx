@@ -6,6 +6,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
+import { PublishScope } from "../MyContentList/types";
 const ASSETS_NAME = "Assets";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -37,6 +38,7 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface ActionProps {
+  scope: PublishScope;
   publish_status: EntityContentInfoWithDetails["publish_status"];
   content_type_name?: EntityContentInfoWithDetails["content_type_name"];
   onDelete: () => any;
@@ -47,41 +49,44 @@ export interface ActionProps {
 }
 export function OperationBtn(props: ActionProps) {
   const css = useStyles();
-  const { publish_status, content_type_name, onDelete, onPublish, onApprove, onReject, onEdit } = props;
+  const { scope, publish_status, content_type_name, onDelete, onPublish, onApprove, onReject, onEdit } = props;
+  console.log(scope);
   return (
     <Box display="flex" justifyContent="flex-end">
-      {publish_status === PublishStatus.published && (
+      {scope === PublishScope.organization && publish_status === PublishStatus.published && (
         <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
           {d("Remove").t("library_label_remove")}
         </LButton>
       )}
-      {(publish_status === PublishStatus.draft ||
-        publish_status === PublishStatus.pending ||
-        publish_status === PublishStatus.rejected ||
-        publish_status === PublishStatus.archive) && (
-        <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
-          {d("Delete").t("library_label_delete")}
-        </LButton>
-      )}
-      {publish_status === PublishStatus.pending && (
+      {scope === PublishScope.organization &&
+        (publish_status === PublishStatus.draft ||
+          publish_status === PublishStatus.pending ||
+          publish_status === PublishStatus.rejected ||
+          publish_status === PublishStatus.archive) && (
+          <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+            {d("Delete").t("library_label_delete")}
+          </LButton>
+        )}
+      {scope === PublishScope.organization && publish_status === PublishStatus.pending && (
         <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
           {d("Reject").t("library_label_reject")}
         </LButton>
       )}
-      {(publish_status === PublishStatus.published ||
-        publish_status === PublishStatus.draft ||
-        publish_status === PublishStatus.rejected ||
-        content_type_name === ASSETS_NAME) && (
-        <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
-          {d("Edit").t("library_label_edit")}
-        </LButton>
-      )}
-      {publish_status === PublishStatus.pending && (
+      {scope === PublishScope.organization &&
+        (publish_status === PublishStatus.published ||
+          publish_status === PublishStatus.draft ||
+          publish_status === PublishStatus.rejected ||
+          content_type_name === ASSETS_NAME) && (
+          <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+            {d("Edit").t("library_label_edit")}
+          </LButton>
+        )}
+      {scope === PublishScope.organization && publish_status === PublishStatus.pending && (
         <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
           {d("Approve").t("library_label_approve")}
         </LButton>
       )}
-      {publish_status === PublishStatus.archive && (
+      {scope === PublishScope.organization && publish_status === PublishStatus.archive && (
         <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
           {d("Republish").t("library_label_republish")}
         </LButton>
