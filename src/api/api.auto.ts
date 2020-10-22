@@ -246,8 +246,10 @@ export interface EntityContentInfoWithDetails {
   program?: string;
   program_name?: string;
   publish_scope?: string;
+  publish_scope_name?: string;
   publish_status?: string;
   reject_reason?: string[];
+  remark?: string;
   self_study?: boolean;
   skills?: string[];
   skills_name?: string[];

@@ -104,7 +104,7 @@ export function Detail(props: ContentPreviewProps) {
             disabled={true}
             variant="outlined"
             InputProps={{ readOnly: true }}
-            value={contentPreview.publish_scope}
+            value={contentPreview.publish_scope_name}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
