@@ -31,7 +31,7 @@ import { d, reportMiss, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 
-const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
+const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
     minHeight: 800,
     [breakpoints.down("sm")]: {
@@ -118,8 +118,10 @@ export default function Details(props: DetailsProps) {
           : item.name}
       </MenuItem>
     ));
-  const rejectReasonTransilation = (reson?: string[]) => {
-    return reson && reson.map((item) => t(item as LangRecordId));
+  const rejectReasonTransilation = (reson?: string[], remark?: string) => {
+    const reson_remark = reson && reson.map((item) => t(item as LangRecordId));
+    if (reson_remark && remark) reson_remark.push(remark);
+    return reson_remark ? reson_remark : remark && [remark];
   };
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
@@ -154,7 +156,7 @@ export default function Details(props: DetailsProps) {
               error
               id="rejectReason"
               multiline
-              value={rejectReasonTransilation(contentDetail.reject_reason)}
+              value={rejectReasonTransilation(contentDetail.reject_reason, contentDetail.remark)}
               label={d("Reason").t("library_label_reason")}
             ></OutlinedInput>
           </FormControl>
