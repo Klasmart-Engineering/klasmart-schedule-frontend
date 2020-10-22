@@ -2876,6 +2876,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "remark": {
+          "type": "string"
         }
       }
     },

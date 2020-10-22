@@ -57,8 +57,10 @@ export function ConfirmDialog() {
         message: d("Please specify the reason for rejection.").t("library_msg_reject_reason"),
       });
     }
-    const value = values[INPUT_NAME] ? [...values[REJECT_REASON], values[INPUT_NAME]] : values[REJECT_REASON];
-    if (type === ConfirmDialogType.textField) dispatch(actExitConfirm({ isConfirmed: true, value }));
+    const reasonValue = [...values[REJECT_REASON]];
+    const otherValue = values[INPUT_NAME] ? values[INPUT_NAME] : "";
+    // const value = values[INPUT_NAME] ? [...values[REJECT_REASON], values[INPUT_NAME]] : values[REJECT_REASON];
+    if (type === ConfirmDialogType.textField) dispatch(actExitConfirm({ isConfirmed: true, reasonValue, otherValue }));
   }, [dispatch, getValues, type, setError]);
   return (
     <Dialog open={open} maxWidth="xs" aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" disableBackdropClick>

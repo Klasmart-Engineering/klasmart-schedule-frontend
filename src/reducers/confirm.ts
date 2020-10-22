@@ -2,7 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ConfirmResult {
   isConfirmed: boolean;
-  value?: string[];
+  reasonValue?: string[];
+  otherValue?: string;
 }
 
 export interface ConfirmRequest {

@@ -329,9 +329,9 @@ export const rejectContent = createAsyncThunk<RejectContentResult, RejectContent
     const title = d("Reason").t("library_label_reason");
     const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
     const type = ConfirmDialogType.textField;
-    const { isConfirmed, value } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
+    const { isConfirmed, reasonValue, otherValue } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
     if (!isConfirmed) return Promise.reject();
-    return api.contents.rejectContentReview(id, { reject_reason: value });
+    return api.contents.rejectContentReview(id, { reject_reason: reasonValue, remark: otherValue });
   }
 );
 export const lockContent = createAsyncThunk<

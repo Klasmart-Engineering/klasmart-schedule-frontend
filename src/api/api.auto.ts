@@ -144,6 +144,7 @@ export interface ApiPublishOutcomeReq {
 
 export interface ApiRejectReasonRequest {
   reject_reason?: string[];
+  remark?: string;
 }
 
 export interface ApiSkill {
