@@ -21,6 +21,6 @@ export interface ContentListForm {
 }
 
 export enum PublishScope {
-  organization = "visibility settings1,visibility settings2",
+  organization = "visibility_settings1,visibility_settings2",
   all = "all",
 }
