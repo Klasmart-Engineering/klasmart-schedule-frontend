@@ -38,7 +38,7 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface ActionProps {
-  scope: PublishScope;
+  scope: string;
   publish_status: EntityContentInfoWithDetails["publish_status"];
   content_type_name?: EntityContentInfoWithDetails["content_type_name"];
   onDelete: () => any;

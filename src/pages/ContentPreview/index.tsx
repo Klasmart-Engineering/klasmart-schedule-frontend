@@ -22,6 +22,7 @@ import {
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleInfo } from "../../reducers/schedule";
 import LayoutPair from "../ContentEdit/Layout";
+import { PublishScope } from "../MyContentList/types";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
 import { H5pPreview } from "./H5pPreview";
@@ -35,7 +36,7 @@ const useQuery = () => {
   const id = query.get("id") || "";
   // const content_type: ContentType = Number(query.get("content_type"));
   const sid = query.get("sid") || "";
-  const scope = query.get("scope");
+  const scope = query.get("scope") || PublishScope.organization;
   return { id, search, sid, scope };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
