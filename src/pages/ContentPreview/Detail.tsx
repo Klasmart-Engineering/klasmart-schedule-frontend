@@ -152,7 +152,7 @@ export function Detail(props: ContentPreviewProps) {
           label={reportMiss("Lesson Type", "library_label_lesson_type")}
           variant="outlined"
           InputProps={{ readOnly: true }}
-          value={contentPreview.lesson_type}
+          value={contentPreview.lesson_type_name}
         />
       )}
       <Box className={css.fieldset} style={{ position: "relative" }}>
