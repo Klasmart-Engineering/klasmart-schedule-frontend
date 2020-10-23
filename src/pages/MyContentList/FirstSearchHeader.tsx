@@ -83,7 +83,7 @@ export const isUnpublish = (value: QueryCondition): boolean => {
 };
 
 export interface FirstSearchHeaderProps extends QueryConditionBaseProps {
-  onChangeAssets: (arg: string) => any;
+  onChangeAssets: (contentType: string, scope: string) => any;
   onCreateContent: () => any;
 }
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
@@ -162,7 +162,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     publish_status: QueryCondition["publish_status"] | SearchContentsRequestContentType.assets
   ) => {
     if (publish_status === SearchContentsRequestContentType.assets) {
-      return onChangeAssets(SearchContentsRequestContentType.assets);
+      return onChangeAssets(SearchContentsRequestContentType.assets, "default");
     }
     onChange({
       publish_status,

@@ -112,8 +112,8 @@ export default function MyContentList() {
     }
   };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
-  const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type) =>
-    history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at }) });
+  const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
+    history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
     if (condition.content_type === SearchContentsRequestContentType.assets) {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
