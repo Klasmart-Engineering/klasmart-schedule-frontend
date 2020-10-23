@@ -24,7 +24,7 @@ import {
 } from "../../reducers/content";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
-import ContentH5p, { ContentH5pProps } from "./ContentH5p";
+import ContentH5p from "./ContentH5p";
 import { ContentHeader, SelectH5PRadio, SelectLesson } from "./ContentHeader";
 import ContentTabs from "./ContentTabs";
 import Details from "./Details";
@@ -259,15 +259,15 @@ export default function ContentEdit() {
     [setValue]
   );
 
-  const handleH5pChange = useMemo(
-    () => (value: ContentH5pProps["value"]) => {
-      console.log("h5pValue=", value);
-      setValue("data.source", value.contentId, { shouldDirty: true });
-      setValue("source_type", value.source_type, { shouldDirty: true });
-    },
-    [setValue]
-  );
-  console.log(watch());
+  // const handleH5pChange = useMemo(
+  //   () => (value: ContentH5pProps["value"]) => {
+  //     console.log("h5pValue=", value);
+  //     setValue("source_type", value.source_type, { shouldDirty: true });
+  //     setValue("data.source", value.contentId, { shouldDirty: true });
+  //   },
+  //   [setValue]
+  // );
+  // console.log(watch());
 
   const handleChangeProgram = useMemo(
     () => (programId: string) => {
@@ -362,14 +362,21 @@ export default function ContentEdit() {
             disabled={!!id}
           />
           {inputSourceWatch === 1 ? (
-            <ContentH5p
-              // name="data.source"
-              // defaultValue={JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source}
-              // control={control}
-              // rules={{ required: true }}
-              value={{ contentId: h5pSource, source_type: contentDetail.source_type }}
-              onChange={handleH5pChange}
-              isCreate={!id}
+            <Controller
+              name="data.source"
+              defaultValue={h5pSource}
+              control={control}
+              // defaultValue={{ 'data.source': h5pSource, source_type: contentDetail.source_type }}
+              render={({ value: valueSource, onChange: onChangeSource }: any) => (
+                <Controller
+                  name="source_type"
+                  defaultValue={contentDetail.source_type}
+                  control={control}
+                  render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
+                    <ContentH5p isCreate={!id} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
+                  )}
+                />
+              )}
             />
           ) : (
             <MediaAssetsEdit
