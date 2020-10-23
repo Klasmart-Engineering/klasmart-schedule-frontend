@@ -102,7 +102,7 @@ const AssessAction = (props: AssessActionProps) => {
       name={`outcome_attendance_maps[${index}].attendance_ids`}
       control={control}
       defaultValue={attendance_ids || []}
-      render={(props) => (
+      render={(props: any) => (
         <CheckboxGroup
           allValue={allValue}
           {...props}
@@ -125,7 +125,7 @@ const AssessAction = (props: AssessActionProps) => {
                   name={`outcome_attendance_maps[${index}].none_achieved`}
                   defaultValue={none_achieved || false}
                   control={control}
-                  render={(props) => (
+                  render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "none_achieved")} color="primary" />}
                       label={reportMiss("None Achieved", "assess_option_none_achieved")}
@@ -137,7 +137,7 @@ const AssessAction = (props: AssessActionProps) => {
                   name={`outcome_attendance_maps[${index}].skip`}
                   defaultValue={skip || false}
                   control={control}
-                  render={(props) => (
+                  render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
                       label={reportMiss("Not Attempted", "assess_option_not_attempted")}

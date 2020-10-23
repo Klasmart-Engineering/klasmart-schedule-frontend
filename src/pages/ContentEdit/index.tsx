@@ -42,8 +42,6 @@ interface RouteParams {
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
 
-type contentFileType = "image" | "video" | "audio" | "document";
-
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
@@ -70,17 +68,10 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
   readonly: rightside.includes("Preview"),
 });
 
-const type2File = {
-  image: ContentType.image,
-  video: ContentType.video,
-  audio: ContentType.audio,
-  document: ContentType.doc,
-};
-
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  const { reset, handleSubmit, control, getValues, setValue, watch, errors } = formMethods;
+  const { reset, handleSubmit, control, setValue, watch, errors } = formMethods;
   const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
     RootState,
     RootState["content"]
@@ -92,7 +83,6 @@ export default function ContentEdit() {
   const [outcomePage, setOutcomePage] = React.useState(1);
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
-  const [assetsFileType, setAssetsFileType] = React.useState<contentFileType>("image");
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
   const { program: programId = "", developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
   const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
@@ -206,12 +196,6 @@ export default function ContentEdit() {
     back ? history.push(back) : history.goBack();
   }, [back, history]);
 
-  const handleChangeFile = (type: contentFileType) => {
-    const formValues: object = getValues();
-    reset(ModelContentDetailForm.decode({ ...formValues, data: "" }));
-    setAssetsFileType(type);
-  };
-
   const handleChangePage = useMemo(
     () => (page: number) => {
       setMediaPage(page);
@@ -259,16 +243,6 @@ export default function ContentEdit() {
     [setValue]
   );
 
-  // const handleH5pChange = useMemo(
-  //   () => (value: ContentH5pProps["value"]) => {
-  //     console.log("h5pValue=", value);
-  //     setValue("source_type", value.source_type, { shouldDirty: true });
-  //     setValue("data.source", value.contentId, { shouldDirty: true });
-  //   },
-  //   [setValue]
-  // );
-  // console.log(watch());
-
   const handleChangeProgram = useMemo(
     () => (programId: string) => {
       ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
@@ -282,10 +256,6 @@ export default function ContentEdit() {
   useEffect(() => {
     // 编辑表单时 加载完 contentDetial 的逻辑
     reset(ModelContentDetailForm.decode(contentDetail));
-    if (lesson === "assets")
-      Object.getOwnPropertyNames(type2File).forEach((key: string) => {
-        if (contentDetail.content_type === type2File[key as contentFileType]) setAssetsFileType(key as contentFileType);
-      });
   }, [contentDetail, lesson, reset]);
   useEffect(() => {
     // 新建表单时，加载完 mockOptions 的逻辑
@@ -306,8 +276,6 @@ export default function ContentEdit() {
       <AssetDetails
         formMethods={formMethods}
         flattenedMockOptions={flattenedMockOptions}
-        fileType={assetsFileType}
-        handleChangeFile={handleChangeFile}
         contentDetail={contentDetail}
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
@@ -366,7 +334,6 @@ export default function ContentEdit() {
               name="data.source"
               defaultValue={h5pSource}
               control={control}
-              // defaultValue={{ 'data.source': h5pSource, source_type: contentDetail.source_type }}
               render={({ value: valueSource, onChange: onChangeSource }: any) => (
                 <Controller
                   name="source_type"

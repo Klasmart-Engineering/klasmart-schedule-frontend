@@ -83,7 +83,7 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
         defaultValue={defaultValue}
         rules={{ required: true }}
         error={errors.attendance_ids}
-        render={(props) => {
+        render={(props: any) => {
           return (
             <CheckboxGroup
               {...props}

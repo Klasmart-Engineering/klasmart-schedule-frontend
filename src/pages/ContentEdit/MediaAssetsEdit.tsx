@@ -162,13 +162,13 @@ function AssetEdit(props: AssetEditProps) {
             name="data.source"
             control={formMethods.control}
             defaultValue={JSON.parse(contentDetail.data || "{}")}
-            render={(props) => (
+            render={(props: any) => (
               <SingleUploader
                 partition="assets"
                 onChangeFileType={handleChangeFileType}
                 accept={"image/*,audio/*,video/*"}
                 {...props}
-                render={({ uploady, item, btnRef, value, isUploading }) => (
+                render={({ item, btnRef, value, isUploading }) => (
                   <>
                     {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
                       <>

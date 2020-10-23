@@ -74,8 +74,6 @@ function AssetsDetails(props: AssetDetailsProps) {
   const {
     formMethods: { control, errors },
     flattenedMockOptions,
-    handleChangeFile,
-    fileType,
     contentDetail,
     onChangeProgram,
     onChangeDevelopmental,
@@ -104,10 +102,6 @@ function AssetsDetails(props: AssetDetailsProps) {
       </MenuItem>
     ));
 
-  const handleTopicListChange = (event: React.ChangeEvent<{ value: String }>, name: string) => {
-    handleChangeFile(event.target.value as "image" | "video" | "audio" | "document");
-  };
-
   const errorValidator = (filed: (FieldError | undefined)[] | FieldError | undefined): boolean => {
     return filed ? true : false;
   };
@@ -119,21 +113,6 @@ function AssetsDetails(props: AssetDetailsProps) {
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
-        {false && (
-          <TextField
-            label="Asset Type"
-            required
-            value={fileType}
-            onChange={(e) => handleTopicListChange(e, "fileType")}
-            disabled={isIdExist()}
-            select
-          >
-            <MenuItem value="image">{d("Image").t("library_label_image")}</MenuItem>
-            <MenuItem value="video">{d("Video").t("library_label_video")}</MenuItem>
-            <MenuItem value="audio">{d("Audio").t("library_label_audio")}</MenuItem>
-            <MenuItem value="document">{d("Document").t("library_label_document")}</MenuItem>
-          </TextField>
-        )}
         <Controller
           as={TextField}
           control={control}
@@ -149,7 +128,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           name="thumbnail"
           defaultValue={contentDetail.thumbnail}
           control={control}
-          render={(props) => (
+          render={(props: any) => (
             <CropImage
               render={({ crop }) => (
                 <SingleUploader
@@ -186,7 +165,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           defaultValue={contentDetail.program}
           control={control}
           rules={{ required: true }}
-          render={(props) => (
+          render={(props: any) => (
             <TextField
               select
               className={css.fieldset}
@@ -224,7 +203,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.developmental}
             control={control}
             rules={{ required: true }}
-            render={(props) => (
+            render={(props: any) => (
               <FormattedTextField
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
@@ -324,21 +303,17 @@ function AssetsDetails(props: AssetDetailsProps) {
 interface AssetDetailsProps {
   formMethods: UseFormMethods<ContentDetailForm>;
   flattenedMockOptions: FlattenedMockOptions;
-  fileType: "image" | "video" | "audio" | "document";
-  handleChangeFile: (type: "image" | "video" | "audio" | "document") => void;
   contentDetail: EntityContentInfoWithDetails;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
 }
 
 export default function AssetDetails(props: AssetDetailsProps) {
-  const { formMethods, flattenedMockOptions, fileType, handleChangeFile, contentDetail, onChangeDevelopmental, onChangeProgram } = props;
+  const { formMethods, flattenedMockOptions, contentDetail, onChangeDevelopmental, onChangeProgram } = props;
   return (
     <AssetsDetails
       formMethods={formMethods}
       flattenedMockOptions={flattenedMockOptions}
-      fileType={fileType}
-      handleChangeFile={handleChangeFile}
       contentDetail={contentDetail}
       onChangeProgram={onChangeProgram}
       onChangeDevelopmental={onChangeDevelopmental}
