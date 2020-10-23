@@ -99,7 +99,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
       scope: PublishScope.organization,
     });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
-    onChange({ content_type, order_by: OrderBy._updated_at, page: 1 });
+    onChange({ content_type, order_by: OrderBy._updated_at, page: 1, scope: "default" });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
