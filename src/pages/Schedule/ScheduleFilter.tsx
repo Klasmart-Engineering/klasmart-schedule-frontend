@@ -6,6 +6,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
+import clsx from "clsx";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -20,7 +21,6 @@ const useStyles = makeStyles(({ shadows }) =>
     fliterRowSpan: {
       marginTop: "10px",
       float: "left",
-      fontWeight: 500,
     },
     fliterRowChange: {
       float: "right",
@@ -50,7 +50,7 @@ const useStyles = makeStyles(({ shadows }) =>
 
 function FilterTemplate(props: FilterProps) {
   const css = useStyles();
-  const { flattenedMockOptions } = props;
+  const { flattenedMockOptions, handleChangeLoadScheduleView } = props;
 
   const [activeStatus, setActiveStatus] = React.useState({
     Schools: false,
@@ -58,6 +58,16 @@ function FilterTemplate(props: FilterProps) {
     Classes: false,
     Subjects: false,
     Programs: false,
+  });
+
+  const [activeAll, setActiveAll] = React.useState<boolean>(true);
+
+  const [activeGather, setActiveGather] = React.useState<any>({
+    Schools: [],
+    Teacher: [],
+    Classes: [],
+    Subjects: [],
+    Programs: [],
   });
 
   const filterGather = [
@@ -72,25 +82,57 @@ function FilterTemplate(props: FilterProps) {
     setActiveStatus({ ...activeStatus, [type]: !activeStatus[type] });
   };
 
-  const activeGather: string[] = [];
-
-  const checkGather = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
-    if (event.target.checked) {
-      activeGather.push(id);
+  const checkGather = (event: React.ChangeEvent<HTMLInputElement>, id: string, group: string) => {
+    if (event.target.checked && activeGather[group].indexOf(id) < 0) {
+      activeGather[group].push(id);
     } else {
-      activeGather.splice(activeGather.indexOf(id), 1);
+      activeGather[group].splice(activeGather[group].indexOf(id), 1);
     }
+    const filterQuery: any = {
+      org_ids: getConnectionStr(activeGather.Schools),
+      teacher_ids: getConnectionStr(activeGather.Teacher),
+      class_ids: getConnectionStr(activeGather.Classes),
+      subject_ids: getConnectionStr(activeGather.Subjects),
+      program_ids: getConnectionStr(activeGather.Programs),
+    };
+    handleChangeLoadScheduleView(filterQuery);
+    setActiveGather(activeGather);
+    setActiveAll(false);
   };
 
-  const checkExist = (id: string) => {
-    return activeGather.indexOf(id) > -1;
+  const getConnectionStr = (item: []) => {
+    let str = "";
+    item.forEach((val: string, key: number) => {
+      str = `${str},${val}`;
+    });
+    return str.substr(1);
+  };
+
+  const handleActiveAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setActiveAll(event.target.checked);
+    const filterQuery: any = {
+      org_ids: getConnectionStr(activeGather.Schools),
+      teacher_ids: getConnectionStr(activeGather.Teacher),
+      class_ids: getConnectionStr(activeGather.Classes),
+      subject_ids: getConnectionStr(activeGather.Subjects),
+      program_ids: getConnectionStr(activeGather.Programs),
+    };
+    handleChangeLoadScheduleView(event.target.checked ? [] : filterQuery);
   };
 
   return (
     <Grid container spacing={2} className={css.fliterRouter}>
       <Grid item xs={12}>
-        <span className={css.fliterRowSpan}>All My Schedule</span>
-        <Checkbox color="primary" inputProps={{ "aria-label": "secondary checkbox" }} className={css.fliterRowChange} />
+        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>All My Schedule</span>
+        <Checkbox
+          color="primary"
+          inputProps={{ "aria-label": "secondary checkbox" }}
+          className={css.fliterRowChange}
+          checked={activeAll}
+          onChange={(e) => {
+            handleActiveAll(e);
+          }}
+        />
       </Grid>
       {filterGather.map((gather: any, index: number) => (
         <Grid
@@ -114,9 +156,8 @@ function FilterTemplate(props: FilterProps) {
                 inputProps={{ "aria-label": "secondary checkbox" }}
                 className={css.fliterRowChange}
                 onChange={(e) => {
-                  checkGather(e, item.id);
+                  checkGather(e, item.id, gather.name);
                 }}
-                checked={checkExist(item.id)}
               />
             </div>
           ))}
@@ -133,9 +174,10 @@ function FilterTemplate(props: FilterProps) {
 
 interface FilterProps {
   flattenedMockOptions: FlattenedMockOptions;
+  handleChangeLoadScheduleView: (query: []) => void;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
-  const { flattenedMockOptions } = props;
-  return <FilterTemplate flattenedMockOptions={flattenedMockOptions} />;
+  const { flattenedMockOptions, handleChangeLoadScheduleView } = props;
+  return <FilterTemplate flattenedMockOptions={flattenedMockOptions} handleChangeLoadScheduleView={handleChangeLoadScheduleView} />;
 }
