@@ -81,8 +81,8 @@ const useStyles = makeStyles(({ shadows }) => ({
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp, flattenedMockOptions } = props;
-
+  const { timesTamp, changeTimesTamp, modelView, flattenedMockOptions } = props;
+  const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
   const handleDateChange = (date: Date | null) => {
@@ -90,6 +90,18 @@ function SmallCalendar(props: CalendarStateProps) {
       start: getTimestamp(date),
       end: getTimestamp(date),
     });
+  };
+
+  const handleChangeLoadScheduleView = (query: []) => {
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start,
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+        metaLoading: true,
+        ...query,
+      })
+    );
   };
 
   const css = useStyles();
@@ -100,7 +112,7 @@ function SmallCalendar(props: CalendarStateProps) {
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
-        <ScheduleFilter flattenedMockOptions={flattenedMockOptions} />
+        <ScheduleFilter flattenedMockOptions={flattenedMockOptions} handleChangeLoadScheduleView={handleChangeLoadScheduleView} />
       </MuiPickersUtilsProvider>
     </Box>
   );
