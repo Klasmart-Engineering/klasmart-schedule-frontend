@@ -23,7 +23,7 @@ const useStyles = makeStyles(({ shadows }) =>
       float: "left",
     },
     fliterRowChange: {
-      float: "right",
+      float: "left",
     },
     fliterRowDivChild: {
       maxHeight: "46px",
@@ -31,19 +31,24 @@ const useStyles = makeStyles(({ shadows }) =>
       overflow: "hidden",
     },
     fliterDivChild: {
-      paddingLeft: "10px",
+      paddingLeft: "20px",
       marginTop: "6px",
       height: "36px",
     },
     filterArrow: {
-      float: "right",
-      marginRight: "10px",
+      float: "left",
+      marginRight: "8px",
       cursor: "pointer",
     },
     emptyFliterRowSpan: {
       marginTop: "10px",
       float: "left",
       fontSize: "14px",
+      marginLeft: "30px",
+    },
+    disabledFliterRowSpan: {
+      color: "#cccccc",
+      cursor: "not-allowed",
     },
   })
 );
@@ -71,14 +76,21 @@ function FilterTemplate(props: FilterProps) {
   });
 
   const filterGather = [
-    { name: "Schools", child: [] },
+    {
+      name: "Schools",
+      child: [
+        { id: "School-1", name: "School-1" },
+        { id: "School-2", name: "School-2" },
+      ],
+    },
     { name: "Teacher", child: flattenedMockOptions.teachers },
     { name: "Classes", child: flattenedMockOptions.classes },
-    { name: "Subjects", child: flattenedMockOptions.subject },
     { name: "Programs", child: flattenedMockOptions.program },
+    { name: "Subjects", child: flattenedMockOptions.subject },
   ];
 
   const changeFilterRow = (type: FilterType) => {
+    if (isDisabledFliterRowSpan(type)) return;
     setActiveStatus({ ...activeStatus, [type]: !activeStatus[type] });
   };
 
@@ -98,6 +110,9 @@ function FilterTemplate(props: FilterProps) {
     handleChangeLoadScheduleView(filterQuery);
     setActiveGather(activeGather);
     setActiveAll(false);
+    if (activeGather.Schools.length < 1) {
+      setActiveStatus({ ...activeStatus, Teacher: false, Classes: false });
+    } else if (activeGather.Programs.length < 1) setActiveStatus({ ...activeStatus, Subjects: false });
   };
 
   const getConnectionStr = (item: []) => {
@@ -120,10 +135,16 @@ function FilterTemplate(props: FilterProps) {
     handleChangeLoadScheduleView(event.target.checked ? [] : filterQuery);
   };
 
+  const isDisabledFliterRowSpan = (type: FilterType) => {
+    return (
+      (["Teacher", "Classes"].indexOf(type) > -1 && activeGather.Schools.length < 1) ||
+      ("Subjects" === type && activeGather.Programs.length < 1)
+    );
+  };
+
   return (
     <Grid container spacing={2} className={css.fliterRouter}>
-      <Grid item xs={12}>
-        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>All My Schedule</span>
+      <Grid item xs={12} style={{ paddingLeft: "0px" }}>
         <Checkbox
           color="primary"
           inputProps={{ "aria-label": "secondary checkbox" }}
@@ -133,24 +154,33 @@ function FilterTemplate(props: FilterProps) {
             handleActiveAll(e);
           }}
         />
+        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>All My Schedule</span>
       </Grid>
       {filterGather.map((gather: any, index: number) => (
         <Grid
           item
           xs={12}
           className={css.fliterRowDivChild}
-          style={{ maxHeight: activeStatus[gather.name as FilterType] ? "5000px" : "46px" }}
+          style={{
+            maxHeight: activeStatus[gather.name as FilterType] ? "5000px" : "46px",
+            paddingLeft: ["Teacher", "Classes", "Subjects"].indexOf(gather.name) > -1 ? "34px" : "8px",
+          }}
         >
-          <span className={css.fliterTitleSpan}>{gather.name}</span>
-          {!activeStatus[gather.name as FilterType] && (
-            <KeyboardArrowDownOutlinedIcon className={css.filterArrow} onClick={() => changeFilterRow(gather.name)} />
-          )}
-          {activeStatus[gather.name as FilterType] && (
-            <KeyboardArrowUpOutlinedIcon className={css.filterArrow} onClick={() => changeFilterRow(gather.name)} />
-          )}
+          <div className={isDisabledFliterRowSpan(gather.name) ? css.disabledFliterRowSpan : ""}>
+            {!activeStatus[gather.name as FilterType] && (
+              <KeyboardArrowDownOutlinedIcon
+                className={css.filterArrow}
+                style={{ cursor: isDisabledFliterRowSpan(gather.name) ? "not-allowed" : "pointer" }}
+                onClick={() => changeFilterRow(gather.name)}
+              />
+            )}
+            {activeStatus[gather.name as FilterType] && (
+              <KeyboardArrowUpOutlinedIcon className={css.filterArrow} onClick={() => changeFilterRow(gather.name)} />
+            )}
+            <span className={css.fliterTitleSpan}>{gather.name}</span>
+          </div>
           {gather.child.map((item: any, index: number) => (
             <div className={css.fliterDivChild}>
-              <span className={css.fliterRowSpan}>{item.name}</span>
               <Checkbox
                 color="primary"
                 inputProps={{ "aria-label": "secondary checkbox" }}
@@ -159,6 +189,7 @@ function FilterTemplate(props: FilterProps) {
                   checkGather(e, item.id, gather.name);
                 }}
               />
+              <span className={css.fliterRowSpan}>{item.name}</span>
             </div>
           ))}
           {gather.child.length === 0 && (
