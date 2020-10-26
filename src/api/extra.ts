@@ -63,7 +63,7 @@ export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: str
     const class_ids = mockOptions.teacher_class_relationship.filter(
       (item: MockOptionsItemTeacherAndClass) => item.teacher_id === teacher_id
     )[0].class_ids;
-    class_ids.map((item: any) => {
+    class_ids.map((item: string) => {
       return mockOptions.classes.forEach((item1: MockOptionsItem) => {
         if (item1.id === item) return item1;
       });
