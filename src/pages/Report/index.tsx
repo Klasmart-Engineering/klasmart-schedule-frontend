@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import BriefIntroduction from "./BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -31,6 +32,7 @@ export default function Report() {
     <>
       <FirstSearchHeader value={condition} onChange={handleChange} />
       <FirstSearchHeaderMb value={condition} onChange={handleChange} />
+      <BriefIntroduction />
     </>
   );
 }

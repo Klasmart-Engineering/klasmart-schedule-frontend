@@ -70,6 +70,7 @@ const initialState: ScheduleState = {
     teachers: [],
     students: [],
     users: [],
+    teacher_class_relationship: [],
   },
   errorLable: "",
 };

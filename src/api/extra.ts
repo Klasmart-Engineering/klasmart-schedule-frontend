@@ -7,6 +7,11 @@ export interface MockOptionsItem {
   name: string;
 }
 
+export interface MockOptionsItemTeacherAndClass {
+  teacher_id: string;
+  class_ids: string[];
+}
+
 export interface MockOptionsOptionsDevelopmentalItem extends MockOptionsItem {
   skills: MockOptionsItem[];
 }
@@ -29,6 +34,7 @@ export interface MockOptions {
   teachers: MockOptionsItem[];
   students: MockOptionsItem[];
   users: MockOptionsItem[];
+  teacher_class_relationship: MockOptionsItemTeacherAndClass[];
 }
 
 export const apiResourcePathById = (resource_id?: string) => {
@@ -50,4 +56,17 @@ export const apiLivePath = (token: string) => {
   // 地址修改后需要再改
   const cl = hostname.split(".").pop() === "net" ? "/class-live/" : "";
   return `https://live.kidsloop.${lastDomainDotName}${cl}?token=${token}`;
+};
+
+export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: string) => {
+  if (mockOptions.teacher_class_relationship.length) {
+    const class_ids = mockOptions.teacher_class_relationship.filter(
+      (item: MockOptionsItemTeacherAndClass) => item.teacher_id === teacher_id
+    )[0].class_ids;
+    class_ids.map((item: any) => {
+      return mockOptions.classes.forEach((item1: MockOptionsItem) => {
+        if (item1.id === item) return item1;
+      });
+    });
+  }
 };
