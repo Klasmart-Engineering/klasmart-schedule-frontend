@@ -16,6 +16,7 @@ import MyContentList from "./pages/MyContentList/index";
 import { default as CreateOutcome, default as CreateOutcomings } from "./pages/OutcomeEdit";
 import { OutcomeList } from "./pages/OutcomeList";
 import Preview from "./pages/Preview";
+import Report from "./pages/Report";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
 import theme from "./theme";
@@ -65,6 +66,9 @@ function App() {
                 </Route>
                 <Route path={Live.routeBasePath}>
                   <Live />
+                </Route>
+                <Route path={Report.routeBasePath}>
+                  <Report />
                 </Route>
                 <Route path="/">
                   <Redirect to={MyContentList.routeRedirectDefault} />
