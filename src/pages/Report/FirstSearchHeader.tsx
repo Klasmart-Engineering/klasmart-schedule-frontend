@@ -3,12 +3,11 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import { PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
-import { PendingBlueIcon, PendingIcon } from "../OutcomeList/Icons";
+import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -92,14 +91,14 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Button
                 onClick={createHandleClick(Category.archived)}
                 className={clsx(css.nav, { [css.actives]: value?.category === Category.archived })}
-                startIcon={<PublishOutlined />}
+                startIcon={value?.category === Category.archived ? <SaBlueIcon /> : <SaIcon />}
               >
                 {reportMiss("Student Archievement", "report_label_student_archievement")}
               </Button>
               <Button
                 onClick={createHandleClick(Category.learningOutcomes)}
                 className={clsx(css.nav, { [css.actives]: value?.category === Category.learningOutcomes })}
-                startIcon={value?.category === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
+                startIcon={value?.category === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
               >
                 {reportMiss("Learning Outcomes In Categories", "report_label_learning_outcomes_in_categories")}
               </Button>
