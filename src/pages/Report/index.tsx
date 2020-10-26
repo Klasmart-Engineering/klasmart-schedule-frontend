@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { setQuery } from "../../models/ModelContentDetailForm";
 import BriefIntroduction from "./BriefIntroduction";
+import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -14,7 +16,12 @@ const useQuery = () => {
   return useMemo(() => {
     const query = new URLSearchParams(search);
     const category = query.get("category");
-    return clearNull({ category });
+    const teacher = query.get("teacher");
+    const class_search = query.get("class");
+    const lesson_plan = query.get("lesson_plan");
+    const filter = query.get("filter");
+    const order_by = query.get("order_by");
+    return clearNull({ category, teacher, class_search, lesson_plan, filter, order_by });
   }, [search]);
 };
 
@@ -28,10 +35,15 @@ export default function Report() {
   const history = useHistory();
 
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
+  const handleChangefilter: FilterAchievementReportProps["onChange"] = (e, tab) => {
+    const value = e.target.value;
+    history.push({ search: setQuery(history.location.search, { [tab]: value }) });
+  };
   return (
     <>
       <FirstSearchHeader value={condition} onChange={handleChange} />
       <FirstSearchHeaderMb value={condition} onChange={handleChange} />
+      <FilterAchievementReport value={condition} onChange={handleChangefilter}></FilterAchievementReport>      
       <BriefIntroduction />
     </>
   );

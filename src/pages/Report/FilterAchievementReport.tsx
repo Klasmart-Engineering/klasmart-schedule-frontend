@@ -1,15 +1,23 @@
-import { Box, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
+import { Box, makeStyles, MenuItem, TextField } from "@material-ui/core";
+import clsx from "clsx";
 import React from "react";
 import { MockOptionsItem } from "../../api/extra";
+import LayoutBox from "../../components/LayoutBox";
+import { sortOptions } from "../MyContentList/ThirdSearchHeader";
+import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows }) => ({
   selectButton: {
-    width: 160,
+    width: 200,
     marginBotton: 20,
     backgroundColor: "white",
     borderRadius: 4,
     boxShadow: shadows[3],
     color: palette.text.primary,
+    marginRight: 20,
+  },
+  lastButton: {
+    marginRight: 0,
   },
 }));
 
@@ -32,11 +40,14 @@ const lesson_plans = [
   { id: "4", name: "Lesson 4" },
 ];
 
-interface FilterAchievementReportProps {
-  handleChangefilter: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: string) => any;
+export interface FilterAchievementReportProps {
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: string) => any;
+  lesson_plan?: string;
+  filter?: string;
+  value: QueryCondition;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { handleChangefilter } = props;
+  const { onChange, value } = props;
   const css = useStyles();
   const GetFilterOptions = (list: MockOptionsItem[]) =>
     list.map((item) => (
@@ -44,23 +55,24 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
         {item.name}
       </MenuItem>
     ));
-  // const orderbyOptions = sortOptions().map((item) => (
-  //   <MenuItem key={item.label} value={item.value}>
-  //     {item.label}
-  //   </MenuItem>
-  // ));
+  const orderbyOptions = sortOptions().map((item) => (
+    <MenuItem key={item.label} value={item.value}>
+      {item.label}
+    </MenuItem>
+  ));
   const handleChangeOrder = () => {};
 
   return (
-    <Box>
-      <Grid container spacing={3} alignItems="center">
-        <Grid item>
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+      <Box display="flex">
+        <Box flex={2}>
           <TextField
             style={{ width: 200 }}
             size="small"
-            onChange={(e) => handleChangefilter(e, "teacher")}
+            className={css.selectButton}
+            onChange={(e) => onChange(e, "teacher")}
             label="Teacher"
-            value=""
+            value={value.teacher}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
@@ -69,9 +81,10 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
           <TextField
             style={{ width: 200 }}
             size="small"
-            onChange={(e) => handleChangefilter(e, "class")}
+            className={css.selectButton}
+            onChange={(e) => onChange(e, "class_search")}
             label="Class"
-            value=""
+            value={value.class_search}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
@@ -80,29 +93,44 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
           <TextField
             style={{ width: 200 }}
             size="small"
-            onChange={(e) => handleChangefilter(e, "lesson_plan")}
-            label="lesson_plan"
-            value=""
+            className={css.selectButton}
+            onChange={(e) => onChange(e, "lesson_plan")}
+            label="Lesson Plan"
+            value={value.lesson_plan}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
             {GetFilterOptions(lesson_plans)}
           </TextField>
-        </Grid>
-        <Grid direction="row" justify="flex-end" alignItems="center" item>
+        </Box>
+        <Box flex={1} display="flex" justifyContent="flex-end">
           <TextField
             size="small"
             className={css.selectButton}
+            onChange={(e) => onChange(e, "filter")}
+            value={value.filter}
+            select
+            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+          >
+            <MenuItem value="All Achieved">All Achieved</MenuItem>
+            <MenuItem value="Non Achieved">Non Achieved</MenuItem>
+            <MenuItem value="Not Attempted">Not Attempted</MenuItem>
+            <MenuItem value="All">All</MenuItem>
+          </TextField>
+
+          <TextField
+            size="small"
+            className={clsx(css.selectButton, css.lastButton)}
             onChange={handleChangeOrder}
             label="Displaying Order"
             value=""
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
-            {/* {orderbyOptions} */}
+            {orderbyOptions}
           </TextField>
-        </Grid>
-      </Grid>
-    </Box>
+        </Box>
+      </Box>
+    </LayoutBox>
   );
 }
