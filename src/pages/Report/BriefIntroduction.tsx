@@ -1,8 +1,10 @@
 import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
+import { MockOptions } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { d, reportMiss } from "../../locale/LocaleManager";
+import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
@@ -63,15 +65,22 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-export default function BriefIntroduction() {
+interface BriefIntroductionProps {
+  value: QueryCondition;
+  mockOptions: MockOptions;
+}
+
+export default function BriefIntroduction(props: BriefIntroductionProps) {
+  const { value } = props;
   const css = useStyles();
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Divider className={css.divider} />
       <Box className={css.container_intro}>
         <Box className={css.leftName}>
-          <span className={css.teacherAndClass}>Teacher 1 - Class 1 - </span>
-          <span className={css.lessonPlan}>Lesson plan 1</span>
+          {value.teacher && <span className={css.teacherAndClass}>{"Teacher " + value.teacher} - </span>}
+          {value.class_search && <span className={css.teacherAndClass}>{"Class " + value.class_search} - </span>}
+          {value.lesson_plain_id && <span className={css.lessonPlan}>{"Lesson Plan " + value.lesson_plain_id}</span>}
           <span className={css.teacherAndClass}> - Student 1</span>
         </Box>
         <Box className={css.rightContainer}>

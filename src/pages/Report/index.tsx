@@ -60,7 +60,7 @@ export default function Report() {
         mockOptions={mockOptions}
         onChangeMb={handleChangeMbFilter}
       ></FilterAchievementReport>
-      <BriefIntroduction />
+      <BriefIntroduction value={condition} mockOptions={mockOptions} />
     </>
   );
 }
