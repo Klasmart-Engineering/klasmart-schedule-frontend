@@ -162,6 +162,7 @@ function ScheduleContent() {
               handleChangeProgramId={handleChangeProgramId}
               toLive={toLive}
               changeModalDate={changeModalDate}
+              mockOptions={mockOptions.options}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
