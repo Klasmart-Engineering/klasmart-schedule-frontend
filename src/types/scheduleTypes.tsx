@@ -77,6 +77,12 @@ export interface AlertDialogProps {
 export interface ScheduleFilterProps {
   name: FilterType;
   child: MockOptionsItem[];
+  label:
+    | "schedule_filter_schools"
+    | "schedule_filter_teachers"
+    | "schedule_filter_classes"
+    | "schedule_filter_programs"
+    | "schedule_filter_subjects";
 }
 
 export interface FilterQueryTypeProps {

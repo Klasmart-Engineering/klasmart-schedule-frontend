@@ -8,6 +8,7 @@ import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
 import clsx from "clsx";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
+import { d, t } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -81,15 +82,16 @@ function FilterTemplate(props: FilterProps) {
   const filterGather: ScheduleFilterProps[] = [
     {
       name: "Schools",
+      label: "schedule_filter_schools",
       child: [
         { id: "School-1", name: "School-1" },
         { id: "School-2", name: "School-2" },
       ],
     },
-    { name: "Teacher", child: flattenedMockOptions.teachers },
-    { name: "Classes", child: flattenedMockOptions.classes },
-    { name: "Programs", child: flattenedMockOptions.program },
-    { name: "Subjects", child: subject },
+    { name: "Teacher", label: "schedule_filter_teachers", child: flattenedMockOptions.teachers },
+    { name: "Classes", label: "schedule_filter_classes", child: flattenedMockOptions.classes },
+    { name: "Programs", label: "schedule_filter_programs", child: flattenedMockOptions.program },
+    { name: "Subjects", label: "schedule_filter_subjects", child: subject },
   ];
 
   const changeFilterRow = (type: FilterType) => {
@@ -165,7 +167,7 @@ function FilterTemplate(props: FilterProps) {
             handleActiveAll(e);
           }}
         />
-        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>All My Schedule</span>
+        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>{d("All My Schedule").t("scheudule_filter_all_my_schedule")}</span>
       </Grid>
       {filterGather.map((gather: ScheduleFilterProps) => (
         <Grid
@@ -188,7 +190,7 @@ function FilterTemplate(props: FilterProps) {
             {activeStatus[gather.name] && (
               <KeyboardArrowUpOutlinedIcon className={css.filterArrow} onClick={() => changeFilterRow(gather.name)} />
             )}
-            <span className={css.fliterTitleSpan}>{gather.name}</span>
+            <span className={css.fliterTitleSpan}>{t(gather.label)}</span>
           </div>
           {gather.child.map((item: MockOptionsItem) => (
             <div className={css.fliterDivChild}>
@@ -205,7 +207,7 @@ function FilterTemplate(props: FilterProps) {
           ))}
           {gather.child.length === 0 && (
             <div className={css.fliterDivChild}>
-              <span className={css.emptyFliterRowSpan}>No Data</span>
+              <span className={css.emptyFliterRowSpan}>{d("No Data").t("schedule_filter_no_data")}</span>
             </div>
           )}
         </Grid>
