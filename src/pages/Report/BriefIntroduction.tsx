@@ -2,7 +2,7 @@ import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
@@ -85,7 +85,7 @@ export default function BriefIntroduction() {
           </Box>
           <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.gray)}></div>
-            <span>{reportMiss("Not Attempted", "not_attempted")}</span>
+            <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
           </Box>
         </Box>
       </Box>
