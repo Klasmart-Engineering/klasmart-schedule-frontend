@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { apiFetchClassByTeacher } from "../../api/extra";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { onloadReport } from "../../reducers/report";
@@ -38,10 +39,16 @@ export default function Report() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { mockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = (e, tab) => {
     const value = e.target.value;
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });
+    if (tab === "teacher") {
+      const classlist = apiFetchClassByTeacher(mockOptions, value);
+      const first_class_id = (classlist && classlist[0] && classlist[0].id) || "";
+      history.push({ search: setQuery(history.location.search, { class_search: first_class_id }) });
+    }
   };
   const handleChangeMbFilter: FilterAchievementReportProps["onChangeMb"] = (e, value, tab) => {
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });

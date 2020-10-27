@@ -1,5 +1,5 @@
 import { UseFormMethods } from "react-hook-form";
-import { MockOptions, MockOptionsItem, MockOptionsOptionsItem } from "../api/extra";
+import { apiFetchClassByTeacher, MockOptions, MockOptionsItem, MockOptionsOptionsItem } from "../api/extra";
 
 interface ToFlattenPropsInput {
   programId: string;
@@ -20,6 +20,11 @@ export interface FlattenedMockOptionsOnlyOption extends Omit<MockOptionsOptionsI
 export type GetOnlyOneOptionValueResult = {
   [Key in keyof FlattenedMockOptionsOnlyOption]?: MockOptionsItem["id"][];
 };
+
+interface GetReportFirstValueResult {
+  first_teacher_id: string;
+  first_class_id: string;
+}
 
 export class ModelMockOptions {
   static toFlatten(input: ToFlattenPropsInput, mockOptions: MockOptions): FlattenedMockOptions {
@@ -84,5 +89,15 @@ export class ModelMockOptions {
       result[name] = flattenedMockOptions[name].map((item) => item.id);
       return result;
     }, {} as GetOnlyOneOptionValueResult);
+  }
+
+  static getReportFirstValue(mockOptions: MockOptions): GetReportFirstValueResult {
+    if (mockOptions.teacher_class_relationship.length) {
+      const first_teacher_id = mockOptions.teacher_class_relationship[0].teacher_id;
+      const classlist = apiFetchClassByTeacher(mockOptions, first_teacher_id);
+      const first_class_id = (classlist && classlist[0] && classlist[0].id) || "";
+      return { first_teacher_id, first_class_id };
+    }
+    return { first_teacher_id: "", first_class_id: "" };
   }
 }

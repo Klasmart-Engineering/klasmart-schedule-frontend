@@ -4,12 +4,10 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
-import React from "react";
-import { MockOptions, MockOptionsItem } from "../../api/extra";
-import { OrderBy } from "../../api/type";
+import React, { forwardRef } from "react";
+import { apiFetchClassByTeacher, MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
-import { d } from "../../locale/LocaleManager";
-import { QueryCondition, ReportFilter } from "./types";
+import { QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -46,12 +44,6 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   },
 }));
 
-const classs = [
-  { id: "1", name: "Class1" },
-  { id: "2", name: "Class2" },
-  { id: "3", name: "Class3" },
-  { id: "4", name: "Class4" },
-];
 const lesson_plans = [
   { id: "1", name: "Lesson 1" },
   { id: "2", name: "Lesson 2" },
@@ -60,21 +52,38 @@ const lesson_plans = [
 ];
 
 export const filter = () => [
-  { label: "All Achieved", value: ReportFilter.all_achieved },
-  { label: "Non Achieved", value: ReportFilter.non_achieved },
-  { label: "Not Attempted", value: ReportFilter.not_attempted },
-  { label: "All ", value: ReportFilter.all },
+  { name: "All Achieved", id: ReportFilter.all_achieved },
+  { name: "Non Achieved", id: ReportFilter.non_achieved },
+  { name: "Not Attempted", id: ReportFilter.not_attempted },
+  { name: "All ", id: ReportFilter.all },
 ];
 const sortOptions = () => [
-  { label: d("Content Name(A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
-  { label: d("Content Name(Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
-  { label: d("Created On(New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
-  { label: d("Created On(Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.updated_at },
+  { name: "Ascending", id: ReportOrderBy.ascending },
+  { name: "Descending", id: ReportOrderBy.descending },
 ];
 interface OptiopsItem {
-  label: string;
-  value: string;
+  name: string;
+  id: string;
 }
+interface GetMenuItemProps {
+  list: OptiopsItem[];
+  value: QueryCondition;
+  onChangeMenu: (e: React.MouseEvent, value: string, tab: string) => any;
+  tab: keyof QueryCondition;
+}
+const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((props, ref) => {
+  const { list, value, onChangeMenu, tab } = props;
+  return (
+    <>
+      {" "}
+      {list.map((item) => (
+        <MenuItem key={item.id} selected={value[tab] === item.id} onClick={(e) => onChangeMenu(e, item.id, tab)}>
+          {item.name}
+        </MenuItem>
+      ))}
+    </>
+  );
+});
 export interface FilterAchievementReportProps {
   value: QueryCondition;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: string) => any;
@@ -84,36 +93,41 @@ export interface FilterAchievementReportProps {
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const { onChange, value, mockOptions, onChangeMb } = props;
   const css = useStyles();
-  const GetFilterOptions = (list: MockOptionsItem[]) =>
+  const getOptions = (list: MockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
       </MenuItem>
     ));
-  const getOptions = (list: OptiopsItem[]) =>
-    list.map((item) => (
-      <MenuItem key={item.label} value={item.value}>
-        {item.label}
-      </MenuItem>
-    ));
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
-  const handleClose = () => {
-    setAnchorElLeft(null);
-  };
-  const showSort = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const showFilter = (event: any) => {
-    setAnchorElLeft(event.currentTarget);
-  };
+  const classs = (value.teacher && apiFetchClassByTeacher(mockOptions, value.teacher)) || [];
 
-  const handleChangeMenu = (e: React.MouseEvent, value: any, tab: string) => {
-    setAnchorEl(null);
-    onChangeMb(e, value, tab);
+  const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
+  const [anchorElFilter, setAnchorElFilter] = React.useState<null | HTMLElement>(null);
+  const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
+  const [anchorElClass, setAnchorElClass] = React.useState<null | HTMLElement>(null);
+  const [anchorElPlan, setAnchorElPlan] = React.useState<null | HTMLElement>(null);
+
+  const showItem = (event: any, tab: keyof QueryCondition) => {
+    if (tab === "teacher") setAnchorElTeacher(event.currentTarget);
+    if (tab === "class_search") setAnchorElClass(event.currentTarget);
+    if (tab === "lesson_plain_id") setAnchorElPlan(event.currentTarget);
+    if (tab === "filter") setAnchorElFilter(event.currentTarget);
+    if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
-  const handleSortClose = () => {
-    setAnchorEl(null);
+  const handleClose = (e: any, tab: keyof QueryCondition) => {
+    if (tab === "teacher") setAnchorElTeacher(null);
+    if (tab === "class_search") setAnchorElClass(null);
+    if (tab === "lesson_plain_id") setAnchorElPlan(null);
+    if (tab === "filter") setAnchorElFilter(null);
+    if (tab === "order_by") setAnchorElOrderBy(null);
+  };
+  const handleChangeMenu = (e: React.MouseEvent, value: any, tab: string) => {
+    if (tab === "teacher") setAnchorElTeacher(null);
+    if (tab === "class_search") setAnchorElClass(null);
+    if (tab === "lesson_plain_id") setAnchorElPlan(null);
+    if (tab === "filter") setAnchorElFilter(null);
+    if (tab === "order_by") setAnchorElOrderBy(null);
+    onChangeMb(e, value, tab);
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -129,7 +143,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {GetFilterOptions(mockOptions.teachers)}
+              {getOptions(mockOptions.teachers)}
             </TextField>
             <TextField
               size="small"
@@ -140,7 +154,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {GetFilterOptions(classs)}
+              {getOptions(classs)}
             </TextField>
             <TextField
               size="small"
@@ -151,7 +165,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {GetFilterOptions(lesson_plans)}
+              {getOptions(lesson_plans)}
             </TextField>
           </Box>
           <Box className={css.boxRight}>
@@ -183,34 +197,31 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       <Hidden mdUp>
         <Box display="flex">
           <Box flex={3}>
-            <PersonOutlinedIcon className={css.selectIcon} />
-            <PeopleOutlineOutlinedIcon className={css.selectIcon} />
-            <ClassOutlined className={css.selectIcon} />
-          </Box>
-          <Box flex={2} display="flex" justifyContent="flex-end">
-            <LocalBarOutlined className={css.selectIcon} onClick={showFilter} />
-            <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
-              {filter().map((item) => (
-                <MenuItem
-                  key={item.label}
-                  selected={value.filter === item.value}
-                  onClick={(e) => handleChangeMenu(e, item.value, "filter")}
-                >
-                  {item.label}
-                </MenuItem>
-              ))}
+            <PersonOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "teacher")} />
+            <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher")}>
+              <GetMenuItem list={mockOptions.teachers} value={value} onChangeMenu={handleChangeMenu} tab="teacher"></GetMenuItem>
             </Menu>
-            <ImportExportIcon onClick={showSort} />
-            <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleSortClose}>
-              {sortOptions().map((item) => (
-                <MenuItem
-                  key={item.label}
-                  selected={value.order_by === item.value}
-                  onClick={(e) => handleChangeMenu(e, item.value, "order_by")}
-                >
-                  {item.label}
-                </MenuItem>
-              ))}
+
+            <PeopleOutlineOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "class_search")} />
+            <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_search")}>
+              <GetMenuItem list={classs} value={value} onChangeMenu={handleChangeMenu} tab="class_search"></GetMenuItem>
+            </Menu>
+
+            <ClassOutlined className={css.selectIcon} onClick={(e) => showItem(e, "lesson_plain_id")} />
+            <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plain_id")}>
+              <GetMenuItem list={lesson_plans} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plain_id"></GetMenuItem>
+            </Menu>
+          </Box>
+
+          <Box flex={2} display="flex" justifyContent="flex-end">
+            <LocalBarOutlined className={css.selectIcon} onClick={(e) => showItem(e, "filter")} />
+            <Menu anchorEl={anchorElFilter} keepMounted open={Boolean(anchorElFilter)} onClose={(e) => handleClose(e, "filter")}>
+              <GetMenuItem list={filter()} value={value} onChangeMenu={handleChangeMenu} tab="filter"></GetMenuItem>
+            </Menu>
+
+            <ImportExportIcon onClick={(e) => showItem(e, "order_by")} />
+            <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "order_by")}>
+              <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="order_by"></GetMenuItem>
             </Menu>
           </Box>
         </Box>

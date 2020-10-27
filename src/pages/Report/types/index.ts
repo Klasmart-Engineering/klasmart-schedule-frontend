@@ -17,3 +17,7 @@ export enum ReportFilter {
   not_attempted = "not_attempted",
   all = "all",
 }
+export enum ReportOrderBy {
+  ascending = "ascending",
+  descending = "descending",
+}
