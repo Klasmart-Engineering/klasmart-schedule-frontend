@@ -2025,6 +2025,96 @@
         }
       }
     },
+    "/reports/students": {
+      "get": {
+        "description": "list student report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "list student report",
+        "operationId": "listStudentReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "lesson plain id",
+            "name": "lesson_plain_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentReportList"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/students/{id}": {
+      "get": {
+        "description": "get student report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "get student report",
+        "operationId": "getStudentReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "student id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentReportDetail"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules": {
       "get": {
         "description": "query schedule",
@@ -4010,6 +4100,71 @@
         },
         "version": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.StudentReportCategory": {
+      "type": "object",
+      "properties": {
+        "all_achieved_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "not_achieved_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_attempted_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.StudentReportDetail": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.StudentReportCategory"
+          }
+        }
+      }
+    },
+    "entity.StudentReportItem": {
+      "type": "object",
+      "properties": {
+        "all_achieved_count": {
+          "type": "integer"
+        },
+        "not_achieved_count": {
+          "type": "integer"
+        },
+        "not_attempted_count": {
+          "type": "integer"
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.StudentReportList": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.StudentReportItem"
+          }
         }
       }
     },

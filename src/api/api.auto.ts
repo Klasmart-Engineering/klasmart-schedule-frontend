@@ -503,6 +503,28 @@ export interface EntityScheduleUpdateView {
   version?: number;
 }
 
+export interface EntityStudentReportCategory {
+  all_achieved_items?: string[];
+  name?: string;
+  not_achieved_items?: string[];
+  not_attempted_items?: string[];
+}
+
+export interface EntityStudentReportDetail {
+  categories?: EntityStudentReportCategory[];
+}
+
+export interface EntityStudentReportItem {
+  all_achieved_count?: number;
+  not_achieved_count?: number;
+  not_attempted_count?: number;
+  student_name?: string;
+}
+
+export interface EntityStudentReportList {
+  items?: EntityStudentReportItem[];
+}
+
 export interface EntityUpdateAssessmentCommand {
   action?: "save" | "complete";
   attendance_ids?: string[];
@@ -1211,6 +1233,35 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/private_learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  reports = {
+    /**
+     * @tags reports
+     * @name listStudentReport
+     * @summary list student report
+     * @request GET:/reports/students
+     * @description list student report
+     */
+    listStudentReport: (query: { lesson_plain_id: string }, params?: RequestParams) =>
+      this.request<EntityStudentReportList, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/reports/students${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports
+     * @name getStudentReport
+     * @summary get student report
+     * @request GET:/reports/students/{id}
+     * @description get student report
+     */
+    getStudentReport: (id: string, params?: RequestParams) =>
+      this.request<EntityStudentReportDetail, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/reports/students/${id}`,
         "GET",
         params
       ),
