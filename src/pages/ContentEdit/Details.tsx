@@ -27,7 +27,7 @@ import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
-import { d, reportMiss, t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
@@ -401,7 +401,7 @@ export default function Details(props: DetailsProps) {
                     color="primary"
                   />
                 }
-                label={reportMiss("Suitable for self-study", "library_label_self_study")}
+                label={d("Suitable for Self Study").t("library_label_self_study")}
                 style={{
                   color: "rgba(0,0,0,0.6)",
                 }}
@@ -434,7 +434,7 @@ export default function Details(props: DetailsProps) {
                       color="primary"
                     />
                   }
-                  label={reportMiss("Drawing Activity", "library_label_draw_activity")}
+                  label={d("Drawing Activity").t("library_label_drawing_activity")}
                   style={{
                     color: "rgba(0,0,0,0.6)",
                   }}

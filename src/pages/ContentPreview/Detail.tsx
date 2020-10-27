@@ -195,7 +195,7 @@ export function Detail(props: ContentPreviewProps) {
               color="primary"
             />
           }
-          label={reportMiss("Suitable for self-study", "library_label_self_study")}
+          label={d("Suitable for Self Study").t("library_label_self_study")}
           style={{
             color: "rgba(0,0,0,0.6)",
           }}
