@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
@@ -93,14 +93,14 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 className={clsx(css.nav, { [css.actives]: value?.category === Category.archived })}
                 startIcon={value?.category === Category.archived ? <SaBlueIcon /> : <SaIcon />}
               >
-                {reportMiss("Student Archievement", "report_label_student_archievement")}
+                {d("Student Achievement").t("report_label_student_achievement")}
               </Button>
               <Button
                 onClick={createHandleClick(Category.learningOutcomes)}
                 className={clsx(css.nav, { [css.actives]: value?.category === Category.learningOutcomes })}
                 startIcon={value?.category === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
               >
-                {reportMiss("Learning Outcomes In Categories", "report_label_learning_outcomes_in_categories")}
+                {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
               </Button>
             </Grid>
           </Grid>
@@ -132,12 +132,12 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
               >
                 <Tab
                   value={Category.archived}
-                  label={reportMiss("Student Archievement", "report_label_student_archievement")}
+                  label={d("Student Achievement").t("report_label_student_achievement")}
                   className={classes.capitalize}
                 />
                 <Tab
                   value={Category.learningOutcomes}
-                  label={reportMiss("Learning Outcomes In Categories", "report_label_learning_outcomes_in_categories")}
+                  label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
                   className={classes.capitalize}
                 />
               </Tabs>
