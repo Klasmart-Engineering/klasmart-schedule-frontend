@@ -1,9 +1,9 @@
 import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import { MockOptions } from "../../api/extra";
+import { MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -65,32 +65,44 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
+function getSpecificName(mockOptions: MockOptions, type: string, id: string) {
+  if (type === "teacher" && mockOptions.teachers[0]) {
+    return mockOptions.teachers.filter((item: MockOptionsItem) => item.id === id)[0].name;
+  }
+  if (type === "class" && mockOptions.classes[0]) {
+    return mockOptions.classes.filter((item: MockOptionsItem) => item.id === id)[0].name;
+  }
+}
+
 interface BriefIntroductionProps {
   value: QueryCondition;
   mockOptions: MockOptions;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value } = props;
+  const { value, mockOptions } = props;
   const css = useStyles();
+
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Divider className={css.divider} />
       <Box className={css.container_intro}>
         <Box className={css.leftName}>
-          {value.teacher && <span className={css.teacherAndClass}>{"Teacher " + value.teacher} - </span>}
-          {value.class_search && <span className={css.teacherAndClass}>{"Class " + value.class_search} - </span>}
-          {value.lesson_plain_id && <span className={css.lessonPlan}>{"Lesson Plan " + value.lesson_plain_id}</span>}
-          <span className={css.teacherAndClass}> - Student 1</span>
+          {value.teacher && <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher) + " - "}</span>}
+          {value.class_search && <span className={css.teacherAndClass}>{"Class 1 - "} </span>}
+          {value.lesson_plain_id && <span className={css.lessonPlan}>{"Lesson Plan 1"}</span>}
+          {/* <span className={css.teacherAndClass}>{'- Student 1'}</span> */}
         </Box>
         <Box className={css.rightContainer}>
           <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.blue)}></div>
-            <span>{reportMiss("All Archieved", "all_archived")}</span>
+            <span>
+              {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
+            </span>
           </Box>
           <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.pink)}></div>
-            <span>{reportMiss("Non Archieved", "non_archived")}</span>
+            <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
           </Box>
           <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.gray)}></div>
