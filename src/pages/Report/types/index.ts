@@ -2,7 +2,7 @@ export type QueryCondition = {
   category?: string | undefined;
   teacher?: string | undefined;
   class_search?: string | undefined;
-  lesson_plan?: string | undefined;
+  lesson_plain_id?: string | undefined;
   filter?: string | undefined;
   order_by?: string | undefined;
 };
@@ -11,3 +11,9 @@ export type QueryConditionBaseProps = {
   onChange: QueryConditionChangeHandler;
   value: QueryCondition;
 };
+export enum ReportFilter {
+  all_achieved = "all_achieved",
+  non_achieved = "non_achieved",
+  not_attempted = "not_attempted",
+  all = "all",
+}
