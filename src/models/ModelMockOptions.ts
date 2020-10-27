@@ -1,5 +1,5 @@
 import { UseFormMethods } from "react-hook-form";
-import { apiFetchClassByTeacher, MockOptions, MockOptionsItem, MockOptionsOptionsItem } from "../api/extra";
+import { MockOptions, MockOptionsItem, MockOptionsOptionsItem } from "../api/extra";
 
 interface ToFlattenPropsInput {
   programId: string;
@@ -94,8 +94,7 @@ export class ModelMockOptions {
   static getReportFirstValue(mockOptions: MockOptions): GetReportFirstValueResult {
     if (mockOptions.teacher_class_relationship.length) {
       const first_teacher_id = mockOptions.teacher_class_relationship[0].teacher_id;
-      const classlist = apiFetchClassByTeacher(mockOptions, first_teacher_id);
-      const first_class_id = (classlist && classlist[0] && classlist[0].id) || "";
+      const first_class_id = mockOptions.teacher_class_relationship[0].class_ids[0];
       return { first_teacher_id, first_class_id };
     }
     return { first_teacher_id: "", first_class_id: "" };

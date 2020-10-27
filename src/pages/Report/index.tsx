@@ -41,6 +41,8 @@ export default function Report() {
   const { mockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
 
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
+  // const {first_class_id, first_teacher_id} = ModelMockOptions.getReportFirstValue(mockOptions)
+
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = (e, tab) => {
     const value = e.target.value;
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });

@@ -7,6 +7,7 @@ import clsx from "clsx";
 import React, { forwardRef } from "react";
 import { apiFetchClassByTeacher, MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import { QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
@@ -52,14 +53,14 @@ const lesson_plans = [
 ];
 
 export const filter = () => [
-  { name: "All Achieved", id: ReportFilter.all_achieved },
-  { name: "Non Achieved", id: ReportFilter.non_achieved },
-  { name: "Not Attempted", id: ReportFilter.not_attempted },
-  { name: "All ", id: ReportFilter.all },
+  { name: d("Achieved").t("report_label_achieved"), id: ReportFilter.achieved },
+  { name: d("Not Achieved").t("report_label_not_achieved"), id: ReportFilter.not_achieved },
+  { name: d("Not Attempted").t("report_label_not_attempted"), id: ReportFilter.not_attempted },
+  { name: d("All").t("report_label_all"), id: ReportFilter.all },
 ];
 const sortOptions = () => [
-  { name: "Ascending", id: ReportOrderBy.ascending },
-  { name: "Descending", id: ReportOrderBy.descending },
+  { name: d("Ascending").t("report_label_ascending"), id: ReportOrderBy.ascending },
+  { name: d("Descending").t("report_label_descending"), id: ReportOrderBy.descending },
 ];
 interface OptiopsItem {
   name: string;
@@ -138,7 +139,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               size="small"
               className={css.selectButton}
               onChange={(e) => onChange(e, "teacher")}
-              label="Teacher"
+              label={d("Teacher").t("report_label_teacher")}
               value={value.teacher}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -149,7 +150,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               size="small"
               className={css.selectButton}
               onChange={(e) => onChange(e, "class_search")}
-              label="Class"
+              label={d("Class").t("report_label_class")}
               value={value.class_search}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -160,7 +161,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               size="small"
               className={css.selectButton}
               onChange={(e) => onChange(e, "lesson_plain_id")}
-              label="Lesson Plan"
+              label={d("Lesson Plan").t("report_label_lesson_plan")}
               value={value.lesson_plain_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -184,7 +185,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               size="small"
               className={clsx(css.selectButton, css.lastButton)}
               onChange={(e) => onChange(e, "order_by")}
-              label="Displaying Order"
+              label={d("Sort By").t("report_label_sort_by")}
               value={value.order_by}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

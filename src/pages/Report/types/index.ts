@@ -12,8 +12,8 @@ export type QueryConditionBaseProps = {
   value: QueryCondition;
 };
 export enum ReportFilter {
-  all_achieved = "all_achieved",
-  non_achieved = "non_achieved",
+  achieved = "achieved",
+  not_achieved = "not_achieved",
   not_attempted = "not_attempted",
   all = "all",
 }
