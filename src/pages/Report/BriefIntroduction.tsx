@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
@@ -7,9 +7,10 @@ import { reportMiss } from "../../locale/LocaleManager";
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
     display: "flex",
-    justifyContent: "space-between",
-    padding: "20px 0",
-    borderTop: "1px solid #E0E0E0",
+    // justifyContent: "space-between",
+    padding: "10px 0 20px 0",
+    flexWrap: "wrap",
+    // alignItems: 'center'
   },
   colorPart: {
     width: "32px",
@@ -27,10 +28,11 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   rightContainer: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-end",
+    // justifyContent: "flex-end",
+    flexWrap: "wrap",
     [breakpoints.down("sm")]: {
-      justifyContent: "left",
-      marginTop: "10px",
+      // justifyContent: "left",
+      // marginTop: "10px",
     },
     "& div": {
       marginRight: "10px",
@@ -49,33 +51,44 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     color: "black",
     fontWeight: 500,
   },
+  divider: {
+    marginTop: "20px",
+  },
+  leftName: {
+    paddingTop: "15px",
+    marginRight: "auto",
+  },
+  marginItem: {
+    paddingTop: "15px",
+  },
 }));
 
 export default function BriefIntroduction() {
   const css = useStyles();
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <Grid container className={css.container_intro}>
-        <Grid item md={3} lg={5} xl={7}>
+      <Divider className={css.divider} />
+      <Box className={css.container_intro}>
+        <Box className={css.leftName}>
           <span className={css.teacherAndClass}>Teacher 1 - Class 1 - </span>
           <span className={css.lessonPlan}>Lesson plan 1</span>
           <span className={css.teacherAndClass}> - Student 1</span>
-        </Grid>
-        <Grid container md={9} lg={7} xl={5} item className={css.rightContainer}>
-          <div className={css.rightContainer}>
+        </Box>
+        <Box className={css.rightContainer}>
+          <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.blue)}></div>
             <span>{reportMiss("All Archieved", "all_archived")}</span>
-          </div>
-          <div className={clsx(css.rightContainer)}>
+          </Box>
+          <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.pink)}></div>
             <span>{reportMiss("Non Archieved", "non_archived")}</span>
-          </div>
-          <div className={css.rightContainer}>
+          </Box>
+          <Box className={clsx(css.rightContainer, css.marginItem)}>
             <div className={clsx(css.colorPart, css.gray)}></div>
             <span>{reportMiss("Not Attempted", "not_attempted")}</span>
-          </div>
-        </Grid>
-      </Grid>
+          </Box>
+        </Box>
+      </Box>
     </LayoutBox>
   );
 }
