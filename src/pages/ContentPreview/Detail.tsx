@@ -3,7 +3,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType } from "../../api/type";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 const useStyles = makeStyles(() => ({
   textFiled: {
@@ -221,7 +221,7 @@ export function Detail(props: ContentPreviewProps) {
                 color="primary"
               />
             }
-            label={reportMiss("Drawing Activity", "library_label_draw_activity")}
+            label={d("Drawing Activity").t("library_label_drawing_activity")}
             style={{
               color: "rgba(0,0,0,0.6)",
             }}
