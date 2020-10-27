@@ -5,7 +5,6 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType } from "../../api/type";
 import { d, reportMiss } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-
 const useStyles = makeStyles(() => ({
   textFiled: {
     height: "112px",
@@ -19,7 +18,6 @@ const useStyles = makeStyles(() => ({
     marginBottom: 32,
   },
 }));
-
 interface ContentPreviewProps {
   contentPreview: EntityContentInfoWithDetails;
 }
@@ -38,7 +36,9 @@ export function Detail(props: ContentPreviewProps) {
         rows={2}
         label={d("Description").t("library_label_description")}
         variant="outlined"
-        InputProps={{ readOnly: true }}
+        InputProps={{
+          readOnly: true,
+        }}
         value={contentPreview.description}
       />
       <Grid container spacing={3}>
@@ -48,7 +48,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={formattedTime(contentPreview.updated_at)}
           />
         </Grid>
@@ -58,7 +60,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.author_name}
           />
         </Grid>
@@ -68,7 +72,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.program_name}
           />
         </Grid>
@@ -78,7 +84,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.subject_name}
           />
         </Grid>
@@ -88,7 +96,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.developmental_name?.join(",")}
           />
         </Grid>
@@ -98,7 +108,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.skills_name}
           />
         </Grid>
@@ -108,7 +120,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.publish_scope_name}
           />
         </Grid>
@@ -118,7 +132,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.suggest_time}
           />
         </Grid>
@@ -128,7 +144,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.age_name?.join(",")}
           />
         </Grid>
@@ -138,7 +156,9 @@ export function Detail(props: ContentPreviewProps) {
             fullWidth
             disabled={true}
             variant="outlined"
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+            }}
             value={contentPreview.grade_name?.join(",")}
           />
         </Grid>
@@ -149,35 +169,62 @@ export function Detail(props: ContentPreviewProps) {
           fullWidth
           disabled={true}
           rows={2}
-          label={reportMiss("Lesson Type", "library_label_lesson_type")}
+          label={d("Lesson Type").t("library_label_lesson_type")}
           variant="outlined"
-          InputProps={{ readOnly: true }}
+          InputProps={{
+            readOnly: true,
+          }}
           value={contentPreview.lesson_type_name}
         />
       )}
-      <Box className={css.fieldset} style={{ position: "relative" }}>
+      <Box
+        className={css.fieldset}
+        style={{
+          position: "relative",
+        }}
+      >
         <FormControlLabel
           control={
-            <Checkbox style={{ position: "absolute", right: 0 }} disabled checked={contentPreview.self_study || false} color="primary" />
+            <Checkbox
+              style={{
+                position: "absolute",
+                right: 0,
+              }}
+              disabled
+              checked={contentPreview.self_study || false}
+              color="primary"
+            />
           }
           label={reportMiss("Suitable for self-study", "library_label_self_study")}
-          style={{ color: "rgba(0,0,0,0.6)" }}
+          style={{
+            color: "rgba(0,0,0,0.6)",
+          }}
           labelPlacement="start"
         />
       </Box>
       {contentPreview.content_type === ContentType.material && (
-        <Box className={css.fieldset} style={{ position: "relative" }}>
+        <Box
+          className={css.fieldset}
+          style={{
+            position: "relative",
+          }}
+        >
           <FormControlLabel
             control={
               <Checkbox
-                style={{ position: "absolute", right: 0 }}
+                style={{
+                  position: "absolute",
+                  right: 0,
+                }}
                 disabled
                 checked={contentPreview.draw_activity || false}
                 color="primary"
               />
             }
             label={reportMiss("Drawing Activity", "library_label_draw_activity")}
-            style={{ color: "rgba(0,0,0,0.6)" }}
+            style={{
+              color: "rgba(0,0,0,0.6)",
+            }}
             labelPlacement="start"
           />
         </Box>
@@ -193,7 +240,15 @@ export function Detail(props: ContentPreviewProps) {
           startAdornment: (
             <InputAdornment position="start">
               {contentPreview.keywords?.map((value, index) => (
-                <Chip key={value + index} label={value} style={{ color: "#fff", backgroundColor: colors[index % 3], margin: 2 }} />
+                <Chip
+                  key={value + index}
+                  label={value}
+                  style={{
+                    color: "#fff",
+                    backgroundColor: colors[index % 3],
+                    margin: 2,
+                  }}
+                />
               ))}
             </InputAdornment>
           ),

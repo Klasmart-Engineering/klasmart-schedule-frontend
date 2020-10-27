@@ -108,6 +108,13 @@ type LangRecord<T = string> =
       description: "Publish as a lesson material, and add to assets library";
       values: undefined;
     }
+  | { id: "library_label_lesson_type"; description: "Lesson Type"; values: undefined }
+  | { id: "library_label_test"; description: "Test"; values: undefined }
+  | { id: "library_label_not_test"; description: "Not Test"; values: undefined }
+  | { id: "library_label_self_study"; description: "Suitable for Self Study"; values: undefined }
+  | { id: "library_label_drawing_activity"; description: "Drawing Activity"; values: undefined }
+  | { id: "library_label_program_esl"; description: "Badanamu ESL"; values: undefined }
+  | { id: "library_label_program_math"; description: "Bada Math"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -154,6 +161,9 @@ type LangRecord<T = string> =
   | { id: "assess_msg_missing_infor"; description: "Please fill in all the information."; values: undefined }
   | { id: "assess_msg_save_successfully"; description: "Save Successfully."; values: undefined }
   | { id: "assess_msg_compete_successfully"; description: "Complete Successfully."; values: undefined }
+  | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
+  | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
+  | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -372,7 +382,14 @@ type LangRecord<T = string> =
   | { id: "schedule_preview_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "schedule_preview_class"; description: "KidsLoop Class"; values: undefined }
   | { id: "schedule_preview_study"; description: "KidsLoop Study"; values: undefined }
-  | { id: "schedule_detail_participants"; description: "Add Participants"; values: undefined };
+  | { id: "schedule_detail_participants"; description: "Add Participants"; values: undefined }
+  | { id: "scheudule_filter_all_my_schedule"; description: "All My Schedule"; values: undefined }
+  | { id: "schedule_filter_schools"; description: "Schools"; values: undefined }
+  | { id: "schedule_filter_teachers"; description: "Teachers"; values: undefined }
+  | { id: "schedule_filter_classes"; description: "Classes"; values: undefined }
+  | { id: "schedule_filter_subjects"; description: "Subjects"; values: undefined }
+  | { id: "schedule_filter_programs"; description: "Programs"; values: undefined }
+  | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

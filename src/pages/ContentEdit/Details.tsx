@@ -30,7 +30,6 @@ import { LangRecordId } from "../../locale/lang/type";
 import { d, reportMiss, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
-
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
     minHeight: 800,
@@ -85,6 +84,7 @@ function ProgressWithText(props: CircularProgressProps) {
     </Box>
   );
 }
+
 interface DetailsProps {
   contentDetail: EntityContentInfoWithDetails;
   uploadThumnail?: Function;
@@ -94,7 +94,6 @@ interface DetailsProps {
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
   onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
 }
-
 export default function Details(props: DetailsProps) {
   const {
     contentDetail,
@@ -104,7 +103,6 @@ export default function Details(props: DetailsProps) {
     onChangeProgram,
     onDrawingActivity,
   } = props;
-
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
@@ -118,11 +116,13 @@ export default function Details(props: DetailsProps) {
           : item.name}
       </MenuItem>
     ));
+
   const rejectReasonTransilation = (reson?: string[], remark?: string) => {
     const reson_remark = reson && reson.map((item) => t(item as LangRecordId));
     if (reson_remark && remark) reson_remark.push(remark);
     return reson_remark ? reson_remark : remark && [remark];
   };
+
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
@@ -163,13 +163,14 @@ export default function Details(props: DetailsProps) {
         )}
         <Controller
           as={TextField}
-          control={control}
-          // className={css.fieldset}
+          control={control} // className={css.fieldset}
           name="name"
           label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required
           defaultValue={contentDetail.name}
-          rules={{ required: true }}
+          rules={{
+            required: true,
+          }}
           error={errors.name ? true : false}
           helperText=""
         />
@@ -264,7 +265,9 @@ export default function Details(props: DetailsProps) {
         <Controller
           as={TextField}
           select
-          SelectProps={{ multiple: true }}
+          SelectProps={{
+            multiple: true,
+          }}
           className={css.fieldset}
           label={d("Subject").t("library_label_subject")}
           name="subject"
@@ -304,7 +307,9 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.skills}
             control={control}
             select
-            SelectProps={{ multiple: true }}
+            SelectProps={{
+              multiple: true,
+            }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Subcategory").t("library_label_subcategory")}
@@ -319,7 +324,9 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.age}
             control={control}
             select
-            SelectProps={{ multiple: true }}
+            SelectProps={{
+              multiple: true,
+            }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Age").t("library_label_age")}
@@ -332,7 +339,9 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.grade}
             control={control}
             select
-            SelectProps={{ multiple: true }}
+            SelectProps={{
+              multiple: true,
+            }}
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Grade").t("library_label_grade")}
@@ -349,7 +358,9 @@ export default function Details(props: DetailsProps) {
           required
           defaultValue={contentDetail.publish_scope}
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: true,
+          }}
           error={errors.publish_scope ? true : false}
           helperText=""
         >
@@ -360,7 +371,7 @@ export default function Details(props: DetailsProps) {
             as={TextField}
             select
             className={css.fieldset}
-            label={reportMiss("Lesson Type", "library_label_lesson_type")}
+            label={d("Lesson Type").t("library_label_lesson_type")}
             name="lesson_type"
             defaultValue={contentDetail.lesson_type || ""}
             control={control}
@@ -372,18 +383,28 @@ export default function Details(props: DetailsProps) {
           name="self_study"
           defaultValue={contentDetail.self_study}
           render={(props) => (
-            <Box className={css.fieldset} style={{ position: "relative" }}>
+            <Box
+              className={css.fieldset}
+              style={{
+                position: "relative",
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox
-                    style={{ position: "absolute", right: 0 }}
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                    }}
                     checked={props.value || false}
                     onChange={(e) => onDrawingActivity(e, "self_study")}
                     color="primary"
                   />
                 }
                 label={reportMiss("Suitable for self-study", "library_label_self_study")}
-                style={{ color: "rgba(0,0,0,0.6)" }}
+                style={{
+                  color: "rgba(0,0,0,0.6)",
+                }}
                 labelPlacement="start"
               />
             </Box>
@@ -395,18 +416,28 @@ export default function Details(props: DetailsProps) {
             name="draw_activity"
             defaultValue={contentDetail.draw_activity}
             render={(props) => (
-              <Box className={css.fieldset} style={{ position: "relative" }}>
+              <Box
+                className={css.fieldset}
+                style={{
+                  position: "relative",
+                }}
+              >
                 <FormControlLabel
                   control={
                     <Checkbox
-                      style={{ position: "absolute", right: 0 }}
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                      }}
                       checked={props.value || false}
                       onChange={(e) => onDrawingActivity(e, "draw_activity")}
                       color="primary"
                     />
                   }
                   label={reportMiss("Drawing Activity", "library_label_draw_activity")}
-                  style={{ color: "rgba(0,0,0,0.6)" }}
+                  style={{
+                    color: "rgba(0,0,0,0.6)",
+                  }}
                   labelPlacement="start"
                 />
               </Box>

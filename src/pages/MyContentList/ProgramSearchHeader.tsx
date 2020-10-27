@@ -6,10 +6,9 @@ import clsx from "clsx";
 import React from "react";
 import { OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { BadaEslBlueIcon, BadaEslIcon, BadaMathBlueIcon, BadaMathIcon } from "../OutcomeList/Icons";
 import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -71,17 +70,16 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-
 export enum Program {
   badaEsl = "program1",
   badamath = "program2",
   badasteam = "program3",
 }
-
 export interface ProgramSearchHeaderProps extends QueryConditionBaseProps {}
 export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
+
   const createHandleClick = (program: QueryCondition["program"]) => () =>
     onChange({
       program,
@@ -90,6 +88,7 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
       page: 1,
       scope: PublishScope.all,
     });
+
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -99,17 +98,21 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(Program.badaEsl)}
-                className={clsx(css.nav, { [css.actives]: value?.program === Program.badaEsl })}
+                className={clsx(css.nav, {
+                  [css.actives]: value?.program === Program.badaEsl,
+                })}
                 startIcon={value?.program === Program.badaEsl ? <BadaEslBlueIcon /> : <BadaEslIcon />}
               >
-                {reportMiss("Badanamu ESL", "library_label_program_esl")}
+                {d("Badanamu ESL").t("library_label_program_esl")}
               </Button>
               <Button
                 onClick={createHandleClick(Program.badamath)}
-                className={clsx(css.nav, { [css.actives]: value?.program === Program.badamath })}
+                className={clsx(css.nav, {
+                  [css.actives]: value?.program === Program.badamath,
+                })}
                 startIcon={value?.program === Program.badamath ? <BadaMathBlueIcon /> : <BadaMathIcon />}
               >
-                {reportMiss("Badanamu Math", "library_label_program_math")}
+                {d("Bada Math").t("library_label_program_math")}
               </Button>
             </Grid>
           </Grid>
@@ -118,10 +121,10 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
     </div>
   );
 }
-
 export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+
   const handleChange = (event: React.ChangeEvent<{}>, program: QueryCondition["program"]) => {
     onChange({
       program,
@@ -131,6 +134,7 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
       scope: PublishScope.all,
     });
   };
+
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
@@ -145,16 +149,8 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
                 indicatorColor="primary"
                 textColor="primary"
               >
-                <Tab
-                  value={Program.badaEsl}
-                  label={reportMiss("Badanamu ESL", "library_label_program_esl")}
-                  className={classes.capitalize}
-                />
-                <Tab
-                  value={Program.badamath}
-                  label={reportMiss("Badanamu Math", "library_label_program_math")}
-                  className={classes.capitalize}
-                />
+                <Tab value={Program.badaEsl} label={d("Badanamu ESL").t("library_label_program_esl")} className={classes.capitalize} />
+                <Tab value={Program.badamath} label={d("Bada Math").t("library_label_program_math")} className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>
