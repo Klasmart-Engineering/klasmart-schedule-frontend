@@ -59,14 +59,9 @@ export const apiLivePath = (token: string) => {
 };
 
 export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: string) => {
-  if (mockOptions.teacher_class_relationship.length) {
-    const class_ids = mockOptions.teacher_class_relationship.filter(
-      (item: MockOptionsItemTeacherAndClass) => item.teacher_id === teacher_id
-    )[0].class_ids;
-    class_ids.map((item: string) => {
-      return mockOptions.classes.forEach((item1: MockOptionsItem) => {
-        if (item1.id === item) return item1;
-      });
-    });
-  }
+  if (!mockOptions.teacher_class_relationship.length) return;
+  const class_ids = mockOptions.teacher_class_relationship.filter(
+    (item: MockOptionsItemTeacherAndClass) => item.teacher_id === teacher_id
+  )[0].class_ids;
+  return mockOptions.classes.filter((item: MockOptionsItem) => class_ids.filter((item1: string) => item.id === item1));
 };

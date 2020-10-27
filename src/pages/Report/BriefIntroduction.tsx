@@ -4,11 +4,12 @@ import React from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
     display: "flex",
     justifyContent: "space-between",
     padding: "20px 0",
+    borderTop: "1px solid #E0E0E0",
   },
   colorPart: {
     width: "32px",
@@ -26,8 +27,13 @@ const useStyles = makeStyles(() => ({
   rightContainer: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "flex-end",
+    [breakpoints.down("sm")]: {
+      justifyContent: "left",
+      marginTop: "10px",
+    },
     "& div": {
-      margin: "0 10px",
+      marginRight: "10px",
     },
     "& span": {
       color: "black",
@@ -55,7 +61,7 @@ export default function BriefIntroduction() {
           <span className={css.lessonPlan}>Lesson plan 1</span>
           <span className={css.teacherAndClass}> - Student 1</span>
         </Grid>
-        <Grid container md={9} lg={7} xl={5} justify="flex-end" item className={css.rightContainer}>
+        <Grid container md={9} lg={7} xl={5} item className={css.rightContainer}>
           <div className={css.rightContainer}>
             <div className={clsx(css.colorPart, css.blue)}></div>
             <span>{reportMiss("All Archieved", "all_archived")}</span>
