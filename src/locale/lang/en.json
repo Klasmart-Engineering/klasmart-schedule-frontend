@@ -368,5 +368,20 @@
   "schedule_filter_classes": "Classes",
   "schedule_filter_subjects": "Subjects",
   "schedule_filter_programs": "Programs",
-  "schedule_filter_no_data": "No Data"
+  "schedule_filter_no_data": "No Data",
+  "report_label_student_achievement": "Student Achievement",
+  "report_label_lo_in_categories": "Learning Outcomes in Categories",
+  "report_label_teacher": "Teacher",
+  "report_label_class": "Class",
+  "report_label_lesson_plan": "Lesson Plan",
+  "report_label_status": "Status",
+  "report_label_all": "All",
+  "report_label_achieved": "Achieved",
+  "report_label_not_achieved": "Not Achieved",
+  "report_label_not_attempted": "Not Attempted",
+  "report_label_sort_by": "Sort By",
+  "report_label_ascending": "Ascending",
+  "report_label_descending": "Descending",
+  "report_label_learning_outcomes_percentage": "Learning Outcomes %",
+  "report_label_absent": "Absent"
 }

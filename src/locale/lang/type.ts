@@ -389,7 +389,22 @@ type LangRecord<T = string> =
   | { id: "schedule_filter_classes"; description: "Classes"; values: undefined }
   | { id: "schedule_filter_subjects"; description: "Subjects"; values: undefined }
   | { id: "schedule_filter_programs"; description: "Programs"; values: undefined }
-  | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined };
+  | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined }
+  | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
+  | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
+  | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
+  | { id: "report_label_class"; description: "Class"; values: undefined }
+  | { id: "report_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
+  | { id: "report_label_status"; description: "Status"; values: undefined }
+  | { id: "report_label_all"; description: "All"; values: undefined }
+  | { id: "report_label_achieved"; description: "Achieved"; values: undefined }
+  | { id: "report_label_not_achieved"; description: "Not Achieved"; values: undefined }
+  | { id: "report_label_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "report_label_sort_by"; description: "Sort By"; values: undefined }
+  | { id: "report_label_ascending"; description: "Ascending"; values: undefined }
+  | { id: "report_label_descending"; description: "Descending"; values: undefined }
+  | { id: "report_label_learning_outcomes_percentage"; description: "Learning Outcomes %"; values: undefined }
+  | { id: "report_label_absent"; description: "Absent"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
