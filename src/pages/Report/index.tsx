@@ -19,7 +19,7 @@ const useQuery = () => {
     const teacher = query.get("teacher");
     const class_search = query.get("class");
     const lesson_plan = query.get("lesson_plan");
-    const filter = query.get("filter");
+    const filter = query.get("filter") || "all";
     const order_by = query.get("order_by");
     return clearNull({ category, teacher, class_search, lesson_plan, filter, order_by });
   }, [search]);
@@ -43,7 +43,7 @@ export default function Report() {
     <>
       <FirstSearchHeader value={condition} onChange={handleChange} />
       <FirstSearchHeaderMb value={condition} onChange={handleChange} />
-      <FilterAchievementReport value={condition} onChange={handleChangefilter}></FilterAchievementReport>      
+      <FilterAchievementReport value={condition} onChange={handleChangefilter}></FilterAchievementReport>
       <BriefIntroduction />
     </>
   );

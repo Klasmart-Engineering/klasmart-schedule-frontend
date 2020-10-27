@@ -60,8 +60,6 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       {item.label}
     </MenuItem>
   ));
-  const handleChangeOrder = () => {};
-
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Box display="flex">
@@ -112,18 +110,18 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
-            <MenuItem value="All Achieved">All Achieved</MenuItem>
-            <MenuItem value="Non Achieved">Non Achieved</MenuItem>
-            <MenuItem value="Not Attempted">Not Attempted</MenuItem>
-            <MenuItem value="All">All</MenuItem>
+            <MenuItem value="all_achieved">All Achieved</MenuItem>
+            <MenuItem value="non_achieved">Non Achieved</MenuItem>
+            <MenuItem value="not_attempted">Not Attempted</MenuItem>
+            <MenuItem value="all">All</MenuItem>
           </TextField>
 
           <TextField
             size="small"
             className={clsx(css.selectButton, css.lastButton)}
-            onChange={handleChangeOrder}
+            onChange={(e) => onChange(e, "order_by")}
             label="Displaying Order"
-            value=""
+            value={value.order_by}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
