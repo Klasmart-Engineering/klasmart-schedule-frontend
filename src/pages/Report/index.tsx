@@ -2,12 +2,16 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher } from "../../api/extra";
+import mockAchievementList from '../../mocks/achievementList.json';
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { onloadReport } from "../../reducers/report";
+import { AchivementListChart } from "./AchivementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { ReportFilter } from "./types";
+
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];
@@ -70,6 +74,7 @@ export default function Report() {
         onChangeMb={handleChangeMbFilter}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} />
+      <AchivementListChart data={mockAchievementList} filter={ReportFilter.all}/>
     </>
   );
 }

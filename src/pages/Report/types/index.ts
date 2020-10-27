@@ -21,3 +21,9 @@ export enum ReportOrderBy {
   ascending = "ascending",
   descending = "descending",
 }
+
+export enum StatusColor {
+  achieved = '#8693f0',
+  not_achieved = '#fe9b9b',
+  not_attempted = '#dadada',
+}
