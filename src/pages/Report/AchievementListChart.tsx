@@ -98,12 +98,7 @@ const studentName2studentId = (name: string, data: DataItem[]) => {
 const computed = (props: AchievementListChartProps) => {
   const { filter } = props;
   const data = mapRatio(props.data);
-  const xMax = Math.max(
-    ...data.map((item) => {
-      const { achieved_count = 0, not_achieved_count = 0, not_attempted_count = 0 } = item;
-      return achieved_count + not_achieved_count + not_attempted_count;
-    })
-  );
+  const xMax = Math.max(...data.map((item) => item.sum));
   const barStacksHeight = data.length * (pixels.barStackHeight + pixels.barStackMargin);
   const xScale = scaleLinear({ domain: [0, xMax], range: [0, pixels.barStackWidth] });
   const paddingRatio = pixels.barStackMargin / (pixels.barStackMargin + pixels.barStackHeight);
