@@ -88,11 +88,9 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
       <Divider className={css.divider} />
       <Box className={css.container_intro}>
         <Box className={css.leftName}>
-          {value.teacher_id && (
-            <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher_id) + " - "}</span>
-          )}
-          {value.class_id && <span className={css.teacherAndClass}>{"Class 1 - "} </span>}
-          {value.lesson_plan_id && <span className={css.lessonPlan}>{"Lesson Plan 1"}</span>}
+          {value.teacher_id && <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher_id)}</span>}
+          {value.class_id && <span className={css.teacherAndClass}>{" - " + getSpecificName(mockOptions, "class", value.class_id)}</span>}
+          {value.lesson_plan_id && <span className={css.lessonPlan}>{" - Lesson Plan 1"}</span>}
           {/* <span className={css.teacherAndClass}>{'- Student 1'}</span> */}
         </Box>
         <Box className={css.rightContainer}>
