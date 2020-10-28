@@ -13,7 +13,7 @@ import { QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
     [breakpoints.down(1500)]: {
-      height: 120,
+      height: 100,
     },
   },
   boxRight: {
@@ -30,7 +30,6 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   selectButton: {
     width: 200,
     height: 40,
-    marginBottom: 20,
     backgroundColor: "white",
     borderRadius: 4,
     boxShadow: shadows[3],
@@ -45,12 +44,12 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   },
 }));
 
-const lesson_plans = [
-  { id: "1", name: "Lesson 1" },
-  { id: "2", name: "Lesson 2" },
-  { id: "3", name: "Lesson 3" },
-  { id: "4", name: "Lesson 4" },
-];
+// const lesson_plans = [
+//   { id: "1", name: "Lesson 1" },
+//   { id: "2", name: "Lesson 2" },
+//   { id: "3", name: "Lesson 3" },
+//   { id: "4", name: "Lesson 4" },
+// ];
 
 export const filter = () => [
   { name: d("Achieved").t("report_label_achieved"), id: ReportFilter.achieved },
@@ -90,9 +89,10 @@ export interface FilterAchievementReportProps {
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: string) => any;
   onChangeMb: (e: React.MouseEvent, value: string, tab: string) => any;
   mockOptions: MockOptions;
+  lessonPlanList: MockOptionsItem[];
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, mockOptions, onChangeMb } = props;
+  const { onChange, value, mockOptions, onChangeMb, lessonPlanList } = props;
   const css = useStyles();
   const getOptions = (list: MockOptionsItem[]) =>
     list.map((item) => (
@@ -166,7 +166,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {getOptions(lesson_plans)}
+              {getOptions(lessonPlanList)}
             </TextField>
           </Box>
           <Box className={css.boxRight}>
@@ -210,7 +210,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
 
             <ClassOutlined className={css.selectIcon} onClick={(e) => showItem(e, "lesson_plan_id")} />
             <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
-              <GetMenuItem list={lesson_plans} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plan_id"></GetMenuItem>
+              <GetMenuItem list={lessonPlanList} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plan_id"></GetMenuItem>
             </Menu>
           </Box>
 

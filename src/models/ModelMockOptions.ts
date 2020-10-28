@@ -22,8 +22,8 @@ export type GetOnlyOneOptionValueResult = {
 };
 
 interface GetReportFirstValueResult {
-  first_teacher_id: string;
-  first_class_id: string;
+  teacher_id: string;
+  class_id: string;
 }
 
 export class ModelMockOptions {
@@ -93,10 +93,10 @@ export class ModelMockOptions {
 
   static getReportFirstValue(mockOptions: MockOptions): GetReportFirstValueResult {
     if (mockOptions.teacher_class_relationship.length) {
-      const first_teacher_id = mockOptions.teacher_class_relationship[0].teacher_id;
-      const first_class_id = mockOptions.teacher_class_relationship[0].class_ids[0];
-      return { first_teacher_id, first_class_id };
+      const teacher_id = mockOptions.teacher_class_relationship[0].teacher_id;
+      const class_id = mockOptions.teacher_class_relationship[0].class_ids[0];
+      return { teacher_id, class_id };
     }
-    return { first_teacher_id: "", first_class_id: "" };
+    return { teacher_id: "", class_id: "" };
   }
 }
