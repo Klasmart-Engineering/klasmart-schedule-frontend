@@ -1,3 +1,4 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -6,11 +7,12 @@ import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
-import { getLessonPlan, getMockOptions } from "../../reducers/report";
+import { AsyncTrunkReturned, getLessonPlan, getMockOptions } from "../../reducers/report";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { QueryCondition } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -43,24 +45,49 @@ export default function Report() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { mockOptions, lessonPlanList } = useSelector<RootState, RootState["report"]>((state) => state.report);
-
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
-
-  const handleChangeFilter: FilterAchievementReportProps["onChange"] = (e, tab) => {
+  const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (e, tab) => {
     const value = e.target.value;
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });
-    if (tab === "teacher_id") {
-      const classlist = apiFetchClassByTeacher(mockOptions, value);
-      const class_id = (classlist && classlist[0] && classlist[0].id) || "";
-      history.push({ search: setQuery(history.location.search, { class_id }) });
-    }
+    computeFilter(tab, value);
   };
   const handleChangeMbFilter: FilterAchievementReportProps["onChangeMb"] = (e, value, tab) => {
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });
+    computeFilter(tab, value);
   };
   const handleChangeStudent: AchievementListChartProps["onClickStudent"] = (studentId) => {
     //todo: 跳转
   };
+
+  const getFirstLessonPlanId = useMemo(
+    () => async (teacher_id: string, class_id: string) => {
+      const { payload } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
+        AsyncTrunkReturned<typeof getLessonPlan>
+      >;
+      if (payload.length > 0) {
+        const lesson_plan_id = (payload[0] && payload[0].id) || "";
+        history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
+      }
+    },
+    [dispatch, history]
+  );
+
+  const computeFilter = useMemo(
+    () => (tab: keyof QueryCondition, value: string) => {
+      if (tab === "teacher_id") {
+        const classlist = apiFetchClassByTeacher(mockOptions, value);
+        const class_id = (classlist && classlist[0] && classlist[0].id) || "";
+        class_id
+          ? getFirstLessonPlanId(value, class_id)
+          : history.push({ search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }) });
+      }
+      if (tab === "class_id") {
+        getFirstLessonPlanId(condition.teacher_id, value);
+      }
+    },
+    [condition.teacher_id, getFirstLessonPlanId, history, mockOptions]
+  );
+
   useEffect(() => {
     dispatch(getMockOptions());
   }, [dispatch]);
@@ -68,15 +95,10 @@ export default function Report() {
   useEffect(() => {
     const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
     if (class_id && teacher_id) {
-      dispatch(getLessonPlan({ teacher_id, class_id }));
+      getFirstLessonPlanId(teacher_id, class_id);
     }
-  }, [dispatch, history, mockOptions]);
+  }, [dispatch, getFirstLessonPlanId, history, mockOptions]);
 
-  useEffect(() => {
-    const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
-    const lesson_plan_id = (lessonPlanList[0] && lessonPlanList[0].id) || "";
-    history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
-  }, [history, lessonPlanList, mockOptions]);
   // useEffect(() => {
   //   dispatch(onloadReport({ teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id }));
   //   // eslint-disable-next-line react-hooks/exhaustive-deps

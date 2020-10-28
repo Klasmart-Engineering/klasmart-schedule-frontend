@@ -111,7 +111,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
     if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
-    if (tab === "lesson_plan_id" && lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
+    if (tab === "lesson_plan_id" && (classs.length > 0 || lessonPlanList.length > 0)) setAnchorElPlan(event.currentTarget);
     if (tab === "filter") setAnchorElFilter(event.currentTarget);
     if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
@@ -166,7 +166,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               value={value.lesson_plan_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              disabled={lessonPlanList.length <= 0}
+              disabled={classs.length <= 0 || lessonPlanList.length <= 0}
             >
               {getOptions(lessonPlanList)}
             </TextField>
