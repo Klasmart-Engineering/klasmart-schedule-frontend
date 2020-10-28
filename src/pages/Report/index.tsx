@@ -3,11 +3,13 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher, MockOptionsItem } from "../../api/extra";
+import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getLessonPlan, getMockOptions } from "../../reducers/report";
+import { AchievementDetailChart } from "./AchievementDetailChart";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
@@ -116,6 +118,7 @@ export default function Report() {
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} />
       <AchievementListChart data={mockAchievementList} filter={condition.filter} onClickStudent={handleChangeStudent} />
+      <AchievementDetailChart data={mockAchievementDetail} />
     </>
   );
 }

@@ -12,10 +12,10 @@ import { ReportFilter, StatusColor } from "./types";
 
 const useStyle = makeStyles({
   chart: {
+    marginTop: 24,
     position: "relative",
   },
   svg: {
-    marginTop: 24,
     backgroundColor: "rgba(0,0,0, .02)",
   },
   desc: {
