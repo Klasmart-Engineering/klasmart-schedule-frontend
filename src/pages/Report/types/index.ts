@@ -3,8 +3,8 @@ export type QueryCondition = {
   teacher_id?: string | undefined;
   class_id?: string | undefined;
   lesson_plan_id?: string | undefined;
-  filter?: string | undefined;
-  order_by?: string | undefined;
+  filter?: ReportFilter;
+  order_by?: ReportOrderBy;
 };
 export type QueryConditionChangeHandler = (value: QueryCondition) => any;
 export type QueryConditionBaseProps = {

@@ -86,8 +86,8 @@ const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((
 });
 export interface FilterAchievementReportProps {
   value: QueryCondition;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: string) => any;
-  onChangeMb: (e: React.MouseEvent, value: string, tab: string) => any;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: keyof QueryCondition) => any;
+  onChangeMb: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   mockOptions: MockOptions;
   lessonPlanList: MockOptionsItem[];
 }
@@ -110,8 +110,8 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
 
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
-    if (tab === "class_id") setAnchorElClass(event.currentTarget);
-    if (tab === "lesson_plan_id") setAnchorElPlan(event.currentTarget);
+    if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
+    if (tab === "lesson_plan_id" && lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
     if (tab === "filter") setAnchorElFilter(event.currentTarget);
     if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
@@ -122,7 +122,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "filter") setAnchorElFilter(null);
     if (tab === "order_by") setAnchorElOrderBy(null);
   };
-  const handleChangeMenu = (e: React.MouseEvent, value: any, tab: string) => {
+  const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
     if (tab === "class_id") setAnchorElClass(null);
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
@@ -154,6 +154,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               value={value.class_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              disabled={classs.length <= 0}
             >
               {getOptions(classs)}
             </TextField>
@@ -165,6 +166,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               value={value.lesson_plan_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              disabled={lessonPlanList.length <= 0}
             >
               {getOptions(lessonPlanList)}
             </TextField>

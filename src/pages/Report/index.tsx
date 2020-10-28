@@ -11,7 +11,6 @@ import { AchivementListChart } from "./AchivementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { ReportFilter } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -50,7 +49,7 @@ export default function Report() {
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = (e, tab) => {
     const value = e.target.value;
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });
-    if (tab === "teacher") {
+    if (tab === "teacher_id") {
       const classlist = apiFetchClassByTeacher(mockOptions, value);
       const class_id = (classlist && classlist[0] && classlist[0].id) || "";
       history.push({ search: setQuery(history.location.search, { class_id }) });
@@ -87,7 +86,7 @@ export default function Report() {
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} />
-      <AchivementListChart data={mockAchievementList} filter={ReportFilter.all} />
+      <AchivementListChart data={mockAchievementList} filter={condition.filter} />
     </>
   );
 }
