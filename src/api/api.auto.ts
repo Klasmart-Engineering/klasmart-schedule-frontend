@@ -503,15 +503,15 @@ export interface EntityScheduleUpdateView {
   version?: number;
 }
 
+export interface EntityStudentDetailReport {
+  categories?: EntityStudentReportCategory[];
+}
+
 export interface EntityStudentReportCategory {
   all_achieved_items?: string[];
   name?: string;
   not_achieved_items?: string[];
   not_attempted_items?: string[];
-}
-
-export interface EntityStudentReportDetail {
-  categories?: EntityStudentReportCategory[];
 }
 
 export interface EntityStudentReportItem {
@@ -521,7 +521,7 @@ export interface EntityStudentReportItem {
   student_name?: string;
 }
 
-export interface EntityStudentReportList {
+export interface EntityStudentsReport {
   items?: EntityStudentReportItem[];
 }
 
@@ -1240,13 +1240,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   reports = {
     /**
      * @tags reports
-     * @name listStudentReport
+     * @name listStudentsReport
      * @summary list student report
      * @request GET:/reports/students
      * @description list student report
      */
-    listStudentReport: (query: { lesson_plain_id: string }, params?: RequestParams) =>
-      this.request<EntityStudentReportList, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+    listStudentsReport: (query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
+      this.request<EntityStudentsReport, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/reports/students${this.addQueryParams(query)}`,
         "GET",
         params
@@ -1254,14 +1254,18 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
-     * @name getStudentReport
+     * @name getStudentDetailReport
      * @summary get student report
      * @request GET:/reports/students/{id}
      * @description get student report
      */
-    getStudentReport: (id: string, params?: RequestParams) =>
-      this.request<EntityStudentReportDetail, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/reports/students/${id}`,
+    getStudentDetailReport: (
+      id: string,
+      query: { teacher_id: string; class_id: string; lesson_plain_id: string },
+      params?: RequestParams
+    ) =>
+      this.request<EntityStudentDetailReport, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/reports/students/${id}${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -1304,20 +1308,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         scheduleData
-      ),
-
-    /**
-     * @tags schedule
-     * @name updateStatus
-     * @summary updateStatus
-     * @request PUT:/schedules/:schedule_id/status
-     * @description update schedule status
-     */
-    updateStatus: (query: { status: "NotStart" | "Started" | "Closed" }, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/schedules/:schedule_id/status${this.addQueryParams(query)}`,
-        "PUT",
-        params
       ),
 
     /**
@@ -1373,6 +1363,35 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getScheduleLiveToken: (schedule_id: string, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/live/token`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name updateStatus
+     * @summary updateStatus
+     * @request PUT:/schedules/{schedule_id}/status
+     * @description update schedule status
+     */
+    updateStatus: (schedule_id: string, query: { status: "NotStart" | "Started" | "Closed" }, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}/status${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
+  };
+  schedulesLessonPlans = {
+    /**
+     * @tags reports
+     * @name getLessonPlans
+     * @summary get lessonPlans by teacher and class
+     * @request GET:/schedules_lesson_plans
+     * @description get lessonPlans by teacher and class
+     */
+    getLessonPlans: (query: { teacher_id: string; class_id: string }, params?: RequestParams) =>
+      this.request<EntityScheduleShortInfo[], ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules_lesson_plans${this.addQueryParams(query)}`,
         "GET",
         params
       ),
