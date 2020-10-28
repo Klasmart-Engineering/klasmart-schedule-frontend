@@ -91,7 +91,11 @@ const mapRatio = (data: DataItem[]): RatioExtendedDataItem[] => {
   });
 };
 
-const computed = (props: AchivementListChartProps) => {
+const studentName2studentId = (name: string, data: DataItem[]) => {
+  return data.find((item) => item.student_name === name)?.student_id as string;
+};
+
+const computed = (props: AchievementListChartProps) => {
   const { filter } = props;
   const data = mapRatio(props.data);
   const xMax = Math.max(
@@ -122,18 +126,20 @@ const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTool
   });
 };
 interface DataItem {
+  student_id: string;
   student_name: string;
   achieved_count: number;
   not_achieved_count: number;
   not_attempted_count: number;
 }
-interface AchivementListChartProps {
+export interface AchievementListChartProps {
   data: DataItem[];
   filter: ReportFilter;
+  onClickStudent: (studentId: string) => any;
 }
-export function AchivementListChart(props: AchivementListChartProps) {
+export function AchievementListChart(props: AchievementListChartProps) {
   const css = useStyle();
-  const { filter } = props;
+  const { filter, onClickStudent } = props;
   const { data, xScale, yScale, colorScale, getY, ratioKeys, barStacksHeight } = useMemo(() => computed(props), [props]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TBar>();
 
@@ -175,7 +181,17 @@ export function AchivementListChart(props: AchivementListChartProps) {
             >
               {(barStacks) => [rectList(barStacks), descriptionList(barStacks)]}
             </BarStackHorizontal>
-            <AxisLeft hideTicks scale={yScale} axisLineClassName={css.axiosLine} tickLabelProps={() => inlineStyles.yAxiosTickLabel} />
+            <AxisLeft
+              hideTicks
+              scale={yScale}
+              axisLineClassName={css.axiosLine}
+              tickLabelProps={() => inlineStyles.yAxiosTickLabel}
+              tickComponent={({ formattedValue, ...tickTextProps }) => (
+                <text {...tickTextProps} onClick={() => onClickStudent(studentName2studentId(formattedValue as string, data))}>
+                  {formattedValue}
+                </text>
+              )}
+            />
             <AxisTop
               hideTicks
               top={0}

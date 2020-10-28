@@ -7,7 +7,7 @@ import { setQuery } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { getLessonPlan, getMockOptions } from "../../reducers/report";
-import { AchivementListChart } from "./AchivementListChart";
+import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -58,6 +58,9 @@ export default function Report() {
   const handleChangeMbFilter: FilterAchievementReportProps["onChangeMb"] = (e, value, tab) => {
     history.push({ search: setQuery(history.location.search, { [tab]: value }) });
   };
+  const handleChangeStudent: AchievementListChartProps["onClickStudent"] = (studentId) => {
+    //todo: 跳转
+  };
   useEffect(() => {
     dispatch(getMockOptions());
   }, [dispatch]);
@@ -90,7 +93,7 @@ export default function Report() {
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} />
-      <AchivementListChart data={mockAchievementList} filter={condition.filter} />
+      <AchievementListChart data={mockAchievementList} filter={condition.filter} onClickStudent={handleChangeStudent} />
     </>
   );
 }
