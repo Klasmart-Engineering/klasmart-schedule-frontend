@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher } from "../../api/extra";
-import mockAchievementList from '../../mocks/achievementList.json';
+import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { onloadReport } from "../../reducers/report";
@@ -24,12 +24,12 @@ const useQuery = () => {
   return useMemo(() => {
     const query = new URLSearchParams(search);
     const category = query.get("category");
-    const teacher = query.get("teacher") || "";
-    const class_search = query.get("class_search") || "";
-    const lesson_plain_id = query.get("lesson_plain_id") || "";
+    const teacher_id = query.get("teacher_id") || "";
+    const class_id = query.get("class_id") || "";
+    const lesson_plan_id = query.get("lesson_plan_id") || "";
     const filter = query.get("filter") || "all";
     const order_by = query.get("order_by") || "";
-    return clearNull({ category, teacher, class_search, lesson_plain_id, filter, order_by });
+    return clearNull({ category, teacher_id, class_id, lesson_plan_id, filter, order_by });
   }, [search]);
 };
 
@@ -61,7 +61,8 @@ export default function Report() {
   };
 
   useEffect(() => {
-    dispatch(onloadReport({ lesson_plain_id: condition.lesson_plan_id }));
+    dispatch(onloadReport({ teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [condition.lesson_plan_id, dispatch]);
   return (
     <>
@@ -74,7 +75,7 @@ export default function Report() {
         onChangeMb={handleChangeMbFilter}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} />
-      <AchivementListChart data={mockAchievementList} filter={ReportFilter.all}/>
+      <AchivementListChart data={mockAchievementList} filter={ReportFilter.all} />
     </>
   );
 }

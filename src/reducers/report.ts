@@ -30,19 +30,22 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   ? U
   : any;
 
-type OnloadReportPayload = Parameters<typeof api.reports.listStudentReport>[0] & LoadingMetaPayload;
+type OnloadReportPayload = Parameters<typeof api.reports.listStudentsReport>[0] & LoadingMetaPayload;
 interface OnloadReportReturn {
   mockOptions: MockOptions;
   reportList: EntityStudentReportItem[];
 }
-export const onloadReport = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>("listStudentReport", async ({ lesson_plain_id }) => {
-  const [mockOptions, reportList] = await Promise.all([
-    apiGetMockOptions(),
-    // api.reports.listStudentReport({lesson_plain_id})
-  ]);
+export const onloadReport = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
+  "listStudentsReport",
+  async ({ teacher_id, class_id, lesson_plan_id }) => {
+    const [mockOptions, reportList] = await Promise.all([
+      apiGetMockOptions(),
+      // api.reports.listStudentReport({lesson_plain_id})
+    ]);
 
-  return { mockOptions, reportList };
-});
+    return { mockOptions, reportList };
+  }
+);
 
 const { reducer } = createSlice({
   name: "report ",

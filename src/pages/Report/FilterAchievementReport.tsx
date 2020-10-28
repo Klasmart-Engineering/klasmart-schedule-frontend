@@ -69,7 +69,7 @@ interface OptiopsItem {
 interface GetMenuItemProps {
   list: OptiopsItem[];
   value: QueryCondition;
-  onChangeMenu: (e: React.MouseEvent, value: string, tab: string) => any;
+  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   tab: keyof QueryCondition;
 }
 const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((props, ref) => {
@@ -100,7 +100,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
         {item.name}
       </MenuItem>
     ));
-  const classs = (value.teacher && apiFetchClassByTeacher(mockOptions, value.teacher)) || [];
+  const classs = (value.teacher_id && apiFetchClassByTeacher(mockOptions, value.teacher_id)) || [];
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
   const [anchorElFilter, setAnchorElFilter] = React.useState<null | HTMLElement>(null);
@@ -109,23 +109,23 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const [anchorElPlan, setAnchorElPlan] = React.useState<null | HTMLElement>(null);
 
   const showItem = (event: any, tab: keyof QueryCondition) => {
-    if (tab === "teacher") setAnchorElTeacher(event.currentTarget);
-    if (tab === "class_search") setAnchorElClass(event.currentTarget);
-    if (tab === "lesson_plain_id") setAnchorElPlan(event.currentTarget);
+    if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
+    if (tab === "class_id") setAnchorElClass(event.currentTarget);
+    if (tab === "lesson_plan_id") setAnchorElPlan(event.currentTarget);
     if (tab === "filter") setAnchorElFilter(event.currentTarget);
     if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
   const handleClose = (e: any, tab: keyof QueryCondition) => {
-    if (tab === "teacher") setAnchorElTeacher(null);
-    if (tab === "class_search") setAnchorElClass(null);
-    if (tab === "lesson_plain_id") setAnchorElPlan(null);
+    if (tab === "teacher_id") setAnchorElTeacher(null);
+    if (tab === "class_id") setAnchorElClass(null);
+    if (tab === "lesson_plan_id") setAnchorElPlan(null);
     if (tab === "filter") setAnchorElFilter(null);
     if (tab === "order_by") setAnchorElOrderBy(null);
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: string) => {
-    if (tab === "teacher") setAnchorElTeacher(null);
-    if (tab === "class_search") setAnchorElClass(null);
-    if (tab === "lesson_plain_id") setAnchorElPlan(null);
+    if (tab === "teacher_id") setAnchorElTeacher(null);
+    if (tab === "class_id") setAnchorElClass(null);
+    if (tab === "lesson_plan_id") setAnchorElPlan(null);
     if (tab === "filter") setAnchorElFilter(null);
     if (tab === "order_by") setAnchorElOrderBy(null);
     onChangeMb(e, value, tab);
@@ -138,9 +138,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "teacher")}
+              onChange={(e) => onChange(e, "teacher_id")}
               label={d("Teacher").t("report_label_teacher")}
-              value={value.teacher}
+              value={value.teacher_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
@@ -149,9 +149,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "class_search")}
+              onChange={(e) => onChange(e, "class_id")}
               label={d("Class").t("report_label_class")}
-              value={value.class_search}
+              value={value.class_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
@@ -160,9 +160,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "lesson_plain_id")}
+              onChange={(e) => onChange(e, "lesson_plan_id")}
               label={d("Lesson Plan").t("report_label_lesson_plan")}
-              value={value.lesson_plain_id}
+              value={value.lesson_plan_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
@@ -198,19 +198,19 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       <Hidden mdUp>
         <Box display="flex">
           <Box flex={3}>
-            <PersonOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "teacher")} />
-            <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher")}>
-              <GetMenuItem list={mockOptions.teachers} value={value} onChangeMenu={handleChangeMenu} tab="teacher"></GetMenuItem>
+            <PersonOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "teacher_id")} />
+            <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
+              <GetMenuItem list={mockOptions.teachers} value={value} onChangeMenu={handleChangeMenu} tab="teacher_id"></GetMenuItem>
             </Menu>
 
-            <PeopleOutlineOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "class_search")} />
-            <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_search")}>
-              <GetMenuItem list={classs} value={value} onChangeMenu={handleChangeMenu} tab="class_search"></GetMenuItem>
+            <PeopleOutlineOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "class_id")} />
+            <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
+              <GetMenuItem list={classs} value={value} onChangeMenu={handleChangeMenu} tab="class_id"></GetMenuItem>
             </Menu>
 
-            <ClassOutlined className={css.selectIcon} onClick={(e) => showItem(e, "lesson_plain_id")} />
-            <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plain_id")}>
-              <GetMenuItem list={lesson_plans} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plain_id"></GetMenuItem>
+            <ClassOutlined className={css.selectIcon} onClick={(e) => showItem(e, "lesson_plan_id")} />
+            <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
+              <GetMenuItem list={lesson_plans} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plan_id"></GetMenuItem>
             </Menu>
           </Box>
 

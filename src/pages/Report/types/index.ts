@@ -1,8 +1,8 @@
 export type QueryCondition = {
   category?: string | undefined;
-  teacher?: string | undefined;
-  class_search?: string | undefined;
-  lesson_plain_id?: string | undefined;
+  teacher_id?: string | undefined;
+  class_id?: string | undefined;
+  lesson_plan_id?: string | undefined;
   filter?: string | undefined;
   order_by?: string | undefined;
 };
@@ -23,7 +23,7 @@ export enum ReportOrderBy {
 }
 
 export enum StatusColor {
-  achieved = '#8693f0',
-  not_achieved = '#fe9b9b',
-  not_attempted = '#dadada',
+  achieved = "#8693f0",
+  not_achieved = "#fe9b9b",
+  not_attempted = "#dadada",
 }
