@@ -66,10 +66,14 @@ export default function Report() {
     const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
     if (class_id && teacher_id) {
       dispatch(getLessonPlan({ teacher_id, class_id }));
-      const lesson_plan_id = (lessonPlanList[0] && lessonPlanList[0].id) || "";
-      history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
     }
-  }, [dispatch, history, lessonPlanList, mockOptions]);
+  }, [dispatch, history, mockOptions]);
+
+  useEffect(() => {
+    const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
+    const lesson_plan_id = (lessonPlanList[0] && lessonPlanList[0].id) || "";
+    history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
+  }, [history, lessonPlanList, mockOptions]);
   // useEffect(() => {
   //   dispatch(onloadReport({ teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id }));
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
