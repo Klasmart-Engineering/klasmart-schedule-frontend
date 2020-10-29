@@ -12,6 +12,8 @@ import { EntityStudentReportCategory } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { ReportFilter, StatusColor } from "../ReportAchievementList/types";
 
+const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
+
 const useStyle = makeStyles({
   chart: {
     marginTop: 24,
@@ -42,7 +44,7 @@ const getInlineStyles = (px: number) => ({
     stroke: "black",
     fontSize: 18 * px,
     textAnchor: "middle" as const,
-    dy: 20 * px,
+    verticalAnchor: "start" as const,
   },
   yAxiosLabel: {
     x: 15 * px,
@@ -127,8 +129,9 @@ const computed = (props: AchievementDetailStaticChartProps) => {
   const ratioKeys = Object.values(RATIO_KEYS);
   const colorScale = scaleOrdinal({ domain: ratioKeys, range: Object.values(StatusColor) });
   const getX = (data: EntityStudentReportCategory) => data.name as string;
+  const xAxiosLabelWidth = data.length ? (pixels.barStacksWidth / data.length) * AXIOS_TICK_RABEL_MAX_WIDTH_RATIO : pixels.barStacksWidth;
   const viewPort = [0, 0, pixels.barStacksWidth, pixels.barStacksHeight + pixels.xMarginTop + pixels.xMarginBottom];
-  return { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, viewPort };
+  return { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, xAxiosLabelWidth, viewPort };
 };
 
 const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTooltip"], px: number) => {
@@ -149,7 +152,9 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
-  const { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, viewPort } = useMemo(() => computed(props), [props]);
+  const { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, xAxiosLabelWidth, viewPort } = useMemo(() => computed(props), [
+    props,
+  ]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TBar>();
 
   const rectList = (barStacks: TBarStack[]) =>
@@ -187,7 +192,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
               top={pixels.barStacksHeight}
               scale={xScale}
               axisLineClassName={css.axiosLine}
-              tickLabelProps={() => inlineStyles.xAxiosTickLabel}
+              tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth })}
             />
           </Group>
           <AxisLeft

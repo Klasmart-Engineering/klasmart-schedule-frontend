@@ -5,6 +5,7 @@ import { ParentSize } from "@visx/responsive";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { BarStackHorizontal } from "@visx/shape";
 import { BarStack } from "@visx/shape/lib/types";
+import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { useMemo } from "react";
@@ -47,7 +48,9 @@ const getInlineStyles = (px: number) => {
       stroke: "#0E78D5",
       fontSize: 18 * px,
       textAnchor: "end" as const,
-      dx: -37 * px,
+      verticalAnchor: "middle" as const,
+      dx: -20 * px,
+      width: 120 * px,
     },
     xAxiosLabel: {
       x: pixels.barStackWidth + pixels.yMarginRight - 4 * px,
@@ -206,9 +209,9 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             axisLineClassName={css.axiosLine}
             tickLabelProps={() => inlineStyles.yAxiosTickLabel}
             tickComponent={({ formattedValue, ...tickTextProps }) => (
-              <text {...tickTextProps} onClick={() => onClickStudent(studentName2studentId(formattedValue as string, data))}>
+              <Text {...tickTextProps} onClick={() => onClickStudent(studentName2studentId(formattedValue as string, data))}>
                 {formattedValue}
-              </text>
+              </Text>
             )}
           />
           <AxisTop
