@@ -7,6 +7,7 @@ import { getAchievementDetail, getMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
+import { ReportCategories } from "../ReportCategories";
 import { AchievementDetailChart } from "./AchievementDetailChart";
 
 const clearNull = (obj: Record<string, any>) => {
@@ -35,7 +36,7 @@ export function ReportAchievementDetail() {
   const { mockOptions, achievementDetail = [] } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
-    if (value === Category.learningOutcomes) history.push(ReportAchievementList.routeBasePath);
+    if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
   };
   const backByLessonPlan = (urlParams: string) => {
     history.push({ pathname: ReportAchievementList.routeBasePath, search: urlParams });
