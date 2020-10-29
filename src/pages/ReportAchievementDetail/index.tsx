@@ -4,7 +4,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
-import { getMockOptions, onloadReportAchievementDetail } from "../../reducers/report";
+import { getAchievementDetail, getMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
@@ -24,9 +24,8 @@ const useQuery = () => {
     const teacher_id = query.get("teacher_id") || "";
     const class_id = query.get("class_id") || "";
     const lesson_plan_id = query.get("lesson_plan_id") || "";
-    const lesson_plan_name = query.get("lesson_plan_name") || "";
     const student_id = query.get("student_id") || "";
-    return clearNull({ teacher_id, class_id, lesson_plan_id, student_id, lesson_plan_name });
+    return clearNull({ teacher_id, class_id, lesson_plan_id, student_id });
   }, [search]);
 };
 
@@ -57,7 +56,7 @@ export function ReportAchievementDetail() {
   useEffect(() => {
     if (condition.student_id) {
       dispatch(
-        onloadReportAchievementDetail({
+        getAchievementDetail({
           id: condition.student_id,
           query: { teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id },
         })

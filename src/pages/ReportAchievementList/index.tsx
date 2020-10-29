@@ -3,12 +3,12 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher, MockOptionsItem } from "../../api/extra";
-import mockAchievementList from "../../mocks/achievementList.json";
+// import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
-import { AsyncTrunkReturned, getLessonPlan, getMockOptions, onloadReportAchievementList } from "../../reducers/report";
+import { AsyncTrunkReturned, getAchievementList, getLessonPlan, getMockOptions } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -31,10 +31,9 @@ const useQuery = () => {
     const teacher_id = query.get("teacher_id") || "";
     const class_id = query.get("class_id") || "";
     const lesson_plan_id = query.get("lesson_plan_id") || "";
-    const lesson_plan_name = query.get("lesson_plan_name") || "";
     const status = query.get("status") || "all";
     const order_by = query.get("order_by") || "";
-    return clearNull({ teacher_id, class_id, lesson_plan_id, status, order_by, lesson_plan_name });
+    return clearNull({ teacher_id, class_id, lesson_plan_id, status, order_by });
   }, [search]);
 };
 
@@ -42,7 +41,7 @@ export function ReportAchievementList() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { mockOptions, lessonPlanList } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { mockOptions, lessonPlanList, reportList = [] } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
@@ -66,8 +65,7 @@ export function ReportAchievementList() {
       >;
       if (payload && payload.length > 0) {
         const lesson_plan_id = (payload[0] && payload[0].id) || "";
-        const lesson_plan_name = (payload[0] && payload[0].name) || "";
-        history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id, lesson_plan_name }) });
+        history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
       }
     },
     [dispatch, history]
@@ -82,7 +80,7 @@ export function ReportAchievementList() {
         class_id
           ? getFirstLessonPlanId(value, class_id)
           : history.push({
-              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "", lesson_plan_name: "" }),
+              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
             });
       }
       if (tab === "class_id") {
@@ -98,7 +96,9 @@ export function ReportAchievementList() {
   useEffect(() => {
     const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
     if (class_id && teacher_id) {
-      condition.teacher_id ? dispatch(getLessonPlan({ teacher_id, class_id })) : getFirstLessonPlanId(teacher_id, class_id);
+      condition.teacher_id && condition.class_id
+        ? dispatch(getLessonPlan({ teacher_id: condition.teacher_id, class_id: condition.class_id }))
+        : getFirstLessonPlanId(teacher_id, class_id);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,7 +107,7 @@ export function ReportAchievementList() {
   useEffect(() => {
     if (condition.lesson_plan_id) {
       dispatch(
-        onloadReportAchievementList({
+        getAchievementList({
           teacher_id: condition.teacher_id,
           class_id: condition.class_id,
           lesson_plan_id: condition.lesson_plan_id,
@@ -137,7 +137,7 @@ export function ReportAchievementList() {
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
-      <AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />
+      {reportList && <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />}
     </>
   );
 }

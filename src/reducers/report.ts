@@ -1,16 +1,18 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api";
-import { EntityScheduleShortInfo, EntityStudentReportItem } from "../api/api.auto";
+import { EntityScheduleShortInfo, EntityStudentReportCategory, EntityStudentReportItem } from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface IreportState {
   reportList?: EntityStudentReportItem[];
+  achievementDetail?: EntityStudentReportCategory[];
   mockOptions: MockOptions;
   lessonPlanList: EntityScheduleShortInfo[];
 }
 const initialState: IreportState = {
   reportList: [],
+  achievementDetail: [],
   mockOptions: {
     options: [],
     visibility_settings: [],
@@ -34,19 +36,19 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
 
 type OnloadReportPayload = Parameters<typeof api.reports.listStudentsReport>[0] & LoadingMetaPayload;
 type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsReport>;
-export const onloadReportAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
+export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
   "listStudentsReport",
   async ({ teacher_id, class_id, lesson_plan_id, status, sortBy }) => {
     return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id, status, sortBy });
   }
 );
-interface OnloadReportAchievementDetailPayload extends LoadingMetaPayload {
+interface GetAchievementDetailPayload extends LoadingMetaPayload {
   id: string;
   query: Parameters<typeof api.reports.getStudentDetailReport>[1];
 }
-export const onloadReportAchievementDetail = createAsyncThunk<
+export const getAchievementDetail = createAsyncThunk<
   AsyncReturnType<typeof api.reports.getStudentDetailReport>,
-  OnloadReportAchievementDetailPayload
+  GetAchievementDetailPayload
 >("StudentsDetailReport", async ({ id, query }) => {
   return await api.reports.getStudentDetailReport(id, query);
 });
@@ -67,13 +69,10 @@ const { reducer } = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [onloadReportAchievementList.fulfilled.type]: (
-      state,
-      { payload }: PayloadAction<AsyncTrunkReturned<typeof onloadReportAchievementList>>
-    ) => {
+    [getAchievementList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementList>>) => {
       state.reportList = payload.items;
     },
-    [onloadReportAchievementList.rejected.type]: (state, { error }: any) => {
+    [getAchievementList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMockOptions>>) => {
@@ -86,6 +85,12 @@ const { reducer } = createSlice({
       state.lessonPlanList = payload;
     },
     [getLessonPlan.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [getAchievementDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementDetail>>) => {
+      state.achievementDetail = payload.categories;
+    },
+    [getAchievementDetail.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
   },
