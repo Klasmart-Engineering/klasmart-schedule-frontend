@@ -95,7 +95,9 @@ type RatioExtendedCategory = EntityStudentReportCategory &
   };
 const mapRatio = (data: EntityStudentReportCategory[]): RatioExtendedCategory[] => {
   return data.map((item) => {
-    const { achieved_items = [], not_achieved_items = [], not_attempted_items = [] } = item;
+    const achieved_items = item.achieved_items || [];
+    const not_achieved_items = item.not_achieved_items || [];
+    const not_attempted_items = item.not_attempted_items || [];
     const sum = achieved_items.length + not_achieved_items.length + not_attempted_items.length;
     return {
       ...item,
