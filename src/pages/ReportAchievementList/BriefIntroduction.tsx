@@ -5,6 +5,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
+import { setQuery } from "../../models/ModelContentDetailForm";
 import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -49,6 +50,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   lessonPlan: {
     color: "blue",
     fontWeight: 500,
+    cursor: "pointer",
   },
   teacherAndClass: {
     color: "black",
@@ -79,11 +81,24 @@ interface BriefIntroductionProps {
   value: QueryCondition;
   mockOptions: MockOptions;
   contentPreview: EntityContentInfoWithDetails;
+  backByLessonPlan?: (urlParams: string) => void;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, mockOptions, contentPreview } = props;
+  const { value, mockOptions, contentPreview, backByLessonPlan } = props;
   const css = useStyles();
+
+  const handleClick = () => {
+    const urlParams =
+      "?" +
+      setQuery("", {
+        teacher_id: value.teacher_id as string,
+        class_id: value.class_id as string,
+        lesson_plan_id: value.lesson_plan_id as string,
+      });
+    if (backByLessonPlan) backByLessonPlan(urlParams);
+    // history.push({ pathname: '/report/achievement-list', search: '?' + setQuery('', { teacher_id: value.teacher_id as string, class_id: value.class_id as string, lesson_plan_id: value.lesson_plan_id as string }) });
+  };
 
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -92,8 +107,12 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
         <Box className={css.leftName}>
           {value.teacher_id && <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher_id)}</span>}
           {value.class_id && <span className={css.teacherAndClass}>{" - " + getSpecificName(mockOptions, "class", value.class_id)}</span>}
-          {contentPreview.name && value.lesson_plan_id && <span className={css.lessonPlan}>{" - " + contentPreview.name}</span>}
-          {/* <span className={css.teacherAndClass}>{'- Student 1'}</span> */}
+          {contentPreview.name && value.lesson_plan_id && (
+            <span className={css.lessonPlan} onClick={handleClick}>
+              {" - " + contentPreview.name}
+            </span>
+          )}
+          {value.student_id && <span className={css.teacherAndClass}>{"- Student 1"}</span>}
         </Box>
         <Box className={css.rightContainer}>
           <Box className={clsx(css.rightContainer, css.marginItem)}>

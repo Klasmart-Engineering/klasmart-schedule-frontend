@@ -6,6 +6,7 @@ export type QueryCondition = {
   lesson_plan_name?: string | undefined;
   status?: ReportFilter;
   order_by?: ReportOrderBy;
+  student_id?: string | undefined;
 };
 export type QueryConditionChangeHandler = (value: QueryCondition) => any;
 export type QueryConditionBaseProps = {
