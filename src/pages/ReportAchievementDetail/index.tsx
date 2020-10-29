@@ -5,9 +5,9 @@ import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { getMockOptions, onloadReportAchievementDetail } from "../../reducers/report";
-import { AchievementDetailChart } from "../ReportAchievementList/AchievementDetailChart";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
+import { AchievementDetailChart } from "./AchievementDetailChart";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
