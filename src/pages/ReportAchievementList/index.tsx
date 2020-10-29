@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher, MockOptionsItem } from "../../api/extra";
 import mockAchievementList from "../../mocks/achievementList.json";
-import { setQuery } from "../../models/ModelContentDetailForm";
+import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { AsyncTrunkReturned, getLessonPlan, getMockOptions, onloadReportAchievementList } from "../../reducers/report";
+import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
@@ -55,15 +56,15 @@ export function ReportAchievementList() {
     computeFilter(tab, value);
   };
   const handleChangeStudent: AchievementListChartProps["onClickStudent"] = (studentId) => {
-    //todo: 跳转
+    const { status, order_by, ...ortherCondition } = condition;
+    history.push({ pathname: ReportAchievementDetail.routeBasePath, search: toQueryString({ student_id: studentId, ...ortherCondition }) });
   };
-
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
       const { payload } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
-      if (payload.length > 0) {
+      if (payload && payload.length > 0) {
         const lesson_plan_id = (payload[0] && payload[0].id) || "";
         const lesson_plan_name = (payload[0] && payload[0].name) || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id, lesson_plan_name }) });
@@ -94,12 +95,13 @@ export function ReportAchievementList() {
   useEffect(() => {
     dispatch(getMockOptions());
   }, [dispatch]);
-
   useEffect(() => {
     const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
     if (class_id && teacher_id) {
-      getFirstLessonPlanId(teacher_id, class_id);
+      condition.teacher_id ? dispatch(getLessonPlan({ teacher_id, class_id })) : getFirstLessonPlanId(teacher_id, class_id);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, getFirstLessonPlanId, history, mockOptions]);
 
   useEffect(() => {
@@ -115,7 +117,7 @@ export function ReportAchievementList() {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.lesson_plan_id, dispatch]);
+  }, [condition.lesson_plan_id, condition.order_by, condition.status, dispatch]);
 
   useEffect(() => {
     if (condition.lesson_plan_id) {

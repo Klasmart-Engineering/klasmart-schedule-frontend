@@ -64,3 +64,7 @@ export const setQuery = (search: string, hash: Record<string, string | number | 
   Object.keys(hash).forEach((key) => query.set(key, String(hash[key])));
   return query.toString();
 };
+export const toQueryString = (hash: Record<string, any>): string => {
+  const search = new URLSearchParams(hash);
+  return `?${search.toString()}`;
+};

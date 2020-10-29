@@ -39,6 +39,9 @@ export function ReportAchievementDetail() {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportAchievementList.routeBasePath);
   };
+  const backByLessonPlan = (urlParams: string) => {
+    history.push({ pathname: ReportAchievementList.routeBasePath, search: urlParams });
+  };
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export function ReportAchievementDetail() {
     <>
       <FirstSearchHeader value={Category.archived} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
-      <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
+      <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} backByLessonPlan={backByLessonPlan} />
       <AchievementDetailChart data={mockAchievementDetail} />
     </>
   );
