@@ -11,10 +11,8 @@ import { QueryCondition } from "./types";
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
     display: "flex",
-    // justifyContent: "space-between",
     padding: "10px 0 20px 0",
     flexWrap: "wrap",
-    // alignItems: 'center'
   },
   colorPart: {
     width: "32px",
@@ -32,12 +30,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   rightContainer: {
     display: "flex",
     alignItems: "center",
-    // justifyContent: "flex-end",
     flexWrap: "wrap",
-    [breakpoints.down("sm")]: {
-      // justifyContent: "left",
-      // marginTop: "10px",
-    },
     "& div": {
       marginRight: "10px",
     },
@@ -108,7 +101,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
           {value.teacher_id && <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher_id)}</span>}
           {value.class_id && <span className={css.teacherAndClass}>{" - " + getSpecificName(mockOptions, "class", value.class_id)}</span>}
           {contentPreview.name && value.lesson_plan_id && (
-            <span className={css.lessonPlan} onClick={handleClick}>
+            <span style={{ cursor: value.student_id ? "pointer" : "default" }} className={css.lessonPlan} onClick={handleClick}>
               {" - " + contentPreview.name}
             </span>
           )}
