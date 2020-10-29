@@ -7,6 +7,7 @@ import { BarStack } from "@visx/shape/lib/types";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { useMemo } from "react";
+import { EntityStudentReportItem } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { ReportFilter, StatusColor } from "./types";
 
@@ -52,7 +53,7 @@ const inlineStyles = {
   },
 };
 
-type TBarStack = BarStack<RatioExtendedDataItem, string>;
+type TBarStack = BarStack<RatioExtendedEntityStudentReportItem, string>;
 type TBar = TBarStack["bars"][0];
 type RatioKey = typeof RATIO_KEYS[keyof typeof RATIO_KEYS];
 type CountKey = typeof COUNT_KEYS[keyof typeof COUNT_KEYS];
@@ -73,11 +74,11 @@ const ratioKey2countKey = (ratioKey: RatioKey): CountKey => {
   return COUNT_KEYS[(filter as unknown) as keyof typeof COUNT_KEYS];
 };
 
-type RatioExtendedDataItem = DataItem &
+type RatioExtendedEntityStudentReportItem = EntityStudentReportItem &
   {
     [key in RatioKey | "sum"]: number;
   };
-const mapRatio = (data: DataItem[]): RatioExtendedDataItem[] => {
+const mapRatio = (data: EntityStudentReportItem[]): RatioExtendedEntityStudentReportItem[] => {
   return data.map((item) => {
     const { achieved_count = 0, not_achieved_count = 0, not_attempted_count = 0 } = item;
     const sum = achieved_count + not_achieved_count + not_attempted_count;
@@ -91,7 +92,7 @@ const mapRatio = (data: DataItem[]): RatioExtendedDataItem[] => {
   });
 };
 
-const studentName2studentId = (name: string, data: DataItem[]) => {
+const studentName2studentId = (name: string, data: EntityStudentReportItem[]) => {
   return data.find((item) => item.student_name === name)?.student_id as string;
 };
 
@@ -102,33 +103,26 @@ const computed = (props: AchievementListChartProps) => {
   const barStacksHeight = data.length * (pixels.barStackHeight + pixels.barStackMargin);
   const xScale = scaleLinear({ domain: [0, xMax], range: [0, pixels.barStackWidth] });
   const paddingRatio = pixels.barStackMargin / (pixels.barStackMargin + pixels.barStackHeight);
-  const yScale = scaleBand({ domain: data.map((item) => item.student_name), range: [barStacksHeight, 0], padding: paddingRatio });
+  const yScale = scaleBand({ domain: data.map((item) => item.student_name as string), range: [barStacksHeight, 0], padding: paddingRatio });
   const ratioKeys = filter === ReportFilter.all ? Object.values(RATIO_KEYS) : [RATIO_KEYS[filter]];
   const colorScale = scaleOrdinal({
     domain: ratioKeys,
     range: filter === ReportFilter.all ? Object.values(StatusColor) : [StatusColor[filter]],
   });
-  const getY = (data: DataItem) => data.student_name;
+  const getY = (data: EntityStudentReportItem) => data.student_name as string;
   return { data, xScale, yScale, colorScale, getY, ratioKeys, barStacksHeight };
 };
 
 const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTooltip"]) => {
-  console.log("call showBarTooltip");
   showTooltip({
     tooltipLeft: bar.x + pixels.yMarginLeft + bar.width / 2,
     tooltipTop: bar.y,
     tooltipData: bar,
   });
 };
-interface DataItem {
-  student_id: string;
-  student_name: string;
-  achieved_count: number;
-  not_achieved_count: number;
-  not_attempted_count: number;
-}
+
 export interface AchievementListChartProps {
-  data: DataItem[];
+  data: EntityStudentReportItem[];
   filter: ReportFilter;
   onClickStudent: (studentId: string) => any;
 }

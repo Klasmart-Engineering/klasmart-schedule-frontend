@@ -7,8 +7,9 @@ import { BarStack } from "@visx/shape/lib/types";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { useMemo } from "react";
+import { EntityStudentReportCategory } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
-import { ReportFilter, StatusColor } from "./types";
+import { ReportFilter, StatusColor } from "../ReportAchievementList/types";
 
 const useStyle = makeStyles({
   chart: {
@@ -88,11 +89,11 @@ const ratioKey2DetailKey = (ratioKey: RatioKey): DetailKey => {
   return DETAIL_KEYS[(filter as unknown) as keyof typeof DETAIL_KEYS];
 };
 
-type RatioExtendedCategory = Category &
+type RatioExtendedCategory = EntityStudentReportCategory &
   {
     [key in RatioKey | "sum"]: number;
   };
-const mapRatio = (data: Category[]): RatioExtendedCategory[] => {
+const mapRatio = (data: EntityStudentReportCategory[]): RatioExtendedCategory[] => {
   return data.map((item) => {
     const { achieved_items = [], not_achieved_items = [], not_attempted_items = [] } = item;
     const sum = achieved_items.length + not_achieved_items.length + not_attempted_items.length;
@@ -109,7 +110,7 @@ const mapRatio = (data: Category[]): RatioExtendedCategory[] => {
 const computed = (props: AchievementDetailChartProps) => {
   const data = mapRatio(props.data);
   const xScale = scaleBand({
-    domain: data.map((item) => item.name),
+    domain: data.map((item) => item.name as string),
     range: [0, pixels.barStacksWidth],
     padding: pixels.barStackMarginRatio,
   });
@@ -117,26 +118,20 @@ const computed = (props: AchievementDetailChartProps) => {
   const yAxiosScale = scaleLinear({ domain: [100, 0], range: [0, pixels.barStacksHeight + pixels.xMarginTop] });
   const ratioKeys = Object.values(RATIO_KEYS);
   const colorScale = scaleOrdinal({ domain: ratioKeys, range: Object.values(StatusColor) });
-  const getX = (data: Category) => data.name;
+  const getX = (data: EntityStudentReportCategory) => data.name as string;
   return { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys };
 };
 
 const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTooltip"]) => {
-  console.log("bar.x, bar.y = ", bar.x, bar.y);
   showTooltip({
     tooltipLeft: bar.x + bar.width,
     tooltipTop: bar.y + pixels.xMarginTop,
     tooltipData: bar,
   });
 };
-interface Category {
-  name: string;
-  achieved_items: string[];
-  not_achieved_items: string[];
-  not_attempted_items: string[];
-}
+
 export interface AchievementDetailChartProps {
-  data: Category[];
+  data: EntityStudentReportCategory[];
 }
 
 export function AchievementDetailChart(props: AchievementDetailChartProps) {
@@ -196,9 +191,9 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
           <Tooltip top={tooltipTop} left={tooltipLeft} offsetLeft={0} offsetTop={0}>
             <div className={css.tooltipContent}>
               <div className={css.tooltipTitle}>
-                {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)].length}&nbsp;LOs
+                {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.length}&nbsp;LOs
               </div>
-              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)].map((desc, idx) => [
+              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.map((desc, idx) => [
                 ...desc.split("\n").map((p, idy) => [p, <br key={`br-${idx}-${idy}`} />]),
                 <br key={`br-${idx}`} />,
               ])}
