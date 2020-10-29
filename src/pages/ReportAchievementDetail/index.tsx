@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { getAchievementDetail, getMockOptions } from "../../reducers/report";
@@ -33,7 +32,7 @@ export function ReportAchievementDetail() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { mockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { mockOptions, achievementDetail = [] } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportAchievementList.routeBasePath);
@@ -69,7 +68,7 @@ export function ReportAchievementDetail() {
       <FirstSearchHeader value={Category.archived} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
       <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} backByLessonPlan={backByLessonPlan} />
-      <AchievementDetailChart data={mockAchievementDetail} />
+      {achievementDetail && <AchievementDetailChart data={achievementDetail} />}
     </>
   );
 }
