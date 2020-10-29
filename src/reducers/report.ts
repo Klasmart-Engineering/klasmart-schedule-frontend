@@ -34,15 +34,27 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
 
 type OnloadReportPayload = Parameters<typeof api.reports.listStudentsReport>[0] & LoadingMetaPayload;
 type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsReport>;
-export const onloadReport = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
+export const onloadReportAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
   "listStudentsReport",
-  async ({ teacher_id, class_id, lesson_plan_id }) => {
-    return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id });
+  async ({ teacher_id, class_id, lesson_plan_id, status, sortBy }) => {
+    return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id, status, sortBy });
   }
 );
+interface OnloadReportAchievementDetailPayload extends LoadingMetaPayload {
+  id: string;
+  query: Parameters<typeof api.reports.getStudentDetailReport>[1];
+}
+export const onloadReportAchievementDetail = createAsyncThunk<
+  AsyncReturnType<typeof api.reports.getStudentDetailReport>,
+  OnloadReportAchievementDetailPayload
+>("StudentsDetailReport", async ({ id, query }) => {
+  return await api.reports.getStudentDetailReport(id, query);
+});
+
 export const getMockOptions = createAsyncThunk<MockOptions>("apiGetMockOptions", async () => {
   return await apiGetMockOptions();
 });
+
 export const getLessonPlan = createAsyncThunk<
   AsyncReturnType<typeof api.schedulesLessonPlans.getLessonPlans>,
   Parameters<typeof api.schedulesLessonPlans.getLessonPlans>[0]
@@ -55,10 +67,13 @@ const { reducer } = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [onloadReport.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onloadReport>>) => {
+    [onloadReportAchievementList.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof onloadReportAchievementList>>
+    ) => {
       state.reportList = payload.items;
     },
-    [onloadReport.rejected.type]: (state, { error }: any) => {
+    [onloadReportAchievementList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMockOptions>>) => {

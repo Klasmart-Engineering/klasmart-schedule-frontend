@@ -1445,11 +1445,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/reports/students/{id}
      * @description get student report
      */
-    getStudentDetailReport: (
-      id: string,
-      query: { teacher_id: string; class_id: string; lesson_plain_id: string },
-      params?: RequestParams
-    ) =>
+    getStudentDetailReport: (id: string, query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
       this.request<EntityStudentDetailReport, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/reports/students/${id}${this.addQueryParams(query)}`,
         "GET",

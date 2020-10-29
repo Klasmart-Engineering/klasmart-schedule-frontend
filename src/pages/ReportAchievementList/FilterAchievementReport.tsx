@@ -112,21 +112,21 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
     if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
     if (tab === "lesson_plan_id" && (classs.length > 0 || lessonPlanList.length > 0)) setAnchorElPlan(event.currentTarget);
-    if (tab === "filter") setAnchorElFilter(event.currentTarget);
+    if (tab === "status") setAnchorElFilter(event.currentTarget);
     if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
   const handleClose = (e: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
     if (tab === "class_id") setAnchorElClass(null);
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
-    if (tab === "filter") setAnchorElFilter(null);
+    if (tab === "status") setAnchorElFilter(null);
     if (tab === "order_by") setAnchorElOrderBy(null);
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
     if (tab === "class_id") setAnchorElClass(null);
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
-    if (tab === "filter") setAnchorElFilter(null);
+    if (tab === "status") setAnchorElFilter(null);
     if (tab === "order_by") setAnchorElOrderBy(null);
     onChangeMb(e, value, tab);
   };
@@ -175,8 +175,8 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "filter")}
-              value={value.filter}
+              onChange={(e) => onChange(e, "status")}
+              value={value.status}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
@@ -217,9 +217,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
           </Box>
 
           <Box flex={2} display="flex" justifyContent="flex-end">
-            <LocalBarOutlined className={css.selectIcon} onClick={(e) => showItem(e, "filter")} />
-            <Menu anchorEl={anchorElFilter} keepMounted open={Boolean(anchorElFilter)} onClose={(e) => handleClose(e, "filter")}>
-              <GetMenuItem list={filter()} value={value} onChangeMenu={handleChangeMenu} tab="filter"></GetMenuItem>
+            <LocalBarOutlined className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
+            <Menu anchorEl={anchorElFilter} keepMounted open={Boolean(anchorElFilter)} onClose={(e) => handleClose(e, "status")}>
+              <GetMenuItem list={filter()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
             </Menu>
 
             <ImportExportIcon onClick={(e) => showItem(e, "order_by")} />

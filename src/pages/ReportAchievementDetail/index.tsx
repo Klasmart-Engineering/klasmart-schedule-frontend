@@ -4,10 +4,10 @@ import { useHistory, useLocation } from "react-router-dom";
 import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
-import { getMockOptions } from "../../reducers/report";
+import { getMockOptions, onloadReportAchievementDetail } from "../../reducers/report";
+import { AchievementDetailChart } from "../ReportAchievementList/AchievementDetailChart";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
-import { AchievementDetailChart } from "./AchievementDetailChart";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -23,8 +23,9 @@ const useQuery = () => {
     const teacher_id = query.get("teacher_id") || "";
     const class_id = query.get("class_id") || "";
     const lesson_plan_id = query.get("lesson_plan_id") || "";
+    const lesson_plan_name = query.get("lesson_plan_name") || "";
     const student_id = query.get("student_id") || "";
-    return clearNull({ teacher_id, class_id, lesson_plan_id, student_id });
+    return clearNull({ teacher_id, class_id, lesson_plan_id, student_id, lesson_plan_name });
   }, [search]);
 };
 
@@ -50,6 +51,17 @@ export function ReportAchievementDetail() {
   useEffect(() => {
     dispatch(getMockOptions());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (condition.student_id) {
+      dispatch(
+        onloadReportAchievementDetail({
+          id: condition.student_id,
+          query: { teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id },
+        })
+      );
+    }
+  }, [condition.class_id, condition.lesson_plan_id, condition.student_id, condition.teacher_id, dispatch]);
 
   return (
     <>
