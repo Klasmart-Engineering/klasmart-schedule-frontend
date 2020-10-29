@@ -29,6 +29,7 @@
     "@types/redux": "^3.6.0",
     "@visx/axis": "^1.1.0",
     "@visx/group": "^1.0.0",
+    "@visx/responsive": "^1.1.0",
     "@visx/scale": "^1.1.0",
     "@visx/shape": "^1.1.0",
     "@visx/tooltip": "^1.1.0",
