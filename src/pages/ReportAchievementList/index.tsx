@@ -9,6 +9,7 @@ import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { AsyncTrunkReturned, getLessonPlan, getMockOptions, onloadReportAchievementList } from "../../reducers/report";
+import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";

@@ -6,9 +6,9 @@ import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { getMockOptions, onloadReportAchievementDetail } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
-import { AchievementDetailChart } from "../ReportAchievementList/AchievementDetailChart";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
+import { AchievementDetailChart } from "./AchievementDetailChart";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
