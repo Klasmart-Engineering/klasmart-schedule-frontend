@@ -8,6 +8,7 @@ import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
+import { getContentDetailById } from "../../reducers/content";
 import { AsyncTrunkReturned, getLessonPlan, getMockOptions } from "../../reducers/report";
 import { AchievementDetailChart } from "./AchievementDetailChart";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -105,6 +106,14 @@ export default function Report() {
   //   dispatch(onloadReport({ teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id }));
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [condition.lesson_plan_id, dispatch]);
+  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+
+  useEffect(() => {
+    if (condition.lesson_plan_id) {
+      dispatch(getContentDetailById({ metaLoading: true, content_id: condition.lesson_plan_id }));
+    }
+  }, [condition.lesson_plan_id, dispatch]);
+
   return (
     <>
       <FirstSearchHeader value={condition} onChange={handleChange} />
@@ -116,7 +125,7 @@ export default function Report() {
         onChangeMb={handleChangeMbFilter}
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
       ></FilterAchievementReport>
-      <BriefIntroduction value={condition} mockOptions={mockOptions} />
+      <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
       <AchievementListChart data={mockAchievementList} filter={condition.filter} onClickStudent={handleChangeStudent} />
       <AchievementDetailChart data={mockAchievementDetail} />
     </>
