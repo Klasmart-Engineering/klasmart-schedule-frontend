@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Group } from "@visx/group";
+import { ParentSize } from "@visx/responsive";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { BarStack as VisxBarStack } from "@visx/shape";
 import { BarStack } from "@visx/shape/lib/types";
@@ -16,57 +17,61 @@ const useStyle = makeStyles({
     marginTop: 24,
     position: "relative",
   },
+  svgContainer: {
+    position: "absolute",
+  },
   svg: {
     backgroundColor: "rgba(0,0,0, .02)",
-  },
-  desc: {
-    textAnchor: "middle",
-    alignmentBaseline: "baseline",
-    stroke: "black",
   },
   axiosLine: {
     stroke: "#999999",
   },
-  tooltipContent: {
-    maxWidth: 240,
-    fontSize: 14,
-    lineHeight: 17 / 14,
-  },
-  tooltipTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    lineHeight: 1,
-    marginTop: 11,
-    marginBottom: 5,
-    color: "#0E78D5",
-  },
 });
 
-const pixels = {
-  barStacksWidth: 1500,
-  barStacksHeight: 400,
-  barStackMarginRatio: 100 / (100 + 160),
-  descMarginBottom: 16,
-  xMarginTop: 180,
-  xMarginBottom: 160,
-};
+const getPixels = (px: number) => ({
+  barStacksWidth: 1500 * px,
+  barStacksHeight: 400 * px,
+  barStackMarginRatio: (100 / (100 + 160)) * px,
+  descMarginBottom: 16 * px,
+  xMarginTop: 180 * px,
+  xMarginBottom: 160 * px,
+});
 
-const inlineStyles = {
+const getInlineStyles = (px: number) => ({
   xAxiosTickLabel: {
     stroke: "black",
-    fontSize: 18,
+    fontSize: 18 * px,
     textAnchor: "middle" as const,
-    dy: 20,
+    dy: 20 * px,
   },
   yAxiosLabel: {
-    x: 15,
-    y: 40,
-    fontSize: 16,
+    x: 15 * px,
+    y: 40 * px,
+    fontSize: 16 * px,
     stroke: "#999",
     textAnchor: "start" as const,
     transform: "",
   },
-};
+  tooltipContent: {
+    maxWidth: 240 * px,
+    fontSize: 14 * px,
+    lineHeight: (17 / 14) * px,
+  },
+  tooltipTitle: {
+    fontSize: 14 * px,
+    fontWeight: "bold" as const,
+    lineHeight: 1 * px,
+    marginTop: 11 * px,
+    marginBottom: 5 * px,
+    color: "#0E78D5" as const,
+  },
+  desc: {
+    textAnchor: "middle" as const,
+    alignmentBaseline: "baseline" as const,
+    stroke: "black" as const,
+    fontSize: 18 * px,
+  },
+});
 
 type TBarStack = BarStack<RatioExtendedCategory, string>;
 type TBar = TBarStack["bars"][0];
@@ -109,7 +114,8 @@ const mapRatio = (data: EntityStudentReportCategory[]): RatioExtendedCategory[] 
   });
 };
 
-const computed = (props: AchievementDetailChartProps) => {
+const computed = (props: AchievementDetailStaticChartProps) => {
+  const pixels = getPixels(props.px);
   const data = mapRatio(props.data);
   const xScale = scaleBand({
     domain: data.map((item) => item.name as string),
@@ -121,10 +127,12 @@ const computed = (props: AchievementDetailChartProps) => {
   const ratioKeys = Object.values(RATIO_KEYS);
   const colorScale = scaleOrdinal({ domain: ratioKeys, range: Object.values(StatusColor) });
   const getX = (data: EntityStudentReportCategory) => data.name as string;
-  return { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys };
+  const viewPort = [0, 0, pixels.barStacksWidth, pixels.barStacksHeight + pixels.xMarginTop + pixels.xMarginBottom];
+  return { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, viewPort };
 };
 
-const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTooltip"]) => {
+const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTooltip"], px: number) => {
+  const pixels = getPixels(px);
   showTooltip({
     tooltipLeft: bar.x + bar.width,
     tooltipTop: bar.y + pixels.xMarginTop,
@@ -132,13 +140,16 @@ const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTool
   });
 };
 
-export interface AchievementDetailChartProps {
-  data: EntityStudentReportCategory[];
+export interface AchievementDetailStaticChartProps extends AchievementDetailChartProps {
+  px: number;
 }
 
-export function AchievementDetailChart(props: AchievementDetailChartProps) {
+export function AchievementDetailStaticChart(props: AchievementDetailStaticChartProps) {
+  const { px } = props;
   const css = useStyle();
-  const { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys } = useMemo(() => computed(props), [props]);
+  const pixels = useMemo(() => getPixels(px), [px]);
+  const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
+  const { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, viewPort } = useMemo(() => computed(props), [props]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TBar>();
 
   const rectList = (barStacks: TBarStack[]) =>
@@ -151,14 +162,14 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
           width={bar.width}
           height={bar.height}
           fill={bar.color}
-          onMouseOver={() => showBarTooltip(bar, showTooltip)}
+          onMouseOver={() => showBarTooltip(bar, showTooltip, px)}
           onMouseLeave={hideTooltip}
         />
       ))
     );
   const descriptionList = (barStacks: TBarStack[]) =>
     barStacks.slice(-1)[0].bars.map((bar) => (
-      <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} className={css.desc}>
+      <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
         100%,&nbsp;
         {data[bar.index].sum}&nbsp;LOs
       </text>
@@ -166,7 +177,7 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.chart}>
-        <svg width={pixels.barStacksWidth} height={pixels.barStacksHeight + pixels.xMarginTop + pixels.xMarginBottom} className={css.svg}>
+        <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
           <Group top={pixels.xMarginTop}>
             <VisxBarStack data={data} keys={ratioKeys} xScale={xScale} yScale={yScale} color={colorScale} x={getX}>
               {(barStacks) => [rectList(barStacks), descriptionList(barStacks)]}
@@ -191,8 +202,8 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
         </svg>
         {tooltipOpen && tooltipData && (
           <Tooltip top={tooltipTop} left={tooltipLeft} offsetLeft={0} offsetTop={0}>
-            <div className={css.tooltipContent}>
-              <div className={css.tooltipTitle}>
+            <div style={inlineStyles.tooltipContent}>
+              <div style={inlineStyles.tooltipTitle}>
                 {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.length}&nbsp;LOs
               </div>
               {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.map((desc, idx) => [
@@ -202,6 +213,32 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
             </div>
           </Tooltip>
         )}
+      </div>
+    </LayoutBox>
+  );
+}
+
+export interface AchievementDetailChartProps {
+  data: EntityStudentReportCategory[];
+}
+export function AchievementDetailChart(props: AchievementDetailChartProps) {
+  const css = useStyle();
+  const {
+    viewPort: [, , svgWidth, svgHeight],
+  } = useMemo(() => computed({ ...props, px: 1 }), [props]);
+  return (
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+      <div className={css.chart} style={{ paddingTop: `${svgHeight / svgWidth}%` }}>
+        <ParentSize>
+          {(info) => {
+            const px = info.width / svgWidth;
+            return !px ? null : (
+              <div className={css.svgContainer}>
+                <AchievementDetailStaticChart {...props} px={px} />
+              </div>
+            );
+          }}
+        </ParentSize>
       </div>
     </LayoutBox>
   );

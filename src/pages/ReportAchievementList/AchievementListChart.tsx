@@ -119,8 +119,8 @@ const studentName2studentId = (name: string, data: EntityStudentReportItem[]) =>
   return data.find((item) => item.student_name === name)?.student_id as string;
 };
 
-const computed = (props: AchievementListChartProps, px: number) => {
-  const { filter } = props;
+const computed = (props: AchievementListStaticChartProps) => {
+  const { filter, px } = props;
   const pixels = getPixels(px);
   const data = mapRatio(props.data);
   const barStacksHeight = data.length * (pixels.barStackHeight + pixels.barStackMargin);
@@ -156,9 +156,8 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
-  const { data, xScale, xAxiosScale, yScale, colorScale, getY, ratioKeys, barStacksHeight, viewPort } = useMemo(() => computed(props, px), [
+  const { data, xScale, xAxiosScale, yScale, colorScale, getY, ratioKeys, barStacksHeight, viewPort } = useMemo(() => computed(props), [
     props,
-    px,
   ]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TBar>();
 
@@ -244,7 +243,7 @@ export function AchievementListChart(props: AchievementListChartProps) {
   const css = useStyle();
   const {
     viewPort: [, , svgWidth, svgHeight],
-  } = useMemo(() => computed(props, 1), [props]);
+  } = useMemo(() => computed({ ...props, px: 1 }), [props]);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.chart} style={{ paddingTop: `${svgHeight / svgWidth}%` }}>
