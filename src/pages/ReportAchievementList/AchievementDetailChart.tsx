@@ -198,9 +198,9 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
               <div className={css.tooltipTitle}>
                 {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)].length}&nbsp;LOs
               </div>
-              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)].map((desc) => [
-                ...desc.split("\n").map((p) => [p, <br />]),
-                <br />,
+              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)].map((desc, idx) => [
+                ...desc.split("\n").map((p, idy) => [p, <br key={`br-${idx}-${idy}`} />]),
+                <br key={`br-${idx}`} />,
               ])}
             </div>
           </Tooltip>
