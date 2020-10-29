@@ -45,7 +45,7 @@ const inlineStyles = {
     dx: -37,
   },
   xAxiosLabel: {
-    x: pixels.barStackWidth,
+    x: pixels.barStackWidth + pixels.yMarginRight - 4,
     y: 24,
     fontSize: 16,
     stroke: "#999",
@@ -99,9 +99,9 @@ const studentName2studentId = (name: string, data: EntityStudentReportItem[]) =>
 const computed = (props: AchievementListChartProps) => {
   const { filter } = props;
   const data = mapRatio(props.data);
-  const xMax = Math.max(...data.map((item) => item.sum));
   const barStacksHeight = data.length * (pixels.barStackHeight + pixels.barStackMargin);
-  const xScale = scaleLinear({ domain: [0, xMax], range: [0, pixels.barStackWidth] });
+  const xScale = scaleLinear({ domain: [0, 100], range: [0, pixels.barStackWidth] });
+  const xAxiosScale = scaleLinear({ domain: [0, 100], range: [0, pixels.barStackWidth + pixels.yMarginRight] });
   const paddingRatio = pixels.barStackMargin / (pixels.barStackMargin + pixels.barStackHeight);
   const yScale = scaleBand({ domain: data.map((item) => item.student_name as string), range: [barStacksHeight, 0], padding: paddingRatio });
   const ratioKeys = filter === ReportFilter.all ? Object.values(RATIO_KEYS) : [RATIO_KEYS[filter]];
@@ -110,7 +110,7 @@ const computed = (props: AchievementListChartProps) => {
     range: filter === ReportFilter.all ? Object.values(StatusColor) : [StatusColor[filter]],
   });
   const getY = (data: EntityStudentReportItem) => data.student_name as string;
-  return { data, xScale, yScale, colorScale, getY, ratioKeys, barStacksHeight };
+  return { data, xScale, xAxiosScale, yScale, colorScale, getY, ratioKeys, barStacksHeight };
 };
 
 const showBarTooltip = (bar: TBar, showTooltip: UseTooltipParams<TBar>["showTooltip"]) => {
@@ -129,7 +129,7 @@ export interface AchievementListChartProps {
 export function AchievementListChart(props: AchievementListChartProps) {
   const css = useStyle();
   const { filter, onClickStudent } = props;
-  const { data, xScale, yScale, colorScale, getY, ratioKeys, barStacksHeight } = useMemo(() => computed(props), [props]);
+  const { data, xScale, xAxiosScale, yScale, colorScale, getY, ratioKeys, barStacksHeight } = useMemo(() => computed(props), [props]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TBar>();
 
   const rectList = (barStacks: TBarStack[]) =>
@@ -184,7 +184,7 @@ export function AchievementListChart(props: AchievementListChartProps) {
             <AxisTop
               hideTicks
               top={0}
-              scale={xScale}
+              scale={xAxiosScale}
               axisLineClassName={css.axiosLine}
               label="in % of all Learning Outcomes"
               labelOffset={0}
