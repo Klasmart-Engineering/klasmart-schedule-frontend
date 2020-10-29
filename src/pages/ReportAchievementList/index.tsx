@@ -12,7 +12,7 @@ import { AsyncTrunkReturned, getLessonPlan, getMockOptions, onloadReportAchievem
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
-import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { QueryCondition } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
@@ -36,18 +36,16 @@ const useQuery = () => {
   }, [search]);
 };
 
-const toQueryString = (hash: Record<string, any>): string => {
-  const search = new URLSearchParams(hash);
-  return `?${search.toString()}`;
-};
-
 export function ReportAchievementList() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
   const { mockOptions, lessonPlanList } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
+  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+    if (value === Category.archived) return;
+    if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
+  };
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (e, tab) => {
     const value = e.target.value;
     computeFilter(tab, value);
@@ -126,8 +124,8 @@ export function ReportAchievementList() {
 
   return (
     <>
-      <FirstSearchHeader value={condition} onChange={handleChange} />
-      <FirstSearchHeaderMb value={condition} onChange={handleChange} />
+      <FirstSearchHeader value={Category.archived} onChange={handleChange} />
+      <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}

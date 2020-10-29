@@ -5,9 +5,10 @@ import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { getMockOptions, onloadReportAchievementDetail } from "../../reducers/report";
+import { ReportAchievementList } from "../ReportAchievementList";
+import { AchievementDetailChart } from "../ReportAchievementList/AchievementDetailChart";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
-import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
-import { AchievementDetailChart } from "./AchievementDetailChart";
+import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -29,17 +30,15 @@ const useQuery = () => {
   }, [search]);
 };
 
-const toQueryString = (hash: Record<string, any>): string => {
-  const search = new URLSearchParams(hash);
-  return `?${search.toString()}`;
-};
-
 export function ReportAchievementDetail() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
   const { mockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
+  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+    if (value === Category.archived) return;
+    if (value === Category.learningOutcomes) history.push(ReportAchievementList.routeBasePath);
+  };
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
 
   useEffect(() => {
@@ -65,8 +64,8 @@ export function ReportAchievementDetail() {
 
   return (
     <>
-      <FirstSearchHeader value={condition} onChange={handleChange} />
-      <FirstSearchHeaderMb value={condition} onChange={handleChange} />
+      <FirstSearchHeader value={Category.archived} onChange={handleChange} />
+      <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
       <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
       <AchievementDetailChart data={mockAchievementDetail} />
     </>

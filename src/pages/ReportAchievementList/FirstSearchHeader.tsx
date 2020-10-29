@@ -8,7 +8,6 @@ import React from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,11 +75,14 @@ export enum Category {
   archived = "archived",
   learningOutcomes = "learningOutcomes",
 }
-export interface FirstSearchHeaderProps extends QueryConditionBaseProps {}
+export interface FirstSearchHeaderProps {
+  value: Category;
+  onChange: (value: Category) => any;
+}
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
-  const createHandleClick = (category: QueryCondition["category"]) => () => onChange({ category });
+  const createHandleClick = (category: Category) => () => onChange(category);
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -90,15 +92,15 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(Category.archived)}
-                className={clsx(css.nav, { [css.actives]: value?.category === Category.archived })}
-                startIcon={value?.category === Category.archived ? <SaBlueIcon /> : <SaIcon />}
+                className={clsx(css.nav, { [css.actives]: value === Category.archived })}
+                startIcon={value === Category.archived ? <SaBlueIcon /> : <SaIcon />}
               >
                 {d("Student Achievement").t("report_label_student_achievement")}
               </Button>
               <Button
                 onClick={createHandleClick(Category.learningOutcomes)}
-                className={clsx(css.nav, { [css.actives]: value?.category === Category.learningOutcomes })}
-                startIcon={value?.category === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
+                className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
+                startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
               >
                 {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
               </Button>
@@ -113,8 +115,8 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (event: React.ChangeEvent<{}>, category: QueryCondition["category"]) => {
-    onChange({ category });
+  const handleChange = (event: React.ChangeEvent<{}>, category: Category) => {
+    onChange(category);
   };
   return (
     <div className={classes.root}>
@@ -123,7 +125,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={value?.category}
+                value={value}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
