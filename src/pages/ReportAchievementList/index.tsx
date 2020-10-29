@@ -3,18 +3,16 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher, MockOptionsItem } from "../../api/extra";
-import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { AsyncTrunkReturned, getLessonPlan, getMockOptions } from "../../reducers/report";
-import { AchievementDetailChart } from "./AchievementDetailChart";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
-import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { QueryCondition } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
@@ -28,13 +26,12 @@ const useQuery = () => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
-    const category = query.get("category");
     const teacher_id = query.get("teacher_id") || "";
     const class_id = query.get("class_id") || "";
     const lesson_plan_id = query.get("lesson_plan_id") || "";
     const filter = query.get("filter") || "all";
     const order_by = query.get("order_by") || "";
-    return clearNull({ category, teacher_id, class_id, lesson_plan_id, filter, order_by });
+    return clearNull({ teacher_id, class_id, lesson_plan_id, filter, order_by });
   }, [search]);
 };
 
@@ -43,7 +40,7 @@ const toQueryString = (hash: Record<string, any>): string => {
   return `?${search.toString()}`;
 };
 
-export default function Report() {
+export function ReportAchievementList() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -127,10 +124,9 @@ export default function Report() {
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
       <AchievementListChart data={mockAchievementList} filter={condition.filter} onClickStudent={handleChangeStudent} />
-      <AchievementDetailChart data={mockAchievementDetail} />
     </>
   );
 }
 
-Report.routeBasePath = "/report/index";
-Report.routeRedirectDefault = `/report/index?category=${Category.archived}`;
+ReportAchievementList.routeBasePath = "/report/achievement-list";
+ReportAchievementList.routeRedirectDefault = `/report/achievement-list`;
