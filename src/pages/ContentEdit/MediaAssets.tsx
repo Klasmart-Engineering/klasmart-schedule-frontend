@@ -78,6 +78,9 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   paginationUl: {
     justifyContent: "center",
   },
+  emptyContainer: {
+    textAlign: "center",
+  },
 }));
 
 // const multipleLine = (list: string[]) => {
@@ -120,10 +123,12 @@ export function Empty() {
   const css = useStyles();
   return (
     <Fragment>
-      <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
-      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        {d("Empty").t("library_label_empty") + "..."}
-      </Typography>
+      <Box className={css.emptyContainer}>
+        <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
+        <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+          {d("Empty").t("library_label_empty") + "..."}
+        </Typography>
+      </Box>
     </Fragment>
   );
 }

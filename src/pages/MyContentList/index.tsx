@@ -1,15 +1,13 @@
-import { Typography } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
-import emptyIconUrl from "../../assets/icons/empty.svg";
-import { d } from "../../locale/LocaleManager";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
+import { Empty } from "../ContentEdit/MediaAssets";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -170,12 +168,7 @@ export default function MyContentList() {
           onDelete={handleDelete}
         />
       ) : (
-        <div style={{ margin: "0 auto", textAlign: "center" }}>
-          <img src={emptyIconUrl} alt="" />
-          <Typography variant="body1" color="textSecondary">
-            {d("Empty").t("library_label_empty")}...
-          </Typography>
-        </div>
+        <Empty />
       )}
     </div>
   );

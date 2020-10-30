@@ -8,6 +8,7 @@ import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, getMockOptions } from "../../reducers/report";
+import { Empty } from "../ContentEdit/MediaAssets";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -80,8 +81,8 @@ export function ReportAchievementList() {
         class_id
           ? getFirstLessonPlanId(value, class_id)
           : history.push({
-            search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
-          });
+              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
+            });
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
@@ -133,6 +134,12 @@ export function ReportAchievementList() {
       <BriefIntroduction value={condition} mockOptions={mockOptions} student_name={student_name} lessonPlanList={lessonPlanList} />
       {/* {reportList && <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
       {reportList && <AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />}
+      {reportList && reportList.length > 0 ? (
+        <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
+      ) : (
+        <Empty />
+      )}
+      {/* {<AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
     </>
   );
 }
