@@ -44,14 +44,7 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   },
 }));
 
-// const lesson_plans = [
-//   { id: "1", name: "Lesson 1" },
-//   { id: "2", name: "Lesson 2" },
-//   { id: "3", name: "Lesson 3" },
-//   { id: "4", name: "Lesson 4" },
-// ];
-
-export const filter = () => [
+export const statusList = () => [
   { name: d("Achieved").t("report_label_achieved"), id: ReportFilter.achieved },
   { name: d("Not Achieved").t("report_label_not_achieved"), id: ReportFilter.not_achieved },
   { name: d("Not Attempted").t("report_label_not_attempted"), id: ReportFilter.not_attempted },
@@ -61,12 +54,9 @@ const sortOptions = () => [
   { name: d("Ascending").t("report_label_ascending"), id: ReportOrderBy.ascending },
   { name: d("Descending").t("report_label_descending"), id: ReportOrderBy.descending },
 ];
-interface OptiopsItem {
-  name: string;
-  id: string;
-}
+
 interface GetMenuItemProps {
-  list: OptiopsItem[];
+  list: MockOptionsItem[];
   value: QueryCondition;
   onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   tab: keyof QueryCondition;
@@ -103,7 +93,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const classs = (value.teacher_id && apiFetchClassByTeacher(mockOptions, value.teacher_id)) || [];
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
-  const [anchorElFilter, setAnchorElFilter] = React.useState<null | HTMLElement>(null);
+  const [anchorElStatus, setAnchorElStatus] = React.useState<null | HTMLElement>(null);
   const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
   const [anchorElClass, setAnchorElClass] = React.useState<null | HTMLElement>(null);
   const [anchorElPlan, setAnchorElPlan] = React.useState<null | HTMLElement>(null);
@@ -112,22 +102,18 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
     if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
     if (tab === "lesson_plan_id" && (classs.length > 0 || lessonPlanList.length > 0)) setAnchorElPlan(event.currentTarget);
-    if (tab === "status") setAnchorElFilter(event.currentTarget);
+    if (tab === "status") setAnchorElStatus(event.currentTarget);
     if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
   const handleClose = (e: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
     if (tab === "class_id") setAnchorElClass(null);
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
-    if (tab === "status") setAnchorElFilter(null);
+    if (tab === "status") setAnchorElStatus(null);
     if (tab === "order_by") setAnchorElOrderBy(null);
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
-    if (tab === "teacher_id") setAnchorElTeacher(null);
-    if (tab === "class_id") setAnchorElClass(null);
-    if (tab === "lesson_plan_id") setAnchorElPlan(null);
-    if (tab === "status") setAnchorElFilter(null);
-    if (tab === "order_by") setAnchorElOrderBy(null);
+    handleClose(e, tab);
     onChangeMb(e, value, tab);
   };
   return (
@@ -180,7 +166,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {getOptions(filter())}
+              {getOptions(statusList())}
             </TextField>
 
             <TextField
@@ -218,8 +204,8 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
 
           <Box flex={2} display="flex" justifyContent="flex-end">
             <LocalBarOutlined className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
-            <Menu anchorEl={anchorElFilter} keepMounted open={Boolean(anchorElFilter)} onClose={(e) => handleClose(e, "status")}>
-              <GetMenuItem list={filter()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
+            <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
+              <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
             </Menu>
 
             <ImportExportIcon onClick={(e) => showItem(e, "order_by")} />

@@ -237,7 +237,7 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
     );
   } else {
     const { material = {}, onRemove } = props;
-    const { thumbnail, author, name, content_type } = material;
+    const { thumbnail, author_name, name, content_type } = material;
     return (
       <Card ref={ref}>
         <Thumbnail className={css.cardMedia} type={content_type} id={thumbnail} />
@@ -246,7 +246,7 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
             {name}
           </Typography>
           <Typography component="div" variant="caption" color="textSecondary" noWrap>
-            {author}
+            {author_name}
           </Typography>
         </CardContent>
         <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
