@@ -43,13 +43,14 @@ const getOnlineLocale = memorize(async function () {
       return rows;
     })))
     .reduce((result, item) => {
-      const { Label: id, English: en, Chinese: zh, Korean: ko, Vietnamese: vi } = item;
+      const { Label: id, English: en, Chinese: zh, Korean: ko, Vietnamese: vi, Indonesian_Bahasa } = item;
       if (en) result.en[id] = en;
       if (zh) result.zh[id] = zh;
       if (ko) result.ko[id] = ko;
       if (vi) result.vi[id] = vi;
+      if (Indonesian_Bahasa) result.id[id] = Indonesian_Bahasa;
       return result;
-    }, { en: {}, ko: {}, zh: {}, vi: {} })
+    }, { en: {}, ko: {}, zh: {}, vi: {}, id: {} })
 })
 
 /**
