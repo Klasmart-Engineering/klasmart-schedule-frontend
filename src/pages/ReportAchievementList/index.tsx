@@ -133,9 +133,8 @@ export function ReportAchievementList() {
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} student_name={student_name} lessonPlanList={lessonPlanList} />
       {/* {reportList && <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
-      {reportList && <AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />}
       {reportList && reportList.length > 0 ? (
-        <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
+        <AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />
       ) : (
         <Empty />
       )}
