@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import mitt from "mitt";
 import { createIntl, createIntlCache, IntlFormatters, IntlShape } from "react-intl";
 import {
@@ -18,19 +19,26 @@ type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecor
       <Id extends LangRecordIdByDescription<Desc>>(id: Id, values: LangeRecordValuesById<Id>): FormatMessageReturn;
     };
 
-// function getDefaultLocale(availableLanguages: string[]) {
-//   const languages = navigator.languages || [
-//     navigator.language,
-//     (navigator as any).browserLanguage,
-//     (navigator as any).userLanguage,
-//     (navigator as any).systemLanguage
-//   ]
-//   for (const language of languages) {
-//     const locale = language.slice(0, 2);
-//     if (availableLanguages.includes(locale)) return locale;
-//   }
-//   return 'en';
-// }
+const AVAILABLE_LANGUAGES = ["en", "zh", "vi", "ko", "id"];
+
+function getDefaultLocale(availableLanguages: string[]) {
+  const languages = navigator.languages || [
+    navigator.language,
+    (navigator as any).browserLanguage,
+    (navigator as any).userLanguage,
+    (navigator as any).systemLanguage,
+  ];
+  for (const language of languages) {
+    const locale = language.slice(0, 2);
+    if (availableLanguages.includes(locale)) return locale;
+  }
+  return "en";
+}
+
+function getLocaleFromUrl() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get("iso");
+}
 
 export interface ChangeHandler {
   (intl?: IntlShape): any;
@@ -98,8 +106,8 @@ class LocaleManager {
     this.emitter.on("change", handler);
   }
 }
-
-export const localeManager = new LocaleManager("en");
+const defaultLocale = getLocaleFromUrl() || Cookies.get("locale") || getDefaultLocale(AVAILABLE_LANGUAGES);
+export const localeManager = new LocaleManager(defaultLocale as LangName);
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
 export const reportMiss = localeManager.reportMiss.bind(localeManager);
