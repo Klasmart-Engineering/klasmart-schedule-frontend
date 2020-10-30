@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-// import mockAchievementDetail from '../../mocks/achievementDetail.json';
+import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getContentDetailById } from "../../reducers/content";
 import { getAchievementDetail, getMockOptions } from "../../reducers/report";
@@ -70,8 +70,8 @@ export function ReportAchievementDetail() {
       <FirstSearchHeader value={Category.archived} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
       <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} backByLessonPlan={backByLessonPlan} />
-      {achievementDetail && <AchievementDetailChart data={achievementDetail} />}
-      {/* {achievementDetail && <AchievementDetailChart data={mockAchievementDetail} />} */}
+      {/* {achievementDetail && <AchievementDetailChart data={achievementDetail} />} */}
+      {achievementDetail && <AchievementDetailChart data={mockAchievementDetail} />}
     </>
   );
 }

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { apiFetchClassByTeacher, MockOptionsItem } from "../../api/extra";
-// import mockAchievementList from '../../mocks/achievementList.json';
+import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
@@ -32,7 +32,7 @@ const useQuery = () => {
     const class_id = query.get("class_id") || "";
     const lesson_plan_id = query.get("lesson_plan_id") || "";
     const status = query.get("status") || "all";
-    const order_by = query.get("order_by") || "";
+    const order_by = query.get("order_by") || "descending";
     return clearNull({ teacher_id, class_id, lesson_plan_id, status, order_by });
   }, [search]);
 };
@@ -137,8 +137,8 @@ export function ReportAchievementList() {
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
-      {reportList && <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />}
-      {/* {<AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
+      {/* {reportList && <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
+      {reportList && <AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />}
     </>
   );
 }
