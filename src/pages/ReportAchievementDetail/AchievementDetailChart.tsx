@@ -17,6 +17,7 @@ const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
 const useStyle = makeStyles({
   chart: {
     marginTop: 24,
+    marginBottom: 400,
     position: "relative",
   },
   svgContainer: {
@@ -180,46 +181,44 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
       </text>
     ));
   return (
-    <LayoutBox holderMin={0} holderBase={202} mainBase={1517}>
-      <div className={css.chart}>
-        <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
-          <Group top={pixels.xMarginTop}>
-            <VisxBarStack data={data} keys={ratioKeys} xScale={xScale} yScale={yScale} color={colorScale} x={getX}>
-              {(barStacks) => [rectList(barStacks), descriptionList(barStacks)]}
-            </VisxBarStack>
-            <AxisBottom
-              hideTicks
-              top={pixels.barStacksHeight}
-              scale={xScale}
-              axisLineClassName={css.axiosLine}
-              tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth })}
-            />
-          </Group>
-          <AxisLeft
+    <div className={css.chart}>
+      <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
+        <Group top={pixels.xMarginTop}>
+          <VisxBarStack data={data} keys={ratioKeys} xScale={xScale} yScale={yScale} color={colorScale} x={getX}>
+            {(barStacks) => [rectList(barStacks), descriptionList(barStacks)]}
+          </VisxBarStack>
+          <AxisBottom
             hideTicks
-            top={0}
-            scale={yAxiosScale}
+            top={pixels.barStacksHeight}
+            scale={xScale}
             axisLineClassName={css.axiosLine}
-            label="% of Learning Outcomes"
-            labelOffset={0}
-            labelProps={inlineStyles.yAxiosLabel}
+            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth })}
           />
-        </svg>
-        {tooltipOpen && tooltipData && (
-          <Tooltip top={tooltipTop} left={tooltipLeft} offsetLeft={0} offsetTop={0}>
-            <div style={inlineStyles.tooltipContent}>
-              <div style={inlineStyles.tooltipTitle}>
-                {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.length}&nbsp;LOs
-              </div>
-              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.map((desc, idx) => [
-                ...desc.split("\n").map((p, idy) => [p, <br key={`br-${idx}-${idy}`} />]),
-                <br key={`br-${idx}`} />,
-              ])}
+        </Group>
+        <AxisLeft
+          hideTicks
+          top={0}
+          scale={yAxiosScale}
+          axisLineClassName={css.axiosLine}
+          label="% of Learning Outcomes"
+          labelOffset={0}
+          labelProps={inlineStyles.yAxiosLabel}
+        />
+      </svg>
+      {tooltipOpen && tooltipData && (
+        <Tooltip top={tooltipTop} left={tooltipLeft} offsetLeft={0} offsetTop={0}>
+          <div style={inlineStyles.tooltipContent}>
+            <div style={inlineStyles.tooltipTitle}>
+              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.length}&nbsp;LOs
             </div>
-          </Tooltip>
-        )}
-      </div>
-    </LayoutBox>
+            {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.map((desc, idx) => [
+              ...desc.split("\n").map((p, idy) => [p, <br key={`br-${idx}-${idy}`} />]),
+              <br key={`br-${idx}`} />,
+            ])}
+          </div>
+        </Tooltip>
+      )}
+    </div>
   );
 }
 
@@ -233,7 +232,7 @@ export function AchievementDetailChart(props: AchievementDetailChartProps) {
   } = useMemo(() => computed({ ...props, px: 1 }), [props]);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <div className={css.chart} style={{ paddingTop: `${svgHeight / svgWidth}%` }}>
+      <div className={css.chart} style={{ paddingBottom: `${(100 * svgHeight) / svgWidth}%` }}>
         <ParentSize>
           {(info) => {
             const px = info.width / svgWidth;

@@ -16,6 +16,7 @@ import { ReportFilter, StatusColor } from "./types";
 const useStyle = makeStyles({
   chart: {
     marginTop: 24,
+    marginBottom: 200,
     position: "relative",
   },
   svgContainer: {
@@ -249,7 +250,7 @@ export function AchievementListChart(props: AchievementListChartProps) {
   } = useMemo(() => computed({ ...props, px: 1 }), [props]);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <div className={css.chart} style={{ paddingTop: `${svgHeight / svgWidth}%` }}>
+      <div className={css.chart} style={{ paddingBottom: `${(100 * svgHeight) / svgWidth}%` }}>
         <ParentSize>
           {(info) => {
             const px = info.width / svgWidth;
