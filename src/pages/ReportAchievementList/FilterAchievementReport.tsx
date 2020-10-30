@@ -40,7 +40,10 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
     marginRight: 0,
   },
   selectIcon: {
-    marginRight: 10,
+    marginRight: 20,
+  },
+  selectIconDisabled: {
+    color: palette.grey[500],
   },
 }));
 
@@ -91,6 +94,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   const classs = (value.teacher_id && apiFetchClassByTeacher(mockOptions, value.teacher_id)) || [];
+  const planIsDisabled = classs.length <= 0 || lessonPlanList.length <= 0;
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
   const [anchorElStatus, setAnchorElStatus] = React.useState<null | HTMLElement>(null);
@@ -101,7 +105,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
     if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
-    if (tab === "lesson_plan_id" && (classs.length > 0 || lessonPlanList.length > 0)) setAnchorElPlan(event.currentTarget);
+    if (tab === "lesson_plan_id" && classs.length > 0 && lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
     if (tab === "status") setAnchorElStatus(event.currentTarget);
     if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
   };
@@ -152,7 +156,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               value={value.lesson_plan_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              disabled={classs.length <= 0 || lessonPlanList.length <= 0}
+              disabled={planIsDisabled}
             >
               {getOptions(lessonPlanList)}
             </TextField>
@@ -186,29 +190,37 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       <Hidden mdUp>
         <Box display="flex">
           <Box flex={3}>
-            <PersonOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "teacher_id")} />
+            <PersonOutlinedIcon fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "teacher_id")} />
             <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
               <GetMenuItem list={mockOptions.teachers} value={value} onChangeMenu={handleChangeMenu} tab="teacher_id"></GetMenuItem>
             </Menu>
 
-            <PeopleOutlineOutlinedIcon className={css.selectIcon} onClick={(e) => showItem(e, "class_id")} />
+            <PeopleOutlineOutlinedIcon
+              fontSize="large"
+              className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
+              onClick={(e) => showItem(e, "class_id")}
+            />
             <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
               <GetMenuItem list={classs} value={value} onChangeMenu={handleChangeMenu} tab="class_id"></GetMenuItem>
             </Menu>
 
-            <ClassOutlined className={css.selectIcon} onClick={(e) => showItem(e, "lesson_plan_id")} />
+            <ClassOutlined
+              fontSize="large"
+              className={clsx(css.selectIcon, planIsDisabled && css.selectIconDisabled)}
+              onClick={(e) => showItem(e, "lesson_plan_id")}
+            />
             <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
               <GetMenuItem list={lessonPlanList} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plan_id"></GetMenuItem>
             </Menu>
           </Box>
 
           <Box flex={2} display="flex" justifyContent="flex-end">
-            <LocalBarOutlined className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
+            <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
             <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
               <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
             </Menu>
 
-            <ImportExportIcon onClick={(e) => showItem(e, "order_by")} />
+            <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "order_by")} />
             <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "order_by")}>
               <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="order_by"></GetMenuItem>
             </Menu>
