@@ -10,6 +10,7 @@ import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { useMemo } from "react";
 import { EntityStudentReportCategory } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
+import { useChartScale } from "../../hooks/useChartScale";
 import { ReportFilter, StatusColor } from "../ReportAchievementList/types";
 
 const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
@@ -25,6 +26,7 @@ const useStyle = makeStyles({
   },
   svg: {
     backgroundColor: "rgba(0,0,0, .02)",
+    fontFamily: "Helvetica",
   },
   axiosLine: {
     stroke: "#999999",
@@ -44,6 +46,7 @@ const getInlineStyles = (px: number) => ({
   xAxiosTickLabel: {
     stroke: "black",
     fontSize: 18 * px,
+    fontWeight: "lighter" as const,
     textAnchor: "middle" as const,
     verticalAnchor: "start" as const,
   },
@@ -73,6 +76,7 @@ const getInlineStyles = (px: number) => ({
     alignmentBaseline: "baseline" as const,
     stroke: "black" as const,
     fontSize: 18 * px,
+    fontWeight: "lighter" as const,
   },
 });
 
@@ -226,9 +230,23 @@ export interface AchievementDetailChartProps {
 }
 export function AchievementDetailChart(props: AchievementDetailChartProps) {
   const css = useStyle();
+  const scale = useChartScale();
   const {
     viewPort: [, , svgWidth, svgHeight],
   } = useMemo(() => computed({ ...props, px: 1 }), [props]);
+  if (scale(1) !== 1) {
+    const px = scale(window.innerWidth / svgWidth);
+    return (
+      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+        <div className={css.chart} style={{ height: svgHeight * px, overflowX: "scroll" }}>
+          <div className={css.svgContainer}>
+            <AchievementDetailStaticChart {...props} px={px} />
+          </div>
+        </div>
+      </LayoutBox>
+    );
+  }
+
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.chart} style={{ paddingBottom: `${(100 * svgHeight) / svgWidth}%` }}>
