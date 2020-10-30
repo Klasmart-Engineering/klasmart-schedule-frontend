@@ -98,7 +98,7 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     marginTop: 40,
   },
   drappableBox: {
-    padding: 15,
+    // padding: 15,
     borderWidth: 2,
     borderStyle: "dashed",
     borderColor: palette.primary.main,
@@ -153,7 +153,7 @@ const useGraphicComputedStyles = makeStyles({
     // width: "100%",
     // overflowX: "scroll",
     paddingTop: 40,
-    paddingBottom: 80,
+    paddingBottom: 900,
     // todo: 将来加入了条件，会出现需要左右滚动当场景，需要 justifycontent: start
     // justifyContent: props.material ? "start" : "center",
     // justifyContent: "center",
