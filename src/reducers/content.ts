@@ -77,6 +77,7 @@ const initialState: IContentState = {
     teachers: [],
     students: [],
     users: [],
+    teacher_class_relationship: [],
   },
   total: 0,
   contentsList: [],

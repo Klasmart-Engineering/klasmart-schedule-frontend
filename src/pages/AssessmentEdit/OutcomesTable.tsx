@@ -15,10 +15,9 @@ import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { IAssessmentState } from "../../reducers/assessments";
-
 const useStyles = makeStyles({
   tableContainer: {
     marginTop: 5,
@@ -48,8 +47,8 @@ const useStyles = makeStyles({
     paddingBottom: 16,
   },
 });
-
 interface mergeHandlerProps<T> extends Array<(arg: T) => any> {}
+
 const mergeHanlder = <T extends unknown>(handlers: mergeHandlerProps<T>): any => {
   return function (arg: T) {
     handlers.forEach((handler) => handler(arg));
@@ -64,6 +63,7 @@ interface AssessActionProps {
   formValue: UpdateAssessmentRequestDataOmitAction;
   status?: string;
 }
+
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
   const {
@@ -83,20 +83,25 @@ const AssessAction = (props: AssessActionProps) => {
     },
     [index, setValue]
   );
+
   const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
     funSetValue(name, e.target.checked);
+
     if (e.target.checked) {
       if (name === "skip") {
         funSetValue("none_achieved", false);
       }
+
       funSetValue("attendance_ids", []);
     }
   };
+
   const handleChangeStudent = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       funSetValue("none_achieved", false);
     }
   };
+
   return (
     <Controller
       name={`outcome_attendance_maps[${index}].attendance_ids`}
@@ -118,7 +123,7 @@ const AssessAction = (props: AssessActionProps) => {
                       color="primary"
                     />
                   }
-                  label={reportMiss("All Achieved", "assess_option_all_achieved")}
+                  label={d("All Achieved").t("assess_option_all_achieved")}
                   disabled={skip || status === "complete"}
                 />
                 <Controller
@@ -128,7 +133,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "none_achieved")} color="primary" />}
-                      label={reportMiss("None Achieved", "assess_option_none_achieved")}
+                      label={d("None Achieved").t("assess_option_none_achieved")}
                       disabled={skip || status === "complete"}
                     />
                   )}
@@ -140,7 +145,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
-                      label={reportMiss("Not Attempted", "assess_option_not_attempted")}
+                      label={d("Not Attempted").t("assess_option_not_attempted")}
                       disabled={status === "complete"}
                     />
                   )}
@@ -169,7 +174,9 @@ const AssessAction = (props: AssessActionProps) => {
                   disabled
                   name={`outcome_attendance_maps[${index}].outcome_id`}
                   defaultValue={outcome_id}
-                  style={{ display: "none" }}
+                  style={{
+                    display: "none",
+                  }}
                 />
               </Box>
             </Box>

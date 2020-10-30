@@ -8,8 +8,12 @@ import { ReactComponent as BadaMathBlueUrl } from "../../assets/icons/badamath-2
 import { ReactComponent as BadaMathUrl } from "../../assets/icons/badamath-24px.svg";
 import { ReactComponent as LOBlueIconUrl } from "../../assets/icons/learning outcomes-24px-blue.svg";
 import { ReactComponent as LOIconUrl } from "../../assets/icons/learning outcomes-24px.svg";
+import { ReactComponent as LoInCategoryBlueIconUrl } from "../../assets/icons/lo_in_categories-24px-blue.svg";
+import { ReactComponent as LoInCategoryIconUrl } from "../../assets/icons/lo_in_categories-24px.svg";
 import { ReactComponent as PendingBlueIconUrl } from "../../assets/icons/pending_actions-24px-blue.svg";
 import { ReactComponent as PendingIconUrl } from "../../assets/icons/pending_actions-24px.svg";
+import { ReactComponent as SaBlueIconUrl } from "../../assets/icons/student_archievement-24px-blue.svg";
+import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import { ReactComponent as UnPubBlueIconUrl } from "../../assets/icons/unpublished-24px-blue.svg";
 import { ReactComponent as UnPubIconUrl } from "../../assets/icons/unpublished-24px.svg";
 export function LoIcon() {
@@ -56,4 +60,20 @@ export function BadaMathIcon() {
 
 export function BadaMathBlueIcon() {
   return <SvgIcon component={BadaMathBlueUrl}></SvgIcon>;
+}
+
+export function SaIcon() {
+  return <SvgIcon component={SaIconUrl}></SvgIcon>;
+}
+
+export function SaBlueIcon() {
+  return <SvgIcon component={SaBlueIconUrl}></SvgIcon>;
+}
+
+export function LoInCategoryIcon() {
+  return <SvgIcon component={LoInCategoryIconUrl}></SvgIcon>;
+}
+
+export function LoInCategoryBlueIcon() {
+  return <SvgIcon component={LoInCategoryBlueIconUrl}></SvgIcon>;
 }

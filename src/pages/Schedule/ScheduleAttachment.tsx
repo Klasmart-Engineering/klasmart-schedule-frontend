@@ -1,7 +1,7 @@
 import { Box, TextField } from "@material-ui/core";
 import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import { CloseOutlined, CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React from "react";
 import { apiResourcePathById } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
@@ -87,6 +87,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
         setOpenStatus(true);
         return;
       }
+      setSpecificStatus(true);
       setAttachmentId(value);
       const url: string | undefined = apiResourcePathById(value);
       setDownloadUrl(url);
@@ -96,6 +97,8 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
   };
 
+  const [specificStatus, setSpecificStatus] = React.useState(true);
+
   const getFileName = (name: string): string => {
     let si = format.some((item) => name.includes(item));
     if (!si) {
@@ -104,7 +107,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
       return attachmentName;
     }
     setAttachmentName(name);
-    return name;
+    return attachmentName;
   };
 
   const [downloadUrl, setDownloadUrl] = React.useState<string | undefined>("");
@@ -128,6 +131,12 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     },
   };
 
+  const deleteItem = () => {
+    setSpecificStatus(false);
+    setAttachmentName("");
+    setAttachmentId("");
+  };
+
   return (
     <>
       <SingleUploader
@@ -140,13 +149,14 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
               className={css.fieldset}
               // placeholder={d("Attachment").t("schedule_detail_attachment")}
               label={d("Attachment").t("schedule_detail_attachment")}
-              value={item ? getFileName(item.file.name) : attachmentName}
+              value={specificStatus ? (item ? getFileName(item.file.name) : attachmentName) : attachmentName}
             ></TextField>
             <HtmlTooltip title={tipsText}>
               <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
             </HtmlTooltip>
             <input type="file" style={{ display: "none" }} />
             <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
+            {attachmentName && <CloseOutlined className={css.iconField} style={{ right: "85px" }} onClick={deleteItem} />}
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
               {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
             </a>

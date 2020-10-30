@@ -1,3 +1,5 @@
+import { MockOptionsItem } from "../api/extra";
+
 export type timestampType = {
   start: number;
   end: number;
@@ -70,4 +72,23 @@ export interface AlertDialogProps {
   radioValue?: number;
   customizeTemplate?: any;
   enableCustomization?: boolean;
+}
+
+export interface ScheduleFilterProps {
+  name: FilterType;
+  child: MockOptionsItem[];
+  label:
+    | "schedule_filter_schools"
+    | "schedule_filter_teachers"
+    | "schedule_filter_classes"
+    | "schedule_filter_programs"
+    | "schedule_filter_subjects";
+}
+
+export interface FilterQueryTypeProps {
+  org_ids: string;
+  teacher_ids: string;
+  class_ids: string;
+  subject_ids: string;
+  program_ids: string;
 }

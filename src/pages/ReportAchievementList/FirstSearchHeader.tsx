@@ -1,14 +1,14 @@
-import { AppBar, Grid, Tab, Tabs } from "@material-ui/core";
+import { Grid, Tab, Tabs } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React from "react";
-import { OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { BadaEslBlueIcon, BadaEslIcon, BadaMathBlueIcon, BadaMathIcon } from "../OutcomeList/Icons";
-import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
+import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -70,49 +70,39 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-export enum Program {
-  badaEsl = "program1",
-  badamath = "program2",
-  badasteam = "program3",
+
+export enum Category {
+  archived = "archived",
+  learningOutcomes = "learningOutcomes",
 }
-export interface ProgramSearchHeaderProps extends QueryConditionBaseProps {}
-export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
+export interface FirstSearchHeaderProps {
+  value: Category;
+  onChange: (value: Category) => any;
+}
+export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
-
-  const createHandleClick = (program: QueryCondition["program"]) => () =>
-    onChange({
-      program,
-      content_type: SearchContentsRequestContentType.materialandplan,
-      order_by: OrderBy._updated_at,
-      page: 1,
-      scope: PublishScope.all,
-    });
-
+  const createHandleClick = (category: Category) => () => onChange(category);
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}></Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
+            <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
-                onClick={createHandleClick(Program.badaEsl)}
-                className={clsx(css.nav, {
-                  [css.actives]: value?.program === Program.badaEsl,
-                })}
-                startIcon={value?.program === Program.badaEsl ? <BadaEslBlueIcon /> : <BadaEslIcon />}
+                onClick={createHandleClick(Category.archived)}
+                className={clsx(css.nav, { [css.actives]: value === Category.archived })}
+                startIcon={value === Category.archived ? <SaBlueIcon /> : <SaIcon />}
               >
-                {d("Badanamu ESL").t("library_label_program_esl")}
+                {d("Student Achievement").t("report_label_student_achievement")}
               </Button>
               <Button
-                onClick={createHandleClick(Program.badamath)}
-                className={clsx(css.nav, {
-                  [css.actives]: value?.program === Program.badamath,
-                })}
-                startIcon={value?.program === Program.badamath ? <BadaMathBlueIcon /> : <BadaMathIcon />}
+                onClick={createHandleClick(Category.learningOutcomes)}
+                className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
+                startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
               >
-                {d("Bada Math").t("library_label_program_math")}
+                {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
               </Button>
             </Grid>
           </Grid>
@@ -121,20 +111,13 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
     </div>
   );
 }
-export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
+
+export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-
-  const handleChange = (event: React.ChangeEvent<{}>, program: QueryCondition["program"]) => {
-    onChange({
-      program,
-      order_by: OrderBy._updated_at,
-      page: 1,
-      content_type: SearchContentsRequestContentType.materialandplan,
-      scope: PublishScope.all,
-    });
+  const handleChange = (event: React.ChangeEvent<{}>, category: Category) => {
+    onChange(category);
   };
-
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
@@ -142,15 +125,23 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
           <Grid item xs={12} sm={12}>
             <AppBar position="static" color="inherit">
               <Tabs
-                value={value?.program}
+                value={value}
                 onChange={handleChange}
                 variant="scrollable"
                 scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
               >
-                <Tab value={Program.badaEsl} label={d("Badanamu ESL").t("library_label_program_esl")} className={classes.capitalize} />
-                <Tab value={Program.badamath} label={d("Bada Math").t("library_label_program_math")} className={classes.capitalize} />
+                <Tab
+                  value={Category.archived}
+                  label={d("Student Achievement").t("report_label_student_achievement")}
+                  className={classes.capitalize}
+                />
+                <Tab
+                  value={Category.learningOutcomes}
+                  label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
+                  className={classes.capitalize}
+                />
               </Tabs>
             </AppBar>
           </Grid>

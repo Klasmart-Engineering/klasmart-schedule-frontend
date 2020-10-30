@@ -13,7 +13,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleShortInfo } from "../../api/api.auto";
-import { MockOptionsItem } from "../../api/extra";
+import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
@@ -28,7 +28,7 @@ import {
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
-import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
+import { FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
@@ -81,7 +81,7 @@ const useStyles = makeStyles(({ shadows }) => ({
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp, modelView, flattenedMockOptions } = props;
+  const { timesTamp, changeTimesTamp, modelView, flattenedMockOptions, mockOptions } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
@@ -92,14 +92,14 @@ function SmallCalendar(props: CalendarStateProps) {
     });
   };
 
-  const handleChangeLoadScheduleView = (query: []) => {
+  const handleChangeLoadScheduleView = (filterQuery: FilterQueryTypeProps | []) => {
     dispatch(
       getScheduleTimeViewData({
         view_type: modelView,
         time_at: timesTamp.start,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
         metaLoading: true,
-        ...query,
+        ...filterQuery,
       })
     );
   };
@@ -112,7 +112,11 @@ function SmallCalendar(props: CalendarStateProps) {
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
-        <ScheduleFilter flattenedMockOptions={flattenedMockOptions} handleChangeLoadScheduleView={handleChangeLoadScheduleView} />
+        <ScheduleFilter
+          flattenedMockOptions={flattenedMockOptions}
+          handleChangeLoadScheduleView={handleChangeLoadScheduleView}
+          mockOptions={mockOptions}
+        />
       </MuiPickersUtilsProvider>
     </Box>
   );
@@ -1078,6 +1082,7 @@ interface CalendarStateProps {
   handleChangeProgramId: (value: string) => void;
   toLive: (schedule_id: string) => void;
   changeModalDate: (data: object) => void;
+  mockOptions?: MockOptionsOptionsItem[];
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -1095,6 +1100,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     handleChangeProgramId,
     toLive,
     changeModalDate,
+    mockOptions,
   } = props;
   const template = (
     <>
@@ -1112,6 +1118,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeProgramId={handleChangeProgramId}
           toLive={toLive}
           changeModalDate={changeModalDate}
+          mockOptions={mockOptions}
         />
       </Box>
       <Box

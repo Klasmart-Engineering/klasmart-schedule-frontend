@@ -10,6 +10,72 @@
   },
   "host": "https://kl2-test.kidsloop.net/v1",
   "paths": {
+    "/ages": {
+      "get": {
+        "description": "get age",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["age"],
+        "summary": "getAge",
+        "operationId": "getAge",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.Age"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ages/{id}": {
+      "get": {
+        "description": "get age by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["age"],
+        "summary": "getAgeByID",
+        "operationId": "getAgeByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "age id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.Age"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/assessments": {
       "get": {
         "description": "list assessments",
@@ -314,6 +380,72 @@
             "description": "Forbidden",
             "schema": {
               "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/class_types": {
+      "get": {
+        "description": "get class type",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["classType"],
+        "summary": "getClassType",
+        "operationId": "getClassType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ClassType"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/class_types/{id}": {
+      "get": {
+        "description": "get classType by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["classType"],
+        "summary": "getClassTypeByID",
+        "operationId": "getClassTypeByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "classType id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ClassType"
             }
           },
           "404": {
@@ -1271,6 +1403,138 @@
         }
       }
     },
+    "/developmentals": {
+      "get": {
+        "description": "get developmental",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["developmental"],
+        "summary": "getDevelopmental",
+        "operationId": "getDevelopmental",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.Developmental"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/developmentals/{id}": {
+      "get": {
+        "description": "get developmental by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["developmental"],
+        "summary": "getDevelopmentalByID",
+        "operationId": "getDevelopmentalByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "developmental id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.Developmental"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/grades": {
+      "get": {
+        "description": "get grade",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["grade"],
+        "summary": "getGrade",
+        "operationId": "getGrade",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.Grade"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/grades/{id}": {
+      "get": {
+        "description": "get grade by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["grade"],
+        "summary": "getGradeByID",
+        "operationId": "getGradeByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "grade id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.Grade"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/learning_outcomes": {
       "get": {
         "description": "search learning outcomes",
@@ -1777,6 +2041,72 @@
         }
       }
     },
+    "/lesson_types": {
+      "get": {
+        "description": "get lessonType",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["lessonType"],
+        "summary": "getLessonType",
+        "operationId": "getLessonType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.LessonType"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/lesson_types/{id}": {
+      "get": {
+        "description": "get lessonType by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["lessonType"],
+        "summary": "getLessonTypeByID",
+        "operationId": "getLessonTypeByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "lessonType id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.LessonType"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/pending_learning_outcomes": {
       "get": {
         "description": "search pending learning outcomes",
@@ -2025,6 +2355,207 @@
         }
       }
     },
+    "/programs": {
+      "get": {
+        "description": "get program",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "getProgram",
+        "operationId": "getProgram",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.Program"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/programs/{id}": {
+      "get": {
+        "description": "get program by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "getProgramByID",
+        "operationId": "getProgramByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.Program"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/students": {
+      "get": {
+        "description": "list student report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "list student report",
+        "operationId": "listStudentsReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "class_id",
+            "name": "class_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "lesson plan id",
+            "name": "lesson_plan_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": ["all", "achieved", "not_achieved", "not_attempted"],
+            "type": "string",
+            "default": "all",
+            "description": "status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "enum": ["descending", "ascending"],
+            "type": "string",
+            "default": "descending",
+            "description": "sort by",
+            "name": "sortBy",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentsReport"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/students/{id}": {
+      "get": {
+        "description": "get student report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "get student report",
+        "operationId": "getStudentDetailReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "student id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "class_id",
+            "name": "class_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "lesson plain id",
+            "name": "lesson_plain_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentDetailReport"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules": {
       "get": {
         "description": "query schedule",
@@ -2135,59 +2666,6 @@
             "description": "Conflict",
             "schema": {
               "$ref": "#/definitions/api.ConflictResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/schedules/:schedule_id/status": {
-      "put": {
-        "description": "update schedule status",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["schedule"],
-        "summary": "updateStatus",
-        "operationId": "updateStatus",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "schedule id",
-            "name": "schedule_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "enum": ["NotStart", "Started", "Closed"],
-            "type": "string",
-            "description": "schedule status",
-            "name": "status",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/entity.IDResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
@@ -2398,6 +2876,114 @@
         }
       }
     },
+    "/schedules/{schedule_id}/status": {
+      "put": {
+        "description": "update schedule status",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "updateStatus",
+        "operationId": "updateStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": ["NotStart", "Started", "Closed"],
+            "type": "string",
+            "description": "schedule status",
+            "name": "status",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_lesson_plans": {
+      "get": {
+        "description": "get lessonPlans by teacher and class",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "get lessonPlans by teacher and class",
+        "operationId": "getLessonPlans",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "teacher id",
+            "name": "teacher_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "class id",
+            "name": "class_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleShortInfo"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules_participate/class": {
       "get": {
         "description": "get participate Class",
@@ -2498,6 +3084,212 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/skills": {
+      "get": {
+        "description": "get skill",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["skill"],
+        "summary": "getSkill",
+        "operationId": "getSkill",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "developmental id",
+            "name": "developmental_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.Skill"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/skills/{id}": {
+      "get": {
+        "description": "get skill by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["skill"],
+        "summary": "getSkillByID",
+        "operationId": "getSkillByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "skill id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.Skill"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/subjects": {
+      "get": {
+        "description": "get subjects",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["subject"],
+        "summary": "getSubject",
+        "operationId": "getSubject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.Subject"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/subjects/{id}": {
+      "get": {
+        "description": "get subjects by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["subject"],
+        "summary": "getSubjectByID",
+        "operationId": "getSubjectByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "subject id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.Subject"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/visibility_settings": {
+      "get": {
+        "description": "get visibilitySetting",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["visibilitySetting"],
+        "summary": "getVisibilitySetting",
+        "operationId": "getVisibilitySetting",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.VisibilitySetting"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/visibility_settings/{id}": {
+      "get": {
+        "description": "get visibilitySetting by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["visibilitySetting"],
+        "summary": "getVisibilitySettingByID",
+        "operationId": "getVisibilitySettingByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "visibilitySetting id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.VisibilitySetting"
             }
           },
           "404": {
@@ -2988,6 +3780,17 @@
         }
       }
     },
+    "entity.Age": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.AssessmentAttendanceView": {
       "type": "object",
       "properties": {
@@ -3107,6 +3910,17 @@
       }
     },
     "entity.AssessmentTeacher": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ClassType": {
       "type": "object",
       "properties": {
         "id": {
@@ -3407,10 +4221,43 @@
         }
       }
     },
+    "entity.Developmental": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.Grade": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.IDResponse": {
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.LessonType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         }
       }
@@ -3566,6 +4413,17 @@
         },
         "skip": {
           "type": "boolean"
+        }
+      }
+    },
+    "entity.Program": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },
@@ -4013,6 +4871,102 @@
         }
       }
     },
+    "entity.Skill": {
+      "type": "object",
+      "properties": {
+        "developmental_id": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.StudentDetailReport": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.StudentReportCategory"
+          }
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.StudentReportCategory": {
+      "type": "object",
+      "properties": {
+        "achieved_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "not_achieved_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_attempted_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.StudentReportItem": {
+      "type": "object",
+      "properties": {
+        "achieved_count": {
+          "type": "integer"
+        },
+        "not_achieved_count": {
+          "type": "integer"
+        },
+        "not_attempted_count": {
+          "type": "integer"
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.StudentsReport": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.StudentReportItem"
+          }
+        }
+      }
+    },
+    "entity.Subject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.UpdateAssessmentCommand": {
       "type": "object",
       "properties": {
@@ -4037,7 +4991,35 @@
         }
       }
     },
+    "entity.VisibilitySetting": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "external.Class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/external.Student"
+          }
+        }
+      }
+    },
+    "external.Student": {
       "type": "object",
       "properties": {
         "id": {

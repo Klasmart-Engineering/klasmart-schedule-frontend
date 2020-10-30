@@ -21,6 +21,11 @@ export type GetOnlyOneOptionValueResult = {
   [Key in keyof FlattenedMockOptionsOnlyOption]?: MockOptionsItem["id"][];
 };
 
+interface GetReportFirstValueResult {
+  teacher_id: string;
+  class_id: string;
+}
+
 export class ModelMockOptions {
   static toFlatten(input: ToFlattenPropsInput, mockOptions: MockOptions): FlattenedMockOptions {
     const { options: originOptions, ...restMockOptions } = mockOptions;
@@ -84,5 +89,14 @@ export class ModelMockOptions {
       result[name] = flattenedMockOptions[name].map((item) => item.id);
       return result;
     }, {} as GetOnlyOneOptionValueResult);
+  }
+
+  static getReportFirstValue(mockOptions: MockOptions): GetReportFirstValueResult {
+    if (mockOptions.teacher_class_relationship.length) {
+      const teacher_id = mockOptions.teacher_class_relationship[0].teacher_id;
+      const class_id = mockOptions.teacher_class_relationship[0].class_ids[0];
+      return { teacher_id, class_id };
+    }
+    return { teacher_id: "", class_id: "" };
   }
 }

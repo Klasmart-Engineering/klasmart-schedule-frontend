@@ -172,6 +172,11 @@ export interface EntityAddAssessmentResult {
   id?: string;
 }
 
+export interface EntityAge {
+  id?: string;
+  name?: string;
+}
+
 export interface EntityAssessmentAttendanceView {
   id?: string;
   name?: string;
@@ -214,6 +219,11 @@ export interface EntityAssessmentSubject {
 }
 
 export interface EntityAssessmentTeacher {
+  id?: string;
+  name?: string;
+}
+
+export interface EntityClassType {
   id?: string;
   name?: string;
 }
@@ -298,8 +308,23 @@ export interface EntityCreateContentRequest {
   thumbnail?: string;
 }
 
+export interface EntityDevelopmental {
+  id?: string;
+  name?: string;
+}
+
+export interface EntityGrade {
+  id?: string;
+  name?: string;
+}
+
 export interface EntityIDResponse {
   id?: string;
+}
+
+export interface EntityLessonType {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityListAssessmentsResult {
@@ -355,6 +380,11 @@ export interface EntityOutcomeAttendanceMapView {
   outcome_id?: string;
   outcome_name?: string;
   skip?: boolean;
+}
+
+export interface EntityProgram {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityRepeatDaily {
@@ -503,6 +533,41 @@ export interface EntityScheduleUpdateView {
   version?: number;
 }
 
+export interface EntitySkill {
+  developmental_id?: string;
+  id?: string;
+  name?: string;
+}
+
+export interface EntityStudentDetailReport {
+  categories?: EntityStudentReportCategory[];
+  student_name?: string;
+}
+
+export interface EntityStudentReportCategory {
+  achieved_items?: string[];
+  name?: string;
+  not_achieved_items?: string[];
+  not_attempted_items?: string[];
+}
+
+export interface EntityStudentReportItem {
+  achieved_count?: number;
+  not_achieved_count?: number;
+  not_attempted_count?: number;
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface EntityStudentsReport {
+  items?: EntityStudentReportItem[];
+}
+
+export interface EntitySubject {
+  id?: string;
+  name?: string;
+}
+
 export interface EntityUpdateAssessmentCommand {
   action?: "save" | "complete";
   attendance_ids?: string[];
@@ -510,7 +575,18 @@ export interface EntityUpdateAssessmentCommand {
   outcome_attendance_maps?: EntityOutcomeAttendanceMap[];
 }
 
+export interface EntityVisibilitySetting {
+  id?: string;
+  name?: string;
+}
+
 export interface ExternalClass {
+  id?: string;
+  name?: string;
+  students?: ExternalStudent[];
+}
+
+export interface ExternalStudent {
   id?: string;
   name?: string;
 }
@@ -623,6 +699,26 @@ class HttpClient<SecurityDataType> {
  * "KidsLoop 2.0 backend rest api
  */
 export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
+  ages = {
+    /**
+     * @tags age
+     * @name getAge
+     * @summary getAge
+     * @request GET:/ages
+     * @description get age
+     */
+    getAge: (params?: RequestParams) => this.request<EntityAge[], ApiInternalServerErrorResponse>(`/ages`, "GET", params),
+
+    /**
+     * @tags age
+     * @name getAgeByID
+     * @summary getAgeByID
+     * @request GET:/ages/{id}
+     * @description get age by id
+     */
+    getAgeById: (id: string, params?: RequestParams) =>
+      this.request<EntityAge, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/ages/${id}`, "GET", params),
+  };
   assessments = {
     /**
      * @tags assessments
@@ -722,6 +818,27 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         id_list
       ),
+  };
+  classTypes = {
+    /**
+     * @tags classType
+     * @name getClassType
+     * @summary getClassType
+     * @request GET:/class_types
+     * @description get class type
+     */
+    getClassType: (params?: RequestParams) =>
+      this.request<EntityClassType[], ApiInternalServerErrorResponse>(`/class_types`, "GET", params),
+
+    /**
+     * @tags classType
+     * @name getClassTypeByID
+     * @summary getClassTypeByID
+     * @request GET:/class_types/{id}
+     * @description get classType by id
+     */
+    getClassTypeById: (id: string, params?: RequestParams) =>
+      this.request<EntityClassType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/class_types/${id}`, "GET", params),
   };
   contents = {
     /**
@@ -998,6 +1115,47 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params
       ),
   };
+  developmentals = {
+    /**
+     * @tags developmental
+     * @name getDevelopmental
+     * @summary getDevelopmental
+     * @request GET:/developmentals
+     * @description get developmental
+     */
+    getDevelopmental: (params?: RequestParams) =>
+      this.request<EntityDevelopmental[], ApiInternalServerErrorResponse>(`/developmentals`, "GET", params),
+
+    /**
+     * @tags developmental
+     * @name getDevelopmentalByID
+     * @summary getDevelopmentalByID
+     * @request GET:/developmentals/{id}
+     * @description get developmental by id
+     */
+    getDevelopmentalById: (id: string, params?: RequestParams) =>
+      this.request<EntityDevelopmental, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/developmentals/${id}`, "GET", params),
+  };
+  grades = {
+    /**
+     * @tags grade
+     * @name getGrade
+     * @summary getGrade
+     * @request GET:/grades
+     * @description get grade
+     */
+    getGrade: (params?: RequestParams) => this.request<EntityGrade[], ApiInternalServerErrorResponse>(`/grades`, "GET", params),
+
+    /**
+     * @tags grade
+     * @name getGradeByID
+     * @summary getGradeByID
+     * @request GET:/grades/{id}
+     * @description get grade by id
+     */
+    getGradeById: (id: string, params?: RequestParams) =>
+      this.request<EntityGrade, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/grades/${id}`, "GET", params),
+  };
   learningOutcomes = {
     /**
      * @tags learning_outcomes
@@ -1144,6 +1302,27 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         OutcomeRejectReq
       ),
   };
+  lessonTypes = {
+    /**
+     * @tags lessonType
+     * @name getLessonType
+     * @summary getLessonType
+     * @request GET:/lesson_types
+     * @description get lessonType
+     */
+    getLessonType: (params?: RequestParams) =>
+      this.request<EntityLessonType[], ApiInternalServerErrorResponse>(`/lesson_types`, "GET", params),
+
+    /**
+     * @tags lessonType
+     * @name getLessonTypeByID
+     * @summary getLessonTypeByID
+     * @request GET:/lesson_types/{id}
+     * @description get lessonType by id
+     */
+    getLessonTypeById: (id: string, params?: RequestParams) =>
+      this.request<EntityLessonType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/lesson_types/${id}`, "GET", params),
+  };
   pendingLearningOutcomes = {
     /**
      * @tags learning_outcomes
@@ -1215,6 +1394,64 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params
       ),
   };
+  programs = {
+    /**
+     * @tags program
+     * @name getProgram
+     * @summary getProgram
+     * @request GET:/programs
+     * @description get program
+     */
+    getProgram: (params?: RequestParams) => this.request<EntityProgram[], ApiInternalServerErrorResponse>(`/programs`, "GET", params),
+
+    /**
+     * @tags program
+     * @name getProgramByID
+     * @summary getProgramByID
+     * @request GET:/programs/{id}
+     * @description get program by id
+     */
+    getProgramById: (id: string, params?: RequestParams) =>
+      this.request<EntityProgram, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/programs/${id}`, "GET", params),
+  };
+  reports = {
+    /**
+     * @tags reports
+     * @name listStudentsReport
+     * @summary list student report
+     * @request GET:/reports/students
+     * @description list student report
+     */
+    listStudentsReport: (
+      query: {
+        teacher_id: string;
+        class_id: string;
+        lesson_plan_id: string;
+        status?: "all" | "achieved" | "not_achieved" | "not_attempted";
+        sortBy?: "descending" | "ascending";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityStudentsReport, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/reports/students${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports
+     * @name getStudentDetailReport
+     * @summary get student report
+     * @request GET:/reports/students/{id}
+     * @description get student report
+     */
+    getStudentDetailReport: (id: string, query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
+      this.request<EntityStudentDetailReport, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/reports/students/${id}${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
   schedules = {
     /**
      * @tags schedule
@@ -1253,20 +1490,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         scheduleData
-      ),
-
-    /**
-     * @tags schedule
-     * @name updateStatus
-     * @summary updateStatus
-     * @request PUT:/schedules/:schedule_id/status
-     * @description update schedule status
-     */
-    updateStatus: (query: { status: "NotStart" | "Started" | "Closed" }, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/schedules/:schedule_id/status${this.addQueryParams(query)}`,
-        "PUT",
-        params
       ),
 
     /**
@@ -1325,6 +1548,35 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "GET",
         params
       ),
+
+    /**
+     * @tags schedule
+     * @name updateStatus
+     * @summary updateStatus
+     * @request PUT:/schedules/{schedule_id}/status
+     * @description update schedule status
+     */
+    updateStatus: (schedule_id: string, query: { status: "NotStart" | "Started" | "Closed" }, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}/status${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
+  };
+  schedulesLessonPlans = {
+    /**
+     * @tags reports
+     * @name getLessonPlans
+     * @summary get lessonPlans by teacher and class
+     * @request GET:/schedules_lesson_plans
+     * @description get lessonPlans by teacher and class
+     */
+    getLessonPlans: (query: { teacher_id: string; class_id: string }, params?: RequestParams) =>
+      this.request<EntityScheduleShortInfo[], ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules_lesson_plans${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   schedulesParticipate = {
     /**
@@ -1360,6 +1612,72 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityScheduleListView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  skills = {
+    /**
+     * @tags skill
+     * @name getSkill
+     * @summary getSkill
+     * @request GET:/skills
+     * @description get skill
+     */
+    getSkill: (query?: { developmental_id?: string }, params?: RequestParams) =>
+      this.request<EntitySkill[], ApiInternalServerErrorResponse>(`/skills${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags skill
+     * @name getSkillByID
+     * @summary getSkillByID
+     * @request GET:/skills/{id}
+     * @description get skill by id
+     */
+    getSkillById: (id: string, params?: RequestParams) =>
+      this.request<EntitySkill, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/skills/${id}`, "GET", params),
+  };
+  subjects = {
+    /**
+     * @tags subject
+     * @name getSubject
+     * @summary getSubject
+     * @request GET:/subjects
+     * @description get subjects
+     */
+    getSubject: (params?: RequestParams) => this.request<EntitySubject[], ApiInternalServerErrorResponse>(`/subjects`, "GET", params),
+
+    /**
+     * @tags subject
+     * @name getSubjectByID
+     * @summary getSubjectByID
+     * @request GET:/subjects/{id}
+     * @description get subjects by id
+     */
+    getSubjectById: (id: string, params?: RequestParams) =>
+      this.request<EntitySubject, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/subjects/${id}`, "GET", params),
+  };
+  visibilitySettings = {
+    /**
+     * @tags visibilitySetting
+     * @name getVisibilitySetting
+     * @summary getVisibilitySetting
+     * @request GET:/visibility_settings
+     * @description get visibilitySetting
+     */
+    getVisibilitySetting: (params?: RequestParams) =>
+      this.request<EntityVisibilitySetting[], ApiInternalServerErrorResponse>(`/visibility_settings`, "GET", params),
+
+    /**
+     * @tags visibilitySetting
+     * @name getVisibilitySettingByID
+     * @summary getVisibilitySettingByID
+     * @request GET:/visibility_settings/{id}
+     * @description get visibilitySetting by id
+     */
+    getVisibilitySettingById: (id: string, params?: RequestParams) =>
+      this.request<EntityVisibilitySetting, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/visibility_settings/${id}`,
         "GET",
         params
       ),

@@ -6,6 +6,7 @@ import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
 import outcome from "./outcome";
+import report from "./report";
 import schedule from "./schedule";
 
 const loadingMiddleware = createLoadingMiddleware({
@@ -22,6 +23,7 @@ export const store = configureStore({
     outcome,
     schedule,
     assessments,
+    report,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loadingMiddleware),
 });
