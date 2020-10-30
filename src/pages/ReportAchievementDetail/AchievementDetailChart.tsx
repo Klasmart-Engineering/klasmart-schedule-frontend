@@ -180,7 +180,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
       </text>
     ));
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+    <LayoutBox holderMin={0} holderBase={202} mainBase={1517}>
       <div className={css.chart}>
         <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
           <Group top={pixels.xMarginTop}>
