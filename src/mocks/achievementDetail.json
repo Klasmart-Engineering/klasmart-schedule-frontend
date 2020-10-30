@@ -1,140 +1,82 @@
 [
   {
     "name": "Category 1",
-    "achieved_items": [
-      "Read Numbers 1：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 2：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 3：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
-    "not_achieved_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
-    "not_attempted_items": ["Read Numbers 10：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "]
+    "achieved_items": ["Read Numbers 1", "Write Numbers 2", "Calc Numbers 3"],
+    "not_achieved_items": ["Read Numbers 4", "Write Numbers 5", "Calc Numbers 6", "Read Numbers 7", "Write Numbers 8", "Calc Numbers 9"],
+    "not_attempted_items": ["Read Numbers 10"]
   },
   {
     "name": "Category 2 One of the great benefits of sauna and steam baths are the toning effects on the skin",
-    "achieved_items": [
-      "Read Numbers 1：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 2：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 3：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 11：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 21：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 31：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
+    "achieved_items": ["Read Numbers 1", "Write Numbers 2", "Calc Numbers 3", "Read Numbers 11", "Write Numbers 21", "Calc Numbers 31"],
     "not_achieved_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 41：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 51：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 61：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 71：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 81：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 91：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
+      "Read Numbers 4",
+      "Write Numbers 5",
+      "Calc Numbers 6",
+      "Read Numbers 7",
+      "Write Numbers 8",
+      "Calc Numbers 9",
+      "Read Numbers 41",
+      "Write Numbers 51",
+      "Calc Numbers 61",
+      "Read Numbers 71",
+      "Write Numbers 81",
+      "Calc Numbers 91"
     ],
-    "not_attempted_items": ["Read Numbers 10：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "]
+    "not_attempted_items": ["Read Numbers 10"]
   },
   {
     "name": "Category 3",
     "achieved_items": [],
     "not_achieved_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 41：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 51：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 61：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 71：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 81：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 91：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
+      "Read Numbers 4",
+      "Write Numbers 5",
+      "Calc Numbers 6",
+      "Read Numbers 7",
+      "Write Numbers 8",
+      "Calc Numbers 9",
+      "Read Numbers 41",
+      "Write Numbers 51",
+      "Calc Numbers 61",
+      "Read Numbers 71",
+      "Write Numbers 81",
+      "Calc Numbers 91"
     ],
-    "not_attempted_items": ["Read Numbers 10：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "]
+    "not_attempted_items": ["Read Numbers 10"]
   },
   {
     "name": "Category 4",
     "achieved_items": [],
     "not_achieved_items": [],
-    "not_attempted_items": ["Read Numbers 10：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "]
+    "not_attempted_items": ["Read Numbers 10"]
   },
   {
     "name": "Category 5",
-    "achieved_items": ["Read Numbers 10：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "],
+    "achieved_items": ["Read Numbers 10"],
     "not_achieved_items": [],
     "not_attempted_items": []
   },
   {
     "name": "Category 6",
     "achieved_items": [],
-    "not_achieved_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
-    "not_attempted_items": [
-      "Read Numbers 1：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 2：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 3：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ]
+    "not_achieved_items": ["Read Numbers 4", "Write Numbers 5", "Calc Numbers 6", "Read Numbers 7", "Write Numbers 8", "Calc Numbers 9"],
+    "not_attempted_items": ["Read Numbers 1", "Write Numbers 2", "Calc Numbers 3"]
   },
   {
     "name": "Category 7",
-    "achieved_items": [
-      "Read Numbers 1：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 2：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 3：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
-    "not_achieved_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
+    "achieved_items": ["Read Numbers 1", "Write Numbers 2", "Calc Numbers 3"],
+    "not_achieved_items": ["Read Numbers 4", "Write Numbers 5", "Calc Numbers 6", "Read Numbers 7", "Write Numbers 8", "Calc Numbers 9"],
     "not_attempted_items": []
   },
   {
     "name": "Category 8",
     "achieved_items": [],
-    "not_achieved_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
+    "not_achieved_items": ["Read Numbers 4", "Write Numbers 5", "Calc Numbers 6", "Read Numbers 7", "Write Numbers 8", "Calc Numbers 9"],
     "not_attempted_items": []
   },
   {
     "name": "Category 9",
-    "achieved_items": [
-      "Read Numbers 1：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 2：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 3：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ],
+    "achieved_items": ["Read Numbers 1", "Write Numbers 2", "Calc Numbers 3"],
     "not_achieved_items": [],
-    "not_attempted_items": [
-      "Read Numbers 4：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 5：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 6：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Read Numbers 7：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Write Numbers 8：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. ",
-      "Calc Numbers 9：\nOne of the great benefits of sauna and steam baths are the toning effects on the skin. "
-    ]
+    "not_attempted_items": ["Read Numbers 4", "Write Numbers 5", "Calc Numbers 6", "Read Numbers 7", "Write Numbers 8", "Calc Numbers 9"]
   }
 ]

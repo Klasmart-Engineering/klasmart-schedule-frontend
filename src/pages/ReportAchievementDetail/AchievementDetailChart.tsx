@@ -17,7 +17,7 @@ const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
 const useStyle = makeStyles({
   chart: {
     marginTop: 24,
-    marginBottom: 400,
+    marginBottom: 300,
     position: "relative",
   },
   svgContainer: {
@@ -58,12 +58,12 @@ const getInlineStyles = (px: number) => ({
   tooltipContent: {
     maxWidth: 240 * px,
     fontSize: 14 * px,
-    lineHeight: (17 / 14) * px,
+    lineHeight: 20 / 14,
   },
   tooltipTitle: {
     fontSize: 14 * px,
     fontWeight: "bold" as const,
-    lineHeight: 1 * px,
+    lineHeight: 1,
     marginTop: 11 * px,
     marginBottom: 5 * px,
     color: "#0E78D5" as const,
@@ -207,15 +207,14 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
       </svg>
       {tooltipOpen && tooltipData && (
         <Tooltip top={tooltipTop} left={tooltipLeft} offsetLeft={0} offsetTop={0}>
-          <div style={inlineStyles.tooltipContent}>
-            <div style={inlineStyles.tooltipTitle}>
-              {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.length}&nbsp;LOs
-            </div>
-            {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.map((desc, idx) => [
-              ...desc.split("\n").map((p, idy) => [p, <br key={`br-${idx}-${idy}`} />]),
-              <br key={`br-${idx}`} />,
-            ])}
+          <div style={inlineStyles.tooltipTitle}>
+            {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.length}&nbsp;LOs
           </div>
+          {tooltipData.bar.data[ratioKey2DetailKey(tooltipData.key as RatioKey)]?.map((desc, idx) => (
+            <div key={desc} style={inlineStyles.tooltipContent}>
+              {desc}
+            </div>
+          ))}
         </Tooltip>
       )}
     </div>

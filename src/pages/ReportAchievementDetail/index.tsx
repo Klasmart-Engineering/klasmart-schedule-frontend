@@ -76,8 +76,8 @@ export function ReportAchievementDetail() {
         backByLessonPlan={backByLessonPlan}
       />
 
-      {achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={mockAchievementDetail} /> : <Empty />}
-      {/* <AchievementDetailChart data={mockAchievementDetail} /> */}
+      {false && (achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={achievementDetail} /> : <Empty />)}
+      <AchievementDetailChart data={mockAchievementDetail} />
     </>
   );
 }
