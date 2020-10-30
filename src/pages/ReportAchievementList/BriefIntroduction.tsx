@@ -85,8 +85,10 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
 
   React.useEffect(() => {
     if (lessonPlanList && lessonPlanList.length) {
-      const res = lessonPlanList.filter((item: EntityScheduleShortInfo) => item.id === value.lesson_plan_id)[0].name;
-      setLessonPlanName(res as typeof backByLessonPlan[keyof typeof backByLessonPlan]);
+      const res = lessonPlanList.filter((item: EntityScheduleShortInfo) => item.id === value.lesson_plan_id)[0];
+      if (res && res.name) {
+        setLessonPlanName(res.name as typeof backByLessonPlan[keyof typeof backByLessonPlan]);
+      }
     }
   }, [backByLessonPlan, lessonPlanList, value.lesson_plan_id]);
 
