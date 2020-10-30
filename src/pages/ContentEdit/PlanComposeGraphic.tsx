@@ -96,6 +96,9 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     width: 240,
     height: 160,
     marginTop: 40,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   drappableBox: {
     // padding: 15,
@@ -326,7 +329,7 @@ function SegmentBox(props: SegmentBoxProps) {
   if (!material && !condition)
     return (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
-        <Typography align="center" variant="body1" color="textSecondary">
+        <Typography align="center" variant="body1" color="textSecondary" style={{ width: 220 }}>
           {d("Drag and drop a lesson material here").t("library_msg_drag_lesson_material")}
         </Typography>
       </div>
@@ -343,7 +346,7 @@ function SegmentBox(props: SegmentBoxProps) {
         <ArcherElement id={segmentMaterialId} relations={materialRelations}>
           <div className={clsx(computedCss.card, { [css.drappableBox]: !canDropCondition })}>
             <div ref={materialDropRef}>
-              <Typography align="center" variant="body1" color="textSecondary">
+              <Typography align="center" variant="body1" color="textSecondary" style={{ width: 220 }}>
                 {d("Drag and drop a lesson material here").t("library_msg_drag_lesson_material")}
               </Typography>
             </div>
