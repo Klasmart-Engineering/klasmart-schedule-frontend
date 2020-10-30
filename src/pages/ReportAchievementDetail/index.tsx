@@ -75,9 +75,9 @@ export function ReportAchievementDetail() {
         lessonPlanList={lessonPlanList}
         backByLessonPlan={backByLessonPlan}
       />
-      {/* {achievementDetail && <AchievementDetailChart data={achievementDetail} />} */}
+
       {achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={mockAchievementDetail} /> : <Empty />}
-      {/* {achievementDetail && <AchievementDetailChart data={mockAchievementDetail} />} */}
+      {/* <AchievementDetailChart data={mockAchievementDetail} /> */}
     </>
   );
 }
