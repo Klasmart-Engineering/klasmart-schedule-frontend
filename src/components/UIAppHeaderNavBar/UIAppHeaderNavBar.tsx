@@ -112,7 +112,7 @@ const navigation = [
   },
   {
     name: "Report",
-    path: "/report",
+    path: "/report/achievement-list",
   },
 ];
 

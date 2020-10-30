@@ -7,7 +7,6 @@ import mockAchievementList from "../../mocks/achievementList.json";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
-import { getContentDetailById } from "../../reducers/content";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, getMockOptions } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
@@ -41,8 +40,9 @@ export function ReportAchievementList() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { mockOptions, lessonPlanList, reportList = [] } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { mockOptions, lessonPlanList, reportList = [], student_name } = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  );
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -80,8 +80,8 @@ export function ReportAchievementList() {
         class_id
           ? getFirstLessonPlanId(value, class_id)
           : history.push({
-              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
-            });
+            search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
+          });
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
@@ -119,12 +119,6 @@ export function ReportAchievementList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [condition.lesson_plan_id, condition.order_by, condition.status, dispatch]);
 
-  useEffect(() => {
-    if (condition.lesson_plan_id) {
-      dispatch(getContentDetailById({ metaLoading: true, content_id: condition.lesson_plan_id }));
-    }
-  }, [condition.lesson_plan_id, dispatch]);
-
   return (
     <>
       <FirstSearchHeader value={Category.archived} onChange={handleChange} />
@@ -136,7 +130,7 @@ export function ReportAchievementList() {
         onChangeMb={handleChangeMbFilter}
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
       ></FilterAchievementReport>
-      <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} />
+      <BriefIntroduction value={condition} mockOptions={mockOptions} student_name={student_name} lessonPlanList={lessonPlanList} />
       {/* {reportList && <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
       {reportList && <AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />}
     </>

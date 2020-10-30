@@ -9,6 +9,7 @@ interface IreportState {
   achievementDetail?: EntityStudentReportCategory[];
   mockOptions: MockOptions;
   lessonPlanList: EntityScheduleShortInfo[];
+  student_name: string | undefined;
 }
 const initialState: IreportState = {
   reportList: [],
@@ -26,6 +27,7 @@ const initialState: IreportState = {
     teacher_class_relationship: [],
   },
   lessonPlanList: [],
+  student_name: "",
 };
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -89,6 +91,7 @@ const { reducer } = createSlice({
     },
     [getAchievementDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementDetail>>) => {
       state.achievementDetail = payload.categories;
+      state.student_name = payload.student_name;
     },
     [getAchievementDetail.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

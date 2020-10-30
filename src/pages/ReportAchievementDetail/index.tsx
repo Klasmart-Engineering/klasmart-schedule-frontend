@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
-import { getContentDetailById } from "../../reducers/content";
-import { getAchievementDetail, getMockOptions } from "../../reducers/report";
+import { getAchievementDetail, getLessonPlan, getMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
@@ -34,7 +33,9 @@ export function ReportAchievementDetail() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { mockOptions, achievementDetail = [] } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { mockOptions, achievementDetail = [], student_name, lessonPlanList } = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  );
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -42,13 +43,6 @@ export function ReportAchievementDetail() {
   const backByLessonPlan = (urlParams: string) => {
     history.push({ pathname: ReportAchievementList.routeBasePath, search: urlParams });
   };
-  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
-
-  useEffect(() => {
-    if (condition.lesson_plan_id) {
-      dispatch(getContentDetailById({ metaLoading: true, content_id: condition.lesson_plan_id }));
-    }
-  }, [condition.lesson_plan_id, dispatch]);
 
   useEffect(() => {
     dispatch(getMockOptions());
@@ -65,11 +59,21 @@ export function ReportAchievementDetail() {
     }
   }, [condition.class_id, condition.lesson_plan_id, condition.student_id, condition.teacher_id, dispatch]);
 
+  useEffect(() => {
+    dispatch(getLessonPlan({ teacher_id: condition.teacher_id, class_id: condition.class_id }));
+  }, [condition.class_id, condition.teacher_id, dispatch]);
+
   return (
     <>
       <FirstSearchHeader value={Category.archived} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
-      <BriefIntroduction value={condition} mockOptions={mockOptions} contentPreview={contentPreview} backByLessonPlan={backByLessonPlan} />
+      <BriefIntroduction
+        value={condition}
+        mockOptions={mockOptions}
+        student_name={student_name}
+        lessonPlanList={lessonPlanList}
+        backByLessonPlan={backByLessonPlan}
+      />
       {/* {achievementDetail && <AchievementDetailChart data={achievementDetail} />} */}
       {achievementDetail && <AchievementDetailChart data={mockAchievementDetail} />}
     </>

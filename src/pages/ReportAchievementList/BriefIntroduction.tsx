@@ -1,7 +1,7 @@
 import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
@@ -73,13 +73,22 @@ function getSpecificName(mockOptions: MockOptions, type: string, id: string) {
 interface BriefIntroductionProps {
   value: QueryCondition;
   mockOptions: MockOptions;
-  contentPreview: EntityContentInfoWithDetails;
+  student_name: string | undefined;
   backByLessonPlan?: (urlParams: string) => void;
+  lessonPlanList?: EntityScheduleShortInfo[];
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, mockOptions, contentPreview, backByLessonPlan } = props;
+  const { value, mockOptions, student_name, backByLessonPlan, lessonPlanList } = props;
   const css = useStyles();
+  const [lessonPlanName, setLessonPlanName] = React.useState("");
+
+  React.useEffect(() => {
+    if (lessonPlanList && lessonPlanList.length) {
+      const res = lessonPlanList.filter((item: EntityScheduleShortInfo) => item.id === value.lesson_plan_id)[0].name;
+      setLessonPlanName(res as typeof backByLessonPlan[keyof typeof backByLessonPlan]);
+    }
+  }, [backByLessonPlan, lessonPlanList, value.lesson_plan_id]);
 
   const handleClick = () => {
     const urlParams =
@@ -100,12 +109,12 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
         <Box className={css.leftName}>
           {value.teacher_id && <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher_id)}</span>}
           {value.class_id && <span className={css.teacherAndClass}>{" - " + getSpecificName(mockOptions, "class", value.class_id)}</span>}
-          {contentPreview.name && value.lesson_plan_id && (
+          {value.lesson_plan_id && (
             <span style={{ cursor: value.student_id ? "pointer" : "default" }} className={css.lessonPlan} onClick={handleClick}>
-              {" - " + contentPreview.name}
+              {" - " + lessonPlanName}
             </span>
           )}
-          {value.student_id && <span className={css.teacherAndClass}>{"- Student 1"}</span>}
+          {value.student_id && <span className={css.teacherAndClass}>{"- " + student_name}</span>}
         </Box>
         <Box className={css.rightContainer}>
           <Box className={clsx(css.rightContainer, css.marginItem)}>
