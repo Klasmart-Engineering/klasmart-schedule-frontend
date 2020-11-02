@@ -21,6 +21,7 @@ interface IContentState {
   contentPreview: EntityContentInfoWithDetails;
   MediaListTotal: number;
   OutcomesListTotal: number;
+  linkedMockOptions: LinkedMockOptions;
 }
 
 interface RootState {
@@ -78,6 +79,17 @@ const initialState: IContentState = {
     students: [],
     users: [],
     teacher_class_relationship: [],
+  },
+  linkedMockOptions: {
+    lesson_types: [],
+    visibility_settings: [],
+    class_types: [],
+    program: [],
+    subject: [],
+    developmental: [],
+    age: [],
+    grade: [],
+    skills: [],
   },
   total: 0,
   contentsList: [],
@@ -192,6 +204,50 @@ export const publishWidthAssets = createAsyncThunk<
     },
   } = getState();
   return api.contents.publishContentWithAssets(id, { scope: publish_scope });
+});
+
+export interface LinkedMockOptionsItem {
+  id?: string;
+  name?: string;
+}
+
+export interface LinkedMockOptions {
+  lesson_types: LinkedMockOptionsItem[];
+  visibility_settings: LinkedMockOptionsItem[];
+  class_types: LinkedMockOptionsItem[];
+  program: LinkedMockOptionsItem[];
+  subject: LinkedMockOptionsItem[];
+  developmental: LinkedMockOptionsItem[];
+  age: LinkedMockOptionsItem[];
+  grade: LinkedMockOptionsItem[];
+  skills: LinkedMockOptionsItem[];
+}
+
+export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, null>("content/", async () => {
+  const [lesson_types, visibility_settings, class_types] = await Promise.all([
+    api.lessonTypes.getLessonType(),
+    api.visibilitySettings.getVisibilitySetting(),
+    api.classTypes.getClassType(),
+  ]);
+  const program = await api.programs.getProgram();
+  const program_id = program[0].id;
+  if (program_id) {
+    const [subject, developmental, age, grade] = await Promise.all([
+      api.subjects.getSubject({ program_id }),
+      api.developmentals.getDevelopmental({ program_id }),
+      api.ages.getAge({ program_id }),
+      api.grades.getGrade({ program_id }),
+    ]);
+    const developmental_id = developmental[0].id;
+    if (developmental_id) {
+      const skills = await api.skills.getSkill({ developmental_id });
+      return { lesson_types, visibility_settings, class_types, program, subject, developmental, age, grade, skills };
+    } else {
+      return { lesson_types, visibility_settings, class_types, program, subject, developmental, age, grade, skills: [] };
+    }
+  } else {
+    return { lesson_types, visibility_settings, class_types, program, subject: [], developmental: [], age: [], grade: [], skills: [] };
+  }
 });
 
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
@@ -414,6 +470,13 @@ const { actions, reducer } = createSlice({
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.linkedMockOptions = payload;
+    },
+    [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [searchOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {

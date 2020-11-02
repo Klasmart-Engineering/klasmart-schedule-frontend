@@ -16,6 +16,7 @@ import {
   AsyncTrunkReturned,
   contentLists,
   deleteContent,
+  getLinkedMockOptions,
   onLoadContentEdit,
   publish,
   publishWidthAssets,
@@ -72,10 +73,11 @@ export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
   const { reset, handleSubmit, control, setValue, watch, errors } = formMethods;
-  const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList } = useSelector<
+  const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions } = useSelector<
     RootState,
     RootState["content"]
   >((state) => state.content);
+
   const { lesson, tab, rightside } = useParams();
   const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQuery();
   const history = useHistory();
@@ -252,6 +254,7 @@ export default function ContentEdit() {
   const handleChangeDevelopmental = useCallback(() => setValue("skills", []), [setValue]);
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
+    dispatch(getLinkedMockOptions(null));
   }, [id, lesson, dispatch, history, editindex]);
   useEffect(() => {
     // 编辑表单时 加载完 contentDetial 的逻辑
@@ -288,6 +291,7 @@ export default function ContentEdit() {
         contentDetail={contentDetail}
         formMethods={formMethods}
         flattenedMockOptions={flattenedMockOptions}
+        linkedMockOptions={linkedMockOptions}
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
         onDrawingActivity={handleDrawingActivity}

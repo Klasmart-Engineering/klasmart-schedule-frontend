@@ -22,7 +22,7 @@ import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
+import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
@@ -30,6 +30,7 @@ import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
     minHeight: 800,
@@ -96,6 +97,7 @@ interface DetailsProps {
   uploadThumnail?: Function;
   formMethods: UseFormMethods<ContentDetailForm>;
   flattenedMockOptions: FlattenedMockOptions;
+  linkedMockOptions: LinkedMockOptions;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
   onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
@@ -104,7 +106,7 @@ export default function Details(props: DetailsProps) {
   const {
     contentDetail,
     formMethods: { control, errors },
-    flattenedMockOptions,
+    linkedMockOptions,
     onChangeDevelopmental,
     onChangeProgram,
     onDrawingActivity,
@@ -114,13 +116,13 @@ export default function Details(props: DetailsProps) {
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
 
-  const menuItemList = (list: MockOptionsItem[]) =>
+  const menuItemList = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
       </MenuItem>
     ));
-  const NeedTransilationMenuItemList = (list: MockOptionsItem[]) =>
+  const NeedTransilationMenuItemList = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {t(item.name as NeedTransilationMenuItem)}
@@ -268,7 +270,7 @@ export default function Details(props: DetailsProps) {
               }}
               required
             >
-              {menuItemList(flattenedMockOptions.program)}
+              {menuItemList(linkedMockOptions.program)}
             </TextField>
           )}
         />
@@ -284,7 +286,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.subject}
           control={control}
         >
-          {menuItemList(flattenedMockOptions.subject)}
+          {menuItemList(linkedMockOptions.subject)}
         </Controller>
         <Box>
           <Controller
@@ -306,7 +308,7 @@ export default function Details(props: DetailsProps) {
                 fullWidth={sm}
                 required
               >
-                {menuItemList(flattenedMockOptions.developmental)}
+                {menuItemList(linkedMockOptions.developmental)}
               </FormattedTextField>
             )}
           />
@@ -324,7 +326,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label={d("Subcategory").t("library_label_subcategory")}
           >
-            {menuItemList(flattenedMockOptions.skills)}
+            {menuItemList(linkedMockOptions.skills)}
           </Controller>
         </Box>
         <Box>
@@ -341,7 +343,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label={d("Age").t("library_label_age")}
           >
-            {menuItemList(flattenedMockOptions.age)}
+            {menuItemList(linkedMockOptions.age)}
           </Controller>
           <Controller
             as={TextField}
@@ -356,7 +358,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label={d("Grade").t("library_label_grade")}
           >
-            {menuItemList(flattenedMockOptions.grade)}
+            {menuItemList(linkedMockOptions.grade)}
           </Controller>
         </Box>
         <Controller
@@ -374,8 +376,7 @@ export default function Details(props: DetailsProps) {
           error={errors.publish_scope ? true : false}
           helperText=""
         >
-          {/* {menuItemList(flattenedMockOptions.visibility_settings)} */}
-          {NeedTransilationMenuItemList(flattenedMockOptions.visibility_settings)}
+          {NeedTransilationMenuItemList(linkedMockOptions.visibility_settings)}
         </Controller>
         {lesson === "material" && (
           <Controller
@@ -387,7 +388,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.lesson_type || ""}
             control={control}
           >
-            {menuItemList(flattenedMockOptions.lesson_types)}
+            {NeedTransilationMenuItemList(linkedMockOptions.lesson_types)}
           </Controller>
         )}
         <Controller
