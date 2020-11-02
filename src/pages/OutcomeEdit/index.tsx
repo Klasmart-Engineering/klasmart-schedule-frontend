@@ -9,12 +9,12 @@ import { d } from "../../locale/LocaleManager";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
-import { onLoadContentEdit } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import {
   approve,
   AsyncTrunkReturned,
   deleteOutcome,
+  getMockOptions,
   getOutcomeDetail,
   lockOutcome,
   publishOutcome,
@@ -47,10 +47,9 @@ export default function CreateOutcomings() {
   const classes = useStyles();
   const { outcome_id, status, before } = useQuery();
   const [openStatus, setOpenStatus] = React.useState(false);
-  const { mockOptions } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { outcomeDetail } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeDetail, mockOptions } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showEdit, setShowEdit] = React.useState(false);
   const [isAssumed, setIsAssumed] = React.useState(false);
 
@@ -88,7 +87,7 @@ export default function CreateOutcomings() {
   }, [mockOptions, reset, outcome_id]);
 
   React.useEffect(() => {
-    dispatch(onLoadContentEdit({ type: "material", id: null }));
+    dispatch(getMockOptions());
   }, [dispatch]);
 
   React.useEffect(() => {

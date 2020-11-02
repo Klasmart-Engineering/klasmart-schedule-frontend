@@ -1,6 +1,18 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api from "../api";
-import { ApiOutcomeCreateResponse, ApiOutcomeCreateView, ApiOutcomeIDList, ApiOutcomeView } from "../api/api.auto";
+import {
+  ApiOutcomeCreateResponse,
+  ApiOutcomeCreateView,
+  ApiOutcomeIDList,
+  ApiOutcomeView,
+  EntityAge,
+  EntityDevelopmental,
+  EntityGrade,
+  EntityProgram,
+  EntitySkill,
+  EntitySubject,
+} from "../api/api.auto";
+import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -12,6 +24,8 @@ interface IOutcomeState {
   outcomeList: ApiOutcomeView[];
   createOutcome: ApiOutcomeCreateView;
   lockOutcome_id: string;
+  mockOptions: MockOptions;
+  newOptions: ResultGetNewOptions;
 }
 
 interface RootState {
@@ -62,6 +76,26 @@ export const initialState: IOutcomeState = {
     description: "",
   },
   lockOutcome_id: "",
+  mockOptions: {
+    options: [],
+    visibility_settings: [],
+    lesson_types: [],
+    classes: [],
+    class_types: [],
+    organizations: [],
+    teachers: [],
+    students: [],
+    users: [],
+    teacher_class_relationship: [],
+  },
+  newOptions: {
+    program: [],
+    subject: [],
+    developmental: [],
+    skills: [],
+    age: [],
+    grade: [],
+  },
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -70,6 +104,29 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : T extends (...args: any) => infer U
   ? U
   : any;
+
+interface ParamsGetNewOptions {
+  development_id?: string | undefined;
+}
+interface ResultGetNewOptions {
+  program: EntityProgram[];
+  subject: EntitySubject[];
+  developmental: EntityDevelopmental[];
+  age: EntityAge[];
+  grade: EntityGrade[];
+  skills: EntitySkill[];
+}
+export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions>("getNewOptions", async ({ development_id }) => {
+  const [program, subject, developmental, skills, age, grade] = await Promise.all([
+    api.programs.getProgram(),
+    api.subjects.getSubject(),
+    api.developmentals.getDevelopmental(),
+    api.skills.getSkill({ developmental_id: development_id }),
+    api.ages.getAge(),
+    api.grades.getGrade(),
+  ]);
+  return { program, subject, developmental, skills, age, grade };
+});
 
 type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
@@ -170,6 +227,10 @@ export const approve = createAsyncThunk<any, any>("outcome/approve", (id) => {
   return api.learningOutcomes.approveLearningOutcomes(id);
 });
 
+export const getMockOptions = createAsyncThunk<MockOptions>("apiGetMockOptions", async () => {
+  return await apiGetMockOptions();
+});
+
 const { reducer } = createSlice({
   name: "outcome",
   initialState,
@@ -236,6 +297,16 @@ const { reducer } = createSlice({
     },
     [updateOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {},
     [updateOutcome.rejected.type]: ({ error }: any) => {},
+    [getMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMockOptions>>) => {
+      state.mockOptions = payload;
+    },
+    [getMockOptions.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [getNewOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getNewOptions>>) => {
+      console.log(payload);
+      state.newOptions = payload;
+    },
   },
 });
 
