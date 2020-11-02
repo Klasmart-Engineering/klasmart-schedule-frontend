@@ -40,7 +40,7 @@ type OnloadReportPayload = Parameters<typeof api.reports.listStudentsReport>[0] 
 type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsReport>;
 export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
   "listStudentsReport",
-  async ({ teacher_id, class_id, lesson_plan_id, status, sortBy }) => {
+  async ({ metaLoading, teacher_id, class_id, lesson_plan_id, status, sortBy }) => {
     return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id, status, sortBy });
   }
 );
@@ -51,7 +51,7 @@ interface GetAchievementDetailPayload extends LoadingMetaPayload {
 export const getAchievementDetail = createAsyncThunk<
   AsyncReturnType<typeof api.reports.getStudentDetailReport>,
   GetAchievementDetailPayload
->("StudentsDetailReport", async ({ id, query }) => {
+>("StudentsDetailReport", async ({ metaLoading, id, query }) => {
   return await api.reports.getStudentDetailReport(id, query);
 });
 
@@ -77,6 +77,10 @@ const { reducer } = createSlice({
     [getAchievementList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
+    [getAchievementList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.reportList = initialState.reportList;
+    },
     [getMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMockOptions>>) => {
       state.mockOptions = payload;
     },
@@ -95,6 +99,10 @@ const { reducer } = createSlice({
     },
     [getAchievementDetail.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
+    },
+    [getAchievementDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.achievementDetail = initialState.achievementDetail;
     },
   },
 });

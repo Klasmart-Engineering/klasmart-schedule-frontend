@@ -43,6 +43,7 @@ export function ReportAchievementList() {
   const { mockOptions, lessonPlanList, reportList = [], student_name } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
+
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -113,6 +114,7 @@ export function ReportAchievementList() {
           lesson_plan_id: condition.lesson_plan_id,
           status: condition.status,
           sortBy: condition.order_by,
+          metaLoading: true,
         })
       );
     }

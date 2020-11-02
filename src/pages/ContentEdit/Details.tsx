@@ -85,6 +85,12 @@ function ProgressWithText(props: CircularProgressProps) {
   );
 }
 
+type NeedTransilationMenuItem =
+  | "library_label_visibility_school"
+  | "library_label_visibility_organization"
+  | "library_label_test"
+  | "library_label_not_test";
+
 interface DetailsProps {
   contentDetail: EntityContentInfoWithDetails;
   uploadThumnail?: Function;
@@ -111,9 +117,13 @@ export default function Details(props: DetailsProps) {
   const menuItemList = (list: MockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
-        {item.id === "visibility_settings1" || item.id === "visibility_settings2"
-          ? t(item.name as "library_label_visibility_school" | "library_label_visibility_organization")
-          : item.name}
+        {item.name}
+      </MenuItem>
+    ));
+  const NeedTransilationMenuItemList = (list: MockOptionsItem[]) =>
+    list.map((item) => (
+      <MenuItem key={item.id} value={item.id}>
+        {t(item.name as NeedTransilationMenuItem)}
       </MenuItem>
     ));
 
@@ -364,7 +374,8 @@ export default function Details(props: DetailsProps) {
           error={errors.publish_scope ? true : false}
           helperText=""
         >
-          {menuItemList(flattenedMockOptions.visibility_settings)}
+          {/* {menuItemList(flattenedMockOptions.visibility_settings)} */}
+          {NeedTransilationMenuItemList(flattenedMockOptions.visibility_settings)}
         </Controller>
         {lesson === "material" && (
           <Controller

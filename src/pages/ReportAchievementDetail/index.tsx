@@ -52,6 +52,7 @@ export function ReportAchievementDetail() {
     if (condition.student_id) {
       dispatch(
         getAchievementDetail({
+          metaLoading: true,
           id: condition.student_id,
           query: { teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: condition.lesson_plan_id },
         })
