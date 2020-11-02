@@ -106,7 +106,7 @@ export function ReportAchievementList() {
   }, [dispatch, getFirstLessonPlanId, history, mockOptions]);
 
   useEffect(() => {
-    if (condition.lesson_plan_id) {
+    if (condition.teacher_id) {
       dispatch(
         getAchievementList({
           teacher_id: condition.teacher_id,
