@@ -4920,6 +4920,12 @@
     "entity.StudentDetailReport": {
       "type": "object",
       "properties": {
+        "assessment_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "attend": {
           "type": "boolean"
         },
@@ -4986,6 +4992,12 @@
     "entity.StudentsReport": {
       "type": "object",
       "properties": {
+        "assessment_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "items": {
           "type": "array",
           "items": {

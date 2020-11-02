@@ -540,6 +540,7 @@ export interface EntitySkill {
 }
 
 export interface EntityStudentDetailReport {
+  assessment_ids?: string[];
   attend?: boolean;
   categories?: EntityStudentReportCategory[];
   student_name?: string;
@@ -562,6 +563,7 @@ export interface EntityStudentReportItem {
 }
 
 export interface EntityStudentsReport {
+  assessment_ids?: string[];
   items?: EntityStudentReportItem[];
 }
 
