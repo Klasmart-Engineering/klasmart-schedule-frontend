@@ -180,7 +180,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
   const descriptionList = (barStacks: TBarStack[]) =>
     barStacks.slice(-1)[0].bars.map((bar) => (
       <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
-        100%,&nbsp;
+        {data[bar.index].sum === 0 ? 0 : 100}%,&nbsp;
         {data[bar.index].sum}&nbsp;LOs
       </text>
     ));
