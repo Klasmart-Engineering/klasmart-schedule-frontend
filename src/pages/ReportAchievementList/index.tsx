@@ -31,8 +31,8 @@ const useQuery = () => {
     const class_id = query.get("class_id") || "";
     const lesson_plan_id = query.get("lesson_plan_id") || "";
     const status = query.get("status") || "all";
-    const order_by = query.get("order_by") || "descending";
-    return clearNull({ teacher_id, class_id, lesson_plan_id, status, order_by });
+    const sort_by = query.get("sort_by") || "desc";
+    return clearNull({ teacher_id, class_id, lesson_plan_id, status, sort_by });
   }, [search]);
 };
 
@@ -56,7 +56,7 @@ export function ReportAchievementList() {
     computeFilter(tab, value);
   };
   const handleChangeStudent: AchievementListChartProps["onClickStudent"] = (studentId) => {
-    const { status, order_by, ...ortherCondition } = condition;
+    const { status, sort_by, ...ortherCondition } = condition;
     history.push({ pathname: ReportAchievementDetail.routeBasePath, search: toQueryString({ student_id: studentId, ...ortherCondition }) });
   };
   const getFirstLessonPlanId = useMemo(
@@ -113,13 +113,13 @@ export function ReportAchievementList() {
           class_id: condition.class_id,
           lesson_plan_id: condition.lesson_plan_id,
           status: condition.status,
-          sortBy: condition.order_by,
+          sort_by: condition.sort_by,
           metaLoading: true,
         })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.lesson_plan_id, condition.order_by, condition.status, dispatch]);
+  }, [condition.lesson_plan_id, condition.sort_by, condition.status, dispatch]);
 
   return (
     <>

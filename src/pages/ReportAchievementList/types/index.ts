@@ -4,7 +4,7 @@ export type QueryCondition = {
   class_id?: string | undefined;
   lesson_plan_id?: string | undefined;
   status?: ReportFilter;
-  order_by?: ReportOrderBy;
+  sort_by?: ReportOrderBy;
   student_id?: string | undefined;
 };
 export type QueryConditionChangeHandler = (value: QueryCondition) => any;
@@ -19,8 +19,8 @@ export enum ReportFilter {
   all = "all",
 }
 export enum ReportOrderBy {
-  ascending = "ascending",
-  descending = "descending",
+  ascending = "asc",
+  descending = "desc",
 }
 
 export enum StatusColor {

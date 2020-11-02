@@ -107,14 +107,14 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
     if (tab === "lesson_plan_id" && classs.length > 0 && lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
     if (tab === "status") setAnchorElStatus(event.currentTarget);
-    if (tab === "order_by") setAnchorElOrderBy(event.currentTarget);
+    if (tab === "sort_by") setAnchorElOrderBy(event.currentTarget);
   };
   const handleClose = (e: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
     if (tab === "class_id") setAnchorElClass(null);
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
     if (tab === "status") setAnchorElStatus(null);
-    if (tab === "order_by") setAnchorElOrderBy(null);
+    if (tab === "sort_by") setAnchorElOrderBy(null);
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
     handleClose(e, tab);
@@ -176,9 +176,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={clsx(css.selectButton, css.lastButton)}
-              onChange={(e) => onChange(e, "order_by")}
+              onChange={(e) => onChange(e, "sort_by")}
               label={d("Sort By").t("report_label_sort_by")}
-              value={value.order_by}
+              value={value.sort_by}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
@@ -220,9 +220,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
             </Menu>
 
-            <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "order_by")} />
-            <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "order_by")}>
-              <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="order_by"></GetMenuItem>
+            <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
+            <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
+              <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
             </Menu>
           </Box>
         </Box>

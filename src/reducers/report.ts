@@ -40,8 +40,8 @@ type OnloadReportPayload = Parameters<typeof api.reports.listStudentsReport>[0] 
 type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsReport>;
 export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
   "listStudentsReport",
-  async ({ metaLoading, teacher_id, class_id, lesson_plan_id, status, sortBy }) => {
-    return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id, status, sortBy });
+  async ({ metaLoading, teacher_id, class_id, lesson_plan_id, status, sort_by }) => {
+    return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id, status, sort_by });
   }
 );
 interface GetAchievementDetailPayload extends LoadingMetaPayload {
