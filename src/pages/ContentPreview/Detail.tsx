@@ -31,9 +31,6 @@ const useStyles = makeStyles(() => ({
     "&::-webkit-scrollbar": {
       display: "none",
     },
-    "&::-moz-scrollbar": {
-      display: "none",
-    },
   },
 }));
 interface ContentPreviewProps {

@@ -89,7 +89,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}></Grid>
-            <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
+            <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
               <Button
                 onClick={createHandleClick(Category.archived)}
                 className={clsx(css.nav, { [css.actives]: value === Category.archived })}
