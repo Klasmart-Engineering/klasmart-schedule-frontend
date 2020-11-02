@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import mockAchievementDetail from "../../mocks/achievementDetail.json";
 import { RootState } from "../../reducers";
 import { getAchievementDetail, getLessonPlan, getMockOptions } from "../../reducers/report";
 import { Empty } from "../ContentEdit/MediaAssets";
@@ -76,8 +75,8 @@ export function ReportAchievementDetail() {
         backByLessonPlan={backByLessonPlan}
       />
 
-      {false && (achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={achievementDetail} /> : <Empty />)}
-      <AchievementDetailChart data={mockAchievementDetail} />
+      {true && (achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={achievementDetail} /> : <Empty />)}
+      {/* <AchievementDetailChart data={mockAchievementDetail} /> */}
     </>
   );
 }
