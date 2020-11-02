@@ -107,6 +107,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
 
 interface ParamsGetNewOptions {
   development_id?: string | undefined;
+  program_id?: string | undefined;
 }
 interface ResultGetNewOptions {
   program: EntityProgram[];
@@ -116,17 +117,20 @@ interface ResultGetNewOptions {
   grade: EntityGrade[];
   skills: EntitySkill[];
 }
-export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions>("getNewOptions", async ({ development_id }) => {
-  const [program, subject, developmental, skills, age, grade] = await Promise.all([
-    api.programs.getProgram(),
-    api.subjects.getSubject(),
-    api.developmentals.getDevelopmental(),
-    api.skills.getSkill({ developmental_id: development_id }),
-    api.ages.getAge(),
-    api.grades.getGrade(),
-  ]);
-  return { program, subject, developmental, skills, age, grade };
-});
+export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions>(
+  "getNewOptions",
+  async ({ development_id, program_id }) => {
+    const [program, subject, developmental, skills, age, grade] = await Promise.all([
+      api.programs.getProgram(),
+      api.subjects.getSubject({ program_id }),
+      api.developmentals.getDevelopmental({ program_id }),
+      api.skills.getSkill({ developmental_id: development_id }),
+      api.ages.getAge({ program_id }),
+      api.grades.getGrade({ program_id }),
+    ]);
+    return { program, subject, developmental, skills, age, grade };
+  }
+);
 
 type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
@@ -304,7 +308,7 @@ const { reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getNewOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getNewOptions>>) => {
-      console.log(payload);
+      // console.log(payload, 111);
       state.newOptions = payload;
     },
   },

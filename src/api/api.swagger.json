@@ -18,6 +18,14 @@
         "tags": ["age"],
         "summary": "getAge",
         "operationId": "getAge",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1411,6 +1419,14 @@
         "tags": ["developmental"],
         "summary": "getDevelopmental",
         "operationId": "getDevelopmental",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1477,6 +1493,14 @@
         "tags": ["grade"],
         "summary": "getGrade",
         "operationId": "getGrade",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -3183,6 +3207,14 @@
         "tags": ["subject"],
         "summary": "getSubject",
         "operationId": "getSubject",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

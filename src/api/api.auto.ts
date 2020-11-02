@@ -709,7 +709,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/ages
      * @description get age
      */
-    getAge: (params?: RequestParams) => this.request<EntityAge[], ApiInternalServerErrorResponse>(`/ages`, "GET", params),
+    getAge: (query?: { program_id?: string }, params?: RequestParams) =>
+      this.request<EntityAge[], ApiInternalServerErrorResponse>(`/ages${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags age
@@ -1125,8 +1126,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/developmentals
      * @description get developmental
      */
-    getDevelopmental: (params?: RequestParams) =>
-      this.request<EntityDevelopmental[], ApiInternalServerErrorResponse>(`/developmentals`, "GET", params),
+    getDevelopmental: (query?: { program_id?: string }, params?: RequestParams) =>
+      this.request<EntityDevelopmental[], ApiInternalServerErrorResponse>(`/developmentals${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags developmental
@@ -1146,7 +1147,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/grades
      * @description get grade
      */
-    getGrade: (params?: RequestParams) => this.request<EntityGrade[], ApiInternalServerErrorResponse>(`/grades`, "GET", params),
+    getGrade: (query?: { program_id?: string }, params?: RequestParams) =>
+      this.request<EntityGrade[], ApiInternalServerErrorResponse>(`/grades${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags grade
@@ -1647,7 +1649,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/subjects
      * @description get subjects
      */
-    getSubject: (params?: RequestParams) => this.request<EntitySubject[], ApiInternalServerErrorResponse>(`/subjects`, "GET", params),
+    getSubject: (query?: { program_id?: string }, params?: RequestParams) =>
+      this.request<EntitySubject[], ApiInternalServerErrorResponse>(`/subjects${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags subject
