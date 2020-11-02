@@ -27,6 +27,13 @@ const useStyles = makeStyles(() => ({
     overflowX: "auto",
     overflowY: "hidden",
     padding: "18.5px 14px",
+    scrollbarWidth: "none",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+    "&::-moz-scrollbar": {
+      display: "none",
+    },
   },
 }));
 interface ContentPreviewProps {
