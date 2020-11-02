@@ -113,9 +113,9 @@ const mapRatio = (data: EntityStudentReportCategory[]): RatioExtendedCategory[] 
     const sum = achieved_items.length + not_achieved_items.length + not_attempted_items.length;
     return {
       ...item,
-      [RATIO_KEYS[ReportFilter.achieved]]: (100 * achieved_items.length) / sum,
-      [RATIO_KEYS[ReportFilter.not_achieved]]: (100 * not_achieved_items.length) / sum,
-      [RATIO_KEYS[ReportFilter.not_attempted]]: (100 * not_attempted_items.length) / sum,
+      [RATIO_KEYS[ReportFilter.achieved]]: sum === 0 ? 0 : (100 * achieved_items.length) / sum,
+      [RATIO_KEYS[ReportFilter.not_achieved]]: sum === 0 ? 0 : (100 * not_achieved_items.length) / sum,
+      [RATIO_KEYS[ReportFilter.not_attempted]]: sum === 0 ? 0 : (100 * not_attempted_items.length) / sum,
       sum,
     };
   });

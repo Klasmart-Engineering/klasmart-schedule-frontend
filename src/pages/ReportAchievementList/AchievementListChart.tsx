@@ -115,9 +115,9 @@ const mapRatio = (data: EntityStudentReportItem[]): RatioExtendedEntityStudentRe
     const sum = achieved_count + not_achieved_count + not_attempted_count;
     return {
       ...item,
-      [RATIO_KEYS[ReportFilter.achieved]]: (100 * achieved_count) / sum,
-      [RATIO_KEYS[ReportFilter.not_achieved]]: (100 * not_achieved_count) / sum,
-      [RATIO_KEYS[ReportFilter.not_attempted]]: (100 * not_attempted_count) / sum,
+      [RATIO_KEYS[ReportFilter.achieved]]: sum === 0 ? 0 : (100 * achieved_count) / sum,
+      [RATIO_KEYS[ReportFilter.not_achieved]]: sum === 0 ? 0 : (100 * not_achieved_count) / sum,
+      [RATIO_KEYS[ReportFilter.not_attempted]]: sum === 0 ? 0 : (100 * not_attempted_count) / sum,
       sum,
     };
   });
@@ -135,7 +135,7 @@ const computed = (props: AchievementListStaticChartProps) => {
   const xScale = scaleLinear({ domain: [0, 100], range: [0, pixels.barStackWidth] });
   const xAxiosScale = scaleLinear({ domain: [0, 100], range: [0, pixels.barStackWidth + pixels.yMarginRight] });
   const paddingRatio = pixels.barStackMargin / (pixels.barStackMargin + pixels.barStackHeight);
-  const yScale = scaleBand({ domain: data.map((item) => item.student_name as string), range: [barStacksHeight, 0], padding: paddingRatio });
+  const yScale = scaleBand({ domain: data.map((item) => item.student_name as string), range: [0, barStacksHeight], padding: paddingRatio });
   const ratioKeys = filter === ReportFilter.all ? Object.values(RATIO_KEYS) : [RATIO_KEYS[filter]];
   const colorScale = scaleOrdinal({
     domain: ratioKeys,
