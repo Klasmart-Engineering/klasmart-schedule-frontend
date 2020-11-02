@@ -540,6 +540,7 @@ export interface EntitySkill {
 }
 
 export interface EntityStudentDetailReport {
+  attend?: boolean;
   categories?: EntityStudentReportCategory[];
   student_name?: string;
 }
@@ -553,6 +554,7 @@ export interface EntityStudentReportCategory {
 
 export interface EntityStudentReportItem {
   achieved_count?: number;
+  attend?: boolean;
   not_achieved_count?: number;
   not_attempted_count?: number;
   student_id?: string;
@@ -1428,7 +1430,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         class_id: string;
         lesson_plan_id: string;
         status?: "all" | "achieved" | "not_achieved" | "not_attempted";
-        sortBy?: "descending" | "ascending";
+        sort_by?: "desc" | "asc";
       },
       params?: RequestParams
     ) =>

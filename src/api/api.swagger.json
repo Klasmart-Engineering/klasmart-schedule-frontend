@@ -2460,11 +2460,11 @@
             "in": "query"
           },
           {
-            "enum": ["descending", "ascending"],
+            "enum": ["desc", "asc"],
             "type": "string",
-            "default": "descending",
+            "default": "desc",
             "description": "sort by",
-            "name": "sortBy",
+            "name": "sort_by",
             "in": "query"
           }
         ],
@@ -2522,8 +2522,8 @@
           },
           {
             "type": "string",
-            "description": "lesson plain id",
-            "name": "lesson_plain_id",
+            "description": "lesson plan id",
+            "name": "lesson_plan_id",
             "in": "query",
             "required": true
           }
@@ -4888,6 +4888,9 @@
     "entity.StudentDetailReport": {
       "type": "object",
       "properties": {
+        "attend": {
+          "type": "boolean"
+        },
         "categories": {
           "type": "array",
           "items": {
@@ -4930,6 +4933,9 @@
       "properties": {
         "achieved_count": {
           "type": "integer"
+        },
+        "attend": {
+          "type": "boolean"
         },
         "not_achieved_count": {
           "type": "integer"
