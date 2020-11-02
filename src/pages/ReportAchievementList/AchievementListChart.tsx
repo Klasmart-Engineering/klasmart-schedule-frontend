@@ -111,8 +111,9 @@ const COUNT_KEYS = {
 };
 
 const ratioKey2countKey = (ratioKey: RatioKey): CountKey => {
-  const [filter] = Object.entries(RATIO_KEYS).find(([k, v]) => (v = ratioKey)) || [];
-  return COUNT_KEYS[(filter as unknown) as keyof typeof COUNT_KEYS];
+  const [filter] = Object.entries(RATIO_KEYS).find(([k, v]) => v === ratioKey) || [];
+  const result = COUNT_KEYS[(filter as unknown) as keyof typeof COUNT_KEYS];
+  return result;
 };
 
 const isAttend = (studentName: string | undefined, data: EntityStudentReportItem[]): boolean => {

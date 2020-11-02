@@ -97,7 +97,7 @@ const DETAIL_KEYS = {
 };
 
 const ratioKey2DetailKey = (ratioKey: RatioKey): DetailKey => {
-  const [filter] = Object.entries(RATIO_KEYS).find(([k, v]) => (v = ratioKey)) || [];
+  const [filter] = Object.entries(RATIO_KEYS).find(([k, v]) => v === ratioKey) || [];
   return DETAIL_KEYS[(filter as unknown) as keyof typeof DETAIL_KEYS];
 };
 
