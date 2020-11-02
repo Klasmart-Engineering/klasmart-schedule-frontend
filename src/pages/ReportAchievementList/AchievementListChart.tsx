@@ -56,6 +56,16 @@ const getInlineStyles = (px: number) => {
       dx: -20 * px,
       width: 120 * px,
     },
+    yAxiosTickLabel__disable: {
+      stroke: "black" as const,
+    },
+    yAxiosTickLabelSub: {
+      stroke: "#999999",
+      fontSize: 16 * px,
+      lineHeight: 22 * px,
+      dy: 22 * px,
+      verticalAnchor: "start" as const,
+    },
     xAxiosLabel: {
       x: pixels.barStackWidth + pixels.yMarginRight - 4 * px,
       y: 24 * px,
@@ -103,6 +113,10 @@ const COUNT_KEYS = {
 const ratioKey2countKey = (ratioKey: RatioKey): CountKey => {
   const [filter] = Object.entries(RATIO_KEYS).find(([k, v]) => (v = ratioKey)) || [];
   return COUNT_KEYS[(filter as unknown) as keyof typeof COUNT_KEYS];
+};
+
+const isAttend = (studentName: string | undefined, data: EntityStudentReportItem[]): boolean => {
+  return data.find((item) => item.student_name === studentName)?.attend || false;
 };
 
 type RatioExtendedEntityStudentReportItem = EntityStudentReportItem &
@@ -213,11 +227,22 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             scale={yScale}
             axisLineClassName={css.axiosLine}
             tickLabelProps={() => inlineStyles.yAxiosTickLabel}
-            tickComponent={({ formattedValue, ...tickTextProps }) => (
-              <Text {...tickTextProps} onClick={() => onClickStudent(studentName2studentId(formattedValue as string, data))}>
-                {formattedValue}
-              </Text>
-            )}
+            tickComponent={({ formattedValue, ...tickTextProps }) =>
+              isAttend(formattedValue, data) ? (
+                <Text {...tickTextProps} onClick={() => onClickStudent(studentName2studentId(formattedValue as string, data))}>
+                  {formattedValue}
+                </Text>
+              ) : (
+                [
+                  <Text {...tickTextProps} {...inlineStyles.yAxiosTickLabel__disable}>
+                    {formattedValue}
+                  </Text>,
+                  <Text {...tickTextProps} {...inlineStyles.yAxiosTickLabelSub}>
+                    (Absent)
+                  </Text>,
+                ]
+              )
+            }
           />
           <AxisTop
             hideTicks
