@@ -17,6 +17,17 @@ const useStyles = makeStyles(() => ({
     marginTop: 32,
     marginBottom: 32,
   },
+  keyword: {
+    "& .MuiInputBase-input": {
+      width: 0,
+    },
+  },
+  chipCon: {
+    width: "100%",
+    overflowX: "auto",
+    overflowY: "hidden",
+    padding: "18.5px 14px",
+  },
 }));
 interface ContentPreviewProps {
   contentPreview: EntityContentInfoWithDetails;
@@ -230,6 +241,7 @@ export function Detail(props: ContentPreviewProps) {
         </Box>
       )}
       <TextField
+        className={css.keyword}
         margin="normal"
         fullWidth
         disabled={true}
@@ -238,7 +250,7 @@ export function Detail(props: ContentPreviewProps) {
         InputProps={{
           readOnly: true,
           startAdornment: (
-            <InputAdornment position="start">
+            <InputAdornment position="start" className={css.chipCon}>
               {contentPreview.keywords?.map((value, index) => (
                 <Chip
                   key={value + index}
