@@ -1,11 +1,10 @@
 import { Box, Checkbox, CheckboxProps, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ApiOutcomeView } from "../../api/api.auto";
-import { MockOptionsItem } from "../../api/extra";
+import { ApiOutcomeView, EntityProgram } from "../../api/api.auto";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { d } from "../../locale/LocaleManager";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
+import { ResultGetNewOptions } from "../../reducers/outcome";
 
 const useStyles = makeStyles(() => ({
   outcomings_container: {
@@ -38,7 +37,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface OutcomeFormProps {
-  flattenedMockOptions: FlattenedMockOptions;
   outcome_id: string;
   showEdit: boolean;
   formMethods: UseFormMethods<any>;
@@ -47,6 +45,7 @@ export interface OutcomeFormProps {
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
   handleCheckBoxChange: CheckboxProps["onChange"];
   isAssumed: boolean;
+  newOptions: ResultGetNewOptions;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -55,15 +54,15 @@ export function OutcomeForm(props: OutcomeFormProps) {
     showEdit,
     formMethods: { control, errors },
     outcomeDetail,
-    flattenedMockOptions,
     onChangeProgram,
     onChangeDevelopmental,
     handleCheckBoxChange,
     isAssumed,
+    newOptions,
   } = props;
   const classes = useStyles();
 
-  const getItems = (list: MockOptionsItem[]) =>
+  const getItems = (list: EntityProgram[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
@@ -218,7 +217,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     fullWidth
                     disabled={showEdit}
                   >
-                    {getItems(flattenedMockOptions.program)}
+                    {getItems(newOptions.program)}
                   </FormattedTextField>
                 )}
               />
@@ -235,7 +234,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {getItems(flattenedMockOptions.subject)}
+                {getItems(newOptions.subject)}
               </Controller>
             </Grid>
           </Grid>
@@ -260,7 +259,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     required
                     disabled={showEdit}
                   >
-                    {getItems(flattenedMockOptions.developmental)}
+                    {getItems(newOptions.developmental)}
                   </FormattedTextField>
                 )}
               />
@@ -277,7 +276,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {getItems(flattenedMockOptions.skills)}
+                {getItems(newOptions.skills)}
               </Controller>
             </Grid>
           </Grid>
@@ -294,7 +293,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {getItems(flattenedMockOptions.age)}
+                {getItems(newOptions.age)}
               </Controller>
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
@@ -309,7 +308,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
                 fullWidth
               >
-                {getItems(flattenedMockOptions.grade)}
+                {getItems(newOptions.grade)}
               </Controller>
             </Grid>
           </Grid>

@@ -109,7 +109,7 @@ interface ParamsGetNewOptions {
   development_id?: string | undefined;
   program_id?: string | undefined;
 }
-interface ResultGetNewOptions {
+export interface ResultGetNewOptions {
   program: EntityProgram[];
   subject: EntitySubject[];
   developmental: EntityDevelopmental[];
@@ -117,18 +117,30 @@ interface ResultGetNewOptions {
   grade: EntityGrade[];
   skills: EntitySkill[];
 }
-export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions>(
+export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions & LoadingMetaPayload>(
   "getNewOptions",
   async ({ development_id, program_id }) => {
-    const [program, subject, developmental, skills, age, grade] = await Promise.all([
-      api.programs.getProgram(),
-      api.subjects.getSubject({ program_id }),
-      api.developmentals.getDevelopmental({ program_id }),
-      api.skills.getSkill({ developmental_id: development_id }),
-      api.ages.getAge({ program_id }),
-      api.grades.getGrade({ program_id }),
+    // if(!development_id && !program_id)
+    const program = await api.programs.getProgram();
+    const firstProgram_id = program[0].id;
+    const [subject, developmental, age, grade] = await Promise.all([
+      api.subjects.getSubject({ program_id: program_id ? program_id : firstProgram_id }),
+      api.developmentals.getDevelopmental({ program_id: program_id ? program_id : firstProgram_id }),
+      api.ages.getAge({ program_id: program_id ? program_id : firstProgram_id }),
+      api.grades.getGrade({ program_id: program_id ? program_id : firstProgram_id }),
     ]);
+    const firstDevelopment_id = developmental[0].id;
+    const skills = await api.skills.getSkill({ developmental_id: development_id ? development_id : firstDevelopment_id });
     return { program, subject, developmental, skills, age, grade };
+  }
+);
+
+type GetSpecialSkillsResponse = AsyncReturnType<typeof api.skills.getSkill>;
+type GetSpecialSkillsParams = Parameters<typeof api.skills.getSkill>[0] & LoadingMetaPayload;
+export const getSpecialSkills = createAsyncThunk<GetSpecialSkillsResponse, GetSpecialSkillsParams>(
+  "getSecondLevelOptions",
+  async ({ developmental_id }) => {
+    return await api.skills.getSkill({ developmental_id });
   }
 );
 
@@ -310,6 +322,9 @@ const { reducer } = createSlice({
     [getNewOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getNewOptions>>) => {
       // console.log(payload, 111);
       state.newOptions = payload;
+    },
+    [getSpecialSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSpecialSkills>>) => {
+      state.newOptions.skills = payload;
     },
   },
 });

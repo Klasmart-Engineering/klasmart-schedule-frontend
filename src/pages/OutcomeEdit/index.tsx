@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import ModalBox from "../../components/ModalBox";
 import { d } from "../../locale/LocaleManager";
-import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
 import { actSuccess } from "../../reducers/notify";
@@ -15,7 +14,9 @@ import {
   AsyncTrunkReturned,
   deleteOutcome,
   getMockOptions,
+  getNewOptions,
   getOutcomeDetail,
+  getSpecialSkills,
   lockOutcome,
   publishOutcome,
   reject,
@@ -49,42 +50,51 @@ export default function CreateOutcomings() {
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { outcomeDetail, mockOptions } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeDetail, newOptions } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showEdit, setShowEdit] = React.useState(false);
   const [isAssumed, setIsAssumed] = React.useState(false);
+  const [condition, setCondition] = React.useState("default");
 
   const formMethods = useForm();
   const {
     handleSubmit,
     reset,
+    getValues,
     formState: { isDirty },
-    watch,
     setValue,
   } = formMethods;
 
-  const { program: [programId] = [], developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
-  const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
-
   const handleChangeProgram = React.useMemo(
     () => ([programId]: string[]) => {
-      ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+      setCondition("program");
+      // ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+      dispatch(getNewOptions({ program_id: programId, metaLoading: true }));
     },
-    [mockOptions, setValue]
+    [dispatch]
+  );
+  const handleChangeDevelopmental = React.useMemo(
+    () => ([developmental_id]: string[]) => {
+      setCondition("development");
+      // ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+      // const [program_id] = getValues('program')
+      dispatch(getSpecialSkills({ developmental_id, metaLoading: true }));
+    },
+    [dispatch]
   );
 
-  const handleChangeDevelopmental = React.useCallback(() => setValue("skills", []), [setValue]);
+  // const handleChangeDevelopmental = React.useCallback(() => dispatch(getNewOptions({ development_id: programId })), [setValue]);
 
-  React.useEffect(() => {
-    // 新建表单时，加载完 mockOptions 的逻辑
-    if (outcome_id) return;
-    const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
-    const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
-    if (!defaultDevelopmentalId || !defaultProgramId) return;
-    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(
-      ModelMockOptions.toFlatten({ programId: defaultProgramId, developmentalId: defaultDevelopmentalId }, mockOptions)
-    );
-    reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
-  }, [mockOptions, reset, outcome_id]);
+  // React.useEffect(() => {
+  //   // 新建表单时，加载完 mockOptions 的逻辑
+  //   if (outcome_id) return;
+  //   const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
+  //   const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
+  //   if (!defaultDevelopmentalId || !defaultProgramId) return;
+  //   const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(
+  //     ModelMockOptions.toFlatten({ programId: defaultProgramId, developmentalId: defaultDevelopmentalId }, mockOptions)
+  //   );
+  //   reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
+  // }, [mockOptions, reset, outcome_id]);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
@@ -113,7 +123,8 @@ export default function CreateOutcomings() {
   const handleSave = React.useMemo(
     () =>
       handleSubmit(async (value) => {
-        console.log(value);
+        console.log(getValues());
+        setValue("assumed", isAssumed);
         if (outcome_id) {
           const { payload } = ((await dispatch(updateOutcome({ outcome_id, value }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateOutcome>
@@ -130,7 +141,7 @@ export default function CreateOutcomings() {
           }
         }
       }),
-    [dispatch, handleSubmit, history, outcome_id]
+    [dispatch, getValues, handleSubmit, history, isAssumed, outcome_id, setValue]
   );
 
   const [enableCustomization, setEnableCustomization] = React.useState(false);
@@ -230,6 +241,44 @@ export default function CreateOutcomings() {
     setIsAssumed(event.target.checked);
   };
 
+  React.useEffect(() => {
+    dispatch(getNewOptions({ metaLoading: true }));
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    if (outcome_id) return;
+    const nextValue: any = {
+      program: [newOptions.program[0]?.id],
+      developmental: [newOptions.developmental[0]?.id],
+      subject: [newOptions.subject[0]?.id],
+      skills: [newOptions.skills[0]?.id],
+      age: [newOptions.age[0]?.id],
+      grade: [newOptions.grade[0]?.id],
+      assumed: true,
+    };
+    if (condition === "default") {
+      reset(nextValue);
+    }
+    if (condition === "program") {
+      reset({ ...nextValue, program: getValues("program") });
+    }
+    if (condition === "development") {
+      reset({ ...nextValue, developmental: getValues("developmental") });
+    }
+  }, [
+    condition,
+    dispatch,
+    getValues,
+    newOptions.age,
+    newOptions.developmental,
+    newOptions.grade,
+    newOptions.program,
+    newOptions.skills,
+    newOptions.subject,
+    outcome_id,
+    reset,
+  ]);
+
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
@@ -249,7 +298,6 @@ export default function CreateOutcomings() {
       />
       <OutcomeForm
         outcome_id={outcome_id}
-        flattenedMockOptions={flattenedMockOptions}
         showEdit={showEdit}
         formMethods={formMethods}
         outcomeDetail={outcomeDetail}
@@ -257,6 +305,7 @@ export default function CreateOutcomings() {
         onChangeDevelopmental={handleChangeDevelopmental}
         handleCheckBoxChange={handleCheckBoxChange}
         isAssumed={isAssumed}
+        newOptions={newOptions}
       />
       <ModalBox modalDate={modalDate} />
     </Box>
