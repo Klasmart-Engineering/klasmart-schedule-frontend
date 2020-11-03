@@ -9,7 +9,7 @@ import { Locale } from "./components/Locale";
 import { Notification } from "./components/Notification";
 import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
-import ContentEdit from "./pages/ContentEdit";
+import ContentEdit from "./pages/ContentEdit/index";
 import ContentPreview from "./pages/ContentPreview";
 import Live from "./pages/Live";
 import MyContentList from "./pages/MyContentList/index";

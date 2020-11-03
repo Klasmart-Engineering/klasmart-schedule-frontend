@@ -1,14 +1,14 @@
 import { Grid } from "@material-ui/core";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import React from "react";
-import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
 import Checkbox from "@material-ui/core/Checkbox";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
 import clsx from "clsx";
+import React from "react";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { d, t } from "../../locale/LocaleManager";
+import { FlattenedMockOptions } from "../../models/ModelMockOptions";
+import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -199,7 +199,7 @@ function FilterTemplate(props: FilterProps) {
                 inputProps={{ "aria-label": "secondary checkbox" }}
                 className={css.fliterRowChange}
                 onChange={(e) => {
-                  checkGather(e, item.id, gather.name);
+                  checkGather(e, item.id as string, gather.name);
                 }}
               />
               <span className={css.fliterRowSpan}>{item.name}</span>

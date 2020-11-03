@@ -29,7 +29,6 @@ import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
@@ -96,8 +95,9 @@ interface DetailsProps {
   contentDetail: EntityContentInfoWithDetails;
   uploadThumnail?: Function;
   formMethods: UseFormMethods<ContentDetailForm>;
-  flattenedMockOptions: FlattenedMockOptions;
   linkedMockOptions: LinkedMockOptions;
+  lesson_types: LinkedMockOptionsItem[];
+  visibility_settings: LinkedMockOptionsItem[];
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
   onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
@@ -107,6 +107,8 @@ export default function Details(props: DetailsProps) {
     contentDetail,
     formMethods: { control, errors },
     linkedMockOptions,
+    visibility_settings,
+    lesson_types,
     onChangeDevelopmental,
     onChangeProgram,
     onDrawingActivity,
@@ -115,14 +117,15 @@ export default function Details(props: DetailsProps) {
   const { lesson } = useParams();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-
   const menuItemList = (list: LinkedMockOptionsItem[]) =>
+    list &&
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
       </MenuItem>
     ));
   const NeedTransilationMenuItemList = (list: LinkedMockOptionsItem[]) =>
+    list &&
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {t(item.name as NeedTransilationMenuItem)}
@@ -376,7 +379,7 @@ export default function Details(props: DetailsProps) {
           error={errors.publish_scope ? true : false}
           helperText=""
         >
-          {NeedTransilationMenuItemList(linkedMockOptions.visibility_settings)}
+          {NeedTransilationMenuItemList(visibility_settings)}
         </Controller>
         {lesson === "material" && (
           <Controller
@@ -388,7 +391,7 @@ export default function Details(props: DetailsProps) {
             defaultValue={contentDetail.lesson_type || ""}
             control={control}
           >
-            {NeedTransilationMenuItemList(linkedMockOptions.lesson_types)}
+            {NeedTransilationMenuItemList(lesson_types)}
           </Controller>
         )}
         <Controller

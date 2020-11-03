@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { Fragment, useCallback, useEffect, useMemo } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
@@ -10,7 +10,7 @@ import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestC
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
-import { ModelMockOptions } from "../../models/ModelMockOptions";
+import { ModelMockOptions } from "../../models/NewModelMockOptions";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,
@@ -72,11 +72,18 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
+  const [hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload] = useState(false);
   const { reset, handleSubmit, control, setValue, watch, errors } = formMethods;
-  const { contentDetail, mediaList, mockOptions, MediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions } = useSelector<
-    RootState,
-    RootState["content"]
-  >((state) => state.content);
+  const {
+    contentDetail,
+    mediaList,
+    MediaListTotal,
+    OutcomesListTotal,
+    outcomeList,
+    linkedMockOptions,
+    visibility_settings,
+    lesson_types,
+  } = useSelector<RootState, RootState["content"]>((state) => state.content);
 
   const { lesson, tab, rightside } = useParams();
   const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQuery();
@@ -86,8 +93,7 @@ export default function ContentEdit() {
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program: programId = "", developmental: [developmentalId] = [] } = watch(["program", "developmental"]);
-  const flattenedMockOptions = ModelMockOptions.toFlatten({ programId, developmentalId }, mockOptions);
+  const { program: programId = "" } = watch(["program"]);
   const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
   const h5pSource = JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source;
   const inputSourceWatch = watch("data.input_source", inputSource);
@@ -246,39 +252,49 @@ export default function ContentEdit() {
   );
 
   const handleChangeProgram = useMemo(
-    () => (programId: string) => {
-      ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
+    () => async (programId: string) => {
+      const { payload: linkedMockOptions } = ((await dispatch(
+        getLinkedMockOptions({ metaLoading: true, default_program_id: programId })
+      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>;
+      ModelMockOptions.updateValuesWhenProgramChange(setValue, linkedMockOptions, programId);
     },
-    [mockOptions, setValue]
+    [dispatch, setValue]
   );
-  const handleChangeDevelopmental = useCallback(() => setValue("skills", []), [setValue]);
+  const handleChangeDevelopmental = useMemo(
+    () => (developmental_id: string[]) => {
+      setValue("skills", []);
+      dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: programId, default_developmental_id: developmental_id[0] }));
+    },
+    [dispatch, programId, setValue]
+  );
+
+  console.log(watch());
+
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
-    dispatch(getLinkedMockOptions(null));
+    setHasCreateSituationFirstOnload(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch, history, editindex]);
   useEffect(() => {
     // 编辑表单时 加载完 contentDetial 的逻辑
     reset(ModelContentDetailForm.decode(contentDetail));
+    setHasCreateSituationFirstOnload(false);
   }, [contentDetail, lesson, reset]);
   useEffect(() => {
     // 新建表单时，加载完 mockOptions 的逻辑
-    if (id) return;
-    const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
-    const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
-    if (!defaultDevelopmentalId || !defaultProgramId) return;
-    const { program, subject, developmental, skills, grade, age } = ModelMockOptions.toFlatten(
-      { programId: defaultProgramId, developmentalId: defaultDevelopmentalId },
-      mockOptions
-    );
+    if (id || !linkedMockOptions.program_id || hasCreateSituationFirstOnload) return;
+    const { program, subject, developmental, skills, grade, age, program_id, developmental_id } = linkedMockOptions;
+    if (!program_id || !developmental_id) return;
     const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
-    reset({ ...onlyOneOptionValue, program: defaultProgramId, developmental: [defaultDevelopmentalId] });
-  }, [mockOptions, reset, id]);
+    reset({ ...onlyOneOptionValue, program: program_id, developmental: [developmental_id] });
+    setHasCreateSituationFirstOnload(true);
+  }, [reset, id, linkedMockOptions, hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload, lesson]);
   const assetDetails = (
     <MediaAssetsLibrary>
       <MediaAssetsEditHeader />
       <AssetDetails
         formMethods={formMethods}
-        flattenedMockOptions={flattenedMockOptions}
+        flattenedMockOptions={linkedMockOptions}
         contentDetail={contentDetail}
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
@@ -290,8 +306,9 @@ export default function ContentEdit() {
       <Details
         contentDetail={contentDetail}
         formMethods={formMethods}
-        flattenedMockOptions={flattenedMockOptions}
         linkedMockOptions={linkedMockOptions}
+        visibility_settings={visibility_settings}
+        lesson_types={lesson_types}
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
         onDrawingActivity={handleDrawingActivity}

@@ -22,7 +22,7 @@ import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField
 import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
+import { LinkedMockOptions } from "../../reducers/content";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -302,7 +302,7 @@ function AssetsDetails(props: AssetDetailsProps) {
 
 interface AssetDetailsProps {
   formMethods: UseFormMethods<ContentDetailForm>;
-  flattenedMockOptions: FlattenedMockOptions;
+  flattenedMockOptions: LinkedMockOptions;
   contentDetail: EntityContentInfoWithDetails;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;

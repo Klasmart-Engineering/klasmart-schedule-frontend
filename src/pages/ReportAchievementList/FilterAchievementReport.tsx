@@ -70,7 +70,7 @@ const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((
     <>
       {" "}
       {list.map((item) => (
-        <MenuItem key={item.id} selected={value[tab] === item.id} onClick={(e) => onChangeMenu(e, item.id, tab)}>
+        <MenuItem key={item.id} selected={value[tab] === item.id} onClick={(e) => onChangeMenu(e, item.id as string, tab)}>
           {item.name}
         </MenuItem>
       ))}

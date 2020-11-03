@@ -3,8 +3,8 @@ export const apiGetMockOptions = () =>
     return res.json();
   });
 export interface MockOptionsItem {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
 }
 
 export interface MockOptionsItemTeacherAndClass {
