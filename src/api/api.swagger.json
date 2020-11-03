@@ -3826,6 +3826,9 @@
     "entity.AssessmentAttendanceView": {
       "type": "object",
       "properties": {
+        "checked": {
+          "type": "boolean"
+        },
         "id": {
           "type": "string"
         },
@@ -4042,7 +4045,7 @@
           "type": "string"
         },
         "lesson_type": {
-          "type": "integer"
+          "type": "string"
         },
         "lesson_type_name": {
           "type": "string"
@@ -4210,7 +4213,7 @@
           }
         },
         "lesson_type": {
-          "type": "integer"
+          "type": "string"
         },
         "name": {
           "type": "string"

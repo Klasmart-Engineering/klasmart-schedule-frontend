@@ -178,6 +178,7 @@ export interface EntityAge {
 }
 
 export interface EntityAssessmentAttendanceView {
+  checked?: boolean;
   id?: string;
   name?: string;
 }
@@ -247,7 +248,7 @@ export interface EntityContentInfoWithDetails {
   id?: string;
   keywords?: string[];
   latest_id?: string;
-  lesson_type?: number;
+  lesson_type?: string;
   lesson_type_name?: string;
   locked_by?: string;
   name?: string;
@@ -295,7 +296,7 @@ export interface EntityCreateContentRequest {
   extra?: string;
   grade?: string[];
   keywords?: string[];
-  lesson_type?: number;
+  lesson_type?: string;
   name?: string;
   outcomes?: string[];
   program?: string;
