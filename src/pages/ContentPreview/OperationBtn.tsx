@@ -52,12 +52,12 @@ export function OperationBtn(props: ActionProps) {
   const { scope, publish_status, content_type_name, onDelete, onPublish, onApprove, onReject, onEdit } = props;
   return (
     <Box display="flex" justifyContent="flex-end">
-      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.published && (
+      {scope === PublishScope.organization && publish_status === PublishStatus.published && (
         <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
           {d("Remove").t("library_label_remove")}
         </LButton>
       )}
-      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
+      {scope === PublishScope.organization &&
         (publish_status === PublishStatus.draft ||
           publish_status === PublishStatus.pending ||
           publish_status === PublishStatus.rejected ||
@@ -66,12 +66,12 @@ export function OperationBtn(props: ActionProps) {
             {d("Delete").t("library_label_delete")}
           </LButton>
         )}
-      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.pending && (
+      {scope === PublishScope.organization && publish_status === PublishStatus.pending && (
         <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
           {d("Reject").t("library_label_reject")}
         </LButton>
       )}
-      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
+      {scope === PublishScope.organization &&
         (publish_status === PublishStatus.published ||
           publish_status === PublishStatus.draft ||
           publish_status === PublishStatus.rejected ||
@@ -80,12 +80,12 @@ export function OperationBtn(props: ActionProps) {
             {d("Edit").t("library_label_edit")}
           </LButton>
         )}
-      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.pending && (
+      {scope === PublishScope.organization && publish_status === PublishStatus.pending && (
         <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
           {d("Approve").t("library_label_approve")}
         </LButton>
       )}
-      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.archive && (
+      {scope === PublishScope.organization && publish_status === PublishStatus.archive && (
         <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
           {d("Republish").t("library_label_republish")}
         </LButton>
