@@ -1,15 +1,27 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import api from "../api";
+import api, { gqlapi } from "../api";
+import {
+  ClassesByTeacherDocument,
+  ClassesByTeacherQuery,
+  ClassesByTeacherQueryVariables,
+  TeachersByOrgnizationDocument,
+  TeachersByOrgnizationQuery,
+  TeachersByOrgnizationQueryVariables,
+} from "../api/api-ko.auto";
 import { EntityScheduleShortInfo, EntityStudentReportCategory, EntityStudentReportItem } from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
+import classListByTeacher from "../mocks/classListByTeacher.json";
+import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
+const MOCK = true;
 interface IreportState {
   reportList?: EntityStudentReportItem[];
   achievementDetail?: EntityStudentReportCategory[];
   mockOptions: MockOptions;
   lessonPlanList: EntityScheduleShortInfo[];
   student_name: string | undefined;
+  reportMockOptions: GetReportMockOptionsResponse;
 }
 const initialState: IreportState = {
   reportList: [],
@@ -28,6 +40,18 @@ const initialState: IreportState = {
   },
   lessonPlanList: [],
   student_name: "",
+  reportMockOptions: {
+    teacherList: {
+      organization: {
+        teachers: [],
+      },
+    },
+    classList: {
+      user: {
+        classesTeaching: [],
+      },
+    },
+  },
 };
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -66,6 +90,40 @@ export const getLessonPlan = createAsyncThunk<
   return await api.schedulesLessonPlans.getLessonPlans({ teacher_id, class_id });
 });
 
+export interface GetReportMockOptionsResponse {
+  teacherList: TeachersByOrgnizationQuery;
+  classList: ClassesByTeacherQuery;
+}
+interface GetReportMockOptionsPayLoad {
+  organization_id?: string | null;
+  teacher_id?: string;
+}
+
+export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsResponse, GetReportMockOptionsPayLoad>(
+  "getTeacherList",
+  async ({ organization_id, teacher_id }) => {
+    const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
+      query: TeachersByOrgnizationDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
+    const teacherList = MOCK ? mockResult : data;
+    // const user_id = teacherList && teacherList.organization && teacherList.organization.teachers && teacherList.organization?.teachers[0]?.user?.user_id
+
+    const { data: result } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
+      query: ClassesByTeacherDocument,
+      variables: {
+        user_id: teacher_id,
+      },
+    });
+    const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
+    const classList = MOCK ? mockClassResult : result;
+    return { teacherList, classList };
+  }
+);
+
 const { reducer } = createSlice({
   name: "report ",
   initialState,
@@ -103,6 +161,10 @@ const { reducer } = createSlice({
     [getAchievementDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.achievementDetail = initialState.achievementDetail;
+    },
+    [getReportMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getReportMockOptions>>) => {
+      console.log(payload, 1111111);
+      state.reportMockOptions = payload;
     },
   },
 });

@@ -28,3 +28,19 @@ export enum StatusColor {
   not_achieved = "#fe9b9b",
   not_attempted = "#dadada",
 }
+
+export interface TeacherItem {
+  user: {
+    user_id: string;
+    user_name: string;
+  };
+}
+interface ClassItem {
+  class_id: string;
+  class_name: string;
+}
+export interface ClassList {
+  user: {
+    classesTeaching: ClassItem[];
+  };
+}

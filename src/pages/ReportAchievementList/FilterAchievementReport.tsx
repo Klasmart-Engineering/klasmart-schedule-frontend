@@ -8,7 +8,8 @@ import React, { forwardRef } from "react";
 import { apiFetchClassByTeacher, MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { QueryCondition, ReportFilter, ReportOrderBy } from "./types";
+import { GetReportMockOptionsResponse } from "../../reducers/report";
+import { ClassList, QueryCondition, ReportFilter, ReportOrderBy, TeacherItem } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -83,9 +84,10 @@ export interface FilterAchievementReportProps {
   onChangeMb: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   mockOptions: MockOptions;
   lessonPlanList: MockOptionsItem[];
+  reportMockOptions: GetReportMockOptionsResponse;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, mockOptions, onChangeMb, lessonPlanList } = props;
+  const { onChange, value, mockOptions, onChangeMb, lessonPlanList, reportMockOptions } = props;
   const css = useStyles();
   const getOptions = (list: MockOptionsItem[]) =>
     list.map((item) => (
@@ -120,6 +122,24 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     handleClose(e, tab);
     onChangeMb(e, value, tab);
   };
+
+  const getTeacherList = (teacherList: TeacherItem[] | undefined | null) => {
+    if (teacherList === null || teacherList === undefined) return;
+    return teacherList.map((item) => (
+      <MenuItem key={item.user.user_id} value={item.user.user_id}>
+        {item.user.user_name}
+      </MenuItem>
+    ));
+  };
+  const getClassList = (list: ClassList | undefined | null) => {
+    if (list === null || list === undefined) return;
+    return list.user.classesTeaching.map((item) => (
+      <MenuItem key={item.class_id} value={item.class_id}>
+        {item.class_name}
+      </MenuItem>
+    ));
+  };
+
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Hidden smDown>
@@ -134,7 +154,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {getOptions(mockOptions.teachers)}
+              {getTeacherList((reportMockOptions.teacherList?.organization?.teachers as TeacherItem[]) || [])}
             </TextField>
             <TextField
               size="small"
@@ -146,7 +166,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               disabled={classs.length <= 0}
             >
-              {getOptions(classs)}
+              {getClassList(reportMockOptions.classList as ClassList)}
             </TextField>
             <TextField
               size="small"

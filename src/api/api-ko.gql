@@ -9,7 +9,7 @@ query teachersByOrgnization($organization_id: ID = "3f135b91-a616-4c80-914a-e446
   }
 }
 
-query classesByTeacher($user_id: ID!) {
+query classesByTeacher($user_id: ID = "7d0ad09a-11ab-4147-9734-974276f397d1") {
   user(user_id: $user_id) {
     classesTeaching {
       class_id
@@ -23,6 +23,19 @@ query classesByOrganization($organization_id: ID = "3f135b91-a616-4c80-914a-e446
     classes {
       class_id
       class_name
+    }
+  }
+}
+
+query participantsByClass($class_id: ID = "c479bd4b-faf8-4a4b-80b6-632c3234d804") {
+  class(class_id: $class_id) {
+    teachers {
+      user_id
+      user_name
+    }
+    students {
+      user_id
+      user_name
     }
   }
 }
