@@ -66,3 +66,8 @@ export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: str
     return mockOptions.classes.filter((item: MockOptionsItem) => class_ids.filter((item1: string) => item.id === item1).length > 0);
   }
 };
+
+export const apiOrganizationOfPage = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  return searchParams.get("org_id");
+};
