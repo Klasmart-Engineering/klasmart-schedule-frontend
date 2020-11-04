@@ -5,7 +5,8 @@ import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
+import AssetLoading from "./AssetLoading";
 
 const useStyles = makeStyles({
   wrap: {
@@ -57,7 +58,8 @@ export default function AssetVideo(props: video) {
   const classes = useStyles();
   const [value, setValue] = React.useState<number>(0);
   const [isplay, setIsplay] = React.useState<boolean>(false);
-
+  const [loaded, dispatchLoaded] = useReducer(() => true, false);
+  const display = loaded ? "block" : "none";
   const handleChange = (event: any, newValue: number | number[]) => {
     const video = document.getElementById("video") as HTMLVideoElement;
     setValue(newValue as number);
@@ -76,23 +78,25 @@ export default function AssetVideo(props: video) {
       isplay ? setValue((video.currentTime / video.duration) * 100) : clearInterval(timer);
     }, 500);
   });
-
   return (
-    <Box className={classes.wrap}>
-      <video id="video" className={classes.video} src={props.src} onClick={handlePlay}></video>
-      <Box className={classes.controls}>
-        <Box className={classes.tools}>
-          <FastRewindOutlinedIcon className={classes.itemTool} />
-          {isplay ? (
-            <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
-          ) : (
-            <PlayCircleFilledOutlinedIcon className={classes.itemTool} onClick={handlePlay} />
-          )}
+    <>
+      {!loaded && <AssetLoading />}
+      <Box className={classes.wrap} style={{ display }}>
+        <video id="video" className={classes.video} src={props.src} onCanPlayThrough={(e) => dispatchLoaded()} onClick={handlePlay}></video>
+        <Box className={classes.controls}>
+          <Box className={classes.tools}>
+            <FastRewindOutlinedIcon className={classes.itemTool} />
+            {isplay ? (
+              <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
+            ) : (
+              <PlayCircleFilledOutlinedIcon className={classes.itemTool} onClick={handlePlay} />
+            )}
 
-          <FastForwardOutlinedIcon className={classes.itemTool} />
+            <FastForwardOutlinedIcon className={classes.itemTool} />
+          </Box>
+          <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
         </Box>
-        <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
       </Box>
-    </Box>
+    </>
   );
 }

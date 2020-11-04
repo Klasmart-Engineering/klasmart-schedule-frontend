@@ -5,8 +5,9 @@ import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import audioUrl from "../../../assets/icons/music.svg";
+import AssetLoading from "./AssetLoading";
 const useStyles = makeStyles({
   wrap: {
     width: "100%",
@@ -53,6 +54,7 @@ export default function AssetAudio(props: Audio) {
   const classes = useStyles();
   const [value, setValue] = React.useState<number>(0);
   const [isplay, setIsplay] = React.useState<boolean>(false);
+  const [loaded, dispatchLoaded] = useReducer(() => true, false);
 
   const handleChange = (event: any, newValue: number | number[]) => {
     const audio = document.getElementById("audio") as HTMLAudioElement;
@@ -73,21 +75,26 @@ export default function AssetAudio(props: Audio) {
   });
   return (
     <Box className={classes.wrap}>
-      <img className={classes.audioCon} src={audioUrl} alt="" />
-      <Box className={classes.controls}>
-        <Box className={classes.tools}>
-          <FastRewindOutlinedIcon className={classes.itemTool} />
-          {isplay ? (
-            <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
-          ) : (
-            <PlayCircleFilledOutlinedIcon className={classes.itemTool} onClick={handlePlay} />
-          )}
+      {!loaded && <AssetLoading />}
+      {loaded && (
+        <>
+          <img className={classes.audioCon} src={audioUrl} alt="" />
+          <Box className={classes.controls}>
+            <Box className={classes.tools}>
+              <FastRewindOutlinedIcon className={classes.itemTool} />
+              {isplay ? (
+                <PauseCircleFilledIcon className={classes.itemTool} onClick={handlePlay} />
+              ) : (
+                <PlayCircleFilledOutlinedIcon className={classes.itemTool} onClick={handlePlay} />
+              )}
 
-          <FastForwardOutlinedIcon className={classes.itemTool} />
-        </Box>
-        <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
-      </Box>
-      <audio id="audio" style={{ width: "100%" }} src={props.src}></audio>
+              <FastForwardOutlinedIcon className={classes.itemTool} />
+            </Box>
+            <Slider className={classes.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
+          </Box>
+        </>
+      )}
+      <audio id="audio" onCanPlayThrough={(e) => dispatchLoaded()} style={{ width: "100%" }} src={props.src}></audio>
     </Box>
   );
 }
