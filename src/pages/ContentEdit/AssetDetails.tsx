@@ -179,7 +179,7 @@ function AssetsDetails(props: AssetDetailsProps) {
               required
               error={errorValidator(errors.program)}
             >
-              {menuItemList(flattenedMockOptions.program)}
+              {menuItemList(flattenedMockOptions.program || [])}
             </TextField>
           )}
         />
@@ -195,7 +195,7 @@ function AssetsDetails(props: AssetDetailsProps) {
           defaultValue={contentDetail.subject}
           disabled={isIdExist()}
         >
-          {menuItemList(flattenedMockOptions.subject)}
+          {menuItemList(flattenedMockOptions.subject || [])}
         </Controller>
         <Box>
           <Controller
@@ -220,7 +220,7 @@ function AssetsDetails(props: AssetDetailsProps) {
                 error={errorValidator(errors.developmental)}
                 disabled={isIdExist()}
               >
-                {menuItemList(flattenedMockOptions.developmental)}
+                {menuItemList(flattenedMockOptions.developmental || [])}
               </FormattedTextField>
             )}
           />
@@ -239,7 +239,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.skills}
             disabled={isIdExist()}
           >
-            {menuItemList(flattenedMockOptions.skills)}
+            {menuItemList(flattenedMockOptions.skills || [])}
           </Controller>
         </Box>
         <Box>
@@ -257,7 +257,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.age}
             disabled={isIdExist()}
           >
-            {menuItemList(flattenedMockOptions.age)}
+            {menuItemList(flattenedMockOptions.age || [])}
           </Controller>
           <Controller
             as={TextField}
@@ -273,7 +273,7 @@ function AssetsDetails(props: AssetDetailsProps) {
             defaultValue={contentDetail.grade}
             disabled={isIdExist()}
           >
-            {menuItemList(flattenedMockOptions.grade)}
+            {menuItemList(flattenedMockOptions.grade || [])}
           </Controller>
         </Box>
         <Controller
