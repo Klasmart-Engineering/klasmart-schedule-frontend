@@ -217,14 +217,14 @@ export interface LinkedMockOptionsItem {
 }
 
 export interface LinkedMockOptions {
-  program: LinkedMockOptionsItem[];
-  subject: LinkedMockOptionsItem[];
-  developmental: LinkedMockOptionsItem[];
-  age: LinkedMockOptionsItem[];
-  grade: LinkedMockOptionsItem[];
-  skills: LinkedMockOptionsItem[];
-  program_id: string;
-  developmental_id: string;
+  program?: LinkedMockOptionsItem[];
+  subject?: LinkedMockOptionsItem[];
+  developmental?: LinkedMockOptionsItem[];
+  age?: LinkedMockOptionsItem[];
+  grade?: LinkedMockOptionsItem[];
+  skills?: LinkedMockOptionsItem[];
+  program_id?: string;
+  developmental_id?: string;
 }
 export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
   default_program_id?: string;

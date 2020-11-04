@@ -35,8 +35,8 @@ export class ModelMockOptions {
   static getOnlyOneOptionValue(MockOptionsOnly: FlattenedMockOptionsOnlyOption): GetOnlyOneOptionValueResult {
     return Object.keys(MockOptionsOnly).reduce((result, key) => {
       const name = key as keyof GetOnlyOneOptionValueResult;
-      if (MockOptionsOnly[name].length !== 1) return result;
-      result[name] = MockOptionsOnly[name].map((item) => item.id as string);
+      if (MockOptionsOnly[name]?.length !== 1) return result;
+      result[name] = MockOptionsOnly[name]?.map((item) => item.id as string);
       return result;
     }, {} as GetOnlyOneOptionValueResult);
   }

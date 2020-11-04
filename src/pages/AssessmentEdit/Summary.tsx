@@ -115,6 +115,8 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
 };
 interface PopupInputProps {
   assessmentDetail: SummaryProps["assessmentDetail"];
+  setValue: UseFormMethods["setValue"];
+
   value?: UpdateAssessmentRequestDatAattendanceIds;
   onChange?: (value: PopupInputProps["value"]) => any;
 }
@@ -136,6 +138,9 @@ function PopupInput(props: PopupInputProps) {
     if (!attendance_ids?.length)
       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
     toggle();
+    // assessmentDetail?.outcome_attendance_maps?.map((item, index)=>{
+    //   setValue(`${item}[${index}].attendance_ids`, attendance_ids||[])
+    // })
     if (onChange) return onChange(attendance_ids || []);
   }, [dispatch, formMethods, onChange]);
   return (
@@ -181,12 +186,15 @@ interface SummaryProps {
 export function Summary(props: SummaryProps) {
   const { assessmentDetail } = props;
   const {
-    formMethods: { control },
+    formMethods: { control, setValue, watch },
   } = props;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const { attendance_ids: default_attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
+  const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
+  const outcomesMap = watch("outcome_attendance_maps");
+  console.log("outcomesMap = ", outcomesMap);
+
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
@@ -205,8 +213,9 @@ export function Summary(props: SummaryProps) {
           <Controller
             as={PopupInput}
             name="attendance_ids"
-            defaultValue={default_attendance_ids}
+            defaultValue={attendance_ids}
             assessmentDetail={assessmentDetail}
+            setValue={setValue}
             control={control}
           />
           <TextField

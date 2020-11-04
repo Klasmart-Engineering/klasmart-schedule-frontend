@@ -117,7 +117,7 @@ export default function Details(props: DetailsProps) {
   const { lesson } = useParams();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-  const menuItemList = (list: LinkedMockOptionsItem[]) =>
+  const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -273,7 +273,7 @@ export default function Details(props: DetailsProps) {
               }}
               required
             >
-              {menuItemList(linkedMockOptions.program)}
+              {menuItemList(linkedMockOptions.program || [])}
             </TextField>
           )}
         />
@@ -289,7 +289,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.subject}
           control={control}
         >
-          {menuItemList(linkedMockOptions.subject)}
+          {menuItemList(linkedMockOptions.subject || [])}
         </Controller>
         <Box>
           <Controller
@@ -311,7 +311,7 @@ export default function Details(props: DetailsProps) {
                 fullWidth={sm}
                 required
               >
-                {menuItemList(linkedMockOptions.developmental)}
+                {menuItemList(linkedMockOptions.developmental || [])}
               </FormattedTextField>
             )}
           />
@@ -329,7 +329,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label={d("Subcategory").t("library_label_subcategory")}
           >
-            {menuItemList(linkedMockOptions.skills)}
+            {menuItemList(linkedMockOptions.skills || [])}
           </Controller>
         </Box>
         <Box>
@@ -346,7 +346,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label={d("Age").t("library_label_age")}
           >
-            {menuItemList(linkedMockOptions.age)}
+            {menuItemList(linkedMockOptions.age || [])}
           </Controller>
           <Controller
             as={TextField}
@@ -361,7 +361,7 @@ export default function Details(props: DetailsProps) {
             fullWidth={sm}
             label={d("Grade").t("library_label_grade")}
           >
-            {menuItemList(linkedMockOptions.grade)}
+            {menuItemList(linkedMockOptions.grade || [])}
           </Controller>
         </Box>
         <Controller

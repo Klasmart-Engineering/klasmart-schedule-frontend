@@ -76,14 +76,17 @@ const AssessAction = (props: AssessActionProps) => {
   } = props;
   const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
   const none_achieved: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].none_achieved) || false;
-  const allValue = useMemo(() => attendanceList?.map((item) => item.id as string), [attendanceList]);
+  const allValue: string[] = formValue.attendance_ids || [];
+  const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
+    allValue,
+    attendance_ids,
+  ]);
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcome_attendance_maps[${index}].${name}`, value);
     },
     [index, setValue]
   );
-
   const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
     funSetValue(name, e.target.checked);
 
@@ -91,7 +94,6 @@ const AssessAction = (props: AssessActionProps) => {
       if (name === "skip") {
         funSetValue("none_achieved", false);
       }
-
       funSetValue("attendance_ids", []);
     }
   };
@@ -106,7 +108,7 @@ const AssessAction = (props: AssessActionProps) => {
     <Controller
       name={`outcome_attendance_maps[${index}].attendance_ids`}
       control={control}
-      defaultValue={attendance_ids || []}
+      defaultValue={checked_attendance_ids || []}
       render={(props: any) => (
         <CheckboxGroup
           allValue={allValue}

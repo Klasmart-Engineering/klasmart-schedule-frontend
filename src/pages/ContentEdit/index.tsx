@@ -267,9 +267,6 @@ export default function ContentEdit() {
     },
     [dispatch, programId, setValue]
   );
-
-  console.log(watch());
-
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
     setHasCreateSituationFirstOnload(false);
