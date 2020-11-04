@@ -1,3 +1,4 @@
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
 import mitt from "mitt";
 import { Api } from "./api.auto";
@@ -37,4 +38,9 @@ fetchIntercept.register({
 
 export default new Api({
   baseUrl: process.env.REACT_APP_BASE_API,
+});
+
+export const gqlapi = new ApolloClient({
+  uri: process.env.REACT_APP_KO_BASE_API,
+  cache: new InMemoryCache(),
 });

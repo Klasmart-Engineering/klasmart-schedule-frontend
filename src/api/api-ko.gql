@@ -1,0 +1,28 @@
+query teachersByOrgnization($organization_id: ID = "3f135b91-a616-4c80-914a-e4463104dbac") {
+  organization(organization_id: $organization_id) {
+    teachers {
+      user {
+        user_id
+        user_name
+      }
+    }
+  }
+}
+
+query classesByTeacher($user_id: ID!) {
+  user(user_id: $user_id) {
+    classesTeaching {
+      class_id
+      class_name
+    }
+  }
+}
+
+query classesByOrganization($organization_id: ID = "3f135b91-a616-4c80-914a-e4463104dbac") {
+  organization(organization_id: $organization_id) {
+    classes {
+      class_id
+      class_name
+    }
+  }
+}

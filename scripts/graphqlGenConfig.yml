@@ -1,0 +1,15 @@
+overwrite: true
+schema: "https://api.kidsloop.net/user/"
+documents: "src/api/*.gql"
+generates:
+  src/api/api-ko-schema.auto.ts:
+    plugins:
+      - typescript
+  src/api/:
+    preset: near-operation-file
+    presetConfig:
+      extension: .auto.tsx
+      baseTypesPath: api-ko-schema.auto.ts
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
