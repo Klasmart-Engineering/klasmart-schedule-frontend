@@ -1,0 +1,24 @@
+{
+  "organization": {
+    "teachers": [
+      {
+        "user": {
+          "user_id": "Teacher-1",
+          "user_name": "Teacher1"
+        }
+      },
+      {
+        "user": {
+          "user_id": "Teacher-2",
+          "user_name": "Teacher2"
+        }
+      },
+      {
+        "user": {
+          "user_id": "Teacher-3",
+          "user_name": "Teacher3"
+        }
+      }
+    ]
+  }
+}

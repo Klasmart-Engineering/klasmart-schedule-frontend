@@ -6,7 +6,7 @@ import { apiFetchClassByTeacher, MockOptionsItem } from "../../api/extra";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAchievementList, getLessonPlan, getMockOptions } from "../../reducers/report";
+import { AsyncTrunkReturned, getAchievementList, getLessonPlan, getMockOptions, getReportMockOptions } from "../../reducers/report";
 import { Empty } from "../ContentEdit/MediaAssets";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
@@ -40,7 +40,7 @@ export function ReportAchievementList() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { mockOptions, lessonPlanList, reportList = [], student_name } = useSelector<RootState, RootState["report"]>(
+  const { mockOptions, lessonPlanList, reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
 
@@ -93,6 +93,7 @@ export function ReportAchievementList() {
 
   useEffect(() => {
     dispatch(getMockOptions());
+    dispatch(getReportMockOptions({}));
   }, [dispatch]);
   useEffect(() => {
     const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
@@ -131,6 +132,7 @@ export function ReportAchievementList() {
         mockOptions={mockOptions}
         onChangeMb={handleChangeMbFilter}
         lessonPlanList={lessonPlanList as MockOptionsItem[]}
+        reportMockOptions={reportMockOptions}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} mockOptions={mockOptions} student_name={student_name} lessonPlanList={lessonPlanList} />
       {true &&
