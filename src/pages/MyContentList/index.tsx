@@ -175,4 +175,4 @@ export default function MyContentList() {
 }
 
 MyContentList.routeBasePath = "/library/my-content-list";
-MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._updated_at}&content_type=${SearchContentsRequestContentType.materialandplan}&scope=${PublishScope.organization}`;
+MyContentList.routeRedirectDefault = `/library/my-content-list?publish_status=published&page=1&order_by=${OrderBy._updated_at}&content_type=${SearchContentsRequestContentType.materialandplan}&scope=${PublishScope.tempArgument}`;

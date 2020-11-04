@@ -96,7 +96,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
       content_type: SearchContentsRequestContentType.materialandplan,
       order_by: OrderBy._updated_at,
       page: 1,
-      scope: PublishScope.organization,
+      scope: PublishScope.tempArgument,
     });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
     onChange({ content_type, order_by: OrderBy._updated_at, page: 1, scope: "default" });
@@ -169,7 +169,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
       order_by: OrderBy._updated_at,
       page: 1,
       content_type: SearchContentsRequestContentType.materialandplan,
-      scope: PublishScope.organization,
+      scope: PublishScope.tempArgument,
     });
   };
   return (

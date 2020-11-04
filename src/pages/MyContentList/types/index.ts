@@ -23,4 +23,5 @@ export interface ContentListForm {
 export enum PublishScope {
   organization = "visibility_settings1,visibility_settings2",
   all = "all",
+  tempArgument = "10f38ce9-5152-4049-b4e7-6d2e2ba884e6",
 }
