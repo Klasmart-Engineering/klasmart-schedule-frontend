@@ -5,7 +5,7 @@ import { LinkedMockOptions } from "../reducers/content";
 export interface FlattenedMockOptionsOnlyOption extends Omit<LinkedMockOptions, "program_id" | "developmental_id"> {}
 
 export type GetOnlyOneOptionValueResult = {
-  [Key in keyof FlattenedMockOptionsOnlyOption]?: MockOptionsItem["id"][];
+  [Key in keyof FlattenedMockOptionsOnlyOption]?: string[];
 };
 
 interface GetReportFirstValueResult {
