@@ -101,6 +101,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     color: palette.text.primary,
     [breakpoints.down("sm")]: {
       boxShadow: "none",
+      width: "95%",
     },
   },
   selectLessonItem: {
@@ -368,7 +369,7 @@ export function SelectLesson(props: SelectLessonProps) {
   const css = useStyles();
   const { lesson, onChangeLesson, disabled } = props;
   return (
-    <Box mb={3}>
+    <Box mb={3} display="flex" justifyContent="center">
       <TextField
         fullWidth
         select

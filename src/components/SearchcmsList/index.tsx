@@ -9,21 +9,48 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   searchField: {
     flexGrow: 1,
     flexShrink: 0.5,
-    marginLeft: 40,
+    marginLeft: 24,
     marginRight: 20,
-    [breakpoints.down("sm")]: {
-      marginLeft: 16,
+    height: 42,
+    [breakpoints.down(1460)]: {
+      marginLeft: 10,
+      marginRight: 10,
+    },
+    [breakpoints.down("md")]: {
+      marginLeft: 40,
+    },
+    [breakpoints.down(560)]: {
+      marginLeft: 10,
     },
   },
   checkField: (props: SearchcmsListProps) => ({
     flexShrink: 0.5,
     marginRight: 100,
     opacity: props.searchName === "searchOutcome" ? 1 : 0,
+    [breakpoints.down(1690)]: {
+      marginRight: 24,
+    },
+    [breakpoints.down(1460)]: {
+      marginRight: 10,
+    },
+    [breakpoints.down("md")]: {
+      marginRight: 100,
+    },
+    [breakpoints.down(560)]: {
+      marginRight: 10,
+    },
   }),
   fieldset: {
-    minWidth: 110,
-    "&:not(:first-child)": {
-      marginRight: 50,
+    minWidth: 90,
+    marginRight: 30,
+    [breakpoints.down(1460)]: {
+      marginRight: 10,
+    },
+    [breakpoints.down("md")]: {
+      marginRight: 40,
+    },
+    [breakpoints.down(560)]: {
+      marginRight: 10,
     },
   },
 }));
