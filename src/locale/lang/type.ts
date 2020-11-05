@@ -1,7 +1,7 @@
 import { IntlFormatters, MessageDescriptor } from "react-intl";
 
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "zh" | "vi";
+export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
 type LangRecord<T = string> =
   | { id: "library_label_create"; description: "Create"; values: undefined }
@@ -164,6 +164,7 @@ type LangRecord<T = string> =
   | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
   | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
   | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -390,6 +391,7 @@ type LangRecord<T = string> =
   | { id: "schedule_filter_subjects"; description: "Subjects"; values: undefined }
   | { id: "schedule_filter_programs"; description: "Programs"; values: undefined }
   | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined }
+  | { id: "schedule_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
