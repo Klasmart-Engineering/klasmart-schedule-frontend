@@ -14,7 +14,7 @@ import classListByTeacher from "../mocks/classListByTeacher.json";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
-const MOCK = true;
+const MOCK = false;
 interface IreportState {
   reportList?: EntityStudentReportItem[];
   achievementDetail?: EntityStudentReportCategory[];
@@ -111,7 +111,9 @@ export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsRespons
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
     const user_id =
-      teacherList && teacherList.organization && teacherList.organization.teachers && teacherList.organization?.teachers[0]?.user?.user_id;
+      teacherList && teacherList.organization && teacherList.organization.teachers
+        ? teacherList.organization?.teachers[0]?.user?.user_id
+        : undefined;
 
     const { data: result } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
       query: ClassesByTeacherDocument,
