@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./api";
 import App from "./App";
 import "./index.css";
+import { LangRecordId } from "./locale/lang/type";
+import { t } from "./locale/LocaleManager";
 import { store } from "./reducers";
 import { actError } from "./reducers/notify";
 import * as serviceWorker from "./serviceWorker";
@@ -10,7 +12,7 @@ import * as serviceWorker from "./serviceWorker";
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   if (!e) return;
   const { label, msg } = e;
-  const message = String(label || msg || "");
+  const message = String(t(label as LangRecordId) || msg || "");
   if (message) store.dispatch(actError(message));
 });
 
