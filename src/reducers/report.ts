@@ -110,12 +110,13 @@ export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsRespons
     });
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
-    // const user_id = teacherList && teacherList.organization && teacherList.organization.teachers && teacherList.organization?.teachers[0]?.user?.user_id
+    const user_id =
+      teacherList && teacherList.organization && teacherList.organization.teachers && teacherList.organization?.teachers[0]?.user?.user_id;
 
     const { data: result } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
       query: ClassesByTeacherDocument,
       variables: {
-        user_id: teacher_id,
+        user_id: teacher_id ? teacher_id : user_id,
       },
     });
     const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
@@ -163,8 +164,12 @@ const { reducer } = createSlice({
       state.achievementDetail = initialState.achievementDetail;
     },
     [getReportMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getReportMockOptions>>) => {
-      console.log(payload, 1111111);
       state.reportMockOptions = payload;
+    },
+    [getReportMockOptions.rejected.type]: (state, { error }: any) => {
+      console.log(error, 1111111);
+      state.reportMockOptions.classList.user = { classesTeaching: [] };
+      state.reportMockOptions.teacherList.organization = { teachers: [] };
     },
   },
 });
