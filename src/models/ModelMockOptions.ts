@@ -18,7 +18,7 @@ export interface FlattenedMockOptionsOnlyOption extends Omit<MockOptionsOptionsI
 }
 
 export type GetOnlyOneOptionValueResult = {
-  [Key in keyof FlattenedMockOptionsOnlyOption]?: MockOptionsItem["id"][];
+  [Key in keyof FlattenedMockOptionsOnlyOption]?: string[];
 };
 
 interface GetReportFirstValueResult {
@@ -86,7 +86,7 @@ export class ModelMockOptions {
     return Object.keys(flattenedMockOptions).reduce((result, key) => {
       const name = key as keyof GetOnlyOneOptionValueResult;
       if (flattenedMockOptions[name].length !== 1) return result;
-      result[name] = flattenedMockOptions[name].map((item) => item.id);
+      result[name] = flattenedMockOptions[name].map((item) => item.id as string);
       return result;
     }, {} as GetOnlyOneOptionValueResult);
   }
