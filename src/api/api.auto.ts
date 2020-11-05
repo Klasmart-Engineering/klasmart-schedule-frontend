@@ -1631,7 +1631,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/skills
      * @description get skill
      */
-    getSkill: (query?: { developmental_id?: string }, params?: RequestParams) =>
+    getSkill: (query?: { program_id?: string; developmental_id?: string }, params?: RequestParams) =>
       this.request<EntitySkill[], ApiInternalServerErrorResponse>(`/skills${this.addQueryParams(query)}`, "GET", params),
 
     /**

@@ -3136,6 +3136,12 @@
         "parameters": [
           {
             "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "developmental id",
             "name": "developmental_id",
             "in": "query"
