@@ -387,13 +387,6 @@ function EditBox(props: CalendarStateProps) {
     name: string
   ) => {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
-    if (name === "start_at" && value < currentTime) {
-      dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
-      return;
-    }
-
     if (name === "title" && (event.target.value as string).length > 20) return;
     if (name === "description" && (event.target.value as string).length > 100) return;
     setScheduleData(name, value);
@@ -470,6 +463,12 @@ function EditBox(props: CalendarStateProps) {
       }
 
       addData["due_at"] = dueDateTimestamp;
+    }
+
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (scheduleList.start_at < currentTime) {
+      dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
+      return;
     }
 
     if (scheduleList.end_at <= scheduleList.start_at) {
