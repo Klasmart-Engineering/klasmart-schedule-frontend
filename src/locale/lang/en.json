@@ -385,5 +385,6 @@
   "report_label_ascending": "Ascending",
   "report_label_descending": "Descending",
   "report_label_learning_outcomes_percentage": "Learning Outcomes %",
-  "report_label_absent": "Absent"
+  "report_label_absent": "Absent",
+  "general_error_unauthorized": "User not logged in, please log in"
 }
