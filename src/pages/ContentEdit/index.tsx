@@ -17,6 +17,7 @@ import {
   contentLists,
   deleteContent,
   getLinkedMockOptions,
+  getLinkedMockOptionsSkills,
   onLoadContentEdit,
   publish,
   publishWidthAssets,
@@ -263,7 +264,9 @@ export default function ContentEdit() {
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string[]) => {
       setValue("skills", []);
-      dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: programId, default_developmental_id: developmental_id[0] }));
+      dispatch(
+        getLinkedMockOptionsSkills({ metaLoading: true, default_program_id: programId, default_developmental_id: developmental_id[0] })
+      );
     },
     [dispatch, programId, setValue]
   );

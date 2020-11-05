@@ -162,7 +162,6 @@ interface onLoadContentEditResult {
   outcomeList?: AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
   contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
   mediaList?: AsyncReturnType<typeof api.contents.searchContents>;
-  mockOptions?: MockOptions;
   lesson_types: LinkedMockOptionsItem[];
   visibility_settings: LinkedMockOptionsItem[];
 }
@@ -245,7 +244,7 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
       ]);
       const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
       if (developmental_id) {
-        const skills = await api.skills.getSkill({ developmental_id });
+        const skills = await api.skills.getSkill({ program_id, developmental_id });
         return { program, subject, developmental, age, grade, skills, program_id, developmental_id };
       } else {
         return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" };
@@ -253,6 +252,12 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
     } else {
       return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
     }
+  }
+);
+export const getLinkedMockOptionsSkills = createAsyncThunk<LinkedMockOptions["skills"], LinkedMockOptionsPayload>(
+  "getLinkedMockOptionsSkills",
+  async ({ metaLoading, default_program_id: program_id, default_developmental_id: developmental_id }) => {
+    return await api.skills.getSkill({ program_id, developmental_id });
   }
 );
 
@@ -465,10 +470,6 @@ const { actions, reducer } = createSlice({
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;
       }
-      if (payload.mockOptions) {
-        state.mockOptions = payload.mockOptions;
-      }
-
       if (payload.outcomeList?.total) {
         state.OutcomesListTotal = payload.outcomeList.total;
       }
@@ -494,20 +495,16 @@ const { actions, reducer } = createSlice({
       // alert("success");
       state.linkedMockOptions = payload;
     },
-    // [getLinkedMockOptions.pending.type]: (state, { payload }: PayloadAction<any>) => {
-    //   // alert("success");
-    //   state.linkedMockOptions = initialState.linkedMockOptions;
-    // },
     [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    // [getNotLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-    //   // alert("success");
-    //   state.notLinkedMockOptions = payload;
-    // },
-    // [getNotLinkedMockOptions.rejected.type]: (state, { error }: any) => {
-    //   // alert(JSON.stringify(error));
-    // },
+    [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.linkedMockOptions.skills = payload;
+    },
+    [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
     [searchOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.outcomeList = payload.list;
