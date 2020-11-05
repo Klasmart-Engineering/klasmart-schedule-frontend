@@ -1,3 +1,6 @@
+// 每个接口都有塞给后端的参数 以及前端 url 上的参数名
+export const ORG_ID_KEY = 'org_id';
+
 export const apiGetMockOptions = () =>
   fetch("https://launch.kidsloop.cn/static/mock-korea-data/select-options.json").then((res) => {
     return res.json();
@@ -69,5 +72,11 @@ export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: str
 
 export const apiOrganizationOfPage = () => {
   const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get("org_id");
+  return searchParams.get(ORG_ID_KEY);
 };
+
+export const apiAddOrganizationToPageUrl = (id: string) => {
+  const url = new URL(window.location.href);
+  url.searchParams.append(ORG_ID_KEY, id);
+  window.history.replaceState(null, document.title, url.toString());
+}

@@ -2,10 +2,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
 import mitt from "mitt";
 import { Api } from "./api.auto";
-import { apiOrganizationOfPage } from "./extra";
-
-// 每个接口都有塞给后端的参数
-const ORGANIZATION_KEY = "org_id";
+import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
 
 export enum ApiEvent {
   ResponseError = "ResponseError",
@@ -25,12 +22,11 @@ export const apiEmitter = mitt();
 fetchIntercept.register({
   request: function (originUrl, config: RequestInit) {
     try {
-      console.log("originUrl, config = ", originUrl, config);
       const organization = apiOrganizationOfPage() || "";
       if (!organization) return [originUrl, config];
       const URL_REPLACE = "https://_u_r_l_r_e_p_l_a_c_e_";
       const url = new URL(originUrl, URL_REPLACE);
-      url.searchParams.append(ORGANIZATION_KEY, organization);
+      url.searchParams.append(ORG_ID_KEY, organization);
       return [url.toString().replace(URL_REPLACE, ""), config];
     } catch (err) {
       console.error(err);
