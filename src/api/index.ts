@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
 import mitt from "mitt";
 import { Api } from "./api.auto";
-import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
+import { apiOrganizationOfPage, apiTokenInCookie, ORG_ID_KEY } from "./extra";
 
 export enum ApiEvent {
   ResponseError = "ResponseError",
@@ -22,6 +22,7 @@ export const apiEmitter = mitt();
 fetchIntercept.register({
   request: function (originUrl, config: RequestInit) {
     try {
+      config.headers = { ...config.headers, Authorization: `Bearer ${apiTokenInCookie()}` };
       const organization = apiOrganizationOfPage() || "";
       if (!organization) return [originUrl, config];
       const URL_REPLACE = "https://_u_r_l_r_e_p_l_a_c_e_";
