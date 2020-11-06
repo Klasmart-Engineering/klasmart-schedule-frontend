@@ -588,12 +588,6 @@ export interface EntityVisibilitySetting {
 export interface ExternalClass {
   id?: string;
   name?: string;
-  students?: ExternalStudent[];
-}
-
-export interface ExternalStudent {
-  id?: string;
-  name?: string;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -1670,11 +1664,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags visibilitySetting
      * @name getVisibilitySetting
      * @summary getVisibilitySetting
-     * @request GET:/visibility_settings
+     * @request GET:/visibility_settings/{content_type}
      * @description get visibilitySetting
      */
-    getVisibilitySetting: (params?: RequestParams) =>
-      this.request<EntityVisibilitySetting[], ApiInternalServerErrorResponse>(`/visibility_settings`, "GET", params),
+    getVisibilitySetting: (content_type: string, params?: RequestParams) =>
+      this.request<EntityVisibilitySetting[], ApiInternalServerErrorResponse>(`/visibility_settings/${content_type}`, "GET", params),
 
     /**
      * @tags visibilitySetting

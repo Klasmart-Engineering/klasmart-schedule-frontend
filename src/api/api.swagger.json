@@ -3279,7 +3279,7 @@
         }
       }
     },
-    "/visibility_settings": {
+    "/visibility_settings/{content_type}": {
       "get": {
         "description": "get visibilitySetting",
         "consumes": ["application/json"],
@@ -3287,6 +3287,15 @@
         "tags": ["visibilitySetting"],
         "summary": "getVisibilitySetting",
         "operationId": "getVisibilitySetting",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content type",
+            "name": "content_type",
+            "in": "path",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -5062,23 +5071,6 @@
       }
     },
     "external.Class": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "students": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/external.Student"
-          }
-        }
-      }
-    },
-    "external.Student": {
       "type": "object",
       "properties": {
         "id": {
