@@ -59,6 +59,30 @@ export type ParticipantsByClassQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type QeuryPermissionOfMeQueryVariables = Types.Exact<{
+  organization_id?: Types.Scalars["ID"];
+}>;
+
+export type QeuryPermissionOfMeQuery = { __typename?: "Query" } & {
+  me?: Types.Maybe<
+    { __typename?: "User" } & {
+      membership?: Types.Maybe<
+        { __typename?: "OrganizationMembership" } & {
+          roles?: Types.Maybe<
+            Array<
+              Types.Maybe<
+                { __typename?: "Role" } & {
+                  permissions?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "permission_name">>>>;
+                }
+              >
+            >
+          >;
+        }
+      >;
+    }
+  >;
+};
+
 export const TeachersByOrgnizationDocument = gql`
   query teachersByOrgnization($organization_id: ID = "3f135b91-a616-4c80-914a-e4463104dbac") {
     organization(organization_id: $organization_id) {
@@ -223,3 +247,46 @@ export function useParticipantsByClassLazyQuery(
 export type ParticipantsByClassQueryHookResult = ReturnType<typeof useParticipantsByClassQuery>;
 export type ParticipantsByClassLazyQueryHookResult = ReturnType<typeof useParticipantsByClassLazyQuery>;
 export type ParticipantsByClassQueryResult = Apollo.QueryResult<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>;
+export const QeuryPermissionOfMeDocument = gql`
+  query qeuryPermissionOfMe($organization_id: ID! = "3f135b91-a616-4c80-914a-e4463104dbac") {
+    me {
+      membership(organization_id: $organization_id) {
+        roles {
+          permissions {
+            permission_name
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useQeuryPermissionOfMeQuery__
+ *
+ * To run a query within a React component, call `useQeuryPermissionOfMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQeuryPermissionOfMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQeuryPermissionOfMeQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useQeuryPermissionOfMeQuery(
+  baseOptions?: Apollo.QueryHookOptions<QeuryPermissionOfMeQuery, QeuryPermissionOfMeQueryVariables>
+) {
+  return Apollo.useQuery<QeuryPermissionOfMeQuery, QeuryPermissionOfMeQueryVariables>(QeuryPermissionOfMeDocument, baseOptions);
+}
+export function useQeuryPermissionOfMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<QeuryPermissionOfMeQuery, QeuryPermissionOfMeQueryVariables>
+) {
+  return Apollo.useLazyQuery<QeuryPermissionOfMeQuery, QeuryPermissionOfMeQueryVariables>(QeuryPermissionOfMeDocument, baseOptions);
+}
+export type QeuryPermissionOfMeQueryHookResult = ReturnType<typeof useQeuryPermissionOfMeQuery>;
+export type QeuryPermissionOfMeLazyQueryHookResult = ReturnType<typeof useQeuryPermissionOfMeLazyQuery>;
+export type QeuryPermissionOfMeQueryResult = Apollo.QueryResult<QeuryPermissionOfMeQuery, QeuryPermissionOfMeQueryVariables>;
