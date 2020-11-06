@@ -10,6 +10,7 @@ import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { modeViewType, timestampType } from "../../types/scheduleTypes";
 
@@ -108,51 +109,65 @@ function Tool(props: ToolProps) {
   return (
     <Box className={css.toolBox}>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={12} md={3} lg={3}>
-          {!includeList && (
-            <Button
-              variant="contained"
-              color="primary"
-              className={css.btnRadio}
-              onClick={() => {
-                toolRouter("create");
-              }}
-            >
-              {d("Schedule Class").t("schedue_button_schedule_class")}
-            </Button>
-          )}
-        </Grid>
-        <Grid item xs={12} sm={8} md={4} lg={4} style={{ display: "flex", alignItems: "center" }}>
-          {includeList && (
-            <ArrowBackIosOutlined
-              className={css.arrowsrt}
-              onClick={() => {
-                toolRouter("create");
-              }}
-            />
-          )}
-          <FormControl>
-            <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
-            <BootstrapInput
-              id="demo-customized-textbox"
-              placeholder={d("teacher name").t("schedule_label_teacher_name")}
-              value={teacherName}
-              onChange={(event) => setTeacherName(event.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-          </FormControl>
-          <Button
-            variant="contained"
-            color="primary"
-            className={css.searchBtn}
-            startIcon={<SearchOutlined />}
-            onClick={() => {
-              toolRouter("search");
-            }}
-          >
-            {d("Search").t("schedule_button_search")}
-          </Button>
-        </Grid>
+        <Permission
+          value={PermissionType.create_schedule_paage_501}
+          render={(value) =>
+            value && (
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                {!includeList && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={css.btnRadio}
+                    onClick={() => {
+                      toolRouter("create");
+                    }}
+                  >
+                    {d("Schedule Class").t("schedue_button_schedule_class")}
+                  </Button>
+                )}
+              </Grid>
+            )
+          }
+        />
+        <Permission
+          value={PermissionType.schedule_search_582}
+          render={(value) =>
+            value && (
+              <Grid item xs={12} sm={8} md={4} lg={4} style={{ display: "flex", alignItems: "center" }}>
+                {includeList && (
+                  <ArrowBackIosOutlined
+                    className={css.arrowsrt}
+                    onClick={() => {
+                      toolRouter("create");
+                    }}
+                  />
+                )}
+                <FormControl>
+                  <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
+                  <BootstrapInput
+                    id="demo-customized-textbox"
+                    placeholder={d("teacher name").t("schedule_label_teacher_name")}
+                    value={teacherName}
+                    onChange={(event) => setTeacherName(event.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </FormControl>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={css.searchBtn}
+                  startIcon={<SearchOutlined />}
+                  onClick={() => {
+                    toolRouter("search");
+                  }}
+                >
+                  {d("Search").t("schedule_button_search")}
+                </Button>
+              </Grid>
+            )
+          }
+        />
         <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
           {!includeList && (
             <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }} onClick={selectToday}>

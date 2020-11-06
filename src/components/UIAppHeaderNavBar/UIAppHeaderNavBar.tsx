@@ -13,6 +13,7 @@ import React from "react";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
 import imgUrl1 from "../../assets/icons/kidsloop-logo.svg";
 import { OutcomeList } from "../../pages/OutcomeList";
+import { Permission, PermissionType } from "../Permission";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -144,17 +145,36 @@ function NavBarLarge() {
           </Grid>
           <Grid item lg={8} xl={8} md={8} style={{ height: "100%" }} className={classes.centerPart}>
             <Grid container style={{ height: "100%" }}>
-              {navigation.map((item) => (
-                <Grid
-                  key={item.name}
-                  item
-                  className={`${classes.rightItem} ${currentValue === item.name.toLowerCase() ? `${classes.currentSelect}` : ""}`}
-                >
-                  <Button onClick={() => handleChangeSelect(item)} className={classes.rightButton}>
-                    {item.name}
-                  </Button>
-                </Grid>
-              ))}
+              {navigation.map((item) =>
+                item.name === "Schedule" ? (
+                  <Permission
+                    value={PermissionType.schedule_500}
+                    render={(value) =>
+                      value && (
+                        <Grid
+                          key={item.name}
+                          item
+                          className={`${classes.rightItem} ${currentValue === item.name.toLowerCase() ? `${classes.currentSelect}` : ""}`}
+                        >
+                          <Button onClick={() => handleChangeSelect(item)} className={classes.rightButton}>
+                            {item.name}
+                          </Button>
+                        </Grid>
+                      )
+                    }
+                  />
+                ) : (
+                  <Grid
+                    key={item.name}
+                    item
+                    className={`${classes.rightItem} ${currentValue === item.name.toLowerCase() ? `${classes.currentSelect}` : ""}`}
+                  >
+                    <Button onClick={() => handleChangeSelect(item)} className={classes.rightButton}>
+                      {item.name}
+                    </Button>
+                  </Grid>
+                )
+              )}
             </Grid>
           </Grid>
           <Grid item lg={2} xl={2} md={2} className={classes.rightPart}>

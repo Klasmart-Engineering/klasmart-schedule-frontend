@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import ContentPreview from "../ContentPreview";
 
@@ -110,14 +111,24 @@ export default function CustomizeTempalte(props: InfoProps) {
         </p>
       </div>
       <div className={classes.iconPart}>
-        <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />
+        <Permission
+          value={PermissionType.edit_event__530}
+          render={(value) => value && <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />}
+        />
         {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
         {scheduleInfo.status === "NotStart" && (
-          <DeleteOutlined
-            className={classes.lastIcon}
-            onClick={() => {
-              handleDelete(scheduleInfo);
-            }}
+          <Permission
+            value={PermissionType.delete_event_540}
+            render={(value) =>
+              value && (
+                <DeleteOutlined
+                  className={classes.lastIcon}
+                  onClick={() => {
+                    handleDelete(scheduleInfo);
+                  }}
+                />
+              )
+            }
           />
         )}
       </div>
