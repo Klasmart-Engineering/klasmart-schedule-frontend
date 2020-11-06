@@ -485,6 +485,7 @@ const { actions, reducer } = createSlice({
       if (payload.visibility_settings) {
         state.visibility_settings = payload.visibility_settings;
       }
+      console.log(payload.outcomeList);
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

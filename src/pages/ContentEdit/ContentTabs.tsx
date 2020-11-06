@@ -4,7 +4,6 @@ import clsx from "clsx";
 import React, { Children, ReactNode } from "react";
 import { FieldError } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -81,12 +80,7 @@ export default function ContentTabs(props: ContentTabsProps) {
           onChange={(e, value) => onChangeTab(value)}
         >
           <Tab className={clsx(css.tab, error && css.errorTab)} label={d("Details").t("library_label_details")} value={VALUES[0]} />
-          <Permission
-            value={PermissionType.associate_learning_outcomes_284}
-            render={(value) => (
-              <Tab className={css.tab} label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />
-            )}
-          />
+          <Tab className={css.tab} label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />
           <Tab
             className={css.tab}
             label={lesson === "material" ? d("Assets").t("library_label_assets") : d("Lesson Material").t("library_label_lesson_material")}

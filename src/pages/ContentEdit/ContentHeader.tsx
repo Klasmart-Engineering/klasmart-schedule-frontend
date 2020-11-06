@@ -202,17 +202,19 @@ export function ContentHeader(props: HeaderProps) {
           {lesson === "assets" && id && (
             <Permission
               value={PermissionType.delete_asset_340}
-              render={(value) => (
-                <LButton
-                  variant="outlined"
-                  endIcon={<DeleteOutlineOutlined />}
-                  color="primary"
-                  className={clsx(css.headerButton, css.redOutlinedButton)}
-                  onClick={onDelete as any}
-                >
-                  {d("Delete").t("library_label_delete")}
-                </LButton>
-              )}
+              render={(value) =>
+                value && (
+                  <LButton
+                    variant="outlined"
+                    endIcon={<DeleteOutlineOutlined />}
+                    color="primary"
+                    className={clsx(css.headerButton, css.redOutlinedButton)}
+                    onClick={onDelete as any}
+                  >
+                    {d("Delete").t("library_label_delete")}
+                  </LButton>
+                )
+              }
             />
           )}
         </Hidden>
@@ -265,17 +267,19 @@ export function ContentHeader(props: HeaderProps) {
           {lesson === "assets" && id && (
             <Permission
               value={PermissionType.delete_asset_340}
-              render={(value) => (
-                <LButton
-                  as={IconButton}
-                  className={clsx(css.iconButton, css.redOutlinedButton)}
-                  color="primary"
-                  onClick={onDelete as any}
-                  replace
-                >
-                  <DeleteOutlineOutlined fontSize="small" />
-                </LButton>
-              )}
+              render={(value) =>
+                value && (
+                  <LButton
+                    as={IconButton}
+                    className={clsx(css.iconButton, css.redOutlinedButton)}
+                    color="primary"
+                    onClick={onDelete as any}
+                    replace
+                  >
+                    <DeleteOutlineOutlined fontSize="small" />
+                  </LButton>
+                )
+              }
             />
           )}
         </Box>
@@ -390,25 +394,36 @@ export function SelectLesson(props: SelectLessonProps) {
         onChange={(e) => onChangeLesson(e.target.value)}
         InputProps={{ style: { fontSize: 20, fontWeight: 700 } }}
       >
-        {/* <Permission value = {PermissionType.create_asset_320}  */}
-        {/* render ={ (value) =>( */}
-        <MenuItem value="assets" className={css.selectLessonItem}>
-          {d("Assets").t("library_label_assets")}
-        </MenuItem>
-        {/* )}/> */}
-        {/* < Permission value= {PermissionType.create_lesson_material_220} */}
-        {/* render = {(value) =>( */}
-        <MenuItem value="material" className={css.selectLessonItem}>
-          {d("Lesson Material").t("library_label_lesson_material")}
-        </MenuItem>
-
-        {/* )} /> */}
-        {/* <Permission value = {PermissionType.create_lesson_plan_221} */}
-        {/* render= {(value) => ( */}
-        <MenuItem value="plan" className={css.selectLessonItem}>
-          {d("Lesson Plan").t("library_label_lesson_plan")}
-        </MenuItem>
-        {/* )}/> */}
+        <Permission
+          value={PermissionType.create_asset_320}
+          render={(value) =>
+            value && (
+              <MenuItem value="assets" className={css.selectLessonItem}>
+                {d("Assets").t("library_label_assets")}
+              </MenuItem>
+            )
+          }
+        />
+        <Permission
+          value={PermissionType.create_lesson_material_220}
+          render={(value) =>
+            value && (
+              <MenuItem value="material" className={css.selectLessonItem}>
+                {d("Lesson Material").t("library_label_lesson_material")}
+              </MenuItem>
+            )
+          }
+        />
+        <Permission
+          value={PermissionType.create_lesson_plan_221}
+          render={(value) =>
+            value && (
+              <MenuItem value="plan" className={css.selectLessonItem}>
+                {d("Lesson Plan").t("library_label_lesson_plan")}
+              </MenuItem>
+            )
+          }
+        />
       </TextField>
     </Box>
   );
