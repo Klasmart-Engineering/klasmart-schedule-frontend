@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 export enum PermissionType {
   create_content_page_201 = "create_content_page_201",
@@ -32,22 +32,34 @@ export enum PermissionType {
   delete_event_540 = "delete_event_540",
 }
 
-// const mockPermissionList = [
-//   'create_content_page_201',
-//   'unpublished_content_page_202',
-//   'pending_content_page_203',
-//   'published_content_page_204',
-// ]
+const mockPermissionList = [
+  PermissionType.create_content_page_201,
+  PermissionType.unpublished_content_page_202,
+  PermissionType.pending_content_page_203,
+  PermissionType.published_content_page_204,
+];
 
 export interface PermissionProps<V> {
   value: V;
-  render?: (value: V) => ReactNode;
+  render?: (value: PermissionResult<V>) => ReactNode;
   children?: ReactNode;
 }
 
+const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);
+
+type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
+
 export function Permission<V extends PermissionType | PermissionType[]>(props: PermissionProps<V>) {
   const { value, render, children } = props;
-  // const targetPermission = typeof value === 'string' ? [value] : value;
-  console.log(value, render, children);
-  return null;
+  let result: PermissionResult<PermissionType> | PermissionResult<PermissionType[]>;
+  if (isPermissionType(value)) {
+    result = mockPermissionList.includes(value);
+  } else {
+    result = (value as PermissionType[]).reduce((s, name) => {
+      s[name] = mockPermissionList.includes(name);
+      return s;
+    }, {} as PermissionResult<PermissionType[]>);
+  }
+  if (render) return <>{render(result as any)}</>;
+  return result ? <>{children}</> : null;
 }
