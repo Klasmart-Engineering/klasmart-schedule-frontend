@@ -32,6 +32,8 @@ export enum PermissionType {
   create_event__520 = "create_event__520",
   edit_event__530 = "edit_event__530",
   delete_event_540 = "delete_event_540",
+  schedule_search_582 = "schedule_search_582",
+  view_school_calendar_512 = "view_school_calendar_512",
 }
 
 // const mockPermissionList = [

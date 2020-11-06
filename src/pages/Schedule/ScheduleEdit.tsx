@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
+import { Permission, PermissionType } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
@@ -809,13 +810,20 @@ function EditBox(props: CalendarStateProps) {
                   className={css.toolset}
                   onClick={handleDelete}
                 />
-                <Save
-                  style={{
-                    color: "#0E78D5",
-                    marginLeft: "10px",
-                  }}
-                  className={css.toolset}
-                  onClick={saveTheTest}
+                <Permission
+                  value={PermissionType.create_event__520}
+                  render={(value) =>
+                    value && (
+                      <Save
+                        style={{
+                          color: "#0E78D5",
+                          marginLeft: "10px",
+                        }}
+                        className={css.toolset}
+                        onClick={saveTheTest}
+                      />
+                    )
+                  }
                 />
               </Grid>
             )}
