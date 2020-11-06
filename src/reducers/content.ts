@@ -150,22 +150,6 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   ? U
   : any;
 
-interface onLoadContentEditPayload extends LoadingMetaPayload {
-  id: EntityContentInfoWithDetails["id"] | null;
-  type: "assets" | "material" | "plan";
-  searchMedia?: string;
-  searchOutcome?: string;
-  assumed?: string;
-}
-
-interface onLoadContentEditResult {
-  outcomeList?: AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
-  contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
-  mediaList?: AsyncReturnType<typeof api.contents.searchContents>;
-  lesson_types: LinkedMockOptionsItem[];
-  visibility_settings: LinkedMockOptionsItem[];
-}
-
 export const save = createAsyncThunk<EntityContentInfoWithDetails["id"], EntityCreateContentRequest, { state: RootState }>(
   "content/save",
   async (payload, { getState }) => {
@@ -261,6 +245,21 @@ export const getLinkedMockOptionsSkills = createAsyncThunk<LinkedMockOptions["sk
   }
 );
 
+interface onLoadContentEditPayload extends LoadingMetaPayload {
+  id: EntityContentInfoWithDetails["id"] | null;
+  type: "assets" | "material" | "plan";
+  searchMedia?: string;
+  searchOutcome?: string;
+  assumed?: string;
+}
+
+interface onLoadContentEditResult {
+  outcomeList?: AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
+  contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
+  mediaList?: AsyncReturnType<typeof api.contents.searchContents>;
+  lesson_types?: LinkedMockOptionsItem[];
+  visibility_settings?: LinkedMockOptionsItem[];
+}
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
   async ({ id, type, searchMedia, searchOutcome, assumed }, { dispatch }) => {
@@ -282,8 +281,12 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
             assumed: assumed === "true" ? 1 : -1,
           })
         : undefined,
-      api.lessonTypes.getLessonType(),
-      api.visibilitySettings.getVisibilitySetting(),
+      type === "material" ? api.lessonTypes.getLessonType() : undefined,
+      type === "material" || type === "plan"
+        ? api.visibilitySettings.getVisibilitySetting(
+            type === "material" ? SearchContentsRequestContentType.material : SearchContentsRequestContentType.plan
+          )
+        : undefined,
       dispatch(
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
@@ -476,8 +479,12 @@ const { actions, reducer } = createSlice({
       if (payload.outcomeList?.list) {
         state.outcomeList = payload.outcomeList.list;
       }
-      state.visibility_settings = payload.visibility_settings;
-      state.lesson_types = payload.lesson_types;
+      if (payload.lesson_types) {
+        state.lesson_types = payload.lesson_types;
+      }
+      if (payload.visibility_settings) {
+        state.visibility_settings = payload.visibility_settings;
+      }
     },
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

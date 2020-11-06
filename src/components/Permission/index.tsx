@@ -63,9 +63,9 @@ const isPermissionType = (x: PermissionType | PermissionType[]): x is Permission
 
 type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
 
-export function Permission<V extends PermissionType | PermissionType[]>(props: PermissionProps<V>) {
-  const { value, render, children } = props;
+export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
   const { data: permissionList } = usePermissionList();
+
   let result: PermissionResult<PermissionType> | PermissionResult<PermissionType[]>;
   if (isPermissionType(value)) {
     result = permissionList.includes(value);
@@ -75,6 +75,12 @@ export function Permission<V extends PermissionType | PermissionType[]>(props: P
       return s;
     }, {} as PermissionResult<PermissionType[]>);
   }
-  if (render) return <>{render(result as any)}</>;
-  return result ? <>{children}</> : null;
+  return result as PermissionResult<V>;
+}
+
+export function Permission<V extends PermissionType | PermissionType[]>(props: PermissionProps<V>) {
+  const { value, render, children } = props;
+  const perm = usePermission(value);
+  if (render) return <>{render(perm as any)}</>;
+  return perm ? <>{children}</> : null;
 }

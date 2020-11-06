@@ -25,8 +25,10 @@ import { ContentType, PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
+import { Permission, PermissionType } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
+import { isUnpublish } from "./FirstSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
@@ -256,15 +258,44 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {!queryCondition.program && content?.publish_status === PublishStatus.archive && (
-            <LButton as={IconButton} replace className={css.rePublishColor} onClick={() => onPublish(content.id as string)}>
-              <PublishOutlinedIcon />
+          {/* content published remove */}
+          {!queryCondition.program &&
+            queryCondition.publish_status === PublishStatus.published &&
+            content?.content_type_name !== ASSETS_NAME && (
+              <Permission value={PermissionType.archive_published_content_273}>
+                <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+                  <RemoveCircleOutlineIcon />
+                </LButton>
+              </Permission>
+            )}
+          {/* content archieved republish delete */}
+          {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
+            <Permission value={PermissionType.republish_archived_content_274}>
+              <LButton as={IconButton} replace className={css.rePublishColor} onClick={() => onPublish(content.id as string)}>
+                <PublishOutlinedIcon />
+              </LButton>
+            </Permission>
+          )}
+          {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
+            <Permission value={PermissionType.delete_archived_content_275}>
+              <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+                <DeleteOutlineIcon />
+              </LButton>
+            </Permission>
+          )}
+          {/* content unpublished delete */}
+          {!queryCondition.program && isUnpublish(queryCondition) && content?.content_type_name !== ASSETS_NAME && (
+            <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+              <DeleteOutlineIcon />
             </LButton>
           )}
-          {!queryCondition.program && queryCondition.publish_status !== PublishStatus.pending && (
-            <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
-              <DeleteIcon />
-            </LButton>
+          {/* assets delete */}
+          {!queryCondition.program && content?.content_type_name === ASSETS_NAME && (
+            <Permission value={PermissionType.delete_asset_340}>
+              <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+                <DeleteIcon />
+              </LButton>
+            </Permission>
           )}
         </div>
       </CardActions>

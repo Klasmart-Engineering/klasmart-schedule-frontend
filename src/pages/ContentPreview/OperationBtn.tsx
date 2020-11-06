@@ -3,11 +3,11 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import clsx from "clsx";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { PublishStatus } from "../../api/type";
+import { ContentType, PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { PublishScope } from "../MyContentList/types";
-const ASSETS_NAME = "Assets";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -40,7 +40,7 @@ const useStyles = makeStyles(({ palette }) => ({
 export interface ActionProps {
   scope: string;
   publish_status: EntityContentInfoWithDetails["publish_status"];
-  content_type_name?: EntityContentInfoWithDetails["content_type_name"];
+  content_type?: EntityContentInfoWithDetails["content_type"];
   onDelete: () => any;
   onPublish: () => any;
   onApprove: () => any;
@@ -49,7 +49,7 @@ export interface ActionProps {
 }
 export function OperationBtn(props: ActionProps) {
   const css = useStyles();
-  const { scope, publish_status, content_type_name, onDelete, onPublish, onApprove, onReject, onEdit } = props;
+  const { scope, publish_status, content_type, onDelete, onPublish, onApprove, onReject, onEdit } = props;
   return (
     <Box display="flex" justifyContent="flex-end">
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.published && (
@@ -60,35 +60,76 @@ export function OperationBtn(props: ActionProps) {
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
         (publish_status === PublishStatus.draft ||
           publish_status === PublishStatus.pending ||
-          publish_status === PublishStatus.rejected ||
-          publish_status === PublishStatus.archive) && (
+          publish_status === PublishStatus.rejected) && (
           <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
             {d("Delete").t("library_label_delete")}
           </LButton>
         )}
+      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.archive && (
+        <Permission value={PermissionType.delete_archived_content_275}>
+          <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+            {d("Delete").t("library_label_delete")}
+          </LButton>
+        </Permission>
+      )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.pending && (
-        <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
-          {d("Reject").t("library_label_reject")}
-        </LButton>
+        <Permission value={PermissionType.reject_pending_content_272}>
+          <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
+            {d("Reject").t("library_label_reject")}
+          </LButton>
+        </Permission>
       )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
-        (publish_status === PublishStatus.published ||
-          publish_status === PublishStatus.draft ||
-          publish_status === PublishStatus.rejected ||
-          content_type_name === ASSETS_NAME) && (
+        publish_status === PublishStatus.published &&
+        content_type === ContentType.plan && (
+          <Permission
+            value={[
+              PermissionType.edit_org_published_content_235,
+              PermissionType.edit_lesson_plan_metadata_237,
+              PermissionType.edit_lesson_plan_content_238,
+            ]}
+            render={(perm) =>
+              (perm.edit_org_published_content_235 || perm.edit_lesson_plan_metadata_237 || perm.edit_lesson_plan_content_238) && (
+                <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+                  {d("Edit").t("library_label_edit")}
+                </LButton>
+              )
+            }
+          />
+        )}
+      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
+        publish_status === PublishStatus.published &&
+        content_type === ContentType.material && (
+          <Permission
+            value={[PermissionType.edit_org_published_content_235, PermissionType.edit_lesson_material_metadata_and_content_236]}
+            render={(perm) =>
+              (perm.edit_org_published_content_235 || perm.edit_lesson_material_metadata_and_content_236) && (
+                <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+                  {d("Edit").t("library_label_edit")}
+                </LButton>
+              )
+            }
+          />
+        )}
+      {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
+        (publish_status === PublishStatus.draft || publish_status === PublishStatus.rejected) && (
           <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
             {d("Edit").t("library_label_edit")}
           </LButton>
         )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.pending && (
-        <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
-          {d("Approve").t("library_label_approve")}
-        </LButton>
+        <Permission value={PermissionType.approve_pending_content_271}>
+          <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
+            {d("Approve").t("library_label_approve")}
+          </LButton>
+        </Permission>
       )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.archive && (
-        <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
-          {d("Republish").t("library_label_republish")}
-        </LButton>
+        <Permission value={PermissionType.delete_archived_content_275}>
+          <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
+            {d("Republish").t("library_label_republish")}
+          </LButton>
+        </Permission>
       )}
     </Box>
   );
