@@ -10,9 +10,9 @@ import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "reac
 import { Controller, useForm } from "react-hook-form";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { QueryConditionBaseProps } from "./types";
-import { d } from "../../locale/LocaleManager";
 import { Permission, PermissionType } from "../../components/Permission";
+import { d } from "../../locale/LocaleManager";
+import { QueryConditionBaseProps } from "./types";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 
@@ -119,11 +119,14 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                   PermissionType.create_lesson_material_220,
                   PermissionType.create_lesson_plan_221,
                 ]}
-              >
-                <Button variant="contained" color="primary" className={classes.createBtn} onClick={onCreateContent}>
-                  {d("Create").t("library_label_create")} +
-                </Button>
-              </Permission>
+                render={(perm) =>
+                  (perm.create_content_page_201 || perm.create_lesson_material_220 || perm.create_lesson_plan_221) && (
+                    <Button variant="contained" color="primary" className={classes.createBtn} onClick={onCreateContent}>
+                      {d("Create").t("library_label_create")} +
+                    </Button>
+                  )
+                }
+              />
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (

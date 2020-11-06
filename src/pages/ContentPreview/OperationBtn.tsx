@@ -88,20 +88,28 @@ export function OperationBtn(props: ActionProps) {
               PermissionType.edit_lesson_plan_metadata_237,
               PermissionType.edit_lesson_plan_content_238,
             ]}
-          >
-            <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
-              {d("Edit").t("library_label_edit")}
-            </LButton>
-          </Permission>
+            render={(perm) =>
+              (perm.edit_org_published_content_235 || perm.edit_lesson_plan_metadata_237 || perm.edit_lesson_plan_content_238) && (
+                <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+                  {d("Edit").t("library_label_edit")}
+                </LButton>
+              )
+            }
+          />
         )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
         publish_status === PublishStatus.published &&
         content_type === ContentType.material && (
-          <Permission value={[PermissionType.edit_org_published_content_235, PermissionType.edit_lesson_material_metadata_and_content_236]}>
-            <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
-              {d("Edit").t("library_label_edit")}
-            </LButton>
-          </Permission>
+          <Permission
+            value={[PermissionType.edit_org_published_content_235, PermissionType.edit_lesson_material_metadata_and_content_236]}
+            render={(perm) =>
+              (perm.edit_org_published_content_235 || perm.edit_lesson_material_metadata_and_content_236) && (
+                <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+                  {d("Edit").t("library_label_edit")}
+                </LButton>
+              )
+            }
+          />
         )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
         (publish_status === PublishStatus.draft || publish_status === PublishStatus.rejected) && (

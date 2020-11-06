@@ -113,11 +113,13 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                   PermissionType.create_lesson_material_220,
                   PermissionType.create_lesson_plan_221,
                 ]}
-                render={(perm) => (
-                  <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
-                    {d("Create").t("library_label_create")} +
-                  </Button>
-                )}
+                render={(perm) =>
+                  (perm.create_content_page_201 || perm.create_lesson_material_220 || perm.create_lesson_plan_221) && (
+                    <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
+                      {d("Create").t("library_label_create")} +
+                    </Button>
+                  )
+                }
               />
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
