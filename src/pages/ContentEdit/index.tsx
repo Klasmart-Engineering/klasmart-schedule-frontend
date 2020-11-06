@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { Permission, PermissionType } from "../../components/Permission";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -381,11 +382,16 @@ export default function ContentEdit() {
         <MediaAssetsEdit readonly={readonly} overlay={includeH5p} isAsset={true} formMethods={formMethods} contentDetail={contentDetail} />
       )}
       {includePlanComposeGraphic && (
-        <Controller
-          name="data"
-          as={PlanComposeGraphic}
-          defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
-          control={control}
+        <Permission
+          value={PermissionType.edit_lesson_plan_content_238}
+          render={(value) => (
+            <Controller
+              name="data"
+              as={PlanComposeGraphic}
+              defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
+              control={control}
+            />
+          )}
         />
       )}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
@@ -410,7 +416,10 @@ export default function ContentEdit() {
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {
           <Fragment>
+            {/* <Permission value = {PermissionType.create_content_page_201} */}
+            {/* render = {(value)=> ( */}
             <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />
+            {/* )} /> */}
             {leftsideArea}
           </Fragment>
         }

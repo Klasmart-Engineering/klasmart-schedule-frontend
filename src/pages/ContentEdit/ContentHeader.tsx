@@ -28,6 +28,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 
@@ -199,15 +200,20 @@ export function ContentHeader(props: HeaderProps) {
               </LButton>
             ))}
           {lesson === "assets" && id && (
-            <LButton
-              variant="outlined"
-              endIcon={<DeleteOutlineOutlined />}
-              color="primary"
-              className={clsx(css.headerButton, css.redOutlinedButton)}
-              onClick={onDelete as any}
-            >
-              {d("Delete").t("library_label_delete")}
-            </LButton>
+            <Permission
+              value={PermissionType.delete_asset_340}
+              render={(value) => (
+                <LButton
+                  variant="outlined"
+                  endIcon={<DeleteOutlineOutlined />}
+                  color="primary"
+                  className={clsx(css.headerButton, css.redOutlinedButton)}
+                  onClick={onDelete as any}
+                >
+                  {d("Delete").t("library_label_delete")}
+                </LButton>
+              )}
+            />
           )}
         </Hidden>
       </Box>
@@ -257,15 +263,20 @@ export function ContentHeader(props: HeaderProps) {
               </LButton>
             ))}
           {lesson === "assets" && id && (
-            <LButton
-              as={IconButton}
-              className={clsx(css.iconButton, css.redOutlinedButton)}
-              color="primary"
-              onClick={onDelete as any}
-              replace
-            >
-              <DeleteOutlineOutlined fontSize="small" />
-            </LButton>
+            <Permission
+              value={PermissionType.delete_asset_340}
+              render={(value) => (
+                <LButton
+                  as={IconButton}
+                  className={clsx(css.iconButton, css.redOutlinedButton)}
+                  color="primary"
+                  onClick={onDelete as any}
+                  replace
+                >
+                  <DeleteOutlineOutlined fontSize="small" />
+                </LButton>
+              )}
+            />
           )}
         </Box>
       </Hidden>
@@ -379,15 +390,25 @@ export function SelectLesson(props: SelectLessonProps) {
         onChange={(e) => onChangeLesson(e.target.value)}
         InputProps={{ style: { fontSize: 20, fontWeight: 700 } }}
       >
+        {/* <Permission value = {PermissionType.create_asset_320}  */}
+        {/* render ={ (value) =>( */}
         <MenuItem value="assets" className={css.selectLessonItem}>
           {d("Assets").t("library_label_assets")}
         </MenuItem>
+        {/* )}/> */}
+        {/* < Permission value= {PermissionType.create_lesson_material_220} */}
+        {/* render = {(value) =>( */}
         <MenuItem value="material" className={css.selectLessonItem}>
           {d("Lesson Material").t("library_label_lesson_material")}
         </MenuItem>
+
+        {/* )} /> */}
+        {/* <Permission value = {PermissionType.create_lesson_plan_221} */}
+        {/* render= {(value) => ( */}
         <MenuItem value="plan" className={css.selectLessonItem}>
           {d("Lesson Plan").t("library_label_lesson_plan")}
         </MenuItem>
+        {/* )}/> */}
       </TextField>
     </Box>
   );
