@@ -2,7 +2,6 @@ import Cookies from "js-cookie";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
-export const TOKEN_KEY = "access";
 export const LOCALE_KEY = "locale";
 
 export const apiGetMockOptions = () =>
@@ -83,10 +82,6 @@ export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
   window.history.replaceState(null, document.title, url.toString());
-};
-
-export const apiTokenInCookie = () => {
-  return Cookies.get(TOKEN_KEY);
 };
 
 export const apiLocaleInCookie = () => {
