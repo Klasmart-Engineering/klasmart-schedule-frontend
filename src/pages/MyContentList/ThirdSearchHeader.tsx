@@ -9,6 +9,7 @@ import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
@@ -110,21 +111,22 @@ interface BulkActionOption {
   value: BulkAction;
 }
 
-function getBulkAction(condition: QueryCondition): BulkActionOption[] {
+function getBulkAction(condition: QueryCondition, perm: PermissionResult<PermissionType[]>): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
   if (condition.content_type === SearchContentsRequestContentType.assets) {
-    return [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }];
+    return perm.delete_asset_340 ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      return [{ label: d("Remove").t("library_label_remove"), value: BulkAction.remove }];
+      return perm.archive_published_content_273 ? [{ label: d("Remove").t("library_label_remove"), value: BulkAction.remove }] : [];
     case PublishStatus.pending:
       return [];
     case PublishStatus.archive:
-      return [
-        { label: d("Republish").t("library_label_republish"), value: BulkAction.publish },
-        { label: d("Delete").t("library_label_delete"), value: BulkAction.remove },
-      ];
+      const result = [];
+      if (perm.republish_archived_content_274)
+        result.push({ label: d("Republish").t("library_label_republish"), value: BulkAction.publish });
+      if (perm.delete_archived_content_275) result.push({ label: d("Delete").t("library_label_delete"), value: BulkAction.remove });
+      return result;
     default:
       return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
   }
@@ -143,6 +145,12 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const perm = usePermission([
+    PermissionType.delete_asset_340,
+    PermissionType.archive_published_content_273,
+    PermissionType.republish_archived_content_274,
+    PermissionType.delete_archived_content_275,
+  ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
@@ -158,7 +166,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     );
   };
 
-  const bulkOptions = getBulkAction(value).map((item) => (
+  const bulkOptions = getBulkAction(value, perm).map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
     </MenuItem>
@@ -221,6 +229,12 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const perm = usePermission([
+    PermissionType.delete_asset_340,
+    PermissionType.archive_published_content_273,
+    PermissionType.republish_archived_content_274,
+    PermissionType.delete_archived_content_275,
+  ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
@@ -250,7 +264,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleSortClose = () => {
     setAnchorEl(null);
   };
-  const actions = getBulkAction(value);
+  const actions = getBulkAction(value, perm);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>

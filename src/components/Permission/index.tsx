@@ -61,7 +61,7 @@ const usePermissionList = () => {
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);
 
-type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
+export type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
 
 export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
   const { data: permissionList } = usePermissionList();

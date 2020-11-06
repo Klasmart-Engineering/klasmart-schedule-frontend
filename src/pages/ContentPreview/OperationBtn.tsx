@@ -53,9 +53,11 @@ export function OperationBtn(props: ActionProps) {
   return (
     <Box display="flex" justifyContent="flex-end">
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) && publish_status === PublishStatus.published && (
-        <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
-          {d("Remove").t("library_label_remove")}
-        </LButton>
+        <Permission value={PermissionType.archive_published_content_273}>
+          <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+            {d("Remove").t("library_label_remove")}
+          </LButton>
+        </Permission>
       )}
       {(scope === PublishScope.organization || scope === PublishScope.tempArgument) &&
         (publish_status === PublishStatus.draft ||
