@@ -76,10 +76,11 @@ export default function CreateOutcomings() {
     () => ([developmental_id]: string[]) => {
       setCondition("development");
       // ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
-      // const [program_id] = getValues('program')
-      dispatch(getSpecialSkills({ developmental_id, metaLoading: true }));
+      const [program_id] = getValues("program");
+      console.log(program_id);
+      dispatch(getSpecialSkills({ developmental_id, metaLoading: true, program_id }));
     },
-    [dispatch]
+    [dispatch, getValues]
   );
 
   // const handleChangeDevelopmental = React.useCallback(() => dispatch(getNewOptions({ development_id: programId })), [setValue]);
@@ -263,7 +264,7 @@ export default function CreateOutcomings() {
       reset({ ...nextValue, program: getValues("program") });
     }
     if (condition === "development") {
-      reset({ ...nextValue, developmental: getValues("developmental") });
+      reset({ ...nextValue, program: getValues("program"), developmental: getValues("developmental") });
     }
   }, [
     condition,

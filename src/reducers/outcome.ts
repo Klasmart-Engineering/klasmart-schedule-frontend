@@ -130,7 +130,10 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
       api.grades.getGrade({ program_id: program_id ? program_id : firstProgram_id }),
     ]);
     const firstDevelopment_id = developmental[0].id;
-    const skills = await api.skills.getSkill({ developmental_id: development_id ? development_id : firstDevelopment_id });
+    const skills = await api.skills.getSkill({
+      developmental_id: development_id ? development_id : firstDevelopment_id,
+      program_id: program_id ? program_id : firstProgram_id,
+    });
     return { program, subject, developmental, skills, age, grade };
   }
 );
@@ -139,8 +142,8 @@ type GetSpecialSkillsResponse = AsyncReturnType<typeof api.skills.getSkill>;
 type GetSpecialSkillsParams = Parameters<typeof api.skills.getSkill>[0] & LoadingMetaPayload;
 export const getSpecialSkills = createAsyncThunk<GetSpecialSkillsResponse, GetSpecialSkillsParams>(
   "getSecondLevelOptions",
-  async ({ developmental_id }) => {
-    return await api.skills.getSkill({ developmental_id });
+  async ({ developmental_id, program_id }) => {
+    return await api.skills.getSkill({ developmental_id, program_id });
   }
 );
 
