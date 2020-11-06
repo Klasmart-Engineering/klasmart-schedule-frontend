@@ -120,7 +120,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
         <OperationBtn
           scope={scope}
           publish_status={contentPreview.publish_status}
-          content_type_name={contentPreview.content_type_name}
+          content_type={contentPreview.content_type}
           onDelete={handleDelete}
           onPublish={handlePublish}
           onApprove={handleApprove}

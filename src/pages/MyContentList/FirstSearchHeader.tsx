@@ -8,6 +8,7 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
@@ -106,46 +107,68 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
-              <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
-                {d("Create").t("library_label_create")} +
-              </Button>
+              <Permission
+                value={[
+                  PermissionType.create_content_page_201,
+                  PermissionType.create_lesson_material_220,
+                  PermissionType.create_lesson_plan_221,
+                ]}
+                render={(perm) => (
+                  <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
+                    {d("Create").t("library_label_create")} +
+                  </Button>
+                )}
+              />
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
-              <Button
-                onClick={createHandleClick(PublishStatus.published)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.published })}
-                startIcon={<PublishOutlined />}
-              >
-                {d("Published").t("library_label_published")}
-              </Button>
-              <Button
-                onClick={createHandleClick(PublishStatus.pending)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.pending })}
-                startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
-              >
-                {d("Pending").t("library_label_pending")}
-              </Button>
-              <Button
-                onClick={createHandleClick(PublishStatus.draft)}
-                className={clsx(css.nav, { [css.actives]: unpublish })}
-                startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
-              >
-                {d("Unpublished").t("library_label_unpublished")}
-              </Button>
-              <Button
-                onClick={createHandleClick(PublishStatus.archive)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.archive })}
-                startIcon={<ArchiveOutlined />}
-              >
-                {d("Archived").t("library_label_archived")}
-              </Button>
-              <Button
-                onClick={assetsHandleClick(SearchContentsRequestContentType.assets)}
-                className={clsx(css.nav, { [css.actives]: value?.content_type === SearchContentsRequestContentType.assets })}
-                startIcon={<PermMediaOutlined />}
-              >
-                {d("Assets").t("library_label_assets")}
-              </Button>
+              <Permission value={PermissionType.published_content_page_204}>
+                <Button
+                  onClick={createHandleClick(PublishStatus.published)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.published })}
+                  startIcon={<PublishOutlined />}
+                >
+                  {d("Published").t("library_label_published")}
+                </Button>
+              </Permission>
+
+              <Permission value={PermissionType.pending_content_page_203}>
+                <Button
+                  onClick={createHandleClick(PublishStatus.pending)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.pending })}
+                  startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
+                >
+                  {d("Pending").t("library_label_pending")}
+                </Button>
+              </Permission>
+
+              <Permission value={PermissionType.unpublished_content_page_202}>
+                <Button
+                  onClick={createHandleClick(PublishStatus.draft)}
+                  className={clsx(css.nav, { [css.actives]: unpublish })}
+                  startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
+                >
+                  {d("Unpublished").t("library_label_unpublished")}
+                </Button>
+              </Permission>
+
+              <Permission value={PermissionType.archived_content_page_205}>
+                <Button
+                  onClick={createHandleClick(PublishStatus.archive)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.archive })}
+                  startIcon={<ArchiveOutlined />}
+                >
+                  {d("Archived").t("library_label_archived")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.create_asset_page_301}>
+                <Button
+                  onClick={assetsHandleClick(SearchContentsRequestContentType.assets)}
+                  className={clsx(css.nav, { [css.actives]: value?.content_type === SearchContentsRequestContentType.assets })}
+                  startIcon={<PermMediaOutlined />}
+                >
+                  {d("Assets").t("library_label_assets")}
+                </Button>
+              </Permission>
             </Grid>
           </Grid>
         </Hidden>
@@ -186,23 +209,38 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 indicatorColor="primary"
                 textColor="primary"
               >
-                <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
-                <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
-                {value?.publish_status === PublishStatus.rejected ? (
+                <Permission value={PermissionType.published_content_page_204}>
+                  <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
+                </Permission>
+                <Permission value={PermissionType.pending_content_page_203}>
+                  <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
+                </Permission>
+                <Permission value={PermissionType.unpublished_content_page_202}>
+                  {value?.publish_status === PublishStatus.rejected ? (
+                    <Tab
+                      value={PublishStatus.rejected}
+                      label={d("Unpublished").t("library_label_unpublished")}
+                      className={classes.capitalize}
+                    />
+                  ) : (
+                    <Tab
+                      value={PublishStatus.draft}
+                      label={d("Unpublished").t("library_label_unpublished")}
+                      className={classes.capitalize}
+                    />
+                  )}
+                </Permission>
+
+                <Permission value={PermissionType.archived_content_page_205}>
+                  <Tab value={PublishStatus.archive} label={d("Archived").t("library_label_archived")} className={classes.capitalize} />
+                </Permission>
+                <Permission value={PermissionType.create_asset_page_301}>
                   <Tab
-                    value={PublishStatus.rejected}
-                    label={d("Unpublished").t("library_label_unpublished")}
+                    value={SearchContentsRequestContentType.assets}
+                    label={d("Assets").t("library_label_assets")}
                     className={classes.capitalize}
                   />
-                ) : (
-                  <Tab value={PublishStatus.draft} label={d("Unpublished").t("library_label_unpublished")} className={classes.capitalize} />
-                )}
-                <Tab value={PublishStatus.archive} label={d("Archived").t("library_label_archived")} className={classes.capitalize} />
-                <Tab
-                  value={SearchContentsRequestContentType.assets}
-                  label={d("Assets").t("library_label_assets")}
-                  className={classes.capitalize}
-                />
+                </Permission>
               </Tabs>
             </AppBar>
           </Grid>

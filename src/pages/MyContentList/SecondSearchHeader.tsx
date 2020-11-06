@@ -12,6 +12,7 @@ import { Author, PublishStatus, SearchContentsRequestContentType } from "../../a
 import LayoutBox from "../../components/LayoutBox";
 import { QueryConditionBaseProps } from "./types";
 import { d } from "../../locale/LocaleManager";
+import { Permission, PermissionType } from "../../components/Permission";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 
@@ -112,15 +113,17 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.createBtn}
-                onClick={onCreateContent}
-                // href="/library/content-edit/lesson/material/tab/details/rightside/contentH5p"
+              <Permission
+                value={[
+                  PermissionType.create_content_page_201,
+                  PermissionType.create_lesson_material_220,
+                  PermissionType.create_lesson_plan_221,
+                ]}
               >
-                {d("Create").t("library_label_create")} +
-              </Button>
+                <Button variant="contained" color="primary" className={classes.createBtn} onClick={onCreateContent}>
+                  {d("Create").t("library_label_create")} +
+                </Button>
+              </Permission>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (
