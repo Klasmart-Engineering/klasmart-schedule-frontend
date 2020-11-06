@@ -21,6 +21,8 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
+  getScheduleMockOptionsResponse,
+  getScheduleParticipantsMockOptionsResponse,
   getScheduleTimeViewData,
   initScheduleDetial,
   removeSchedule,
@@ -77,6 +79,23 @@ const useStyles = makeStyles(({ shadows }) => ({
     boxShadow: shadows[3],
     width: "310px",
     margin: "0 auto",
+  },
+  participantBox: {
+    width: "100%",
+    maxHeight: "200px",
+    border: "1px solid rgba(0, 0, 0, 0.23)",
+    marginTop: "20px",
+    borderRadius: "5px",
+    padding: "0px 0px 20px 0px",
+    overflow: "auto",
+  },
+  participantContent: {
+    backgroundColor: "#E6E6E6",
+    padding: "8px 10px 8px 10px",
+    marginTop: "10px",
+    marginLeft: "10px",
+    borderRadius: "18px",
+    float: "left",
   },
 }));
 
@@ -136,10 +155,12 @@ function EditBox(props: CalendarStateProps) {
     scheduleId,
     includeTable,
     changeTimesTamp,
-    flattenedMockOptions,
     handleChangeProgramId,
     toLive,
     changeModalDate,
+    scheduleMockOptions,
+    participantMockOptions,
+    getParticipantOptions,
   } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -148,7 +169,7 @@ function EditBox(props: CalendarStateProps) {
   const [lessonPlan, setLessonPlan] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
-  const [teacherItem, setTeacherItem] = React.useState<any[] | undefined>([]);
+  const [, setTeacherItem] = React.useState<any[] | undefined>([]);
   const [contentsListSelect, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
@@ -345,17 +366,12 @@ function EditBox(props: CalendarStateProps) {
   const autocompleteChange = (value: any | null, name: string) => {
     let ids: any[] = [];
 
-    if (name === "teacher_ids") {
-      value.forEach((val: any, key: number) => {
-        ids.push(val.id.toString());
-      });
-      setTeacherItem(value);
+    if (name === "class_id") {
+      getParticipantOptions("7394e93d-d00a-4c88-a08b-d4fb9b96edee");
+      setClassItem(value);
+      ids = value ? value["class_id"] : "";
     } else {
       ids = value ? value["id"] : "";
-    }
-
-    if (name === "class_id") {
-      setClassItem(value);
     }
 
     if (name === "lesson_plan_id") {
@@ -404,7 +420,6 @@ function EditBox(props: CalendarStateProps) {
     title: false,
     class_id: false,
     lesson_plan_id: false,
-    teacher_ids: false,
     start_at: false,
     end_at: false,
     subject_id: false,
@@ -419,7 +434,6 @@ function EditBox(props: CalendarStateProps) {
     const taskValidator = {
       title: false,
       class_id: false,
-      teacher_ids: false,
       start_at: false,
       end_at: false,
       class_type: false,
@@ -434,11 +448,14 @@ function EditBox(props: CalendarStateProps) {
         // @ts-ignore
         validator[name] = !result;
         if (!result) {
+          // @ts-ignore
           verificaPath = false;
         }
       }
     }
-    isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = scheduleList.class_type !== "Task";
+    if (scheduleList.class_type === "Task") {
+      isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = false;
+    }
     setValidator({ ...isValidator });
     return verificaPath;
   };
@@ -476,6 +493,11 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
+    const participant: any = participantMockOptions.participantList;
+    const participantSet = participant.class.teachers.concat(participant.class.students);
+    let ids: any[] = [];
+    participantSet.map((item: any) => ids.push(item.user_id.toString()));
+    addData["teacher_ids"] = ids;
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
@@ -536,6 +558,10 @@ function EditBox(props: CalendarStateProps) {
 
   const isScheduleExpired = (): boolean => {
     return scheduleId ? scheduleDetial.status !== "NotStart" : false;
+  };
+
+  const getClassOption = (list: any) => {
+    return list.classesTeaching;
   };
 
   const saveTheTest = () => {
@@ -747,6 +773,12 @@ function EditBox(props: CalendarStateProps) {
       </MenuItem>
     ));
 
+  const menuItemListClassKr = () => {
+    const participant: any = participantMockOptions.participantList;
+    const participantSet = participant.class.teachers.concat(participant.class.students);
+    return participantSet.map((item: any) => <span className={css.participantContent}>{item.user_name}</span>);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -803,8 +835,8 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={flattenedMockOptions.classes}
-          getOptionLabel={(option: any) => option.name}
+          options={getClassOption(scheduleMockOptions.classList.user)}
+          getOptionLabel={(option: any) => option.class_name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
           }}
@@ -845,29 +877,7 @@ function EditBox(props: CalendarStateProps) {
             )}
           />
         )}
-        <Autocomplete
-          id="combo-box-demo"
-          freeSolo
-          multiple
-          options={flattenedMockOptions.teachers}
-          getOptionLabel={(option: any) => option.name}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "teacher_ids");
-          }}
-          value={teacherItem}
-          disabled={isScheduleExpired()}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={css.fieldset}
-              label={d("Add Participants").t("schedule_detail_participants")}
-              error={validator.teacher_ids}
-              value={scheduleList.teacher_ids}
-              variant="outlined"
-              required
-            />
-          )}
-        />
+        {menuItemListClassKr().length > 0 && <Box className={css.participantBox}>{menuItemListClassKr()}</Box>}
         <Box>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
@@ -923,7 +933,7 @@ function EditBox(props: CalendarStateProps) {
         {scheduleList.class_type !== "Task" && (
           <Autocomplete
             id="combo-box-demo"
-            options={flattenedMockOptions.program}
+            options={scheduleMockOptions.programList}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "program_id");
@@ -946,7 +956,7 @@ function EditBox(props: CalendarStateProps) {
         {scheduleList.class_type !== "Task" && (
           <Autocomplete
             id="combo-box-demo"
-            options={flattenedMockOptions.subject}
+            options={scheduleMockOptions.subjectList}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "subject_id");
@@ -977,7 +987,7 @@ function EditBox(props: CalendarStateProps) {
           required
           disabled={isScheduleExpired()}
         >
-          {menuItemListClassType(flattenedMockOptions.class_types)}
+          {menuItemListClassType(scheduleMockOptions.classTypeList)}
         </TextField>
         <Box
           style={{
@@ -1082,6 +1092,9 @@ interface CalendarStateProps {
   toLive: (schedule_id: string) => void;
   changeModalDate: (data: object) => void;
   mockOptions?: MockOptionsOptionsItem[];
+  scheduleMockOptions: getScheduleMockOptionsResponse;
+  participantMockOptions: getScheduleParticipantsMockOptionsResponse;
+  getParticipantOptions: (class_id: string) => void;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -1100,6 +1113,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     toLive,
     changeModalDate,
     mockOptions,
+    scheduleMockOptions,
+    participantMockOptions,
+    getParticipantOptions,
   } = props;
   const template = (
     <>
@@ -1118,6 +1134,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           toLive={toLive}
           changeModalDate={changeModalDate}
           mockOptions={mockOptions}
+          scheduleMockOptions={scheduleMockOptions}
+          participantMockOptions={participantMockOptions}
+          getParticipantOptions={getParticipantOptions}
         />
       </Box>
       <Box
@@ -1136,6 +1155,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeProgramId={handleChangeProgramId}
           toLive={toLive}
           changeModalDate={changeModalDate}
+          scheduleMockOptions={scheduleMockOptions}
+          participantMockOptions={participantMockOptions}
+          getParticipantOptions={getParticipantOptions}
         />
       </Box>
     </>

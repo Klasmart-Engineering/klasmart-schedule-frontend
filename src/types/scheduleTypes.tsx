@@ -92,3 +92,8 @@ export interface FilterQueryTypeProps {
   subject_ids: string;
   program_ids: string;
 }
+
+export interface ClassOptionsItem {
+  class_id?: string;
+  class_name?: string;
+}

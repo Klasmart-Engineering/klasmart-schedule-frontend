@@ -1,9 +1,29 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import api from "../api";
-import { EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleListView, EntityScheduleSearchView } from "../api/api.auto";
+import api, { gqlapi } from "../api";
+import {
+  EntityScheduleAddView,
+  EntityScheduleDetailsView,
+  EntityScheduleListView,
+  EntityScheduleSearchView,
+  EntitySubject,
+  EntityProgram,
+  EntityClassType,
+} from "../api/api.auto";
 import { apiGetMockOptions, MockOptions } from "../api/extra";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import {
+  ClassesByTeacherQuery,
+  ClassesByOrganizationDocument,
+  ClassesByOrganizationQuery,
+  ClassesByOrganizationQueryVariables,
+  ParticipantsByClassQueryVariables,
+  ParticipantsByClassQuery,
+  ParticipantsByClassDocument,
+} from "../api/api-ko.auto";
+import classListByTeacher from "../mocks/classListByTeacher.json";
+import { AsyncTrunkReturned } from "./report";
 
+const MOCK = true;
 interface scheduleViewData {
   end: Date;
   id: string;
@@ -26,6 +46,8 @@ export interface ScheduleState {
   searchFlag: boolean;
   mockOptions: MockOptions;
   errorLable: string;
+  scheduleMockOptions: getScheduleMockOptionsResponse;
+  participantMockOptions: getScheduleParticipantsMockOptionsResponse;
 }
 
 interface Rootstate {
@@ -73,6 +95,24 @@ const initialState: ScheduleState = {
     teacher_class_relationship: [],
   },
   errorLable: "",
+  scheduleMockOptions: {
+    classList: {
+      user: {
+        classesTeaching: [],
+      },
+    },
+    subjectList: [],
+    programList: [],
+    classTypeList: [],
+  },
+  participantMockOptions: {
+    participantList: {
+      class: {
+        teachers: [],
+        students: [],
+      },
+    },
+  },
 };
 
 type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedule>[0] } & LoadingMetaPayload;
@@ -126,15 +166,68 @@ export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedul
   return api.schedules.getScheduleById(schedule_id);
 });
 
-type attachmentParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
-type attachmentResult = Parameters<typeof api.contentsResources.getContentResourceUploadPath>;
-
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
 type IGetContentsResourseResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
   "content/getContentResourceUploadPath",
   (query) => {
     return api.contentsResources.getContentResourceUploadPath(query);
+  }
+);
+
+export interface getScheduleParticipantsPayLoad {
+  class_id?: string;
+}
+export interface getScheduleParticipantsMockOptionsResponse {
+  participantList: ParticipantsByClassQuery;
+}
+
+export interface getScheduleMockOptionsResponse {
+  classList: ClassesByTeacherQuery;
+  subjectList: EntitySubject[];
+  programList: EntityProgram[];
+  classTypeList: EntityClassType[];
+}
+interface GetScheduleMockOptionsPayLoad {
+  organization_id?: string | null;
+  teacher_id?: string;
+}
+
+/**
+ * get schedule option
+ */
+export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsResponse, GetScheduleMockOptionsPayLoad>(
+  "getClassesList",
+  async ({ organization_id, teacher_id }) => {
+    const { data } = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
+      query: ClassesByOrganizationDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const [subjectList, programList, classTypeList] = await Promise.all([
+      api.subjects.getSubject(),
+      api.programs.getProgram(),
+      api.classTypes.getClassType(),
+    ]);
+    const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
+    const classList = MOCK ? mockClassResult : data;
+    return { classList, subjectList, programList, classTypeList };
+  }
+);
+
+/**
+ * get participant
+ */
+export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
+  "getParticipant",
+  async ({ class_id }) => {
+    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
+      query: ParticipantsByClassDocument,
+      variables: { class_id },
+    });
+    const participantList = data;
+    return { participantList };
   }
 );
 
@@ -206,6 +299,15 @@ const { actions, reducer } = createSlice({
     },
     [getMockOptions.fulfilled.type]: (state, { payload }: any) => {
       state.mockOptions = payload;
+    },
+    [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
+      state.scheduleMockOptions = payload;
+    },
+    [getScheduleMockOptions.rejected.type]: (state, { error }: any) => {
+      state.scheduleMockOptions.classList.user = { classesTeaching: [] };
+    },
+    [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
+      state.participantMockOptions = payload;
     },
   },
 });

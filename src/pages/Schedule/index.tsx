@@ -6,7 +6,14 @@ import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
-import { getScheduleInfo, getScheduleTimeViewData, getMockOptions, getScheduleLiveToken } from "../../reducers/schedule";
+import {
+  getScheduleInfo,
+  getScheduleTimeViewData,
+  getMockOptions,
+  getScheduleLiveToken,
+  getScheduleMockOptions,
+  getScheduleParticipant,
+} from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -42,7 +49,9 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { mockOptions, scheduleMockOptions, participantMockOptions } = useSelector<RootState, RootState["schedule"]>(
+    (state) => state.schedule
+  );
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
   const [state] = useRepeatSchedule();
@@ -87,6 +96,14 @@ function ScheduleContent() {
   };
 
   /**
+   * get participants
+   * @param class_id
+   */
+  const getParticipantOptions = (class_id: string) => {
+    dispatch(getScheduleParticipant({ class_id: class_id }));
+  };
+
+  /**
    * calendar model view change
    */
   const [timesTamp, setTimesTamp] = React.useState<timestampType>({
@@ -117,6 +134,7 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(getMockOptions());
+    dispatch(getScheduleMockOptions({ organization_id: "3f135b91-a616-4c80-914a-e4463104dbac" }));
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -163,6 +181,9 @@ function ScheduleContent() {
               toLive={toLive}
               changeModalDate={changeModalDate}
               mockOptions={mockOptions.options}
+              scheduleMockOptions={scheduleMockOptions}
+              participantMockOptions={participantMockOptions}
+              getParticipantOptions={getParticipantOptions}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
