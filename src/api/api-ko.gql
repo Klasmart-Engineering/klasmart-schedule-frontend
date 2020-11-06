@@ -39,3 +39,15 @@ query participantsByClass($class_id: ID = "c479bd4b-faf8-4a4b-80b6-632c3234d804"
     }
   }
 }
+
+query qeuryPermissionOfMe($organization_id: ID! = "3f135b91-a616-4c80-914a-e4463104dbac") {
+  me {
+    membership(organization_id: $organization_id) {
+      roles {
+        permissions {
+          permission_name
+        }
+      }
+    }
+  }
+}
