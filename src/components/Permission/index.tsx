@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export enum PermissionType {
   create_content_page_201 = "create_content_page_201",
   unpublished_content_page_202 = "unpublished_content_page_202",
@@ -30,10 +32,22 @@ export enum PermissionType {
   delete_event_540 = "delete_event_540",
 }
 
-export interface PermissionProps {
-  value: PermissionType;
+// const mockPermissionList = [
+//   'create_content_page_201',
+//   'unpublished_content_page_202',
+//   'pending_content_page_203',
+//   'published_content_page_204',
+// ]
+
+export interface PermissionProps<V> {
+  value: V;
+  render?: (value: V) => ReactNode;
+  children?: ReactNode;
 }
 
-export function Permission(props: PermissionProps) {
+export function Permission<V extends PermissionType | PermissionType[]>(props: PermissionProps<V>) {
+  const { value, render, children } = props;
+  // const targetPermission = typeof value === 'string' ? [value] : value;
+  console.log(value, render, children);
   return null;
 }
