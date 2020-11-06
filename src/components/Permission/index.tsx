@@ -1,4 +1,6 @@
 import React, { ReactNode } from "react";
+import { useQeuryPermissionOfMeQuery } from "../../api/api-ko.auto";
+import { apiOrganizationOfPage } from "../../api/extra";
 
 export enum PermissionType {
   create_content_page_201 = "create_content_page_201",
@@ -32,12 +34,12 @@ export enum PermissionType {
   delete_event_540 = "delete_event_540",
 }
 
-const mockPermissionList = [
-  PermissionType.create_content_page_201,
-  PermissionType.unpublished_content_page_202,
-  PermissionType.pending_content_page_203,
-  PermissionType.published_content_page_204,
-];
+// const mockPermissionList = [
+//   PermissionType.create_content_page_201,
+//   PermissionType.unpublished_content_page_202,
+//   PermissionType.pending_content_page_203,
+//   PermissionType.published_content_page_204,
+// ];
 
 export interface PermissionProps<V> {
   value: V;
@@ -45,18 +47,31 @@ export interface PermissionProps<V> {
   children?: ReactNode;
 }
 
+const usePermissionList = () => {
+  const organization_id = apiOrganizationOfPage() || "";
+  const { loading, error, data } = useQeuryPermissionOfMeQuery({ variables: { organization_id } });
+  const result: PermissionType[] = [];
+  data?.me?.membership?.roles?.forEach((role) =>
+    role?.permissions?.forEach((permission) => {
+      if (permission) result.push(permission.permission_name as PermissionType);
+    })
+  );
+  return { loading, error, data: result };
+};
+
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);
 
 type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
 
 export function Permission<V extends PermissionType | PermissionType[]>(props: PermissionProps<V>) {
   const { value, render, children } = props;
+  const { data: permissionList } = usePermissionList();
   let result: PermissionResult<PermissionType> | PermissionResult<PermissionType[]>;
   if (isPermissionType(value)) {
-    result = mockPermissionList.includes(value);
+    result = permissionList.includes(value);
   } else {
     result = (value as PermissionType[]).reduce((s, name) => {
-      s[name] = mockPermissionList.includes(name);
+      s[name] = permissionList.includes(name);
       return s;
     }, {} as PermissionResult<PermissionType[]>);
   }
