@@ -1,7 +1,14 @@
-import Cookies from "js-cookie";
 import mitt from "mitt";
 import { createIntl, createIntlCache, IntlFormatters, IntlShape } from "react-intl";
-import { LangeRecordValuesByDesc, LangeRecordValuesById, LangName, LangRecodeDescription, LangRecordId, LangRecordIdByDescription } from "./lang/type";
+import { apiLocaleInCookie } from "../api/extra";
+import {
+  LangeRecordValuesByDesc,
+  LangeRecordValuesById,
+  LangName,
+  LangRecodeDescription,
+  LangRecordId,
+  LangRecordIdByDescription,
+} from "./lang/type";
 
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
 type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecordValuesByDesc<Desc> extends undefined
@@ -99,7 +106,7 @@ class LocaleManager {
     this.emitter.on("change", handler);
   }
 }
-const defaultLocale = getLocaleFromUrl() || Cookies.get("locale")?.slice(0, 2) || getDefaultLocale(AVAILABLE_LANGUAGES);
+const defaultLocale = getLocaleFromUrl() || apiLocaleInCookie() || getDefaultLocale(AVAILABLE_LANGUAGES);
 export const localeManager = new LocaleManager(defaultLocale as LangName);
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
