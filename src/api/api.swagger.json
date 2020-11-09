@@ -3279,7 +3279,7 @@
         }
       }
     },
-    "/visibility_settings/{content_type}": {
+    "/visibility_settings": {
       "get": {
         "description": "get visibilitySetting",
         "consumes": ["application/json"],
@@ -3292,7 +3292,7 @@
             "type": "string",
             "description": "content type",
             "name": "content_type",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -3304,6 +3304,12 @@
               "items": {
                 "$ref": "#/definitions/entity.VisibilitySetting"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {

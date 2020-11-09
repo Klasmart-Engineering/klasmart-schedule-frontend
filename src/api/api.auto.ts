@@ -1664,11 +1664,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags visibilitySetting
      * @name getVisibilitySetting
      * @summary getVisibilitySetting
-     * @request GET:/visibility_settings/{content_type}
+     * @request GET:/visibility_settings
      * @description get visibilitySetting
      */
-    getVisibilitySetting: (content_type: string, params?: RequestParams) =>
-      this.request<EntityVisibilitySetting[], ApiInternalServerErrorResponse>(`/visibility_settings/${content_type}`, "GET", params),
+    getVisibilitySetting: (query: { content_type: string }, params?: RequestParams) =>
+      this.request<EntityVisibilitySetting[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/visibility_settings${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags visibilitySetting
