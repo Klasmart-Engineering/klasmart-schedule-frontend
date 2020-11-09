@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
-import { Empty } from "../ContentEdit/MediaAssets";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -168,7 +168,7 @@ export default function MyContentList() {
           onDelete={handleDelete}
         />
       ) : (
-        <Empty />
+        <TipImages type={TipImagesType.empty} text="library_label_empty" />
       )}
     </div>
   );

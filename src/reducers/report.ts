@@ -9,7 +9,7 @@ import {
   TeachersByOrgnizationQueryVariables,
 } from "../api/api-ko.auto";
 import { EntityScheduleShortInfo, EntityStudentReportCategory, EntityStudentReportItem } from "../api/api.auto";
-import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { apiGetMockOptions, apiOrganizationOfPage, MockOptions } from "../api/extra";
 import classListByTeacher from "../mocks/classListByTeacher.json";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -101,7 +101,8 @@ interface GetReportMockOptionsPayLoad {
 
 export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsResponse, GetReportMockOptionsPayLoad>(
   "getTeacherList",
-  async ({ organization_id, teacher_id }) => {
+  async ({ teacher_id }) => {
+    const organization_id = apiOrganizationOfPage() as string;
     const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
       query: TeachersByOrgnizationDocument,
       variables: {
@@ -110,10 +111,9 @@ export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsRespons
     });
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
-    const user_id =
-      teacherList && teacherList.organization && teacherList.organization.teachers
-        ? teacherList.organization?.teachers[0]?.user?.user_id
-        : undefined;
+    const user_id = (teacherList && teacherList.organization && teacherList.organization.teachers
+      ? teacherList.organization?.teachers[0]?.user?.user_id
+      : undefined) as string;
 
     const { data: result } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
       query: ClassesByTeacherDocument,

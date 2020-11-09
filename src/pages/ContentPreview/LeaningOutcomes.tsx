@@ -2,8 +2,8 @@ import { Box, createStyles, makeStyles, Table, TableBody, TableCell, TableHead, 
 import TableContainer from "@material-ui/core/TableContainer/TableContainer";
 import React from "react";
 import { EntityOutcome } from "../../api/api.auto";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
-import { Empty } from "../ContentEdit/MediaAssets";
 import CreateOutcomings from "../OutcomeEdit";
 
 const useStyles = makeStyles((theme) =>
@@ -68,7 +68,7 @@ export function LearningOutcome(props: LearningOutcomeProps) {
           </Table>
         </TableContainer>
       ) : (
-        <Empty />
+        <TipImages type={TipImagesType.empty} text="library_label_empty" />
       )}
     </Box>
   );
