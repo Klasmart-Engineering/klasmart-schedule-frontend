@@ -15,7 +15,7 @@ variables:
   devCnDeployBucketName: ''
   testGlobalDeployBucketName: 'krklcutest.frontend'
   testCnDeployBucketName: 'cdk-kl2-test-kl2-s3frontend'
-  releaseGlobalDeployBucketName: 'krklcuprod.frontend'
+  releaseGlobalDeployBucketName: 'cdk-kl2-release-global-s3frontend'
   releaseCnDeployBucketName: ''
   devGlobalDeployBucketPath: "/"
   devCnDeployBucketPath: "/"
