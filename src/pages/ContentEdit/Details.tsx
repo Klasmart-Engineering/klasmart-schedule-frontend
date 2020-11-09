@@ -391,7 +391,7 @@ export default function Details(props: DetailsProps) {
           error={errors.publish_scope ? true : false}
           helperText=""
         >
-          {NeedTransilationMenuItemList(visibility_settings)}
+          {menuItemList(visibility_settings)}
         </Controller>
         {lesson === "material" && (
           <Controller

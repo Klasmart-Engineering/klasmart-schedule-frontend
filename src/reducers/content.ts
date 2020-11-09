@@ -283,9 +283,9 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
         : undefined,
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
       type === "material" || type === "plan"
-        ? api.visibilitySettings.getVisibilitySetting(
-            type === "material" ? SearchContentsRequestContentType.material : SearchContentsRequestContentType.plan
-          )
+        ? api.visibilitySettings.getVisibilitySetting({
+            content_type: type === "material" ? SearchContentsRequestContentType.material : SearchContentsRequestContentType.plan,
+          })
         : undefined,
       dispatch(
         getLinkedMockOptions({
