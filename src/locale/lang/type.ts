@@ -408,7 +408,8 @@ type LangRecord<T = string> =
   | { id: "report_label_learning_outcomes_percentage"; description: "Learning Outcomes %"; values: undefined }
   | { id: "report_label_absent"; description: "Absent"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
-  | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined };
+  | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
+  | { id: "general_error_unknown"; description: "Unknown Error"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

@@ -387,5 +387,6 @@
   "report_label_learning_outcomes_percentage": "学习成果百分比",
   "report_label_absent": "缺席",
   "general_error_unauthorized": "用户未登录，请先登录",
-  "general_error_no_organization": "用户没有组织信息"
+  "general_error_no_organization": "用户没有组织信息",
+  "general_error_unknown": "服务器请求失败"
 }
