@@ -8,7 +8,7 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
@@ -107,20 +107,17 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
             <Grid item md={3} lg={5} xl={7}>
-              <Permission
+              <PermissionOr
                 value={[
                   PermissionType.create_content_page_201,
                   PermissionType.create_lesson_material_220,
                   PermissionType.create_lesson_plan_221,
                 ]}
-                render={(perm) =>
-                  (perm.create_content_page_201 || perm.create_lesson_material_220 || perm.create_lesson_plan_221) && (
-                    <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
-                      {d("Create").t("library_label_create")} +
-                    </Button>
-                  )
-                }
-              />
+              >
+                <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
+                  {d("Create").t("library_label_create")} +
+                </Button>
+              </PermissionOr>
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Permission value={PermissionType.published_content_page_204}>

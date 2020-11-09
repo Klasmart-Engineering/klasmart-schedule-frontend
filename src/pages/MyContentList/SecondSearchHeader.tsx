@@ -10,7 +10,7 @@ import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "reac
 import { Controller, useForm } from "react-hook-form";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionType } from "../../components/Permission";
+import { PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { QueryConditionBaseProps } from "./types";
 
@@ -113,20 +113,17 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Permission
+              <PermissionOr
                 value={[
                   PermissionType.create_content_page_201,
                   PermissionType.create_lesson_material_220,
                   PermissionType.create_lesson_plan_221,
                 ]}
-                render={(perm) =>
-                  (perm.create_content_page_201 || perm.create_lesson_material_220 || perm.create_lesson_plan_221) && (
-                    <Button variant="contained" color="primary" className={classes.createBtn} onClick={onCreateContent}>
-                      {d("Create").t("library_label_create")} +
-                    </Button>
-                  )
-                }
-              />
+              >
+                <Button variant="contained" color="primary" className={classes.createBtn} onClick={onCreateContent}>
+                  {d("Create").t("library_label_create")} +
+                </Button>
+              </PermissionOr>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (
