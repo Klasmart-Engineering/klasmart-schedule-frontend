@@ -1,26 +1,26 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
 import {
+  ClassesByOrganizationDocument,
+  ClassesByOrganizationQuery,
+  ClassesByOrganizationQueryVariables,
+  ClassesByTeacherQuery,
+  ParticipantsByClassDocument,
+  ParticipantsByClassQuery,
+  ParticipantsByClassQueryVariables,
+} from "../api/api-ko.auto";
+import {
+  EntityClassType,
+  EntityProgram,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleListView,
   EntityScheduleSearchView,
   EntitySubject,
-  EntityProgram,
-  EntityClassType,
 } from "../api/api.auto";
-import { apiGetMockOptions, MockOptions, apiOrganizationOfPage } from "../api/extra";
-import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import {
-  ClassesByTeacherQuery,
-  ClassesByOrganizationDocument,
-  ClassesByOrganizationQuery,
-  ClassesByOrganizationQueryVariables,
-  ParticipantsByClassQueryVariables,
-  ParticipantsByClassQuery,
-  ParticipantsByClassDocument,
-} from "../api/api-ko.auto";
+import { apiGetMockOptions, apiOrganizationOfPage, MockOptions } from "../api/extra";
 import classListByTeacher from "../mocks/classListByTeacher.json";
+import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 
 const MOCK = true;
@@ -176,7 +176,7 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
 );
 
 export interface getScheduleParticipantsPayLoad {
-  class_id?: string;
+  class_id: string;
 }
 export interface getScheduleParticipantsMockOptionsResponse {
   participantList: ParticipantsByClassQuery;
