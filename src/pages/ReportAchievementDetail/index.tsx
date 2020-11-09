@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import { RootState } from "../../reducers";
 import { getAchievementDetail, getLessonPlan, getMockOptions } from "../../reducers/report";
-import { Empty } from "../ContentEdit/MediaAssets";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
@@ -76,7 +76,12 @@ export function ReportAchievementDetail() {
         backByLessonPlan={backByLessonPlan}
       />
 
-      {true && (achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={achievementDetail} /> : <Empty />)}
+      {true &&
+        (achievementDetail && achievementDetail.length > 0 ? (
+          <AchievementDetailChart data={achievementDetail} />
+        ) : (
+          <TipImages type={TipImagesType.empty} text="library_label_empty" />
+        ))}
       {/* <AchievementDetailChart data={mockAchievementDetail} /> */}
     </>
   );

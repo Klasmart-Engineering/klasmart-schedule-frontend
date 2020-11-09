@@ -23,8 +23,8 @@ import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
-import { Comingsoon, NoFiles } from "./MediaAssets";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: paletteColor.main,
@@ -275,7 +275,7 @@ export default function Outcomes(props: OutcomesProps) {
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
-        <Comingsoon />
+        <TipImages text="library_msg_coming_soon" type={TipImagesType.commingSoon} />
       ) : (
         <>
           <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
@@ -291,7 +291,7 @@ export default function Outcomes(props: OutcomesProps) {
               {pagination}
             </>
           ) : (
-            <NoFiles />
+            <TipImages text="library_msg_no_results_found" type={TipImagesType.noResults} />
           )}
           <OutComesInput value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
         </>

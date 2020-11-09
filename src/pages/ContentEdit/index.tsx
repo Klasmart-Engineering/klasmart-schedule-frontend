@@ -8,6 +8,7 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -427,18 +428,31 @@ export default function ContentEdit() {
         id={id}
         inputSourceWatch={inputSourceWatch}
       />
-      <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        {
-          <Fragment>
-            <Permission
-              value={PermissionType.create_content_page_201}
-              render={(value) => value && <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />}
-            />
-            {leftsideArea}
-          </Fragment>
+      <PermissionOr
+        value={[
+          PermissionType.edit_lesson_material_metadata_and_content_236,
+          PermissionType.edit_lesson_plan_content_238,
+          PermissionType.edit_lesson_plan_metadata_237,
+        ]}
+        render={(value) =>
+          value ? (
+            <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
+              {
+                <Fragment>
+                  <Permission
+                    value={PermissionType.create_content_page_201}
+                    render={(value) => value && <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />}
+                  />
+                  {leftsideArea}
+                </Fragment>
+              }
+              {rightsideArea}
+            </LayoutPair>
+          ) : (
+            <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+          )
         }
-        {rightsideArea}
-      </LayoutPair>
+      />
     </DndProvider>
   );
 }

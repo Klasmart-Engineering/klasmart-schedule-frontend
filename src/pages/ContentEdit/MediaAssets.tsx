@@ -1,15 +1,13 @@
-import { Box, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Box, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
-import React, { Fragment, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useDrag } from "react-dnd";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
-import emptyIconUrl from "../../assets/icons/empty.svg";
-import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -84,15 +82,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-// const multipleLine = (list: string[]) => {
-//   const spanList = list.map((item, idx) => <span key={idx}>{item}</span>);
-//   return (
-//     <Box display="flex" flexDirection="column" alignItems="center">
-//       {spanList}
-//     </Box>
-//   );
-// };
-
 interface Asset {
   status: string;
   type: string;
@@ -119,42 +108,6 @@ interface mockAsset {
   created: string;
   author: string;
   action: string;
-}
-export function Empty() {
-  const css = useStyles();
-  return (
-    <Fragment>
-      <Box className={css.emptyContainer}>
-        <img className={css.emptyImage} alt="empty" src={emptyIconUrl} />
-        <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-          {d("Empty").t("library_label_empty") + "..."}
-        </Typography>
-      </Box>
-    </Fragment>
-  );
-}
-
-export function Comingsoon() {
-  const css = useStyles();
-  return (
-    <Fragment>
-      <img className={css.comingsoonImage} alt="comingsoon" src={comingsoonIconUrl} />
-      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        {d("Coming soon...").t("library_msg_coming_soon")}
-      </Typography>
-    </Fragment>
-  );
-}
-export function NoFiles() {
-  const css = useStyles();
-  return (
-    <Fragment>
-      <img className={css.noFilesImage} alt="noFiles" src={noFilesIconUrl} />
-      <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-        {d("No results found").t("library_msg_no_results_found")}
-      </Typography>
-    </Fragment>
-  );
 }
 
 interface DraggableItemProps {
@@ -243,11 +196,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
-        <Comingsoon />
+        <TipImages text="library_msg_coming_soon" type={TipImagesType.commingSoon} />
       ) : (
         <>
           <SearchcmsList searchName="searchMedia" onSearch={onSearch} value={value} />
-          {list.length > 0 ? table : <NoFiles />}
+          {list.length > 0 ? table : <TipImages text="library_msg_no_results_found" type={TipImagesType.noResults} />}
         </>
       )}
     </Box>
