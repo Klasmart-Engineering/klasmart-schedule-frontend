@@ -94,7 +94,7 @@ export interface PermissionOrProps {
 export function PermissionOr(props: PermissionOrProps) {
   const { value, render, children } = props;
   const pemJson = usePermission(value);
-  const perm = !Object.values(pemJson).some((v) => !v);
+  const perm = Object.values(pemJson).some((v) => v);
   if (render) return <>{render(perm)}</>;
   return perm ? <>{children}</> : null;
 }
