@@ -8,7 +8,7 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
+import { Permission, PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
@@ -119,7 +119,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 </Button>
               </PermissionOr>
             </Grid>
-            <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
+            <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
               <Permission value={PermissionType.published_content_page_204}>
                 <Button
                   onClick={createHandleClick(PublishStatus.published)}
@@ -179,6 +179,13 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssets } = props;
+  const perm = usePermission([
+    PermissionType.published_content_page_204,
+    PermissionType.pending_content_page_203,
+    PermissionType.unpublished_content_page_202,
+    PermissionType.archived_content_page_205,
+    PermissionType.create_asset_page_301,
+  ]);
   const handleChange = (
     event: React.ChangeEvent<{}>,
     publish_status: QueryCondition["publish_status"] | SearchContentsRequestContentType.assets
@@ -208,14 +215,14 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 indicatorColor="primary"
                 textColor="primary"
               >
-                <Permission value={PermissionType.published_content_page_204}>
+                {perm.published_content_page_204 && (
                   <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
-                </Permission>
-                <Permission value={PermissionType.pending_content_page_203}>
+                )}
+                {perm.pending_content_page_203 && (
                   <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
-                </Permission>
-                <Permission value={PermissionType.unpublished_content_page_202}>
-                  {value?.publish_status === PublishStatus.rejected ? (
+                )}
+                {perm.unpublished_content_page_202 &&
+                  (value?.publish_status === PublishStatus.rejected ? (
                     <Tab
                       value={PublishStatus.rejected}
                       label={d("Unpublished").t("library_label_unpublished")}
@@ -227,19 +234,17 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                       label={d("Unpublished").t("library_label_unpublished")}
                       className={classes.capitalize}
                     />
-                  )}
-                </Permission>
-
-                <Permission value={PermissionType.archived_content_page_205}>
+                  ))}
+                {perm.archived_content_page_205 && (
                   <Tab value={PublishStatus.archive} label={d("Archived").t("library_label_archived")} className={classes.capitalize} />
-                </Permission>
-                <Permission value={PermissionType.create_asset_page_301}>
+                )}
+                {perm.create_asset_page_301 && (
                   <Tab
                     value={SearchContentsRequestContentType.assets}
                     label={d("Assets").t("library_label_assets")}
                     className={classes.capitalize}
                   />
-                </Permission>
+                )}
               </Tabs>
             </AppBar>
           </Grid>
