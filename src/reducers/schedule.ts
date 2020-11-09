@@ -9,7 +9,7 @@ import {
   EntityProgram,
   EntityClassType,
 } from "../api/api.auto";
-import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { apiGetMockOptions, MockOptions, apiOrganizationOfPage } from "../api/extra";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import {
   ClassesByTeacherQuery,
@@ -198,7 +198,8 @@ interface GetScheduleMockOptionsPayLoad {
  */
 export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsResponse, GetScheduleMockOptionsPayLoad>(
   "getClassesList",
-  async ({ organization_id, teacher_id }) => {
+  async () => {
+    const organization_id = apiOrganizationOfPage() || "";
     const { data } = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
       query: ClassesByOrganizationDocument,
       variables: {
