@@ -7,6 +7,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
@@ -164,7 +165,12 @@ interface DraggableItemProps {
 function DraggableImage(props: DraggableItemProps) {
   const { type, item, lesson } = props;
   const css = useStyles();
-  const [, dragRef] = useDrag({ item: { type, data: item } });
+  const editbales = usePermission([
+    PermissionType.edit_lesson_plan_content_238,
+    PermissionType.edit_lesson_material_metadata_and_content_236,
+  ]);
+  const editbale = editbales.edit_lesson_material_metadata_and_content_236 || editbales.edit_lesson_plan_content_238;
+  const [, dragRef] = useDrag({ item: { type, data: item }, canDrag: () => editbale });
   const contentType =
     lesson === "material"
       ? item.content_type && Number(item.content_type * 10 + (JSON.parse(item.data || JSON.stringify({ file_type: "" })).file_type || 1))

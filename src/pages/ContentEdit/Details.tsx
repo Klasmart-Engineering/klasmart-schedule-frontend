@@ -101,6 +101,7 @@ interface DetailsProps {
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
   onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
+  permission: boolean;
 }
 export default function Details(props: DetailsProps) {
   const {
@@ -112,6 +113,7 @@ export default function Details(props: DetailsProps) {
     onChangeDevelopmental,
     onChangeProgram,
     onDrawingActivity,
+    permission,
   } = props;
   const css = useStyles();
   const { lesson } = useParams();
@@ -178,7 +180,7 @@ export default function Details(props: DetailsProps) {
         )}
         <Controller
           as={TextField}
-          control={control} // className={css.fieldset}
+          control={control}
           name="name"
           label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required
@@ -188,6 +190,7 @@ export default function Details(props: DetailsProps) {
           }}
           error={errors.name ? true : false}
           helperText=""
+          disabled={permission}
         />
         <Controller
           name="thumbnail"
@@ -211,6 +214,7 @@ export default function Details(props: DetailsProps) {
                         component="span"
                         color="primary"
                         endIcon={<CloudUploadOutlined />}
+                        disabled={permission}
                       >
                         {d("Thumbnail").t("library_label_thumbnail")}
                       </Button>
@@ -256,6 +260,7 @@ export default function Details(props: DetailsProps) {
           className={css.fieldset}
           label={d("Duration(Minutes)").t("library_label_duration")}
           defaultValue={contentDetail.suggest_time}
+          disabled={permission}
         />
         <Controller
           name="program"
@@ -266,6 +271,7 @@ export default function Details(props: DetailsProps) {
               select
               className={css.fieldset}
               label={d("Program").t("library_label_program")}
+              disabled={permission}
               {...props}
               onChange={(e) => {
                 onChangeProgram(e.target.value);
@@ -285,6 +291,7 @@ export default function Details(props: DetailsProps) {
           }}
           className={css.fieldset}
           label={d("Subject").t("library_label_subject")}
+          disabled={permission}
           name="subject"
           defaultValue={contentDetail.subject}
           control={control}
@@ -301,6 +308,7 @@ export default function Details(props: DetailsProps) {
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Category").t("library_label_category")}
+                disabled={permission}
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}
@@ -328,6 +336,7 @@ export default function Details(props: DetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Subcategory").t("library_label_subcategory")}
+            disabled={permission}
           >
             {menuItemList(linkedMockOptions.skills || [])}
           </Controller>
@@ -345,6 +354,7 @@ export default function Details(props: DetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Age").t("library_label_age")}
+            disabled={permission}
           >
             {menuItemList(linkedMockOptions.age || [])}
           </Controller>
@@ -360,6 +370,7 @@ export default function Details(props: DetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Grade").t("library_label_grade")}
+            disabled={permission}
           >
             {menuItemList(linkedMockOptions.grade || [])}
           </Controller>
@@ -369,6 +380,7 @@ export default function Details(props: DetailsProps) {
           select
           className={css.fieldset}
           label={d("Visibility Settings").t("library_label_visibility_settings")}
+          disabled={permission}
           name="publish_scope"
           required
           defaultValue={contentDetail.publish_scope}
@@ -387,6 +399,7 @@ export default function Details(props: DetailsProps) {
             select
             className={css.fieldset}
             label={d("Lesson Type").t("library_label_lesson_type")}
+            disabled={permission}
             name="lesson_type"
             defaultValue={contentDetail.lesson_type || ""}
             control={control}
@@ -417,6 +430,7 @@ export default function Details(props: DetailsProps) {
                   />
                 }
                 label={d("Suitable for Self Study").t("library_label_self_study")}
+                disabled={permission}
                 style={{
                   color: "rgba(0,0,0,0.6)",
                 }}
@@ -450,6 +464,7 @@ export default function Details(props: DetailsProps) {
                     />
                   }
                   label={d("Drawing Activity").t("library_label_drawing_activity")}
+                  disabled={permission}
                   style={{
                     color: "rgba(0,0,0,0.6)",
                   }}
@@ -469,6 +484,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.description}
           className={css.fieldset}
           label={d("Description").t("library_label_description")}
+          disabled={permission}
         />
         <Controller
           as={FormattedTextField}
@@ -478,6 +494,7 @@ export default function Details(props: DetailsProps) {
           defaultValue={contentDetail.keywords}
           className={css.fieldset}
           label={d("Keywords").t("library_label_keywords")}
+          disabled={permission}
           helperText=""
         />
       </Box>

@@ -107,12 +107,13 @@ interface AssetEditProps {
   formMethods: UseFormMethods<ContentDetailForm>;
   contentDetail: EntityContentInfoWithDetails;
   onclosePreview?: () => any;
+  permission?: boolean;
 }
 
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, formMethods, contentDetail, onclosePreview } = props;
+  const { isAsset, formMethods, contentDetail, onclosePreview, permission } = props;
   const { setValue } = formMethods;
   const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
   const setFile = useMemo(
@@ -178,7 +179,7 @@ function AssetEdit(props: AssetEditProps) {
                     )}
                     {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
                     {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
-                      <Button variant="contained" color="primary" ref={btnRef}>
+                      <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
                         {d("Upload from Device").t("library_label_upload_from_device")}
                       </Button>
                     )}
@@ -206,13 +207,22 @@ function AssetPreviewOverlay() {
 interface MediaAssetsEditProps extends AssetEditProps {
   readonly: boolean;
   overlay: boolean;
+  permission?: boolean;
 }
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
-    const { readonly, overlay, isAsset, formMethods, contentDetail, onclosePreview } = this.props;
+    const { readonly, overlay, isAsset, formMethods, contentDetail, onclosePreview, permission } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
     if (readonly) return <AssetPreview resourceId={JSON.parse(contentDetail.data || "{}")} />;
-    return <AssetEdit isAsset={isAsset} formMethods={formMethods} contentDetail={contentDetail} onclosePreview={onclosePreview} />;
+    return (
+      <AssetEdit
+        isAsset={isAsset}
+        formMethods={formMethods}
+        contentDetail={contentDetail}
+        onclosePreview={onclosePreview}
+        permission={permission}
+      />
+    );
   }
 }

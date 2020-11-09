@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -304,44 +304,42 @@ export default function ContentEdit() {
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.publish_scope || errors.name}>
-      <Permission
+      <PermissionOr
         value={[PermissionType.edit_lesson_material_metadata_and_content_236, PermissionType.edit_lesson_plan_metadata_237]}
-        render={(value) =>
-          (value.edit_lesson_material_metadata_and_content_236 || value.edit_lesson_plan_metadata_237) && (
-            <Details
-              contentDetail={contentDetail}
-              formMethods={formMethods}
-              linkedMockOptions={linkedMockOptions}
-              visibility_settings={visibility_settings}
-              lesson_types={lesson_types}
-              onChangeProgram={handleChangeProgram}
-              onChangeDevelopmental={handleChangeDevelopmental}
-              onDrawingActivity={handleDrawingActivity}
-            />
-          )
-        }
+        render={(value) => (
+          <Details
+            contentDetail={contentDetail}
+            formMethods={formMethods}
+            linkedMockOptions={linkedMockOptions}
+            visibility_settings={visibility_settings}
+            lesson_types={lesson_types}
+            onChangeProgram={handleChangeProgram}
+            onChangeDevelopmental={handleChangeDevelopmental}
+            onDrawingActivity={handleDrawingActivity}
+            permission={!value}
+          />
+        )}
       />
       <Permission
         value={PermissionType.associate_learning_outcomes_284}
-        render={(value) =>
-          value && (
-            <Controller
-              as={Outcomes}
-              name="outcome_entities"
-              defaultValue={contentDetail.outcome_entities}
-              control={control}
-              list={outcomeList}
-              onSearch={handleSearchOutcomes}
-              onCheck={handleCheckAssumed}
-              searchName={searchOutcome}
-              assumed={assumed}
-              total={OutcomesListTotal}
-              onChangePage={handleChangePageOutCome}
-              onGoOutcomesDetail={handleGoOutcomeDetail}
-              outcomePage={outcomePage}
-            />
-          )
-        }
+        render={(value) => (
+          <Controller
+            as={Outcomes}
+            name="outcome_entities"
+            defaultValue={contentDetail.outcome_entities}
+            control={control}
+            list={outcomeList}
+            onSearch={handleSearchOutcomes}
+            onCheck={handleCheckAssumed}
+            searchName={searchOutcome}
+            assumed={assumed}
+            total={OutcomesListTotal}
+            onChangePage={handleChangePageOutCome}
+            onGoOutcomesDetail={handleGoOutcomeDetail}
+            outcomePage={outcomePage}
+            permission={!value}
+          />
+        )}
       />
 
       <MediaAssets
@@ -359,63 +357,55 @@ export default function ContentEdit() {
       {includeH5p && !includeAsset && (
         <Permission
           value={PermissionType.edit_lesson_material_metadata_and_content_236}
-          render={(value) =>
-            value && (
-              <Fragment>
+          render={(value) => (
+            <Fragment>
+              <Controller
+                name="data.input_source"
+                as={SelectH5PRadio}
+                defaultValue={inputSourceWatch}
+                control={control}
+                formMethods={formMethods}
+                disabled={!!id}
+              />
+              {inputSourceWatch === 1 ? (
                 <Controller
-                  name="data.input_source"
-                  as={SelectH5PRadio}
-                  defaultValue={inputSourceWatch}
+                  name="data.source"
+                  defaultValue={h5pSource}
                   control={control}
-                  formMethods={formMethods}
-                  disabled={!!id}
+                  render={({ value: valueSource, onChange: onChangeSource }: any) => (
+                    <Controller
+                      name="source_type"
+                      defaultValue={contentDetail.source_type}
+                      control={control}
+                      render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
+                        <ContentH5p isCreate={!id} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
+                      )}
+                    />
+                  )}
                 />
-                {inputSourceWatch === 1 ? (
-                  <Controller
-                    name="data.source"
-                    defaultValue={h5pSource}
-                    control={control}
-                    render={({ value: valueSource, onChange: onChangeSource }: any) => (
-                      <Controller
-                        name="source_type"
-                        defaultValue={contentDetail.source_type}
-                        control={control}
-                        render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
-                          <ContentH5p isCreate={!id} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
-                        )}
-                      />
-                    )}
-                  />
-                ) : (
-                  <MediaAssetsEdit
-                    readonly={false}
-                    overlay={false}
-                    formMethods={formMethods}
-                    contentDetail={contentDetail}
-                    onclosePreview={handleClosePreview}
-                  />
-                )}
-              </Fragment>
-            )
-          }
+              ) : (
+                <MediaAssetsEdit
+                  readonly={false}
+                  overlay={false}
+                  formMethods={formMethods}
+                  contentDetail={contentDetail}
+                  onclosePreview={handleClosePreview}
+                  permission={!value}
+                />
+              )}
+            </Fragment>
+          )}
         />
       )}
       {!includeH5p && includeAsset && (
         <MediaAssetsEdit readonly={readonly} overlay={includeH5p} isAsset={true} formMethods={formMethods} contentDetail={contentDetail} />
       )}
       {includePlanComposeGraphic && (
-        <Permission
-          value={PermissionType.edit_lesson_plan_content_238}
-          render={(value) =>
-            value && (
-              <Controller
-                name="data"
-                as={PlanComposeGraphic}
-                defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
-                control={control}
-              />
-            )
-          }
+        <Controller
+          name="data"
+          as={PlanComposeGraphic}
+          defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
+          control={control}
         />
       )}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
