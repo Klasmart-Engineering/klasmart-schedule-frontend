@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
+import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
@@ -156,20 +157,35 @@ export default function MyContentList() {
       <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
       <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
-      {contentsList && contentsList.length > 0 ? (
-        <ContentCardList
-          formMethods={formMethods}
-          list={contentsList}
-          total={total}
-          queryCondition={condition}
-          onChangePage={handleChangePage}
-          onClickContent={handleClickConent}
-          onPublish={handlePublish}
-          onDelete={handleDelete}
-        />
-      ) : (
-        <TipImages type={TipImagesType.empty} text="library_label_empty" />
-      )}
+      <PermissionOr
+        value={[
+          PermissionType.published_content_page_204,
+          PermissionType.pending_content_page_203,
+          PermissionType.unpublished_content_page_202,
+          PermissionType.archived_content_page_205,
+          PermissionType.create_asset_page_301,
+        ]}
+        render={(value) =>
+          value ? (
+            contentsList && contentsList.length > 0 ? (
+              <ContentCardList
+                formMethods={formMethods}
+                list={contentsList}
+                total={total}
+                queryCondition={condition}
+                onChangePage={handleChangePage}
+                onClickContent={handleClickConent}
+                onPublish={handlePublish}
+                onDelete={handleDelete}
+              />
+            ) : (
+              <TipImages type={TipImagesType.empty} text="library_label_empty" />
+            )
+          ) : (
+            <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+          )
+        }
+      />
     </div>
   );
 }
