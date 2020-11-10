@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     marginRight: "3px",
     textTransform: "capitalize",
+    marginLeft: 20,
   },
   searchBtn: {
     width: "111px",
@@ -98,14 +99,24 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
       order_by: OrderBy._updated_at,
       page: 1,
     });
+  const handleClickUnpublished = (publish_status: QueryCondition["publish_status"]) => () => {
+    onChange({
+      publish_status,
+      content_type: SearchContentsRequestContentType.materialandplan,
+      order_by: OrderBy._updated_at,
+      page: 1,
+      author: Author.self,
+    });
+  };
+
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
-    onChange({ content_type, order_by: OrderBy._updated_at, page: 1, scope: "default" });
+    onChange({ content_type, order_by: OrderBy._updated_at, page: 1 });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
-            <Grid item md={3} lg={5} xl={7}>
+            <Grid item md={2} lg={4} xl={5}>
               <PermissionOr
                 value={[
                   PermissionType.create_content_page_201,
@@ -118,7 +129,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 </Button>
               </PermissionOr>
             </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
+            <Grid container direction="row" justify="flex-end" alignItems="center" item md={10} lg={8} xl={7}>
               <Permission value={PermissionType.published_content_page_204}>
                 <Button
                   onClick={createHandleClick(PublishStatus.published)}
@@ -132,8 +143,10 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Permission value={PermissionType.pending_content_page_203}>
                 <Button
                   onClick={createHandleClick(PublishStatus.pending)}
-                  className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.pending })}
-                  startIcon={value?.publish_status === "pending" ? <PendingBlueIcon /> : <PendingIcon />}
+                  className={clsx(css.nav, {
+                    [css.actives]: value?.publish_status === PublishStatus.pending && value.author !== Author.self,
+                  })}
+                  startIcon={value?.publish_status === "pending" && value.author !== Author.self ? <PendingBlueIcon /> : <PendingIcon />}
                 >
                   {d("Pending").t("library_label_pending")}
                 </Button>
@@ -141,7 +154,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 
               <Permission value={PermissionType.unpublished_content_page_202}>
                 <Button
-                  onClick={createHandleClick(PublishStatus.draft)}
+                  onClick={handleClickUnpublished(PublishStatus.draft)}
                   className={clsx(css.nav, { [css.actives]: unpublish })}
                   startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
                 >

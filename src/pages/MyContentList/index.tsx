@@ -3,11 +3,19 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
-import { ContentType, OrderBy, SearchContentsRequestContentType } from "../../api/type";
+import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
-import { bulkDeleteContent, bulkPublishContent, contentLists, deleteContent, publishContent } from "../../reducers/content";
+import {
+  bulkDeleteContent,
+  bulkPublishContent,
+  contentLists,
+  deleteContent,
+  pendingContentLists,
+  privateContentLists,
+  publishContent,
+} from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
@@ -105,7 +113,7 @@ export default function MyContentList() {
     } else {
       history.push({
         pathname: ContentPreview.routeRedirectDefault,
-        search: toQueryString({ id: id, content_type: content_type, scope: condition.scope }),
+        search: toQueryString({ id: id, content_type: content_type }),
       });
     }
   };
@@ -129,7 +137,17 @@ export default function MyContentList() {
 
   useEffect(() => {
     reset();
-    dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+    if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
+      dispatch(pendingContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+    } else if (
+      condition.publish_status === PublishStatus.draft ||
+      condition.publish_status === PublishStatus.rejected ||
+      (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
+    ) {
+      dispatch(privateContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+    } else {
+      dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+    }
   }, [condition, reset, dispatch, refreshKey]);
 
   return (

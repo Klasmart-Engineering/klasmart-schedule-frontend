@@ -317,6 +317,25 @@ export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContent
     return { list, total };
   }
 );
+type IQueryPendingContentsParams = Parameters<typeof api.contentsPending.searchPendingContents>[0] & LoadingMetaPayload;
+type IQueryPendingContentsResult = AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
+export const pendingContentLists = createAsyncThunk<IQueryPendingContentsResult, IQueryPendingContentsParams>(
+  "content/pendingContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contentsPending.searchPendingContents(query);
+    return { list, total };
+  }
+);
+
+type IQueryPrivateContentsParams = Parameters<typeof api.contentsPrivate.searchPrivateContents>[0] & LoadingMetaPayload;
+type IQueryPrivateContentsResult = AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
+export const privateContentLists = createAsyncThunk<IQueryPrivateContentsResult, IQueryPrivateContentsParams>(
+  "content/pendingContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contentsPrivate.searchPrivateContents(query);
+    return { list, total };
+  }
+);
 type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
@@ -397,9 +416,6 @@ export const approveContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.approveContentReview>,
   Required<EntityContentInfoWithDetails>["id"]
 >("content/approveContentReview", async (content_id, { dispatch }) => {
-  // const content = `Are you sure you want to approve this content?`;
-  // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-  // if (!isConfirmed) return Promise.reject();
   return api.contents.approveContentReview(content_id);
 });
 type RejectContentParams = {
@@ -497,6 +513,24 @@ const { actions, reducer } = createSlice({
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [pendingContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentsList = payload.list;
+      state.mediaList = payload.list;
+      state.total = payload.total;
+    },
+    [pendingContentLists.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [privateContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.contentsList = payload.list;
+      state.mediaList = payload.list;
+      state.total = payload.total;
+    },
+    [privateContentLists.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
