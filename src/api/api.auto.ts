@@ -881,62 +881,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
-     * @name searchPendingContents
-     * @summary queryPendingContent
-     * @request GET:/contents/pending
-     * @description query pending content by condition
-     */
-    searchPendingContents: (
-      query?: {
-        name?: string;
-        author?: string;
-        content_type?: string;
-        scope?: string;
-        program?: string;
-        source_type?: string;
-        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
-        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
-        page_size?: number;
-        page?: number;
-      },
-      params?: RequestParams
-    ) =>
-      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/contents/pending${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags content
-     * @name searchPrivateContents
-     * @summary queryPrivateContent
-     * @request GET:/contents/private
-     * @description query private content by condition
-     */
-    searchPrivateContents: (
-      query?: {
-        name?: string;
-        author?: string;
-        content_type?: string;
-        program?: string;
-        source_type?: string;
-        scope?: string;
-        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
-        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
-        page_size?: number;
-        page?: number;
-      },
-      params?: RequestParams
-    ) =>
-      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/contents/private${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags content
      * @name getContentById
      * @summary getContent
      * @request GET:/contents/{content_id}
@@ -1085,6 +1029,64 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     publishContentBulk: (contentIds: ApiContentBulkOperateRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_bulk/publish`, "PUT", params, contentIds),
+  };
+  contentsPending = {
+    /**
+     * @tags content
+     * @name searchPendingContents
+     * @summary queryPendingContent
+     * @request GET:/contents_pending
+     * @description query pending content by condition
+     */
+    searchPendingContents: (
+      query?: {
+        name?: string;
+        author?: string;
+        content_type?: string;
+        scope?: string;
+        program?: string;
+        source_type?: string;
+        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page_size?: number;
+        page?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_pending${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  contentsPrivate = {
+    /**
+     * @tags content
+     * @name searchPrivateContents
+     * @summary queryPrivateContent
+     * @request GET:/contents_private
+     * @description query private content by condition
+     */
+    searchPrivateContents: (
+      query?: {
+        name?: string;
+        author?: string;
+        content_type?: string;
+        program?: string;
+        source_type?: string;
+        scope?: string;
+        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page_size?: number;
+        page?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_private${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   contentsResources = {
     /**

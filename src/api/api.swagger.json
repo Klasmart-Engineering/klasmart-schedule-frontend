@@ -604,194 +604,6 @@
         }
       }
     },
-    "/contents/pending": {
-      "get": {
-        "description": "query pending content by condition",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["content"],
-        "summary": "queryPendingContent",
-        "operationId": "searchPendingContents",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "search content name",
-            "name": "name",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content author",
-            "name": "author",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content type",
-            "name": "content_type",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content scope",
-            "name": "scope",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content program",
-            "name": "program",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content source type",
-            "name": "source_type",
-            "in": "query"
-          },
-          {
-            "enum": ["published", "draft", "pending", "rejected", "archive"],
-            "type": "string",
-            "description": "search content publish status",
-            "name": "publish_status",
-            "in": "query"
-          },
-          {
-            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
-            "type": "string",
-            "description": "search content order by column name",
-            "name": "order_by",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "content list page size",
-            "name": "page_size",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "content list page index",
-            "name": "page",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/contents/private": {
-      "get": {
-        "description": "query private content by condition",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["content"],
-        "summary": "queryPrivateContent",
-        "operationId": "searchPrivateContents",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "search content name",
-            "name": "name",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content author",
-            "name": "author",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content type",
-            "name": "content_type",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content program",
-            "name": "program",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content source type",
-            "name": "source_type",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search content scope",
-            "name": "scope",
-            "in": "query"
-          },
-          {
-            "enum": ["published", "draft", "pending", "rejected", "archive"],
-            "type": "string",
-            "description": "search content publish status",
-            "name": "publish_status",
-            "in": "query"
-          },
-          {
-            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
-            "type": "string",
-            "description": "search content order by column name",
-            "name": "order_by",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "content list page size",
-            "name": "page_size",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "content list page index",
-            "name": "page",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/contents/{content_id}": {
       "get": {
         "description": "get a content by id",
@@ -1309,6 +1121,194 @@
             "description": "OK",
             "schema": {
               "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_pending": {
+      "get": {
+        "description": "query pending content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryPendingContent",
+        "operationId": "searchPendingContents",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content scope",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
+            "in": "query"
+          },
+          {
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
+            "type": "string",
+            "description": "search content publish status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_private": {
+      "get": {
+        "description": "query private content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryPrivateContent",
+        "operationId": "searchPrivateContents",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content scope",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
+            "type": "string",
+            "description": "search content publish status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
             }
           },
           "400": {
