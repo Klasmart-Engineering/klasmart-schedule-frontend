@@ -8,6 +8,9 @@ import {
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
+  TeachersByOrgnizationDocument,
+  TeachersByOrgnizationQuery,
+  TeachersByOrgnizationQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassType,
@@ -22,6 +25,7 @@ import { apiGetMockOptions, apiOrganizationOfPage, MockOptions } from "../api/ex
 import classListByTeacher from "../mocks/classListByTeacher.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
+import teacherListByOrg from "../mocks/teacherListByOrg.json";
 
 const MOCK = true;
 interface scheduleViewData {
@@ -99,6 +103,11 @@ const initialState: ScheduleState = {
     classList: {
       user: {
         classesTeaching: [],
+      },
+    },
+    teacherList: {
+      organization: {
+        teachers: [],
       },
     },
     subjectList: [],
@@ -183,6 +192,7 @@ export interface getScheduleParticipantsMockOptionsResponse {
 }
 
 export interface getScheduleMockOptionsResponse {
+  teacherList: TeachersByOrgnizationQuery;
   classList: ClassesByTeacherQuery;
   subjectList: EntitySubject[];
   programList: EntityProgram[];
@@ -200,7 +210,16 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
   "getClassesList",
   async () => {
     const organization_id = apiOrganizationOfPage() || "";
-    const { data } = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
+    const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
+      query: TeachersByOrgnizationDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
+    const teacherList = MOCK ? mockResult : data;
+
+    const { data: result } = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
       query: ClassesByOrganizationDocument,
       variables: {
         organization_id,
@@ -212,8 +231,8 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
       api.classTypes.getClassType(),
     ]);
     const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
-    const classList = MOCK ? mockClassResult : data;
-    return { classList, subjectList, programList, classTypeList };
+    const classList = MOCK ? mockClassResult : result;
+    return { classList, subjectList, programList, classTypeList, teacherList };
   }
 );
 

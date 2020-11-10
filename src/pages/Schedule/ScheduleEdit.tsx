@@ -101,7 +101,7 @@ const useStyles = makeStyles(({ shadows }) => ({
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp, modelView, flattenedMockOptions, mockOptions } = props;
+  const { timesTamp, changeTimesTamp, modelView, flattenedMockOptions, mockOptions, scheduleMockOptions } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
@@ -136,6 +136,7 @@ function SmallCalendar(props: CalendarStateProps) {
           flattenedMockOptions={flattenedMockOptions}
           handleChangeLoadScheduleView={handleChangeLoadScheduleView}
           mockOptions={mockOptions}
+          scheduleMockOptions={scheduleMockOptions}
         />
       </MuiPickersUtilsProvider>
     </Box>

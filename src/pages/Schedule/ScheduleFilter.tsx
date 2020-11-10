@@ -9,6 +9,8 @@ import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { d, t } from "../../locale/LocaleManager";
 import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
+import { PermissionType, usePermission } from "../../components/Permission";
+import { getScheduleMockOptionsResponse } from "../../reducers/schedule";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -57,7 +59,9 @@ const useStyles = makeStyles(({ shadows }) =>
 
 function FilterTemplate(props: FilterProps) {
   const css = useStyles();
-  const { flattenedMockOptions, handleChangeLoadScheduleView, mockOptions } = props;
+  const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
+
+  const perm = usePermission([PermissionType.view_my_calendar_510, PermissionType.view_school_calendar_512]);
 
   const [activeStatus, setActiveStatus] = React.useState({
     Schools: false,
@@ -77,9 +81,27 @@ function FilterTemplate(props: FilterProps) {
     Programs: [],
   });
 
-  const [subject, setSubject] = React.useState<MockOptionsItem[]>([]);
+  const getClassOption = (list: any) => {
+    return list.classesTeaching.map((item: any) => {
+      return { id: item.class_id, name: item.class_name };
+    });
+  };
 
-  const filterGather: ScheduleFilterProps[] = [
+  const getTeacherOption = (list: any) => {
+    return list.teachers.map((item: any) => {
+      return { id: item.user_id, name: item.user_name };
+    });
+  };
+
+  const [, setSubject] = React.useState<MockOptionsItem[]>([]);
+
+  const myGather: ScheduleFilterProps[] = [
+    { name: "Classes", label: "schedule_filter_classes", child: getClassOption(scheduleMockOptions.classList.user) },
+    { name: "Programs", label: "schedule_filter_programs", child: scheduleMockOptions.programList },
+    { name: "Subjects", label: "schedule_filter_subjects", child: scheduleMockOptions.subjectList },
+  ];
+
+  const schoolGather: ScheduleFilterProps[] = [
     {
       name: "Schools",
       label: "schedule_filter_schools",
@@ -88,11 +110,10 @@ function FilterTemplate(props: FilterProps) {
         { id: "School-2", name: "School-2" },
       ],
     },
-    { name: "Teacher", label: "schedule_filter_teachers", child: flattenedMockOptions.teachers },
-    { name: "Classes", label: "schedule_filter_classes", child: flattenedMockOptions.classes },
-    { name: "Programs", label: "schedule_filter_programs", child: flattenedMockOptions.program },
-    { name: "Subjects", label: "schedule_filter_subjects", child: subject },
+    { name: "Teacher", label: "schedule_filter_teachers", child: getTeacherOption(scheduleMockOptions.teacherList.organization) },
   ];
+
+  const filterGather = perm.view_school_calendar_512 ? myGather.concat(schoolGather) : myGather;
 
   const changeFilterRow = (type: FilterType) => {
     if (isDisabledFliterRowSpan(type)) return;
@@ -150,7 +171,7 @@ function FilterTemplate(props: FilterProps) {
 
   const isDisabledFliterRowSpan = (type: FilterType) => {
     return (
-      (["Teacher", "Classes"].indexOf(type) > -1 && activeGather.Schools.length < 1) ||
+      (["Teacher", "Classes"].indexOf(type) > -1 && activeGather.Schools.length < 1 && perm.view_school_calendar_512) ||
       ("Subjects" === type && activeGather.Programs.length < 1)
     );
   };
@@ -176,7 +197,7 @@ function FilterTemplate(props: FilterProps) {
           className={css.fliterRowDivChild}
           style={{
             maxHeight: activeStatus[gather.name] ? "5000px" : "46px",
-            paddingLeft: ["Teacher", "Classes", "Subjects"].indexOf(gather.name) > -1 ? "34px" : "8px",
+            paddingLeft: (perm.view_school_calendar_512 ? ["Teacher", "Classes"] : ["Subjects"]).indexOf(gather.name) > -1 ? "34px" : "8px",
           }}
         >
           <div className={isDisabledFliterRowSpan(gather.name) ? css.disabledFliterRowSpan : ""}>
@@ -220,15 +241,17 @@ interface FilterProps {
   flattenedMockOptions: FlattenedMockOptions;
   handleChangeLoadScheduleView: (filterQuery: FilterQueryTypeProps | []) => void;
   mockOptions: MockOptionsOptionsItem[] | undefined;
+  scheduleMockOptions: getScheduleMockOptionsResponse;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
-  const { flattenedMockOptions, handleChangeLoadScheduleView, mockOptions } = props;
+  const { flattenedMockOptions, handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
   return (
     <FilterTemplate
       flattenedMockOptions={flattenedMockOptions}
       handleChangeLoadScheduleView={handleChangeLoadScheduleView}
       mockOptions={mockOptions}
+      scheduleMockOptions={scheduleMockOptions}
     />
   );
 }
