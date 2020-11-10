@@ -8,7 +8,7 @@ import { OrderBy, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { BadaEslBlueIcon, BadaEslIcon, BadaMathBlueIcon, BadaMathIcon } from "../OutcomeList/Icons";
-import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
+import { QueryCondition, QueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -86,7 +86,6 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
       content_type: SearchContentsRequestContentType.materialandplan,
       order_by: OrderBy._updated_at,
       page: 1,
-      scope: PublishScope.tempArgument,
     });
 
   return (
@@ -131,7 +130,6 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
       order_by: OrderBy._updated_at,
       page: 1,
       content_type: SearchContentsRequestContentType.materialandplan,
-      scope: PublishScope.tempArgument,
     });
   };
 

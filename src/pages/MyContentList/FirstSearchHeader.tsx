@@ -11,7 +11,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
-import { PublishScope, QueryCondition, QueryConditionBaseProps } from "./types";
+import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,7 +97,6 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
       content_type: SearchContentsRequestContentType.materialandplan,
       order_by: OrderBy._updated_at,
       page: 1,
-      scope: PublishScope.tempArgument,
     });
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
     onChange({ content_type, order_by: OrderBy._updated_at, page: 1, scope: "default" });
@@ -198,7 +197,6 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
       order_by: OrderBy._updated_at,
       page: 1,
       content_type: SearchContentsRequestContentType.materialandplan,
-      scope: PublishScope.tempArgument,
     });
   };
   return (
