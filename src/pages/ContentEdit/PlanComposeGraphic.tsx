@@ -19,6 +19,7 @@ import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
 import blankImg from "../../assets/icons/deleted.jpg";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
@@ -228,11 +229,12 @@ interface MaterialCardProps {
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
   const css = useStyles();
+  const editable = usePermission(PermissionType.edit_lesson_plan_content_238);
   if (JSON.stringify(props.material) === "{}" || !props.material) {
     return (
       <Card ref={ref}>
         <img src={blankImg} alt="qq" width={200} height={150} />
-        <CancelRounded onClick={props.onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
+        {editable && <CancelRounded onClick={props.onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>}
       </Card>
     );
   } else {
@@ -249,7 +251,7 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
             {author_name}
           </Typography>
         </CardContent>
-        <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>
+        {editable && <CancelRounded onClick={onRemove} viewBox="3 3 18 18" className={css.removeCardIcon}></CancelRounded>}
       </Card>
     );
   }

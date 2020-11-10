@@ -35,7 +35,6 @@ import Details from "./Details";
 import LayoutPair from "./Layout";
 import MediaAssets, { MediaAssetsProps } from "./MediaAssets";
 import MediaAssetsEdit, { MediaAssetsEditHeader } from "./MediaAssetsEdit";
-import { MediaAssetsLibrary } from "./MediaAssetsLibrary";
 import Outcomes, { OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
@@ -292,7 +291,7 @@ export default function ContentEdit() {
     setHasCreateSituationFirstOnload(true);
   }, [reset, id, linkedMockOptions, hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload, lesson]);
   const assetDetails = (
-    <MediaAssetsLibrary>
+    <Fragment>
       <MediaAssetsEditHeader />
       <AssetDetails
         formMethods={formMethods}
@@ -301,7 +300,7 @@ export default function ContentEdit() {
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
       />
-    </MediaAssetsLibrary>
+    </Fragment>
   );
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.publish_scope || errors.name}>
