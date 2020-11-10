@@ -894,7 +894,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         scope?: string;
         program?: string;
         source_type?: string;
-        publish_status?: "published" | "draft" | "pending" | "rejected";
+        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
         page?: number;
@@ -922,7 +922,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         program?: string;
         source_type?: string;
         scope?: string;
-        publish_status?: "published" | "draft" | "pending" | "rejected";
+        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
         page?: number;

@@ -650,7 +650,7 @@
             "in": "query"
           },
           {
-            "enum": ["published", "draft", "pending", "rejected"],
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
             "type": "string",
             "description": "search content publish status",
             "name": "publish_status",
@@ -744,7 +744,7 @@
             "in": "query"
           },
           {
-            "enum": ["published", "draft", "pending", "rejected"],
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
             "type": "string",
             "description": "search content publish status",
             "name": "publish_status",
