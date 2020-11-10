@@ -22,7 +22,6 @@ import {
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleInfo } from "../../reducers/schedule";
 import LayoutPair from "../ContentEdit/Layout";
-import { PublishScope } from "../MyContentList/types";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
 import { H5pPreview } from "./H5pPreview";
@@ -34,15 +33,13 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id") || "";
-  // const content_type: ContentType = Number(query.get("content_type"));
   const sid = query.get("sid") || "";
-  const scope = query.get("scope") || PublishScope.organization;
-  return { id, search, sid, scope };
+  return { id, search, sid };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, search, sid, scope } = useQuery();
+  const { id, search, sid } = useQuery();
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
@@ -118,7 +115,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       )}
       {tab === TabValue.details && (
         <OperationBtn
-          scope={scope}
           publish_status={contentPreview.publish_status}
           content_type={contentPreview.content_type}
           onDelete={handleDelete}
