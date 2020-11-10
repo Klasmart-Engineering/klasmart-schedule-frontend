@@ -143,7 +143,7 @@ function FilterTemplate(props: FilterProps) {
     handleChangeLoadScheduleView(filterQuery);
     setActiveGather(activeGather);
     setActiveAll(false);
-    if (activeGather.Schools.length < 1) {
+    if (activeGather.Schools.length < 1 && perm.view_school_calendar_512) {
       setActiveStatus({ ...activeStatus, Teacher: false, Classes: false });
       if (activeGather.Programs.length < 1) setActiveStatus({ ...activeStatus, Teacher: false, Classes: false, Subjects: false });
     } else if (activeGather.Programs.length < 1) setActiveStatus({ ...activeStatus, Subjects: false });
