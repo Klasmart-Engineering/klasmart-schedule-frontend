@@ -26,7 +26,7 @@ export enum PermissionType {
   attend_live_class_as_a_student_187 = "attend_live_class_as_a_student_187",
   attend_live_class_as_a_teacher_186 = "attend_live_class_as_a_teacher_186",
   schedule_500 = "schedule_500",
-  create_schedule_paage_501 = "create_schedule_paage_501",
+  create_schedule_page_501 = "create_schedule_page_501",
   view_my_calendar_510 = "view_my_calendar_510",
   view_org_calendar__511 = "view_org_calendar__511",
   create_event__520 = "create_event__520",

@@ -110,7 +110,7 @@ function Tool(props: ToolProps) {
     <Box className={css.toolBox}>
       <Grid container spacing={2} alignItems="center">
         <Permission
-          value={PermissionType.create_schedule_paage_501}
+          value={PermissionType.create_schedule_page_501}
           render={(value) =>
             value && (
               <Grid item xs={12} sm={12} md={3} lg={3}>
