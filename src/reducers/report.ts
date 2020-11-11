@@ -99,7 +99,7 @@ interface GetReportMockOptionsPayLoad {
   teacher_id?: string;
 }
 
-export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsResponse, GetReportMockOptionsPayLoad>(
+export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsResponse, GetReportMockOptionsPayLoad & LoadingMetaPayload>(
   "getTeacherList",
   async ({ teacher_id }) => {
     // const organization_id = apiOrganizationOfPage() as string;
@@ -119,12 +119,15 @@ export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsRespons
     const { data: result } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
       query: ClassesByTeacherDocument,
       variables: {
-        user_id: teacher_id ? teacher_id : user_id,
+        user_id: teacher_id ? teacher_id : user_id ? user_id : "",
       },
     });
     const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
     const classList = MOCK ? mockClassResult : result;
-    return { teacherList, classList };
+    return {
+      teacherList: teacherList ? teacherList : { organization: { teachers: [] } },
+      classList: classList ? classList : { user: { classesTeaching: [] } },
+    };
   }
 );
 

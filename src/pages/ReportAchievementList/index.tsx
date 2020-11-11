@@ -93,7 +93,7 @@ export function ReportAchievementList() {
 
   useEffect(() => {
     dispatch(getMockOptions());
-    dispatch(getReportMockOptions({}));
+    dispatch(getReportMockOptions({ metaLoading: true }));
   }, [dispatch]);
   useEffect(() => {
     const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
