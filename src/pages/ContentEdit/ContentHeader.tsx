@@ -28,7 +28,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 
@@ -382,6 +382,9 @@ interface SelectLessonProps {
 }
 export function SelectLesson(props: SelectLessonProps) {
   const css = useStyles();
+  const create_asset = usePermission(PermissionType.create_asset_320);
+  const create_material = usePermission(PermissionType.create_lesson_material_220);
+  const create_plan = usePermission(PermissionType.create_lesson_plan_221);
   const { lesson, onChangeLesson, disabled } = props;
   return (
     <Box mb={3} display="flex" justifyContent="center">
@@ -394,36 +397,23 @@ export function SelectLesson(props: SelectLessonProps) {
         onChange={(e) => onChangeLesson(e.target.value)}
         InputProps={{ style: { fontSize: 20, fontWeight: 700 } }}
       >
-        <Permission
-          value={PermissionType.create_asset_320}
-          render={(value) =>
-            value && (
-              <MenuItem value="assets" className={css.selectLessonItem}>
-                {d("Assets").t("library_label_assets")}
-              </MenuItem>
-            )
-          }
-        />
-        <Permission
-          value={PermissionType.create_lesson_material_220}
-          render={(value) =>
-            value && (
-              <MenuItem value="material" className={css.selectLessonItem}>
-                {d("Lesson Material").t("library_label_lesson_material")}
-              </MenuItem>
-            )
-          }
-        />
-        <Permission
-          value={PermissionType.create_lesson_plan_221}
-          render={(value) =>
-            value && (
-              <MenuItem value="plan" className={css.selectLessonItem}>
-                {d("Lesson Plan").t("library_label_lesson_plan")}
-              </MenuItem>
-            )
-          }
-        />
+        {create_asset && (
+          <MenuItem value="assets" className={css.selectLessonItem}>
+            {d("Assets").t("library_label_assets")}
+          </MenuItem>
+        )}
+
+        {create_material && (
+          <MenuItem value="material" className={css.selectLessonItem}>
+            {d("Lesson Material").t("library_label_lesson_material")}
+          </MenuItem>
+        )}
+
+        {create_plan && (
+          <MenuItem value="plan" className={css.selectLessonItem}>
+            {d("Lesson Plan").t("library_label_lesson_plan")}
+          </MenuItem>
+        )}
       </TextField>
     </Box>
   );

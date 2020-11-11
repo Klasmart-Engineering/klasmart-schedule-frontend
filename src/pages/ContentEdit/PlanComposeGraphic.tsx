@@ -274,6 +274,7 @@ interface SegmentBoxProps extends Segment {
 function SegmentBox(props: SegmentBoxProps) {
   const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
+  const editPlanContent = usePermission(PermissionType.edit_lesson_plan_content_238);
   const addPlan = useMemo(
     () => (item: DragItem) => {
       const type = item.type === "condition" ? "condition" : "material";
@@ -327,14 +328,17 @@ function SegmentBox(props: SegmentBoxProps) {
       ))}
     </Box>
   );
+
   // 既没选 material 也没选 condition 的情况
   if (!material && !condition)
-    return (
+    return editPlanContent ? (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary" style={{ width: 220 }}>
           {d("Drag and drop a lesson material here").t("library_msg_drag_lesson_material")}
         </Typography>
       </div>
+    ) : (
+      <div></div>
     );
   // 选 condition 但没选 material 的情况
   if (!material && condition)

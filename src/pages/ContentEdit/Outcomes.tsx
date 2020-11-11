@@ -22,6 +22,7 @@ import { cloneDeep } from "lodash";
 import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
@@ -114,13 +115,13 @@ interface OutcomesTableProps {
   onChange?: (value: ApiOutcomeView[]) => any;
   onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
   open?: boolean;
-  permission?: boolean;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail, open, permission } = props;
+  const { list, value, onChange, onGoOutcomesDetail, open } = props;
   const css = useStyles();
+  const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
   const handleAction = (item: ApiOutcomeView, type: "add" | "remove") => {
-    if (permission) return;
+    if (associateLOC) return;
     const { outcome_id: id } = item;
     if (type === "add") {
       if (id && value) {
@@ -151,9 +152,12 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         <TableCell>{item.author_name}</TableCell>
         <TableCell>
           {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
-            <AddCircle className={clsx(css.addGreen, permission && css.buttonDisabled)} onClick={() => handleAction(item, "add")} />
+            <AddCircle className={clsx(css.addGreen, associateLOC && css.buttonDisabled)} onClick={() => handleAction(item, "add")} />
           ) : (
-            <RemoveCircle className={clsx(css.removeRead, permission && css.buttonDisabled)} onClick={() => handleAction(item, "remove")} />
+            <RemoveCircle
+              className={clsx(css.removeRead, associateLOC && css.buttonDisabled)}
+              onClick={() => handleAction(item, "remove")}
+            />
           )}
         </TableCell>
       </TableRow>
@@ -233,7 +237,6 @@ export interface OutcomesProps {
   onChange?: (value: ApiOutcomeView[]) => any;
   onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
   outcomePage: number;
-  permission: boolean;
 }
 
 export default function Outcomes(props: OutcomesProps) {
@@ -252,7 +255,6 @@ export default function Outcomes(props: OutcomesProps) {
     total,
     onGoOutcomesDetail,
     outcomePage,
-    permission,
   } = props;
   const { lesson } = useParams();
   const handChangePage = useCallback(
@@ -281,13 +283,7 @@ export default function Outcomes(props: OutcomesProps) {
           <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
           {list.length > 0 ? (
             <>
-              <OutcomesTable
-                list={list}
-                value={value}
-                onChange={onChange}
-                onGoOutcomesDetail={onGoOutcomesDetail}
-                permission={permission}
-              />
+              <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
               {pagination}
             </>
           ) : (

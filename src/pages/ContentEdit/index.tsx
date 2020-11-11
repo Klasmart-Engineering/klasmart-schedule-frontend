@@ -320,26 +320,20 @@ export default function ContentEdit() {
           />
         )}
       />
-      <Permission
-        value={PermissionType.associate_learning_outcomes_284}
-        render={(value) => (
-          <Controller
-            as={Outcomes}
-            name="outcome_entities"
-            defaultValue={contentDetail.outcome_entities}
-            control={control}
-            list={outcomeList}
-            onSearch={handleSearchOutcomes}
-            onCheck={handleCheckAssumed}
-            searchName={searchOutcome}
-            assumed={assumed}
-            total={OutcomesListTotal}
-            onChangePage={handleChangePageOutCome}
-            onGoOutcomesDetail={handleGoOutcomeDetail}
-            outcomePage={outcomePage}
-            permission={!value}
-          />
-        )}
+      <Controller
+        as={Outcomes}
+        name="outcome_entities"
+        defaultValue={contentDetail.outcome_entities}
+        control={control}
+        list={outcomeList}
+        onSearch={handleSearchOutcomes}
+        onCheck={handleCheckAssumed}
+        searchName={searchOutcome}
+        assumed={assumed}
+        total={OutcomesListTotal}
+        onChangePage={handleChangePageOutCome}
+        onGoOutcomesDetail={handleGoOutcomeDetail}
+        outcomePage={outcomePage}
       />
 
       <MediaAssets
@@ -356,7 +350,11 @@ export default function ContentEdit() {
     <Fragment>
       {includeH5p && !includeAsset && (
         <Permission
-          value={PermissionType.edit_lesson_material_metadata_and_content_236}
+          value={[
+            PermissionType.edit_lesson_material_metadata_and_content_236,
+            PermissionType.create_asset_320,
+            PermissionType.create_lesson_material_220,
+          ]}
           render={(value) => (
             <Fragment>
               <Controller
