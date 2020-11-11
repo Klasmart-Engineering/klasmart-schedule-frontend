@@ -17,7 +17,6 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
-import clsx from "clsx";
 import { cloneDeep } from "lodash";
 import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
@@ -55,9 +54,6 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
   addGreen: createColor(palette.success, palette),
   removeRead: createColor(palette.error, palette),
-  buttonDisabled: {
-    color: palette.grey[500],
-  },
   pagination: {
     marginBottom: 90,
   },
@@ -121,7 +117,6 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   const css = useStyles();
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
   const handleAction = (item: ApiOutcomeView, type: "add" | "remove") => {
-    if (associateLOC) return;
     const { outcome_id: id } = item;
     if (type === "add") {
       if (id && value) {
@@ -150,16 +145,15 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         <TableCell>{item.shortcode}</TableCell>
         <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
         <TableCell>{item.author_name}</TableCell>
-        <TableCell>
-          {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
-            <AddCircle className={clsx(css.addGreen, associateLOC && css.buttonDisabled)} onClick={() => handleAction(item, "add")} />
-          ) : (
-            <RemoveCircle
-              className={clsx(css.removeRead, associateLOC && css.buttonDisabled)}
-              onClick={() => handleAction(item, "remove")}
-            />
-          )}
-        </TableCell>
+        {associateLOC && (
+          <TableCell>
+            {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
+              <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
+            ) : (
+              <RemoveCircle className={css.removeRead} onClick={() => handleAction(item, "remove")} />
+            )}
+          </TableCell>
+        )}
       </TableRow>
     ));
   return (
