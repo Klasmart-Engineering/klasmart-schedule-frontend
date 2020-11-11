@@ -34,12 +34,13 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id") || "";
   const sid = query.get("sid") || "";
-  return { id, search, sid };
+  const author = query.get("author");
+  return { id, search, sid, author };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, search, sid } = useQuery();
+  const { id, search, sid, author } = useQuery();
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
@@ -115,6 +116,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       )}
       {tab === TabValue.details && (
         <OperationBtn
+          author={author}
           publish_status={contentPreview.publish_status}
           content_type={contentPreview.content_type}
           onDelete={handleDelete}

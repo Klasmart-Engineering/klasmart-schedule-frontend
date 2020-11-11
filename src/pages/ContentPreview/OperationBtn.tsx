@@ -3,7 +3,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import clsx from "clsx";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { ContentType, PublishStatus } from "../../api/type";
+import { Author, ContentType, PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
 import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -37,6 +37,7 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 export interface ActionProps {
+  author: string | null;
   publish_status: EntityContentInfoWithDetails["publish_status"];
   content_type?: EntityContentInfoWithDetails["content_type"];
   onDelete: () => any;
@@ -47,7 +48,7 @@ export interface ActionProps {
 }
 export function OperationBtn(props: ActionProps) {
   const css = useStyles();
-  const { publish_status, content_type, onDelete, onPublish, onApprove, onReject, onEdit } = props;
+  const { author, publish_status, content_type, onDelete, onPublish, onApprove, onReject, onEdit } = props;
   return (
     <Box display="flex" justifyContent="flex-end">
       {publish_status === PublishStatus.published && (
@@ -58,7 +59,7 @@ export function OperationBtn(props: ActionProps) {
         </Permission>
       )}
       {(publish_status === PublishStatus.draft ||
-        publish_status === PublishStatus.pending ||
+        (publish_status === PublishStatus.pending && author === Author.self) ||
         publish_status === PublishStatus.rejected) && (
         <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
           {d("Delete").t("library_label_delete")}
@@ -71,7 +72,7 @@ export function OperationBtn(props: ActionProps) {
           </LButton>
         </Permission>
       )}
-      {publish_status === PublishStatus.pending && (
+      {publish_status === PublishStatus.pending && author !== Author.self && (
         <Permission value={PermissionType.reject_pending_content_272}>
           <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
             {d("Reject").t("library_label_reject")}
@@ -103,7 +104,7 @@ export function OperationBtn(props: ActionProps) {
           {d("Edit").t("library_label_edit")}
         </LButton>
       )}
-      {publish_status === PublishStatus.pending && (
+      {publish_status === PublishStatus.pending && author !== Author.self && (
         <Permission value={PermissionType.approve_pending_content_271}>
           <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
             {d("Approve").t("library_label_approve")}
