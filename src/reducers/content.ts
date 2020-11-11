@@ -390,7 +390,7 @@ export const bulkPublishContent = createAsyncThunk<
   AsyncReturnType<typeof api.contentsBulk.publishContentBulk>,
   Required<ApiContentBulkOperateRequest>["id"]
 >("content/bulkPublishContent", async (ids, { dispatch }) => {
-  if (!ids.length)
+  if (!ids?.length)
     return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
   const content = d("Are you sure you want to publish this content?").t("library_msg_publish_content");
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
