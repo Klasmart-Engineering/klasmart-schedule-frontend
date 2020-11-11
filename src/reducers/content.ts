@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import api from "../api";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import { ApiContentBulkOperateRequest, ApiOutcomeView, EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
-import { MockOptions } from "../api/extra";
 import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
@@ -15,7 +14,6 @@ interface IContentState {
   contentDetail: EntityContentInfoWithDetails;
   mediaList: EntityContentInfoWithDetails[];
   outcomeList: ApiOutcomeView[];
-  mockOptions: MockOptions;
   total: number;
   contentsList: EntityContentInfoWithDetails[];
   contentPreview: EntityContentInfoWithDetails;
@@ -70,18 +68,6 @@ const initialState: IContentState = {
   MediaListTotal: 0,
   OutcomesListTotal: 0,
   outcomeList: [],
-  mockOptions: {
-    options: [],
-    visibility_settings: [],
-    lesson_types: [],
-    classes: [],
-    class_types: [],
-    organizations: [],
-    teachers: [],
-    students: [],
-    users: [],
-    teacher_class_relationship: [],
-  },
   linkedMockOptions: {
     program: [],
     subject: [],
