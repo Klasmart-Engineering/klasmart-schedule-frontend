@@ -86,7 +86,7 @@ export const apiWaitForOrganizationOfPage = () => {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const orgId = apiOrganizationOfPage();
-    if (orgId) return Promise.resolve(orgId);
+    if (orgId) return resolve(orgId);
     const timer = setInterval(() => {
       if (Date.now() - startTime > TIME_OUT) {
         clearInterval(timer);
