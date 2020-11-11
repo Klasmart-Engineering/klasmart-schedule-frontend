@@ -21,7 +21,7 @@ import {
   EntityScheduleSearchView,
   EntitySubject,
 } from "../api/api.auto";
-import { apiGetMockOptions, apiOrganizationOfPage, MockOptions } from "../api/extra";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import classListByTeacher from "../mocks/classListByTeacher.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
@@ -209,7 +209,7 @@ interface GetScheduleMockOptionsPayLoad {
 export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsResponse, GetScheduleMockOptionsPayLoad>(
   "getClassesList",
   async () => {
-    const organization_id = apiOrganizationOfPage() || "";
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
       query: TeachersByOrgnizationDocument,
       variables: {

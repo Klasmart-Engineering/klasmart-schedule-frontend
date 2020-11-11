@@ -18,7 +18,6 @@ import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../.
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { apiLivePath } from "../../api/extra";
@@ -56,8 +55,7 @@ function ScheduleContent() {
   const { scheduleId } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
-  const [changeProgram, setChangeProgram] = React.useState<string>("");
-  const flattenedMockOptions = ModelMockOptions.toFlatten({ programId: changeProgram, developmentalId: "" }, mockOptions);
+  const [, setChangeProgram] = React.useState<string>("");
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
@@ -176,7 +174,6 @@ function ScheduleContent() {
               modelView={modelView}
               scheduleId={scheduleId}
               includeTable={includeTable}
-              flattenedMockOptions={flattenedMockOptions}
               handleChangeProgramId={handleChangeProgramId}
               toLive={toLive}
               changeModalDate={changeModalDate}

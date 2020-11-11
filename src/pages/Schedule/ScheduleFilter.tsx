@@ -7,7 +7,6 @@ import clsx from "clsx";
 import React from "react";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { d, t } from "../../locale/LocaleManager";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { getScheduleMockOptionsResponse } from "../../reducers/schedule";
@@ -238,17 +237,15 @@ function FilterTemplate(props: FilterProps) {
 }
 
 interface FilterProps {
-  flattenedMockOptions: FlattenedMockOptions;
   handleChangeLoadScheduleView: (filterQuery: FilterQueryTypeProps | []) => void;
   mockOptions: MockOptionsOptionsItem[] | undefined;
   scheduleMockOptions: getScheduleMockOptionsResponse;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
-  const { flattenedMockOptions, handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
+  const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
   return (
     <FilterTemplate
-      flattenedMockOptions={flattenedMockOptions}
       handleChangeLoadScheduleView={handleChangeLoadScheduleView}
       mockOptions={mockOptions}
       scheduleMockOptions={scheduleMockOptions}

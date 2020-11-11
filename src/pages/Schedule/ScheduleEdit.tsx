@@ -17,7 +17,6 @@ import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { Permission, PermissionType } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
-import { FlattenedMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
@@ -101,7 +100,7 @@ const useStyles = makeStyles(({ shadows }) => ({
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp, modelView, flattenedMockOptions, mockOptions, scheduleMockOptions } = props;
+  const { timesTamp, changeTimesTamp, modelView, mockOptions, scheduleMockOptions } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
@@ -133,7 +132,6 @@ function SmallCalendar(props: CalendarStateProps) {
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
         <ScheduleFilter
-          flattenedMockOptions={flattenedMockOptions}
           handleChangeLoadScheduleView={handleChangeLoadScheduleView}
           mockOptions={mockOptions}
           scheduleMockOptions={scheduleMockOptions}
@@ -1096,7 +1094,6 @@ interface CalendarStateProps {
   modelView: modeViewType;
   scheduleId?: string;
   includeTable?: boolean;
-  flattenedMockOptions: FlattenedMockOptions;
   handleChangeProgramId: (value: string) => void;
   toLive: (schedule_id: string) => void;
   changeModalDate: (data: object) => void;
@@ -1117,7 +1114,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     modelView,
     scheduleId,
     includeTable,
-    flattenedMockOptions,
     handleChangeProgramId,
     toLive,
     changeModalDate,
@@ -1138,7 +1134,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           timesTamp={timesTamp}
           repeatData={repeatData}
           modelView={modelView}
-          flattenedMockOptions={flattenedMockOptions}
           handleChangeProgramId={handleChangeProgramId}
           toLive={toLive}
           changeModalDate={changeModalDate}
@@ -1160,7 +1155,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           modelView={modelView}
           scheduleId={scheduleId}
           includeTable={includeTable}
-          flattenedMockOptions={flattenedMockOptions}
           handleChangeProgramId={handleChangeProgramId}
           toLive={toLive}
           changeModalDate={changeModalDate}
