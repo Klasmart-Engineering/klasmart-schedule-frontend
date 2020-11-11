@@ -9,7 +9,7 @@ import {
   TeachersByOrgnizationQueryVariables,
 } from "../api/api-ko.auto";
 import { EntityScheduleShortInfo, EntityStudentReportCategory, EntityStudentReportItem } from "../api/api.auto";
-import { apiGetMockOptions, apiOrganizationOfPage, MockOptions } from "../api/extra";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import classListByTeacher from "../mocks/classListByTeacher.json";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -102,7 +102,8 @@ interface GetReportMockOptionsPayLoad {
 export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsResponse, GetReportMockOptionsPayLoad>(
   "getTeacherList",
   async ({ teacher_id }) => {
-    const organization_id = apiOrganizationOfPage() as string;
+    // const organization_id = apiOrganizationOfPage() as string;
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
       query: TeachersByOrgnizationDocument,
       variables: {
