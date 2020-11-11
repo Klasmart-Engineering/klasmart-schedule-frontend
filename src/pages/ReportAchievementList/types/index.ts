@@ -35,7 +35,12 @@ export interface TeacherItem {
     user_name: string;
   };
 }
-interface ClassItem {
+
+export interface SingleTeacherItem {
+  user_id: string;
+  user_name: string;
+}
+export interface ClassItem {
   class_id: string;
   class_name: string;
 }

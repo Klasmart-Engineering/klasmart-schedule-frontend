@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { RootState } from "../../reducers";
-import { getAchievementDetail, getLessonPlan, getMockOptions } from "../../reducers/report";
+import { getAchievementDetail, getLessonPlan, getMockOptions, getReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
@@ -33,9 +33,7 @@ export function ReportAchievementDetail() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { mockOptions, achievementDetail = [], student_name, lessonPlanList } = useSelector<RootState, RootState["report"]>(
-    (state) => state.report
-  );
+  const { achievementDetail = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -64,16 +62,20 @@ export function ReportAchievementDetail() {
     dispatch(getLessonPlan({ teacher_id: condition.teacher_id, class_id: condition.class_id }));
   }, [condition.class_id, condition.teacher_id, dispatch]);
 
+  useEffect(() => {
+    dispatch(getReportMockOptions({ metaLoading: true }));
+  }, [dispatch]);
+
   return (
     <>
       <FirstSearchHeader value={Category.archived} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
       <BriefIntroduction
         value={condition}
-        mockOptions={mockOptions}
         student_name={student_name}
-        lessonPlanList={lessonPlanList}
+        lessonPlanList={reportMockOptions.lessonPlanList}
         backByLessonPlan={backByLessonPlan}
+        reportMockOptions={reportMockOptions}
       />
 
       {true &&
