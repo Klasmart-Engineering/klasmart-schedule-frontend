@@ -1,23 +1,9 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
-import mitt from "mitt";
 import { Api } from "./api.auto";
+import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
-
-export enum ApiEvent {
-  ResponseError = "ResponseError",
-}
-
-export interface ApiErrorEventData {
-  msg?: string;
-  label?: string;
-}
-
-export interface ApiEventHandler {
-  (data: ApiErrorEventData): any;
-}
-
-export const apiEmitter = mitt();
+export * from "./emitter";
 
 fetchIntercept.register({
   request: function (originUrl, config: RequestInit) {

@@ -1,4 +1,6 @@
 import Cookies from "js-cookie";
+import { LangRecordId } from "../locale/lang/type";
+import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
@@ -79,13 +81,22 @@ export const apiOrganizationOfPage = () => {
 };
 
 export const apiWaitForOrganizationOfPage = () => {
-  return new Promise((resolve) => {
+  const errorLabel: LangRecordId = "general_error_no_organization";
+  const TIME_OUT = 2000;
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    const orgId = apiOrganizationOfPage();
+    if (orgId) return Promise.resolve(orgId);
     const timer = setInterval(() => {
-      const searchParams = new URLSearchParams(window.location.search);
-      const orgId = searchParams.get(ORG_ID_KEY);
+      if (Date.now() - startTime > TIME_OUT) {
+        clearInterval(timer);
+        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: errorLabel });
+        return reject({ label: errorLabel });
+      }
+      const orgId = apiOrganizationOfPage();
       if (!orgId) return;
       clearInterval(timer);
-      resolve(orgId);
+      return resolve(orgId);
     }, 100);
   });
 };
