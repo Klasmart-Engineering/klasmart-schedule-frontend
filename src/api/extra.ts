@@ -78,6 +78,18 @@ export const apiOrganizationOfPage = () => {
   return searchParams.get(ORG_ID_KEY);
 };
 
+export const apiWaitForOrganizationOfPage = () => {
+  return new Promise((resolve) => {
+    const timer = setInterval(() => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const orgId = searchParams.get(ORG_ID_KEY);
+      if (!orgId) return;
+      clearInterval(timer);
+      resolve(orgId);
+    }, 100);
+  });
+};
+
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
