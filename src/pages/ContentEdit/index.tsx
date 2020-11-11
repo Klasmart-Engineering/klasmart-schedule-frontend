@@ -12,7 +12,7 @@ import { TipImages, TipImagesType } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
-import { ModelMockOptions } from "../../models/NewModelMockOptions";
+import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,

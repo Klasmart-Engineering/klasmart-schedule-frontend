@@ -67,7 +67,6 @@ export default function CreateOutcomings() {
   const handleChangeProgram = React.useMemo(
     () => ([programId]: string[]) => {
       setCondition("program");
-      // ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
       dispatch(getNewOptions({ program_id: programId, metaLoading: true }));
     },
     [dispatch]
@@ -75,27 +74,12 @@ export default function CreateOutcomings() {
   const handleChangeDevelopmental = React.useMemo(
     () => ([developmental_id]: string[]) => {
       setCondition("development");
-      // ModelMockOptions.updateValuesWhenProgramChange(setValue, mockOptions, programId);
       const [program_id] = getValues("program");
       console.log(program_id);
       dispatch(getSpecialSkills({ developmental_id, metaLoading: true, program_id }));
     },
     [dispatch, getValues]
   );
-
-  // const handleChangeDevelopmental = React.useCallback(() => dispatch(getNewOptions({ development_id: programId })), [setValue]);
-
-  // React.useEffect(() => {
-  //   // 新建表单时，加载完 mockOptions 的逻辑
-  //   if (outcome_id) return;
-  //   const defaultProgramId = ModelMockOptions.getDefaultProgramId(mockOptions);
-  //   const defaultDevelopmentalId = ModelMockOptions.getDefaultDevelopmental(mockOptions, defaultProgramId);
-  //   if (!defaultDevelopmentalId || !defaultProgramId) return;
-  //   const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue(
-  //     ModelMockOptions.toFlatten({ programId: defaultProgramId, developmentalId: defaultDevelopmentalId }, mockOptions)
-  //   );
-  //   reset({ program: [defaultProgramId], developmental: [defaultDevelopmentalId], ...onlyOneOptionValue });
-  // }, [mockOptions, reset, outcome_id]);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
