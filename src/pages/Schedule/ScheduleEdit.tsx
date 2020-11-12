@@ -561,7 +561,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const getClassOption = (list: any) => {
-    return list.classesTeaching;
+    return list.classes;
   };
 
   const saveTheTest = () => {
@@ -842,7 +842,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={getClassOption(scheduleMockOptions.classList.user)}
+          options={getClassOption(scheduleMockOptions.classList.organization)}
           getOptionLabel={(option: any) => option.class_name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");

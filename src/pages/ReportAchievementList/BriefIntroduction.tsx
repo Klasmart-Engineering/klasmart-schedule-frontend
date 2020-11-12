@@ -2,11 +2,11 @@ import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
-import { MockOptions, MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
-import { QueryCondition } from "./types";
+import { GetReportMockOptionsResponse } from "../../reducers/report";
+import { ClassItem, QueryCondition, TeacherItem } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
@@ -61,25 +61,37 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-function getSpecificName(mockOptions: MockOptions, type: string, id: string) {
-  if (type === "teacher" && mockOptions.teachers[0]) {
-    return mockOptions.teachers.filter((item: MockOptionsItem) => item.id === id)[0].name;
+function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: string, id: string) {
+  const teacherList =
+    reportMockOptions.teacherList &&
+    reportMockOptions.teacherList.organization &&
+    (reportMockOptions.teacherList.organization.teachers as TeacherItem[]);
+  const classList =
+    reportMockOptions.classList &&
+    reportMockOptions.classList.user?.classesTeaching &&
+    (reportMockOptions.classList.user.classesTeaching as ClassItem[]);
+  if (type === "teacher" && teacherList) {
+    const temp =
+      teacherList.filter((item: TeacherItem) => item.user.user_id === id)[0] &&
+      teacherList.filter((item: TeacherItem) => item.user.user_id === id)[0].user;
+    return temp ? temp.user_name : "";
   }
-  if (type === "class" && mockOptions.classes[0]) {
-    return mockOptions.classes.filter((item: MockOptionsItem) => item.id === id)[0].name;
+  if (type === "class" && classList) {
+    const tempClass = classList.filter((item: ClassItem) => item.class_id === id)[0];
+    return tempClass ? tempClass.class_name : "";
   }
 }
 
 interface BriefIntroductionProps {
   value: QueryCondition;
-  mockOptions: MockOptions;
   student_name: string | undefined;
   backByLessonPlan?: (urlParams: string) => void;
   lessonPlanList?: EntityScheduleShortInfo[];
+  reportMockOptions?: GetReportMockOptionsResponse;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, mockOptions, student_name, backByLessonPlan, lessonPlanList } = props;
+  const { value, student_name, backByLessonPlan, lessonPlanList, reportMockOptions } = props;
   const css = useStyles();
   const [lessonPlanName, setLessonPlanName] = React.useState("");
 
@@ -109,8 +121,16 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
       <Divider className={css.divider} />
       <Box className={css.container_intro}>
         <Box className={css.leftName}>
-          {value.teacher_id && <span className={css.teacherAndClass}>{getSpecificName(mockOptions, "teacher", value.teacher_id)}</span>}
-          {value.class_id && <span className={css.teacherAndClass}>{" - " + getSpecificName(mockOptions, "class", value.class_id)}</span>}
+          {value.teacher_id && (
+            <span className={css.teacherAndClass}>
+              {getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "teacher", value.teacher_id)}
+            </span>
+          )}
+          {value.class_id && (
+            <span className={css.teacherAndClass}>
+              {" - " + getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "class", value.class_id)}
+            </span>
+          )}
           {value.lesson_plan_id && (
             <span style={{ cursor: value.student_id ? "pointer" : "default" }} className={css.lessonPlan} onClick={handleClick}>
               {" - " + lessonPlanName}
