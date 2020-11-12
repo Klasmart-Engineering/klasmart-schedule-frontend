@@ -13,7 +13,6 @@ import {
   approve,
   AsyncTrunkReturned,
   deleteOutcome,
-  getMockOptions,
   getNewOptions,
   getOutcomeDetail,
   getSpecialSkills,
@@ -82,10 +81,6 @@ export default function CreateOutcomings() {
   );
 
   React.useEffect(() => {
-    dispatch(getMockOptions());
-  }, [dispatch]);
-
-  React.useEffect(() => {
     if (outcome_id) {
       dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
       setShowEdit(true);
@@ -108,7 +103,6 @@ export default function CreateOutcomings() {
   const handleSave = React.useMemo(
     () =>
       handleSubmit(async (value) => {
-        console.log(getValues());
         setValue("assumed", isAssumed);
         if (outcome_id) {
           const { payload } = ((await dispatch(updateOutcome({ outcome_id, value }))) as unknown) as PayloadAction<
@@ -126,7 +120,7 @@ export default function CreateOutcomings() {
           }
         }
       }),
-    [dispatch, getValues, handleSubmit, history, isAssumed, outcome_id, setValue]
+    [dispatch, handleSubmit, history, isAssumed, outcome_id, setValue]
   );
 
   const [enableCustomization, setEnableCustomization] = React.useState(false);
@@ -250,6 +244,7 @@ export default function CreateOutcomings() {
     if (condition === "development") {
       reset({ ...nextValue, program: getValues("program"), developmental: getValues("developmental") });
     }
+    setIsAssumed(true);
   }, [
     condition,
     dispatch,
@@ -263,7 +258,6 @@ export default function CreateOutcomings() {
     outcome_id,
     reset,
   ]);
-
   return (
     <Box component="form" className={classes.outcomings_container}>
       <OutcomeHeader
