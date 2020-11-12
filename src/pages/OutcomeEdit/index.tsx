@@ -178,7 +178,7 @@ export default function CreateOutcomings() {
   };
 
   const handleReset = () => {
-    history.go(-1);
+    history.push("/assessments/outcome-list");
   };
 
   const handelReject = (): void => {
@@ -226,7 +226,6 @@ export default function CreateOutcomings() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (outcome_id) return;
     const nextValue: any = {
       program: [newOptions.program[0]?.id],
       developmental: [newOptions.developmental[0]?.id],
@@ -236,20 +235,35 @@ export default function CreateOutcomings() {
       grade: [newOptions.grade[0]?.id],
       assumed: true,
     };
+    if (outcome_id) {
+      if (condition === "program") {
+        setValue("subject", nextValue.subject);
+        setValue("developmental", nextValue.developmental);
+        setValue("skills", nextValue.skills);
+        setValue("age", nextValue.age);
+        setValue("grade", nextValue.grade);
+      }
+      if (condition === "development") {
+        setValue("skills", nextValue.skills);
+      }
+      return;
+    }
     if (condition === "default") {
       reset(nextValue);
     }
     if (condition === "program") {
-      reset({ ...nextValue, program: getValues("program") });
+      setValue("subject", nextValue.subject);
+      setValue("developmental", nextValue.developmental);
+      setValue("skills", nextValue.skills);
+      setValue("age", nextValue.age);
+      setValue("grade", nextValue.grade);
     }
     if (condition === "development") {
-      reset({ ...nextValue, program: getValues("program"), developmental: getValues("developmental") });
+      setValue("skills", nextValue.skills);
     }
     setIsAssumed(true);
   }, [
     condition,
-    dispatch,
-    getValues,
     newOptions.age,
     newOptions.developmental,
     newOptions.grade,
@@ -258,6 +272,7 @@ export default function CreateOutcomings() {
     newOptions.subject,
     outcome_id,
     reset,
+    setValue,
   ]);
   return (
     <Box component="form" className={classes.outcomings_container}>
