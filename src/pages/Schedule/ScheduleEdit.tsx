@@ -1061,7 +1061,7 @@ function EditBox(props: CalendarStateProps) {
               marginRight: "10%",
             }}
             disabled={scheduleList.class_type === "Task"}
-            href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}`}
+            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}`}
           >
             {d("Preview").t("schedule_button_preview")}
           </Button>

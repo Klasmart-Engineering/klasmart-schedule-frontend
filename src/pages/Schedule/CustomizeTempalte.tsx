@@ -137,7 +137,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           color="primary"
           variant="contained"
           disabled={scheduleInfo.class_type === "Task"}
-          href={`/#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}`}
+          href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}`}
         >
           {d("Preview").t("schedule_button_preview")}
         </Button>
