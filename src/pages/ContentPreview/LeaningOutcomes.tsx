@@ -27,7 +27,7 @@ function OutComeRow(props: OutcomeProps) {
   const css = useStyles();
   const { outcome } = props;
   const handleClickOutcome = () => {
-    window.open(`#${CreateOutcomings.routeBasePath}?outcome_id=${outcome.outcome_id}`);
+    window.open(`#${CreateOutcomings.routeBasePath}?outcome_id=${outcome.outcome_id}&readonly=true`);
   };
   return (
     <TableRow>
