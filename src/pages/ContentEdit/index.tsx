@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
-import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
+import { PermissionOr, PermissionType } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
@@ -352,7 +352,7 @@ export default function ContentEdit() {
   const rightsideArea = (
     <Fragment>
       {includeH5p && !includeAsset && (
-        <Permission
+        <PermissionOr
           value={[
             PermissionType.edit_lesson_material_metadata_and_content_236,
             PermissionType.create_lesson_material_220,
@@ -445,19 +445,7 @@ export default function ContentEdit() {
             <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
               {
                 <Fragment>
-                  <PermissionOr
-                    value={[
-                      PermissionType.create_content_page_201,
-                      PermissionType.create_asset_320,
-                      PermissionType.create_lesson_material_220,
-                      PermissionType.create_lesson_plan_221,
-                      PermissionType.edit_org_published_content_235,
-                      PermissionType.edit_lesson_material_metadata_and_content_236,
-                      PermissionType.edit_lesson_plan_content_238,
-                      PermissionType.edit_lesson_plan_metadata_237,
-                    ]}
-                    render={(value) => value && <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />}
-                  />
+                  <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />
                   {leftsideArea}
                 </Fragment>
               }
