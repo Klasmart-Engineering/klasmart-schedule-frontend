@@ -53,6 +53,18 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  assetsHeader: {
+    fontSize: "20px",
+    fontWeight: "bold",
+    height: "64px",
+    paddingLeft: "30px",
+    lineHeight: "64px",
+    backgroundColor: palette.grey[200],
+    boxShadow: shadows[3],
+  },
+  detailBox: {
+    boxShadow: shadows[3],
+  },
 }));
 
 function ProgressWithText(props: CircularProgressProps) {
@@ -310,13 +322,17 @@ interface AssetDetailsProps {
 
 export default function AssetDetails(props: AssetDetailsProps) {
   const { formMethods, flattenedMockOptions, contentDetail, onChangeDevelopmental, onChangeProgram } = props;
+  const css = useStyles();
   return (
-    <AssetsDetails
-      formMethods={formMethods}
-      flattenedMockOptions={flattenedMockOptions}
-      contentDetail={contentDetail}
-      onChangeProgram={onChangeProgram}
-      onChangeDevelopmental={onChangeDevelopmental}
-    />
+    <div className={css.detailBox}>
+      <Box className={css.assetsHeader}>{d("Details").t("library_label_details")}</Box>
+      <AssetsDetails
+        formMethods={formMethods}
+        flattenedMockOptions={flattenedMockOptions}
+        contentDetail={contentDetail}
+        onChangeProgram={onChangeProgram}
+        onChangeDevelopmental={onChangeDevelopmental}
+      />
+    </div>
   );
 }

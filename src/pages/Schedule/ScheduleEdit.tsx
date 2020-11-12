@@ -281,8 +281,9 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
+      getParticipantOptions("7394e93d-d00a-4c88-a08b-d4fb9b96edee");
     }
-  }, [scheduleDetial, scheduleId]);
+  }, [getParticipantOptions, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
   const repeatData = {
@@ -366,12 +367,10 @@ function EditBox(props: CalendarStateProps) {
   const autocompleteChange = (value: any | null, name: string) => {
     let ids: any[] = [];
 
+    ids = value ? value["id"] : "";
     if (name === "class_id") {
       getParticipantOptions("7394e93d-d00a-4c88-a08b-d4fb9b96edee");
       setClassItem(value);
-      ids = value ? value["class_id"] : "";
-    } else {
-      ids = value ? value["id"] : "";
     }
 
     if (name === "lesson_plan_id") {
@@ -561,7 +560,9 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const getClassOption = (list: any) => {
-    return list.classes;
+    return list.classes.map((item: any) => {
+      return { id: item.class_id, name: item.class_name };
+    });
   };
 
   const saveTheTest = () => {
@@ -843,7 +844,7 @@ function EditBox(props: CalendarStateProps) {
         <Autocomplete
           id="combo-box-demo"
           options={getClassOption(scheduleMockOptions.classList.organization)}
-          getOptionLabel={(option: any) => option.class_name}
+          getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
           }}
