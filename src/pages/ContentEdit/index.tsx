@@ -237,7 +237,7 @@ export default function ContentEdit() {
   );
   const handleGoOutcomeDetail = useMemo(
     () => (id: ApiOutcomeView["outcome_id"]) => {
-      window.open(`#/assessments/outcome-edit?outcome_id=${id}`, "_blank");
+      window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
     },
     []
   );

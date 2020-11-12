@@ -40,12 +40,13 @@ const useQuery = () => {
   const outcome_id = query.get("outcome_id") || "";
   const status = query.get("status") || "";
   const before = query.get("before") || "";
-  return { outcome_id, status, before };
+  const readOnly = query.get("readonly") || false;
+  return { outcome_id, status, before, readOnly };
 };
 
 export default function CreateOutcomings() {
   const classes = useStyles();
-  const { outcome_id, status, before } = useQuery();
+  const { outcome_id, status, before, readOnly } = useQuery();
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -260,21 +261,23 @@ export default function CreateOutcomings() {
   ]);
   return (
     <Box component="form" className={classes.outcomings_container}>
-      <OutcomeHeader
-        handleSave={handleSave}
-        handleReset={handleReset}
-        handleDelete={handleDelete}
-        outcome_id={outcome_id}
-        handelReject={handelReject}
-        handlePublish={handlePublish}
-        handleApprove={handleApprove}
-        publish_status={outcome_id ? outcomeDetail.publish_status : "draft"}
-        isDirty={isDirty}
-        showEdit={showEdit}
-        handleEdit={handleEdit}
-        status={status}
-        before={before}
-      />
+      {!readOnly && (
+        <OutcomeHeader
+          handleSave={handleSave}
+          handleReset={handleReset}
+          handleDelete={handleDelete}
+          outcome_id={outcome_id}
+          handelReject={handelReject}
+          handlePublish={handlePublish}
+          handleApprove={handleApprove}
+          publish_status={outcome_id ? outcomeDetail.publish_status : "draft"}
+          isDirty={isDirty}
+          showEdit={showEdit}
+          handleEdit={handleEdit}
+          status={status}
+          before={before}
+        />
+      )}
       <OutcomeForm
         outcome_id={outcome_id}
         showEdit={showEdit}
