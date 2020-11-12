@@ -27,7 +27,7 @@ import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 
-const MOCK = true;
+const MOCK = false;
 interface scheduleViewData {
   end: Date;
   id: string;
@@ -101,8 +101,8 @@ const initialState: ScheduleState = {
   errorLable: "",
   scheduleMockOptions: {
     classList: {
-      user: {
-        classesTeaching: [],
+      organization: {
+        classes: [],
       },
     },
     teacherList: {
@@ -193,7 +193,7 @@ export interface getScheduleParticipantsMockOptionsResponse {
 
 export interface getScheduleMockOptionsResponse {
   teacherList: TeachersByOrgnizationQuery;
-  classList: ClassesByTeacherQuery;
+  classList: ClassesByOrganizationQuery;
   subjectList: EntitySubject[];
   programList: EntityProgram[];
   classTypeList: EntityClassType[];
@@ -324,7 +324,7 @@ const { actions, reducer } = createSlice({
       state.scheduleMockOptions = payload;
     },
     [getScheduleMockOptions.rejected.type]: (state, { error }: any) => {
-      state.scheduleMockOptions.classList.user = { classesTeaching: [] };
+      state.scheduleMockOptions.classList.organization = { classes: [] };
     },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.participantMockOptions = payload;

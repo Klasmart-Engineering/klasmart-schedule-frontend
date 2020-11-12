@@ -81,13 +81,14 @@ function FilterTemplate(props: FilterProps) {
   });
 
   const getClassOption = (list: any) => {
-    return list.classesTeaching.map((item: any) => {
+    return list.classes.map((item: any) => {
       return { id: item.class_id, name: item.class_name };
     });
   };
 
   const getTeacherOption = (list: any) => {
-    return list.teachers.map((item: any) => {
+    const teachers = list.teachers || [];
+    return teachers.map((item: any) => {
       return { id: item.user_id, name: item.user_name };
     });
   };
@@ -95,7 +96,7 @@ function FilterTemplate(props: FilterProps) {
   const [, setSubject] = React.useState<MockOptionsItem[]>([]);
 
   const myGather: ScheduleFilterProps[] = [
-    { name: "Classes", label: "schedule_filter_classes", child: getClassOption(scheduleMockOptions.classList.user) },
+    { name: "Classes", label: "schedule_filter_classes", child: getClassOption(scheduleMockOptions.classList.organization) },
     { name: "Programs", label: "schedule_filter_programs", child: scheduleMockOptions.programList },
     { name: "Subjects", label: "schedule_filter_subjects", child: scheduleMockOptions.subjectList },
   ];
