@@ -229,7 +229,11 @@ interface MaterialCardProps {
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
   const css = useStyles();
-  const editable = usePermission(PermissionType.edit_lesson_plan_content_238);
+  const editPlan = usePermission(PermissionType.edit_lesson_plan_content_238);
+  const editAll = usePermission(PermissionType.edit_org_published_content_235);
+  const createAll = usePermission(PermissionType.create_content_page_201);
+  const createplan = usePermission(PermissionType.create_lesson_plan_221);
+  const editable = editPlan || editAll || createAll || createplan;
   if (JSON.stringify(props.material) === "{}" || !props.material) {
     return (
       <Card ref={ref}>
@@ -274,7 +278,11 @@ interface SegmentBoxProps extends Segment {
 function SegmentBox(props: SegmentBoxProps) {
   const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
-  const editPlanContent = usePermission(PermissionType.edit_lesson_plan_content_238);
+  const editPlan = usePermission(PermissionType.edit_lesson_plan_content_238);
+  const editAll = usePermission(PermissionType.edit_org_published_content_235);
+  const createAll = usePermission(PermissionType.create_content_page_201);
+  const createplan = usePermission(PermissionType.create_lesson_plan_221);
+  const editable = editPlan || editAll || createAll || createplan;
   const addPlan = useMemo(
     () => (item: DragItem) => {
       const type = item.type === "condition" ? "condition" : "material";
@@ -331,7 +339,7 @@ function SegmentBox(props: SegmentBoxProps) {
 
   // 既没选 material 也没选 condition 的情况
   if (!material && !condition)
-    return editPlanContent ? (
+    return editable ? (
       <div ref={blankDropRef} className={clsx(css.blankBox, css.drappableBox)}>
         <Typography align="center" variant="body1" color="textSecondary" style={{ width: 220 }}>
           {d("Drag and drop a lesson material here").t("library_msg_drag_lesson_material")}

@@ -384,6 +384,7 @@ export function SelectLesson(props: SelectLessonProps) {
   const create_asset = usePermission(PermissionType.create_asset_320);
   const create_material = usePermission(PermissionType.create_lesson_material_220);
   const create_plan = usePermission(PermissionType.create_lesson_plan_221);
+  const create_content = usePermission(PermissionType.create_content_page_201);
   const { lesson, onChangeLesson, disabled } = props;
   return (
     <Box mb={3} display="flex" justifyContent="center">
@@ -396,19 +397,19 @@ export function SelectLesson(props: SelectLessonProps) {
         onChange={(e) => onChangeLesson(e.target.value)}
         InputProps={{ style: { fontSize: 20, fontWeight: 700 } }}
       >
-        {create_asset && (
+        {(create_asset || create_content) && (
           <MenuItem value="assets" className={css.selectLessonItem}>
             {d("Assets").t("library_label_assets")}
           </MenuItem>
         )}
 
-        {create_material && (
+        {(create_material || create_content) && (
           <MenuItem value="material" className={css.selectLessonItem}>
             {d("Lesson Material").t("library_label_lesson_material")}
           </MenuItem>
         )}
 
-        {create_plan && (
+        {(create_plan || create_content) && (
           <MenuItem value="plan" className={css.selectLessonItem}>
             {d("Lesson Plan").t("library_label_lesson_plan")}
           </MenuItem>

@@ -116,6 +116,9 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   const { list, value, onChange, onGoOutcomesDetail, open } = props;
   const css = useStyles();
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
+  const createContent = usePermission(PermissionType.create_content_page_201);
+  const editAll = usePermission(PermissionType.edit_org_published_content_235);
+  const isPermission = associateLOC || createContent || editAll;
   const handleAction = (item: ApiOutcomeView, type: "add" | "remove") => {
     const { outcome_id: id } = item;
     if (type === "add") {
@@ -145,7 +148,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         <TableCell>{item.shortcode}</TableCell>
         <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
         <TableCell>{item.author_name}</TableCell>
-        {associateLOC && (
+        {isPermission && (
           <TableCell>
             {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
               <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />

@@ -302,7 +302,14 @@ export default function ContentEdit() {
   const contentTabs = (
     <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.publish_scope || errors.name}>
       <PermissionOr
-        value={[PermissionType.edit_lesson_material_metadata_and_content_236, PermissionType.edit_lesson_plan_metadata_237]}
+        value={[
+          PermissionType.edit_org_published_content_235,
+          PermissionType.edit_lesson_material_metadata_and_content_236,
+          PermissionType.edit_lesson_plan_metadata_237,
+          PermissionType.create_content_page_201,
+          PermissionType.create_lesson_plan_221,
+          PermissionType.create_lesson_material_220,
+        ]}
         render={(value) => (
           <Details
             contentDetail={contentDetail}
@@ -332,7 +339,6 @@ export default function ContentEdit() {
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
       />
-
       <MediaAssets
         list={mediaList}
         onSearch={handleSearchMedia}
@@ -349,8 +355,9 @@ export default function ContentEdit() {
         <Permission
           value={[
             PermissionType.edit_lesson_material_metadata_and_content_236,
-            PermissionType.create_asset_320,
             PermissionType.create_lesson_material_220,
+            PermissionType.create_content_page_201,
+            PermissionType.edit_org_published_content_235,
           ]}
           render={(value) => (
             <Fragment>
@@ -423,14 +430,32 @@ export default function ContentEdit() {
         inputSourceWatch={inputSourceWatch}
       />
       <PermissionOr
-        value={[PermissionType.create_content_page_201, PermissionType.edit_org_published_content_235]}
+        value={[
+          PermissionType.create_content_page_201,
+          PermissionType.edit_org_published_content_235,
+          PermissionType.create_asset_320,
+          PermissionType.create_lesson_material_220,
+          PermissionType.create_lesson_plan_221,
+          PermissionType.edit_lesson_material_metadata_and_content_236,
+          PermissionType.edit_lesson_plan_content_238,
+          PermissionType.edit_lesson_plan_metadata_237,
+        ]}
         render={(value) =>
           value ? (
             <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
               {
                 <Fragment>
-                  <Permission
-                    value={PermissionType.create_content_page_201}
+                  <PermissionOr
+                    value={[
+                      PermissionType.create_content_page_201,
+                      PermissionType.create_asset_320,
+                      PermissionType.create_lesson_material_220,
+                      PermissionType.create_lesson_plan_221,
+                      PermissionType.edit_org_published_content_235,
+                      PermissionType.edit_lesson_material_metadata_and_content_236,
+                      PermissionType.edit_lesson_plan_content_238,
+                      PermissionType.edit_lesson_plan_metadata_237,
+                    ]}
                     render={(value) => value && <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />}
                   />
                   {leftsideArea}

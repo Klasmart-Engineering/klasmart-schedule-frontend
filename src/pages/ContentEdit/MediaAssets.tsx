@@ -121,8 +121,18 @@ function DraggableImage(props: DraggableItemProps) {
   const editbales = usePermission([
     PermissionType.edit_lesson_plan_content_238,
     PermissionType.edit_lesson_material_metadata_and_content_236,
+    PermissionType.edit_org_published_content_235,
+    PermissionType.create_lesson_material_220,
+    PermissionType.create_lesson_plan_221,
+    PermissionType.create_content_page_201,
   ]);
-  const editbale = editbales.edit_lesson_material_metadata_and_content_236 || editbales.edit_lesson_plan_content_238;
+  const editbale =
+    editbales.edit_lesson_material_metadata_and_content_236 ||
+    editbales.edit_lesson_plan_content_238 ||
+    editbales.create_content_page_201 ||
+    editbales.create_lesson_material_220 ||
+    editbales.create_lesson_plan_221 ||
+    editbales.edit_org_published_content_235;
   const [, dragRef] = useDrag({ item: { type, data: item }, canDrag: () => editbale });
   const contentType =
     lesson === "material"
