@@ -22,6 +22,7 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
   getScheduleMockOptionsResponse,
+  getScheduleParticipant,
   getScheduleParticipantsMockOptionsResponse,
   getScheduleTimeViewData,
   initScheduleDetial,
@@ -281,9 +282,10 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
-      getParticipantOptions("7394e93d-d00a-4c88-a08b-d4fb9b96edee");
+      // getParticipantOptions("");
+      dispatch(getScheduleParticipant({ class_id: "7394e93d-d00a-4c88-a08b-d4fb9b96edee" }));
     }
-  }, [getParticipantOptions, scheduleDetial, scheduleId]);
+  }, [dispatch, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
   const repeatData = {
@@ -777,7 +779,11 @@ function EditBox(props: CalendarStateProps) {
   const menuItemListClassKr = () => {
     const participant: any = participantMockOptions.participantList;
     const participantSet = participant.class.teachers.concat(participant.class.students);
-    return participantSet.map((item: any) => <span className={css.participantContent}>{item.user_name}</span>);
+    return participantSet.map((item: any, key: number) => (
+      <span key={key} className={css.participantContent}>
+        {item.user_name}
+      </span>
+    ));
   };
 
   return (

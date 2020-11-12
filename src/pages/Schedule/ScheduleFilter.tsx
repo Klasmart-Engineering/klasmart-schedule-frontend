@@ -190,7 +190,7 @@ function FilterTemplate(props: FilterProps) {
         />
         <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>{d("All My Schedule").t("scheudule_filter_all_my_schedule")}</span>
       </Grid>
-      {filterGather.map((gather: ScheduleFilterProps) => (
+      {filterGather.map((gather: ScheduleFilterProps, key: number) => (
         <Grid
           item
           xs={12}
@@ -199,6 +199,7 @@ function FilterTemplate(props: FilterProps) {
             maxHeight: activeStatus[gather.name] ? "5000px" : "46px",
             paddingLeft: (perm.view_school_calendar_512 ? ["Teacher", "Classes"] : ["Subjects"]).indexOf(gather.name) > -1 ? "34px" : "8px",
           }}
+          key={key}
         >
           <div className={isDisabledFliterRowSpan(gather.name) ? css.disabledFliterRowSpan : ""}>
             {!activeStatus[gather.name] && (
@@ -213,8 +214,8 @@ function FilterTemplate(props: FilterProps) {
             )}
             <span className={css.fliterTitleSpan}>{t(gather.label)}</span>
           </div>
-          {gather.child.map((item: MockOptionsItem) => (
-            <div className={css.fliterDivChild}>
+          {gather.child.map((item: MockOptionsItem, index: number) => (
+            <div className={css.fliterDivChild} key={index}>
               <Checkbox
                 color="primary"
                 inputProps={{ "aria-label": "secondary checkbox" }}
