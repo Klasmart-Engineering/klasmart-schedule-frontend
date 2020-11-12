@@ -38,14 +38,7 @@ const useStyles = makeStyles(({ palette }) => ({
     fontSize: "18px",
     fontWeight: 500,
   },
-  assetsHeader: {
-    fontSize: "20px",
-    fontWeight: "bold",
-    height: "64px",
-    backgroundColor: "#F0F0F0",
-    paddingLeft: "30px",
-    lineHeight: "64px",
-  },
+
   thumbnailImg: {
     width: 260,
     height: 132,
@@ -193,11 +186,6 @@ function AssetEdit(props: AssetEditProps) {
       </div>
     </Box>
   );
-}
-
-export function MediaAssetsEditHeader() {
-  const css = useStyles();
-  return <Box className={css.assetsHeader}>{d("Details").t("library_label_details")}</Box>;
 }
 
 function AssetPreviewOverlay() {
