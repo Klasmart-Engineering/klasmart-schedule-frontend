@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { RootState } from "../../reducers";
-import { getAchievementDetail, getLessonPlan, getMockOptions, getReportMockOptions } from "../../reducers/report";
+import { getAchievementDetail, getLessonPlan, getReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
@@ -41,10 +41,6 @@ export function ReportAchievementDetail() {
   const backByLessonPlan = (urlParams: string) => {
     history.push({ pathname: ReportAchievementList.routeBasePath, search: urlParams });
   };
-
-  useEffect(() => {
-    dispatch(getMockOptions());
-  }, [dispatch]);
 
   useEffect(() => {
     if (condition.student_id) {
