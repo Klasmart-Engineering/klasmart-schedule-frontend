@@ -41,7 +41,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author } = useQuery();
-  console.log(author + "------");
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
