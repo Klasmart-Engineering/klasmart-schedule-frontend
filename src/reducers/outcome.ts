@@ -129,12 +129,15 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
       api.ages.getAge({ program_id: program_id ? program_id : firstProgram_id }),
       api.grades.getGrade({ program_id: program_id ? program_id : firstProgram_id }),
     ]);
-    const firstDevelopment_id = developmental[0].id;
-    const skills = await api.skills.getSkill({
-      developmental_id: development_id ? development_id : firstDevelopment_id,
-      program_id: program_id ? program_id : firstProgram_id,
-    });
-    return { program, subject, developmental, skills, age, grade };
+    if (developmental[0] && developmental[0].id) {
+      const firstDevelopment_id = developmental[0].id;
+      const skills = await api.skills.getSkill({
+        developmental_id: development_id ? development_id : firstDevelopment_id,
+        program_id: program_id ? program_id : firstProgram_id,
+      });
+      return { program, subject, developmental, skills, age, grade };
+    }
+    return { program, subject, developmental: [], skills: [], age, grade };
   }
 );
 
