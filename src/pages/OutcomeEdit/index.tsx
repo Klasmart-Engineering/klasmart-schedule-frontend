@@ -222,8 +222,15 @@ export default function CreateOutcomings() {
   };
 
   React.useEffect(() => {
-    dispatch(getNewOptions({ metaLoading: true }));
-  }, [dispatch]);
+    if (outcome_id) {
+      const program_id = outcomeDetail.program && outcomeDetail.program[0] && outcomeDetail.program[0].program_id;
+      const development_id =
+        outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
+      dispatch(getNewOptions({ program_id, development_id, metaLoading: true }));
+    } else {
+      dispatch(getNewOptions({ metaLoading: true }));
+    }
+  }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcome_id]);
 
   React.useEffect(() => {
     const nextValue: any = {
