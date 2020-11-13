@@ -123,6 +123,9 @@ const initialState: IContentState = {
     publish_scope_name: "",
     source_type: "",
     lesson_type_name: "",
+    creator: "",
+    creator_name: "",
+    is_mine: false,
   },
 };
 export enum Action {

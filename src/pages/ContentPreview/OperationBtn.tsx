@@ -38,6 +38,7 @@ const useStyles = makeStyles(({ palette }) => ({
 
 export interface ActionProps {
   author: string | null;
+  isMine: boolean | undefined;
   publish_status: EntityContentInfoWithDetails["publish_status"];
   content_type?: EntityContentInfoWithDetails["content_type"];
   onDelete: () => any;
@@ -48,10 +49,16 @@ export interface ActionProps {
 }
 export function OperationBtn(props: ActionProps) {
   const css = useStyles();
-  const { author, publish_status, content_type, onDelete, onPublish, onApprove, onReject, onEdit } = props;
+  const { author, isMine, publish_status, content_type, onDelete, onPublish, onApprove, onReject, onEdit } = props;
+  console.log(author);
   return (
     <Box display="flex" justifyContent="flex-end">
-      {publish_status === PublishStatus.published && (
+      {isMine && publish_status === PublishStatus.published && (
+        <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+          {d("Remove").t("library_label_remove")}
+        </LButton>
+      )}
+      {!isMine && publish_status === PublishStatus.published && (
         <Permission value={PermissionType.archive_published_content_273}>
           <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
             {d("Remove").t("library_label_remove")}
@@ -65,7 +72,12 @@ export function OperationBtn(props: ActionProps) {
           {d("Delete").t("library_label_delete")}
         </LButton>
       )}
-      {publish_status === PublishStatus.archive && (
+      {isMine && publish_status === PublishStatus.archive && (
+        <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
+          {d("Delete").t("library_label_delete")}
+        </LButton>
+      )}
+      {!isMine && publish_status === PublishStatus.archive && (
         <Permission value={PermissionType.delete_archived_content_275}>
           <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
             {d("Delete").t("library_label_delete")}
@@ -79,7 +91,12 @@ export function OperationBtn(props: ActionProps) {
           </LButton>
         </Permission>
       )}
-      {publish_status === PublishStatus.published && content_type === ContentType.plan && (
+      {isMine && publish_status === PublishStatus.published && content_type === ContentType.plan && (
+        <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+          {d("Edit").t("library_label_edit")}
+        </LButton>
+      )}
+      {!isMine && publish_status === PublishStatus.published && content_type === ContentType.plan && (
         <PermissionOr
           value={[
             PermissionType.edit_org_published_content_235,
@@ -92,7 +109,12 @@ export function OperationBtn(props: ActionProps) {
           </LButton>
         </PermissionOr>
       )}
-      {publish_status === PublishStatus.published && content_type === ContentType.material && (
+      {isMine && publish_status === PublishStatus.published && content_type === ContentType.material && (
+        <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
+          {d("Edit").t("library_label_edit")}
+        </LButton>
+      )}
+      {!isMine && publish_status === PublishStatus.published && content_type === ContentType.material && (
         <PermissionOr value={[PermissionType.edit_org_published_content_235, PermissionType.edit_lesson_material_metadata_and_content_236]}>
           <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
             {d("Edit").t("library_label_edit")}
@@ -111,7 +133,12 @@ export function OperationBtn(props: ActionProps) {
           </LButton>
         </Permission>
       )}
-      {publish_status === PublishStatus.archive && (
+      {isMine && publish_status === PublishStatus.archive && (
+        <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
+          {d("Republish").t("library_label_republish")}
+        </LButton>
+      )}
+      {!isMine && publish_status === PublishStatus.archive && (
         <Permission value={PermissionType.delete_archived_content_275}>
           <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
             {d("Republish").t("library_label_republish")}

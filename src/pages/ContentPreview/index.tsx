@@ -41,6 +41,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author } = useQuery();
+  console.log(author + "------");
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
@@ -117,6 +118,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       {tab === TabValue.details && (
         <OperationBtn
           author={author}
+          isMine={contentPreview.is_mine}
           publish_status={contentPreview.publish_status}
           content_type={contentPreview.content_type}
           onDelete={handleDelete}
