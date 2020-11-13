@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "KidsLoop Platform",
+  "name": "KidsLoop Platform | Interative Digital Platform for Education",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,9 +8,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "kidslooplogo.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "300x300"
     },
     {
       "src": "logo512.png",

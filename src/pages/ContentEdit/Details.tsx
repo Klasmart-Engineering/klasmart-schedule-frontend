@@ -29,6 +29,7 @@ import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
+import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
@@ -91,7 +92,8 @@ type NeedTransilationMenuItem =
   | "library_label_test"
   | "library_label_not_test";
 
-interface DetailsProps {
+export interface DetailsProps {
+  allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
   contentDetail: EntityContentInfoWithDetails;
   uploadThumnail?: Function;
   formMethods: UseFormMethods<ContentDetailForm>;
@@ -105,6 +107,7 @@ interface DetailsProps {
 }
 export default function Details(props: DetailsProps) {
   const {
+    allDefaultValueAndKey,
     contentDetail,
     formMethods: { control, errors },
     linkedMockOptions,
@@ -115,6 +118,8 @@ export default function Details(props: DetailsProps) {
     onDrawingActivity,
     permission,
   } = props;
+  console.log("allDefaultValueAndKey = ", allDefaultValueAndKey);
+  console.log("contentDetail = ", contentDetail);
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
@@ -184,7 +189,8 @@ export default function Details(props: DetailsProps) {
           name="name"
           label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required
-          defaultValue={contentDetail.name}
+          defaultValue={allDefaultValueAndKey.name?.value}
+          key={allDefaultValueAndKey.name?.key}
           rules={{
             required: true,
           }}
@@ -194,7 +200,8 @@ export default function Details(props: DetailsProps) {
         />
         <Controller
           name="thumbnail"
-          defaultValue={contentDetail.thumbnail}
+          defaultValue={allDefaultValueAndKey.thumbnail?.value}
+          key={allDefaultValueAndKey.thumbnail?.key}
           control={control}
           render={(props) => (
             <CropImage
@@ -233,6 +240,7 @@ export default function Details(props: DetailsProps) {
               as={TextField}
               name="created_at"
               defaultValue={formattedTime(contentDetail.updated_at)}
+              key={allDefaultValueAndKey.created_at?.value}
               control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
@@ -242,7 +250,8 @@ export default function Details(props: DetailsProps) {
             <Controller
               as={TextField}
               name="author_name"
-              defaultValue={contentDetail.author_name}
+              defaultValue={allDefaultValueAndKey.author_name?.value}
+              key={allDefaultValueAndKey.author_name?.key}
               control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
@@ -264,7 +273,8 @@ export default function Details(props: DetailsProps) {
         />
         <Controller
           name="program"
-          defaultValue={contentDetail.program}
+          defaultValue={allDefaultValueAndKey.program?.value}
+          key={allDefaultValueAndKey.program?.key}
           control={control}
           render={(props) => (
             <TextField
@@ -293,7 +303,8 @@ export default function Details(props: DetailsProps) {
           label={d("Subject").t("library_label_subject")}
           disabled={permission}
           name="subject"
-          defaultValue={contentDetail.subject}
+          defaultValue={allDefaultValueAndKey.subject?.value}
+          key={allDefaultValueAndKey.subject?.key}
           control={control}
         >
           {menuItemList(linkedMockOptions.subject || [])}
@@ -301,7 +312,8 @@ export default function Details(props: DetailsProps) {
         <Box>
           <Controller
             name="developmental"
-            defaultValue={contentDetail.developmental}
+            defaultValue={allDefaultValueAndKey.developmental?.value}
+            key={allDefaultValueAndKey.developmental?.key}
             control={control}
             render={(props) => (
               <FormattedTextField
@@ -327,7 +339,8 @@ export default function Details(props: DetailsProps) {
           <Controller
             as={TextField}
             name="skills"
-            defaultValue={contentDetail.skills}
+            defaultValue={allDefaultValueAndKey.skills?.value}
+            key={allDefaultValueAndKey.skills?.key}
             control={control}
             select
             SelectProps={{
@@ -345,7 +358,8 @@ export default function Details(props: DetailsProps) {
           <Controller
             as={TextField}
             name="age"
-            defaultValue={contentDetail.age}
+            defaultValue={allDefaultValueAndKey.age?.value}
+            key={allDefaultValueAndKey.age?.key}
             control={control}
             select
             SelectProps={{
@@ -361,7 +375,8 @@ export default function Details(props: DetailsProps) {
           <Controller
             as={TextField}
             name="grade"
-            defaultValue={contentDetail.grade}
+            defaultValue={allDefaultValueAndKey.grade?.value}
+            key={allDefaultValueAndKey.grade?.key}
             control={control}
             select
             SelectProps={{
@@ -383,7 +398,8 @@ export default function Details(props: DetailsProps) {
           disabled={permission}
           name="publish_scope"
           required
-          defaultValue={contentDetail.publish_scope}
+          defaultValue={allDefaultValueAndKey.publish_scope?.value}
+          key={allDefaultValueAndKey.publish_scope?.key}
           control={control}
           rules={{
             required: true,
@@ -401,7 +417,8 @@ export default function Details(props: DetailsProps) {
             label={d("Lesson Type").t("library_label_lesson_type")}
             disabled={permission}
             name="lesson_type"
-            defaultValue={contentDetail.lesson_type || ""}
+            defaultValue={allDefaultValueAndKey.lesson_type?.value}
+            key={allDefaultValueAndKey.lesson_type?.key}
             control={control}
           >
             {NeedTransilationMenuItemList(lesson_types)}
@@ -409,7 +426,8 @@ export default function Details(props: DetailsProps) {
         )}
         <Controller
           name="self_study"
-          defaultValue={contentDetail.self_study}
+          defaultValue={allDefaultValueAndKey.self_study?.value}
+          key={allDefaultValueAndKey.self_study?.key}
           render={(props) => (
             <Box
               className={css.fieldset}
@@ -443,7 +461,8 @@ export default function Details(props: DetailsProps) {
         {lesson === "material" && (
           <Controller
             name="draw_activity"
-            defaultValue={contentDetail.draw_activity}
+            defaultValue={allDefaultValueAndKey.draw_activity?.value}
+            key={allDefaultValueAndKey.draw_activity?.key}
             render={(props) => (
               <Box
                 className={css.fieldset}
@@ -481,7 +500,8 @@ export default function Details(props: DetailsProps) {
           control={control}
           name="description"
           multiline
-          defaultValue={contentDetail.description}
+          defaultValue={allDefaultValueAndKey.description?.value}
+          key={allDefaultValueAndKey.description?.key}
           className={css.fieldset}
           label={d("Description").t("library_label_description")}
           disabled={permission}
@@ -491,7 +511,8 @@ export default function Details(props: DetailsProps) {
           control={control}
           name="keywords"
           decode={decodeArray}
-          defaultValue={contentDetail.keywords}
+          defaultValue={allDefaultValueAndKey.keywords?.value}
+          key={allDefaultValueAndKey.keywords?.key}
           className={css.fieldset}
           label={d("Keywords").t("library_label_keywords")}
           disabled={permission}

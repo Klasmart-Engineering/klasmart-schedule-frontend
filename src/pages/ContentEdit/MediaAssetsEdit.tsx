@@ -10,6 +10,7 @@ import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { DragItem, mapDropSegmentPropsReturn } from "./PlanComposeGraphic";
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -96,6 +97,7 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
   canDrop: monitor.canDrop(),
 });
 interface AssetEditProps {
+  allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
   isAsset?: boolean;
   formMethods: UseFormMethods<ContentDetailForm>;
   contentDetail: EntityContentInfoWithDetails;
@@ -106,7 +108,7 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, formMethods, contentDetail, onclosePreview, permission } = props;
+  const { isAsset, formMethods, contentDetail, onclosePreview, permission, allDefaultValueAndKey } = props;
   const { setValue } = formMethods;
   const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
   const setFile = useMemo(
@@ -155,7 +157,9 @@ function AssetEdit(props: AssetEditProps) {
           <Controller
             name="data.source"
             control={formMethods.control}
-            defaultValue={JSON.parse(contentDetail.data || "{}")}
+            // defaultValue={JSON.parse(contentDetail.data || "{}")}
+            defaultValue={allDefaultValueAndKey["data.source"]?.value}
+            key={allDefaultValueAndKey["data.source"]?.key}
             render={(props: any) => (
               <SingleUploader
                 partition="assets"
@@ -200,17 +204,9 @@ interface MediaAssetsEditProps extends AssetEditProps {
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
   public render() {
-    const { readonly, overlay, isAsset, formMethods, contentDetail, onclosePreview, permission } = this.props;
+    const { readonly, overlay, contentDetail, ...assetEditProps } = this.props;
     if (overlay) return <AssetPreviewOverlay />;
     if (readonly) return <AssetPreview resourceId={JSON.parse(contentDetail.data || "{}")} />;
-    return (
-      <AssetEdit
-        isAsset={isAsset}
-        formMethods={formMethods}
-        contentDetail={contentDetail}
-        onclosePreview={onclosePreview}
-        permission={permission}
-      />
-    );
+    return <AssetEdit contentDetail={contentDetail} {...assetEditProps} />;
   }
 }

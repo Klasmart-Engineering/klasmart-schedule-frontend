@@ -38,6 +38,7 @@ import MediaAssetsEdit from "./MediaAssetsEdit";
 import Outcomes, { OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
+import { Regulation } from "./type";
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -74,8 +75,8 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 export default function ContentEdit() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  const [hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload] = useState(false);
-  const { reset, handleSubmit, control, setValue, watch, errors } = formMethods;
+  // const [hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload] = useState(false);
+  const { handleSubmit, control, setValue, watch, errors } = formMethods;
   const {
     contentDetail,
     mediaList,
@@ -89,16 +90,21 @@ export default function ContentEdit() {
 
   const { lesson, tab, rightside } = useParams();
   const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQuery();
+  const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program: programId = "" } = watch(["program"]);
-  const inputSource = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
-  const h5pSource = JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source;
-  const inputSourceWatch = watch("data.input_source", inputSource);
+  const { program, developmental } = watch(["program", "developmental"]);
+  const inputSource = watch("data.input_source");
+  const allDefaultValueAndKey = ModelMockOptions.createAllDefaultValueAndKey(
+    { regulation, contentDetail, linkedMockOptions },
+    { program, developmental }
+  );
+  // const inputSourceDefaultValue = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
+  // const h5pSource = JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source;
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -255,41 +261,48 @@ export default function ContentEdit() {
 
   const handleChangeProgram = useMemo(
     () => async (programId: string) => {
-      const { payload: linkedMockOptions } = ((await dispatch(
-        getLinkedMockOptions({ metaLoading: true, default_program_id: programId })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>;
-      ModelMockOptions.updateValuesWhenProgramChange(setValue, linkedMockOptions, programId);
+      setRegulation(Regulation.ByOptionCount);
+      dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: programId }));
+      // const { payload: linkedMockOptions } = ((await dispatch(
+      //   getLinkedMockOptions({ metaLoading: true, default_program_id: programId })
+      // )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>;
+      // ModelMockOptions.updateValuesWhenProgramChange(setValue, linkedMockOptions, programId);
     },
-    [dispatch, setValue]
+    [dispatch]
   );
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string[]) => {
-      setValue("skills", []);
+      // setValue("skills", []);
+      setRegulation(Regulation.ByOptionCount);
       dispatch(
-        getLinkedMockOptionsSkills({ metaLoading: true, default_program_id: programId, default_developmental_id: developmental_id[0] })
+        getLinkedMockOptionsSkills({ metaLoading: true, default_program_id: program, default_developmental_id: developmental_id[0] })
       );
     },
-    [dispatch, programId, setValue]
+    [dispatch, program]
   );
+  // useEffect(() => {
+  //   dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
+  //   setHasCreateSituationFirstOnload(false);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [id, lesson, dispatch, history, editindex]);
+  // useEffect(() => {
+  //   // 编辑表单时 加载完 contentDetial 的逻辑
+  //   reset(ModelContentDetailForm.decode(contentDetail));
+  //   setHasCreateSituationFirstOnload(false);
+  // }, [contentDetail, lesson, reset]);
+  // useEffect(() => {
+  //   // 新建表单时，加载完 mockOptions 的逻辑
+  //   if (id || !linkedMockOptions.program_id || hasCreateSituationFirstOnload) return;
+  //   const { program, subject, developmental, skills, grade, age, program_id, developmental_id } = linkedMockOptions;
+  //   if (!program_id || !developmental_id) return;
+  //   const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
+  //   reset({ ...onlyOneOptionValue, program: program_id, developmental: [developmental_id] });
+  //   setHasCreateSituationFirstOnload(true);
+  // }, [reset, id, linkedMockOptions, lesson]);
+
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
-    setHasCreateSituationFirstOnload(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, lesson, dispatch, history, editindex]);
-  useEffect(() => {
-    // 编辑表单时 加载完 contentDetial 的逻辑
-    reset(ModelContentDetailForm.decode(contentDetail));
-    setHasCreateSituationFirstOnload(false);
-  }, [contentDetail, lesson, reset]);
-  useEffect(() => {
-    // 新建表单时，加载完 mockOptions 的逻辑
-    if (id || !linkedMockOptions.program_id || hasCreateSituationFirstOnload) return;
-    const { program, subject, developmental, skills, grade, age, program_id, developmental_id } = linkedMockOptions;
-    if (!program_id || !developmental_id) return;
-    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
-    reset({ ...onlyOneOptionValue, program: program_id, developmental: [developmental_id] });
-    setHasCreateSituationFirstOnload(true);
-  }, [reset, id, linkedMockOptions, hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload, lesson]);
+  }, [id, lesson, dispatch, editindex]);
   const assetDetails = (
     <AssetDetails
       formMethods={formMethods}
@@ -312,6 +325,7 @@ export default function ContentEdit() {
         ]}
         render={(value) => (
           <Details
+            allDefaultValueAndKey={allDefaultValueAndKey}
             contentDetail={contentDetail}
             formMethods={formMethods}
             linkedMockOptions={linkedMockOptions}
@@ -328,6 +342,7 @@ export default function ContentEdit() {
         as={Outcomes}
         name="outcome_entities"
         defaultValue={contentDetail.outcome_entities}
+        key={allDefaultValueAndKey.outcomes?.key}
         control={control}
         list={outcomeList}
         onSearch={handleSearchOutcomes}
@@ -364,20 +379,23 @@ export default function ContentEdit() {
               <Controller
                 name="data.input_source"
                 as={SelectH5PRadio}
-                defaultValue={inputSourceWatch}
+                defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
+                key={allDefaultValueAndKey["data.input_source"]?.key}
                 control={control}
                 formMethods={formMethods}
                 disabled={!!id}
               />
-              {inputSourceWatch === 1 ? (
+              {inputSource === MaterialType.h5p ? (
                 <Controller
                   name="data.source"
-                  defaultValue={h5pSource}
+                  defaultValue={allDefaultValueAndKey["data.source"]?.value}
+                  key={allDefaultValueAndKey["data.source"]?.key}
                   control={control}
                   render={({ value: valueSource, onChange: onChangeSource }: any) => (
                     <Controller
                       name="source_type"
-                      defaultValue={contentDetail.source_type}
+                      defaultValue={allDefaultValueAndKey.source_type?.value}
+                      key={allDefaultValueAndKey.source_type?.key}
                       control={control}
                       render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
                         <ContentH5p isCreate={!id} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
@@ -387,6 +405,7 @@ export default function ContentEdit() {
                 />
               ) : (
                 <MediaAssetsEdit
+                  allDefaultValueAndKey={allDefaultValueAndKey}
                   readonly={false}
                   overlay={false}
                   formMethods={formMethods}
@@ -400,13 +419,14 @@ export default function ContentEdit() {
         />
       )}
       {!includeH5p && includeAsset && (
-        <MediaAssetsEdit readonly={readonly} overlay={includeH5p} isAsset={true} formMethods={formMethods} contentDetail={contentDetail} />
+        <MediaAssetsEdit overlay={includeH5p} isAsset={true} {...{ allDefaultValueAndKey, readonly, formMethods, contentDetail }} />
       )}
       {includePlanComposeGraphic && (
         <Controller
           name="data"
           as={PlanComposeGraphic}
           defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
+          key={allDefaultValueAndKey.data?.key}
           control={control}
         />
       )}
@@ -427,7 +447,7 @@ export default function ContentEdit() {
         onBack={handleGoBack}
         onDelete={handleDelete}
         id={id}
-        inputSourceWatch={inputSourceWatch}
+        inputSourceWatch={inputSource}
       />
       <PermissionOr
         value={[
