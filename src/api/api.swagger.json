@@ -4017,6 +4017,12 @@
         "created_at": {
           "type": "integer"
         },
+        "creator": {
+          "type": "string"
+        },
+        "creator_name": {
+          "type": "string"
+        },
         "data": {
           "type": "string"
         },
@@ -4055,6 +4061,9 @@
         },
         "id": {
           "type": "string"
+        },
+        "is_mine": {
+          "type": "boolean"
         },
         "keywords": {
           "type": "array",

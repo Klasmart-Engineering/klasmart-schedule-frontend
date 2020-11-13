@@ -237,6 +237,8 @@ export interface EntityContentInfoWithDetails {
   content_type?: number;
   content_type_name?: string;
   created_at?: number;
+  creator?: string;
+  creator_name?: string;
   data?: string;
   description?: string;
   developmental?: string[];
@@ -246,6 +248,7 @@ export interface EntityContentInfoWithDetails {
   grade?: string[];
   grade_name?: string[];
   id?: string;
+  is_mine?: boolean;
   keywords?: string[];
   latest_id?: string;
   lesson_type?: string;
