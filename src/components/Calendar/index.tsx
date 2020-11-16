@@ -15,6 +15,7 @@ import { actSuccess } from "../../reducers/notify";
 import { d } from "../../locale/LocaleManager";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AsyncTrunkReturned } from "../../reducers/content";
+import { PermissionType, usePermission } from "../Permission";
 
 interface scheduleInfoProps {
   end: Date;
@@ -145,13 +146,15 @@ function MyCalendar(props: CalendarProps) {
     });
   };
 
+  const perm = usePermission([PermissionType.view_my_calendar_510, PermissionType.create_schedule_page_501]);
+
   /**
    * crete schedule
    * @param e
    */
   const creteSchedule = (e: any) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (getTimestamp(e.start) < currentTime) return;
+    if (getTimestamp(e.start) < currentTime || !perm.create_schedule_page_501) return;
     changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
