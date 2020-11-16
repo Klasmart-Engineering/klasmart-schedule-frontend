@@ -167,9 +167,6 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       value={[
                         PermissionType.delete_my_unpublished_learninng_outcome_444,
                         PermissionType.delete_org_unpublished_learning_outcome_445,
-                        PermissionType.delete_my_pending_learning_outcome_446,
-                        PermissionType.delete_org_pending_learning_outcome_447,
-                        PermissionType.delete_published_learning_outcome_448,
                       ]}
                       render={(value) =>
                         value && (
@@ -260,13 +257,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         {publish_status === "pending" && (
           <>
             <PermissionOr
-              value={[
-                PermissionType.delete_my_unpublished_learninng_outcome_444,
-                PermissionType.delete_org_unpublished_learning_outcome_445,
-                PermissionType.delete_my_pending_learning_outcome_446,
-                PermissionType.delete_org_pending_learning_outcome_447,
-                PermissionType.delete_published_learning_outcome_448,
-              ]}
+              value={[PermissionType.delete_my_pending_learning_outcome_446, PermissionType.delete_org_pending_learning_outcome_447]}
               render={(value) =>
                 value && (
                   <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
@@ -306,22 +297,9 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
           <>
             {showEdit && (
               <>
-                <PermissionOr
-                  value={[
-                    PermissionType.delete_my_unpublished_learninng_outcome_444,
-                    PermissionType.delete_org_unpublished_learning_outcome_445,
-                    PermissionType.delete_my_pending_learning_outcome_446,
-                    PermissionType.delete_org_pending_learning_outcome_447,
-                    PermissionType.delete_published_learning_outcome_448,
-                  ]}
-                  render={(value) =>
-                    value && (
-                      <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
-                        {d("Delete").t("assess_label_delete")}
-                      </Button>
-                    )
-                  }
-                />
+                <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
+                  {d("Delete").t("assess_label_delete")}
+                </Button>
                 <Button
                   variant="contained"
                   endIcon={<Create />}
@@ -380,14 +358,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 )
               }
             />
-            <PermissionOr
-              value={[
-                PermissionType.delete_my_unpublished_learninng_outcome_444,
-                PermissionType.delete_org_unpublished_learning_outcome_445,
-                PermissionType.delete_my_pending_learning_outcome_446,
-                PermissionType.delete_org_pending_learning_outcome_447,
-                PermissionType.delete_published_learning_outcome_448,
-              ]}
+            <Permission
+              value={PermissionType.delete_published_learning_outcome_448}
               render={(value) =>
                 value && (
                   <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
@@ -423,9 +395,19 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   </>
                 ) : (
                   <>
-                    <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
-                      <Delete fontSize="small" />
-                    </IconButton>
+                    <PermissionOr
+                      value={[
+                        PermissionType.delete_my_unpublished_learninng_outcome_444,
+                        PermissionType.delete_org_unpublished_learning_outcome_445,
+                      ]}
+                      render={(value) =>
+                        value && (
+                          <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        )
+                      }
+                    />
                     {!status ? (
                       <PermissionOr
                         value={[
@@ -495,15 +477,36 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         )}
         {publish_status === "pending" && (
           <>
-            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
-              <Delete fontSize="small" />
-            </IconButton>
-            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
-              <ClearSharp fontSize="small" />
-            </IconButton>
-            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
-              <Check fontSize="small" />
-            </IconButton>
+            <PermissionOr
+              value={[PermissionType.delete_my_pending_learning_outcome_446, PermissionType.delete_org_pending_learning_outcome_447]}
+              render={(value) =>
+                value && (
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                )
+              }
+            />
+            <Permission
+              value={PermissionType.reject_pending_learning_outcome_482}
+              render={(value) =>
+                value && (
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
+                    <ClearSharp fontSize="small" />
+                  </IconButton>
+                )
+              }
+            />
+            <Permission
+              value={PermissionType.approve_pending_learning_outcome_481}
+              render={(value) =>
+                value && (
+                  <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
+                    <Check fontSize="small" />
+                  </IconButton>
+                )
+              }
+            />
           </>
         )}
         {publish_status === "rejected" && (
@@ -550,9 +553,16 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 )
               }
             />
-            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
-              <Delete fontSize="small" />
-            </IconButton>
+            <Permission
+              value={PermissionType.delete_published_learning_outcome_448}
+              render={(value) =>
+                value && (
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                )
+              }
+            />
           </>
         )}
       </>
