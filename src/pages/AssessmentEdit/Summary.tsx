@@ -20,6 +20,7 @@ import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -152,15 +153,22 @@ function PopupInput(props: PopupInputProps) {
         className={clsx(css.fieldset, css.nowarp)}
         label={d("Attendance").t("assess_detail_attendance")}
       />
-      <Button
-        className={css.editButton}
-        color="primary"
-        variant="contained"
-        onClick={toggle}
-        disabled={assessmentDetail.status === "complete"}
-      >
-        {d("Edit").t("assess_button_edit")}
-      </Button>
+      <PermissionOr
+        value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
+        render={(value) =>
+          value && (
+            <Button
+              className={css.editButton}
+              color="primary"
+              variant="contained"
+              onClick={toggle}
+              disabled={assessmentDetail.status === "complete"}
+            >
+              {d("Edit").t("assess_button_edit")}
+            </Button>
+          )
+        }
+      />
       <Dialog open={open} onClose={toggle}>
         <DialogTitle>{d("Edit Attendance").t("assess_popup_edit_attendance")}</DialogTitle>
         <DialogContent dividers>
