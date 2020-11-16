@@ -28,6 +28,7 @@ import {
   initScheduleDetial,
   removeSchedule,
   resetScheduleDetial,
+  resetParticipantList,
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
@@ -240,6 +241,7 @@ function EditBox(props: CalendarStateProps) {
     setScheduleList(newData);
     setInitScheduleList(newData);
     dispatch(resetScheduleDetial(initScheduleDetial));
+    dispatch(resetParticipantList());
   }, [dispatch, timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
