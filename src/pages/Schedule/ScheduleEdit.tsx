@@ -751,6 +751,10 @@ function EditBox(props: CalendarStateProps) {
             changeModalDate({
               openStatus: false,
             });
+            changeTimesTamp({
+              start: currentTime,
+              end: currentTime,
+            });
             history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
           },
         },

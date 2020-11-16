@@ -201,7 +201,7 @@ function FilterTemplate(props: FilterProps) {
           }}
           key={key}
         >
-          <div className={isDisabledFliterRowSpan(gather.name) ? css.disabledFliterRowSpan : ""}>
+          <div className={isDisabledFliterRowSpan(gather.name) ? css.disabledFliterRowSpan : ""} style={{ height: "32px" }}>
             {!activeStatus[gather.name] && (
               <KeyboardArrowDownOutlinedIcon
                 className={css.filterArrow}
