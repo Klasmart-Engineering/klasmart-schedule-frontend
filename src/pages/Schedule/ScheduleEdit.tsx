@@ -283,7 +283,7 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newData);
       setInitScheduleList(newData);
       // getParticipantOptions("");
-      dispatch(getScheduleParticipant({ class_id: "7394e93d-d00a-4c88-a08b-d4fb9b96edee" }));
+      dispatch(getScheduleParticipant({ class_id: newData.class_id }));
     }
   }, [dispatch, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();
@@ -371,7 +371,7 @@ function EditBox(props: CalendarStateProps) {
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      getParticipantOptions("7394e93d-d00a-4c88-a08b-d4fb9b96edee");
+      getParticipantOptions(value["id"]);
       setClassItem(value);
     }
 

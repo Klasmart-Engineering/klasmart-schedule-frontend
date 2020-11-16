@@ -89,7 +89,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       dateNumFun((timestamp as Date).getHours()),
       dateNumFun((timestamp as Date).getMinutes()),
     ];
-    return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m} ${h > 12 ? "PM" : "AM"}`;
+    return `${weekArr[W - 1]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m} ${h > 12 ? "PM" : "AM"}`;
   };
 
   const handleEditSchedule = (): void => {
