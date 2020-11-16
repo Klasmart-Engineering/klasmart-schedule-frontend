@@ -186,15 +186,12 @@ interface SummaryProps {
 export function Summary(props: SummaryProps) {
   const { assessmentDetail } = props;
   const {
-    formMethods: { control, setValue, watch },
+    formMethods: { control, setValue },
   } = props;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
-  const outcomesMap = watch("outcome_attendance_maps");
-  console.log("outcomesMap = ", outcomesMap);
-
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
