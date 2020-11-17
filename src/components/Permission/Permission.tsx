@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { useQeuryPermissionOfMeQuery } from "../../api/api-ko.auto";
+import { useQeuryMeQuery } from "../../api/api-ko.auto";
 import { apiOrganizationOfPage } from "../../api/extra";
 
 export enum PermissionType {
@@ -64,6 +64,9 @@ export enum PermissionType {
   view_org_in_progress_assessments_425 = "view_org_in_progress_assessments_425",
   view_school_completed_assessments_426 = "view_school_completed_assessments_426",
   view_school_in_progress_assessments_427 = "view_school_in_progress_assessments_427",
+  teacher_reports_603 = "teacher_reports_603",
+  view_reports_610 = "view_reports_610",
+  view_my_reports_614 = "view_my_reports_614",
 }
 
 // const mockPermissionList = [
@@ -75,7 +78,7 @@ export enum PermissionType {
 
 const usePermissionList = () => {
   const organization_id = apiOrganizationOfPage() || "";
-  const { loading, error, data } = useQeuryPermissionOfMeQuery({ variables: { organization_id } });
+  const { loading, error, data } = useQeuryMeQuery({ variables: { organization_id } });
   const result: PermissionType[] = [];
   data?.me?.membership?.roles?.forEach((role) =>
     role?.permissions?.forEach((permission) => {
