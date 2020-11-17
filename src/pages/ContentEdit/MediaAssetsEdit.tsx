@@ -114,6 +114,7 @@ function AssetEdit(props: AssetEditProps) {
   const setFile = useMemo(
     () => (item: DragItem) => {
       const source = JSON.parse(item.data.data).source;
+      // debugger;
       setValue("data.source", source, { shouldDirty: true });
       setValue("data.input_source", 3, { shouldDirty: true });
     },
@@ -127,11 +128,10 @@ function AssetEdit(props: AssetEditProps) {
     accept: "LIBRARY_ITEM",
     drop: setFile,
   });
-  const handleChangeFileType = useCallback(
-    () => setValue("data.input_source", 2, { shouldDirty: true }),
-
-    [setValue]
-  );
+  const handleChangeFileType = useCallback(() => {
+    // debugger
+    setValue("data.input_source", 2, { shouldDirty: true });
+  }, [setValue]);
 
   const previewHeader = (
     <Box position="relative">

@@ -77,11 +77,11 @@ export class ModelMockOptions {
     return { teacher_id: "", class_id: "" };
   }
 
-  static createMandatoryDefaultValue(props: CreateDefaultValueProps, name: "program" | "developmental"): string | undefined {
+  static createMandatoryDefaultValue(props: CreateDefaultValueProps, name: "program" | "developmental"): string {
     const { regulation, contentDetail, linkedMockOptions } = props;
     if (regulation === Regulation.ByContentDetail)
       return Array.isArray(contentDetail[name]) ? (contentDetail[name] || [])[0] : (contentDetail[name] as string);
-    return (linkedMockOptions[name] || [])[0]?.id;
+    return (linkedMockOptions[name] || [])[0]?.id || "";
   }
 
   static createDefaultValue(
@@ -129,7 +129,7 @@ export class ModelMockOptions {
           break;
         case "skills":
           result[name] = {
-            key: ModelMockOptions.createSelectKey(linkedMockOptions.subject, program, developmental, contentDetail[name], name),
+            key: ModelMockOptions.createSelectKey(linkedMockOptions[name], program, developmental, contentDetail[name], name),
             value: ModelMockOptions.createDefaultValue(props, name),
           };
           break;
@@ -137,7 +137,7 @@ export class ModelMockOptions {
         case "grade":
         case "age":
           result[name] = {
-            key: ModelMockOptions.createSelectKey(linkedMockOptions.subject, program, contentDetail[name], name),
+            key: ModelMockOptions.createSelectKey(linkedMockOptions[name], program, contentDetail[name], name),
             value: ModelMockOptions.createDefaultValue(props, name),
           };
           break;

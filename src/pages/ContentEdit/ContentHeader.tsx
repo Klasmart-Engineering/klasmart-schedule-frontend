@@ -137,6 +137,8 @@ export function ContentHeader(props: HeaderProps) {
     control,
     formState: { isDirty },
   } = formMethods;
+  // console.log("isDirty", isDirty);
+  // console.log("dirtyFields = ", dirtyFields);
   const sm = useMediaQuery(breakpoints.down("sm"));
   const xs = useMediaQuery(breakpoints.down("xs"));
   const size = sm ? "small" : "medium";
@@ -439,6 +441,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
         className={css.radioGroup}
         value={value}
         onChange={(e) => {
+          // debugger;
           formMethods.setValue("data.source", "", { shouldDirty: true });
           onChange && onChange(Number(e.target.value));
         }}

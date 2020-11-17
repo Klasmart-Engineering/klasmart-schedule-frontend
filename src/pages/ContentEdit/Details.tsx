@@ -118,8 +118,8 @@ export default function Details(props: DetailsProps) {
     onDrawingActivity,
     permission,
   } = props;
-  console.log("allDefaultValueAndKey = ", allDefaultValueAndKey);
-  console.log("contentDetail = ", contentDetail);
+  // console.log("allDefaultValueAndKey = ", allDefaultValueAndKey);
+
   const css = useStyles();
   const { lesson } = useParams();
   const defaultTheme = useTheme();
@@ -236,28 +236,28 @@ export default function Details(props: DetailsProps) {
         />
         {contentDetail.id && (
           <Box>
-            <Controller
-              as={TextField}
-              name="created_at"
+            <TextField
+              // as={TextField}
+              // name="created_at"
               defaultValue={formattedTime(contentDetail.updated_at)}
               key={allDefaultValueAndKey.created_at?.value}
-              control={control}
+              // control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled
               label={d("Created On").t("library_label_created_on")}
-            ></Controller>
-            <Controller
-              as={TextField}
-              name="author_name"
+            ></TextField>
+            <TextField
+              // as={TextField}
+              // name="author_name"
               defaultValue={allDefaultValueAndKey.author_name?.value}
               key={allDefaultValueAndKey.author_name?.key}
-              control={control}
+              // control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled
               label={d("Author").t("library_label_author")}
-            ></Controller>
+            ></TextField>
           </Box>
         )}
         <Controller
@@ -284,6 +284,7 @@ export default function Details(props: DetailsProps) {
               disabled={permission}
               {...props}
               onChange={(e) => {
+                // debugger;
                 onChangeProgram(e.target.value);
                 props.onChange(e.target.value);
               }}
@@ -293,6 +294,7 @@ export default function Details(props: DetailsProps) {
             </TextField>
           )}
         />
+        {/*
         <Controller
           as={TextField}
           select
@@ -308,7 +310,8 @@ export default function Details(props: DetailsProps) {
           control={control}
         >
           {menuItemList(linkedMockOptions.subject || [])}
-        </Controller>
+        </Controller>*/}
+
         <Box>
           <Controller
             name="developmental"
@@ -335,7 +338,6 @@ export default function Details(props: DetailsProps) {
               </FormattedTextField>
             )}
           />
-
           <Controller
             as={TextField}
             name="skills"
@@ -355,6 +357,9 @@ export default function Details(props: DetailsProps) {
           </Controller>
         </Box>
         <Box>
+          {/* {console.log('{allDefaultValueAndKey.age?.key = ', allDefaultValueAndKey.age?.key)}
+          {console.log('{allDefaultValueAndKey.skills?.key = ', allDefaultValueAndKey.skills?.key)}
+          {console.log('{allDefaultValueAndKey.program?.key = ', allDefaultValueAndKey.program?.key)} */}
           <Controller
             as={TextField}
             name="age"

@@ -385,25 +385,39 @@ export default function ContentEdit() {
                 formMethods={formMethods}
                 disabled={!!id}
               />
+              <Controller
+                as="input"
+                hidden
+                name="source_type"
+                defaultValue={allDefaultValueAndKey.source_type?.value}
+                key={allDefaultValueAndKey.source_type?.key}
+                control={formMethods.control}
+              />
               {inputSource === MaterialType.h5p ? (
-                <Controller
-                  name="data.source"
-                  defaultValue={allDefaultValueAndKey["data.source"]?.value}
-                  key={allDefaultValueAndKey["data.source"]?.key}
-                  control={control}
-                  render={({ value: valueSource, onChange: onChangeSource }: any) => (
-                    <Controller
-                      name="source_type"
-                      defaultValue={allDefaultValueAndKey.source_type?.value}
-                      key={allDefaultValueAndKey.source_type?.key}
-                      control={control}
-                      render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
-                        <ContentH5p isCreate={!id} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
-                      )}
-                    />
-                  )}
+                <ContentH5p
+                  isCreate={!id}
+                  allDefaultValueAndKey={allDefaultValueAndKey}
+                  formMethods={formMethods}
+                  valueSource={allDefaultValueAndKey["data.source"]?.value}
                 />
               ) : (
+                // <Controller
+                //   name="data.source"
+                //   defaultValue={allDefaultValueAndKey["data.source"]?.value}
+                //   key={allDefaultValueAndKey["data.source"]?.key}
+                //   control={control}
+                //   render={({ value: valueSource, onChange: onChangeSource }: any) => (
+                //     <Controller
+                //       name="source_type"
+                //       defaultValue={allDefaultValueAndKey.source_type?.value}
+                //       key={allDefaultValueAndKey.source_type?.key}
+                //       control={control}
+                //       render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
+                //         <ContentH5p isCreate={!id} allDefaultValueAndKey= {allDefaultValueAndKey} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
+                //       )}
+                //     />
+                //   )}
+                // />
                 <MediaAssetsEdit
                   allDefaultValueAndKey={allDefaultValueAndKey}
                   readonly={false}

@@ -46,6 +46,7 @@ const initialState: IContentState = {
     thumbnail: "",
     version: 0,
     source_id: "",
+    source_type: "",
     locked_by: "",
     data: "",
     extra: "",
@@ -460,8 +461,26 @@ const { actions, reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [onLoadContentEdit.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
-      const { contentDetail, MediaListTotal, mediaList, outcomeList, OutcomesListTotal, linkedMockOptions } = initialState;
-      Object.assign(state, { contentDetail, MediaListTotal, mediaList, outcomeList, OutcomesListTotal, linkedMockOptions });
+      const {
+        contentDetail,
+        MediaListTotal,
+        mediaList,
+        outcomeList,
+        OutcomesListTotal,
+        linkedMockOptions,
+        lesson_types,
+        visibility_settings,
+      } = initialState;
+      Object.assign(state, {
+        contentDetail,
+        MediaListTotal,
+        mediaList,
+        outcomeList,
+        OutcomesListTotal,
+        linkedMockOptions,
+        lesson_types,
+        visibility_settings,
+      });
     },
     [onLoadContentEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
       if (payload.contentDetail) {
