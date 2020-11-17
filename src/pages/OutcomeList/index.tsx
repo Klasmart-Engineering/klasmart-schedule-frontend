@@ -4,10 +4,18 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { OrderBy, OutcomeOrderBy } from "../../api/type";
+import { Author, OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
-import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
+import {
+  actOutcomeList,
+  actPendingOutcomeList,
+  actPrivateOutcomeList,
+  bulkDeleteOutcome,
+  bulkPublishOutcome,
+  deleteOutcome,
+  publishOutcome,
+} from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
 import CreateOutcomings from "../OutcomeEdit";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -108,7 +116,17 @@ export function OutcomeList() {
 
   useEffect(() => {
     reset();
-    dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+    if (condition.publish_status === OutcomePublishStatus.pending && condition.author_name !== Author.self) {
+      dispatch(actPendingOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+    } else if (
+      condition.publish_status === OutcomePublishStatus.draft ||
+      condition.publish_status === OutcomePublishStatus.rejected ||
+      (condition.publish_status === OutcomePublishStatus.pending && condition.author_name === Author.self)
+    ) {
+      dispatch(actPrivateOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+    } else {
+      dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+    }
   }, [condition, reset, dispatch, refreshKey]);
 
   return (

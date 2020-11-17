@@ -44,6 +44,9 @@ const useStyles = makeStyles((theme) =>
     },
     tableCell: {
       textAlign: "center",
+      maxWidth: 200,
+      wordWrap: "break-word",
+      wordBreak: "normal",
     },
   })
 );
