@@ -3,10 +3,11 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { MockOptionsItem } from "../../api/extra";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAchievementList, getLessonPlan, getReportMockOptions } from "../../reducers/report";
+import { AsyncTrunkReturned, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -40,7 +41,8 @@ export function ReportAchievementList() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
-
+  const viewMyReport = usePermission(PermissionType.view_my_reports_614);
+  const viewReport = usePermission(PermissionType.view_reports_610);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -56,12 +58,13 @@ export function ReportAchievementList() {
     const { status, sort_by, ...ortherCondition } = condition;
     history.push({ pathname: ReportAchievementDetail.routeBasePath, search: toQueryString({ student_id: studentId, ...ortherCondition }) });
   };
+
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
       const { payload } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
-      if (payload && payload.length > 0) {
+      if (payload) {
         const lesson_plan_id = (payload[0] && payload[0].id) || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
       }
@@ -88,58 +91,81 @@ export function ReportAchievementList() {
     [condition.teacher_id, getFirstLessonPlanId, history, reportMockOptions.classList.user]
   );
 
-  useEffect(() => {
-    dispatch(getReportMockOptions({ metaLoading: true }));
-  }, [dispatch]);
   // useEffect(() => {
-  //   const { class_id, teacher_id } = ModelMockOptions.getReportFirstValue(mockOptions);
-  //   if (class_id && teacher_id) {
-  //     condition.teacher_id && condition.class_id
-  //       ? dispatch(getLessonPlan({ teacher_id: condition.teacher_id, class_id: condition.class_id }))
-  //       : getFirstLessonPlanId(teacher_id, class_id);
+  //   dispatch(getReportMockOptions({ metaLoading: true }));
+  // }, [dispatch]);
+
+  // useEffect(() => {
+  //   const firstTeacher =
+  //     reportMockOptions.teacherList &&
+  //     reportMockOptions.teacherList.organization &&
+  //     reportMockOptions.teacherList.organization.teachers &&
+  //     reportMockOptions.teacherList.organization.teachers[0];
+  //   const firstClass =
+  //     reportMockOptions.classList &&
+  //     reportMockOptions.classList.user &&
+  //     reportMockOptions.classList.user.classesTeaching &&
+  //     reportMockOptions.classList.user.classesTeaching[0];
+  //   const firstLessonPlan = reportMockOptions.lessonPlanList && reportMockOptions.lessonPlanList[0];
+  //   if (firstTeacher?.user?.user_id && firstClass?.class_id && firstLessonPlan.id) {
+  //     history.push({
+  //       search: setQuery(history.location.search, {
+  //         teacher_id: firstTeacher?.user?.user_id,
+  //         class_id: firstClass?.class_id,
+  //         lesson_plan_id: firstLessonPlan.id,
+  //       }),
+  //     });
   //   }
+  //   // if(reportMockOptions.teacherList)
+  // }, [history, reportMockOptions.classList, reportMockOptions.lessonPlanList, reportMockOptions.teacherList]);
+  // useEffect(() => {
+  //   dispatch(queryMe({metaLoading: true}));
+  // },[dispatch])
+  // useEffect(() => {
+  //   if (condition.teacher_id) {
+  //     dispatch(
+  //       getAchievementList({
+  //         teacher_id: condition.teacher_id,
+  //         class_id: condition.class_id,
+  //         lesson_plan_id: condition.lesson_plan_id,
+  //         status: condition.status,
+  //         sort_by: condition.sort_by,
+  //         metaLoading: true,
+  //       })
+  //     );
 
+  //   }
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [dispatch, getFirstLessonPlanId, history, mockOptions]);
-  useEffect(() => {
-    const firstTeacher =
-      reportMockOptions.teacherList &&
-      reportMockOptions.teacherList.organization &&
-      reportMockOptions.teacherList.organization.teachers &&
-      reportMockOptions.teacherList.organization.teachers[0];
-    const firstClass =
-      reportMockOptions.classList &&
-      reportMockOptions.classList.user &&
-      reportMockOptions.classList.user.classesTeaching &&
-      reportMockOptions.classList.user.classesTeaching[0];
-    const firstLessonPlan = reportMockOptions.lessonPlanList && reportMockOptions.lessonPlanList[0];
-    if (firstTeacher?.user?.user_id && firstClass?.class_id && firstLessonPlan.id) {
-      history.push({
-        search: setQuery(history.location.search, {
-          teacher_id: firstTeacher?.user?.user_id,
-          class_id: firstClass?.class_id,
-          lesson_plan_id: firstLessonPlan.id,
-        }),
-      });
-    }
-    // if(reportMockOptions.teacherList)
-  }, [history, reportMockOptions.classList, reportMockOptions.lessonPlanList, reportMockOptions.teacherList]);
+  // }, [condition.lesson_plan_id, condition.sort_by, condition.status, dispatch]);
 
   useEffect(() => {
-    if (condition.teacher_id) {
-      dispatch(
-        getAchievementList({
-          teacher_id: condition.teacher_id,
-          class_id: condition.class_id,
-          lesson_plan_id: condition.lesson_plan_id,
-          status: condition.status,
-          sort_by: condition.sort_by,
-          metaLoading: true,
-        })
-      );
-    }
+    console.log("!viewReport && viewMyReport = ", !viewReport && viewMyReport);
+
+    dispatch(
+      reportOnload({
+        teacher_id: condition.teacher_id,
+        class_id: condition.class_id,
+        lesson_plan_id: condition.lesson_plan_id,
+        status: condition.status,
+        sort_by: condition.sort_by,
+        view_my_report: true,
+        metaLoading: true,
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [condition.lesson_plan_id, condition.sort_by, condition.status, dispatch]);
+
+  useEffect(() => {
+    if (reportMockOptions) {
+      const { teacher_id, class_id, lesson_plan_id } = reportMockOptions;
+      teacher_id &&
+        class_id &&
+        lesson_plan_id &&
+        history.push({
+          search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }),
+        });
+    }
+  }, [history, reportMockOptions]);
 
   return (
     <>
