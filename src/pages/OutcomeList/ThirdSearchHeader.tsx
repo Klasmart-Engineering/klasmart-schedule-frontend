@@ -7,7 +7,7 @@ import { MoreHoriz } from "@material-ui/icons";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
-import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
+import { Author, OutcomeOrderBy, OutcomePublishStatus, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { isUnpublish } from "./FirstSearchHeader";
@@ -81,8 +81,12 @@ const useStyles = makeStyles((theme) => ({
 function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) =>
+  const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) => {
+    if (publish_status === PublishStatus.pending) {
+      return onChange({ ...value, publish_status, page: 1, author_name: Author.self });
+    }
     onChange({ ...value, publish_status, page: 1 });
+  };
   return (
     <Tabs
       className={classes.tabs}

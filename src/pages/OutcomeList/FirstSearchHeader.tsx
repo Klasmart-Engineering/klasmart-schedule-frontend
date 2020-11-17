@@ -74,6 +74,12 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "42px",
     height: "42px",
   },
+  selectedTab: {
+    color: "rgba(0, 0, 0, 0.54) !important",
+  },
+  active: {
+    color: "#0E78D5 !important",
+  },
 }));
 
 interface TabPanelProps {
@@ -99,6 +105,8 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
     onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at });
+  const handleClickUnpublished = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
+    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at, author_name: Author.self });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -124,15 +132,23 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Permission value={PermissionType.pending_page_403}>
                 <Button
                   onClick={createHandleClick(OutcomePublishStatus.pending)}
-                  className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.pending })}
-                  startIcon={value?.publish_status === OutcomePublishStatus.pending ? <PendingBlueIcon /> : <PendingIcon />}
+                  className={clsx(css.nav, {
+                    [css.actives]: value?.publish_status === OutcomePublishStatus.pending && value?.author_name !== Author.self,
+                  })}
+                  startIcon={
+                    value?.publish_status === OutcomePublishStatus.pending && value?.author_name !== Author.self ? (
+                      <PendingBlueIcon />
+                    ) : (
+                      <PendingIcon />
+                    )
+                  }
                 >
                   {d("Pending").t("assess_label_pending")}
                 </Button>
               </Permission>
               <Permission value={PermissionType.unpublished_page_402}>
                 <Button
-                  onClick={createHandleClick(OutcomePublishStatus.draft)}
+                  onClick={handleClickUnpublished(OutcomePublishStatus.draft)}
                   className={clsx(css.nav, { [css.actives]: unpublish })}
                   startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
                 >
@@ -187,25 +203,63 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab
-                  value={OutcomePublishStatus.published}
-                  label={d("Learning Outcome").t("assess_label_learning_outcome")}
-                  className={classes.capitalize}
-                />
-                <Tab value={OutcomePublishStatus.pending} label={d("Pending").t("assess_label_pending")} className={classes.capitalize} />
-                {value.publish_status === OutcomePublishStatus.rejected ? (
+                {perm.learning_outcome_page_404 && (
+                  <Tab
+                    value={OutcomePublishStatus.published}
+                    label={d("Learning Outcome").t("assess_label_learning_outcome")}
+                    className={classes.capitalize}
+                  />
+                )}
+                {perm.pending_page_403 && (
+                  <Tab
+                    value={OutcomePublishStatus.pending}
+                    label={d("Pending").t("assess_label_pending")}
+                    classes={{ selected: classes.selectedTab }}
+                    className={clsx(classes.capitalize, classes.selectedTab, {
+                      [classes.active]: value?.publish_status === OutcomePublishStatus.pending && value?.author_name !== Author.self,
+                    })}
+                  />
+                )}
+                {perm.unpublished_page_402 &&
+                  (value.publish_status === OutcomePublishStatus.pending && value.author_name === Author.self ? (
+                    <Tab
+                      value={OutcomePublishStatus.pending}
+                      label={d("Unpublished").t("assess_label_unpublished")}
+                      className={classes.capitalize}
+                    />
+                  ) : value.publish_status === OutcomePublishStatus.rejected ? (
+                    <Tab
+                      value={OutcomePublishStatus.rejected}
+                      label={d("Unpublished").t("assess_label_unpublished")}
+                      className={classes.capitalize}
+                    />
+                  ) : (
+                    <Tab
+                      value={OutcomePublishStatus.draft}
+                      label={d("Unpublished").t("assess_label_unpublished")}
+                      className={classes.capitalize}
+                    />
+                  ))}
+                {/* {value.publish_status === OutcomePublishStatus.rejected ? (
                   <Tab
                     value={OutcomePublishStatus.rejected}
                     label={d("Unpublished").t("assess_label_unpublished")}
                     className={classes.capitalize}
                   />
-                ) : (
+                ) : value.publish_status === OutcomePublishStatus.draft ? (
                   <Tab
                     value={OutcomePublishStatus.draft}
                     label={d("Unpublished").t("assess_label_unpublished")}
                     className={classes.capitalize}
                   />
-                )}
+                ) : (
+                  <Tab
+                    value={OutcomePublishStatus.pending}
+                    label={d("Unpublished").t("assess_label_unpublished")}
+                    className={classes.capitalize}
+                  />
+                )
+              } */}
                 {perm.assessments_page_406 && (
                   <Tab
                     value={HeaderCategory.assessment}

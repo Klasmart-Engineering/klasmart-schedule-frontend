@@ -10,6 +10,7 @@ import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "reac
 import { Controller, useForm } from "react-hook-form";
 import { Author, PublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import CreateOutcomings from "../OutcomeEdit";
 import { OutcomeQueryConditionBaseProps } from "./types";
@@ -109,9 +110,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Button variant="contained" color="primary" className={classes.createBtn} href={`#${CreateOutcomings.routeBasePath}`}>
-                {d("Create").t("assess_label_create")} +
-              </Button>
+              <Permission value={PermissionType.create_learning_outcome__421}>
+                <Button variant="contained" color="primary" className={classes.createBtn} href={`#${CreateOutcomings.routeBasePath}`}>
+                  {d("Create").t("assess_label_create")} +
+                </Button>
+              </Permission>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
