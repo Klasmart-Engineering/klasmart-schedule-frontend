@@ -240,26 +240,6 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                       className={classes.capitalize}
                     />
                   ))}
-                {/* {value.publish_status === OutcomePublishStatus.rejected ? (
-                  <Tab
-                    value={OutcomePublishStatus.rejected}
-                    label={d("Unpublished").t("assess_label_unpublished")}
-                    className={classes.capitalize}
-                  />
-                ) : value.publish_status === OutcomePublishStatus.draft ? (
-                  <Tab
-                    value={OutcomePublishStatus.draft}
-                    label={d("Unpublished").t("assess_label_unpublished")}
-                    className={classes.capitalize}
-                  />
-                ) : (
-                  <Tab
-                    value={OutcomePublishStatus.pending}
-                    label={d("Unpublished").t("assess_label_unpublished")}
-                    className={classes.capitalize}
-                  />
-                )
-              } */}
                 {perm.assessments_page_406 && (
                   <Tab
                     value={HeaderCategory.assessment}
