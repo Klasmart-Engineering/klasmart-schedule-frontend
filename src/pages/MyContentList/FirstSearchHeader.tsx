@@ -74,6 +74,12 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "42px",
     height: "42px",
   },
+  selected: {
+    color: "rgba(0, 0, 0, 0.54) !important",
+  },
+  active: {
+    color: "#0E78D5 !important",
+  },
 }));
 
 export const isUnpublish = (value: QueryCondition): boolean => {
@@ -230,9 +236,16 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                   <Tab value={PublishStatus.published} label={d("Published").t("library_label_published")} className={classes.capitalize} />
                 )}
                 {perm.pending_content_page_203 && (
-                  <Tab value={PublishStatus.pending} label={d("Pending").t("library_label_pending")} className={classes.capitalize} />
+                  <Tab
+                    value={PublishStatus.pending}
+                    label={d("Pending").t("library_label_pending")}
+                    classes={{ selected: classes.selected }}
+                    className={clsx(classes.capitalize, classes.selected, {
+                      [classes.active]: value?.publish_status === PublishStatus.pending && value?.author !== Author.self,
+                    })}
+                  />
                 )}
-                {perm.unpublished_content_page_202 &&
+                {/* {perm.unpublished_content_page_202 &&
                   (value?.publish_status === PublishStatus.rejected ? (
                     <Tab
                       value={PublishStatus.rejected}
@@ -245,7 +258,22 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                       label={d("Unpublished").t("library_label_unpublished")}
                       className={classes.capitalize}
                     />
-                  ))}
+                  ))} */}
+                {perm.unpublished_content_page_202 && value?.publish_status === PublishStatus.pending && value?.author === Author.self ? (
+                  <Tab
+                    value={PublishStatus.pending}
+                    label={d("Unpublished").t("library_label_unpublished")}
+                    className={classes.capitalize}
+                  />
+                ) : value?.publish_status === PublishStatus.rejected ? (
+                  <Tab
+                    value={PublishStatus.rejected}
+                    label={d("Unpublished").t("library_label_unpublished")}
+                    className={classes.capitalize}
+                  />
+                ) : (
+                  <Tab value={PublishStatus.draft} label={d("Unpublished").t("library_label_unpublished")} className={classes.capitalize} />
+                )}
                 {perm.archived_content_page_205 && (
                   <Tab value={PublishStatus.archive} label={d("Archived").t("library_label_archived")} className={classes.capitalize} />
                 )}
