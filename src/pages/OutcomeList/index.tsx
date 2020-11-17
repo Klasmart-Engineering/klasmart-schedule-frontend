@@ -4,10 +4,18 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { OrderBy, OutcomeOrderBy } from "../../api/type";
+import { Author, OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
-import { actOutcomeList, bulkDeleteOutcome, bulkPublishOutcome, deleteOutcome, publishOutcome } from "../../reducers/outcome";
+import {
+  actOutcomeList,
+  actPendingOutcomeList,
+  actPrivateOutcomeList,
+  bulkDeleteOutcome,
+  bulkPublishOutcome,
+  deleteOutcome,
+  publishOutcome,
+} from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
 import CreateOutcomings from "../OutcomeEdit";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
@@ -75,21 +83,22 @@ export function OutcomeList() {
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const formMethods = useForm<BulkListForm>();
-  const { getValues, reset } = formMethods;
+  const { watch, reset } = formMethods;
+  const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
   const { outcomeList, total } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: OutcomeTableProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishOutcome(id)));
   };
   const handleBulkPublish: ThirdSearchHeaderProps["onBulkPublish"] = () => {
-    const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
+    // const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
     return refreshWithDispatch(dispatch(bulkPublishOutcome(ids)));
   };
   const handleDelete: OutcomeTableProps["onDelete"] = (id) => {
     return refreshWithDispatch(dispatch(deleteOutcome(id)));
   };
   const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = () => {
-    const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
+    // const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
     return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
@@ -107,8 +116,20 @@ export function OutcomeList() {
   }, [condition, condition.page, history, outcomeList.length, total]);
 
   useEffect(() => {
-    reset();
-    dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+    (async () => {
+      if (condition.publish_status === OutcomePublishStatus.pending && condition.author_name !== Author.self) {
+        await dispatch(actPendingOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+      } else if (
+        condition.publish_status === OutcomePublishStatus.draft ||
+        condition.publish_status === OutcomePublishStatus.rejected ||
+        (condition.publish_status === OutcomePublishStatus.pending && condition.author_name === Author.self)
+      ) {
+        await dispatch(actPrivateOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+      } else {
+        await dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+      }
+      setTimeout(reset, 500);
+    })();
   }, [condition, reset, dispatch, refreshKey]);
 
   return (

@@ -9,6 +9,7 @@ import clsx from "clsx";
 import React from "react";
 import { AssessmentStatus, Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentsBlueIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { HeaderCategory, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
@@ -101,41 +102,40 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3}>
-            <Grid item md={3} lg={5} xl={7}>
-              {/* <Button
-                href={`#/library/content-edit/lesson/material/tab/details/rightside/contentH5p`}
-                variant="contained"
-                color="primary"
-                className={css.createBtn}
-              >
-                Create +
-              </Button> */}
-            </Grid>
+            <Grid item md={3} lg={5} xl={7}></Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
-              <Button
-                onClick={createHandleClick(OutcomePublishStatus.published, OutcomeOrderBy._updated_at)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.published })}
-                startIcon={value?.publish_status === OutcomePublishStatus.published ? <LoBlueIcon /> : <LoIcon />}
-              >
-                {d("Learning Outcome").t("assess_label_learning_outcome")}
-              </Button>
-              <Button
-                onClick={createHandleClick(OutcomePublishStatus.pending, OutcomeOrderBy._updated_at)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.pending })}
-                startIcon={value?.publish_status === OutcomePublishStatus.pending ? <PendingBlueIcon /> : <PendingIcon />}
-              >
-                {d("Pending").t("assess_label_pending")}
-              </Button>
-              <Button
-                onClick={createHandleClick(OutcomePublishStatus.draft, OutcomeOrderBy._updated_at)}
-                className={clsx(css.nav, { [css.actives]: unpublish })}
-                startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
-              >
-                {d("Unpublished").t("assess_label_unpublished")}
-              </Button>
-              <Button className={clsx(css.nav, { [css.actives]: true })} startIcon={<AssessmentsBlueIcon />}>
-                {d("Assessments").t("assess_label_assessments")}
-              </Button>
+              <Permission value={PermissionType.learning_outcome_page_404}>
+                <Button
+                  onClick={createHandleClick(OutcomePublishStatus.published, OutcomeOrderBy._updated_at)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.published })}
+                  startIcon={value?.publish_status === OutcomePublishStatus.published ? <LoBlueIcon /> : <LoIcon />}
+                >
+                  {d("Learning Outcome").t("assess_label_learning_outcome")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.pending_page_403}>
+                <Button
+                  onClick={createHandleClick(OutcomePublishStatus.pending, OutcomeOrderBy._updated_at)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.pending })}
+                  startIcon={value?.publish_status === OutcomePublishStatus.pending ? <PendingBlueIcon /> : <PendingIcon />}
+                >
+                  {d("Pending").t("assess_label_pending")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.unpublished_page_402}>
+                <Button
+                  onClick={createHandleClick(OutcomePublishStatus.draft, OutcomeOrderBy._updated_at)}
+                  className={clsx(css.nav, { [css.actives]: unpublish })}
+                  startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
+                >
+                  {d("Unpublished").t("assess_label_unpublished")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.assessments_page_406}>
+                <Button className={clsx(css.nav, { [css.actives]: true })} startIcon={<AssessmentsBlueIcon />}>
+                  {d("Assessments").t("assess_label_assessments")}
+                </Button>
+              </Permission>
             </Grid>
           </Grid>
         </Hidden>
@@ -147,6 +147,12 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+  const perm = usePermission([
+    PermissionType.unpublished_page_402,
+    PermissionType.pending_page_403,
+    PermissionType.learning_outcome_page_404,
+    PermissionType.assessments_page_406,
+  ]);
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: OutcomePublishStatus | HeaderCategory) => {
     if (!publish_status) return;
     return onChange({ ...value, publish_status: publish_status as OutcomePublishStatus, order_by: OutcomeOrderBy._updated_at });
@@ -167,18 +173,26 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 textColor="primary"
                 aria-label="scrollable force tabs example"
               >
-                <Tab
-                  value={OutcomePublishStatus.published}
-                  label={d("Learning Outcome").t("assess_label_learning_outcome")}
-                  className={classes.capitalize}
-                />
-                <Tab value={OutcomePublishStatus.pending} label={d("Pending").t("assess_label_pending")} className={classes.capitalize} />
-                <Tab
-                  value={OutcomePublishStatus.draft}
-                  label={d("Unpublished").t("assess_label_unpublished")}
-                  className={classes.capitalize}
-                />
-                <Tab value={AssessmentStatus.all} label={d("Assessments").t("assess_label_assessments")} className={classes.capitalize} />
+                {perm.learning_outcome_page_404 && (
+                  <Tab
+                    value={OutcomePublishStatus.published}
+                    label={d("Learning Outcome").t("assess_label_learning_outcome")}
+                    className={classes.capitalize}
+                  />
+                )}
+                {perm.pending_page_403 && (
+                  <Tab value={OutcomePublishStatus.pending} label={d("Pending").t("assess_label_pending")} className={classes.capitalize} />
+                )}
+                {perm.unpublished_page_402 && (
+                  <Tab
+                    value={OutcomePublishStatus.draft}
+                    label={d("Unpublished").t("assess_label_unpublished")}
+                    className={classes.capitalize}
+                  />
+                )}
+                {perm.assessments_page_406 && (
+                  <Tab value={AssessmentStatus.all} label={d("Assessments").t("assess_label_assessments")} className={classes.capitalize} />
+                )}
               </Tabs>
             </AppBar>
           </Grid>

@@ -7,6 +7,7 @@ import React, { ChangeEvent } from "react";
 import { AssessmentOrderBy, AssessmentStatus } from "../../api/type";
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
 import LayoutBox from "../../components/LayoutBox";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentQueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
@@ -90,6 +91,16 @@ export interface ThirdSearchHeaderProps extends AssessmentQueryConditionBaseProp
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+  const completed_perm = usePermission([
+    PermissionType.view_completed_assessments__414,
+    PermissionType.view_org_completed_assessments_424,
+    PermissionType.view_school_in_progress_assessments_427,
+  ]);
+  const in_progress_perm = usePermission([
+    PermissionType.view_in_progress_assessments_415,
+    PermissionType.view_org_in_progress_assessments_425,
+    PermissionType.view_school_in_progress_assessments_427,
+  ]);
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as AssessmentOrderBy | undefined;
     onChange(
@@ -123,17 +134,24 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
           <Divider />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={6} xs={6} md={3}>
-              <TextField
-                size="small"
-                style={{ width: 200 }}
-                onChange={handleChangeStatus}
-                value={value.status || AssessmentStatus.all}
-                label={d("Status").t("assess_filter_column_status")}
-                select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              >
-                {statusOptions}
-              </TextField>
+              {(completed_perm.view_completed_assessments__414 ||
+                completed_perm.view_org_completed_assessments_424 ||
+                completed_perm.view_school_in_progress_assessments_427) &&
+                (in_progress_perm.view_in_progress_assessments_415 ||
+                  in_progress_perm.view_org_in_progress_assessments_425 ||
+                  in_progress_perm.view_school_in_progress_assessments_427) && (
+                  <TextField
+                    size="small"
+                    style={{ width: 200 }}
+                    onChange={handleChangeStatus}
+                    value={value.status || AssessmentStatus.all}
+                    label={d("Status").t("assess_filter_column_status")}
+                    select
+                    SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  >
+                    {statusOptions}
+                  </TextField>
+                )}
             </Grid>
             <Hidden only={["xs", "sm"]}>
               <Grid item md={6}></Grid>

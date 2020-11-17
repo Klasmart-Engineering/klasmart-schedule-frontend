@@ -89,21 +89,20 @@ export default function MyContentList() {
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const formMethods = useForm<ContentListForm>();
-  const { getValues, reset } = formMethods;
+  const { watch, reset } = formMethods;
+  const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
   const handleBulkPublish: ThirdSearchHeaderProps["onBulkPublish"] = () => {
-    const ids = getValues()[ContentListFormKey.CHECKED_CONTENT_IDS];
     return refreshWithDispatch(dispatch(bulkPublishContent(ids)));
   };
   const handleDelete: ContentCardListProps["onDelete"] = (id, type) => {
     return refreshWithDispatch(dispatch(deleteContent({ id, type })));
   };
   const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = (type) => {
-    const ids = getValues()[ContentListFormKey.CHECKED_CONTENT_IDS];
     return refreshWithDispatch(dispatch(bulkDeleteContent({ ids, type })));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
@@ -136,18 +135,20 @@ export default function MyContentList() {
   }, [condition, contentsList, history, total]);
 
   useEffect(() => {
-    reset();
-    if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
-      dispatch(pendingContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
-    } else if (
-      condition.publish_status === PublishStatus.draft ||
-      condition.publish_status === PublishStatus.rejected ||
-      (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
-    ) {
-      dispatch(privateContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
-    } else {
-      dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
-    }
+    (async () => {
+      if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
+        await dispatch(pendingContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+      } else if (
+        condition.publish_status === PublishStatus.draft ||
+        condition.publish_status === PublishStatus.rejected ||
+        (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
+      ) {
+        await dispatch(privateContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+      } else {
+        await dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+      }
+      setTimeout(reset, 500);
+    })();
   }, [condition, reset, dispatch, refreshKey]);
 
   return (

@@ -160,6 +160,26 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
   }
 );
 
+type IQueryPendingOutcomeListParams = Parameters<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryPendingOutcomeListResult = AsyncReturnType<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>;
+export const actPendingOutcomeList = createAsyncThunk<IQueryPendingOutcomeListResult, IQueryPendingOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(query);
+    return { list, total };
+  }
+);
+
+type IQueryPrivateOutcomeListParams = Parameters<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryPrivateOutcomeListResult = AsyncReturnType<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>;
+export const actPrivateOutcomeList = createAsyncThunk<IQueryPrivateOutcomeListResult, IQueryPrivateOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(query);
+    return { list, total };
+  }
+);
+
 export const deleteOutcome = createAsyncThunk<string, Required<ApiOutcomeView>["outcome_id"]>(
   "outcome/deleteOutcome",
   async (id, { dispatch }) => {
@@ -187,7 +207,7 @@ type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
 export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
-    if (!ids.length)
+    if (!ids?.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
     const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
@@ -264,6 +284,22 @@ const { reducer } = createSlice({
       state.total = payload.total;
     },
     [actOutcomeList.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [actPendingOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.outcomeList = payload.list;
+      state.total = payload.total;
+    },
+    [actPendingOutcomeList.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [actPrivateOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.outcomeList = payload.list;
+      state.total = payload.total;
+    },
+    [actPrivateOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
