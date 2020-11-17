@@ -146,6 +146,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
   "reportOnload",
   async ({ teacher_id, class_id, lesson_plan_id, view_my_report, status, sort_by }, { dispatch }) => {
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    let reportList: EntityStudentReportItem[] = [];
     // 拉取我的user_id
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
       query: QeuryMeDocument,
@@ -187,24 +188,33 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       teacher_id: (finalTearchId as string) || "",
       class_id: (finalClassId as string) || "",
     });
-    const finalPlanId = lesson_plan_id ? lesson_plan_id : lessonPlanList[0].id || "";
+    debugger;
+    const finalPlanId = lesson_plan_id ? lesson_plan_id : lessonPlanList[0]?.id || "";
+    debugger;
     // dispatch(getAchievementList({ metaLoading:true, teacher_id: finalTearchId, class_id: finalClassId, lesson_plan_id: finalPlanId, status , sort_by}))
-    const items = await api.reports.listStudentsReport({
-      teacher_id: finalTearchId,
-      class_id: finalClassId,
-      lesson_plan_id: finalPlanId as string,
-      status,
-      sort_by,
-    });
-    return {
+    if (finalPlanId) {
+      const items = await api.reports.listStudentsReport({
+        teacher_id: finalTearchId,
+        class_id: finalClassId,
+        lesson_plan_id: finalPlanId as string,
+        status,
+        sort_by,
+      });
+      reportList = items.items || [];
+    }
+
+    debugger;
+    const abc = {
       teacherList: teacherList || { organization: { teachers: [] } },
       classList: classList || { user: { classesTeaching: [] } },
       lessonPlanList: lessonPlanList,
       teacher_id: finalTearchId,
       class_id: finalClassId,
       lesson_plan_id: finalPlanId as string,
-      reportList: items.items,
+      reportList,
     };
+    debugger;
+    return abc;
   }
 );
 
