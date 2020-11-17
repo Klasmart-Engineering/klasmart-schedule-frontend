@@ -207,7 +207,7 @@ type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
 export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
-    if (!ids.length)
+    if (!ids?.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
     const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
