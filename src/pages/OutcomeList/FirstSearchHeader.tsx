@@ -9,6 +9,7 @@ import clsx from "clsx";
 import React from "react";
 import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import CreateOutcomings from "../OutcomeEdit";
 import { AssessmentsIcon, LoBlueIcon, LoIcon, PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "./Icons";
@@ -104,39 +105,49 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container>
             <Grid item md={3} lg={5} xl={7}>
-              <Button href={`#${CreateOutcomings.routeBasePath}`} variant="contained" color="primary" className={css.createBtn}>
-                {d("Create").t("assess_label_create")} +
-              </Button>
+              <Permission value={PermissionType.create_learning_outcome__421}>
+                <Button href={`#${CreateOutcomings.routeBasePath}`} variant="contained" color="primary" className={css.createBtn}>
+                  {d("Create").t("assess_label_create")} +
+                </Button>
+              </Permission>
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
-              <Button
-                onClick={createHandleClick(OutcomePublishStatus.published)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.published })}
-                startIcon={value?.publish_status === OutcomePublishStatus.published ? <LoBlueIcon /> : <LoIcon />}
-              >
-                {d("Learning Outcome").t("assess_label_learning_outcome")}
-              </Button>
-              <Button
-                onClick={createHandleClick(OutcomePublishStatus.pending)}
-                className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.pending })}
-                startIcon={value?.publish_status === OutcomePublishStatus.pending ? <PendingBlueIcon /> : <PendingIcon />}
-              >
-                {d("Pending").t("assess_label_pending")}
-              </Button>
-              <Button
-                onClick={createHandleClick(OutcomePublishStatus.draft)}
-                className={clsx(css.nav, { [css.actives]: unpublish })}
-                startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
-              >
-                {d("Unpublished").t("assess_label_unpublished")}
-              </Button>
-              <Button
-                onClick={() => onChangeCategory(HeaderCategory.assessment)}
-                className={clsx(css.nav, { [css.actives]: false })}
-                startIcon={<AssessmentsIcon />}
-              >
-                {d("Assessments").t("assess_label_assessments")}
-              </Button>
+              <Permission value={PermissionType.learning_outcome_page_404}>
+                <Button
+                  onClick={createHandleClick(OutcomePublishStatus.published)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.published })}
+                  startIcon={value?.publish_status === OutcomePublishStatus.published ? <LoBlueIcon /> : <LoIcon />}
+                >
+                  {d("Learning Outcome").t("assess_label_learning_outcome")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.pending_page_403}>
+                <Button
+                  onClick={createHandleClick(OutcomePublishStatus.pending)}
+                  className={clsx(css.nav, { [css.actives]: value?.publish_status === OutcomePublishStatus.pending })}
+                  startIcon={value?.publish_status === OutcomePublishStatus.pending ? <PendingBlueIcon /> : <PendingIcon />}
+                >
+                  {d("Pending").t("assess_label_pending")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.unpublished_page_402}>
+                <Button
+                  onClick={createHandleClick(OutcomePublishStatus.draft)}
+                  className={clsx(css.nav, { [css.actives]: unpublish })}
+                  startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
+                >
+                  {d("Unpublished").t("assess_label_unpublished")}
+                </Button>
+              </Permission>
+              <Permission value={PermissionType.assessments_page_406}>
+                <Button
+                  onClick={() => onChangeCategory(HeaderCategory.assessment)}
+                  className={clsx(css.nav, { [css.actives]: false })}
+                  startIcon={<AssessmentsIcon />}
+                >
+                  {d("Assessments").t("assess_label_assessments")}
+                </Button>
+              </Permission>
             </Grid>
           </Grid>
         </Hidden>
@@ -148,6 +159,12 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeCategory } = props;
+  const perm = usePermission([
+    PermissionType.unpublished_page_402,
+    PermissionType.pending_page_403,
+    PermissionType.learning_outcome_page_404,
+    PermissionType.assessments_page_406,
+  ]);
   const handleChange = (event: React.ChangeEvent<{}>, publish_status: OutcomePublishStatus | HeaderCategory) => {
     if (publish_status === HeaderCategory.assessment) {
       return onChangeCategory(HeaderCategory.assessment);
@@ -189,11 +206,13 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                     className={classes.capitalize}
                   />
                 )}
-                <Tab
-                  value={HeaderCategory.assessment}
-                  label={d("Assessments").t("assess_label_assessments")}
-                  className={classes.capitalize}
-                />
+                {perm.assessments_page_406 && (
+                  <Tab
+                    value={HeaderCategory.assessment}
+                    label={d("Assessments").t("assess_label_assessments")}
+                    className={classes.capitalize}
+                  />
+                )}
               </Tabs>
             </AppBar>
           </Grid>

@@ -196,7 +196,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status === PublishStatus.published ? (
+              {value.publish_status !== PublishStatus.pending ? (
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author_name === Author.self} onChange={handleChangeMyonly} />}
