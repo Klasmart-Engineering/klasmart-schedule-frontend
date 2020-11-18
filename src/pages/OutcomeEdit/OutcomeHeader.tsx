@@ -125,6 +125,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     status,
     before,
     isSelf,
+    author_name,
   } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -302,31 +303,40 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 }
               />
             )}
-            <Permission
-              value={PermissionType.reject_pending_learning_outcome_482}
-              render={(value) =>
-                value && (
-                  <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={handelReject}>
-                    {d("Reject").t("assess_label_reject")}
-                  </Button>
-                )
-              }
-            />
-            <Permission
-              value={PermissionType.approve_pending_learning_outcome_481}
-              render={(value) =>
-                value && (
-                  <LButton
-                    variant="contained"
-                    endIcon={<Check />}
-                    className={clsx(css.headerButton, css.greenButton)}
-                    onClick={handleApprove}
-                  >
-                    {d("Approve").t("assess_label_approve")}
-                  </LButton>
-                )
-              }
-            />
+            {!author_name && (
+              <Permission
+                value={PermissionType.reject_pending_learning_outcome_482}
+                render={(value) =>
+                  value && (
+                    <Button
+                      variant="contained"
+                      endIcon={<Clear />}
+                      className={clsx(css.headerButton, css.redButton)}
+                      onClick={handelReject}
+                    >
+                      {d("Reject").t("assess_label_reject")}
+                    </Button>
+                  )
+                }
+              />
+            )}
+            {!author_name && (
+              <Permission
+                value={PermissionType.approve_pending_learning_outcome_481}
+                render={(value) =>
+                  value && (
+                    <LButton
+                      variant="contained"
+                      endIcon={<Check />}
+                      className={clsx(css.headerButton, css.greenButton)}
+                      onClick={handleApprove}
+                    >
+                      {d("Approve").t("assess_label_approve")}
+                    </LButton>
+                  )
+                }
+              />
+            )}
           </>
         )}
         {publish_status === "rejected" && (
