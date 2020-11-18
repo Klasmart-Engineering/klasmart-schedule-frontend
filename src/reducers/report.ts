@@ -188,10 +188,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       teacher_id: (finalTearchId as string) || "",
       class_id: (finalClassId as string) || "",
     });
-    debugger;
     const finalPlanId = lesson_plan_id ? lesson_plan_id : lessonPlanList[0]?.id || "";
-    debugger;
-    // dispatch(getAchievementList({ metaLoading:true, teacher_id: finalTearchId, class_id: finalClassId, lesson_plan_id: finalPlanId, status , sort_by}))
     if (finalPlanId) {
       const items = await api.reports.listStudentsReport({
         teacher_id: finalTearchId,
@@ -202,8 +199,6 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       });
       reportList = items.items || [];
     }
-
-    debugger;
     const abc = {
       teacherList: teacherList || { organization: { teachers: [] } },
       classList: classList || { user: { classesTeaching: [] } },
@@ -213,7 +208,6 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       lesson_plan_id: finalPlanId as string,
       reportList,
     };
-    debugger;
     return abc;
   }
 );
@@ -264,9 +258,7 @@ const { reducer } = createSlice({
       state.reportList = reportList;
     },
     [reportOnload.pending.type]: (state) => {
-      state.reportMockOptions.teacher_id = initialState.reportMockOptions.teacher_id;
-      state.reportMockOptions.class_id = initialState.reportMockOptions.class_id;
-      state.reportMockOptions.lesson_plan_id = initialState.reportMockOptions.lesson_plan_id;
+      state.reportMockOptions = initialState.reportMockOptions;
     },
   },
 });

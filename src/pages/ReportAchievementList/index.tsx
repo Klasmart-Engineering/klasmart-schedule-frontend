@@ -90,57 +90,8 @@ export function ReportAchievementList() {
     },
     [condition.teacher_id, getFirstLessonPlanId, history, reportMockOptions.classList.user]
   );
-
-  // useEffect(() => {
-  //   dispatch(getReportMockOptions({ metaLoading: true }));
-  // }, [dispatch]);
-
-  // useEffect(() => {
-  //   const firstTeacher =
-  //     reportMockOptions.teacherList &&
-  //     reportMockOptions.teacherList.organization &&
-  //     reportMockOptions.teacherList.organization.teachers &&
-  //     reportMockOptions.teacherList.organization.teachers[0];
-  //   const firstClass =
-  //     reportMockOptions.classList &&
-  //     reportMockOptions.classList.user &&
-  //     reportMockOptions.classList.user.classesTeaching &&
-  //     reportMockOptions.classList.user.classesTeaching[0];
-  //   const firstLessonPlan = reportMockOptions.lessonPlanList && reportMockOptions.lessonPlanList[0];
-  //   if (firstTeacher?.user?.user_id && firstClass?.class_id && firstLessonPlan.id) {
-  //     history.push({
-  //       search: setQuery(history.location.search, {
-  //         teacher_id: firstTeacher?.user?.user_id,
-  //         class_id: firstClass?.class_id,
-  //         lesson_plan_id: firstLessonPlan.id,
-  //       }),
-  //     });
-  //   }
-  //   // if(reportMockOptions.teacherList)
-  // }, [history, reportMockOptions.classList, reportMockOptions.lessonPlanList, reportMockOptions.teacherList]);
-  // useEffect(() => {
-  //   dispatch(queryMe({metaLoading: true}));
-  // },[dispatch])
-  // useEffect(() => {
-  //   if (condition.teacher_id) {
-  //     dispatch(
-  //       getAchievementList({
-  //         teacher_id: condition.teacher_id,
-  //         class_id: condition.class_id,
-  //         lesson_plan_id: condition.lesson_plan_id,
-  //         status: condition.status,
-  //         sort_by: condition.sort_by,
-  //         metaLoading: true,
-  //       })
-  //     );
-
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [condition.lesson_plan_id, condition.sort_by, condition.status, dispatch]);
-
   useEffect(() => {
-    console.log("!viewReport && viewMyReport = ", !viewReport && viewMyReport);
-
+    // console.log("!viewReport && viewMyReport = ", !viewReport && viewMyReport);
     dispatch(
       reportOnload({
         teacher_id: condition.teacher_id,
@@ -148,7 +99,7 @@ export function ReportAchievementList() {
         lesson_plan_id: condition.lesson_plan_id,
         status: condition.status,
         sort_by: condition.sort_by,
-        view_my_report: true,
+        view_my_report: !viewReport && viewMyReport,
         metaLoading: true,
       })
     );
