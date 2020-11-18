@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
+import { LangRecordId } from "../locale/lang/type";
 import { Api } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
@@ -30,7 +31,9 @@ fetchIntercept.register({
         apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label });
       })
       .catch(async (e) => {
-        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: response.statusText });
+        const errorLabel: LangRecordId = "general_error_unknown";
+        console.error(e);
+        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: errorLabel });
       });
     return response;
   },
