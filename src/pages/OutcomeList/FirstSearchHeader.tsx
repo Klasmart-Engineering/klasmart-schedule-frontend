@@ -107,8 +107,6 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const unpublish = isUnpublish(value);
   const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
     onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at });
-  const handleClickUnpublished = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at, is_unpub: UNPUB });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -146,7 +144,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
               </Permission>
               <Permission value={PermissionType.unpublished_page_402}>
                 <Button
-                  onClick={handleClickUnpublished(OutcomePublishStatus.draft)}
+                  onClick={createHandleClick(OutcomePublishStatus.draft)}
                   className={clsx(css.nav, { [css.actives]: unpublish })}
                   startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
                 >
