@@ -22,6 +22,7 @@ import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField
 import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions } from "../../reducers/content";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -81,7 +82,15 @@ function ProgressWithText(props: CircularProgressProps) {
   );
 }
 
-function AssetsDetails(props: AssetDetailsProps) {
+interface AssetDetailsProps {
+  allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
+  formMethods: UseFormMethods<ContentDetailForm>;
+  flattenedMockOptions: LinkedMockOptions;
+  contentDetail: EntityContentInfoWithDetails;
+  onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
+  onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
+}
+export default function AssetsDetails(props: AssetDetailsProps) {
   const css = useStyles();
   const {
     formMethods: { control, errors },
@@ -89,6 +98,7 @@ function AssetsDetails(props: AssetDetailsProps) {
     contentDetail,
     onChangeProgram,
     onChangeDevelopmental,
+    allDefaultValueAndKey,
   } = props;
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
@@ -123,6 +133,8 @@ function AssetsDetails(props: AssetDetailsProps) {
   };
 
   return (
+    <div className={css.detailBox}>
+      <Box className={css.assetsHeader}>{d("Details").t("library_label_details")}</Box>
     <ThemeProvider theme={theme}>
       <Box component="form" p="7.8% 8.5%">
         <Controller
@@ -132,13 +144,15 @@ function AssetsDetails(props: AssetDetailsProps) {
           label={d("Asset Name").t("library_label_asset_name")}
           required
           rules={{ required: true }}
-          defaultValue={contentDetail.name}
+          defaultValue={allDefaultValueAndKey.name?.value}
+          key={allDefaultValueAndKey.name?.key}
           disabled={isIdExist()}
           error={errorValidator(errors.name)}
         />
         <Controller
           name="thumbnail"
-          defaultValue={contentDetail.thumbnail}
+          defaultValue={allDefaultValueAndKey.thumbnail?.value}
+          key={allDefaultValueAndKey.thumbnail?.key}
           control={control}
           render={(props: any) => (
             <CropImage
@@ -174,7 +188,8 @@ function AssetsDetails(props: AssetDetailsProps) {
 
         <Controller
           name="program"
-          defaultValue={contentDetail.program}
+          defaultValue={allDefaultValueAndKey.program?.value}
+          key={allDefaultValueAndKey.program?.key}
           control={control}
           rules={{ required: true }}
           render={(props: any) => (
@@ -204,7 +219,8 @@ function AssetsDetails(props: AssetDetailsProps) {
           name="subject"
           control={control}
           SelectProps={{ multiple: true }}
-          defaultValue={contentDetail.subject}
+          defaultValue={allDefaultValueAndKey.subject?.value}
+          key={allDefaultValueAndKey.subject?.key}
           disabled={isIdExist()}
         >
           {menuItemList(flattenedMockOptions.subject || [])}
@@ -212,7 +228,8 @@ function AssetsDetails(props: AssetDetailsProps) {
         <Box>
           <Controller
             name="developmental"
-            defaultValue={contentDetail.developmental}
+            defaultValue={allDefaultValueAndKey.developmental?.value}
+            key={allDefaultValueAndKey.developmental?.key}
             control={control}
             rules={{ required: true }}
             render={(props: any) => (
@@ -248,7 +265,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             rules={{ required: true }}
             error={errorValidator(errors.skills)}
             SelectProps={{ multiple: true }}
-            defaultValue={contentDetail.skills}
+            defaultValue={allDefaultValueAndKey.skills?.value}
+            key={allDefaultValueAndKey.skills?.key}
             disabled={isIdExist()}
           >
             {menuItemList(flattenedMockOptions.skills || [])}
@@ -266,7 +284,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             rules={{ required: true }}
             error={errorValidator(errors.age)}
             SelectProps={{ multiple: true }}
-            defaultValue={contentDetail.age}
+            defaultValue={allDefaultValueAndKey.age?.value}
+            key={allDefaultValueAndKey.age?.key}
             disabled={isIdExist()}
           >
             {menuItemList(flattenedMockOptions.age || [])}
@@ -282,7 +301,8 @@ function AssetsDetails(props: AssetDetailsProps) {
             rules={{ required: true }}
             error={errorValidator(errors.grade)}
             SelectProps={{ multiple: true }}
-            defaultValue={contentDetail.grade}
+            defaultValue={allDefaultValueAndKey.grade?.value}
+            key={allDefaultValueAndKey.grade?.key}
             disabled={isIdExist()}
           >
             {menuItemList(flattenedMockOptions.grade || [])}
@@ -294,7 +314,8 @@ function AssetsDetails(props: AssetDetailsProps) {
           name="description"
           className={css.fieldset}
           label={d("Description").t("library_label_description")}
-          defaultValue={contentDetail.description}
+          defaultValue={allDefaultValueAndKey.description?.value}
+          key={allDefaultValueAndKey.description?.key}
           disabled={isIdExist()}
         />
         <Controller
@@ -304,35 +325,12 @@ function AssetsDetails(props: AssetDetailsProps) {
           decode={decodeArray}
           className={css.fieldset}
           label={d("Keywords").t("library_label_keywords")}
-          defaultValue={contentDetail.keywords}
+          defaultValue={allDefaultValueAndKey.keywords?.value}
+          key={allDefaultValueAndKey.keywords?.key}
           disabled={isIdExist()}
         />
       </Box>
     </ThemeProvider>
-  );
-}
-
-interface AssetDetailsProps {
-  formMethods: UseFormMethods<ContentDetailForm>;
-  flattenedMockOptions: LinkedMockOptions;
-  contentDetail: EntityContentInfoWithDetails;
-  onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
-  onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
-}
-
-export default function AssetDetails(props: AssetDetailsProps) {
-  const { formMethods, flattenedMockOptions, contentDetail, onChangeDevelopmental, onChangeProgram } = props;
-  const css = useStyles();
-  return (
-    <div className={css.detailBox}>
-      <Box className={css.assetsHeader}>{d("Details").t("library_label_details")}</Box>
-      <AssetsDetails
-        formMethods={formMethods}
-        flattenedMockOptions={flattenedMockOptions}
-        contentDetail={contentDetail}
-        onChangeProgram={onChangeProgram}
-        onChangeDevelopmental={onChangeDevelopmental}
-      />
     </div>
   );
 }

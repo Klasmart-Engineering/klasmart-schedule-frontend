@@ -268,7 +268,8 @@ export default function Details(props: DetailsProps) {
           type="number"
           className={css.fieldset}
           label={d("Duration(Minutes)").t("library_label_duration")}
-          defaultValue={contentDetail.suggest_time}
+          defaultValue={allDefaultValueAndKey.suggest_time?.value}
+          key={allDefaultValueAndKey.suggest_time?.key}
           disabled={permission}
         />
         <Controller
@@ -294,7 +295,6 @@ export default function Details(props: DetailsProps) {
             </TextField>
           )}
         />
-        {/*
         <Controller
           as={TextField}
           select
@@ -310,8 +310,7 @@ export default function Details(props: DetailsProps) {
           control={control}
         >
           {menuItemList(linkedMockOptions.subject || [])}
-        </Controller>*/}
-
+        </Controller>
         <Box>
           <Controller
             name="developmental"

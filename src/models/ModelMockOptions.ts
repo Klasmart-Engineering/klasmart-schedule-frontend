@@ -117,7 +117,7 @@ export class ModelMockOptions {
       switch (name) {
         case "program":
           result[name] = {
-            key: ModelMockOptions.createSelectKey(linkedMockOptions.program, contentDetail[name], name),
+            key: ModelMockOptions.createSelectKey( linkedMockOptions.program, contentDetail[name], name ),
             value: ModelMockOptions.createMandatoryDefaultValue(props, name),
           };
           break;
@@ -156,7 +156,7 @@ export class ModelMockOptions {
       value: input_source,
     };
     result["data.source"] = {
-      key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.input_source"),
+      key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.source"),
       value: source,
     };
     return result;

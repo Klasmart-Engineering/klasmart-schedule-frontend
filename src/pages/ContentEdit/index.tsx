@@ -39,6 +39,7 @@ import { Outcomes, OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
+import { DevTool } from "@hookform/devtools"
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -72,7 +73,7 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
   readonly: rightside.includes("Preview"),
 });
 
-export default function ContentEdit() {
+function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
   // const [hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload] = useState(false);
@@ -103,8 +104,6 @@ export default function ContentEdit() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
   );
-  // const inputSourceDefaultValue = JSON.parse(contentDetail.data || JSON.stringify({ input_source: MaterialType.h5p })).input_source;
-  // const h5pSource = JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source;
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -263,16 +262,11 @@ export default function ContentEdit() {
     () => async (programId: string) => {
       setRegulation(Regulation.ByOptionCount);
       dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: programId }));
-      // const { payload: linkedMockOptions } = ((await dispatch(
-      //   getLinkedMockOptions({ metaLoading: true, default_program_id: programId })
-      // )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>;
-      // ModelMockOptions.updateValuesWhenProgramChange(setValue, linkedMockOptions, programId);
     },
     [dispatch]
   );
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string[]) => {
-      // setValue("skills", []);
       setRegulation(Regulation.ByOptionCount);
       dispatch(
         getLinkedMockOptionsSkills({ metaLoading: true, default_program_id: program, default_developmental_id: developmental_id[0] })
@@ -280,31 +274,12 @@ export default function ContentEdit() {
     },
     [dispatch, program]
   );
-  // useEffect(() => {
-  //   dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
-  //   setHasCreateSituationFirstOnload(false);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [id, lesson, dispatch, history, editindex]);
-  // useEffect(() => {
-  //   // 编辑表单时 加载完 contentDetial 的逻辑
-  //   reset(ModelContentDetailForm.decode(contentDetail));
-  //   setHasCreateSituationFirstOnload(false);
-  // }, [contentDetail, lesson, reset]);
-  // useEffect(() => {
-  //   // 新建表单时，加载完 mockOptions 的逻辑
-  //   if (id || !linkedMockOptions.program_id || hasCreateSituationFirstOnload) return;
-  //   const { program, subject, developmental, skills, grade, age, program_id, developmental_id } = linkedMockOptions;
-  //   if (!program_id || !developmental_id) return;
-  //   const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
-  //   reset({ ...onlyOneOptionValue, program: program_id, developmental: [developmental_id] });
-  //   setHasCreateSituationFirstOnload(true);
-  // }, [reset, id, linkedMockOptions, lesson]);
-
   useEffect(() => {
     dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
-  }, [id, lesson, dispatch, editindex]);
+  }, [id, lesson, dispatch]);
   const assetDetails = (
     <AssetDetails
+      allDefaultValueAndKey={allDefaultValueAndKey}
       formMethods={formMethods}
       flattenedMockOptions={linkedMockOptions}
       contentDetail={contentDetail}
@@ -401,23 +376,6 @@ export default function ContentEdit() {
                   valueSource={allDefaultValueAndKey["data.source"]?.value}
                 />
               ) : (
-                // <Controller
-                //   name="data.source"
-                //   defaultValue={allDefaultValueAndKey["data.source"]?.value}
-                //   key={allDefaultValueAndKey["data.source"]?.key}
-                //   control={control}
-                //   render={({ value: valueSource, onChange: onChangeSource }: any) => (
-                //     <Controller
-                //       name="source_type"
-                //       defaultValue={allDefaultValueAndKey.source_type?.value}
-                //       key={allDefaultValueAndKey.source_type?.key}
-                //       control={control}
-                //       render={({ value: valueSourceType, onChange: onChangeSourceType }: any) => (
-                //         <ContentH5p isCreate={!id} allDefaultValueAndKey= {allDefaultValueAndKey} {...{ valueSource, valueSourceType, onChangeSource, onChangeSourceType }} />
-                //       )}
-                //     />
-                //   )}
-                // />
                 <MediaAssetsEdit
                   allDefaultValueAndKey={allDefaultValueAndKey}
                   readonly={false}
@@ -490,9 +448,15 @@ export default function ContentEdit() {
           )
         }
       />
-      {/* <DevTool control={control} /> */}
+      <DevTool control={control} />
     </DndProvider>
   );
+}
+
+export default function ContentEdit() {
+  const { id, editindex } = useQuery();
+  const { lesson } = useParams()
+  return <ContentEditForm key={`id${id},editindex${editindex}lesson${lesson}`} />
 }
 
 ContentEdit.routeBasePath = "/library/content-edit";

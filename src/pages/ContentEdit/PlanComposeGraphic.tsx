@@ -437,7 +437,7 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
   const { breakpoints } = useTheme();
   const disable = useMediaQuery(breakpoints.down("md"));
-  const startRef = useScrollCenter(true, disable);
+  // const startRef = useScrollCenter(true, disable);
   return (
     <Box className={css.planComposeGraphic} {...{ ref }}>
       {false && (
@@ -485,7 +485,7 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
           <Box className="Box1" display="flex" flexDirection="column" alignItems="center">
             <ArcherElement id="start" relations={startRelations}>
               <div>
-                <ConditionBtn ref={startRef} className={css.arrowSourceCircle} type="start" />
+                <ConditionBtn  className={css.arrowSourceCircle} type="start" />
               </div>
             </ArcherElement>
             <Box className="box2" position="relative">
