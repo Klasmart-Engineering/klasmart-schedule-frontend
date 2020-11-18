@@ -3,7 +3,7 @@ import { BatchItem, FileLike } from "@rpldy/shared";
 import { PreSendData, UploadyContextType, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
 import { UPLOADER_EVENTS } from "@rpldy/uploader";
 import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
-import React, { ReactNode, RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../../api";
 import { AsyncTrunkReturned, getContentResourceUploadPath } from "../../reducers/content";
@@ -49,7 +49,7 @@ interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   onChange?: (value?: string) => any;
   onChangeFileType?: () => any;
 }
-export function SingleUploader(props: SingleUploaderProps) {
+export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((props, ref) => {
   const { value, onChange, render, partition, transformFile, onChangeFileType, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
@@ -78,8 +78,10 @@ export function SingleUploader(props: SingleUploaderProps) {
     [transformFile, dispatch, partition, onChange, rid, onChangeFileType]
   );
   return (
-    <Uploady {...uploadyProps} method="PUT" sendWithFormData={false} listeners={listeners}>
-      <BaseUploader {...{ value, onChange, render }} />
-    </Uploady>
+    <div ref={ref}>
+      <Uploady {...uploadyProps} method="PUT" sendWithFormData={false} listeners={listeners}>
+        <BaseUploader {...{ value, onChange, render }} />
+      </Uploady>
+    </div>
   );
-}
+});

@@ -11,7 +11,7 @@ import { actWarning } from "./notify";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
-  contentDetail: EntityContentInfoWithDetails;
+  contentDetail: Required<EntityContentInfoWithDetails>;
   mediaList: EntityContentInfoWithDetails[];
   outcomeList: ApiOutcomeView[];
   total: number;
@@ -64,6 +64,17 @@ const initialState: IContentState = {
     org_name: "",
     outcomes: [],
     outcome_entities: [],
+    created_at: 0,
+    draw_activity: false,
+    grade_name: [],
+    latest_id: "",
+    lesson_type: "",
+    lesson_type_name: "",
+    publish_scope_name: "",
+    reject_reason: [],
+    remark: "",
+    self_study: false,
+    updated_at: 0,
   },
   mediaList: [],
   MediaListTotal: 0,
@@ -486,7 +497,7 @@ const { actions, reducer } = createSlice({
       if (payload.contentDetail) {
         // debug
         // state.contentDetail = require('../mocks/contentDetial.json');
-        state.contentDetail = payload.contentDetail;
+        state.contentDetail = payload.contentDetail as Required<EntityContentInfoWithDetails>;
       }
       if (payload.mediaList?.total) {
         state.MediaListTotal = payload.mediaList.total;

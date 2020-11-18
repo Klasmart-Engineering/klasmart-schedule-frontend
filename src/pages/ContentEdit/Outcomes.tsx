@@ -18,7 +18,7 @@ import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
-import React, { useCallback } from "react";
+import React, { forwardRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { PermissionType, usePermission } from "../../components/Permission";
@@ -236,7 +236,7 @@ export interface OutcomesProps {
   outcomePage: number;
 }
 
-export default function Outcomes(props: OutcomesProps) {
+export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
   const {
     comingsoon,
@@ -272,7 +272,7 @@ export default function Outcomes(props: OutcomesProps) {
     />
   );
   return (
-    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
+    <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
         <TipImages text="library_msg_coming_soon" type={TipImagesType.commingSoon} />
       ) : (
@@ -291,4 +291,4 @@ export default function Outcomes(props: OutcomesProps) {
       )}
     </Box>
   );
-}
+});

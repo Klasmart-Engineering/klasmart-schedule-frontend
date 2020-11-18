@@ -418,7 +418,7 @@ interface PlanComposeGraphicProps {
   value?: Segment;
   onChange?: (value: Segment) => any;
 }
-export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
+export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicProps>((props, ref) => {
   const { value = {}, onChange = doNothing } = props;
   const plan = ModelLessonPlan.toSegment(JSON.stringify(value));
   const { palette } = useTheme<Theme>();
@@ -439,7 +439,7 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
   const disable = useMediaQuery(breakpoints.down("md"));
   const startRef = useScrollCenter(true, disable);
   return (
-    <Box className={css.planComposeGraphic}>
+    <Box className={css.planComposeGraphic} {...{ ref }}>
       {false && (
         <Box position="relative" display="flex" alignItems="center" px={3} boxShadow={3}>
           <ButtonGroup className={css.headerButtonGroup}>
@@ -499,4 +499,4 @@ export function PlanComposeGraphic(props: PlanComposeGraphicProps) {
       </Box>
     </Box>
   );
-}
+});

@@ -35,7 +35,7 @@ import Details from "./Details";
 import LayoutPair from "./Layout";
 import MediaAssets, { MediaAssetsProps } from "./MediaAssets";
 import MediaAssetsEdit from "./MediaAssetsEdit";
-import Outcomes, { OutcomesProps } from "./Outcomes";
+import { Outcomes, OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
@@ -490,6 +490,7 @@ export default function ContentEdit() {
           )
         }
       />
+      {/* <DevTool control={control} /> */}
     </DndProvider>
   );
 }

@@ -23,7 +23,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import shadows from "@material-ui/core/styles/shadows";
 import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { Fragment, useCallback, useReducer } from "react";
+import React, { forwardRef, Fragment, useCallback, useReducer } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
@@ -427,7 +427,7 @@ interface SelectH5PRadioProps {
   formMethods: UseFormMethods<ContentDetailForm>;
   disabled: boolean;
 }
-export function SelectH5PRadio(props: SelectH5PRadioProps) {
+export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((props, ref) => {
   const { value, onChange, formMethods, disabled } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
@@ -436,7 +436,7 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
   const size = xs ? "small" : "medium";
   const radioTypography = xs ? "subtitle2" : "h6";
   return (
-    <Box display="flex" mb={3} justifyContent={sm ? "center" : "start"}>
+    <Box display="flex" mb={3} justifyContent={sm ? "center" : "start"} {...{ ref }}>
       <RadioGroup
         className={css.radioGroup}
         value={value}
@@ -484,4 +484,4 @@ export function SelectH5PRadio(props: SelectH5PRadioProps) {
       </RadioGroup>
     </Box>
   );
-}
+});

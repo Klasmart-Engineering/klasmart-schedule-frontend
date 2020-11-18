@@ -22,7 +22,7 @@ export function MultiNameController<TName extends string, TFieldValues extends F
   ));
   const onChange: renderProps<TName>["onChange"] = (value) => {
     names.forEach((name) => {
-      formMethods.setValue(name, value[name], { shouldDirty: true });
+      // formMethods.setValue(name, value[name], { shouldDirty: true });
     });
   };
   return (
