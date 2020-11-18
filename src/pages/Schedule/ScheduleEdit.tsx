@@ -823,7 +823,7 @@ function EditBox(props: CalendarStateProps) {
                   onClick={handleDelete}
                 />
                 <Permission
-                  value={PermissionType.create_event__520}
+                  value={PermissionType.create_event_520}
                   render={(value) =>
                     value && (
                       <Save

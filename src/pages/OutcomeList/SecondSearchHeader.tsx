@@ -116,7 +116,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <Permission value={PermissionType.create_learning_outcome__421}>
+              <Permission value={PermissionType.create_learning_outcome_421}>
                 <Button variant="contained" color="primary" className={classes.createBtn} href={`#${CreateOutcomings.routeBasePath}`}>
                   {d("Create").t("assess_label_create")} +
                 </Button>

@@ -92,7 +92,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const completed_perm = usePermission([
-    PermissionType.view_completed_assessments__414,
+    PermissionType.view_completed_assessments_414,
     PermissionType.view_org_completed_assessments_424,
     PermissionType.view_school_in_progress_assessments_427,
   ]);
@@ -134,7 +134,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
           <Divider />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={6} xs={6} md={3}>
-              {(completed_perm.view_completed_assessments__414 ||
+              {(completed_perm.view_completed_assessments_414 ||
                 completed_perm.view_org_completed_assessments_424 ||
                 completed_perm.view_school_in_progress_assessments_427) &&
                 (in_progress_perm.view_in_progress_assessments_415 ||

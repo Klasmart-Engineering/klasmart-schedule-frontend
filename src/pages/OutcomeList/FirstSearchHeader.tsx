@@ -113,7 +113,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container>
             <Grid item md={3} lg={5} xl={7}>
-              <Permission value={PermissionType.create_learning_outcome__421}>
+              <Permission value={PermissionType.create_learning_outcome_421}>
                 <Button href={`#${CreateOutcomings.routeBasePath}`} variant="contained" color="primary" className={css.createBtn}>
                   {d("Create").t("assess_label_create")} +
                 </Button>

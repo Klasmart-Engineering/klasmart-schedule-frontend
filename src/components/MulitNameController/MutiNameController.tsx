@@ -21,9 +21,9 @@ export function MultiNameController<TName extends string, TFieldValues extends F
     <input name={name} hidden defaultValue={defaultValue && defaultValue[name]} ref={formMethods.register} />
   ));
   const onChange: renderProps<TName>["onChange"] = (value) => {
-    names.forEach((name) => {
-      formMethods.setValue(name, value[name], { shouldDirty: true });
-    });
+    // names.forEach((name) => {
+    //   // formMethods.setValue(name, value[name], { shouldDirty: true });
+    // });
   };
   return (
     <Fragment>
