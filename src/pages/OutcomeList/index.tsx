@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Author, OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
+import { OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { AppDispatch, RootState } from "../../reducers";
 import {
@@ -18,7 +18,7 @@ import {
 } from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
 import CreateOutcomings from "../OutcomeEdit";
-import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps, isUnpublish } from "./FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -42,8 +42,8 @@ const useQuery = (): OutcomeQueryCondition => {
     const author_name = query.get("author_name");
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
-
-    return clearNull({ search_key, publish_status, author_name, page, order_by });
+    const is_unpub = query.get("is_unpub");
+    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub });
   }, [search]);
 };
 
@@ -84,6 +84,7 @@ export function OutcomeList() {
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const formMethods = useForm<BulkListForm>();
   const { watch, reset } = formMethods;
+  const unpublish = isUnpublish(condition);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
   const { outcomeList, total } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const dispatch = useDispatch<AppDispatch>();
@@ -120,12 +121,12 @@ export function OutcomeList() {
 
   useEffect(() => {
     (async () => {
-      if (condition.publish_status === OutcomePublishStatus.pending && condition.author_name !== Author.self) {
+      if (condition.publish_status === OutcomePublishStatus.pending && !condition.is_unpub) {
         await dispatch(actPendingOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
       } else if (
         condition.publish_status === OutcomePublishStatus.draft ||
         condition.publish_status === OutcomePublishStatus.rejected ||
-        (condition.publish_status === OutcomePublishStatus.pending && condition.author_name === Author.self)
+        (condition.publish_status === OutcomePublishStatus.pending && condition.is_unpub)
       ) {
         await dispatch(actPrivateOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
       } else {
@@ -133,7 +134,7 @@ export function OutcomeList() {
       }
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey]);
+  }, [condition, reset, dispatch, refreshKey, unpublish]);
 
   return (
     <div>

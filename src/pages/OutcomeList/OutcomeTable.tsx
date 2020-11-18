@@ -7,13 +7,13 @@ import clsx from "clsx";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { ApiOutcomeView } from "../../api/api.auto";
-import { OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { isPending } from "./FirstSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
 const useStyles = makeStyles((theme) =>
@@ -68,8 +68,7 @@ function OutomeRow(props: OutcomeProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
-      {(outcome.publish_status !== OutcomePublishStatus.pending ||
-        (queryCondition.author_name && queryCondition.publish_status === OutcomePublishStatus.pending)) && (
+      {!isPending(queryCondition) && (
         <TableCell align="center" padding="checkbox">
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
@@ -104,8 +103,7 @@ function OutomeRow(props: OutcomeProps) {
           ]}
           render={(value) =>
             value &&
-            (queryCondition.publish_status !== OutcomePublishStatus.pending ||
-              (queryCondition.author_name && queryCondition.publish_status === OutcomePublishStatus.pending)) && (
+            !isPending(queryCondition) && (
               <LButton
                 as={IconButton}
                 replace
@@ -157,8 +155,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
                 <Table>
                   <TableHead className={css.tableHead}>
                     <TableRow>
-                      {(list[0].publish_status !== OutcomePublishStatus.pending ||
-                        (queryCondition.author_name && queryCondition.publish_status === OutcomePublishStatus.pending)) && (
+                      {!isPending(queryCondition) && (
                         <TableCell align="center" padding="checkbox">
                           <Checkbox
                             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}

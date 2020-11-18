@@ -7,7 +7,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import clsx from "clsx";
 import React from "react";
-import { Author, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
+import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -90,12 +90,14 @@ interface TabPanelProps {
 
 export const isUnpublish = (value: OutcomeQueryCondition): boolean => {
   return (
-    (value.publish_status === OutcomePublishStatus.pending && value.author_name === Author.self) ||
+    (value.publish_status === OutcomePublishStatus.pending && !!value?.is_unpub) ||
     value.publish_status === OutcomePublishStatus.draft ||
     value.publish_status === OutcomePublishStatus.rejected
   );
 };
-
+export const isPending = (value: OutcomeQueryCondition): boolean =>
+  value.publish_status === OutcomePublishStatus.pending && !value.is_unpub;
+export const UNPUB = "UNPUB";
 export interface FirstSearchHeaderProps extends OutcomeQueryConditionBaseProps {
   onChangeCategory: (arg: HeaderCategory) => any;
 }
@@ -106,7 +108,7 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const createHandleClick = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
     onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at });
   const handleClickUnpublished = (publish_status: OutcomeQueryCondition["publish_status"]) => () =>
-    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at, author_name: Author.self });
+    onChange({ publish_status, page: 1, order_by: OutcomeOrderBy._updated_at, is_unpub: UNPUB });
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -133,14 +135,10 @@ export function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 <Button
                   onClick={createHandleClick(OutcomePublishStatus.pending)}
                   className={clsx(css.nav, {
-                    [css.actives]: value?.publish_status === OutcomePublishStatus.pending && value?.author_name !== Author.self,
+                    [css.actives]: value?.publish_status === OutcomePublishStatus.pending && !value?.is_unpub,
                   })}
                   startIcon={
-                    value?.publish_status === OutcomePublishStatus.pending && value?.author_name !== Author.self ? (
-                      <PendingBlueIcon />
-                    ) : (
-                      <PendingIcon />
-                    )
+                    value?.publish_status === OutcomePublishStatus.pending && !value?.is_unpub ? <PendingBlueIcon /> : <PendingIcon />
                   }
                 >
                   {d("Pending").t("assess_label_pending")}
@@ -216,12 +214,12 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                     label={d("Pending").t("assess_label_pending")}
                     classes={{ selected: classes.selectedTab }}
                     className={clsx(classes.capitalize, classes.selectedTab, {
-                      [classes.active]: value?.publish_status === OutcomePublishStatus.pending && value?.author_name !== Author.self,
+                      [classes.active]: value?.publish_status === OutcomePublishStatus.pending && !value?.is_unpub,
                     })}
                   />
                 )}
                 {perm.unpublished_page_402 &&
-                  (value.publish_status === OutcomePublishStatus.pending && value.author_name === Author.self ? (
+                  (value.publish_status === OutcomePublishStatus.pending && value?.is_unpub ? (
                     <Tab
                       value={OutcomePublishStatus.pending}
                       label={d("Unpublished").t("assess_label_unpublished")}

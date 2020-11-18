@@ -8,11 +8,12 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Author, PublishStatus } from "../../api/type";
+import { Author } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import CreateOutcomings from "../OutcomeEdit";
+import { isPending } from "./FirstSearchHeader";
 import { OutcomeQueryConditionBaseProps } from "./types";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
@@ -99,7 +100,12 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const handleItemClick = (event: any) => {
     setAnchorEl(null);
     const author_name = value.author_name === Author.self ? undefined : Author.self;
-    onChange({ ...value, author_name });
+    // onChange({ ...value, author_name });
+    onChange(
+      produce(value, (draft) => {
+        author_name ? (draft.author_name = author_name) : delete draft.author_name;
+      })
+    );
   };
   useEffect(() => {
     reset();
@@ -117,12 +123,16 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               </Permission>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
-              <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
-              <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-                <MenuItem selected={value.author_name === Author.self} onClick={handleItemClick}>
-                  {d("My Only").t("assess_label_my_only")}
-                </MenuItem>
-              </Menu>
+              {!isPending(value) && (
+                <>
+                  <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
+                  <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+                    <MenuItem selected={value.author_name === Author.self} onClick={handleItemClick}>
+                      {d("My Only").t("assess_label_my_only")}
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
             </Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <Controller
@@ -199,7 +209,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status !== PublishStatus.pending ? (
+              {!isPending(value) ? (
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author_name === Author.self} onChange={handleChangeMyonly} />}

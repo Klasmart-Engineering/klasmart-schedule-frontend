@@ -6,7 +6,9 @@ type NonNullRecordValue<T> = {
   [K in keyof T]: NonOnlyNull<T[K]>;
 };
 
-export type OutcomeQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0]>>;
+export type OutcomeQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0]>> & {
+  is_unpub?: string;
+};
 export type OutcomeQueryConditionChangeHandler = (value: OutcomeQueryCondition) => any;
 export type OutcomeQueryConditionBaseProps = {
   onChange: OutcomeQueryConditionChangeHandler;
