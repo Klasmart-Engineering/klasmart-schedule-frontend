@@ -1,5 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
-import api from "../api";
+import api, { gqlapi } from "../api";
+import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import {
   ApiOutcomeCreateResponse,
   ApiOutcomeCreateView,
@@ -12,7 +13,7 @@ import {
   EntitySkill,
   EntitySubject,
 } from "../api/api.auto";
-import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -95,6 +96,7 @@ export const initialState: IOutcomeState = {
     skills: [],
     age: [],
     grade: [],
+    user_id: "",
   },
 };
 
@@ -116,11 +118,20 @@ export interface ResultGetNewOptions {
   age: EntityAge[];
   grade: EntityGrade[];
   skills: EntitySkill[];
+  user_id: string | undefined;
 }
 export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions & LoadingMetaPayload>(
   "getNewOptions",
   async ({ development_id, program_id }) => {
     // if(!development_id && !program_id)
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
     const program = await api.programs.getProgram();
     const firstProgram_id = program[0].id;
     const [subject, developmental, age, grade] = await Promise.all([
@@ -135,9 +146,9 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
         developmental_id: development_id ? development_id : firstDevelopment_id,
         program_id: program_id ? program_id : firstProgram_id,
       });
-      return { program, subject, developmental, skills, age, grade };
+      return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
     }
-    return { program, subject, developmental: [], skills: [], age, grade };
+    return { program, subject, developmental: [], skills: [], age, grade, user_id: meInfo.me?.user_id };
   }
 );
 

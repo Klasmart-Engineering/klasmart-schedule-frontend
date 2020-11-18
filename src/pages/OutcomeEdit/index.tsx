@@ -41,12 +41,13 @@ const useQuery = () => {
   const status = query.get("status") || "";
   const before = query.get("before") || "";
   const readOnly = query.get("readonly") || false;
-  return { outcome_id, status, before, readOnly };
+  const author_name = query.get("author_name") || "";
+  return { outcome_id, status, before, readOnly, author_name };
 };
 
 export default function CreateOutcomings() {
   const classes = useStyles();
-  const { outcome_id, status, before, readOnly } = useQuery();
+  const { outcome_id, status, before, readOnly, author_name } = useQuery();
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -54,6 +55,7 @@ export default function CreateOutcomings() {
   const [showEdit, setShowEdit] = React.useState(false);
   const [isAssumed, setIsAssumed] = React.useState(false);
   const [condition, setCondition] = React.useState("default");
+  const [isSelf, setIsSelf] = React.useState(false);
 
   const formMethods = useForm();
   const {
@@ -80,6 +82,14 @@ export default function CreateOutcomings() {
     },
     [dispatch, getValues]
   );
+
+  React.useEffect(() => {
+    if (outcomeDetail.author_id === newOptions.user_id) {
+      setIsSelf(true);
+    } else {
+      setIsSelf(false);
+    }
+  }, [newOptions.user_id, outcomeDetail.author_id]);
 
   React.useEffect(() => {
     if (outcome_id) {
@@ -298,6 +308,8 @@ export default function CreateOutcomings() {
           handleEdit={handleEdit}
           status={status}
           before={before}
+          author_name={author_name}
+          isSelf={isSelf}
         />
       )}
       <OutcomeForm
