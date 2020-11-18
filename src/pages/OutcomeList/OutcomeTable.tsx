@@ -68,7 +68,8 @@ function OutomeRow(props: OutcomeProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
-      {outcome.publish_status !== OutcomePublishStatus.pending && (
+      {(outcome.publish_status !== OutcomePublishStatus.pending ||
+        (queryCondition.author_name && queryCondition.publish_status === OutcomePublishStatus.pending)) && (
         <TableCell align="center" padding="checkbox">
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
@@ -103,7 +104,8 @@ function OutomeRow(props: OutcomeProps) {
           ]}
           render={(value) =>
             value &&
-            queryCondition.publish_status !== OutcomePublishStatus.pending && (
+            (queryCondition.publish_status !== OutcomePublishStatus.pending ||
+              (queryCondition.author_name && queryCondition.publish_status === OutcomePublishStatus.pending)) && (
               <LButton
                 as={IconButton}
                 replace
@@ -155,7 +157,8 @@ export function OutcomeTable(props: OutcomeTableProps) {
                 <Table>
                   <TableHead className={css.tableHead}>
                     <TableRow>
-                      {list[0].publish_status !== OutcomePublishStatus.pending && (
+                      {(list[0].publish_status !== OutcomePublishStatus.pending ||
+                        (queryCondition.author_name && queryCondition.publish_status === OutcomePublishStatus.pending)) && (
                         <TableCell align="center" padding="checkbox">
                           <Checkbox
                             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}

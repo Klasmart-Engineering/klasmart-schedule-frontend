@@ -112,7 +112,7 @@ export default function MyContentList() {
     } else {
       history.push({
         pathname: ContentPreview.routeRedirectDefault,
-        search: toQueryString({ id: id, content_type: content_type, author: condition.author }),
+        search: toQueryString(clearNull({ id: id, content_type: content_type, author: condition.author })),
       });
     }
   };

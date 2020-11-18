@@ -119,7 +119,11 @@ function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
     case OutcomePublishStatus.published:
       return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
     case OutcomePublishStatus.pending:
-      return [];
+      if (condition.author_name === Author.self) {
+        return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
+      } else {
+        return [];
+      }
     default:
       return unpublish ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
   }

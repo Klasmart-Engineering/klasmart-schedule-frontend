@@ -103,7 +103,10 @@ export function OutcomeList() {
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (outcome_id) =>
-    history.push({ pathname: CreateOutcomings.routeBasePath, search: toQueryString({ outcome_id }) });
+    history.push({
+      pathname: CreateOutcomings.routeBasePath,
+      search: toQueryString(clearNull({ outcome_id, author_name: condition.author_name })),
+    });
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
 
