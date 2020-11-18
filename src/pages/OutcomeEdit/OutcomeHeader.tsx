@@ -180,11 +180,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                         Cancel
                       </Button> */}
                     {!status ? (
-                      <PermissionOr
-                        value={[
-                          PermissionType.edit_my_unpublished_learning_outcome_430,
-                          PermissionType.edit_org_unpublished_learning_outcome__431,
-                        ]}
+                      <Permission
+                        value={PermissionType.edit_my_unpublished_learning_outcome_430}
                         render={(value) =>
                           value && (
                             <Button
@@ -342,7 +339,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         {publish_status === "published" && (
           <>
             <Permission
-              value={PermissionType.edit_publsihed_learning_outcome_436}
+              value={PermissionType.edit_published_learning_outcome_436}
               render={(value) =>
                 value && (
                   <Button
@@ -409,11 +406,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       }
                     />
                     {!status ? (
-                      <PermissionOr
-                        value={[
-                          PermissionType.edit_my_unpublished_learning_outcome_430,
-                          PermissionType.edit_org_unpublished_learning_outcome__431,
-                        ]}
+                      <Permission
+                        value={PermissionType.edit_my_unpublished_learning_outcome_430}
                         render={(value) =>
                           value && (
                             <IconButton
@@ -544,7 +538,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         {publish_status === "published" && (
           <>
             <Permission
-              value={PermissionType.edit_publsihed_learning_outcome_436}
+              value={PermissionType.edit_published_learning_outcome_436}
               render={(value) =>
                 value && (
                   <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={handleEdit}>
