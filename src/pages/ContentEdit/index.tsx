@@ -39,7 +39,6 @@ import { Outcomes, OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
-import { DevTool } from "@hookform/devtools"
 
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -448,15 +447,15 @@ function ContentEditForm() {
           )
         }
       />
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </DndProvider>
   );
 }
 
 export default function ContentEdit() {
   const { id, editindex } = useQuery();
-  const { lesson } = useParams()
-  return <ContentEditForm key={`id${id},editindex${editindex}lesson${lesson}`} />
+  const { lesson } = useParams();
+  return <ContentEditForm key={`id${id},editindex${editindex}lesson${lesson}`} />;
 }
 
 ContentEdit.routeBasePath = "/library/content-edit";
