@@ -284,6 +284,16 @@ const { actions, reducer } = createSlice({
     resetScheduleDetial: (state, { payload }: PayloadAction<ScheduleState["scheduleDetial"]>) => {
       state.scheduleDetial = payload;
     },
+    resetParticipantList: (state) => {
+      state.participantMockOptions = {
+        participantList: {
+          class: {
+            teachers: [],
+            students: [],
+          },
+        },
+      };
+    },
   },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
@@ -332,5 +342,5 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const { resetScheduleDetial } = actions;
+export const { resetScheduleDetial, resetParticipantList } = actions;
 export default reducer;

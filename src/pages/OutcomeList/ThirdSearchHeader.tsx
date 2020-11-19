@@ -10,7 +10,7 @@ import React, { ChangeEvent } from "react";
 import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { isUnpublish } from "./FirstSearchHeader";
+import { isUnpublish, UNPUB } from "./FirstSearchHeader";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -81,8 +81,12 @@ const useStyles = makeStyles((theme) => ({
 function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) =>
+  const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) => {
+    if (publish_status === OutcomePublishStatus.pending) {
+      return onChange({ ...value, publish_status, page: 1, is_unpub: UNPUB });
+    }
     onChange({ ...value, publish_status, page: 1 });
+  };
   return (
     <Tabs
       className={classes.tabs}
@@ -115,7 +119,11 @@ function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
     case OutcomePublishStatus.published:
       return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
     case OutcomePublishStatus.pending:
-      return [];
+      if (condition.is_unpub) {
+        return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
+      } else {
+        return [];
+      }
     default:
       return unpublish ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
   }

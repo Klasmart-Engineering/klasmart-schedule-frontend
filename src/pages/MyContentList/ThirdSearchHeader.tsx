@@ -7,7 +7,7 @@ import { MoreHoriz } from "@material-ui/icons";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
-import { OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -83,7 +83,12 @@ const useStyles = makeStyles((theme) => ({
 function SubUnpublished(props: QueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (e: ChangeEvent<{}>, publish_status: QueryCondition["publish_status"]) => onChange({ ...value, publish_status });
+  const handleChange = (e: ChangeEvent<{}>, publish_status: QueryCondition["publish_status"]) => {
+    if (publish_status === PublishStatus.pending) {
+      return onChange({ ...value, publish_status, author: Author.self });
+    }
+    onChange({ ...value, publish_status });
+  };
   return (
     <Tabs
       className={classes.tabs}

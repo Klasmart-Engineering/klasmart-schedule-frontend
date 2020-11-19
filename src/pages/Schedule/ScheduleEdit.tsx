@@ -28,6 +28,7 @@ import {
   initScheduleDetial,
   removeSchedule,
   resetScheduleDetial,
+  resetParticipantList,
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
@@ -240,6 +241,7 @@ function EditBox(props: CalendarStateProps) {
     setScheduleList(newData);
     setInitScheduleList(newData);
     dispatch(resetScheduleDetial(initScheduleDetial));
+    dispatch(resetParticipantList());
   }, [dispatch, timesTamp]);
 
   const formatTeahcerId = (teacherIds: any) => {
@@ -283,7 +285,7 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newData);
       setInitScheduleList(newData);
       // getParticipantOptions("");
-      dispatch(getScheduleParticipant({ class_id: "7394e93d-d00a-4c88-a08b-d4fb9b96edee" }));
+      dispatch(getScheduleParticipant({ class_id: newData.class_id }));
     }
   }, [dispatch, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();
@@ -371,7 +373,7 @@ function EditBox(props: CalendarStateProps) {
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      getParticipantOptions("7394e93d-d00a-4c88-a08b-d4fb9b96edee");
+      getParticipantOptions(value["id"]);
       setClassItem(value);
     }
 
@@ -749,6 +751,10 @@ function EditBox(props: CalendarStateProps) {
             changeModalDate({
               openStatus: false,
             });
+            changeTimesTamp({
+              start: currentTime,
+              end: currentTime,
+            });
             history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
           },
         },
@@ -817,7 +823,7 @@ function EditBox(props: CalendarStateProps) {
                   onClick={handleDelete}
                 />
                 <Permission
-                  value={PermissionType.create_event__520}
+                  value={PermissionType.create_event_520}
                   render={(value) =>
                     value && (
                       <Save

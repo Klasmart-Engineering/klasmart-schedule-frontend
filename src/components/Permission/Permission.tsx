@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { useQeuryPermissionOfMeQuery } from "../../api/api-ko.auto";
+import { useQeuryMeQuery } from "../../api/api-ko.auto";
 import { apiOrganizationOfPage } from "../../api/extra";
 
 export enum PermissionType {
@@ -28,12 +28,44 @@ export enum PermissionType {
   schedule_500 = "schedule_500",
   create_schedule_page_501 = "create_schedule_page_501",
   view_my_calendar_510 = "view_my_calendar_510",
-  view_org_calendar__511 = "view_org_calendar__511",
-  create_event__520 = "create_event__520",
-  edit_event__530 = "edit_event__530",
+  view_org_calendar_511 = "view_org_calendar_511",
+  create_event_520 = "create_event_520",
+  edit_event_530 = "edit_event_530",
   delete_event_540 = "delete_event_540",
   schedule_search_582 = "schedule_search_582",
   view_school_calendar_512 = "view_school_calendar_512",
+  assessments_400 = "assessments_400",
+  unpublished_page_402 = "unpublished_page_402",
+  pending_page_403 = "pending_page_403",
+  learning_outcome_page_404 = "learning_outcome_page_404",
+  assessments_page_406 = "assessments_page_406",
+  view_my_unpublished_learning_outcome_410 = "view_my_unpublished_learning_outcome_410",
+  view_org_unpublished_learning_outcome_411 = "view_org_unpublished_learning_outcome_411",
+  view_my_pending_learning_outcome_412 = "view_my_pending_learning_outcome_412",
+  view_org_pending_learning_outcome_413 = "view_org_pending_learning_outcome_413",
+  view_completed_assessments_414 = "view_completed_assessments_414",
+  view_in_progress_assessments_415 = "view_in_progress_assessments_415",
+  view_published_learning_outcome_416 = "view_published_learning_outcome_416",
+  create_learning_outcome_421 = "create_learning_outcome_421",
+  edit_my_unpublished_learning_outcome_430 = "edit_my_unpublished_learning_outcome_430",
+  edit_published_learning_outcome_436 = "edit_published_learning_outcome_436",
+  edit_attendance_for_in_progress_assessment_438 = "edit_attendance_for_in_progress_assessment_438",
+  edit_in_progress_assessment_439 = "edit_in_progress_assessment_439",
+  delete_my_unpublished_learninng_outcome_444 = "delete_my_unpublished_learninng_outcome_444",
+  delete_org_unpublished_learning_outcome_445 = "delete_org_unpublished_learning_outcome_445",
+  delete_my_pending_learning_outcome_446 = "delete_my_pending_learning_outcome_446",
+  delete_org_pending_learning_outcome_447 = "delete_org_pending_learning_outcome_447",
+  delete_published_learning_outcome_448 = "delete_published_learning_outcome_448",
+  approve_pending_learning_outcome_481 = "approve_pending_learning_outcome_481",
+  reject_pending_learning_outcome_482 = "reject_pending_learning_outcome_482",
+  add_learning_outcome_to_content_485 = "add_learning_outcome_to_content_485",
+  view_org_completed_assessments_424 = "view_org_completed_assessments_424",
+  view_org_in_progress_assessments_425 = "view_org_in_progress_assessments_425",
+  view_school_completed_assessments_426 = "view_school_completed_assessments_426",
+  view_school_in_progress_assessments_427 = "view_school_in_progress_assessments_427",
+  teacher_reports_603 = "teacher_reports_603",
+  view_reports_610 = "view_reports_610",
+  view_my_reports_614 = "view_my_reports_614",
 }
 
 // const mockPermissionList = [
@@ -45,7 +77,7 @@ export enum PermissionType {
 
 const usePermissionList = () => {
   const organization_id = apiOrganizationOfPage() || "";
-  const { loading, error, data } = useQeuryPermissionOfMeQuery({ variables: { organization_id } });
+  const { loading, error, data } = useQeuryMeQuery({ variables: { organization_id } });
   const result: PermissionType[] = [];
   data?.me?.membership?.roles?.forEach((role) =>
     role?.permissions?.forEach((permission) => {

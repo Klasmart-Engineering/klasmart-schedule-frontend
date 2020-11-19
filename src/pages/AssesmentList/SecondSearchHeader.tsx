@@ -89,16 +89,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
-            <Grid item xs={8} sm={8}>
-              {/* <Button
-                variant="contained"
-                color="primary"
-                className={classes.createBtn}
-                href="/library/content-edit/lesson/material/tab/details/rightside/contentH5p"
-              >
-                {d("Create").t("assess_label_create")} +
-              </Button> */}
-            </Grid>
+            <Grid item xs={8} sm={8}></Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}></Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
               <TextField

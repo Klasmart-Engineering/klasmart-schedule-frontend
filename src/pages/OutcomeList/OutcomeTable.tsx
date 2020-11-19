@@ -7,12 +7,13 @@ import clsx from "clsx";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { ApiOutcomeView } from "../../api/api.auto";
-import { OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
+import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { isPending } from "./FirstSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
 const useStyles = makeStyles((theme) =>
@@ -43,6 +44,9 @@ const useStyles = makeStyles((theme) =>
     },
     tableCell: {
       textAlign: "center",
+      maxWidth: 200,
+      wordWrap: "break-word",
+      wordBreak: "normal",
     },
   })
 );
@@ -64,7 +68,7 @@ function OutomeRow(props: OutcomeProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
-      {outcome.publish_status !== OutcomePublishStatus.pending && (
+      {!isPending(queryCondition) && (
         <TableCell align="center" padding="checkbox">
           <Checkbox
             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
@@ -89,16 +93,28 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
-        {queryCondition.publish_status !== OutcomePublishStatus.pending && (
-          <LButton
-            as={IconButton}
-            replace
-            className={css.iconColor}
-            onClick={stopPropagation((e) => onDelete(outcome.outcome_id as string))}
-          >
-            <DeleteOutlineIcon />
-          </LButton>
-        )}
+        <PermissionOr
+          value={[
+            PermissionType.delete_my_unpublished_learninng_outcome_444,
+            PermissionType.delete_org_unpublished_learning_outcome_445,
+            PermissionType.delete_my_pending_learning_outcome_446,
+            PermissionType.delete_org_pending_learning_outcome_447,
+            PermissionType.delete_published_learning_outcome_448,
+          ]}
+          render={(value) =>
+            value &&
+            !isPending(queryCondition) && (
+              <LButton
+                as={IconButton}
+                replace
+                className={css.iconColor}
+                onClick={stopPropagation((e) => onDelete(outcome.outcome_id as string))}
+              >
+                <DeleteOutlineIcon />
+              </LButton>
+            )
+          }
+        />
       </TableCell>
     </TableRow>
   );
@@ -139,7 +155,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
                 <Table>
                   <TableHead className={css.tableHead}>
                     <TableRow>
-                      {list[0].publish_status !== OutcomePublishStatus.pending && (
+                      {!isPending(queryCondition) && (
                         <TableCell align="center" padding="checkbox">
                           <Checkbox
                             icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}

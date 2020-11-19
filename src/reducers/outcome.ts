@@ -1,5 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
-import api from "../api";
+import api, { gqlapi } from "../api";
+import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import {
   ApiOutcomeCreateResponse,
   ApiOutcomeCreateView,
@@ -12,7 +13,7 @@ import {
   EntitySkill,
   EntitySubject,
 } from "../api/api.auto";
-import { apiGetMockOptions, MockOptions } from "../api/extra";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -95,6 +96,7 @@ export const initialState: IOutcomeState = {
     skills: [],
     age: [],
     grade: [],
+    user_id: "",
   },
 };
 
@@ -116,11 +118,20 @@ export interface ResultGetNewOptions {
   age: EntityAge[];
   grade: EntityGrade[];
   skills: EntitySkill[];
+  user_id: string | undefined;
 }
 export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions & LoadingMetaPayload>(
   "getNewOptions",
   async ({ development_id, program_id }) => {
     // if(!development_id && !program_id)
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
     const program = await api.programs.getProgram();
     const firstProgram_id = program[0].id;
     const [subject, developmental, age, grade] = await Promise.all([
@@ -129,12 +140,15 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
       api.ages.getAge({ program_id: program_id ? program_id : firstProgram_id }),
       api.grades.getGrade({ program_id: program_id ? program_id : firstProgram_id }),
     ]);
-    const firstDevelopment_id = developmental[0].id;
-    const skills = await api.skills.getSkill({
-      developmental_id: development_id ? development_id : firstDevelopment_id,
-      program_id: program_id ? program_id : firstProgram_id,
-    });
-    return { program, subject, developmental, skills, age, grade };
+    if (developmental[0] && developmental[0].id) {
+      const firstDevelopment_id = developmental[0].id;
+      const skills = await api.skills.getSkill({
+        developmental_id: development_id ? development_id : firstDevelopment_id,
+        program_id: program_id ? program_id : firstProgram_id,
+      });
+      return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
+    }
+    return { program, subject, developmental: [], skills: [], age, grade, user_id: meInfo.me?.user_id };
   }
 );
 
@@ -153,6 +167,26 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
     const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    return { list, total };
+  }
+);
+
+type IQueryPendingOutcomeListParams = Parameters<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryPendingOutcomeListResult = AsyncReturnType<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>;
+export const actPendingOutcomeList = createAsyncThunk<IQueryPendingOutcomeListResult, IQueryPendingOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(query);
+    return { list, total };
+  }
+);
+
+type IQueryPrivateOutcomeListParams = Parameters<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryPrivateOutcomeListResult = AsyncReturnType<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>;
+export const actPrivateOutcomeList = createAsyncThunk<IQueryPrivateOutcomeListResult, IQueryPrivateOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(query);
     return { list, total };
   }
 );
@@ -184,7 +218,7 @@ type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
 export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
-    if (!ids.length)
+    if (!ids?.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
     const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
@@ -261,6 +295,22 @@ const { reducer } = createSlice({
       state.total = payload.total;
     },
     [actOutcomeList.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [actPendingOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.outcomeList = payload.list;
+      state.total = payload.total;
+    },
+    [actPendingOutcomeList.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [actPrivateOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.outcomeList = payload.list;
+      state.total = payload.total;
+    },
+    [actPrivateOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {

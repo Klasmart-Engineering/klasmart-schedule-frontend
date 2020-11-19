@@ -83,7 +83,7 @@ type LangRecord<T = string> =
   | { id: "library_label_previous"; description: "Previous"; values: undefined }
   | { id: "library_label_next"; description: "Next"; values: undefined }
   | { id: "library_label_edit_content"; description: "Edit Content"; values: undefined }
-  | { id: "library_error_no_permissions"; description: "No permissions"; values: undefined }
+  | { id: "library_error_no_permissions"; description: "You have no permission."; values: undefined }
   | { id: "library_error_no_network_connection"; description: "No network connection"; values: undefined }
   | { id: "library_error_unknown_error"; description: "Unknown error"; values: undefined }
   | { id: "library_label_image"; description: "Image"; values: undefined }
@@ -392,6 +392,7 @@ type LangRecord<T = string> =
   | { id: "schedule_filter_programs"; description: "Programs"; values: undefined }
   | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined }
   | { id: "schedule_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
+  | { id: "schedule_msg_no_student"; description: "There is no student in this class"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }

@@ -6,6 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
 
@@ -86,27 +87,34 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-        <Hidden only={["xs", "sm"]}>
-          <Grid container spacing={3}>
-            <Grid item md={3} lg={5} xl={7}></Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
-              <Button
-                onClick={createHandleClick(Category.archived)}
-                className={clsx(css.nav, { [css.actives]: value === Category.archived })}
-                startIcon={value === Category.archived ? <SaBlueIcon /> : <SaIcon />}
-              >
-                {d("Student Achievement").t("report_label_student_achievement")}
-              </Button>
-              <Button
-                onClick={createHandleClick(Category.learningOutcomes)}
-                className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
-                startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
-              >
-                {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
-              </Button>
-            </Grid>
-          </Grid>
-        </Hidden>
+        <Permission
+          value={PermissionType.teacher_reports_603}
+          render={(permission) =>
+            permission && (
+              <Hidden only={["xs", "sm"]}>
+                <Grid container spacing={3}>
+                  <Grid item md={3} lg={5} xl={7}></Grid>
+                  <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
+                    <Button
+                      onClick={createHandleClick(Category.archived)}
+                      className={clsx(css.nav, { [css.actives]: value === Category.archived })}
+                      startIcon={value === Category.archived ? <SaBlueIcon /> : <SaIcon />}
+                    >
+                      {d("Student Achievement").t("report_label_student_achievement")}
+                    </Button>
+                    <Button
+                      onClick={createHandleClick(Category.learningOutcomes)}
+                      className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
+                      startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
+                    >
+                      {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Hidden>
+            )
+          }
+        />
       </LayoutBox>
     </div>
   );
@@ -120,33 +128,40 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   };
   return (
     <div className={classes.root}>
-      <Hidden only={["md", "lg", "xl"]}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
-            <AppBar position="static" color="inherit">
-              <Tabs
-                value={value}
-                onChange={handleChange}
-                variant="scrollable"
-                scrollButtons="on"
-                indicatorColor="primary"
-                textColor="primary"
-              >
-                <Tab
-                  value={Category.archived}
-                  label={d("Student Achievement").t("report_label_student_achievement")}
-                  className={classes.capitalize}
-                />
-                <Tab
-                  value={Category.learningOutcomes}
-                  label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
-                  className={classes.capitalize}
-                />
-              </Tabs>
-            </AppBar>
-          </Grid>
-        </Grid>
-      </Hidden>
+      <Permission
+        value={PermissionType.teacher_reports_603}
+        render={(permission) =>
+          permission && (
+            <Hidden only={["md", "lg", "xl"]}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={12}>
+                  <AppBar position="static" color="inherit">
+                    <Tabs
+                      value={value}
+                      onChange={handleChange}
+                      variant="scrollable"
+                      scrollButtons="on"
+                      indicatorColor="primary"
+                      textColor="primary"
+                    >
+                      <Tab
+                        value={Category.archived}
+                        label={d("Student Achievement").t("report_label_student_achievement")}
+                        className={classes.capitalize}
+                      />
+                      <Tab
+                        value={Category.learningOutcomes}
+                        label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
+                        className={classes.capitalize}
+                      />
+                    </Tabs>
+                  </AppBar>
+                </Grid>
+              </Grid>
+            </Hidden>
+          )
+        }
+      />
     </div>
   );
 }

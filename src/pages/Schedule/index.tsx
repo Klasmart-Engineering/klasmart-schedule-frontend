@@ -24,6 +24,7 @@ import { apiLivePath } from "../../api/extra";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import { d } from "../../locale/LocaleManager";
 import ModalBox from "../../components/ModalBox";
+import { actError } from "../../reducers/notify";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -97,8 +98,13 @@ function ScheduleContent() {
    * get participants
    * @param class_id
    */
-  const getParticipantOptions = (class_id: string) => {
-    dispatch(getScheduleParticipant({ class_id: class_id }));
+  const getParticipantOptions = async (class_id: string) => {
+    let resultInfo: any;
+    resultInfo = ((await dispatch(getScheduleParticipant({ class_id: class_id }))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof getScheduleParticipant>
+    >;
+    if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
+      dispatch(actError(d("There is no student in this class").t("schedule_msg_no_student")));
   };
 
   /**

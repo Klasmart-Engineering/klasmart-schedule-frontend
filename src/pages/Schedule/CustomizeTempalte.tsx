@@ -77,7 +77,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const history = useHistory();
   const { handleDelete, handleClose, scheduleInfo, toLive } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
-  const weekArr = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   const timestampToTime = (timestamp: Date | null): string => {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -112,7 +112,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       <div className={classes.iconPart}>
         <Permission
-          value={PermissionType.edit_event__530}
+          value={PermissionType.edit_event_530}
           render={(value) => value && <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />}
         />
         {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}

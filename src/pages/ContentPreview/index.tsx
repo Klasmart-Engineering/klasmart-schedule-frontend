@@ -117,6 +117,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       {tab === TabValue.details && (
         <OperationBtn
           author={author}
+          isMine={contentPreview.is_mine}
           publish_status={contentPreview.publish_status}
           content_type={contentPreview.content_type}
           onDelete={handleDelete}
