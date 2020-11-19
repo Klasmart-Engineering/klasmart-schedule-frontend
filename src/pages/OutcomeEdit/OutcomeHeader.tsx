@@ -279,7 +279,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       variant="contained"
                       endIcon={<Clear />}
                       className={clsx(css.headerButton, css.redButton)}
-                      onClick={handelReject}
+                      onClick={handleDelete}
                     >
                       {d("Delete").t("assess_label_delete")}
                     </Button>
@@ -295,7 +295,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       variant="contained"
                       endIcon={<Clear />}
                       className={clsx(css.headerButton, css.redButton)}
-                      onClick={handelReject}
+                      onClick={handleDelete}
                     >
                       {d("Delete").t("assess_label_delete")}
                     </Button>
@@ -556,26 +556,30 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 }
               />
             )}
-            <Permission
-              value={PermissionType.reject_pending_learning_outcome_482}
-              render={(value) =>
-                value && (
-                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
-                    <ClearSharp fontSize="small" />
-                  </IconButton>
-                )
-              }
-            />
-            <Permission
-              value={PermissionType.approve_pending_learning_outcome_481}
-              render={(value) =>
-                value && (
-                  <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
-                    <Check fontSize="small" />
-                  </IconButton>
-                )
-              }
-            />
+            {!is_unpub && (
+              <Permission
+                value={PermissionType.reject_pending_learning_outcome_482}
+                render={(value) =>
+                  value && (
+                    <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
+                      <ClearSharp fontSize="small" />
+                    </IconButton>
+                  )
+                }
+              />
+            )}
+            {!is_unpub && (
+              <Permission
+                value={PermissionType.approve_pending_learning_outcome_481}
+                render={(value) =>
+                  value && (
+                    <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
+                      <ClearSharp fontSize="small" />
+                    </IconButton>
+                  )
+                }
+              />
+            )}
           </>
         )}
         {publish_status === "rejected" && (
