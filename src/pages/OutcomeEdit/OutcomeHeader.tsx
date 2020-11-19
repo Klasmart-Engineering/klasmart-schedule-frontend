@@ -103,7 +103,7 @@ export interface OutcomeHeaderProps {
   handleEdit: ButtonProps["onClick"];
   status: string | undefined;
   before: string | undefined;
-  author_name: string | undefined;
+  is_unpub: string | undefined;
   isSelf: Boolean;
 }
 
@@ -125,7 +125,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     status,
     before,
     isSelf,
-    author_name,
+    is_unpub,
   } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -303,7 +303,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 }
               />
             )}
-            {!author_name && (
+            {!is_unpub && (
               <Permission
                 value={PermissionType.reject_pending_learning_outcome_482}
                 render={(value) =>
@@ -320,7 +320,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 }
               />
             )}
-            {!author_name && (
+            {!is_unpub && (
               <Permission
                 value={PermissionType.approve_pending_learning_outcome_481}
                 render={(value) =>

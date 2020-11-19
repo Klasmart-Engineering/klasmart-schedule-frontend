@@ -41,13 +41,13 @@ const useQuery = () => {
   const status = query.get("status") || "";
   const before = query.get("before") || "";
   const readOnly = query.get("readonly") || false;
-  const author_name = query.get("author_name") || "";
-  return { outcome_id, status, before, readOnly, author_name };
+  const is_unpub = query.get("is_unpub") || "";
+  return { outcome_id, status, before, readOnly, is_unpub };
 };
 
 export default function CreateOutcomings() {
   const classes = useStyles();
-  const { outcome_id, status, before, readOnly, author_name } = useQuery();
+  const { outcome_id, status, before, readOnly, is_unpub } = useQuery();
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -308,7 +308,7 @@ export default function CreateOutcomings() {
           handleEdit={handleEdit}
           status={status}
           before={before}
-          author_name={author_name}
+          is_unpub={is_unpub}
           isSelf={isSelf}
         />
       )}
