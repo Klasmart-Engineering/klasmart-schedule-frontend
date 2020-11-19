@@ -148,10 +148,10 @@ export function OutcomeForm(props: OutcomeFormProps) {
               <>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                   <Controller
-                    name="organization_id"
+                    name="organization_name"
                     control={control}
                     as={TextField}
-                    defaultValue={outcomeDetail.organization_id}
+                    defaultValue={outcomeDetail.organization_name}
                     fullWidth
                     label={d("Organization").t("assess_label_organization")}
                     disabled
