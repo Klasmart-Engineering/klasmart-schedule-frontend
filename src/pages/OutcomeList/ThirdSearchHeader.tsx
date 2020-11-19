@@ -85,7 +85,7 @@ function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
     if (publish_status === OutcomePublishStatus.pending) {
       return onChange({ ...value, publish_status, page: 1, is_unpub: UNPUB });
     }
-    onChange({ ...value, publish_status, page: 1 });
+    onChange({ ...value, publish_status, page: 1, is_unpub: undefined });
   };
   return (
     <Tabs

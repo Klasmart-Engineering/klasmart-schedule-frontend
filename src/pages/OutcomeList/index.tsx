@@ -106,9 +106,9 @@ export function OutcomeList() {
   const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (outcome_id) =>
     history.push({
       pathname: CreateOutcomings.routeBasePath,
-      search: toQueryString(clearNull({ outcome_id, author_name: condition.author_name })),
+      search: toQueryString(clearNull({ outcome_id, is_unpub: condition.is_unpub })),
     });
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
+  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(clearNull(value)) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
 
   useEffect(() => {
@@ -128,7 +128,9 @@ export function OutcomeList() {
         condition.publish_status === OutcomePublishStatus.rejected ||
         (condition.publish_status === OutcomePublishStatus.pending && condition.is_unpub)
       ) {
-        await dispatch(actPrivateOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
+        let newCondition: OutcomeQueryCondition = JSON.parse(JSON.stringify(condition));
+        if (newCondition.is_unpub) delete newCondition.is_unpub;
+        await dispatch(actPrivateOutcomeList({ ...newCondition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
       } else {
         await dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
       }
