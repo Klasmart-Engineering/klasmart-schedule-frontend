@@ -9,8 +9,8 @@ variables:
   devCnBuildCommand: "npm run build"
   testGlobalBuildCommand: "npx env-cmd -f .env.test npm run build"
   testCnBuildCommand: "npx env-cmd -f .env.test npm run build"
-  releaseGlobalBuildCommand: "npm run build"
-  releaseCnBuildCommand: "npm run build"
+  releaseGlobalBuildCommand: "npx env-cmd -f .env.ko.production npm run build"
+  releaseCnBuildCommand: "npx env-cmd -f .env.cn.production npm run build"
   devGlobalDeployBucketName: 'dev-cms'
   devCnDeployBucketName: ''
   testGlobalDeployBucketName: 'krklcutest.frontend'
