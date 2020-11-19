@@ -1,19 +1,7 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Card,
-  CardContent,
-  makeStyles,
-  SvgIconProps,
-  Theme,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { forwardRef, HTMLAttributes, useCallback, useMemo, useRef } from "react";
+import React, { forwardRef, HTMLAttributes, useCallback, useMemo } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
@@ -398,19 +386,19 @@ function SegmentBox(props: SegmentBoxProps) {
   );
 }
 
-const useScrollCenter = (once?: boolean, disable = false) => {
-  const countRef = useRef(0);
-  const enable = once ? countRef.current < 1 : true;
-  const ref = useCallback(
-    (node: HTMLElement | null) => {
-      if (!enable || !node || disable) return;
-      countRef.current += 1;
-      node.scrollIntoView({ inline: "center", behavior: "smooth" });
-    },
-    [disable, enable]
-  );
-  return ref;
-};
+// const useScrollCenter = (once?: boolean, disable = false) => {
+//   const countRef = useRef(0);
+//   const enable = once ? countRef.current < 1 : true;
+//   const ref = useCallback(
+//     (node: HTMLElement | null) => {
+//       if (!enable || !node || disable) return;
+//       countRef.current += 1;
+//       node.scrollIntoView({ inline: "center", behavior: "smooth" });
+//     },
+//     [disable, enable]
+//   );
+//   return ref;
+// };
 
 const doNothing = (arg: any): any => {};
 
@@ -435,8 +423,8 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
-  const { breakpoints } = useTheme();
-  const disable = useMediaQuery(breakpoints.down("md"));
+  // const { breakpoints } = useTheme();
+  // const disable = useMediaQuery(breakpoints.down("md"));
   // const startRef = useScrollCenter(true, disable);
   return (
     <Box className={css.planComposeGraphic} {...{ ref }}>
@@ -485,7 +473,7 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
           <Box className="Box1" display="flex" flexDirection="column" alignItems="center">
             <ArcherElement id="start" relations={startRelations}>
               <div>
-                <ConditionBtn  className={css.arrowSourceCircle} type="start" />
+                <ConditionBtn className={css.arrowSourceCircle} type="start" />
               </div>
             </ArcherElement>
             <Box className="box2" position="relative">
