@@ -146,13 +146,13 @@ export function OutcomeTable(props: OutcomeTableProps) {
         name={BulkListFormKey.CHECKED_BULK_IDS}
         control={control}
         defaultValue={[]}
-        render={(props) => (
+        render={({ ref, ...props }) => (
           <CheckboxGroup
             allValue={allValue}
             {...props}
             render={(selectedContentGroupContext) => (
               <TableContainer>
-                <Table>
+                <Table ref={ref}>
                   <TableHead className={css.tableHead}>
                     <TableRow>
                       {!isPending(queryCondition) && (

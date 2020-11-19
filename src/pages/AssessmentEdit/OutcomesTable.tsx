@@ -109,12 +109,12 @@ const AssessAction = (props: AssessActionProps) => {
       name={`outcome_attendance_maps[${index}].attendance_ids`}
       control={control}
       defaultValue={checked_attendance_ids || []}
-      render={(props: any) => (
+      render={({ ref, ...props }) => (
         <CheckboxGroup
           allValue={allValue}
           {...props}
           render={(selectedContentGroupContext) => (
-            <Box display="flex" alignItems="center" p={2} pb={0}>
+            <Box display="flex" alignItems="center" p={2} pb={0} {...{ ref }}>
               <Box width={500} fontSize={14}>
                 <FormControlLabel
                   control={

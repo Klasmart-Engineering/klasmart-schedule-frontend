@@ -324,12 +324,12 @@ export function ContentCardList(props: ContentCardListProps) {
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <Grid className={css.gridContainer} container>
-        <Controller
-          name={ContentListFormKey.CHECKED_CONTENT_IDS}
-          control={control}
-          defaultValue={[]}
-          render={(props) => (
+      <Controller
+        name={ContentListFormKey.CHECKED_CONTENT_IDS}
+        control={control}
+        defaultValue={[]}
+        render={({ ref, ...props }) => (
+          <Grid className={css.gridContainer} container ref={ref}>
             <CheckboxGroup
               {...props}
               render={(selectedContentGroupContext) => (
@@ -345,9 +345,9 @@ export function ContentCardList(props: ContentCardListProps) {
                 </Fragment>
               )}
             />
-          )}
-        />
-      </Grid>
+          </Grid>
+        )}
+      />
       <Pagination
         page={queryCondition.page}
         className={css.pagination}

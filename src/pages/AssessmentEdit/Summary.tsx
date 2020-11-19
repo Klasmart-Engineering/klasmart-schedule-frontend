@@ -15,7 +15,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
-import React, { Fragment, useCallback, useMemo, useReducer } from "react";
+import React, { forwardRef, Fragment, useCallback, useMemo, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
@@ -121,7 +121,7 @@ interface PopupInputProps {
   value?: UpdateAssessmentRequestDatAattendanceIds;
   onChange?: (value: PopupInputProps["value"]) => any;
 }
-function PopupInput(props: PopupInputProps) {
+const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
   const { value, onChange, assessmentDetail } = props;
   const css = useStyles();
   const dispatch = useDispatch();
@@ -145,7 +145,7 @@ function PopupInput(props: PopupInputProps) {
     if (onChange) return onChange(attendance_ids || []);
   }, [dispatch, formMethods, onChange]);
   return (
-    <Box className={css.editBox}>
+    <Box className={css.editBox} {...{ ref }}>
       <TextField
         fullWidth
         disabled
@@ -185,7 +185,7 @@ function PopupInput(props: PopupInputProps) {
       </Dialog>
     </Box>
   );
-}
+});
 
 interface SummaryProps {
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
