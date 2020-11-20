@@ -27,6 +27,7 @@ interface IOutcomeState {
   lockOutcome_id: string;
   mockOptions: MockOptions;
   newOptions: ResultGetNewOptions;
+  user_id: string;
 }
 
 interface RootState {
@@ -98,6 +99,7 @@ export const initialState: IOutcomeState = {
     grade: [],
     user_id: "",
   },
+  user_id: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -166,8 +168,16 @@ type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searc
 export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
     const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
-    return { list, total };
+    return { list, total, user_id: meInfo.me?.user_id };
   }
 );
 
@@ -176,8 +186,16 @@ type IQueryPendingOutcomeListResult = AsyncReturnType<typeof api.pendingLearning
 export const actPendingOutcomeList = createAsyncThunk<IQueryPendingOutcomeListResult, IQueryPendingOutcomeListParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
     const { list, total } = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(query);
-    return { list, total };
+    return { list, total, user_id: meInfo.me?.user_id };
   }
 );
 
@@ -186,8 +204,16 @@ type IQueryPrivateOutcomeListResult = AsyncReturnType<typeof api.privateLearning
 export const actPrivateOutcomeList = createAsyncThunk<IQueryPrivateOutcomeListResult, IQueryPrivateOutcomeListParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
     const { list, total } = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(query);
-    return { list, total };
+    return { list, total, user_id: meInfo.me?.user_id };
   }
 );
 
@@ -293,6 +319,7 @@ const { reducer } = createSlice({
       // alert("success");
       state.outcomeList = payload.list;
       state.total = payload.total;
+      state.user_id = payload.user_id;
     },
     [actOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -301,6 +328,7 @@ const { reducer } = createSlice({
       // alert("success");
       state.outcomeList = payload.list;
       state.total = payload.total;
+      state.user_id = payload.user_id;
     },
     [actPendingOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -309,6 +337,7 @@ const { reducer } = createSlice({
       // alert("success");
       state.outcomeList = payload.list;
       state.total = payload.total;
+      state.user_id = payload.user_id;
     },
     [actPrivateOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

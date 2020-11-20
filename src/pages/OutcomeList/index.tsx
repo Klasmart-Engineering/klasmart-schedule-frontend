@@ -86,7 +86,7 @@ export function OutcomeList() {
   const { watch, reset } = formMethods;
   const unpublish = isUnpublish(condition);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
-  const { outcomeList, total } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeList, total, user_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: OutcomeTableProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishOutcome(id)));
@@ -151,6 +151,7 @@ export function OutcomeList() {
           formMethods={formMethods}
           list={outcomeList}
           total={total}
+          userId={user_id}
           queryCondition={condition}
           onChangePage={handleChangePage}
           onClickOutcome={handleClickOutcome}

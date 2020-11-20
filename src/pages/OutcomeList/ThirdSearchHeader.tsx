@@ -9,6 +9,7 @@ import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { isUnpublish, UNPUB } from "./FirstSearchHeader";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
@@ -113,19 +114,18 @@ interface BulkActionOption {
   value: BulkAction;
 }
 
-function getBulkAction(condition: OutcomeQueryCondition): BulkActionOption[] {
-  const unpublish = isUnpublish(condition);
+function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<PermissionType[]>): BulkActionOption[] {
   switch (condition.publish_status) {
     case OutcomePublishStatus.published:
-      return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
+      return perm.delete_published_learning_outcome_448 ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
     case OutcomePublishStatus.pending:
-      if (condition.is_unpub) {
-        return [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }];
-      } else {
-        return [];
-      }
+      return perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446
+        ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }]
+        : [];
     default:
-      return unpublish ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
+      return perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learninng_outcome_444
+        ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }]
+        : [];
   }
 }
 
@@ -145,6 +145,13 @@ export interface ThirdSearchHeaderProps extends OutcomeQueryConditionBaseProps {
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const perm = usePermission([
+    PermissionType.delete_published_learning_outcome_448,
+    PermissionType.delete_org_pending_learning_outcome_447,
+    PermissionType.delete_my_pending_learning_outcome_446,
+    PermissionType.delete_org_unpublished_learning_outcome_445,
+    PermissionType.delete_my_unpublished_learninng_outcome_444,
+  ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
@@ -159,7 +166,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     );
   };
 
-  const bulkOptions = getBulkAction(value).map((item) => (
+  const bulkOptions = getBulkAction(value, perm).map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
     </MenuItem>
@@ -222,6 +229,13 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const perm = usePermission([
+    PermissionType.delete_published_learning_outcome_448,
+    PermissionType.delete_org_pending_learning_outcome_447,
+    PermissionType.delete_my_pending_learning_outcome_446,
+    PermissionType.delete_org_unpublished_learning_outcome_445,
+    PermissionType.delete_my_unpublished_learninng_outcome_444,
+  ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
@@ -250,7 +264,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleSortClose = () => {
     setAnchorEl(null);
   };
-  const actions = getBulkAction(value);
+  const actions = getBulkAction(value, perm);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
