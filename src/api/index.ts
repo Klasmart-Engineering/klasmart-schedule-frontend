@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
 import { LangRecordId } from "../locale/lang/type";
-import { Api } from "./api.auto";
+import { Api as AutoApi } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
 export * from "./emitter";
@@ -38,6 +38,19 @@ fetchIntercept.register({
     return response;
   },
 });
+
+class Api extends AutoApi {
+  constructor(...props: ConstructorParameters<typeof AutoApi>) {
+    super(...props);
+    const originRequest = this.request;
+    this.request = (...args) => {
+      return originRequest(...args).catch(err => {
+        if (err.label && !err.name) err.name = err.label;
+        throw err;
+      });
+    };
+  }
+}
 
 export default new Api({
   baseUrl: process.env.REACT_APP_BASE_API,
