@@ -113,7 +113,7 @@ function FilterTemplate(props: FilterProps) {
     { name: "Teacher", label: "schedule_filter_teachers", child: getTeacherOption(scheduleMockOptions.teacherList.organization) },
   ];
 
-  const filterGather = perm.view_school_calendar_512 ? myGather.concat(schoolGather) : myGather;
+  const filterGather = perm.view_school_calendar_512 ? schoolGather.concat(myGather) : myGather;
 
   const changeFilterRow = (type: FilterType) => {
     if (isDisabledFliterRowSpan(type)) return;
@@ -197,7 +197,10 @@ function FilterTemplate(props: FilterProps) {
           className={css.fliterRowDivChild}
           style={{
             maxHeight: activeStatus[gather.name] ? "5000px" : "46px",
-            paddingLeft: (perm.view_school_calendar_512 ? ["Teacher", "Classes"] : ["Subjects"]).indexOf(gather.name) > -1 ? "34px" : "8px",
+            paddingLeft:
+              (perm.view_school_calendar_512 ? ["Teacher", "Classes", "Subjects"] : ["Subjects"]).indexOf(gather.name) > -1
+                ? "34px"
+                : "8px",
           }}
           key={key}
         >
