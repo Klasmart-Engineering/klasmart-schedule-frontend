@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
+import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   actOutcomeList,
@@ -86,7 +87,12 @@ export function OutcomeList() {
   const { watch, reset } = formMethods;
   const unpublish = isUnpublish(condition);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
-  const { outcomeList, total, user_id } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const {
+    outcomeList,
+    total,
+    user_id,
+    permission: { assess_msg_no_permission },
+  } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: OutcomeTableProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishOutcome(id)));
@@ -146,7 +152,9 @@ export function OutcomeList() {
       <SecondSearchHeaderMb value={condition} onChange={handleChange} />
       <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
       <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
-      {outcomeList && outcomeList.length > 0 ? (
+      {assess_msg_no_permission === false ? (
+        <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+      ) : outcomeList && outcomeList.length > 0 ? (
         <OutcomeTable
           formMethods={formMethods}
           list={outcomeList}

@@ -14,12 +14,14 @@ import {
   EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
+import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
+import { IPermissionState } from "./type";
 
-interface IOutcomeState {
+interface IOutcomeState extends IPermissionState {
   outcomeDetail: ApiOutcomeView;
   total: number;
   outcomeList: ApiOutcomeView[];
@@ -34,7 +36,12 @@ interface RootState {
   outcome: IOutcomeState;
 }
 
+const assess_msg_no_permission: LangRecordId = "assess_msg_no_permission";
+
 export const initialState: IOutcomeState = {
+  permission: {
+    [assess_msg_no_permission]: undefined,
+  },
   outcomeDetail: {
     outcome_id: "",
     ancestor_id: "",
@@ -335,11 +342,13 @@ const { reducer } = createSlice({
     },
     [actPrivateOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
+      state.permission[assess_msg_no_permission] = undefined;
       state.outcomeList = payload.list;
       state.total = payload.total;
       state.user_id = payload.user_id;
     },
     [actPrivateOutcomeList.rejected.type]: (state, { error }: any) => {
+      state.permission[assess_msg_no_permission] = false;
       // alert(JSON.stringify(error));
     },
     [deleteOutcome.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
