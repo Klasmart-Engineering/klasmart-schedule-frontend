@@ -18,7 +18,7 @@ export function AssetPreview(props: PreviewProps) {
   const path = apiResourcePathById(source);
   const getSuffix = (source: string | undefined) => {
     if (JSON.stringify(source) === "{}" || !source) return;
-    return source.substring(source.lastIndexOf(".") + 1, source.length);
+    return source.substring(source.lastIndexOf(".") + 1, source.length).toLowerCase();
   };
   return (
     <Box display="flex" flexDirection="column" alignItems="center" className={className} width="100%" height="100%">
