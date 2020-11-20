@@ -334,7 +334,7 @@ export const pendingContentLists = createAsyncThunk<IQueryPendingContentsResult,
 type IQueryPrivateContentsParams = Parameters<typeof api.contentsPrivate.searchPrivateContents>[0] & LoadingMetaPayload;
 type IQueryPrivateContentsResult = AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
 export const privateContentLists = createAsyncThunk<IQueryPrivateContentsResult, IQueryPrivateContentsParams>(
-  "content/pendingContentLists",
+  "content/privateContentLists",
   async ({ metaLoading, ...query }) => {
     const { list, total } = await api.contentsPrivate.searchPrivateContents(query);
     return { list, total };

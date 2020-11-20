@@ -184,7 +184,7 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
 type IQueryPendingOutcomeListParams = Parameters<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryPendingOutcomeListResult = AsyncReturnType<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>;
 export const actPendingOutcomeList = createAsyncThunk<IQueryPendingOutcomeListResult, IQueryPendingOutcomeListParams>(
-  "outcome/outcomeList",
+  "outcome/actPendingOutcomeList",
   async ({ metaLoading, ...query }) => {
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
@@ -202,7 +202,7 @@ export const actPendingOutcomeList = createAsyncThunk<IQueryPendingOutcomeListRe
 type IQueryPrivateOutcomeListParams = Parameters<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryPrivateOutcomeListResult = AsyncReturnType<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>;
 export const actPrivateOutcomeList = createAsyncThunk<IQueryPrivateOutcomeListResult, IQueryPrivateOutcomeListParams>(
-  "outcome/outcomeList",
+  "outcome/actPrivateOutcomeList",
   async ({ metaLoading, ...query }) => {
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
