@@ -104,7 +104,7 @@ function OutomeRow(props: OutcomeProps) {
             </LButton>
           </Permission>
         )}
-        {userId !== outcome.author_id && outcome.publish_scope === OutcomePublishStatus.pending && (
+        {userId !== outcome.author_id && outcome.publish_status === OutcomePublishStatus.pending && (
           <Permission value={PermissionType.delete_org_pending_learning_outcome_447}>
             <LButton
               as={IconButton}
@@ -116,7 +116,7 @@ function OutomeRow(props: OutcomeProps) {
             </LButton>
           </Permission>
         )}
-        {userId === outcome.author_id && outcome.publish_scope === OutcomePublishStatus.pending && (
+        {userId === outcome.author_id && outcome.publish_status === OutcomePublishStatus.pending && (
           <Permission value={PermissionType.delete_my_pending_learning_outcome_446}>
             <LButton
               as={IconButton}
