@@ -1,7 +1,9 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import mockData from "../../mocks/categoryChart.json";
 import { ReportAchievementList, useReportQuery } from "../ReportAchievementList";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
+import { CategoriesChart } from "./CategoriesChart";
 import { SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 
 export function ReportCategories() {
@@ -25,6 +27,7 @@ export function ReportCategories() {
         onChangeMb={handleChangeMbFilter}
         teacherList={[]}
       ></SecondSearchHeader>
+      <CategoriesChart data={mockData} />
     </>
   );
 }
