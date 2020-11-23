@@ -72,8 +72,8 @@ const { reducer } = createSlice({
   extraReducers: {
     [actAssessmentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof actAssessmentList>>) => {
       // alert("success");
-      if (payload.items != null) state.assessmentList = payload.items;
-      if (payload.total != null) state.total = payload.total;
+      state.assessmentList = payload.items || [];
+      state.total = payload.total || 0;
     },
     [actAssessmentList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
