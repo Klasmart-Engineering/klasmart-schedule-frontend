@@ -83,13 +83,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
     return `${Y}-${M}-${D} ${h}:${m}`;
   };
 
-  // console.log(isAssumed)
+  // console.log(outcomeDetail, outcome_id)
 
   return (
     <Box className={classes.outcomings_container}>
       <div className={classes.middleBox}>
         <Box style={{ borderBottom: "1px solid #d7d7d7", marginBottom: "40px" }}>
-          {outcomeDetail.publish_status && outcomeDetail.publish_status === "rejected" && (
+          {outcomeDetail.publish_status && outcomeDetail.publish_status === "rejected" && outcome_id && (
             <Grid container>
               <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                 <Controller
