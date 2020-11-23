@@ -15,6 +15,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank, ExpandMore } from "@material-ui/icons";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
@@ -168,6 +169,10 @@ const useStyles = makeStyles((theme) =>
       color: "#0E78D5",
       padding: "0 0 0 10px",
     },
+    folderColor: {
+      color: "#0e78d5",
+      padding: "0 0 0 10px",
+    },
   })
 );
 
@@ -258,6 +263,13 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
+          {false &&
+            !queryCondition.program &&
+            (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
+              <LButton as={IconButton} replace className={css.folderColor} onClick={() => onDelete(content.id as string, type)}>
+                <FolderOpenIcon />
+              </LButton>
+            )}
           {/* content published remove */}
           {!queryCondition.program &&
             queryCondition.publish_status === PublishStatus.published &&
