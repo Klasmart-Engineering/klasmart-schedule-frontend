@@ -324,20 +324,24 @@ const { reducer } = createSlice({
   extraReducers: {
     [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
+      state.permission[assess_msg_no_permission] = undefined;
       state.outcomeList = payload.list;
       state.total = payload.total;
       state.user_id = payload.user_id;
     },
     [actOutcomeList.rejected.type]: (state, { error }: any) => {
+      state.permission[assess_msg_no_permission] = false;
       // alert(JSON.stringify(error));
     },
     [actPendingOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
+      state.permission[assess_msg_no_permission] = undefined;
       state.outcomeList = payload.list;
       state.total = payload.total;
       state.user_id = payload.user_id;
     },
     [actPendingOutcomeList.rejected.type]: (state, { error }: any) => {
+      state.permission[assess_msg_no_permission] = false;
       // alert(JSON.stringify(error));
     },
     [actPrivateOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
