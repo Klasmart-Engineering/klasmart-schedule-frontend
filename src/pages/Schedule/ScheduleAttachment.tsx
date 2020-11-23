@@ -3,6 +3,7 @@ import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { CloseOutlined, CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { apiResourcePathById } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { SingleUploader } from "../../components/SingleUploader";
@@ -77,9 +78,17 @@ interface ScheduleAttachmentProps {
   setAttachmentName: (name: string) => void;
 }
 
+const useQuery = () => {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const schedule_id = query.get("schedule_id") || "";
+  return { schedule_id };
+};
+
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const { setAttachmentId, attachmentName, setAttachmentName } = props;
   const css = useStyles();
+  const { schedule_id } = useQuery();
   const handleOnChange = (value: string | undefined): void => {
     if (value) {
       let si = format.some((item) => value.includes(item));
@@ -136,6 +145,12 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     setAttachmentName("");
     setAttachmentId("");
   };
+
+  React.useEffect(() => {
+    if (!schedule_id) {
+      setSpecificStatus(false);
+    }
+  }, [schedule_id]);
 
   return (
     <>
