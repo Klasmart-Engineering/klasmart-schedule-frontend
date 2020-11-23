@@ -76,6 +76,8 @@ interface ScheduleAttachmentProps {
   attachmentId: string;
   attachmentName: string;
   setAttachmentName: (name: string) => void;
+  specificStatus?: boolean;
+  setSpecificStatus?: (value: boolean) => void;
 }
 
 const useQuery = () => {
@@ -86,7 +88,7 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, specificStatus, setSpecificStatus } = props;
   const css = useStyles();
   const { schedule_id } = useQuery();
   const handleOnChange = (value: string | undefined): void => {
@@ -96,7 +98,9 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
         setOpenStatus(true);
         return;
       }
-      setSpecificStatus(true);
+      if (setSpecificStatus) {
+        setSpecificStatus(true);
+      }
       setAttachmentId(value);
       const url: string | undefined = apiResourcePathById(value);
       setDownloadUrl(url);
@@ -106,7 +110,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
   };
 
-  const [specificStatus, setSpecificStatus] = React.useState(true);
+  // const [specificStatus, setSpecificStatus] = React.useState(true);
 
   const getFileName = (name: string): string => {
     let si = format.some((item) => name.includes(item));
@@ -141,13 +145,15 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   };
 
   const deleteItem = () => {
-    setSpecificStatus(false);
+    if (setSpecificStatus) {
+      setSpecificStatus(false);
+    }
     setAttachmentName("");
     setAttachmentId("");
   };
 
   React.useEffect(() => {
-    if (!schedule_id) {
+    if (setSpecificStatus) {
       setSpecificStatus(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,30 +1,30 @@
 import { Grid } from "@material-ui/core";
+import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
+import { apiLivePath } from "../../api/extra";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
+import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
+import { d } from "../../locale/LocaleManager";
+import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
+import { actError } from "../../reducers/notify";
 import {
-  getScheduleInfo,
-  getScheduleTimeViewData,
   getMockOptions,
+  getScheduleInfo,
   getScheduleLiveToken,
   getScheduleMockOptions,
   getScheduleParticipant,
+  getScheduleTimeViewData,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { RootState } from "../../reducers";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { apiLivePath } from "../../api/extra";
-import ConfilctTestTemplate from "./ConfilctTestTemplate";
-import { d } from "../../locale/LocaleManager";
-import ModalBox from "../../components/ModalBox";
-import { actError } from "../../reducers/notify";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -157,6 +157,7 @@ function ScheduleContent() {
       handleClose: () => {},
     });
   }, [scheduleId, setModalDate, dispatch]);
+  const [specificStatus, setSpecificStatus] = React.useState(true);
 
   return (
     <>
@@ -187,6 +188,8 @@ function ScheduleContent() {
               scheduleMockOptions={scheduleMockOptions}
               participantMockOptions={participantMockOptions}
               getParticipantOptions={getParticipantOptions}
+              setSpecificStatus={setSpecificStatus}
+              specificStatus={specificStatus}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
@@ -197,6 +200,7 @@ function ScheduleContent() {
                 changeTimesTamp={changeTimesTamp}
                 toLive={toLive}
                 changeModalDate={changeModalDate}
+                setSpecificStatus={setSpecificStatus}
               />
             )}
             {includeList && <SearchList />}

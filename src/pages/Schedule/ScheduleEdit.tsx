@@ -27,8 +27,8 @@ import {
   getScheduleTimeViewData,
   initScheduleDetial,
   removeSchedule,
-  resetScheduleDetial,
   resetParticipantList,
+  resetScheduleDetial,
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
@@ -163,6 +163,8 @@ function EditBox(props: CalendarStateProps) {
     scheduleMockOptions,
     participantMockOptions,
     getParticipantOptions,
+    setSpecificStatus,
+    specificStatus,
   } = props;
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -1058,6 +1060,8 @@ function EditBox(props: CalendarStateProps) {
           attachmentId={attachmentId}
           attachmentName={attachmentName}
           setAttachmentName={setAttachmentName}
+          setSpecificStatus={setSpecificStatus}
+          specificStatus={specificStatus}
         />
         <Box
           className={css.fieldset}
@@ -1114,6 +1118,8 @@ interface CalendarStateProps {
   scheduleMockOptions: getScheduleMockOptionsResponse;
   participantMockOptions: getScheduleParticipantsMockOptionsResponse;
   getParticipantOptions: (class_id: string) => void;
+  specificStatus?: boolean;
+  setSpecificStatus?: (value: boolean) => void;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -1134,6 +1140,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     scheduleMockOptions,
     participantMockOptions,
     getParticipantOptions,
+    setSpecificStatus,
+    specificStatus,
   } = props;
   const template = (
     <>
@@ -1174,6 +1182,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleMockOptions={scheduleMockOptions}
           participantMockOptions={participantMockOptions}
           getParticipantOptions={getParticipantOptions}
+          setSpecificStatus={setSpecificStatus}
+          specificStatus={specificStatus}
         />
       </Box>
     </>

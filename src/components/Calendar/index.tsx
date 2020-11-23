@@ -1,20 +1,20 @@
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
 import React, { useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { d } from "../../locale/LocaleManager";
+import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
-import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
-import { timestampType, repeatOptionsType, modeViewType } from "../../types/scheduleTypes";
-import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
-import { actSuccess } from "../../reducers/notify";
-import { d } from "../../locale/LocaleManager";
-import { PayloadAction } from "@reduxjs/toolkit";
 import { AsyncTrunkReturned } from "../../reducers/content";
+import { actSuccess } from "../../reducers/notify";
+import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 
 interface scheduleInfoProps {
@@ -42,7 +42,7 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -156,6 +156,7 @@ function MyCalendar(props: CalendarProps) {
     const currentTime = Math.floor(new Date().getTime() / 1000);
     if (getTimestamp(e.start) < currentTime || !perm.create_schedule_page_501) return;
     changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
+    setSpecificStatus(false);
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
 
@@ -190,10 +191,11 @@ interface CalendarProps {
   changeTimesTamp: (value: timestampType) => void;
   toLive: (schedule_id: string) => void;
   changeModalDate: (data: object) => void;
+  setSpecificStatus: (value: boolean) => void;
 }
 
 export default function KidsCalendar(props: CalendarProps) {
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus } = props;
   return (
     <MyCalendar
       modelView={modelView}
@@ -201,6 +203,7 @@ export default function KidsCalendar(props: CalendarProps) {
       changeTimesTamp={changeTimesTamp}
       toLive={toLive}
       changeModalDate={changeModalDate}
+      setSpecificStatus={setSpecificStatus}
     />
   );
 }
