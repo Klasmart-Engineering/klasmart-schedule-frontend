@@ -69,7 +69,6 @@ export function ReportAchievementDetail() {
       <BriefIntroduction
         value={condition}
         student_name={student_name}
-        lessonPlanList={reportMockOptions.lessonPlanList}
         backByLessonPlan={backByLessonPlan}
         reportMockOptions={reportMockOptions}
       />

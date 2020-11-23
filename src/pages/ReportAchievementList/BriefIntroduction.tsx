@@ -86,12 +86,12 @@ interface BriefIntroductionProps {
   value: QueryCondition;
   student_name: string | undefined;
   backByLessonPlan?: (urlParams: string) => void;
-  lessonPlanList?: EntityScheduleShortInfo[];
   reportMockOptions?: GetReportMockOptionsResponse;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, student_name, backByLessonPlan, lessonPlanList, reportMockOptions } = props;
+  const { value, student_name, backByLessonPlan, reportMockOptions } = props;
+  const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
   const [lessonPlanName, setLessonPlanName] = React.useState("");
 

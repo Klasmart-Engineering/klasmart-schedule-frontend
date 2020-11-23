@@ -69,14 +69,14 @@ interface GetMenuItemProps {
 const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((props, ref) => {
   const { list, value, onChangeMenu, tab } = props;
   return (
-    <>
+    <div {...ref}>
       {" "}
       {list.map((item) => (
         <MenuItem key={item.id} selected={value[tab] === item.id} onClick={(e) => onChangeMenu(e, item.id as string, tab)}>
           {item.name}
         </MenuItem>
       ))}
-    </>
+    </div>
   );
 });
 
@@ -131,11 +131,10 @@ export interface FilterAchievementReportProps {
   value: QueryCondition;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: keyof QueryCondition) => any;
   onChangeMb: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
-  lessonPlanList: MockOptionsItem[];
   reportMockOptions: GetReportMockOptionsResponse;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, onChangeMb, lessonPlanList, reportMockOptions } = props;
+  const { onChange, value, onChangeMb, reportMockOptions } = props;
   const css = useStyles();
   const viewReport = usePermission(PermissionType.view_reports_610);
   const viewMyReport = usePermission(PermissionType.view_my_reports_614);
@@ -146,7 +145,8 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   const classs = reportMockOptions.classList.user?.classesTeaching || [];
-  const planIsDisabled = classs.length <= 0 || lessonPlanList.length <= 0;
+  const teachers = reportMockOptions.teacherList?.organization?.teachers || [];
+  const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
   const [anchorElStatus, setAnchorElStatus] = React.useState<null | HTMLElement>(null);
@@ -155,9 +155,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const [anchorElPlan, setAnchorElPlan] = React.useState<null | HTMLElement>(null);
 
   const showItem = (event: any, tab: keyof QueryCondition) => {
-    if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
+    if (tab === "teacher_id" && classs.length > 0) setAnchorElTeacher(event.currentTarget);
     if (tab === "class_id" && classs.length > 0) setAnchorElClass(event.currentTarget);
-    if (tab === "lesson_plan_id" && classs.length > 0 && lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
+    if (tab === "lesson_plan_id" && classs.length > 0 && reportMockOptions.lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
     if (tab === "status") setAnchorElStatus(event.currentTarget);
     if (tab === "sort_by") setAnchorElOrderBy(event.currentTarget);
   };
@@ -203,6 +203,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 label={d("Teacher").t("report_label_teacher")}
                 value={value.teacher_id}
                 select
+                disabled={teachers.length <= 0}
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
                 {getTeacherList((reportMockOptions.teacherList?.organization?.teachers as TeacherItem[]) || [])}
@@ -230,7 +231,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               disabled={planIsDisabled}
             >
-              {getOptions(lessonPlanList)}
+              {getOptions(reportMockOptions.lessonPlanList)}
             </TextField>
           </Box>
           <Box className={css.boxRight}>
@@ -259,59 +260,67 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
           </Box>
         </Box>
       </Hidden>
-
-      {viewReport && !viewMyReport && (
-        <Hidden mdUp>
-          <Box display="flex">
-            <Box flex={3}>
-              <PersonOutlinedIcon fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "teacher_id")} />
-              <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
-                <GetTeacherItem
-                  list={reportMockOptions.teacherList.organization?.teachers as SingleTeacherItem[]}
-                  value={value}
-                  onChangeMenu={handleChangeMenu}
-                  tab="teacher_id"
-                ></GetTeacherItem>
-              </Menu>
-
-              <PeopleOutlineOutlinedIcon
+      <Hidden mdUp>
+        <Box display="flex">
+          <Box flex={3}>
+            {viewReport && !viewMyReport && (
+              <PersonOutlinedIcon
                 fontSize="large"
                 className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
-                onClick={(e) => showItem(e, "class_id")}
+                onClick={(e) => showItem(e, "teacher_id")}
               />
-              <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
-                <GetClassItem
-                  list={reportMockOptions.classList.user?.classesTeaching as ClassItem[]}
-                  value={value}
-                  onChangeMenu={handleChangeMenu}
-                  tab="class_id"
-                ></GetClassItem>
-              </Menu>
+            )}
+            <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
+              <GetTeacherItem
+                list={reportMockOptions.teacherList.organization?.teachers as SingleTeacherItem[]}
+                value={value}
+                onChangeMenu={handleChangeMenu}
+                tab="teacher_id"
+              ></GetTeacherItem>
+            </Menu>
 
-              <ClassOutlined
-                fontSize="large"
-                className={clsx(css.selectIcon, planIsDisabled && css.selectIconDisabled)}
-                onClick={(e) => showItem(e, "lesson_plan_id")}
-              />
-              <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
-                <GetMenuItem list={lessonPlanList} value={value} onChangeMenu={handleChangeMenu} tab="lesson_plan_id"></GetMenuItem>
-              </Menu>
-            </Box>
+            <PeopleOutlineOutlinedIcon
+              fontSize="large"
+              className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
+              onClick={(e) => showItem(e, "class_id")}
+            />
+            <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
+              <GetClassItem
+                list={reportMockOptions.classList.user?.classesTeaching as ClassItem[]}
+                value={value}
+                onChangeMenu={handleChangeMenu}
+                tab="class_id"
+              ></GetClassItem>
+            </Menu>
 
-            <Box flex={2} display="flex" justifyContent="flex-end">
-              <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
-              <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
-                <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
-              </Menu>
-
-              <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
-              <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
-                <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
-              </Menu>
-            </Box>
+            <ClassOutlined
+              fontSize="large"
+              className={clsx(css.selectIcon, planIsDisabled && css.selectIconDisabled)}
+              onClick={(e) => showItem(e, "lesson_plan_id")}
+            />
+            <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
+              <GetMenuItem
+                list={reportMockOptions.lessonPlanList}
+                value={value}
+                onChangeMenu={handleChangeMenu}
+                tab="lesson_plan_id"
+              ></GetMenuItem>
+            </Menu>
           </Box>
-        </Hidden>
-      )}
+
+          <Box flex={2} display="flex" justifyContent="flex-end">
+            <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
+            <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
+              <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
+            </Menu>
+
+            <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
+            <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
+              <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
+            </Menu>
+          </Box>
+        </Box>
+      </Hidden>
     </LayoutBox>
   );
 }

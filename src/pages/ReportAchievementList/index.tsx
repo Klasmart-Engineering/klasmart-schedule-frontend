@@ -2,7 +2,6 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { MockOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
@@ -23,7 +22,7 @@ const clearNull = (obj: Record<string, any>) => {
   return obj;
 };
 
-const useQuery = () => {
+export const useReportQuery = () => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
@@ -37,7 +36,7 @@ const useQuery = () => {
 };
 
 export function ReportAchievementList() {
-  const condition = useQuery();
+  const condition = useReportQuery();
   const history = useHistory();
   const dispatch = useDispatch();
   const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
@@ -91,7 +90,7 @@ export function ReportAchievementList() {
     [condition.teacher_id, getFirstLessonPlanId, history, reportMockOptions.classList.user]
   );
   useEffect(() => {
-    // console.log("!viewReport && viewMyReport = ", !viewReport && viewMyReport);
+    console.log("!viewReport && viewMyReport = ", !viewReport && viewMyReport);
     dispatch(
       reportOnload({
         teacher_id: condition.teacher_id,
@@ -126,15 +125,9 @@ export function ReportAchievementList() {
         value={condition}
         onChange={handleChangeFilter}
         onChangeMb={handleChangeMbFilter}
-        lessonPlanList={reportMockOptions.lessonPlanList as MockOptionsItem[]}
         reportMockOptions={reportMockOptions}
       ></FilterAchievementReport>
-      <BriefIntroduction
-        value={condition}
-        reportMockOptions={reportMockOptions}
-        student_name={student_name}
-        lessonPlanList={reportMockOptions.lessonPlanList}
-      />
+      <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
       {true &&
         (reportList && reportList.length > 0 ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
