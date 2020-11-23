@@ -17,8 +17,8 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { CloudUploadOutlined } from "@material-ui/icons";
-import React from "react";
+import { CancelRounded, CloudUploadOutlined } from "@material-ui/icons";
+import React, { useCallback } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
@@ -70,6 +70,11 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  iconField: {
+    position: "absolute",
+    top: "56%",
+    cursor: "pointer",
+  },
 }));
 
 function ProgressWithText(props: CircularProgressProps) {
@@ -109,7 +114,7 @@ export default function Details(props: DetailsProps) {
   const {
     allDefaultValueAndKey,
     contentDetail,
-    formMethods: { control, errors },
+    formMethods: { control, errors, setValue },
     linkedMockOptions,
     visibility_settings,
     lesson_types,
@@ -144,6 +149,9 @@ export default function Details(props: DetailsProps) {
     if (reson_remark && remark) reson_remark.push(remark);
     return reson_remark ? reson_remark : remark && [remark];
   };
+  const handleDeleteManual = useCallback(() => {
+    setValue("teacher_manual", "", { shouldDirty: true });
+  }, [setValue]);
 
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
@@ -237,22 +245,16 @@ export default function Details(props: DetailsProps) {
         {contentDetail.id && (
           <Box>
             <TextField
-              // as={TextField}
-              // name="created_at"
               defaultValue={formattedTime(contentDetail.updated_at)}
               key={allDefaultValueAndKey.created_at?.value}
-              // control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled
               label={d("Created On").t("library_label_created_on")}
             ></TextField>
             <TextField
-              // as={TextField}
-              // name="author_name"
               defaultValue={allDefaultValueAndKey.author_name?.value}
               key={allDefaultValueAndKey.author_name?.key}
-              // control={control}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled
@@ -272,45 +274,46 @@ export default function Details(props: DetailsProps) {
           key={allDefaultValueAndKey.suggest_time?.key}
           disabled={permission}
         />
-        <Controller
-          name="program"
-          defaultValue={allDefaultValueAndKey.program?.value}
-          key={allDefaultValueAndKey.program?.key}
-          control={control}
-          render={(props) => (
-            <TextField
-              select
-              className={css.fieldset}
-              label={d("Program").t("library_label_program")}
-              disabled={permission}
-              {...props}
-              onChange={(e) => {
-                // debugger;
-                onChangeProgram(e.target.value);
-                props.onChange(e.target.value);
-              }}
-              required
-            >
-              {menuItemList(linkedMockOptions.program || [])}
-            </TextField>
-          )}
-        />
-        <Controller
-          as={TextField}
-          select
-          SelectProps={{
-            multiple: true,
-          }}
-          className={css.fieldset}
-          label={d("Subject").t("library_label_subject")}
-          disabled={permission}
-          name="subject"
-          defaultValue={allDefaultValueAndKey.subject?.value}
-          key={allDefaultValueAndKey.subject?.key}
-          control={control}
-        >
-          {menuItemList(linkedMockOptions.subject || [])}
-        </Controller>
+        <Box>
+          <Controller
+            name="program"
+            defaultValue={allDefaultValueAndKey.program?.value}
+            key={allDefaultValueAndKey.program?.key}
+            control={control}
+            render={(props) => (
+              <TextField
+                select
+                className={sm ? css.fieldset : css.halfFieldset}
+                label={d("Program").t("library_label_program")}
+                disabled={permission}
+                {...props}
+                onChange={(e) => {
+                  onChangeProgram(e.target.value);
+                  props.onChange(e.target.value);
+                }}
+                required
+              >
+                {menuItemList(linkedMockOptions.program || [])}
+              </TextField>
+            )}
+          />
+          <Controller
+            as={TextField}
+            select
+            SelectProps={{
+              multiple: true,
+            }}
+            className={sm ? css.fieldset : css.halfFieldset}
+            label={d("Subject").t("library_label_subject")}
+            disabled={permission}
+            name="subject"
+            defaultValue={allDefaultValueAndKey.subject?.value}
+            key={allDefaultValueAndKey.subject?.key}
+            control={control}
+          >
+            {menuItemList(linkedMockOptions.subject || [])}
+          </Controller>
+        </Box>
         <Box>
           <Controller
             name="developmental"
@@ -356,9 +359,6 @@ export default function Details(props: DetailsProps) {
           </Controller>
         </Box>
         <Box>
-          {/* {console.log('{allDefaultValueAndKey.age?.key = ', allDefaultValueAndKey.age?.key)}
-          {console.log('{allDefaultValueAndKey.skills?.key = ', allDefaultValueAndKey.skills?.key)}
-          {console.log('{allDefaultValueAndKey.program?.key = ', allDefaultValueAndKey.program?.key)} */}
           <Controller
             as={TextField}
             name="age"
@@ -522,6 +522,27 @@ export default function Details(props: DetailsProps) {
           disabled={permission}
           helperText=""
         />
+        {lesson === "plan" && (
+          <Controller
+            control={control}
+            name="teacher_manual"
+            render={({ ref, ...props }) => (
+              <SingleUploader
+                ref={ref}
+                partition="tearcherManual"
+                accept=".pdf"
+                {...props}
+                render={({ btnRef, item, value }) => (
+                  <Box style={{ position: "relative" }}>
+                    <TextField disabled className={css.fieldset} label="Teacher Manual" value={value}></TextField>
+                    <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
+                    {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onChange={handleDeleteManual} />}
+                  </Box>
+                )}
+              />
+            )}
+          />
+        )}
       </Box>
     </ThemeProvider>
   );
