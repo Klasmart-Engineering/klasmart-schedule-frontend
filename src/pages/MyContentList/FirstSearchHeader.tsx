@@ -105,15 +105,6 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
       order_by: OrderBy._updated_at,
       page: 1,
     });
-  const handleClickUnpublished = (publish_status: QueryCondition["publish_status"]) => () => {
-    onChange({
-      publish_status,
-      content_type: SearchContentsRequestContentType.materialandplan,
-      order_by: OrderBy._updated_at,
-      page: 1,
-      author: Author.self,
-    });
-  };
 
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
     onChange({ content_type, order_by: OrderBy._updated_at, page: 1 });
@@ -160,7 +151,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 
               <Permission value={PermissionType.unpublished_content_page_202}>
                 <Button
-                  onClick={handleClickUnpublished(PublishStatus.draft)}
+                  onClick={createHandleClick(PublishStatus.draft)}
                   className={clsx(css.nav, { [css.actives]: unpublish })}
                   startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
                 >

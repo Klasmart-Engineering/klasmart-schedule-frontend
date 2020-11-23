@@ -87,7 +87,7 @@ function SubUnpublished(props: QueryConditionBaseProps) {
     if (publish_status === PublishStatus.pending) {
       return onChange({ ...value, publish_status, author: Author.self });
     }
-    onChange({ ...value, publish_status });
+    onChange({ ...value, publish_status, author: undefined });
   };
   return (
     <Tabs
@@ -125,15 +125,18 @@ function getBulkAction(condition: QueryCondition, perm: PermissionResult<Permiss
     case PublishStatus.published:
       return perm.archive_published_content_273 ? [{ label: d("Remove").t("library_label_remove"), value: BulkAction.remove }] : [];
     case PublishStatus.pending:
-      return [];
+      return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
     case PublishStatus.archive:
       const result = [];
       if (perm.republish_archived_content_274)
         result.push({ label: d("Republish").t("library_label_republish"), value: BulkAction.publish });
       if (perm.delete_archived_content_275) result.push({ label: d("Delete").t("library_label_delete"), value: BulkAction.remove });
       return result;
+    case PublishStatus.draft:
+    case PublishStatus.rejected:
+      return [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }];
     default:
-      return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
+      return [];
   }
 }
 
