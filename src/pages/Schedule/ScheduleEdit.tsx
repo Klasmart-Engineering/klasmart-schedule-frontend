@@ -535,6 +535,10 @@ function EditBox(props: CalendarStateProps) {
         type: "changeData",
         data: initialState,
       });
+      changeTimesTamp({
+        start: currentTime,
+        end: currentTime,
+      });
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
