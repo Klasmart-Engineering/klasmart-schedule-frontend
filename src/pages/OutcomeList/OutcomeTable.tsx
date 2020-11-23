@@ -141,7 +141,7 @@ function OutomeRow(props: OutcomeProps) {
               </LButton>
             </Permission>
           )}
-        {userId !== outcome.author_id &&
+        {userId === outcome.author_id &&
           (outcome.publish_status === OutcomePublishStatus.draft || outcome.publish_status === OutcomePublishStatus.rejected) && (
             <Permission value={PermissionType.delete_my_unpublished_learninng_outcome_444}>
               <LButton
