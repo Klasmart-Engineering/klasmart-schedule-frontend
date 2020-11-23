@@ -150,6 +150,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     if (!schedule_id) {
       setSpecificStatus(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schedule_id]);
 
   return (
