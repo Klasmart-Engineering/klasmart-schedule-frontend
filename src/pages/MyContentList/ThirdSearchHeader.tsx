@@ -1,9 +1,10 @@
-import { Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Button, Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { MoreHoriz } from "@material-ui/icons";
+import CreateNewFolderOutlinedIcon from "@material-ui/icons/CreateNewFolderOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
@@ -77,6 +78,12 @@ const useStyles = makeStyles((theme) => ({
   tabs: {
     minHeight: "42px",
     height: "42px",
+  },
+  addFloderBtn: {
+    width: 160,
+    height: 40,
+    marginLeft: 30,
+    boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)",
   },
 }));
 
@@ -193,7 +200,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid item sm={6} xs={6} md={3}>
               {bulkOptions.length > 0 && (
                 <TextField
-                  style={{ width: 200 }}
+                  style={{ width: 160 }}
                   size="small"
                   onChange={handleChangeBulkAction}
                   label={d("Bulk Actions").t("library_label_bulk_actions")}
@@ -203,6 +210,11 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 >
                   {bulkOptions}
                 </TextField>
+              )}
+              {false && (
+                <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />}>
+                  Add a Folder
+                </Button>
               )}
             </Grid>
             {unpublish ? (
