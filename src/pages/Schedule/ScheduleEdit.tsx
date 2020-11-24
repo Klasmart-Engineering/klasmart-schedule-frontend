@@ -536,8 +536,8 @@ function EditBox(props: CalendarStateProps) {
         data: initialState,
       });
       changeTimesTamp({
-        start: currentTime,
-        end: currentTime,
+        start: scheduleList.start_at,
+        end: scheduleList.end_at,
       });
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
