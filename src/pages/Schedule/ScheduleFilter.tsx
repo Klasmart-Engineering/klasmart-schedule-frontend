@@ -24,6 +24,8 @@ const useStyles = makeStyles(({ shadows }) =>
     fliterRowSpan: {
       marginTop: "10px",
       float: "left",
+      overflowWrap: "break-word",
+      width: "80%",
     },
     fliterRowChange: {
       float: "left",
@@ -36,7 +38,8 @@ const useStyles = makeStyles(({ shadows }) =>
     fliterDivChild: {
       paddingLeft: "20px",
       marginTop: "6px",
-      height: "36px",
+      minHeight: "36px",
+      display: "flex",
     },
     filterArrow: {
       float: "left",

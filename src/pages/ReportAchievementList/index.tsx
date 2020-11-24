@@ -46,11 +46,7 @@ export function ReportAchievementList() {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
   };
-  const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (e, tab) => {
-    const value = e.target.value;
-    computeFilter(tab, value);
-  };
-  const handleChangeMbFilter: FilterAchievementReportProps["onChangeMb"] = (e, value, tab) => {
+  const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
   };
   const handleChangeStudent: AchievementListChartProps["onClickStudent"] = (studentId) => {
@@ -90,7 +86,6 @@ export function ReportAchievementList() {
     [condition.teacher_id, getFirstLessonPlanId, history, reportMockOptions.classList.user]
   );
   useEffect(() => {
-    console.log("!viewReport && viewMyReport = ", !viewReport && viewMyReport);
     dispatch(
       reportOnload({
         teacher_id: condition.teacher_id,
@@ -124,7 +119,6 @@ export function ReportAchievementList() {
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}
-        onChangeMb={handleChangeMbFilter}
         reportMockOptions={reportMockOptions}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
