@@ -109,7 +109,6 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
       setAttachmentId("");
     }
   };
-
   // const [specificStatus, setSpecificStatus] = React.useState(true);
 
   const getFileName = (name: string): string => {
@@ -158,6 +157,12 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schedule_id]);
+
+  React.useEffect(() => {
+    if (!specificStatus) {
+      setAttachmentName("");
+    }
+  }, [setAttachmentName, specificStatus]);
 
   return (
     <>

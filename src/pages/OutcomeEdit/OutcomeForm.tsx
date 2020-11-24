@@ -95,6 +95,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 <Controller
                   name="reject_reason"
                   control={control}
+                  multiline
                   as={TextField}
                   defaultValue={outcomeDetail.reject_reason}
                   fullWidth
