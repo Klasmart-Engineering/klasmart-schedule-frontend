@@ -19,6 +19,7 @@ import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import { Pagination } from "@material-ui/lab";
+import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
@@ -173,6 +174,11 @@ const useStyles = makeStyles((theme) =>
       color: "#0e78d5",
       padding: "0 0 0 10px",
     },
+    MuiIconButtonRoot: {
+      "&:hover": {
+        backgroundColor: "rgba(0, 0, 0, 0.00) !important",
+      },
+    },
   })
 );
 
@@ -240,7 +246,7 @@ function ContentCard(props: ContentProps) {
           <Typography variant="h6" style={{ flex: 1 }} noWrap={true}>
             {content?.name}
           </Typography>
-          <ExpandBtn className={css.iconButtonExpandMore} {...expand.expandMore}>
+          <ExpandBtn className={clsx(css.iconButtonExpandMore, css.MuiIconButtonRoot)} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
           </ExpandBtn>
         </Grid>
@@ -266,7 +272,12 @@ function ContentCard(props: ContentProps) {
           {false &&
             !queryCondition.program &&
             (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-              <LButton as={IconButton} replace className={css.folderColor} onClick={() => onDelete(content.id as string, type)}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+                onClick={() => onDelete(content.id as string, type)}
+              >
                 <FolderOpenIcon />
               </LButton>
             )}
@@ -275,7 +286,12 @@ function ContentCard(props: ContentProps) {
             queryCondition.publish_status === PublishStatus.published &&
             content?.content_type_name !== ASSETS_NAME && (
               <Permission value={PermissionType.archive_published_content_273}>
-                <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                  onClick={() => onDelete(content.id as string, type)}
+                >
                   <RemoveCircleOutlineIcon />
                 </LButton>
               </Permission>
@@ -283,28 +299,48 @@ function ContentCard(props: ContentProps) {
           {/* content archieved republish delete */}
           {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
             <Permission value={PermissionType.republish_archived_content_274}>
-              <LButton as={IconButton} replace className={css.rePublishColor} onClick={() => onPublish(content.id as string)}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.rePublishColor, css.MuiIconButtonRoot)}
+                onClick={() => onPublish(content.id as string)}
+              >
                 <PublishOutlinedIcon />
               </LButton>
             </Permission>
           )}
           {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
             <Permission value={PermissionType.delete_archived_content_275}>
-              <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                onClick={() => onDelete(content.id as string, type)}
+              >
                 <DeleteOutlineIcon />
               </LButton>
             </Permission>
           )}
           {/* content unpublished delete */}
           {!queryCondition.program && isUnpublish(queryCondition) && content?.content_type_name !== ASSETS_NAME && (
-            <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              onClick={() => onDelete(content.id as string, type)}
+            >
               <DeleteOutlineIcon />
             </LButton>
           )}
           {/* assets delete */}
           {!queryCondition.program && content?.content_type_name === ASSETS_NAME && (
             <Permission value={PermissionType.delete_asset_340}>
-              <LButton as={IconButton} replace className={css.iconColor} onClick={() => onDelete(content.id as string, type)}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                onClick={() => onDelete(content.id as string, type)}
+              >
                 <DeleteIcon />
               </LButton>
             </Permission>
