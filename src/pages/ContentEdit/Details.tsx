@@ -529,14 +529,14 @@ export default function Details(props: DetailsProps) {
             render={({ ref, ...props }) => (
               <SingleUploader
                 ref={ref}
-                partition="tearcherManual"
+                partition="thumbnail"
                 accept=".pdf"
                 {...props}
                 render={({ btnRef, item, value }) => (
                   <Box style={{ position: "relative" }}>
-                    <TextField disabled className={css.fieldset} label="Teacher Manual" value={value}></TextField>
+                    <TextField disabled className={css.fieldset} value={value} placeholder="Teacher Manual"></TextField>
                     <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
-                    {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onChange={handleDeleteManual} />}
+                    {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}
                   </Box>
                 )}
               />

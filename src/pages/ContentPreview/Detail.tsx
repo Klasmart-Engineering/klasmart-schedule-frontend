@@ -1,5 +1,6 @@
 import { Box, Checkbox, Chip, FormControlLabel, Grid, InputAdornment, TextField } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { CloudDownloadOutlined } from "@material-ui/icons";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType } from "../../api/type";
@@ -31,6 +32,11 @@ const useStyles = makeStyles(() => ({
     "&::-webkit-scrollbar": {
       display: "none",
     },
+  },
+  iconField: {
+    position: "absolute",
+    top: "40%",
+    cursor: "pointer",
   },
 }));
 interface ContentPreviewProps {
@@ -270,6 +276,12 @@ export function Detail(props: ContentPreviewProps) {
           ),
         }}
       ></TextField>
+      {contentPreview.content_type === ContentType.plan && (
+        <Box style={{ position: "relative" }}>
+          <TextField disabled className={css.fieldset} value="" label="Teacher Manual" fullWidth></TextField>
+          <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />
+        </Box>
+      )}
     </>
   );
 }
