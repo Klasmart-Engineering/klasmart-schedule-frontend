@@ -94,6 +94,7 @@ function Tool(props: ToolProps) {
     if (place === "create") {
       history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
     } else if (place === "search") {
+      if (!teacherName) return;
       history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
     } else {
       history.goBack();

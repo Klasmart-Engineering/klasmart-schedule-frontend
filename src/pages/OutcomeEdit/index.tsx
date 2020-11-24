@@ -122,12 +122,14 @@ export default function CreateOutcomings() {
           if (payload === "ok") {
             dispatch(actSuccess("Update Success"));
             dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+            setCondition("default");
           }
         } else {
           const { payload } = ((await dispatch(save(value))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
           if (payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess("Save Success"));
+            setCondition("default");
           }
         }
       }),
@@ -254,14 +256,17 @@ export default function CreateOutcomings() {
     };
     if (outcome_id) {
       if (condition === "program") {
-        setValue("subject", nextValue.subject);
+        setValue("subject", [""]);
         setValue("developmental", nextValue.developmental);
-        setValue("skills", nextValue.skills);
-        setValue("age", nextValue.age);
-        setValue("grade", nextValue.grade);
+        setValue("skills", [""]);
+        setValue("age", [""]);
+        setValue("grade", [""]);
       }
       if (condition === "development") {
-        setValue("skills", nextValue.skills);
+        setValue("skills", [""]);
+      }
+      if (condition === "default") {
+        reset(modelOutcomeDetail(outcomeDetail));
       }
       return;
     }
@@ -269,14 +274,14 @@ export default function CreateOutcomings() {
       reset(nextValue);
     }
     if (condition === "program") {
-      setValue("subject", nextValue.subject);
+      setValue("subject", [""]);
       setValue("developmental", nextValue.developmental);
-      setValue("skills", nextValue.skills);
-      setValue("age", nextValue.age);
-      setValue("grade", nextValue.grade);
+      setValue("skills", [""]);
+      setValue("age", [""]);
+      setValue("grade", [""]);
     }
     if (condition === "development") {
-      setValue("skills", nextValue.skills);
+      setValue("skills", [""]);
     }
     setIsAssumed(true);
   }, [
@@ -287,6 +292,7 @@ export default function CreateOutcomings() {
     newOptions.program,
     newOptions.skills,
     newOptions.subject,
+    outcomeDetail,
     outcome_id,
     reset,
     setValue,
