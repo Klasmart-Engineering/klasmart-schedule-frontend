@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { useQeuryMeQuery } from "../../api/api-ko.auto";
+import { QeuryMeQuery, useQeuryMeQuery } from "../../api/api-ko.auto";
 import { apiOrganizationOfPage } from "../../api/extra";
 
 export enum PermissionType {
@@ -68,33 +68,18 @@ export enum PermissionType {
   view_my_reports_614 = "view_my_reports_614",
 }
 
-// const mockPermissionList = [
-//   PermissionType.create_content_page_201,
-//   PermissionType.unpublished_content_page_202,
-//   PermissionType.pending_content_page_203,
-//   PermissionType.published_content_page_204,
-// ];
-
-const usePermissionList = () => {
-  const organization_id = apiOrganizationOfPage() || "";
-  const { loading, error, data } = useQeuryMeQuery({ variables: { organization_id } });
-  const result: PermissionType[] = [];
-  data?.me?.membership?.roles?.forEach((role) =>
-    role?.permissions?.forEach((permission) => {
-      if (permission) result.push(permission.permission_name as PermissionType);
-    })
-  );
-  return { loading, error, data: result };
-};
-
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);
 
 export type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
 
-export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
-  const { data: permissionList } = usePermissionList();
-
+export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(value: V, me: QeuryMeQuery['me']): PermissionResult<V> {
+  const permissionList: PermissionType[] = [];
   let result: PermissionResult<PermissionType> | PermissionResult<PermissionType[]>;
+  me?.membership?.roles?.forEach((role) => {
+    role?.permissions?.forEach((permission) => {
+      if (permission) permissionList.push(permission.permission_name as PermissionType);
+    });
+  });
   if (isPermissionType(value)) {
     result = permissionList.includes(value);
   } else {
@@ -104,6 +89,12 @@ export function usePermission<V extends PermissionType | PermissionType[]>(value
     }, {} as PermissionResult<PermissionType[]>);
   }
   return result as PermissionResult<V>;
+}
+
+export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
+  const organization_id = apiOrganizationOfPage() || "";
+  const { data } = useQeuryMeQuery({ variables: { organization_id }, fetchPolicy: 'cache-first' });
+  return hasPermissionOfMe<V>(value, data?.me);
 }
 
 export interface PermissionProps<V> {

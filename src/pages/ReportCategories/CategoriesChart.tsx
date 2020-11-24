@@ -7,15 +7,11 @@ import { PieArcDatum, ProvidedProps } from "@visx/shape/lib/shapes/Pie";
 import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import React, { useMemo, useState } from "react";
+import { EntityTeacherReportCategory } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { useChartScale } from "../../hooks/useChartScale";
 
-interface MockDataItem {
-  name: string;
-  items: string[];
-}
-
-interface RatioExtendedMockDataItem extends MockDataItem {
+interface RatioExtendedEntityTeacherReportCategory extends EntityTeacherReportCategory {
   items_ratio: number;
 }
 
@@ -130,12 +126,12 @@ const getInlineStyles = (px: number) => ({
   },
 });
 
-const mapRatio = (data: MockDataItem[]): RatioExtendedMockDataItem[] => {
-  const sum = data.reduce((r, item) => r + item.items.length, 0);
+const mapRatio = (data: EntityTeacherReportCategory[]): RatioExtendedEntityTeacherReportCategory[] => {
+  const sum = data.reduce((r, item) => r + (item.items?.length || 0), 0);
   return data.map((item) => {
     return {
       ...item,
-      items_ratio: sum === 0 ? 0 : item.items.length / sum,
+      items_ratio: sum === 0 ? 0 : (item.items?.length || 0) / sum,
     };
   });
 };
@@ -149,9 +145,9 @@ const computed = (props: CategoriesStaticChartProps) => {
     2 * (pixels.viewMargin + pixels.tooltipWidth + pixels.tooltipMargin + pixels.outerRadius),
     2 * (pixels.viewMargin + pixels.outerRadius),
   ];
-  const colorScale = scaleOrdinal({ domain: data.map((item) => item.name), range: categoryColors.slice(0, data.length) });
+  const colorScale = scaleOrdinal({ domain: data.map((item) => item.name as string), range: categoryColors.slice(0, data.length) });
   const radiusScale = (radius: number) => (2 * radius) / (pixels.outerRadius + pixels.innerRadius);
-  const pieValue = (item: RatioExtendedMockDataItem) => item.items_ratio;
+  const pieValue = (item: RatioExtendedEntityTeacherReportCategory) => item.items_ratio;
   return { viewPort, colorScale, pieValue, radiusScale };
 };
 
@@ -160,11 +156,11 @@ const sig = (x: boolean) => (x ? 1 : -1);
 interface TooltipData {
   yProperty: "top" | "bottom";
   xProperty: "left" | "right";
-  data: MockDataItem;
+  data: EntityTeacherReportCategory;
 }
 interface PieItemProps {
-  pie: ProvidedProps<RatioExtendedMockDataItem>;
-  arc: PieArcDatum<RatioExtendedMockDataItem>;
+  pie: ProvidedProps<RatioExtendedEntityTeacherReportCategory>;
+  arc: PieArcDatum<RatioExtendedEntityTeacherReportCategory>;
 }
 export interface CategoriesStaticChartProps extends CategoriesChartProps {
   px: number;
@@ -189,7 +185,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
     const y1 = centroidY * radiusScale(pixels.extendRadius);
     const x2 = sig(isRight) * (pixels.outerRadius + pixels.tooltipMargin);
     const showPieTooltip = () => {
-      setActiveCategoryName(arc.data.name);
+      setActiveCategoryName(arc.data.name as string);
       showTooltip({
         tooltipLeft: x2 + viewPort[2] / 2,
         tooltipTop: y1 + viewPort[3] / 2,
@@ -204,7 +200,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
       <g key={arc.data.name}>
         <path
           d={pie.path({ ...arc }) || undefined}
-          fill={colorScale(arc.data.name)}
+          fill={colorScale(arc.data.name as string)}
           onMouseOver={showPieTooltip}
           onMouseLeave={() => {
             hideTooltip();
@@ -212,7 +208,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
           }}
         />
         <Text x={centroidX} y={centroidY} style={inlineStyles.pieText}>
-          {(100 * arc.data.items_ratio).toFixed(0) + "%"}
+          {arc.data.items_ratio < 0.05 ? '' : (100 * arc.data.items_ratio).toFixed(0) + "%"}
         </Text>
         {activeCategoryName === arc.data.name && (
           <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.data.name)} {...inlineStyles.tooltipLinker} />
@@ -225,7 +221,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
       <div className={css.legend}>
         {data.map(({ name }) => (
           <div className={css.legendItem} key={name}>
-            <div className={css.legendIcon} style={{ backgroundColor: colorScale(name) }} />
+            <div className={css.legendIcon} style={{ backgroundColor: colorScale(name as string) }} />
             <div className={css.legendTitle}>{name}</div>
           </div>
         ))}
@@ -240,8 +236,8 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
       {tooltipOpen && tooltipData && (
         <Tooltip top={tooltipTop} left={tooltipLeft} offsetTop={0} offsetLeft={0} style={{ position: "absolute" }}>
           <div style={{ ...inlineStyles.tooltip, [tooltipData.yProperty]: 0, [tooltipData.xProperty]: 0 }}>
-            <div style={inlineStyles.tooltipTitle}>{tooltipData.data.items.length}&nbsp;LOs</div>
-            {tooltipData.data.items.map((desc, idx) => (
+            <div style={inlineStyles.tooltipTitle}>{tooltipData.data.items?.length}&nbsp;LOs</div>
+            {tooltipData.data.items?.map((desc, idx) => (
               <div key={idx} style={inlineStyles.tooltipContent}>
                 {desc}
               </div>
@@ -254,7 +250,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
 }
 
 export interface CategoriesChartProps {
-  data: MockDataItem[];
+  data: EntityTeacherReportCategory[];
 }
 export function CategoriesChart(props: CategoriesChartProps) {
   const css = useStyle();

@@ -1,18 +1,11 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep } from "lodash";
 import api, { gqlapi } from "../api";
-import {
-  ClassesByTeacherDocument,
-  ClassesByTeacherQuery,
-  ClassesByTeacherQueryVariables,
-  QeuryMeDocument,
-  QeuryMeQuery,
-  QeuryMeQueryVariables,
-  TeachersByOrgnizationDocument,
-  TeachersByOrgnizationQuery,
-  TeachersByOrgnizationQueryVariables,
-} from "../api/api-ko.auto";
-import { EntityScheduleShortInfo, EntityStudentReportCategory, EntityStudentReportItem } from "../api/api.auto";
+import { User } from "../api/api-ko-schema.auto";
+import { ClassesByTeacherDocument, ClassesByTeacherQuery, ClassesByTeacherQueryVariables, QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables, TeachersByOrgnizationDocument, TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables } from "../api/api-ko.auto";
+import { EntityScheduleShortInfo, EntityStudentReportCategory, EntityStudentReportItem, EntityTeacherReportCategory } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
+import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import classListByTeacher from "../mocks/classListByTeacher.json";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
@@ -25,6 +18,10 @@ interface IreportState {
   // lessonPlanList: EntityScheduleShortInfo[];
   student_name: string | undefined;
   reportMockOptions: GetReportMockOptionsResponse;
+  categoriesPage: {
+    teacherList: Pick<User, 'user_id' | 'user_name'>[];
+    categories: EntityTeacherReportCategory[];
+  }
 }
 const initialState: IreportState = {
   reportList: [],
@@ -46,6 +43,10 @@ const initialState: IreportState = {
     class_id: "",
     lesson_plan_id: "",
   },
+  categoriesPage: {
+    teacherList: [],
+    categories: [],
+  }
 };
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -64,13 +65,15 @@ export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadRep
 );
 interface GetAchievementDetailPayload extends LoadingMetaPayload {
   id: string;
-  query: Parameters<typeof api.reports.getStudentDetailReport>[1];
+  query: Parameters<typeof api.reports.getStudentReport>[1];
 }
+
+
 export const getAchievementDetail = createAsyncThunk<
-  AsyncReturnType<typeof api.reports.getStudentDetailReport>,
+  AsyncReturnType<typeof api.reports.getStudentReport>,
   GetAchievementDetailPayload
 >("StudentsDetailReport", async ({ metaLoading, id, query }) => {
-  return await api.reports.getStudentDetailReport(id, query);
+  return await api.reports.getStudentReport(id, query);
 });
 
 export const getLessonPlan = createAsyncThunk<
@@ -203,7 +206,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       });
       reportList = items.items || [];
     }
-    const abc = {
+    return {
       teacherList: teacherList || { organization: { teachers: [] } },
       classList: classList || { user: { classesTeaching: [] } },
       lessonPlanList: lessonPlanList,
@@ -212,21 +215,20 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       lesson_plan_id: finalPlanId as string,
       reportList,
     };
-    return abc;
   }
 );
 
-interface ReportCategoriesPayLoad {
+
+interface ReportCategoriesPayLoadProps {
   teacher_id?: string;
-  view_my_report?: boolean;
 }
-interface ReportCategoriesResponse {
-  teacherList: TeachersByOrgnizationQuery;
-  teacher_id: string;
+interface ReportCategoriesPayLoadResult {
+  teacherList: Pick<User, 'user_id' | 'user_name'>[];
+  categories: EntityTeacherReportCategory[];
 }
-export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesResponse, ReportCategoriesPayLoad & LoadingMetaPayload>(
-  "reportOnload",
-  async ({ teacher_id, view_my_report }) => {
+export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadResult, ReportCategoriesPayLoadProps & LoadingMetaPayload>(
+  'report/reportCategoriesOnload',
+  async ({ teacher_id }) => {
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
@@ -235,25 +237,30 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesResponse,
         organization_id,
       },
     });
-    const myTearchId = meInfo.me?.user_id || "";
-    // 拉取本组织的teacherList
-    const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
-      query: TeachersByOrgnizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
-    const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
-    const teacherList = MOCK ? mockResult : data;
-    const user_id = (teacherList && teacherList.organization && teacherList.organization.teachers
-      ? teacherList.organization?.teachers[0]?.user?.user_id
-      : undefined) as string;
-    const firstTearchId = teacher_id ? teacher_id : user_id ? user_id : "";
-    const finalTearchId = view_my_report ? myTearchId : firstTearchId;
-    return {
-      teacherList: teacherList || { organization: { teachers: [] } },
-      teacher_id: finalTearchId,
-    };
+    const perm = hasPermissionOfMe([PermissionType.view_my_reports_614, PermissionType.view_reports_610], meInfo.me);
+    const my_id = meInfo?.me?.user_id;
+    debugger
+    if (perm.view_reports_610) {
+      // 拉取本组织的teacherList
+      const { data: teachersInfo } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
+        query: TeachersByOrgnizationDocument,
+        variables: {
+          organization_id,
+        },
+      });
+      const teacherList = teachersInfo.organization?.teachers?.map(item => item?.user as Pick<User, 'user_id' | 'user_name'>);
+      // teacherList 不存在，不需要拉取 categories
+      if (!teacherList || !teacherList[0]) return { teacherList: [], categories: [] };
+      // 如果 teacher_id 就直接使用，不然就用列表第一项
+      const { categories = [] } = await api.reports.getTeacherReport(teacher_id || teacherList[0]?.user_id);
+      return { teacherList, categories };
+    }
+    if (!my_id) return { teacherList: [], categories: []};
+    if (perm.view_my_reports_614) {
+      const { categories = [] } = await api.reports.getTeacherReport(my_id);
+      return { teacherList: [], categories };
+    }
+    return { teacherList: [], categories: []};
   }
 );
 
@@ -303,7 +310,13 @@ const { reducer } = createSlice({
       state.reportList = reportList;
     },
     [reportOnload.pending.type]: (state) => {
-      state.reportMockOptions = initialState.reportMockOptions;
+      state.reportMockOptions = cloneDeep(initialState.reportMockOptions);
+    },
+    [reportCategoriesOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof reportCategoriesOnload>>) => {
+      state.categoriesPage = payload;
+    },
+    [reportCategoriesOnload.pending.type]: (state) => {
+      state.categoriesPage = cloneDeep(initialState.categoriesPage);
     },
   },
 });
