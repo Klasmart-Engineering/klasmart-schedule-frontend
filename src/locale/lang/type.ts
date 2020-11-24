@@ -115,6 +115,19 @@ type LangRecord<T = string> =
   | { id: "library_label_drawing_activity"; description: "Drawing Activity"; values: undefined }
   | { id: "library_label_program_esl"; description: "Badanamu ESL"; values: undefined }
   | { id: "library_label_program_math"; description: "Bada Math"; values: undefined }
+  | { id: "library_error_unsupported_format"; description: "Unsupported Format"; values: undefined }
+  | { id: "library_error_no_content"; description: "Content does not exist"; values: undefined }
+  | { id: "library_error_content_locked"; description: "Content is locked by another user"; values: undefined }
+  | {
+      id: "library_error_delete_lesson_plan_in_schedule";
+      description: "Unable to delete lesson plan which is scheduled";
+      values: undefined;
+    }
+  | { id: "library_error_update_content_failed"; description: "Update content failed"; values: undefined }
+  | { id: "library_error_read_content_failed"; description: "Read content failed"; values: undefined }
+  | { id: "library_error_delete_content_failed"; description: "Delete content failed"; values: undefined }
+  | { id: "library_error_invalid_visibility_settings"; description: "Invalid Visibility Settings"; values: undefined }
+  | { id: "library_error_associate_learning_outcome_failed"; description: "Associate learning outcome failed"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -125,8 +138,8 @@ type LangRecord<T = string> =
   | { id: "assess_sort_by"; description: "Sort By"; values: undefined }
   | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
   | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }
-  | { id: "assess_complete_time_new_old"; description: "Complete Time(New-Old)"; values: undefined }
-  | { id: "assess_complete_time_old_new"; description: "Complete Time(Old-New)"; values: undefined }
+  | { id: "assess_complete_time_new_old"; description: "Complete Time (New-Old)"; values: undefined }
+  | { id: "assess_complete_time_old_new"; description: "Complete Time (Old-New)"; values: undefined }
   | { id: "assess_column_title"; description: "Assessment Title"; values: undefined }
   | { id: "assess_column_subject"; description: "Subject"; values: undefined }
   | { id: "assess_column_program"; description: "Program"; values: undefined }
@@ -408,6 +421,9 @@ type LangRecord<T = string> =
   | { id: "report_label_descending"; description: "Descending"; values: undefined }
   | { id: "report_label_learning_outcomes_percentage"; description: "Learning Outcomes %"; values: undefined }
   | { id: "report_label_absent"; description: "Absent"; values: undefined }
+  | { id: "report_error_no_permissions"; description: "You have no permission."; values: undefined }
+  | { id: "report_error_no_network_connection"; description: "No network connection"; values: undefined }
+  | { id: "report_error_unknown_error"; description: "Unknown error"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Unknown Error"; values: undefined };
