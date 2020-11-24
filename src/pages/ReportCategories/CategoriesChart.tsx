@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { scaleOrdinal } from "@visx/scale";
@@ -21,21 +21,69 @@ interface RatioExtendedMockDataItem extends MockDataItem {
 
 // todo: 如果颜色超过10个， 需要 doris 补颜色
 const categoryColors = ["#89C4F9", "#FF9492", "#A4DDFF", "#CB9BFF", "#8693F0", "#FFA966", "#FB7575", "#9E46FF", "#77DCB7", "#FBD775"];
+const LEGEND_WIDTH = 130;
 
-const useStyle = makeStyles({
+const useStyle = makeStyles(({ breakpoints }) => ({
   chart: {
     marginTop: 24,
     marginBottom: 300,
     position: "relative",
+    [breakpoints.up("md")]: {
+      paddingRight: LEGEND_WIDTH,
+    },
+  },
+  legend: {
+    [breakpoints.up("md")]: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      width: LEGEND_WIDTH,
+    },
+    [breakpoints.down("sm")]: {
+      width: "100%",
+      display: "flex",
+      flexWrap: "wrap",
+    },
+  },
+  legendItem: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: 12,
+    width: LEGEND_WIDTH,
+    [breakpoints.down("sm")]: {
+      marginRight: 24,
+      width: "auto",
+      height: 20,
+    },
+  },
+  legendIcon: {
+    width: 32,
+    height: 20,
+    marginRight: 12,
+  },
+  legendTitle: {
+    width: 88,
+    fontSize: 16,
+    fontWeight: "lighter",
+    lineHeight: 20 / 16,
+    [breakpoints.down("sm")]: {
+      width: "auto",
+      height: 20,
+      minWidth: LEGEND_WIDTH - 32 - 12,
+      maxWidth: 2 * LEGEND_WIDTH - 32 - 12,
+      overflowX: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
   },
   svgContainer: {
     position: "absolute",
   },
   svg: {
-    backgroundColor: "rgba(0,0,0, .02)",
+    // backgroundColor: "rgba(0,0,0, .02)",
     fontFamily: "Helvetica",
   },
-});
+}));
 
 const getPixels = (px: number) => ({
   outerRadius: 300 * px,
@@ -174,6 +222,14 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
   };
   return (
     <div className={css.chart}>
+      <div className={css.legend}>
+        {data.map(({ name }) => (
+          <div className={css.legendItem} key={name}>
+            <div className={css.legendIcon} style={{ backgroundColor: colorScale(name) }} />
+            <div className={css.legendTitle}>{name}</div>
+          </div>
+        ))}
+      </div>
       <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
         <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
           <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
@@ -202,12 +258,15 @@ export interface CategoriesChartProps {
 }
 export function CategoriesChart(props: CategoriesChartProps) {
   const css = useStyle();
+  const theme = useTheme();
+  const upMd = useMediaQuery(theme.breakpoints.up("md"));
   const scale = useChartScale();
   const {
     viewPort: [, , svgWidth, svgHeight],
   } = useMemo(() => computed({ ...props, px: 1 }), [props]);
   if (scale(1) !== 1) {
-    const px = scale(window.innerWidth / svgWidth);
+    const scalableWidth = window.innerWidth - (upMd ? 1 : 0) * LEGEND_WIDTH;
+    const px = scale(scalableWidth / svgWidth);
     return (
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <div className={css.chart} style={{ height: svgHeight * px, overflowX: "scroll" }}>
