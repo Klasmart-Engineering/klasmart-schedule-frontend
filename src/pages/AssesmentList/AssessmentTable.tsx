@@ -54,7 +54,7 @@ function AssessmentRow(props: AssessmentProps) {
       <TableCell align="center">{assessment.subject?.name}</TableCell>
       <TableCell align="center">{assessment.program?.name}</TableCell>
       <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
-      <TableCell align="center">{assessment.teachers?.map((v) => v.name)}</TableCell>
+      <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,")}</TableCell>
       <TableCell align="center">{formattedTime(assessment.class_end_time)}</TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_time)}</TableCell>
     </TableRow>
