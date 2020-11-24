@@ -173,8 +173,15 @@ export interface EntityAddAssessmentResult {
 }
 
 export interface EntityAge {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface EntityAssessmentAttendanceView {
@@ -225,8 +232,15 @@ export interface EntityAssessmentTeacher {
 }
 
 export interface EntityClassType {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface EntityContentInfoWithDetails {
@@ -313,13 +327,27 @@ export interface EntityCreateContentRequest {
 }
 
 export interface EntityDevelopmental {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface EntityGrade {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface EntityIDResponse {
@@ -327,8 +355,15 @@ export interface EntityIDResponse {
 }
 
 export interface EntityLessonType {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface EntityListAssessmentsResult {
@@ -387,8 +422,15 @@ export interface EntityOutcomeAttendanceMapView {
 }
 
 export interface EntityProgram {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface EntityRepeatDaily {
@@ -538,12 +580,18 @@ export interface EntityScheduleUpdateView {
 }
 
 export interface EntitySkill {
-  developmental_id?: string;
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
-export interface EntityStudentDetailReport {
+export interface EntityStudentReport {
   assessment_ids?: string[];
   attend?: boolean;
   categories?: EntityStudentReportCategory[];
@@ -572,7 +620,23 @@ export interface EntityStudentsReport {
 }
 
 export interface EntitySubject {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
+  name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
+}
+
+export interface EntityTeacherReport {
+  categories?: EntityTeacherReportCategory[];
+}
+
+export interface EntityTeacherReportCategory {
+  items?: string[];
   name?: string;
 }
 
@@ -584,8 +648,15 @@ export interface EntityUpdateAssessmentCommand {
 }
 
 export interface EntityVisibilitySetting {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
   id?: string;
   name?: string;
+  number?: number;
+  updateAt?: number;
+  updateID?: string;
 }
 
 export interface ExternalClass {
@@ -714,6 +785,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags age
+     * @name addAge
+     * @summary addAge
+     * @request POST:/ages
+     * @description add age
+     */
+    addAge: (age: EntityAge, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/ages`, "POST", params, age),
+
+    /**
+     * @tags age
      * @name getAgeByID
      * @summary getAgeByID
      * @request GET:/ages/{id}
@@ -721,6 +802,26 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getAgeById: (id: string, params?: RequestParams) =>
       this.request<EntityAge, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/ages/${id}`, "GET", params),
+
+    /**
+     * @tags age
+     * @name updateAge
+     * @summary updateAge
+     * @request PUT:/ages/{id}
+     * @description updateAge
+     */
+    updateAge: (id: string, age: EntityAge, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/ages/${id}`, "PUT", params, age),
+
+    /**
+     * @tags age
+     * @name deleteAge
+     * @summary deleteAge
+     * @request DELETE:/ages/{id}
+     * @description deleteAge
+     */
+    deleteAge: (id: string, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/ages/${id}`, "DELETE", params),
   };
   assessments = {
     /**
@@ -740,7 +841,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityListAssessmentsResult, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityListAssessmentsResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments${this.addQueryParams(query)}`,
         "GET",
         params
@@ -754,7 +855,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add assessments
      */
     addAssessment: (assessment: EntityAddAssessmentCommand, params?: RequestParams) =>
-      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments`,
         "POST",
         params,
@@ -769,11 +870,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get assessment detail
      */
     getAssessment: (id: string, params?: RequestParams) =>
-      this.request<EntityAssessmentDetailView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/assessments/${id}`,
-        "GET",
-        params
-      ),
+      this.request<
+        EntityAssessmentDetailView,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/assessments/${id}`, "GET", params),
 
     /**
      * @tags assessments
@@ -783,7 +883,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update assessment
      */
     updateAssessment: (id: string, update_assessment_command: EntityUpdateAssessmentCommand, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments/${id}`,
         "PUT",
         params,
@@ -1133,6 +1233,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags developmental
+     * @name addDevelopmental
+     * @summary addDevelopmental
+     * @request POST:/developmentals
+     * @description addDevelopmental
+     */
+    addDevelopmental: (developmental: EntityDevelopmental, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/developmentals`, "POST", params, developmental),
+
+    /**
+     * @tags developmental
      * @name getDevelopmentalByID
      * @summary getDevelopmentalByID
      * @request GET:/developmentals/{id}
@@ -1140,6 +1250,31 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getDevelopmentalById: (id: string, params?: RequestParams) =>
       this.request<EntityDevelopmental, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/developmentals/${id}`, "GET", params),
+
+    /**
+     * @tags developmental
+     * @name updateDevelopmental
+     * @summary updateDevelopmental
+     * @request PUT:/developmentals/{id}
+     * @description updateDevelopmental
+     */
+    updateDevelopmental: (id: string, developmental: EntityDevelopmental, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/developmentals/${id}`,
+        "PUT",
+        params,
+        developmental
+      ),
+
+    /**
+     * @tags developmental
+     * @name deleteDevelopmental
+     * @summary deleteDevelopmental
+     * @request DELETE:/developmentals/{id}
+     * @description deleteDevelopmental
+     */
+    deleteDevelopmental: (id: string, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/developmentals/${id}`, "DELETE", params),
   };
   grades = {
     /**
@@ -1154,6 +1289,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags grade
+     * @name addGrade
+     * @summary addGrade
+     * @request POST:/grades
+     * @description addGrade
+     */
+    addGrade: (grade: EntityGrade, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/grades`, "POST", params, grade),
+
+    /**
+     * @tags grade
      * @name getGradeByID
      * @summary getGradeByID
      * @request GET:/grades/{id}
@@ -1161,6 +1306,26 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getGradeById: (id: string, params?: RequestParams) =>
       this.request<EntityGrade, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/grades/${id}`, "GET", params),
+
+    /**
+     * @tags grade
+     * @name updateGrade
+     * @summary updateGrade
+     * @request PUT:/grades/{id}
+     * @description updateGrade
+     */
+    updateGrade: (id: string, grade: EntityGrade, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/grades/${id}`, "PUT", params, grade),
+
+    /**
+     * @tags grade
+     * @name deleteGrade
+     * @summary deleteGrade
+     * @request DELETE:/grades/{id}
+     * @description deleteGrade
+     */
+    deleteGrade: (id: string, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/grades/${id}`, "DELETE", params),
   };
   learningOutcomes = {
     /**
@@ -1412,6 +1577,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags program
+     * @name addProgram
+     * @summary addProgram
+     * @request POST:/programs
+     * @description addProgram
+     */
+    addProgram: (program: EntityProgram, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/programs`, "POST", params, program),
+
+    /**
+     * @tags program
      * @name getProgramByID
      * @summary getProgramByID
      * @request GET:/programs/{id}
@@ -1419,6 +1594,96 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getProgramById: (id: string, params?: RequestParams) =>
       this.request<EntityProgram, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/programs/${id}`, "GET", params),
+
+    /**
+     * @tags program
+     * @name updateProgram
+     * @summary updateProgram
+     * @request PUT:/programs/{id}
+     * @description updateProgram
+     */
+    updateProgram: (id: string, program: EntityProgram, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/programs/${id}`, "PUT", params, program),
+
+    /**
+     * @tags program
+     * @name deleteProgram
+     * @summary deleteProgram
+     * @request DELETE:/programs/{id}
+     * @description deleteProgram
+     */
+    deleteProgram: (id: string, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/programs/${id}`, "DELETE", params),
+
+    /**
+     * @tags program
+     * @name SetAge
+     * @summary SetAge
+     * @request PUT:/programs/{id}/ages
+     * @description SetAge
+     */
+    setAge: (id: string, query: { age_ids: string }, params?: RequestParams) =>
+      this.request<string, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/programs/${id}/ages${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
+
+    /**
+     * @tags program
+     * @name SetDevelopmental
+     * @summary SetDevelopmental
+     * @request PUT:/programs/{id}/developments
+     * @description SetDevelopmental
+     */
+    setDevelopmental: (id: string, query: { development_ids: string }, params?: RequestParams) =>
+      this.request<string, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/programs/${id}/developments${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
+
+    /**
+     * @tags program
+     * @name SetGrade
+     * @summary SetGrade
+     * @request PUT:/programs/{id}/grades
+     * @description SetGrade
+     */
+    setGrade: (id: string, query: { grade_ids: string }, params?: RequestParams) =>
+      this.request<string, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/programs/${id}/grades${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
+
+    /**
+     * @tags program
+     * @name SetSkill
+     * @summary SetSkill
+     * @request PUT:/programs/{id}/skills
+     * @description SetSkill
+     */
+    setSkill: (id: string, query: { development_id: string; skill_ids: string }, params?: RequestParams) =>
+      this.request<string, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/programs/${id}/skills${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
+
+    /**
+     * @tags program
+     * @name SetSubject
+     * @summary SetSubject
+     * @request PUT:/programs/{id}/subjects
+     * @description SetSubject
+     */
+    setSubject: (id: string, query: { subject_ids: string }, params?: RequestParams) =>
+      this.request<string, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/programs/${id}/subjects${this.addQueryParams(query)}`,
+        "PUT",
+        params
+      ),
   };
   reports = {
     /**
@@ -1438,7 +1703,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityStudentsReport, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityStudentsReport, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/students${this.addQueryParams(query)}`,
         "GET",
         params
@@ -1446,17 +1711,29 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
-     * @name getStudentDetailReport
+     * @name getStudentReport
      * @summary get student report
      * @request GET:/reports/students/{id}
      * @description get student report
      */
-    getStudentDetailReport: (id: string, query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
-      this.request<EntityStudentDetailReport, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/reports/students/${id}${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
+    getStudentReport: (id: string, query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
+      this.request<
+        EntityStudentReport,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/reports/students/${id}${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports
+     * @name getTeacherReport
+     * @summary get teacher report
+     * @request GET:/reports/teachers/{id}
+     * @description get teacher report
+     */
+    getTeacherReport: (id: string, params?: RequestParams) =>
+      this.request<
+        EntityTeacherReport,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/reports/teachers/${id}`, "GET", params),
   };
   schedules = {
     /**
@@ -1635,6 +1912,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags skill
+     * @name addSkill
+     * @summary addSkill
+     * @request POST:/skills
+     * @description addSkill
+     */
+    addSkill: (skill: EntitySkill, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/skills`, "POST", params, skill),
+
+    /**
+     * @tags skill
      * @name getSkillByID
      * @summary getSkillByID
      * @request GET:/skills/{id}
@@ -1642,6 +1929,26 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getSkillById: (id: string, params?: RequestParams) =>
       this.request<EntitySkill, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/skills/${id}`, "GET", params),
+
+    /**
+     * @tags skill
+     * @name updateSkill
+     * @summary updateSkill
+     * @request PUT:/skills/{id}
+     * @description updateSkill
+     */
+    updateSkill: (id: string, skill: EntitySkill, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/skills/${id}`, "PUT", params, skill),
+
+    /**
+     * @tags skill
+     * @name deleteSkill
+     * @summary deleteSkill
+     * @request DELETE:/skills/{id}
+     * @description deleteSkill
+     */
+    deleteSkill: (id: string, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/skills/${id}`, "DELETE", params),
   };
   subjects = {
     /**
@@ -1656,6 +1963,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags subject
+     * @name addSubject
+     * @summary addSubject
+     * @request POST:/subjects
+     * @description addSubject
+     */
+    addSubject: (subject: EntitySubject, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/subjects`, "POST", params, subject),
+
+    /**
+     * @tags subject
      * @name getSubjectByID
      * @summary getSubjectByID
      * @request GET:/subjects/{id}
@@ -1663,6 +1980,26 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getSubjectById: (id: string, params?: RequestParams) =>
       this.request<EntitySubject, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/subjects/${id}`, "GET", params),
+
+    /**
+     * @tags subject
+     * @name updateSubject
+     * @summary updateSubject
+     * @request PUT:/subjects/{id}
+     * @description updateSubject
+     */
+    updateSubject: (id: string, subject: EntitySubject, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/subjects/${id}`, "PUT", params, subject),
+
+    /**
+     * @tags subject
+     * @name deleteSubject
+     * @summary deleteSubject
+     * @request DELETE:/subjects/{id}
+     * @description deleteSubject
+     */
+    deleteSubject: (id: string, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/subjects/${id}`, "DELETE", params),
   };
   visibilitySettings = {
     /**

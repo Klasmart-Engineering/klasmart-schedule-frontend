@@ -43,6 +43,39 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "add age",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["age"],
+        "summary": "addAge",
+        "operationId": "addAge",
+        "parameters": [
+          {
+            "description": "age",
+            "name": "age",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Age"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/ages/{id}": {
@@ -73,6 +106,83 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "updateAge",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["age"],
+        "summary": "updateAge",
+        "operationId": "updateAge",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "age id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "age",
+            "name": "age",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Age"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteAge",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["age"],
+        "summary": "deleteAge",
+        "operationId": "deleteAge",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "age id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
             }
           },
           "500": {
@@ -142,10 +252,10 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "403": {
+            "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -187,10 +297,10 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "403": {
+            "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -230,6 +340,12 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -284,10 +400,10 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "404": {
-            "description": "Not Found",
+          "403": {
+            "description": "Forbidden",
             "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -1444,6 +1560,39 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "addDevelopmental",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["developmental"],
+        "summary": "addDevelopmental",
+        "operationId": "addDevelopmental",
+        "parameters": [
+          {
+            "description": "developmental",
+            "name": "developmental",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Developmental"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/developmentals/{id}": {
@@ -1474,6 +1623,83 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "updateDevelopmental",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["developmental"],
+        "summary": "updateDevelopmental",
+        "operationId": "updateDevelopmental",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "developmental id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "developmental",
+            "name": "developmental",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Developmental"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteDevelopmental",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["developmental"],
+        "summary": "deleteDevelopmental",
+        "operationId": "deleteDevelopmental",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "developmental id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
             }
           },
           "500": {
@@ -1518,6 +1744,39 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "addGrade",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["grade"],
+        "summary": "addGrade",
+        "operationId": "addGrade",
+        "parameters": [
+          {
+            "description": "Grade",
+            "name": "grade",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Grade"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/grades/{id}": {
@@ -1548,6 +1807,83 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "updateGrade",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["grade"],
+        "summary": "updateGrade",
+        "operationId": "updateGrade",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "grade id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "grade",
+            "name": "grade",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Grade"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteGrade",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["grade"],
+        "summary": "deleteGrade",
+        "operationId": "deleteGrade",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "grade id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
             }
           },
           "500": {
@@ -2404,6 +2740,39 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "addProgram",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "addProgram",
+        "operationId": "addProgram",
+        "parameters": [
+          {
+            "description": "program",
+            "name": "program",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Program"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/programs/{id}": {
@@ -2428,6 +2797,320 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/entity.Program"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "updateProgram",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "updateProgram",
+        "operationId": "updateProgram",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "program",
+            "name": "program",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Program"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteProgram",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "deleteProgram",
+        "operationId": "deleteProgram",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/programs/{id}/ages": {
+      "put": {
+        "description": "SetAge",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "SetAge",
+        "operationId": "SetAge",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "age_ids",
+            "name": "age_ids",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/programs/{id}/developments": {
+      "put": {
+        "description": "SetDevelopmental",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "SetDevelopmental",
+        "operationId": "SetDevelopmental",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "development_ids",
+            "name": "development_ids",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/programs/{id}/grades": {
+      "put": {
+        "description": "SetGrade",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "SetGrade",
+        "operationId": "SetGrade",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "grade_ids",
+            "name": "grade_ids",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/programs/{id}/skills": {
+      "put": {
+        "description": "SetSkill",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "SetSkill",
+        "operationId": "SetSkill",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "development_id",
+            "name": "development_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "skill_ids",
+            "name": "skill_ids",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/programs/{id}/subjects": {
+      "put": {
+        "description": "SetSubject",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "SetSubject",
+        "operationId": "SetSubject",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "subject_ids",
+            "name": "subject_ids",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
             }
           },
           "404": {
@@ -2505,6 +3188,12 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -2521,7 +3210,7 @@
         "produces": ["application/json"],
         "tags": ["reports"],
         "summary": "get student report",
-        "operationId": "getStudentDetailReport",
+        "operationId": "getStudentReport",
         "parameters": [
           {
             "type": "string",
@@ -2556,13 +3245,70 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.StudentDetailReport"
+              "$ref": "#/definitions/entity.StudentReport"
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/teachers/{id}": {
+      "get": {
+        "description": "get teacher report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "get teacher report",
+        "operationId": "getTeacherReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "teacher id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherReport"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -3164,6 +3910,39 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "addSkill",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["skill"],
+        "summary": "addSkill",
+        "operationId": "addSkill",
+        "parameters": [
+          {
+            "description": "skill",
+            "name": "skill",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Skill"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/skills/{id}": {
@@ -3194,6 +3973,83 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "updateSkill",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["skill"],
+        "summary": "updateSkill",
+        "operationId": "updateSkill",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "skill id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "skill",
+            "name": "skill",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Skill"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteSkill",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["skill"],
+        "summary": "deleteSkill",
+        "operationId": "deleteSkill",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "skill id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
             }
           },
           "500": {
@@ -3238,6 +4094,39 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "addSubject",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["subject"],
+        "summary": "addSubject",
+        "operationId": "addSubject",
+        "parameters": [
+          {
+            "description": "subject",
+            "name": "subject",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Subject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/subjects/{id}": {
@@ -3268,6 +4157,83 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "updateSubject",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["subject"],
+        "summary": "updateSubject",
+        "operationId": "updateSubject",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "subject id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "subject",
+            "name": "subject",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.Subject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "deleteSubject",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["subject"],
+        "summary": "deleteSubject",
+        "operationId": "deleteSubject",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "subject id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
             }
           },
           "500": {
@@ -3836,10 +4802,31 @@
     "entity.Age": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
@@ -3979,10 +4966,31 @@
     "entity.ClassType": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
@@ -4289,10 +5297,31 @@
     "entity.Developmental": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
@@ -4300,10 +5329,31 @@
     "entity.Grade": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
@@ -4319,10 +5369,31 @@
     "entity.LessonType": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
@@ -4484,10 +5555,31 @@
     "entity.Program": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
@@ -4939,7 +6031,16 @@
     "entity.Skill": {
       "type": "object",
       "properties": {
-        "developmental_id": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
           "type": "string"
         },
         "id": {
@@ -4947,10 +6048,19 @@
         },
         "name": {
           "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
+          "type": "string"
         }
       }
     },
-    "entity.StudentDetailReport": {
+    "entity.StudentReport": {
       "type": "object",
       "properties": {
         "assessment_ids": {
@@ -5042,8 +6152,54 @@
     "entity.Subject": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.TeacherReport": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.TeacherReportCategory"
+          }
+        }
+      }
+    },
+    "entity.TeacherReportCategory": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "name": {
           "type": "string"
@@ -5077,10 +6233,31 @@
     "entity.VisibilitySetting": {
       "type": "object",
       "properties": {
+        "createAt": {
+          "type": "integer"
+        },
+        "createID": {
+          "type": "string"
+        },
+        "deleteAt": {
+          "type": "integer"
+        },
+        "deleteID": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "updateAt": {
+          "type": "integer"
+        },
+        "updateID": {
           "type": "string"
         }
       }
