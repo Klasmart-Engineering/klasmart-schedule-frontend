@@ -129,12 +129,11 @@ const GetClassItem = forwardRef<React.RefObject<HTMLElement>, GetClassItemProps>
 });
 export interface FilterAchievementReportProps {
   value: QueryCondition;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tab: keyof QueryCondition) => any;
-  onChangeMb: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
+  onChange: (value: string, tab: keyof QueryCondition) => any;
   reportMockOptions: GetReportMockOptionsResponse;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, onChangeMb, reportMockOptions } = props;
+  const { onChange, value, reportMockOptions } = props;
   const css = useStyles();
   const viewReport = usePermission(PermissionType.view_reports_610);
   const viewMyReport = usePermission(PermissionType.view_my_reports_614);
@@ -170,7 +169,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
     handleClose(e, tab);
-    onChangeMb(e, value, tab);
+    onChange(value, tab);
   };
 
   const getTeacherList = (teacherList: TeacherItem[] | undefined | null) => {
@@ -199,7 +198,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               <TextField
                 size="small"
                 className={css.selectButton}
-                onChange={(e) => onChange(e, "teacher_id")}
+                onChange={(e) => onChange(e.target.value, "teacher_id")}
                 label={d("Teacher").t("report_label_teacher")}
                 value={value.teacher_id}
                 select
@@ -212,7 +211,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "class_id")}
+              onChange={(e) => onChange(e.target.value, "class_id")}
               label={d("Class").t("report_label_class")}
               value={value.class_id}
               select
@@ -224,7 +223,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "lesson_plan_id")}
+              onChange={(e) => onChange(e.target.value, "lesson_plan_id")}
               label={d("Lesson Plan").t("report_label_lesson_plan")}
               value={value.lesson_plan_id}
               select
@@ -238,7 +237,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={(e) => onChange(e, "status")}
+              onChange={(e) => onChange(e.target.value, "status")}
               value={value.status}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -249,7 +248,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             <TextField
               size="small"
               className={clsx(css.selectButton, css.lastButton)}
-              onChange={(e) => onChange(e, "sort_by")}
+              onChange={(e) => onChange(e.target.value, "sort_by")}
               label={d("Sort By").t("report_label_sort_by")}
               value={value.sort_by}
               select
