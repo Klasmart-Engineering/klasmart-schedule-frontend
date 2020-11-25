@@ -256,14 +256,14 @@ export default function CreateOutcomings() {
     };
     if (outcome_id) {
       if (condition === "program") {
-        setValue("subject", [""]);
+        setValue("subject", []);
         setValue("developmental", nextValue.developmental);
-        setValue("skills", [""]);
-        setValue("age", [""]);
-        setValue("grade", [""]);
+        setValue("skills", []);
+        setValue("age", []);
+        setValue("grade", []);
       }
       if (condition === "development") {
-        setValue("skills", [""]);
+        setValue("skills", []);
       }
       if (condition === "default") {
         reset(modelOutcomeDetail(outcomeDetail));
@@ -274,14 +274,14 @@ export default function CreateOutcomings() {
       reset(nextValue);
     }
     if (condition === "program") {
-      setValue("subject", [""]);
+      setValue("subject", []);
       setValue("developmental", nextValue.developmental);
-      setValue("skills", [""]);
-      setValue("age", [""]);
-      setValue("grade", [""]);
+      setValue("skills", []);
+      setValue("age", []);
+      setValue("grade", []);
     }
     if (condition === "development") {
-      setValue("skills", [""]);
+      setValue("skills", []);
     }
     setIsAssumed(true);
   }, [
