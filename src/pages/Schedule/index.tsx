@@ -19,6 +19,7 @@ import {
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
+  getSearchScheduleList,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -30,7 +31,7 @@ const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const scheduleId = query.get("schedule_id") || "";
-  const teacherName = query.get("teacher_name") || "";
+  const teacherName = query.get("name") || "";
   return { scheduleId, teacherName };
 };
 
@@ -53,7 +54,7 @@ function ScheduleContent() {
     (state) => state.schedule
   );
   const dispatch = useDispatch();
-  const { scheduleId } = useQuery();
+  const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [, setChangeProgram] = React.useState<string>("");
@@ -123,13 +124,26 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    dispatch(
-      getScheduleTimeViewData({
-        view_type: modelView,
-        time_at: timesTamp.start,
+    if (teacherName) {
+      console.log(111111111);
+      const data = {
+        teacher_name: teacherName,
+        page: 1,
+        page_size: 10,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
-      })
-    );
+        start_at: timesTamp.start,
+      };
+      dispatch(getSearchScheduleList({ data, metaLoading: true }));
+    } else {
+      dispatch(
+        getScheduleTimeViewData({
+          view_type: modelView,
+          time_at: timesTamp.start,
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+        })
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, dispatch]);
 
   React.useEffect(() => {
@@ -202,7 +216,7 @@ function ScheduleContent() {
                 setSpecificStatus={setSpecificStatus}
               />
             )}
-            {includeList && <SearchList />}
+            {includeList && <SearchList timesTamp={timesTamp} />}
           </Grid>
         </Grid>
       </LayoutBox>
