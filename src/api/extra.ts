@@ -82,7 +82,7 @@ export const apiOrganizationOfPage = () => {
 
 export const apiWaitForOrganizationOfPage = () => {
   const errorLabel: LangRecordId = "general_error_no_organization";
-  const TIME_OUT = 2000;
+  const TIME_OUT = 3600 * 1000;
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const orgId = apiOrganizationOfPage();
