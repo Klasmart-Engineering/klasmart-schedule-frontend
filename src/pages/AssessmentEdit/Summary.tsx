@@ -117,12 +117,12 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
 interface PopupInputProps {
   assessmentDetail: SummaryProps["assessmentDetail"];
   setValue: UseFormMethods["setValue"];
-
   value?: UpdateAssessmentRequestDatAattendanceIds;
   onChange?: (value: PopupInputProps["value"]) => any;
+  isMyAssessment?: boolean;
 }
 const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
-  const { value, onChange, assessmentDetail } = props;
+  const { value, onChange, assessmentDetail, isMyAssessment } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateAssessmentRequestData>();
@@ -156,6 +156,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
       <PermissionOr
         value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
         render={(value) =>
+          isMyAssessment &&
           value && (
             <Button
               className={css.editButton}
@@ -190,9 +191,10 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
 interface SummaryProps {
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
   assessmentDetail: IAssessmentState["assessmentDetail"];
+  isMyAssessment?: boolean;
 }
 export function Summary(props: SummaryProps) {
-  const { assessmentDetail } = props;
+  const { assessmentDetail, isMyAssessment } = props;
   const {
     formMethods: { control, setValue },
   } = props;
@@ -222,6 +224,7 @@ export function Summary(props: SummaryProps) {
             assessmentDetail={assessmentDetail}
             setValue={setValue}
             control={control}
+            isMyAssessment={isMyAssessment}
           />
           <TextField
             fullWidth

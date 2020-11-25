@@ -1,10 +1,14 @@
+import { cloneDeep } from "@apollo/client/utilities";
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import api from "../api";
+import api, { gqlapi } from "../api";
+import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
+import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
+  my_id?: string;
   total: NonNullable<ListAssessmentResult["total"]>;
   assessmentList: ListAssessmentResultItem[];
 }
@@ -58,10 +62,24 @@ export const updateAssessment = createAsyncThunk<string, IupdateAssessmentParams
   await api.assessments.updateAssessment(id, data);
   return id;
 });
-export const getAssessment = createAsyncThunk<AsyncReturnType<typeof api.assessments.getAssessment>, { id: string } & LoadingMetaPayload>(
+interface getAssessmentResponce {
+  detail: AsyncReturnType<typeof api.assessments.getAssessment>;
+  my_id: string;
+}
+export const getAssessment = createAsyncThunk<getAssessmentResponce, { id: string } & LoadingMetaPayload>(
   "assessments/getAssessment",
   async ({ id }) => {
-    return await api.assessments.getAssessment(id);
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const my_id = meInfo.me?.user_id || "";
+    const detail = await api.assessments.getAssessment(id);
+    return { detail, my_id };
   }
 );
 
@@ -79,11 +97,13 @@ const { reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getAssessment.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
-      state.assessmentDetail = initialState.assessmentDetail;
+      state.assessmentDetail = cloneDeep(initialState.assessmentDetail);
+      state.my_id = cloneDeep(initialState.my_id);
     },
     [getAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       if (payload) {
-        state.assessmentDetail = payload;
+        state.assessmentDetail = payload.detail;
+        state.my_id = payload.my_id;
       }
     },
     [getAssessment.rejected.type]: (state, { error }: any) => {

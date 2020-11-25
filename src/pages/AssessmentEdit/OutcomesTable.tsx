@@ -61,7 +61,7 @@ interface AssessActionProps {
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
-  status?: string;
+  editable: boolean;
 }
 
 const AssessAction = (props: AssessActionProps) => {
@@ -72,7 +72,7 @@ const AssessAction = (props: AssessActionProps) => {
     index,
     attendanceList,
     formValue,
-    status,
+    editable,
   } = props;
   const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
   const none_achieved: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].none_achieved) || false;
@@ -126,7 +126,7 @@ const AssessAction = (props: AssessActionProps) => {
                     />
                   }
                   label={d("All Achieved").t("assess_option_all_achieved")}
-                  disabled={skip || status === "complete"}
+                  disabled={skip || editable}
                 />
                 <Controller
                   name={`outcome_attendance_maps[${index}].none_achieved`}
@@ -136,7 +136,7 @@ const AssessAction = (props: AssessActionProps) => {
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "none_achieved")} color="primary" />}
                       label={d("None Achieved").t("assess_option_none_achieved")}
-                      disabled={skip || status === "complete"}
+                      disabled={skip || editable}
                     />
                   )}
                 />
@@ -148,7 +148,7 @@ const AssessAction = (props: AssessActionProps) => {
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
                       label={d("Not Attempted").t("assess_option_not_attempted")}
-                      disabled={status === "complete"}
+                      disabled={editable}
                     />
                   )}
                 />
@@ -167,7 +167,7 @@ const AssessAction = (props: AssessActionProps) => {
                       }
                       label={item.name}
                       key={item.id}
-                      disabled={skip || status === "complete"}
+                      disabled={skip || editable}
                     />
                   ))}
                 <Controller
@@ -194,12 +194,12 @@ interface OutcomesTableProps {
   attendanceList: IAssessmentState["assessmentDetail"]["attendances"];
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   formValue: UpdateAssessmentRequestDataOmitAction;
-  status?: string;
+  editable: boolean;
   filterOutcomes: string;
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods, formValue, status, filterOutcomes } = props;
+  const { outcomesList, attendanceList, formMethods, formValue, editable, filterOutcomes } = props;
   const rows =
     outcomesList &&
     outcomesList.map((outcome, index) => (
@@ -222,7 +222,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
             formMethods={formMethods}
             index={index}
             formValue={formValue}
-            status={status}
+            editable={editable}
           ></AssessAction>
         </TableCell>
       </TableRow>

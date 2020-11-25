@@ -83,12 +83,13 @@ interface AssessmentHeaderProps {
   onSave: LButtonProps["onClick"];
   onComplete: Function;
   assessmentDetail: GetAssessmentResult;
+  isMyAssessment?: boolean;
 }
 export function AssessmentHeader(props: AssessmentHeaderProps) {
-  const { name, onComplete, onSave, onBack, assessmentDetail } = props;
+  const { name, onComplete, onSave, onBack, assessmentDetail, isMyAssessment } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
-  const editable = usePermission(PermissionType.edit_in_progress_assessment_439);
+  const editable = usePermission(PermissionType.edit_in_progress_assessment_439) && isMyAssessment;
   const sm = useMediaQuery(breakpoints.down("sm"));
   const [open, toggle] = useReducer((open) => {
     return !open;

@@ -30,14 +30,16 @@ export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { filterOutcomes = "all", id, editindex } = useQuery();
-  const assessmentDetail = useSelector<RootState, RootState["assessments"]["assessmentDetail"]>(
-    (state) => state.assessments.assessmentDetail
-  );
+  const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;
+  // 切换的时候formValue的数据是旧的
   const formValue = watch();
   const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   const filteredOutcomelist = assessmentDetail.outcome_attendance_maps;
+  const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
+  const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
+  const editable = isMyAssessment || !(assessmentDetail.status === "complete");
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
@@ -111,8 +113,8 @@ export function AssessmentsEdit() {
           attendanceList={attendances}
           formMethods={formMethods}
           formValue={formValue}
-          status={assessmentDetail.status}
           filterOutcomes={filterOutcomes}
+          editable={editable}
         />
       ) : (
         <NoOutComesList />
@@ -128,9 +130,10 @@ export function AssessmentsEdit() {
         onBack={handleGoBack}
         onComplete={handleAssessmentComplete}
         assessmentDetail={assessmentDetail}
+        isMyAssessment={isMyAssessment}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} />
+        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} isMyAssessment={isMyAssessment} />
         {rightsideArea}
       </LayoutPair>
     </>
