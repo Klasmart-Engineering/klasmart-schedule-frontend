@@ -6,6 +6,9 @@ import { useHistory } from "react-router";
 import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import ContentPreview from "../ContentPreview";
+import { apiLivePath } from "../../api/extra";
+import { useSelector } from "react-redux";
+import { RootState } from "../../reducers";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -75,9 +78,10 @@ interface InfoProps {
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
-  const { handleDelete, handleClose, scheduleInfo, toLive } = props;
+  const { handleDelete, handleClose, scheduleInfo } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
   const timestampToTime = (timestamp: Date | null): string => {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -149,7 +153,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
           onClick={() => {
             handleClose();
-            toLive();
+            window.open(apiLivePath(liveToken));
           }}
         >
           {d("Go Live").t("schedule_button_go_live")}
