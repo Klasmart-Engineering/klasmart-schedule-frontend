@@ -9,6 +9,7 @@ import { EntityScheduleSearchView } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getSearchScheduleList } from "../../reducers/schedule";
+import { timestampType } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -100,35 +101,39 @@ const useQuery = () => {
   return { name };
 };
 
-const timestampToTime = () => {
-  const date = new Date();
-  const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
-  const [Y, M, D] = [
-    date.getFullYear(),
-    dateNumFun(date.getMonth() + 1),
-    dateNumFun(date.getDate()),
-    dateNumFun(date.getHours()),
-    dateNumFun(date.getMinutes()),
-    dateNumFun(date.getSeconds()),
-  ];
-  return `${Y}-${M}-${D}`;
-};
+// const timestampToTime = () => {
+//   const date = new Date();
+//   const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+//   const [Y, M, D] = [
+//     date.getFullYear(),
+//     dateNumFun(date.getMonth() + 1),
+//     dateNumFun(date.getDate()),
+//     dateNumFun(date.getHours()),
+//     dateNumFun(date.getMinutes()),
+//     dateNumFun(date.getSeconds()),
+//   ];
+//   return `${Y}-${M}-${D}`;
+// };
 
-export default function SearchList() {
+interface SearchListProps {
+  timesTamp: timestampType;
+}
+
+export default function SearchList(props: SearchListProps) {
   const dispatch = useDispatch();
   const { name } = useQuery();
   const [page, setPage] = React.useState(1);
-  const current_time = Math.floor(new Date(timestampToTime()).valueOf() / 1000);
+  const { timesTamp } = props;
   React.useEffect(() => {
     const data = {
       teacher_name: name,
       page: 1,
       page_size: 10,
       time_zone_offset: -new Date().getTimezoneOffset() * 60,
-      start_at: current_time,
+      start_at: timesTamp.start,
     };
     dispatch(getSearchScheduleList({ data, metaLoading: true }));
-  }, [current_time, dispatch, name]);
+  }, [dispatch, name, timesTamp.start]);
   const { searchScheduleList, total } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const classes = useStyles();
 
@@ -168,7 +173,7 @@ export default function SearchList() {
       page: value,
       page_size: 10,
       time_zone_offset: -new Date().getTimezoneOffset() * 60,
-      start_at: current_time,
+      start_at: timesTamp.start,
     };
     dispatch(getSearchScheduleList({ data, metaLoading: true }));
     document.documentElement.scrollTop = 0;
