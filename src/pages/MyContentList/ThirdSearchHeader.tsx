@@ -211,11 +211,12 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   {bulkOptions}
                 </TextField>
               )}
-              {false && (
-                <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />}>
-                  Add a Folder
-                </Button>
-              )}
+              {false &&
+                (value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets) && (
+                  <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />}>
+                    Add a Folder
+                  </Button>
+                )}
             </Grid>
             {unpublish ? (
               <Grid item md={6}>

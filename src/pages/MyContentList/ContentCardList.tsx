@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardActionArea,
   CardActions,
@@ -27,6 +28,9 @@ import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType, PublishStatus } from "../../api/type";
+import folderBigIconUrl from "../../assets/icons/folderbigicon.svg";
+import folderIconUrl from "../../assets/icons/foldericon.svg";
+import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
@@ -186,6 +190,13 @@ const useStyles = makeStyles((theme) =>
       display: "flex",
       justifyContent: "center",
     },
+    prevImg: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "50%",
+    },
   })
 );
 
@@ -243,9 +254,10 @@ function ContentCard(props: ContentProps) {
           {content.content_type === ContentType.assets && (
             <Thumbnail className={css.cardImg} type={content.content_type * 10 + file_type} id={content.thumbnail}></Thumbnail>
           )}
-          {content.content_type !== ContentType.assets && (
+          {(content.content_type === ContentType.material || content.content_type === ContentType.plan) && (
             <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
           )}
+          {content.content_type === 4 && <img className={css.cardImg} src={folderBigIconUrl} alt="" />}
         </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
@@ -276,18 +288,16 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {false &&
-            !queryCondition.program &&
-            (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-                onClick={() => onDelete(content.id as string, type)}
-              >
-                <FolderOpenIcon />
-              </LButton>
-            )}
+          {!queryCondition.program && (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+              onClick={() => onDelete(content.id as string, type)}
+            >
+              <FolderOpenIcon />
+            </LButton>
+          )}
           {/* content published remove */}
           {!queryCondition.program &&
             queryCondition.publish_status === PublishStatus.published &&
@@ -405,6 +415,22 @@ export function ContentCardList(props: ContentCardListProps) {
               {...props}
               render={(selectedContentGroupContext) => (
                 <Fragment>
+                  {false && (
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+                      <Box className={css.card}>
+                        <Box className={css.cardMedia} style={{ marginTop: 10 }}>
+                          <img className={css.prevImg} src={prevPageUrl} alt="" />
+                        </Box>
+                        <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                          <img src={folderIconUrl} alt="" />
+                          <Typography variant="h6">Badanamu Zoo</Typography>
+                        </Box>
+                        <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
+                          (10 items. 6 available)
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  )}
                   {list.map((item, idx) => (
                     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
                       <ContentCard
