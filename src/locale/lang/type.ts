@@ -117,7 +117,11 @@ type LangRecord<T = string> =
   | { id: "library_label_program_math"; description: "Bada Math"; values: undefined }
   | { id: "library_error_unsupported_format"; description: "Unsupported Format"; values: undefined }
   | { id: "library_error_no_content"; description: "Content does not exist"; values: undefined }
-  | { id: "library_error_content_locked"; description: "Content is locked by {name}"; values: { name: string | number } }
+  | {
+      id: "library_error_content_locked";
+      description: "This content is locked by editor {given_name} {family_name}. To use this content, ask the editor to check their drafts or rejected content, republish, then get it approved.";
+      values: { given_name: string | number; family_name: string | number };
+    }
   | {
       id: "library_error_delete_lesson_plan_in_schedule";
       description: "Unable to delete lesson plan which is scheduled";

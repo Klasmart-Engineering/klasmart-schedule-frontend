@@ -108,7 +108,7 @@
   "library_label_program_math": "Bada Math",
   "library_error_unsupported_format": "不支持的格式",
   "library_error_no_content": "内容不存在",
-  "library_error_content_locked": "内容被{name}锁定",
+  "library_error_content_locked": "内容被{given_name} {family_name}锁定",
   "library_error_delete_lesson_plan_in_schedule": "无法删除已经排课的教学计划",
   "library_error_update_content_failed": "修改内容失败",
   "library_error_read_content_failed": "读取内容失败",

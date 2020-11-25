@@ -314,7 +314,7 @@
   "schedule_end_repeat": "Kết Thúc Lặp Lại",
   "schedule_repeat_never": "Không Bao Giờ",
   "schedule_repeat_after": "Sau",
-  "schedule_repeat_occurrence(s)": "Một sự kiện (Nhiều sự kiện)",
+  "schedule_repeat_occurrence(s)": "Lần(Nhiều Lần)",
   "schedule_repeat_on": "Trên",
   "schedule_frequency_month": "của mỗi tháng",
   "schedule_frequency_year": "của mỗi năm",
