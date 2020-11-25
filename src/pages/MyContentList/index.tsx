@@ -25,8 +25,6 @@ import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
-const PAGE_SIZE = 20;
-
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];
@@ -92,6 +90,7 @@ export default function MyContentList() {
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const [pageSize, setPageSize] = useState(20);
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
@@ -106,6 +105,9 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkDeleteContent({ ids, type })));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
+  const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
+    setPageSize(page_size);
+  };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
     if (content_type !== ContentType.material && content_type !== ContentType.plan) {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
@@ -136,20 +138,21 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
+      console.log(pageSize);
       if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
-        await dispatch(pendingContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+        await dispatch(pendingContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       } else if (
         condition.publish_status === PublishStatus.draft ||
         condition.publish_status === PublishStatus.rejected ||
         (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
       ) {
-        await dispatch(privateContentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+        await dispatch(privateContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       } else {
-        await dispatch(contentLists({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+        await dispatch(contentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       }
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey]);
+  }, [condition, reset, dispatch, refreshKey, pageSize]);
 
   return (
     <div>
@@ -190,8 +193,10 @@ export default function MyContentList() {
                 formMethods={formMethods}
                 list={contentsList}
                 total={total}
+                amountPerPage={pageSize}
                 queryCondition={condition}
                 onChangePage={handleChangePage}
+                onChangePageSize={handleChangePageSize}
                 onClickContent={handleClickConent}
                 onPublish={handlePublish}
                 onDelete={handleDelete}

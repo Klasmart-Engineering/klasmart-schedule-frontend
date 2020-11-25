@@ -7,8 +7,11 @@ import {
   Checkbox,
   Collapse,
   createStyles,
+  FormControl,
   Grid,
   IconButton,
+  MenuItem,
+  Select,
   styled,
   Typography,
 } from "@material-ui/core";
@@ -178,6 +181,10 @@ const useStyles = makeStyles((theme) =>
       "&:hover": {
         backgroundColor: "rgba(0, 0, 0, 0.00) !important",
       },
+    },
+    bottomCon: {
+      display: "flex",
+      justifyContent: "center",
     },
   })
 );
@@ -359,17 +366,33 @@ interface ContentActionProps {
 export interface ContentCardListProps extends ContentActionProps {
   formMethods: UseFormMethods<ContentListForm>;
   total: number;
-  amountPerPage?: number;
+  amountPerPage: number;
   list: EntityContentInfoWithDetails[];
   queryCondition: QueryCondition;
   onChangePage: (page: number) => void;
   onClickContent: (id: EntityContentInfoWithDetails["id"], content_type: EntityContentInfoWithDetails["content_type"]) => any;
+  onChangePageSize: (page_size: number) => void;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
-  const { formMethods, list, total, amountPerPage = 20, queryCondition, onPublish, onDelete, onChangePage, onClickContent } = props;
+  const {
+    formMethods,
+    list,
+    total,
+    amountPerPage,
+    queryCondition,
+    onPublish,
+    onDelete,
+    onChangePage,
+    onClickContent,
+    onChangePageSize,
+  } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
+  const handleChangePageSize = (event: React.ChangeEvent<{ value: unknown }>) => {
+    onChangePageSize(event.target.value as number);
+  };
+  const pageSizes = [20, 100, 500];
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Controller
@@ -396,14 +419,25 @@ export function ContentCardList(props: ContentCardListProps) {
           </Grid>
         )}
       />
-      <Pagination
-        page={queryCondition.page}
-        className={css.pagination}
-        classes={{ ul: css.paginationUl }}
-        onChange={handleChangePage}
-        count={Math.ceil(total / amountPerPage)}
-        color="primary"
-      />
+      <div className={css.bottomCon}>
+        <Pagination
+          page={queryCondition.page}
+          className={css.pagination}
+          classes={{ ul: css.paginationUl }}
+          onChange={handleChangePage}
+          count={Math.ceil(total / amountPerPage)}
+          color="primary"
+        />
+        <FormControl>
+          <Select value={amountPerPage} onChange={handleChangePageSize}>
+            {pageSizes.map((item) => (
+              <MenuItem value={item} key={item}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
     </LayoutBox>
   );
 }
