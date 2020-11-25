@@ -49,7 +49,7 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions } = useSelector<RootState, RootState["schedule"]>(
+  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken } = useSelector<RootState, RootState["schedule"]>(
     (state) => state.schedule
   );
   const dispatch = useDispatch();
@@ -118,12 +118,8 @@ function ScheduleContent() {
     setTimesTamp(times);
   };
 
-  const toLive = async (schedule_id: string) => {
-    let tokenInfo: any;
-    tokenInfo = ((await dispatch(getScheduleLiveToken({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
-      AsyncTrunkReturned<typeof getScheduleLiveToken>
-    >;
-    if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
+  const toLive = () => {
+    if (liveToken) window.open(apiLivePath(liveToken));
   };
 
   React.useEffect(() => {
@@ -143,7 +139,10 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
-    if (scheduleId) dispatch(getScheduleInfo(scheduleId));
+    if (scheduleId) {
+      dispatch(getScheduleLiveToken({ schedule_id: scheduleId, metaLoading: true }));
+      dispatch(getScheduleInfo(scheduleId));
+    }
     setModalDate({
       handleChange: function (p1: number) {},
       radioValue: 0,

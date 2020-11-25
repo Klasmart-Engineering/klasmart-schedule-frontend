@@ -1092,7 +1092,7 @@ function EditBox(props: CalendarStateProps) {
               width: "45%",
             }}
             onClick={() => {
-              toLive(scheduleId as string);
+              toLive();
             }}
           >
             {d("Go Live").t("schedule_button_go_live")}
@@ -1116,7 +1116,7 @@ interface CalendarStateProps {
   scheduleId?: string;
   includeTable?: boolean;
   handleChangeProgramId: (value: string) => void;
-  toLive: (schedule_id: string) => void;
+  toLive: () => void;
   changeModalDate: (data: object) => void;
   mockOptions?: MockOptionsOptionsItem[];
   scheduleMockOptions: getScheduleMockOptionsResponse;
