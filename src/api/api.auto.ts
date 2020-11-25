@@ -1885,7 +1885,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         view_type: "day" | "work_week" | "week" | "month";
         time_at: number;
         time_zone_offset: number;
-        org_ids?: string;
+        school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;

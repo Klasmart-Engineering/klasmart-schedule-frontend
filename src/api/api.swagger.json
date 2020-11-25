@@ -3814,8 +3814,8 @@
           },
           {
             "type": "string",
-            "description": "org id,separated by comma",
-            "name": "org_ids",
+            "description": "school ids,separated by comma",
+            "name": "school_ids",
             "in": "query"
           },
           {
