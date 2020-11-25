@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { apiEmitter, ApiErrorEventData, ApiEvent } from "./api";
+import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData } from "./api";
 import { apiAddOrganizationToPageUrl } from "./api/extra";
 import { subscribeIframeMessage } from "./api/iframeMessage";
 import App from "./App";
@@ -8,7 +8,7 @@ import "./index.css";
 import { LangName, LangRecordId } from "./locale/lang/type";
 import { localeManager, t } from "./locale/LocaleManager";
 import { store } from "./reducers";
-import { actError } from "./reducers/notify";
+import { actError, actInfo } from "./reducers/notify";
 import * as serviceWorker from "./serviceWorker";
 
 // const UNAUTHORIZED_LABEL = 'general_error_unauthorized';
@@ -20,6 +20,13 @@ apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   // if (label === UNAUTHORIZED_LABEL) sendIframeMessage({ type: 'unauthorized', payload: null });
   const message = String(t(label as LangRecordId, data || undefined) || msg || "");
   if (message) store.dispatch(actError(message));
+});
+
+apiEmitter.on<ApiInfoEventData>(ApiEvent.Info, (e) => {
+  if (!e) return;
+  const { label } = e;
+  const message = String(t(label as LangRecordId) || "");
+  if (message) store.dispatch(actInfo(message));
 });
 
 subscribeIframeMessage("changeLocale", (locale) => localeManager.toggle(locale.slice(0, 2) as LangName));

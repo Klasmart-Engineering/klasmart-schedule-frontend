@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ControllerProps } from "react-hook-form";
 
 export interface ConfirmResult {
   isConfirmed: boolean;
@@ -13,6 +14,8 @@ export interface ConfirmRequest {
   label?: string;
   confirmText?: string;
   cancelText?: string;
+  placeholder?: string;
+  rules?: ControllerProps<"input">["rules"];
 }
 
 export interface IConfirmState extends ConfirmRequest {
@@ -32,6 +35,8 @@ const initialState: IConfirmState = {
   label: "",
   confirmText: "",
   cancelText: "",
+  placeholder: "",
+  rules: undefined,
 };
 
 let resolve: (value?: ConfirmResult | PromiseLike<ConfirmResult>) => void;

@@ -82,14 +82,20 @@ export const apiOrganizationOfPage = () => {
 
 export const apiWaitForOrganizationOfPage = () => {
   const errorLabel: LangRecordId = "general_error_no_organization";
+  // const infoLabel: LangRecordId = "general_info_waiting_orgnization_info";
   const TIME_OUT = 3600 * 1000;
+  // const INFO_INTERVAL = 10 * 1000;
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const orgId = apiOrganizationOfPage();
     if (orgId) return resolve(orgId);
+    // const infoTimer = setInterval(() => {
+    //   apiEmitter.emit<ApiErrorEventData>(ApiEvent.Info, { label: infoLabel });
+    // }, INFO_INTERVAL)
     const timer = setInterval(() => {
       if (Date.now() - startTime > TIME_OUT) {
         clearInterval(timer);
+        // clearInterval(infoTimer);
         apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: errorLabel });
         return reject({ label: errorLabel });
       }

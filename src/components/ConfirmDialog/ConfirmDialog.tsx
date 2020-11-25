@@ -39,29 +39,30 @@ const REJECT_REASON_VALUES = () => [
 ];
 
 export function ConfirmDialog() {
-  const { open, title, content, type, label, confirmText, cancelText } = useSelector<RootState, RootState["confirm"]>(
+  const { open, title, content, type, label, confirmText, cancelText, rules, placeholder } = useSelector<RootState, RootState["confirm"]>(
     (state) => state.confirm
   );
   const dispatch = useDispatch();
-  const { control, getValues, setError, errors, watch } = useForm();
+  const { control, setError, errors, watch, handleSubmit } = useForm();
   const values = watch();
   const disableConfirm =
     type === ConfirmDialogType.textField && !values[REJECT_REASON]?.length && !values[OTHER_REASON] && !values[INPUT_NAME];
   const handleCancel = useCallback(() => dispatch(actExitConfirm({ isConfirmed: false })), [dispatch]);
   const handleConfirm = useCallback(() => {
-    if (type === ConfirmDialogType.text) return dispatch(actExitConfirm({ isConfirmed: true }));
-    const values = getValues();
-    if (values[OTHER_REASON] && !values[INPUT_NAME]) {
-      return setError(INPUT_NAME, {
-        type: "manual",
-        message: d("Please specify the reason for rejection.").t("library_msg_reject_reason"),
-      });
-    }
-    const reasonValue = [...values[REJECT_REASON]];
-    const otherValue = values[INPUT_NAME] ? values[INPUT_NAME] : "";
-    // const value = values[INPUT_NAME] ? [...values[REJECT_REASON], values[INPUT_NAME]] : values[REJECT_REASON];
-    if (type === ConfirmDialogType.textField) dispatch(actExitConfirm({ isConfirmed: true, reasonValue, otherValue }));
-  }, [dispatch, getValues, type, setError]);
+    handleSubmit((values) => {
+      if (type === ConfirmDialogType.text) return dispatch(actExitConfirm({ isConfirmed: true }));
+      if (values[OTHER_REASON] && !values[INPUT_NAME]) {
+        return setError(INPUT_NAME, {
+          type: "manual",
+          message: d("Please specify the reason for rejection.").t("library_msg_reject_reason"),
+        });
+      }
+      const reasonValue = [...values[REJECT_REASON]];
+      const otherValue = values[INPUT_NAME] ? values[INPUT_NAME] : "";
+      // const value = values[INPUT_NAME] ? [...values[REJECT_REASON], values[INPUT_NAME]] : values[REJECT_REASON];
+      if (type === ConfirmDialogType.textField) dispatch(actExitConfirm({ isConfirmed: true, reasonValue, otherValue }));
+    });
+  }, [dispatch, type, setError, handleSubmit]);
   return (
     <Dialog open={open} maxWidth="xs" aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" disableBackdropClick>
       <DialogTitle>{title}</DialogTitle>
@@ -122,8 +123,8 @@ export function ConfirmDialog() {
               autoFocus={true}
               fullWidth
               label={label}
-              placeholder={d("Reason").t("library_label_reason")}
-              rules={{ required: true }}
+              placeholder={placeholder || d("Reason").t("library_label_reason")}
+              rules={{ required: true, ...rules }}
               control={control}
               error={!!errors[INPUT_NAME]}
               helperText={errors[INPUT_NAME]?.message}
