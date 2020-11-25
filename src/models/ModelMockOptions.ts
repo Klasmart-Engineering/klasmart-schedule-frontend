@@ -117,7 +117,7 @@ export class ModelMockOptions {
       switch (name) {
         case "program":
           result[name] = {
-            key: ModelMockOptions.createSelectKey( linkedMockOptions.program, contentDetail[name], name ),
+            key: ModelMockOptions.createSelectKey(linkedMockOptions.program, contentDetail[name], name),
             value: ModelMockOptions.createMandatoryDefaultValue(props, name),
           };
           break;
@@ -150,7 +150,7 @@ export class ModelMockOptions {
           };
       }
     });
-    const { input_source = MaterialType.h5p, source = "" } = JSON.parse(contentDetail.data || "{}");
+    const { input_source, source = "" } = JSON.parse(contentDetail.data || "{}");
     result["data.input_source"] = {
       key: ModelMockOptions.createSelectKey([], input_source, "data.input_source"),
       value: input_source,
