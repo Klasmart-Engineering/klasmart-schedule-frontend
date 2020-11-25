@@ -382,9 +382,9 @@ export const publishContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.publishContent>,
   Required<EntityContentInfoWithDetails>["id"]
 >("content/publishContent", async (id, { dispatch }) => {
-  const content = d("Are you sure you want to publish this content?").t("library_msg_publish_content");
-  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-  if (!isConfirmed) return Promise.reject();
+  // const content = d("Are you sure you want to publish this content?").t("library_msg_publish_content");
+  // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  // if (!isConfirmed) return Promise.reject();
   return api.contents.publishContent(id, { scope: "" });
 });
 
@@ -412,7 +412,7 @@ export const bulkPublishContent = createAsyncThunk<
 >("content/bulkPublishContent", async (ids, { dispatch }) => {
   if (!ids?.length)
     return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
-  const content = d("Are you sure you want to publish this content?").t("library_msg_publish_content");
+  const content = d("Are you sure you want to republish these contents?").t("library_msg_republish_content");
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
   if (!isConfirmed) return Promise.reject();
   return api.contentsBulk.publishContentBulk({ id: ids });
