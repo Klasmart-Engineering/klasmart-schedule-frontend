@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
-import { ContentType, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { ContentType, H5pSub, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
@@ -369,7 +369,7 @@ function ContentEditForm() {
               />
               {inputSource === MaterialType.h5p ? (
                 <ContentH5p
-                  isCreate={!id}
+                  sub={id ? H5pSub.edit : H5pSub.new}
                   allDefaultValueAndKey={allDefaultValueAndKey}
                   formMethods={formMethods}
                   valueSource={allDefaultValueAndKey["data.source"]?.value}

@@ -50,12 +50,16 @@ export const apiResourcePathById = (resource_id?: string) => {
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
 
-export const apiGetH5pResourceById = (id: string) => {
-  return `${process.env.REACT_APP_H5P_API}/h5p/play/${id}`;
-};
+// export const apiGetH5pResourceById = (id: string) => {
+//   return `${process.env.REACT_APP_H5P_API}/h5p/play/${id}`;
+// };
 
-export const apiCreateH5pResource = () => {
-  return `${process.env.REACT_APP_H5P_API}/h5p/new`;
+// export const apiCreateH5pResource = () => {
+//   return `${process.env.REACT_APP_H5P_API}/h5p/new`;
+// };
+
+export const apiGenH5pResourceByToken = (token: string) => {
+  return `${process.env.REACT_APP_H5P_API}/h5p/token/${token}`;
 };
 
 export const apiLivePath = (token: string) => {

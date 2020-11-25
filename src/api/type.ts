@@ -93,3 +93,11 @@ export enum SearchContentsRequestContentType {
   assets = "3",
   materialandplan = "1,2",
 }
+
+export enum H5pSub {
+  delete = "delete",
+  download = "download",
+  edit = "edit",
+  new = "new",
+  view = "view",
+}

@@ -6,6 +6,7 @@ import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
+import { H5pSub } from "../../api/type";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
 import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
@@ -172,7 +173,11 @@ export function H5pPreview(props: H5pPreview) {
         {fileFormat.audio.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetAudio src={path} />}
         {fileFormat.document.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetFile src={path} />}
         {!getSuffix(h5pItem.source) &&
-          (JSON.stringify(h5pItem) === JSON.stringify({}) ? <EmptyContent /> : <ContentH5p valueSource={h5pItem.source} />)}
+          (JSON.stringify(h5pItem) === JSON.stringify({}) ? (
+            <EmptyContent />
+          ) : (
+            <ContentH5p sub={H5pSub.view} valueSource={h5pItem.source} />
+          ))}
       </Box>
       <Box className={css.btnCon}>
         {h5pArray.length > 1 && (

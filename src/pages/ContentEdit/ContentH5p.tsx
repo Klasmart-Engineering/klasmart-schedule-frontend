@@ -1,13 +1,15 @@
 import { makeStyles } from "@material-ui/core";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { apiCreateH5pResource, apiGetH5pResourceById } from "../../api/extra";
+import api from "../../api";
+import { apiGenH5pResourceByToken } from "../../api/extra";
+import { H5pSub } from "../../api/type";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 
 export interface ContentH5pProps {
   children?: ReactNode;
-  isCreate?: boolean;
+  sub: H5pSub;
   valueSource?: string;
   // valueSourceType?: string;
   // onChangeSource?: (value: string) => any;
@@ -25,24 +27,34 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ContentH5p(props: ContentH5pProps) {
-  const { valueSource, children, isCreate, allDefaultValueAndKey, formMethods } = props;
-  const css = useStyles();
+const useH5pSrc = function (sub: H5pSub, content_id?: string) {
+  const [src, setSrc] = useState<string>();
+  useEffect(() => {
+    api.crypto.generateH5PJwt(content_id ? { sub, content_id } : { sub }).then((res) => {
+      const { token } = res;
+      if (!token) return;
+      setSrc(apiGenH5pResourceByToken(token));
+    });
+  }, [content_id, sub]);
+  return src;
+};
 
-  const src = isCreate ? apiCreateH5pResource() : valueSource && apiGetH5pResourceById(valueSource);
+export default function ContentH5p(props: ContentH5pProps) {
+  const { valueSource, children, sub, allDefaultValueAndKey, formMethods } = props;
+  const css = useStyles();
+  const src = useH5pSrc(sub, valueSource);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const { contentId, source_type = "" } = event.data;
       if (!contentId) return;
       if (formMethods) {
-        // debugger;
         formMethods.setValue("data.source", contentId, { shouldDirty: true });
         formMethods.setValue("source_type", source_type, { shouldDirty: true });
       }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [formMethods]);
+  }, [formMethods, sub]);
   return (
     <>
       {allDefaultValueAndKey && formMethods && (
