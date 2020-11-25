@@ -16,7 +16,7 @@ export function ReportCategories() {
   const { teacher_id } = condition;
   const history = useHistory();
   const dispatch = useDispatch();
-  const { teacherList, categories } = useSelector<RootState, RootState['report']['categoriesPage']>(state => state.report.categoriesPage);
+  const { teacherList, categories } = useSelector<RootState, RootState["report"]["categoriesPage"]>((state) => state.report.categoriesPage);
   const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.learningOutcomes) return;
@@ -26,21 +26,18 @@ export function ReportCategories() {
     history.replace({ search: toQueryString({ [tab]: value }) });
   };
   useEffect(() => {
-    dispatch(reportCategoriesOnload({ teacher_id, metaLoading: true }))
-  }, [teacher_id])
+    dispatch(reportCategoriesOnload({ teacher_id, metaLoading: true }));
+  }, [teacher_id, dispatch]);
   return (
     <>
       <FirstSearchHeader value={Category.learningOutcomes} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.learningOutcomes} onChange={handleChange} />
-      <SecondSearchHeader
-        value={condition}
-        onChange={handleChangeFilter}
-        teacherList={teacherList}
-      ></SecondSearchHeader>
-      {perm.view_reports_610 || perm.view_my_reports_614 ?
-        <CategoriesChart data={categories} /> :
+      <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
+      {perm.view_reports_610 || perm.view_my_reports_614 ? (
+        <CategoriesChart data={categories} />
+      ) : (
         <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
-      }
+      )}
     </>
   );
 }
