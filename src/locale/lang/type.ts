@@ -9,7 +9,7 @@ type LangRecord<T = string> =
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
   | { id: "library_label_save"; description: "Save"; values: undefined }
   | { id: "library_label_publish"; description: "Publish"; values: undefined }
-  | { id: "library_msg_publish_content"; description: "Are you sure you want to publish this content?"; values: undefined }
+  | { id: "library_msg_publish_content"; description: "Are you sure you want to publish these contents?"; values: undefined }
   | { id: "library_label_ok"; description: "OK"; values: undefined }
   | { id: "library_label_create_new_content"; description: "Create New Content"; values: undefined }
   | { id: "library_label_lesson_material"; description: "Lesson Material"; values: undefined }
@@ -62,7 +62,7 @@ type LangRecord<T = string> =
   | { id: "library_label_waiting_for_approval"; description: "Waiting for Approval"; values: undefined }
   | { id: "library_label_rejected"; description: "Rejected"; values: undefined }
   | { id: "library_label_republish"; description: "Republish"; values: undefined }
-  | { id: "library_msg_republish_content"; description: "Are you sure you want to republish this content?"; values: undefined }
+  | { id: "library_msg_republish_content"; description: "Are you sure you want to republish these contents?"; values: undefined }
   | { id: "library_label_name"; description: "Name"; values: undefined }
   | { id: "library_label_created_on"; description: "Created On"; values: undefined }
   | { id: "library_label_author"; description: "Author"; values: undefined }

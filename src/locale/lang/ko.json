@@ -115,6 +115,9 @@
   "library_error_delete_content_failed": "컨텐츠 삭제 실패",
   "library_error_invalid_visibility_settings": "유효하지 않은 보기 권한 설정",
   "library_error_associate_learning_outcome_failed": "학습결과 연결 실패",
+  "library_label_teacher_manual": "선생님 메뉴얼",
+  "library_label_supported_format": "지원되는 형식",
+  "library_label_max_size": "최대 사이즈",
   "assess_tab_assessments": "평가",
   "assess_button_search": "검색",
   "assess_text_search teacher": "교사 검색",
@@ -399,6 +402,7 @@
   "report_error_no_network_connection": "네트워크 연결 없음",
   "report_error_unknown_error": "알 수 없는 에러",
   "report_label_lo_in_categories": "학습 결과 카테고리",
+  "report_label_lo": "학습 결과들",
   "general_error_unauthorized": "사용자 로그인이 필요합니다",
   "general_error_no_organization": "기관이 없습니다",
   "general_error_unknown": "알 수 없는 에러"
