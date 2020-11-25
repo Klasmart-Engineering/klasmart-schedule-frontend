@@ -526,15 +526,22 @@ export default function Details(props: DetailsProps) {
           <Controller
             control={control}
             name="teacher_manual"
+            defaultValue={allDefaultValueAndKey.teacher_manual?.value}
+            key={allDefaultValueAndKey.teacher_manual?.key}
             render={({ ref, ...props }) => (
               <SingleUploader
                 ref={ref}
-                partition="thumbnail"
+                partition="teacher_manual"
                 accept=".pdf"
                 {...props}
-                render={({ btnRef, item, value }) => (
+                render={({ btnRef, value }) => (
                   <Box style={{ position: "relative" }}>
-                    <TextField disabled className={css.fieldset} value={value} placeholder="Teacher Manual"></TextField>
+                    <TextField
+                      disabled
+                      className={css.fieldset}
+                      value={value}
+                      label={d("Teacher Manual").t("library_label_teacher_manual")}
+                    ></TextField>
                     <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
                     {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}
                   </Box>
