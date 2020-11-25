@@ -26,9 +26,9 @@ fetchIntercept.register({
       .clone()
       .json()
       .then((result) => {
-        const { msg, label } = result;
+        const { msg, label, data } = result;
         if (!msg && !label) return;
-        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label });
+        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label, data });
       })
       .catch(async (e) => {
         const errorLabel: LangRecordId = "general_error_unknown";
@@ -44,8 +44,11 @@ class Api extends AutoApi {
     super(...props);
     const originRequest = this.request;
     this.request = (...args) => {
-      return originRequest(...args).catch(err => {
-        if (err.label && !err.name) err.name = err.label;
+      return originRequest(...args).catch((err) => {
+        if (err.label && !err.name) {
+          err.name = err.label;
+          err.message = err.data;
+        }
         throw err;
       });
     };

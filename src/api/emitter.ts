@@ -7,6 +7,7 @@ export enum ApiEvent {
 export interface ApiErrorEventData {
   msg?: string;
   label?: string;
+  data?: any;
 }
 
 export interface ApiEventHandler {
