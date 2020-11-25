@@ -69,7 +69,7 @@ interface InfoProps {
   handleDelete: (scheduleInfo: scheduleInfoProps) => void;
   handleClose: () => void;
   scheduleInfo: scheduleInfoProps;
-  toLive: (schedule_id: string) => void;
+  toLive: () => void;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
@@ -149,7 +149,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
           onClick={() => {
             handleClose();
-            toLive(scheduleInfo.id as string);
+            toLive();
           }}
         >
           {d("Go Live").t("schedule_button_go_live")}

@@ -13,7 +13,7 @@ import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 
@@ -125,6 +125,9 @@ function MyCalendar(props: CalendarProps) {
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
+    if (event.status === "NotStart" || event.status === "Started") {
+      await dispatch(getScheduleLiveToken({ schedule_id: event.id, metaLoading: true }));
+    }
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -189,7 +192,7 @@ interface CalendarProps {
   modelView: modeViewType;
   timesTamp: timestampType;
   changeTimesTamp: (value: timestampType) => void;
-  toLive: (schedule_id: string) => void;
+  toLive: () => void;
   changeModalDate: (data: object) => void;
   setSpecificStatus: (value: boolean) => void;
 }

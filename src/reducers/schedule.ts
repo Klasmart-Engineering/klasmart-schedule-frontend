@@ -52,6 +52,7 @@ export interface ScheduleState {
   errorLable: string;
   scheduleMockOptions: getScheduleMockOptionsResponse;
   participantMockOptions: getScheduleParticipantsMockOptionsResponse;
+  liveToken: string;
 }
 
 interface Rootstate {
@@ -122,6 +123,7 @@ const initialState: ScheduleState = {
       },
     },
   },
+  liveToken: "",
 };
 
 type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedule>[0] } & LoadingMetaPayload;
@@ -325,7 +327,7 @@ const { actions, reducer } = createSlice({
       state.attachement_id = payload.resource_id;
     },
     [getScheduleLiveToken.fulfilled.type]: (state, { payload }: any) => {
-      // console.log(payload)
+      state.liveToken = payload.token;
     },
     [getMockOptions.fulfilled.type]: (state, { payload }: any) => {
       state.mockOptions = payload;
