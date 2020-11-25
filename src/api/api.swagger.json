@@ -628,6 +628,12 @@
           },
           {
             "type": "string",
+            "description": "search content path",
+            "name": "path",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content source type",
             "name": "source_type",
             "in": "query"
@@ -1254,6 +1260,112 @@
         }
       }
     },
+    "/contents_folders": {
+      "get": {
+        "description": "query content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryFolderContent",
+        "operationId": "queryFolderContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content author",
+            "name": "author",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content scope",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content path",
+            "name": "path",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
+            "in": "query"
+          },
+          {
+            "enum": ["published", "draft", "pending", "rejected", "archive"],
+            "type": "string",
+            "description": "search content publish status",
+            "name": "publish_status",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.FolderContentInfoWithDetailsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/contents_pending": {
       "get": {
         "description": "query pending content by condition",
@@ -1433,6 +1545,12 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -1516,6 +1634,76 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/crypto/h5p/jwt": {
+      "get": {
+        "description": "generate JWT for h5p",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["crypto"],
+        "summary": "generateH5pJWT",
+        "operationId": "generateH5pJWT",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "subject for jwt",
+            "name": "sub",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "content id to operate",
+            "name": "content_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.TokenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/crypto/h5p/signature": {
+      "get": {
+        "description": "signature url for h5p",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["crypto"],
+        "summary": "h5pSignature",
+        "operationId": "h5pSignature",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "url to signature",
+            "name": "url",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.SignatureResponse"
             }
           },
           "500": {
@@ -1700,6 +1888,473 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders": {
+      "post": {
+        "description": "create folder",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "createFolder",
+        "operationId": "createFolder",
+        "parameters": [
+          {
+            "description": "create request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CreateFolderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateFolderResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items": {
+      "post": {
+        "description": "create folder item",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "addFolderItem",
+        "operationId": "addFolderItem",
+        "parameters": [
+          {
+            "description": "create request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CreateFolderItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateFolderResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/bulk/move": {
+      "put": {
+        "description": "bulk move folder item",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "moveFolderItemBulk",
+        "operationId": "moveFolderItemBulk",
+        "parameters": [
+          {
+            "description": "move folder item buck request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.MoveFolderIDBulk"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/details/:folder_id": {
+      "get": {
+        "description": "get the root folder of org or user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "getRootFolder",
+        "operationId": "getRootFolder",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "list items owner type",
+            "name": "owner_type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateFolderResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/details/{item_id}": {
+      "put": {
+        "description": "update folder item info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "updateFolderItem",
+        "operationId": "updateFolderItem",
+        "parameters": [
+          {
+            "description": "update request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UpdateFolderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/list/{folder_id}": {
+      "get": {
+        "description": "list folder items",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "listFolderItems",
+        "operationId": "listFolderItems",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "list items type",
+            "name": "item_type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.FolderItemsResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/move/{item_id}": {
+      "put": {
+        "description": "move folder item",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "moveFolderItem",
+        "operationId": "moveFolderItem",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/search/org": {
+      "get": {
+        "description": "search folder items in org",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "searchOrgFolderItems",
+        "operationId": "searchOrgFolderItems",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "list items type",
+            "name": "item_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "list items owner type",
+            "name": "owner_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "list items from parent",
+            "name": "parent_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "list items in path",
+            "name": "path",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.FolderItemsResponseWithTotal"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/search/private": {
+      "get": {
+        "description": "search user's private folder items",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "searchPrivateFolderItems",
+        "operationId": "searchPrivateFolderItems",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "list items type",
+            "name": "item_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "list items owner type",
+            "name": "owner_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "list items from parent",
+            "name": "parent_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "list items in path",
+            "name": "path",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.FolderItemsResponseWithTotal"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/{item_id}": {
+      "delete": {
+        "description": "remove folder item",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "removeFolderItem",
+        "operationId": "removeFolderItem",
+        "parameters": [
+          {
+            "description": "create request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CreateFolderItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
@@ -4353,6 +5008,14 @@
         }
       }
     },
+    "api.CreateFolderResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "api.Developmental": {
       "type": "object",
       "properties": {
@@ -4367,10 +5030,38 @@
     "api.ErrorResponse": {
       "type": "object",
       "properties": {
+        "data": {
+          "type": "object"
+        },
         "label": {
           "type": "string",
           "enum": ["unknown"],
           "example": "unknown"
+        }
+      }
+    },
+    "api.FolderItemsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FolderItem"
+          }
+        }
+      }
+    },
+    "api.FolderItemsResponseWithTotal": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FolderItem"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
@@ -4738,6 +5429,14 @@
         }
       }
     },
+    "api.SignatureResponse": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "api.Skill": {
       "type": "object",
       "properties": {
@@ -4756,6 +5455,14 @@
           "type": "string"
         },
         "subject_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.TokenResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
           "type": "string"
         }
       }
@@ -5029,6 +5736,7 @@
           "type": "string"
         },
         "creator_name": {
+          "description": "AuthorName string `json:\"author_name\"`",
           "type": "string"
         },
         "data": {
@@ -5172,6 +5880,9 @@
         "suggest_time": {
           "type": "integer"
         },
+        "teacher_manual": {
+          "type": "string"
+        },
         "thumbnail": {
           "type": "string"
         },
@@ -5289,6 +6000,38 @@
         "suggest_time": {
           "type": "integer"
         },
+        "teacher_manual": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.CreateFolderItemRequest": {
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "type": "string"
+        },
+        "link": {
+          "description": "ItemType  ItemType  `json:\"item_type\"`",
+          "type": "string"
+        }
+      }
+    },
+    "entity.CreateFolderRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner_type": {
+          "type": "integer"
+        },
+        "parent_id": {
+          "type": "string"
+        },
         "thumbnail": {
           "type": "string"
         }
@@ -5323,6 +6066,158 @@
         },
         "updateID": {
           "type": "string"
+        }
+      }
+    },
+    "entity.FolderContent": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "dir_path": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "items_count": {
+          "type": "integer"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.FolderContentInfoWithDetailsResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FolderContent"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.FolderItem": {
+      "type": "object",
+      "properties": {
+        "create_at": {
+          "type": "integer"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "dir_path": {
+          "type": "string"
+        },
+        "editor": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "itemType": {
+          "type": "integer"
+        },
+        "items_count": {
+          "type": "integer"
+        },
+        "link": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_type": {
+          "type": "integer"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.FolderItemInfo": {
+      "type": "object",
+      "properties": {
+        "create_at": {
+          "type": "integer"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "dir_path": {
+          "type": "string"
+        },
+        "editor": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "itemType": {
+          "type": "integer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FolderItem"
+          }
+        },
+        "items_count": {
+          "type": "integer"
+        },
+        "link": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_type": {
+          "type": "integer"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "integer"
         }
       }
     },
@@ -5417,6 +6312,20 @@
       "properties": {
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "entity.MoveFolderIDBulk": {
+      "type": "object",
+      "properties": {
+        "dist": {
+          "type": "string"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5768,6 +6677,7 @@
           "type": "string"
         },
         "teacher_ids": {
+          "description": "Abandoned",
           "type": "array",
           "items": {
             "type": "string"
@@ -5821,6 +6731,12 @@
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
+        "member_teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
         "org_id": {
           "type": "string"
         },
@@ -5838,6 +6754,9 @@
         "status": {
           "type": "string",
           "enum": ["NotStart", "Started", "Closed"]
+        },
+        "student_count": {
+          "type": "integer"
         },
         "subject": {
           "type": "object",
@@ -5919,11 +6838,20 @@
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
+        "member_teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
         "program": {
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
+          "type": "integer"
+        },
+        "student_count": {
           "type": "integer"
         },
         "subject": {
@@ -6012,6 +6940,7 @@
           "type": "string"
         },
         "teacher_ids": {
+          "description": "Abandoned",
           "type": "array",
           "items": {
             "type": "string"
@@ -6227,6 +7156,17 @@
           "items": {
             "$ref": "#/definitions/entity.OutcomeAttendanceMap"
           }
+        }
+      }
+    },
+    "entity.UpdateFolderRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
         }
       }
     },

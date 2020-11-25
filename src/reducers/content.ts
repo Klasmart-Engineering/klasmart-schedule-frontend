@@ -79,6 +79,7 @@ const initialState: IContentState = {
     creator: "",
     creator_name: "",
     is_mine: false,
+    teacher_manual: "",
   },
   mediaList: [],
   MediaListTotal: 0,

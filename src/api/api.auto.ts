@@ -23,13 +23,27 @@ export interface ApiCreateContentResponse {
   id?: string;
 }
 
+export interface ApiCreateFolderResponse {
+  id?: string;
+}
+
 export interface ApiDevelopmental {
   developmental_id?: string;
   developmental_name?: string;
 }
 
 export interface ApiErrorResponse {
+  data?: object;
   label?: "unknown";
+}
+
+export interface ApiFolderItemsResponse {
+  items?: EntityFolderItem[];
+}
+
+export interface ApiFolderItemsResponseWithTotal {
+  items?: EntityFolderItem[];
+  total?: number;
 }
 
 export type ApiForbiddenResponse = ApiErrorResponse;
@@ -147,6 +161,10 @@ export interface ApiRejectReasonRequest {
   remark?: string;
 }
 
+export interface ApiSignatureResponse {
+  url?: string;
+}
+
 export interface ApiSkill {
   skill_id?: string;
   skill_name?: string;
@@ -155,6 +173,10 @@ export interface ApiSkill {
 export interface ApiSubject {
   subject_id?: string;
   subject_name?: string;
+}
+
+export interface ApiTokenResponse {
+  token?: string;
 }
 
 export interface ApiContentBulkOperateRequest {
@@ -252,6 +274,8 @@ export interface EntityContentInfoWithDetails {
   content_type_name?: string;
   created_at?: number;
   creator?: string;
+
+  /** AuthorName string `json:"author_name"` */
   creator_name?: string;
   data?: string;
   description?: string;
@@ -288,6 +312,7 @@ export interface EntityContentInfoWithDetails {
   subject?: string[];
   subject_name?: string[];
   suggest_time?: number;
+  teacher_manual?: string;
   thumbnail?: string;
   updated_at?: number;
   version?: number;
@@ -323,6 +348,21 @@ export interface EntityCreateContentRequest {
   source_type?: string;
   subject?: string[];
   suggest_time?: number;
+  teacher_manual?: string;
+  thumbnail?: string;
+}
+
+export interface EntityCreateFolderItemRequest {
+  folder_id?: string;
+
+  /** ItemType  ItemType  `json:"item_type"` */
+  link?: string;
+}
+
+export interface EntityCreateFolderRequest {
+  name?: string;
+  owner_type?: number;
+  parent_id?: string;
   thumbnail?: string;
 }
 
@@ -336,6 +376,60 @@ export interface EntityDevelopmental {
   number?: number;
   updateAt?: number;
   updateID?: string;
+}
+
+export interface EntityFolderContent {
+  author?: string;
+  author_name?: string;
+  content_type?: number;
+  create_at?: number;
+  description?: string;
+  dir_path?: string;
+  id?: string;
+  items_count?: number;
+  keywords?: string;
+  name?: string;
+  update_at?: number;
+}
+
+export interface EntityFolderContentInfoWithDetailsResponse {
+  list?: EntityFolderContent[];
+  total?: number;
+}
+
+export interface EntityFolderItem {
+  create_at?: number;
+  creator?: string;
+  dir_path?: string;
+  editor?: string;
+  id?: string;
+  itemType?: number;
+  items_count?: number;
+  link?: string;
+  name?: string;
+  owner?: string;
+  owner_type?: number;
+  parent_id?: string;
+  thumbnail?: string;
+  update_at?: number;
+}
+
+export interface EntityFolderItemInfo {
+  create_at?: number;
+  creator?: string;
+  dir_path?: string;
+  editor?: string;
+  id?: string;
+  itemType?: number;
+  items?: EntityFolderItem[];
+  items_count?: number;
+  link?: string;
+  name?: string;
+  owner?: string;
+  owner_type?: number;
+  parent_id?: string;
+  thumbnail?: string;
+  update_at?: number;
 }
 
 export interface EntityGrade {
@@ -373,6 +467,11 @@ export interface EntityListAssessmentsResult {
 
 export interface EntityLiveTokenView {
   token?: string;
+}
+
+export interface EntityMoveFolderIDBulk {
+  dist?: string;
+  ids?: string[];
 }
 
 export interface EntityOutcome {
@@ -494,6 +593,8 @@ export interface EntityScheduleAddView {
   repeat?: EntityRepeatOptions;
   start_at: number;
   subject_id?: string;
+
+  /** Abandoned */
   teacher_ids: string[];
   time_zone_offset?: number;
   title: string;
@@ -511,11 +612,13 @@ export interface EntityScheduleDetailsView {
   is_all_day?: boolean;
   is_repeat?: boolean;
   lesson_plan?: EntityScheduleShortInfo;
+  member_teachers?: EntityScheduleShortInfo[];
   org_id?: string;
   program?: EntityScheduleShortInfo;
   repeat?: EntityRepeatOptions;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
+  student_count?: number;
   subject?: EntityScheduleShortInfo;
   teachers?: EntityScheduleShortInfo[];
   title?: string;
@@ -543,8 +646,10 @@ export interface EntityScheduleSearchView {
   end_at?: number;
   id?: string;
   lesson_plan?: EntityScheduleShortInfo;
+  member_teachers?: EntityScheduleShortInfo[];
   program?: EntityScheduleShortInfo;
   start_at?: number;
+  student_count?: number;
   subject?: EntityScheduleShortInfo;
   teachers?: EntityScheduleShortInfo[];
   title?: string;
@@ -573,6 +678,8 @@ export interface EntityScheduleUpdateView {
   repeat_edit_options?: "only_current" | "with_following";
   start_at: number;
   subject_id?: string;
+
+  /** Abandoned */
   teacher_ids: string[];
   time_zone_offset?: number;
   title: string;
@@ -645,6 +752,11 @@ export interface EntityUpdateAssessmentCommand {
   attendance_ids?: string[];
   id?: string;
   outcome_attendance_maps?: EntityOutcomeAttendanceMap[];
+}
+
+export interface EntityUpdateFolderRequest {
+  name?: string;
+  thumbnail?: string;
 }
 
 export interface EntityVisibilitySetting {
@@ -958,6 +1070,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        path?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1133,6 +1246,36 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     publishContentBulk: (contentIds: ApiContentBulkOperateRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_bulk/publish`, "PUT", params, contentIds),
   };
+  contentsFolders = {
+    /**
+     * @tags content
+     * @name queryFolderContent
+     * @summary queryFolderContent
+     * @request GET:/contents_folders
+     * @description query content by condition
+     */
+    queryFolderContent: (
+      query?: {
+        name?: string;
+        author?: string;
+        content_type?: string;
+        scope?: string;
+        program?: string;
+        path?: string;
+        source_type?: string;
+        publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page_size?: number;
+        page?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityFolderContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_folders${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
   contentsPending = {
     /**
      * @tags content
@@ -1220,6 +1363,31 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params
       ),
   };
+  crypto = {
+    /**
+     * @tags crypto
+     * @name generateH5pJWT
+     * @summary generateH5pJWT
+     * @request GET:/crypto/h5p/jwt
+     * @description generate JWT for h5p
+     */
+    generateH5PJwt: (query?: { sub?: string; content_id?: string }, params?: RequestParams) =>
+      this.request<ApiTokenResponse, ApiInternalServerErrorResponse>(`/crypto/h5p/jwt${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags crypto
+     * @name h5pSignature
+     * @summary h5pSignature
+     * @request GET:/crypto/h5p/signature
+     * @description signature url for h5p
+     */
+    h5PSignature: (query?: { url?: string }, params?: RequestParams) =>
+      this.request<ApiSignatureResponse, ApiInternalServerErrorResponse>(
+        `/crypto/h5p/signature${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
   developmentals = {
     /**
      * @tags developmental
@@ -1275,6 +1443,157 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteDevelopmental: (id: string, params?: RequestParams) =>
       this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/developmentals/${id}`, "DELETE", params),
+  };
+  folders = {
+    /**
+     * @tags folder
+     * @name createFolder
+     * @summary createFolder
+     * @request POST:/folders
+     * @description create folder
+     */
+    createFolder: (content: EntityCreateFolderRequest, params?: RequestParams) =>
+      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders`, "POST", params, content),
+
+    /**
+     * @tags folder
+     * @name addFolderItem
+     * @summary addFolderItem
+     * @request POST:/folders/items
+     * @description create folder item
+     */
+    addFolderItem: (content: EntityCreateFolderItemRequest, params?: RequestParams) =>
+      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items`,
+        "POST",
+        params,
+        content
+      ),
+
+    /**
+     * @tags folder
+     * @name moveFolderItemBulk
+     * @summary moveFolderItemBulk
+     * @request PUT:/folders/items/bulk/move
+     * @description bulk move folder item
+     */
+    moveFolderItemBulk: (content: EntityMoveFolderIDBulk, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/bulk/move`, "PUT", params, content),
+
+    /**
+     * @tags folder
+     * @name getRootFolder
+     * @summary getRootFolder
+     * @request GET:/folders/items/details/:folder_id
+     * @description get the root folder of org or user
+     */
+    getRootFolder: (query?: { owner_type?: number }, params?: RequestParams) =>
+      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items/details/:folder_id${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags folder
+     * @name updateFolderItem
+     * @summary updateFolderItem
+     * @request PUT:/folders/items/details/{item_id}
+     * @description update folder item info
+     */
+    updateFolderItem: (item_id: string, content: EntityUpdateFolderRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items/details/${item_id}`,
+        "PUT",
+        params,
+        content
+      ),
+
+    /**
+     * @tags folder
+     * @name listFolderItems
+     * @summary listFolderItems
+     * @request GET:/folders/items/list/{folder_id}
+     * @description list folder items
+     */
+    listFolderItems: (folder_id: string, query?: { item_type?: string }, params?: RequestParams) =>
+      this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
+        `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags folder
+     * @name moveFolderItem
+     * @summary moveFolderItem
+     * @request PUT:/folders/items/move/{item_id}
+     * @description move folder item
+     */
+    moveFolderItem: (item_id: string, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/move/${item_id}`, "PUT", params),
+
+    /**
+     * @tags folder
+     * @name searchOrgFolderItems
+     * @summary searchOrgFolderItems
+     * @request GET:/folders/items/search/org
+     * @description search folder items in org
+     */
+    searchOrgFolderItems: (
+      query?: {
+        name?: string;
+        item_type?: number;
+        owner_type?: number;
+        parent_id?: string;
+        path?: string;
+        order_by?: "id" | "-id" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page?: number;
+        page_size?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<ApiFolderItemsResponseWithTotal, ApiInternalServerErrorResponse>(
+        `/folders/items/search/org${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags folder
+     * @name searchPrivateFolderItems
+     * @summary searchPrivateFolderItems
+     * @request GET:/folders/items/search/private
+     * @description search user's private folder items
+     */
+    searchPrivateFolderItems: (
+      query?: {
+        name?: string;
+        item_type?: number;
+        owner_type?: number;
+        parent_id?: string;
+        path?: string;
+        order_by?: "id" | "-id" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page?: number;
+        page_size?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<ApiFolderItemsResponseWithTotal, ApiInternalServerErrorResponse>(
+        `/folders/items/search/private${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags folder
+     * @name removeFolderItem
+     * @summary removeFolderItem
+     * @request DELETE:/folders/items/{item_id}
+     * @description remove folder item
+     */
+    removeFolderItem: (item_id: string, content: EntityCreateFolderItemRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/${item_id}`, "DELETE", params, content),
   };
   grades = {
     /**
