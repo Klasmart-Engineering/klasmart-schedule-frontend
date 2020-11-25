@@ -108,7 +108,7 @@
   "library_label_program_math": "Bada Math",
   "library_error_unsupported_format": "Unsupported Format",
   "library_error_no_content": "Content does not exist",
-  "library_error_content_locked": "This content is locked by editor {given_name} {family_name}. To use this content, ask the editor to check their drafts or rejected content, republish, then get it approved.",
+  "library_error_content_locked": "This content is locked by editor at {email}. To use this content, ask the editor to check their drafts or rejected content, republish, then get it approved.",
   "library_error_delete_lesson_plan_in_schedule": "Unable to delete lesson plan which is scheduled",
   "library_error_update_content_failed": "Update content failed",
   "library_error_read_content_failed": "Read content failed",
