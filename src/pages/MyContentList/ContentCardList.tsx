@@ -288,16 +288,18 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {!queryCondition.program && (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-            <LButton
-              as={IconButton}
-              replace
-              className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-              onClick={() => onDelete(content.id as string, type)}
-            >
-              <FolderOpenIcon />
-            </LButton>
-          )}
+          {false &&
+            !queryCondition.program &&
+            (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+                onClick={() => onDelete(content.id as string, type)}
+              >
+                <FolderOpenIcon />
+              </LButton>
+            )}
           {/* content published remove */}
           {!queryCondition.program &&
             queryCondition.publish_status === PublishStatus.published &&
