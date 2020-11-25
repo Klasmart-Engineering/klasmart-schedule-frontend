@@ -22,6 +22,7 @@ interface IContentState {
   linkedMockOptions: LinkedMockOptions;
   lesson_types: LinkedMockOptionsItem[];
   visibility_settings: LinkedMockOptionsItem[];
+  token: string;
 }
 
 interface RootState {
@@ -142,6 +143,7 @@ const initialState: IContentState = {
     creator_name: "",
     is_mine: false,
   },
+  token: "",
 };
 export enum Action {
   remove = "remove",
@@ -639,6 +641,9 @@ const { actions, reducer } = createSlice({
     },
     [getContentLiveToken.rejected.type]: (state, { error }: any) => {
       // console.log(error)
+    },
+    [getContentLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.token = payload.token;
     },
   },
 });

@@ -41,7 +41,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author } = useQuery();
-  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
   const content_type = contentPreview.content_type;
@@ -94,11 +94,12 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
-    let tokenInfo: any;
-    tokenInfo = ((await dispatch(
-      getContentLiveToken({ content_id: contentPreview.id as string, metaLoading: true })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getContentLiveToken>>;
-    if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
+    // let tokenInfo: any;
+    // tokenInfo = ((await dispatch(
+    //   getContentLiveToken({ content_id: contentPreview.id as string, metaLoading: true })
+    // )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getContentLiveToken>>;
+    // if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
+    window.open(apiLivePath(token));
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
@@ -149,6 +150,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
+    dispatch(getContentLiveToken({ content_id: id, metaLoading: true }));
     if (sid) dispatch(getScheduleInfo(sid));
   }, [dispatch, id, sid]);
   return (
