@@ -117,7 +117,7 @@ type LangRecord<T = string> =
   | { id: "library_label_program_math"; description: "Bada Math"; values: undefined }
   | { id: "library_error_unsupported_format"; description: "Unsupported Format"; values: undefined }
   | { id: "library_error_no_content"; description: "Content does not exist"; values: undefined }
-  | { id: "library_error_content_locked"; description: "Content is locked by another user"; values: undefined }
+  | { id: "library_error_content_locked"; description: "Content is locked by {name}"; values: { name: string | number } }
   | {
       id: "library_error_delete_lesson_plan_in_schedule";
       description: "Unable to delete lesson plan which is scheduled";
@@ -128,6 +128,9 @@ type LangRecord<T = string> =
   | { id: "library_error_delete_content_failed"; description: "Delete content failed"; values: undefined }
   | { id: "library_error_invalid_visibility_settings"; description: "Invalid Visibility Settings"; values: undefined }
   | { id: "library_error_associate_learning_outcome_failed"; description: "Associate learning outcome failed"; values: undefined }
+  | { id: "library_label_teacher_manual"; description: "Teacher Manual"; values: undefined }
+  | { id: "library_label_supported_format"; description: "Supported Format"; values: undefined }
+  | { id: "library_label_max_size"; description: "Max Size"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -407,7 +410,6 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
   | { id: "schedule_msg_no_student"; description: "There is no student in this class"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
-  | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
   | { id: "report_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
@@ -424,6 +426,8 @@ type LangRecord<T = string> =
   | { id: "report_error_no_permissions"; description: "You have no permission."; values: undefined }
   | { id: "report_error_no_network_connection"; description: "No network connection"; values: undefined }
   | { id: "report_error_unknown_error"; description: "Unknown error"; values: undefined }
+  | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
+  | { id: "report_label_lo"; description: "LOs"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Unknown Error"; values: undefined };
