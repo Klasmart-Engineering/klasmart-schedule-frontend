@@ -238,11 +238,17 @@ export default function CreateOutcomings() {
       const program_id = outcomeDetail.program && outcomeDetail.program[0] && outcomeDetail.program[0].program_id;
       const development_id =
         outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
-      dispatch(getNewOptions({ program_id, development_id, metaLoading: true }));
-    } else {
+      if (program_id && development_id && outcome_id === outcomeDetail.outcome_id) {
+        dispatch(getNewOptions({ program_id, development_id, metaLoading: true }));
+      }
+    }
+  }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcomeDetail.outcome_id, outcome_id]);
+
+  React.useEffect(() => {
+    if (!outcome_id) {
       dispatch(getNewOptions({ metaLoading: true }));
     }
-  }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcome_id]);
+  }, [outcome_id, dispatch]);
 
   React.useEffect(() => {
     const nextValue: any = {
