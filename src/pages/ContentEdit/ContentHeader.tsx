@@ -439,7 +439,6 @@ export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((p
         className={css.radioGroup}
         value={value}
         onChange={(e) => {
-          // debugger;
           formMethods.setValue("data.source", "", { shouldDirty: true });
           onChange && onChange(Number(e.target.value));
         }}

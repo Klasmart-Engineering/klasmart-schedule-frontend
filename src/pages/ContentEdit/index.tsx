@@ -99,10 +99,12 @@ function ContentEditForm() {
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
   const { program, developmental } = watch(["program", "developmental"]);
   const inputSource = watch("data.input_source");
+  console.log("inputSource = ", inputSource);
   const allDefaultValueAndKey = ModelMockOptions.createAllDefaultValueAndKey(
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
   );
+  console.log("allDefaultValueAndKey['data.input_source'] = ", allDefaultValueAndKey["data.input_source"]);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -353,7 +355,11 @@ function ContentEditForm() {
               <Controller
                 name="data.input_source"
                 as={SelectH5PRadio}
-                defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
+                defaultValue={
+                  id
+                    ? allDefaultValueAndKey["data.input_source"]?.value
+                    : allDefaultValueAndKey["data.input_source"]?.value || MaterialType.h5p
+                }
                 key={allDefaultValueAndKey["data.input_source"]?.key}
                 control={control}
                 formMethods={formMethods}
