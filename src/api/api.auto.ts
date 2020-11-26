@@ -382,13 +382,17 @@ export interface EntityFolderContent {
   author?: string;
   author_name?: string;
   content_type?: number;
+  content_type_name?: string;
   create_at?: number;
+  data?: string;
   description?: string;
   dir_path?: string;
   id?: string;
   items_count?: number;
   keywords?: string;
   name?: string;
+  publish_status?: string;
+  thumbnail?: string;
   update_at?: number;
 }
 
@@ -1482,14 +1486,14 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags folder
-     * @name getRootFolder
-     * @summary getRootFolder
+     * @name getFolderItemByID
+     * @summary getFolderItemByID
      * @request GET:/folders/items/details/:folder_id
-     * @description get the root folder of org or user
+     * @description get a folder item by id
      */
-    getRootFolder: (query?: { owner_type?: number }, params?: RequestParams) =>
-      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/folders/items/details/:folder_id${this.addQueryParams(query)}`,
+    getFolderItemById: (params?: RequestParams) =>
+      this.request<EntityFolderItemInfo, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items/details/:folder_id`,
         "GET",
         params
       ),
@@ -1532,6 +1536,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     moveFolderItem: (item_id: string, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/move/${item_id}`, "PUT", params),
+
+    /**
+     * @tags folder
+     * @name getRootFolder
+     * @summary getRootFolder
+     * @request GET:/folders/items/root
+     * @description get the root folder of org or user
+     */
+    getRootFolder: (query?: { owner_type?: number; partition?: string }, params?: RequestParams) =>
+      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items/root${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags folder

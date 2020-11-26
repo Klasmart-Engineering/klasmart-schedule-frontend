@@ -2030,29 +2030,21 @@
     },
     "/folders/items/details/:folder_id": {
       "get": {
-        "description": "get the root folder of org or user",
+        "description": "get a folder item by id",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["folder"],
-        "summary": "getRootFolder",
-        "operationId": "getRootFolder",
-        "parameters": [
-          {
-            "type": "integer",
-            "description": "list items owner type",
-            "name": "owner_type",
-            "in": "query"
-          }
-        ],
+        "summary": "getFolderItemByID",
+        "operationId": "getFolderItemByID",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.CreateFolderResponse"
+              "$ref": "#/definitions/entity.FolderItemInfo"
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "404": {
+            "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
             }
@@ -2162,6 +2154,50 @@
           },
           "406": {
             "description": "Not Acceptable",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/folders/items/root": {
+      "get": {
+        "description": "get the root folder of org or user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "getRootFolder",
+        "operationId": "getRootFolder",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "get item owner type",
+            "name": "owner_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "get item partition",
+            "name": "partition",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateFolderResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
             }
@@ -6081,8 +6117,14 @@
         "content_type": {
           "type": "integer"
         },
+        "content_type_name": {
+          "type": "string"
+        },
         "create_at": {
           "type": "integer"
+        },
+        "data": {
+          "type": "string"
         },
         "description": {
           "type": "string"
@@ -6100,6 +6142,12 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "thumbnail": {
           "type": "string"
         },
         "update_at": {
