@@ -6,6 +6,7 @@ import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
+import mockTreeData from "../../mocks/foldertree.json";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   bulkDeleteContent,
@@ -16,12 +17,12 @@ import {
   pendingContentLists,
   privateContentLists,
   publishContent,
-  setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { FolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -210,6 +211,7 @@ export default function MyContentList() {
           )
         }
       />
+      <FolderTree folders={mockTreeData} />
     </div>
   );
 }

@@ -101,3 +101,19 @@ export enum H5pSub {
   new = "new",
   view = "view",
 }
+
+export enum FolderPartition {
+  assets = "assets",
+  plans = "plans",
+  materials = "materials",
+}
+
+export enum FolderItemType {
+  folder = 1,
+  file = 2,
+}
+
+export enum FolderOwnerType {
+  org = 1,
+  private = 2,
+}

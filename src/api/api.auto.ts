@@ -1535,7 +1535,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/folders/items/list/{folder_id}
      * @description list folder items
      */
-    listFolderItems: (folder_id: string, query?: { item_type?: number }, params?: RequestParams) =>
+    listFolderItems: (folder_id: string, query?: { item_type?: number; partition?: string }, params?: RequestParams) =>
       this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
         `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
         "GET",
