@@ -15,6 +15,13 @@ const proxy = {
       [`^/${process.env.REACT_APP_KO_BASE_API}`]: "",
     },
   },
+  [`/${process.env.REACT_APP_H5P_API}`]: {
+    changeOrigin: true,
+    target: decodeURIComponent(process.env.REACT_APP_H5P_API),
+    pathRewrite: {
+      [`^/${process.env.REACT_APP_H5P_API}`]: "",
+    },
+  },
 };
 
 module.exports = function (app) {

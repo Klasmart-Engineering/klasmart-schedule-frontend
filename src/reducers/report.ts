@@ -267,7 +267,6 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
       const teacherList = teachersInfo.organization?.roles
         ?.find((role) => role?.role_name?.toLocaleLowerCase() === "teacher")
         ?.memberships?.map((membership) => membership?.user as Pick<User, "user_id" | "user_name">);
-      debugger;
       // teacherList 不存在，不需要拉取 categories
       if (!teacherList || !teacherList[0]) return { teacherList: [], categories: [] };
       // 如果 teacher_id 就直接使用，不然就用列表第一项
