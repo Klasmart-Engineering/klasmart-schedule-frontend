@@ -8,13 +8,16 @@ import { PermissionOr, PermissionType } from "../../components/Permission/Permis
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import {
+  AsyncTrunkReturned,
   bulkDeleteContent,
   bulkPublishContent,
   contentLists,
   deleteContent,
+  getUserSetting,
   pendingContentLists,
   privateContentLists,
   publishContent,
+  setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
@@ -106,7 +109,7 @@ export default function MyContentList() {
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
-    setPageSize(page_size);
+    refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size })));
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
     if (content_type !== ContentType.material && content_type !== ContentType.plan) {
@@ -138,7 +141,8 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      console.log(pageSize);
+      const userSetInfo = ((await dispatch(getUserSetting())) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>;
+      setPageSize(userSetInfo.payload.cms_page_size);
       if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
         await dispatch(pendingContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       } else if (

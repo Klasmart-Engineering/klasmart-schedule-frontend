@@ -449,6 +449,17 @@ export const lockContent = createAsyncThunk<
   return await api.contents.lockContent(content_id);
 });
 
+type IQuerySetUserSettingParams = Parameters<typeof api.userSettings.setUserSetting>[0] & LoadingMetaPayload;
+type IQuerySetUserSettingResult = AsyncReturnType<typeof api.userSettings.setUserSetting>;
+export const setUserSetting = createAsyncThunk<IQuerySetUserSettingResult, IQuerySetUserSettingParams>(
+  "content/setUserSetting",
+  ({ cms_page_size }) => api.userSettings.setUserSetting({ cms_page_size })
+);
+
+export const getUserSetting = createAsyncThunk<any>("content/getUserSetting", () => {
+  return api.userSettings.getUserSettingByOperator();
+});
+
 interface LiveContentPayload extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentLiveToken>[0];
 }
