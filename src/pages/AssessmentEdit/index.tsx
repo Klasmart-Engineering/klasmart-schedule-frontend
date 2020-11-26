@@ -39,7 +39,7 @@ function AssessmentsEditIner() {
   const filteredOutcomelist = assessmentDetail.outcome_attendance_maps;
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
-  const editable = isMyAssessment || !(assessmentDetail.status === "complete");
+  const editable = isMyAssessment && assessmentDetail.status === "in_progress";
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
