@@ -124,7 +124,6 @@ export default function Details(props: DetailsProps) {
     onDrawingActivity,
     permission,
   } = props;
-  // console.log("allDefaultValueAndKey = ", allDefaultValueAndKey);
 
   const css = useStyles();
   const { lesson } = useParams();
