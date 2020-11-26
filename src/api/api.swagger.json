@@ -2109,7 +2109,7 @@
         "operationId": "listFolderItems",
         "parameters": [
           {
-            "type": "string",
+            "type": "integer",
             "description": "list items type. 1.folder 2.file",
             "name": "item_type",
             "in": "query"
@@ -2139,6 +2139,17 @@
         "tags": ["folder"],
         "summary": "moveFolderItem",
         "operationId": "moveFolderItem",
+        "parameters": [
+          {
+            "description": "move folder request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.MoveFolderRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -4904,6 +4915,75 @@
         }
       }
     },
+    "/user_settings": {
+      "get": {
+        "description": "get user setting by user id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["userSetting"],
+        "summary": "getUserSettingByOperator",
+        "operationId": "getUserSettingByOperator",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.UserSettingJsonContent"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "set user setting",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["userSetting"],
+        "summary": "setUserSetting",
+        "operationId": "setUserSetting",
+        "parameters": [
+          {
+            "description": "user setting json content",
+            "name": "userSetting",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UserSettingJsonContent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/visibility_settings": {
       "get": {
         "description": "get visibilitySetting",
@@ -6027,6 +6107,9 @@
         "link": {
           "type": "string"
         },
+        "owner_type": {
+          "type": "integer"
+        },
         "partition": {
           "description": "ItemType  ItemType  `json:\"item_type\"`",
           "type": "string"
@@ -6167,7 +6250,7 @@
         "id": {
           "type": "string"
         },
-        "itemType": {
+        "item_type": {
           "type": "integer"
         },
         "items_count": {
@@ -6217,7 +6300,7 @@
         "id": {
           "type": "string"
         },
-        "itemType": {
+        "item_type": {
           "type": "integer"
         },
         "items": {
@@ -6360,6 +6443,14 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "entity.MoveFolderRequest": {
+      "type": "object",
+      "properties": {
+        "dist": {
+          "type": "string"
         }
       }
     },
@@ -7201,6 +7292,15 @@
         },
         "thumbnail": {
           "type": "string"
+        }
+      }
+    },
+    "entity.UserSettingJsonContent": {
+      "type": "object",
+      "required": ["cms_page_size"],
+      "properties": {
+        "cms_page_size": {
+          "type": "integer"
         }
       }
     },

@@ -357,6 +357,7 @@ export interface EntityCreateContentRequest {
 export interface EntityCreateFolderItemRequest {
   folder_id?: string;
   link?: string;
+  owner_type?: number;
 
   /** ItemType  ItemType  `json:"item_type"` */
   partition?: string;
@@ -411,7 +412,7 @@ export interface EntityFolderItem {
   dir_path?: string;
   editor?: string;
   id?: string;
-  itemType?: number;
+  item_type?: number;
   items_count?: number;
   link?: string;
   name?: string;
@@ -429,7 +430,7 @@ export interface EntityFolderItemInfo {
   dir_path?: string;
   editor?: string;
   id?: string;
-  itemType?: number;
+  item_type?: number;
   items?: EntityFolderItem[];
   items_count?: number;
   link?: string;
@@ -482,6 +483,10 @@ export interface EntityLiveTokenView {
 export interface EntityMoveFolderIDBulk {
   dist?: string;
   ids?: string[];
+}
+
+export interface EntityMoveFolderRequest {
+  dist?: string;
 }
 
 export interface EntityOutcome {
@@ -767,6 +772,10 @@ export interface EntityUpdateAssessmentCommand {
 export interface EntityUpdateFolderRequest {
   name?: string;
   thumbnail?: string;
+}
+
+export interface EntityUserSettingJsonContent {
+  cms_page_size: number;
 }
 
 export interface EntityVisibilitySetting {
@@ -1526,7 +1535,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/folders/items/list/{folder_id}
      * @description list folder items
      */
-    listFolderItems: (folder_id: string, query?: { item_type?: string }, params?: RequestParams) =>
+    listFolderItems: (folder_id: string, query?: { item_type?: number }, params?: RequestParams) =>
       this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
         `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
         "GET",
@@ -1540,8 +1549,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/folders/items/move/{item_id}
      * @description move folder item
      */
-    moveFolderItem: (item_id: string, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/move/${item_id}`, "PUT", params),
+    moveFolderItem: (item_id: string, content: EntityMoveFolderRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items/move/${item_id}`,
+        "PUT",
+        params,
+        content
+      ),
 
     /**
      * @tags folder
@@ -2331,6 +2345,27 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteSubject: (id: string, params?: RequestParams) =>
       this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/subjects/${id}`, "DELETE", params),
+  };
+  userSettings = {
+    /**
+     * @tags userSetting
+     * @name getUserSettingByOperator
+     * @summary getUserSettingByOperator
+     * @request GET:/user_settings
+     * @description get user setting by user id
+     */
+    getUserSettingByOperator: (params?: RequestParams) =>
+      this.request<EntityUserSettingJsonContent, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/user_settings`, "GET", params),
+
+    /**
+     * @tags userSetting
+     * @name setUserSetting
+     * @summary setUserSetting
+     * @request POST:/user_settings
+     * @description set user setting
+     */
+    setUserSetting: (userSetting: EntityUserSettingJsonContent, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/user_settings`, "POST", params, userSetting),
   };
   visibilitySettings = {
     /**
