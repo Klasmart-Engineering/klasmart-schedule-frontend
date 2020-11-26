@@ -17,7 +17,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { CancelRounded, CloudUploadOutlined } from "@material-ui/icons";
+import { CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React, { useCallback } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -31,6 +31,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
+import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
     minHeight: 800,
@@ -152,7 +153,13 @@ export default function Details(props: DetailsProps) {
   const handleDeleteManual = useCallback(() => {
     setValue("teacher_manual", "", { shouldDirty: true });
   }, [setValue]);
-
+  const teacherInfo = (
+    <div style={{ color: "#000" }}>
+      <span style={{ fontWeight: 700 }}>{d("Max Size").t("library_label_max_size")}</span>: 500MB
+      <br />
+      <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf
+    </div>
+  );
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
@@ -542,6 +549,12 @@ export default function Details(props: DetailsProps) {
                       value={value}
                       label={d("Teacher Manual").t("library_label_teacher_manual")}
                     ></TextField>
+                    <HtmlTooltip title={teacherInfo}>
+                      <InfoOutlined
+                        className={css.iconField}
+                        style={{ left: "90px", display: value ? "none" : "block", color: "darkgrey" }}
+                      />
+                    </HtmlTooltip>
                     <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
                     {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}
                   </Box>

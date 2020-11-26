@@ -26,7 +26,7 @@ const useQuery = () => {
   return { id, filterOutcomes, editindex };
 };
 
-export function AssessmentsEdit() {
+function AssessmentsEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { filterOutcomes = "all", id, editindex } = useQuery();
@@ -138,5 +138,10 @@ export function AssessmentsEdit() {
       </LayoutPair>
     </>
   );
+}
+export function AssessmentsEdit() {
+  const { id, editindex } = useQuery();
+  debugger;
+  return <AssessmentsEditIner key={`${id}${editindex}`}></AssessmentsEditIner>;
 }
 AssessmentsEdit.routeBasePath = "/assessments/assessments-detail";

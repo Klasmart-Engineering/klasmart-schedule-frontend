@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const HtmlTooltip = withStyles((theme: Theme) => ({
+export const HtmlTooltip = withStyles((theme: Theme) => ({
   tooltip: {
     backgroundColor: "#FFFFFF",
     maxWidth: 260,
