@@ -23,6 +23,7 @@ interface IContentState {
   lesson_types: LinkedMockOptionsItem[];
   visibility_settings: LinkedMockOptionsItem[];
   token: string;
+  page_size: number;
 }
 
 interface RootState {
@@ -146,6 +147,7 @@ const initialState: IContentState = {
     is_mine: false,
   },
   token: "",
+  page_size: 20,
 };
 export enum Action {
   remove = "remove",
@@ -456,7 +458,8 @@ export const setUserSetting = createAsyncThunk<IQuerySetUserSettingResult, IQuer
   ({ cms_page_size }) => api.userSettings.setUserSetting({ cms_page_size })
 );
 
-export const getUserSetting = createAsyncThunk<any>("content/getUserSetting", () => {
+type IQueryGetUserSettingResult = AsyncReturnType<typeof api.userSettings.getUserSettingByOperator>;
+export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult>("content/getUserSetting", () => {
   return api.userSettings.getUserSettingByOperator();
 });
 
@@ -657,6 +660,9 @@ const { actions, reducer } = createSlice({
     },
     [getContentLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.token = payload.token;
+    },
+    [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.page_size = payload.cms_page_size;
     },
   },
 });

@@ -8,7 +8,6 @@ import { PermissionOr, PermissionType } from "../../components/Permission/Permis
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import {
-  AsyncTrunkReturned,
   bulkDeleteContent,
   bulkPublishContent,
   contentLists,
@@ -92,8 +91,7 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const [pageSize, setPageSize] = useState(20);
+  const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
@@ -141,22 +139,21 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      const userSetInfo = ((await dispatch(getUserSetting())) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>;
-      setPageSize(userSetInfo.payload.cms_page_size);
+      await dispatch(getUserSetting());
       if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
-        await dispatch(pendingContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(pendingContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else if (
         condition.publish_status === PublishStatus.draft ||
         condition.publish_status === PublishStatus.rejected ||
         (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
       ) {
-        await dispatch(privateContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(privateContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else {
-        await dispatch(contentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(contentLists({ ...condition, page_size: page_size, metaLoading: true }));
       }
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey, pageSize]);
+  }, [condition, reset, dispatch, refreshKey, page_size]);
 
   return (
     <div>
@@ -197,7 +194,7 @@ export default function MyContentList() {
                 formMethods={formMethods}
                 list={contentsList}
                 total={total}
-                amountPerPage={pageSize}
+                amountPerPage={page_size}
                 queryCondition={condition}
                 onChangePage={handleChangePage}
                 onChangePageSize={handleChangePageSize}
