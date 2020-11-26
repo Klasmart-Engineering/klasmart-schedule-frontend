@@ -2028,7 +2028,7 @@
         }
       }
     },
-    "/folders/items/details/:folder_id": {
+    "/folders/items/details/{folder_id}": {
       "get": {
         "description": "get a folder item by id",
         "consumes": ["application/json"],
@@ -2109,8 +2109,8 @@
         "operationId": "listFolderItems",
         "parameters": [
           {
-            "type": "string",
-            "description": "list items type",
+            "type": "integer",
+            "description": "list items type. 1.folder 2.file",
             "name": "item_type",
             "in": "query"
           }
@@ -2139,6 +2139,17 @@
         "tags": ["folder"],
         "summary": "moveFolderItem",
         "operationId": "moveFolderItem",
+        "parameters": [
+          {
+            "description": "move folder request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.MoveFolderRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -2154,50 +2165,6 @@
           },
           "406": {
             "description": "Not Acceptable",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/folders/items/root": {
-      "get": {
-        "description": "get the root folder of org or user",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["folder"],
-        "summary": "getRootFolder",
-        "operationId": "getRootFolder",
-        "parameters": [
-          {
-            "type": "integer",
-            "description": "get item owner type",
-            "name": "owner_type",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "get item partition",
-            "name": "partition",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/api.CreateFolderResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
             }
@@ -2228,14 +2195,20 @@
           },
           {
             "type": "integer",
-            "description": "list items type",
+            "description": "list items type. 1.folder 2.file",
             "name": "item_type",
             "in": "query"
           },
           {
             "type": "integer",
-            "description": "list items owner type",
+            "description": "list items owner type. 1.org folder 2.private folder",
             "name": "owner_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "list items type. [assets, plans and materials]",
+            "name": "partition",
             "in": "query"
           },
           {
@@ -2303,14 +2276,20 @@
           },
           {
             "type": "integer",
-            "description": "list items type",
+            "description": "list items type. 1.folder 2.file",
             "name": "item_type",
             "in": "query"
           },
           {
             "type": "integer",
-            "description": "list items owner type",
+            "description": "list items owner type. 1.org folder 2.private folder",
             "name": "owner_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "list items type. [assets, plans and materials]",
+            "name": "partition",
             "in": "query"
           },
           {
@@ -5919,6 +5898,9 @@
         "teacher_manual": {
           "type": "string"
         },
+        "teacher_manual_name": {
+          "type": "string"
+        },
         "thumbnail": {
           "type": "string"
         },
@@ -6039,6 +6021,9 @@
         "teacher_manual": {
           "type": "string"
         },
+        "teacher_manual_name": {
+          "type": "string"
+        },
         "thumbnail": {
           "type": "string"
         }
@@ -6051,6 +6036,9 @@
           "type": "string"
         },
         "link": {
+          "type": "string"
+        },
+        "partition": {
           "description": "ItemType  ItemType  `json:\"item_type\"`",
           "type": "string"
         }
@@ -6066,6 +6054,9 @@
           "type": "integer"
         },
         "parent_id": {
+          "type": "string"
+        },
+        "partition": {
           "type": "string"
         },
         "thumbnail": {
@@ -6187,7 +6178,7 @@
         "id": {
           "type": "string"
         },
-        "itemType": {
+        "item_type": {
           "type": "integer"
         },
         "items_count": {
@@ -6206,6 +6197,9 @@
           "type": "integer"
         },
         "parent_id": {
+          "type": "string"
+        },
+        "partition": {
           "type": "string"
         },
         "thumbnail": {
@@ -6234,7 +6228,7 @@
         "id": {
           "type": "string"
         },
-        "itemType": {
+        "item_type": {
           "type": "integer"
         },
         "items": {
@@ -6259,6 +6253,9 @@
           "type": "integer"
         },
         "parent_id": {
+          "type": "string"
+        },
+        "partition": {
           "type": "string"
         },
         "thumbnail": {
@@ -6374,6 +6371,14 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "entity.MoveFolderRequest": {
+      "type": "object",
+      "properties": {
+        "dist": {
+          "type": "string"
         }
       }
     },

@@ -313,6 +313,7 @@ export interface EntityContentInfoWithDetails {
   subject_name?: string[];
   suggest_time?: number;
   teacher_manual?: string;
+  teacher_manual_name?: string;
   thumbnail?: string;
   updated_at?: number;
   version?: number;
@@ -349,20 +350,23 @@ export interface EntityCreateContentRequest {
   subject?: string[];
   suggest_time?: number;
   teacher_manual?: string;
+  teacher_manual_name?: string;
   thumbnail?: string;
 }
 
 export interface EntityCreateFolderItemRequest {
   folder_id?: string;
+  link?: string;
 
   /** ItemType  ItemType  `json:"item_type"` */
-  link?: string;
+  partition?: string;
 }
 
 export interface EntityCreateFolderRequest {
   name?: string;
   owner_type?: number;
   parent_id?: string;
+  partition?: string;
   thumbnail?: string;
 }
 
@@ -407,13 +411,14 @@ export interface EntityFolderItem {
   dir_path?: string;
   editor?: string;
   id?: string;
-  itemType?: number;
+  item_type?: number;
   items_count?: number;
   link?: string;
   name?: string;
   owner?: string;
   owner_type?: number;
   parent_id?: string;
+  partition?: string;
   thumbnail?: string;
   update_at?: number;
 }
@@ -424,7 +429,7 @@ export interface EntityFolderItemInfo {
   dir_path?: string;
   editor?: string;
   id?: string;
-  itemType?: number;
+  item_type?: number;
   items?: EntityFolderItem[];
   items_count?: number;
   link?: string;
@@ -432,6 +437,7 @@ export interface EntityFolderItemInfo {
   owner?: string;
   owner_type?: number;
   parent_id?: string;
+  partition?: string;
   thumbnail?: string;
   update_at?: number;
 }
@@ -476,6 +482,10 @@ export interface EntityLiveTokenView {
 export interface EntityMoveFolderIDBulk {
   dist?: string;
   ids?: string[];
+}
+
+export interface EntityMoveFolderRequest {
+  dist?: string;
 }
 
 export interface EntityOutcome {
@@ -1488,12 +1498,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags folder
      * @name getFolderItemByID
      * @summary getFolderItemByID
-     * @request GET:/folders/items/details/:folder_id
+     * @request GET:/folders/items/details/{folder_id}
      * @description get a folder item by id
      */
-    getFolderItemById: (params?: RequestParams) =>
+    getFolderItemById: (folder_id: string, params?: RequestParams) =>
       this.request<EntityFolderItemInfo, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/folders/items/details/:folder_id`,
+        `/folders/items/details/${folder_id}`,
         "GET",
         params
       ),
@@ -1520,7 +1530,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/folders/items/list/{folder_id}
      * @description list folder items
      */
-    listFolderItems: (folder_id: string, query?: { item_type?: string }, params?: RequestParams) =>
+    listFolderItems: (folder_id: string, query?: { item_type?: number }, params?: RequestParams) =>
       this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
         `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
         "GET",
@@ -1534,21 +1544,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/folders/items/move/{item_id}
      * @description move folder item
      */
-    moveFolderItem: (item_id: string, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/move/${item_id}`, "PUT", params),
-
-    /**
-     * @tags folder
-     * @name getRootFolder
-     * @summary getRootFolder
-     * @request GET:/folders/items/root
-     * @description get the root folder of org or user
-     */
-    getRootFolder: (query?: { owner_type?: number; partition?: string }, params?: RequestParams) =>
-      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/folders/items/root${this.addQueryParams(query)}`,
-        "GET",
-        params
+    moveFolderItem: (item_id: string, content: EntityMoveFolderRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items/move/${item_id}`,
+        "PUT",
+        params,
+        content
       ),
 
     /**
@@ -1563,6 +1564,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         name?: string;
         item_type?: number;
         owner_type?: number;
+        partition?: string;
         parent_id?: string;
         path?: string;
         order_by?: "id" | "-id" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1589,6 +1591,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         name?: string;
         item_type?: number;
         owner_type?: number;
+        partition?: string;
         parent_id?: string;
         path?: string;
         order_by?: "id" | "-id" | "create_at" | "-create_at" | "update_at" | "-update_at";
