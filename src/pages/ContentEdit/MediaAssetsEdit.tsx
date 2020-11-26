@@ -161,7 +161,7 @@ function AssetEdit(props: AssetEditProps) {
             render={(props: any) => (
               <SingleUploader
                 partition="assets"
-                onChangeFileType={handleChangeFileType}
+                onChangeOther={handleChangeFileType}
                 accept={"image/*,audio/*,video/*"}
                 {...props}
                 render={({ item, btnRef, value, isUploading }) => (

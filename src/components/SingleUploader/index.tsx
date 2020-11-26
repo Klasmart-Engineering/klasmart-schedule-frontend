@@ -47,12 +47,13 @@ interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   value?: string;
   transformFile?: (file: FileLike) => Promise<FileLike>;
   onChange?: (value?: string) => any;
-  onChangeFileType?: () => any;
+  onChangeOther?: (filename?: string) => any;
 }
 export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((props, ref) => {
-  const { value, onChange, render, partition, transformFile, onChangeFileType, ...uploadyProps } = props;
+  const { value, onChange, render, partition, transformFile, onChangeOther, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
+  const [rname, setRname] = useState<string>();
   const listeners = useMemo(
     () => ({
       async [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>> {
@@ -65,6 +66,7 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
           >;
           const { path, resource_id } = payload;
           setRid(resource_id);
+          setRname(file.name);
           return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
         } catch (err) {
           return false;
@@ -72,10 +74,10 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
       },
       [UPLOADER_EVENTS.ITEM_FINISH]() {
         if (onChange) onChange(rid);
-        if (onChangeFileType) onChangeFileType();
+        if (onChangeOther) onChangeOther(rname);
       },
     }),
-    [transformFile, dispatch, partition, onChange, rid, onChangeFileType]
+    [transformFile, dispatch, partition, onChange, rid, onChangeOther, rname]
   );
   return (
     <div ref={ref}>

@@ -18,7 +18,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
@@ -75,6 +75,10 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     position: "absolute",
     top: "56%",
     cursor: "pointer",
+  },
+  progress: {
+    width: 36,
+    height: 36,
   },
 }));
 
@@ -151,7 +155,14 @@ export default function Details(props: DetailsProps) {
   };
   const handleDeleteManual = useCallback(() => {
     setValue("teacher_manual", "", { shouldDirty: true });
+    setValue("teacher_manual_name", "", { shouldDirty: true });
   }, [setValue]);
+  const handleChangeTeacherManualName = useMemo(
+    () => (filename?: string) => {
+      setValue("teacher_manual_name", filename, { shouldDirty: true });
+    },
+    [setValue]
+  );
   const teacherInfo = (
     <div style={{ color: "#000" }}>
       <span style={{ fontWeight: 700 }}>{d("Max Size").t("library_label_max_size")}</span>: 500MB
@@ -537,25 +548,39 @@ export default function Details(props: DetailsProps) {
             render={({ ref, ...props }) => (
               <SingleUploader
                 ref={ref}
+                onChangeOther={(filename?: string) => handleChangeTeacherManualName(filename)}
                 partition="teacher_manual"
                 accept=".pdf"
                 {...props}
-                render={({ btnRef, value }) => (
+                render={({ btnRef, value, isUploading, item }) => (
                   <Box style={{ position: "relative" }}>
-                    <TextField
-                      disabled
+                    <Controller
+                      as={TextField}
+                      control={control}
+                      name="teacher_manual_name"
+                      defaultValue={allDefaultValueAndKey.teacher_manual_name?.value}
+                      key={allDefaultValueAndKey.teacher_manual_name?.key}
                       className={css.fieldset}
-                      value={value}
+                      multiline
                       label={d("Teacher Manual").t("library_label_teacher_manual")}
-                    ></TextField>
+                      disabled
+                    />
                     <HtmlTooltip title={teacherInfo}>
                       <InfoOutlined
                         className={css.iconField}
                         style={{ left: "90px", display: value ? "none" : "block", color: "darkgrey" }}
                       />
                     </HtmlTooltip>
-                    <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
-                    {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}
+                    {isUploading ? (
+                      <Box style={{ right: "10px", position: "absolute", top: "47%" }}>
+                        <ProgressWithText value={item?.completed} className={css.progress} />
+                      </Box>
+                    ) : (
+                      <>
+                        <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
+                        {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}{" "}
+                      </>
+                    )}
                   </Box>
                 )}
               />
