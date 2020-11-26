@@ -141,7 +141,7 @@ function AssessmentsEditIner() {
 }
 export function AssessmentsEdit() {
   const { id, editindex } = useQuery();
-  debugger;
+  // debugger;
   return <AssessmentsEditIner key={`${id}${editindex}`}></AssessmentsEditIner>;
 }
 AssessmentsEdit.routeBasePath = "/assessments/assessments-detail";
