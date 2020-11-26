@@ -1,17 +1,22 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
-import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { Author, ContentType, FolderName, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
+import { actAsyncConfirm, ConfirmDialogType } from "../../reducers/confirm";
 import {
+  addFolder,
   bulkDeleteContent,
   bulkPublishContent,
   contentLists,
   deleteContent,
+  deleteFolder,
+  folderContentLists,
+  moveFolderBulk,
   pendingContentLists,
   privateContentLists,
   publishContent,
@@ -43,7 +48,8 @@ const useQuery = (): QueryCondition => {
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
     const program = query.get("program");
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program });
+    const path = query.get("path") || "";
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path });
   }, [search]);
 };
 
@@ -91,6 +97,7 @@ export default function MyContentList() {
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [pageSize, setPageSize] = useState(20);
+  const [, setRemoveId] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
@@ -108,14 +115,20 @@ export default function MyContentList() {
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
     setPageSize(page_size);
   };
-  const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
-    if (content_type !== ContentType.material && content_type !== ContentType.plan) {
-      history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
-    } else {
+  const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type, dir_path) => {
+    if (content_type === ContentType.material || content_type === ContentType.plan) {
       history.push({
         pathname: ContentPreview.routeRedirectDefault,
         search: toQueryString(clearNull({ id: id, content_type: content_type, author: condition.author })),
       });
+    } else if (content_type === ContentType.folder) {
+      if (dir_path === "/") {
+        history.push({ search: toQueryString({ ...condition, path: `${dir_path}${id}` }) });
+      } else {
+        history.push({ search: toQueryString({ ...condition, path: `${dir_path}/${id}` }) });
+      }
+    } else {
+      history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
     }
   };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(clearNull(value)) });
@@ -128,7 +141,47 @@ export default function MyContentList() {
       history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
     }
   };
-
+  const handleRememberMoveFolder: ContentCardListProps["onRemeberMoveFolder"] = (id) => {
+    setRemoveId(id);
+    // dispatch(moveFolder({item_id: id, dist:{dist: "5fbf4cf9b9678f45f4e7954b"}}))
+  };
+  // const handleRemoveFolder = (id: string) => {
+  //   dispatch(moveFolder(removeId, id))
+  // }
+  const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (id) => {
+    // refreshWithDispatch(dispatch(renameFolder({item_id: id, name: {name: "folder2"}})))
+  };
+  let parent_id: string;
+  parent_id = (condition?.path || "").split("/").pop() || "";
+  const handleAddFolder = async () => {
+    let partition: string = FolderName.pandm;
+    if (condition.publish_status === PublishStatus.published) {
+      partition = FolderName.pandm;
+    }
+    if (condition.content_type === String(ContentType.assets)) {
+      partition = FolderName.assets;
+    }
+    const title = "Add a Folder";
+    const content = "Folder Name";
+    const placeholder = "name";
+    const type = ConfirmDialogType.onlyInput;
+    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, placeholder, type })));
+    if (isConfirmed) {
+      console.log(text, isConfirmed);
+    }
+    console.log(condition.path);
+    if (isConfirmed) refreshWithDispatch(dispatch(addFolder({ name: text, partition: partition, owner_type: 1, parent_id: parent_id })));
+    // refreshWithDispatch(addFolder({name: "folder1", partition: partition, owner_type: 1}))
+  };
+  const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
+    refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
+  };
+  const handleBulkMove: ThirdSearchHeaderProps["onBulkMove"] = () => {
+    refreshWithDispatch(dispatch(moveFolderBulk({ dist: parent_id, ids })));
+  };
+  const handleGoback: ContentCardListProps["onGoBack"] = () => {
+    history.go(-1);
+  };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -138,7 +191,6 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      console.log(pageSize);
       if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
         await dispatch(pendingContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       } else if (
@@ -147,6 +199,8 @@ export default function MyContentList() {
         (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
       ) {
         await dispatch(privateContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+      } else if (condition.publish_status === PublishStatus.published) {
+        await dispatch(folderContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       } else {
         await dispatch(contentLists({ ...condition, page_size: pageSize, metaLoading: true }));
       }
@@ -176,8 +230,22 @@ export default function MyContentList() {
       )}
       <SecondSearchHeader value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
       <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
-      <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
-      <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
+      <ThirdSearchHeader
+        value={condition}
+        onChange={handleChange}
+        onBulkPublish={handleBulkPublish}
+        onBulkDelete={handleBulkDelete}
+        onAddFolder={handleAddFolder}
+        onBulkMove={handleBulkMove}
+      />
+      <ThirdSearchHeaderMb
+        value={condition}
+        onChange={handleChange}
+        onBulkPublish={handleBulkPublish}
+        onBulkDelete={handleBulkDelete}
+        onAddFolder={handleAddFolder}
+        onBulkMove={handleBulkMove}
+      />
       <PermissionOr
         value={[
           PermissionType.published_content_page_204,
@@ -200,6 +268,10 @@ export default function MyContentList() {
                 onClickContent={handleClickConent}
                 onPublish={handlePublish}
                 onDelete={handleDelete}
+                onRemeberMoveFolder={handleRememberMoveFolder}
+                onRenameFolder={handleRenameFolder}
+                onDeleteFolder={handleDeleteFolder}
+                onGoBack={handleGoback}
               />
             ) : (
               <TipImages type={TipImagesType.empty} text="library_label_empty" />

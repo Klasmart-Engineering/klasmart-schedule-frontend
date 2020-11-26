@@ -5,6 +5,7 @@ export interface ConfirmResult {
   isConfirmed: boolean;
   reasonValue?: string[];
   otherValue?: string;
+  text?: string;
 }
 
 export interface ConfirmRequest {
@@ -25,6 +26,7 @@ export interface IConfirmState extends ConfirmRequest {
 export enum ConfirmDialogType {
   text = "text",
   textField = "textField",
+  onlyInput = "onlyInput",
 }
 
 const initialState: IConfirmState = {

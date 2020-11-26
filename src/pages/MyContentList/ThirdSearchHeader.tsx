@@ -116,6 +116,7 @@ export enum BulkAction {
   publish = "publish",
   remove = "remove",
   delete = "delete",
+  move = "move",
 }
 
 interface BulkActionOption {
@@ -130,7 +131,12 @@ function getBulkAction(condition: QueryCondition, perm: PermissionResult<Permiss
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      return perm.archive_published_content_273 ? [{ label: d("Remove").t("library_label_remove"), value: BulkAction.remove }] : [];
+      const res = [
+        { label: "Move to Folder", value: BulkAction.move },
+        { label: "Delete", value: BulkAction.delete },
+      ];
+      if (perm.archive_published_content_273) res.push({ label: d("Remove").t("library_label_remove"), value: BulkAction.remove });
+      return res;
     case PublishStatus.pending:
       return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
     case PublishStatus.archive:
@@ -156,10 +162,12 @@ const sortOptions = () => [
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
   onBulkDelete: (type: Action) => any;
+  onBulkMove: () => any;
+  onAddFolder: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, onAddFolder } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -171,6 +179,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.publish) onBulkPublish();
     if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
     if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
+    if (event.target.value === BulkAction.move) onBulkMove();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
@@ -180,7 +189,9 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       })
     );
   };
-
+  const handleClickAddFolder = () => {
+    onAddFolder();
+  };
   const bulkOptions = getBulkAction(value, perm).map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.label}
@@ -211,12 +222,11 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   {bulkOptions}
                 </TextField>
               )}
-              {false &&
-                (value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets) && (
-                  <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />}>
-                    Add a Folder
-                  </Button>
-                )}
+              {(value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets) && (
+                <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
+                  Add a Folder
+                </Button>
+              )}
             </Grid>
             {unpublish ? (
               <Grid item md={6}>
@@ -249,7 +259,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -267,6 +277,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     if (bulkaction === BulkAction.publish) onBulkPublish();
     if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
     if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
+    if (event.target.value === BulkAction.move) onBulkMove();
   };
   const handleClose = () => {
     setAnchorElLeft(null);

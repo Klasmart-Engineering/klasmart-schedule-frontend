@@ -14,6 +14,7 @@ export enum ContentType {
   assets = 3,
   plan = 2,
   material = 1,
+  folder = 0,
 }
 export enum MaterialType {
   h5p = 1,
@@ -100,4 +101,9 @@ export enum H5pSub {
   edit = "edit",
   new = "new",
   view = "view",
+}
+
+export enum FolderName {
+  assets = "assets",
+  pandm = "plans and materials",
 }

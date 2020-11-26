@@ -2,7 +2,13 @@ import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult 
 import { useHistory } from "react-router-dom";
 import api from "../api";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
-import { ApiContentBulkOperateRequest, ApiOutcomeView, EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
+import {
+  ApiContentBulkOperateRequest,
+  ApiOutcomeView,
+  EntityContentInfoWithDetails,
+  EntityCreateContentRequest,
+  EntityFolderContent,
+} from "../api/api.auto";
 import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
@@ -15,7 +21,7 @@ interface IContentState {
   mediaList: EntityContentInfoWithDetails[];
   outcomeList: ApiOutcomeView[];
   total: number;
-  contentsList: EntityContentInfoWithDetails[];
+  contentsList: EntityFolderContent[];
   contentPreview: EntityContentInfoWithDetails;
   MediaListTotal: number;
   OutcomesListTotal: number;
@@ -80,6 +86,7 @@ const initialState: IContentState = {
     creator_name: "",
     is_mine: false,
     teacher_manual: "",
+    teacher_manual_name: "",
   },
   mediaList: [],
   MediaListTotal: 0,
@@ -456,6 +463,64 @@ export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveConte
   return api.contents.getContentLiveToken(content_id);
 });
 
+type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
+type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
+export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, IQueryFolderContentParams>(
+  "content/folderContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contentsFolders.queryFolderContent(query);
+    return { list, total };
+  }
+);
+
+type IQueryAddFolderParams = Parameters<typeof api.folders.createFolder>[0];
+type IQueryAddFolderResult = AsyncReturnType<typeof api.folders.createFolder>;
+export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolderParams>(
+  "content/addFolder",
+  ({ name, partition, owner_type, parent_id }) => api.folders.createFolder({ name, partition, owner_type, parent_id })
+);
+
+type IQueryMOveFolderParams = {
+  item_id: Parameters<typeof api.folders.moveFolderItem>[0];
+  dist: Parameters<typeof api.folders.moveFolderItem>[1];
+};
+type IQueryMoveFolderResult = AsyncReturnType<typeof api.folders.moveFolderItem>;
+export const moveFolder = createAsyncThunk<IQueryMoveFolderResult, IQueryMOveFolderParams>("content/moveFolder", ({ item_id, dist }) =>
+  api.folders.moveFolderItem(item_id, dist)
+);
+
+type IQueryBulkMoveFolderParams = Parameters<typeof api.folders.moveFolderItemBulk>[0];
+type IQueryBulkMoveFolderResult = AsyncReturnType<typeof api.folders.moveFolderItemBulk>;
+export const moveFolderBulk = createAsyncThunk<IQueryBulkMoveFolderResult, IQueryBulkMoveFolderParams>(
+  "content/moveFolderBulk",
+  ({ dist, ids }) => api.folders.moveFolderItemBulk({ dist, ids })
+);
+
+type IQueryRenameFolderParams = {
+  item_id: Parameters<typeof api.folders.updateFolderItem>[0];
+  name: Parameters<typeof api.folders.updateFolderItem>[1];
+};
+type IQueryRenameFolderResult = AsyncReturnType<typeof api.folders.updateFolderItem>;
+export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRenameFolderParams>(
+  "content/renameFolder",
+  ({ item_id, name }) => api.folders.updateFolderItem(item_id, name)
+);
+
+type IQueryRemoveFolderParams = {
+  item_id: Parameters<typeof api.folders.removeFolderItem>[0];
+  params: Parameters<typeof api.folders.removeFolderItem>[1];
+};
+type IQueryRemoveFolderResult = AsyncReturnType<typeof api.folders.removeFolderItem>;
+export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRemoveFolderParams>(
+  "content/deleteFolder",
+  async ({ item_id, params }, { dispatch }) => {
+    const content = "Are you sure you want to delete this folder?";
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.folders.removeFolderItem(item_id, params);
+  }
+);
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -534,6 +599,10 @@ const { actions, reducer } = createSlice({
       // alert("success");
       state.contentsList = payload.list;
       state.mediaList = payload.list;
+      state.total = payload.total;
+    },
+    [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.contentsList = payload.list;
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {

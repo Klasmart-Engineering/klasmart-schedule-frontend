@@ -7,6 +7,7 @@ import audioImg from "../../assets/icons/music.svg";
 import imageImg from "../../assets/icons/pic.svg";
 import planImg from "../../assets/icons/plan.svg";
 import videoImg from "../../assets/icons/video.svg";
+import folderImg from "../../assets/icons/folderbigicon.svg";
 
 const type2svg = {
   [ContentType.image]: imageImg,
@@ -16,6 +17,7 @@ const type2svg = {
   [ContentType.plan]: planImg,
   [ContentType.assets]: imageImg,
   [ContentType.material]: materialImg,
+  [ContentType.folder]: folderImg,
 };
 
 interface ThumbnailProps extends React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> {

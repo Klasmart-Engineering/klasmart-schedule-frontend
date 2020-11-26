@@ -19,6 +19,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank, ExpandMore } from "@material-ui/icons";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
@@ -26,9 +27,8 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { EntityFolderContent } from "../../api/api.auto";
 import { ContentType, PublishStatus } from "../../api/type";
-import folderBigIconUrl from "../../assets/icons/folderbigicon.svg";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
@@ -197,6 +197,11 @@ const useStyles = makeStyles((theme) =>
       transform: "translate(-50%, -50%)",
       width: "50%",
     },
+    editBtn: {
+      width: "24px",
+      height: 32,
+      fontSize: "12px",
+    },
   })
 );
 
@@ -213,7 +218,7 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   transform: props.open ? "rotate(180deg)" : "none",
 }));
 interface ContentProps extends ContentActionProps {
-  content: EntityContentInfoWithDetails;
+  content: EntityFolderContent;
   queryCondition: QueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
   onClickContent: ContentCardListProps["onClickContent"];
@@ -225,8 +230,21 @@ enum DeleteText {
 function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
-  const { content, queryCondition, selectedContentGroupContext, onDelete, onPublish, onClickContent } = props;
-  const file_type: number = JSON.parse(content.data || "").file_type;
+  const {
+    content,
+    queryCondition,
+    selectedContentGroupContext,
+    onDelete,
+    onPublish,
+    onClickContent,
+    onRemeberMoveFolder,
+    onRenameFolder,
+    onDeleteFolder,
+  } = props;
+  let file_type: number = 0;
+  if (content?.content_type === ContentType.assets) {
+    file_type = JSON.parse(content.data || "").file_type;
+  }
   const { registerChange, hashValue } = selectedContentGroupContext;
   const DeleteIcon =
     content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
@@ -236,7 +254,6 @@ function ContentCard(props: ContentProps) {
     content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
       ? DeleteText.remove
       : DeleteText.delete;
-
   return (
     <Card className={css.card}>
       <Checkbox
@@ -249,7 +266,7 @@ function ContentCard(props: ContentProps) {
         checked={hashValue[content.id as string] || false}
         onChange={registerChange}
       ></Checkbox>
-      <CardActionArea onClick={(e) => onClickContent(content.id, content.content_type)}>
+      <CardActionArea onClick={(e) => onClickContent(content.id, content.content_type, content.dir_path)}>
         <CardMedia className={css.cardMedia}>
           {content.content_type === ContentType.assets && (
             <Thumbnail className={css.cardImg} type={content.content_type * 10 + file_type} id={content.thumbnail}></Thumbnail>
@@ -257,7 +274,10 @@ function ContentCard(props: ContentProps) {
           {(content.content_type === ContentType.material || content.content_type === ContentType.plan) && (
             <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
           )}
-          {content.content_type === 4 && <img className={css.cardImg} src={folderBigIconUrl} alt="" />}
+          {content.content_type === ContentType.folder && (
+            <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
+          )}
+          {/* {content.content_type === ContentType.folder && <img className={css.cardImg} src={folderBigIconUrl} alt="" />} */}
         </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
@@ -265,6 +285,11 @@ function ContentCard(props: ContentProps) {
           <Typography variant="h6" style={{ flex: 1 }} noWrap={true}>
             {content?.name}
           </Typography>
+          {content.content_type === ContentType.folder && (
+            <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content.id as string)}>
+              <EditOutlinedIcon />
+            </IconButton>
+          )}
           <ExpandBtn className={clsx(css.iconButtonExpandMore, css.MuiIconButtonRoot)} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
           </ExpandBtn>
@@ -278,6 +303,7 @@ function ContentCard(props: ContentProps) {
       <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
         {content?.content_type === ContentType.material && d("Material").t("library_label_material")}
         {content?.content_type === ContentType.plan && d("Plan").t("library_label_plan")}
+        {content?.content_type === ContentType.folder && "Folder"}
         {content?.content_type === ContentType.assets && file_type === ContentType.image % 10 && d("Image").t("library_label_image")}
         {content?.content_type === ContentType.assets && file_type === ContentType.video % 10 && d("Video").t("library_label_video")}
         {content?.content_type === ContentType.assets && file_type === ContentType.audio % 10 && d("Audio").t("library_label_audio")}
@@ -288,21 +314,20 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {false &&
-            !queryCondition.program &&
-            (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-                onClick={() => onDelete(content.id as string, type)}
-              >
-                <FolderOpenIcon />
-              </LButton>
-            )}
+          {!queryCondition.program && (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+              onClick={() => onRemeberMoveFolder(content.id as string, content.content_type as number)}
+            >
+              <FolderOpenIcon />
+            </LButton>
+          )}
           {/* content published remove */}
           {!queryCondition.program &&
             queryCondition.publish_status === PublishStatus.published &&
+            content?.content_type !== ContentType.folder &&
             content?.content_type_name !== ASSETS_NAME && (
               <Permission value={PermissionType.archive_published_content_273}>
                 <LButton
@@ -315,6 +340,16 @@ function ContentCard(props: ContentProps) {
                 </LButton>
               </Permission>
             )}
+          {!queryCondition.program && content?.content_type === ContentType.folder && (
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              onClick={() => onDeleteFolder(content.id as string)}
+            >
+              <DeleteOutlineIcon />
+            </LButton>
+          )}
           {/* content archieved republish delete */}
           {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
             <Permission value={PermissionType.republish_archived_content_274}>
@@ -371,19 +406,27 @@ function ContentCard(props: ContentProps) {
 }
 
 interface ContentActionProps {
-  onPublish: (id: NonNullable<EntityContentInfoWithDetails["id"]>) => any;
-  onDelete: (id: NonNullable<EntityContentInfoWithDetails["id"]>, type: string) => any;
+  onPublish: (id: NonNullable<EntityFolderContent["id"]>) => any;
+  onDelete: (id: NonNullable<EntityFolderContent["id"]>, type: string) => any;
+  onRemeberMoveFolder: (id: NonNullable<EntityFolderContent["id"]>, content_type: NonNullable<EntityFolderContent["content_type"]>) => any;
+  onRenameFolder: (id: NonNullable<EntityFolderContent["id"]>) => any;
+  onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => any;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
   formMethods: UseFormMethods<ContentListForm>;
   total: number;
   amountPerPage: number;
-  list: EntityContentInfoWithDetails[];
+  list: EntityFolderContent[];
   queryCondition: QueryCondition;
   onChangePage: (page: number) => void;
-  onClickContent: (id: EntityContentInfoWithDetails["id"], content_type: EntityContentInfoWithDetails["content_type"]) => any;
+  onClickContent: (
+    id: EntityFolderContent["id"],
+    content_type: EntityFolderContent["content_type"],
+    dir_path: EntityFolderContent["dir_path"]
+  ) => any;
   onChangePageSize: (page_size: number) => void;
+  onGoBack: () => any;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
@@ -398,6 +441,10 @@ export function ContentCardList(props: ContentCardListProps) {
     onChangePage,
     onClickContent,
     onChangePageSize,
+    onRemeberMoveFolder,
+    onRenameFolder,
+    onDeleteFolder,
+    onGoBack,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -405,6 +452,7 @@ export function ContentCardList(props: ContentCardListProps) {
     onChangePageSize(event.target.value as number);
   };
   const pageSizes = [20, 100, 500];
+  console.log(queryCondition);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Controller
@@ -417,10 +465,10 @@ export function ContentCardList(props: ContentCardListProps) {
               {...props}
               render={(selectedContentGroupContext) => (
                 <Fragment>
-                  {false && (
+                  {queryCondition.path && queryCondition.path !== "/" && queryCondition.page === 1 && (
                     <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
                       <Box className={css.card}>
-                        <Box className={css.cardMedia} style={{ marginTop: 10 }}>
+                        <Box className={css.cardMedia} style={{ marginTop: 10, cursor: "pointer" }} onClick={onGoBack}>
                           <img className={css.prevImg} src={prevPageUrl} alt="" />
                         </Box>
                         <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -428,7 +476,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           <Typography variant="h6">Badanamu Zoo</Typography>
                         </Box>
                         <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-                          (10 items. 6 available)
+                          ({10} items. 6 available)
                         </Typography>
                       </Box>
                     </Grid>
@@ -437,7 +485,16 @@ export function ContentCardList(props: ContentCardListProps) {
                     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
                       <ContentCard
                         content={item}
-                        {...{ onPublish, onDelete, queryCondition, selectedContentGroupContext, onClickContent }}
+                        {...{
+                          onPublish,
+                          onDelete,
+                          queryCondition,
+                          selectedContentGroupContext,
+                          onClickContent,
+                          onRemeberMoveFolder,
+                          onRenameFolder,
+                          onDeleteFolder,
+                        }}
                       />
                     </Grid>
                   ))}
