@@ -1,13 +1,13 @@
-import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
-import { Author, ContentType, FolderName, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
+import mockTreeData from "../../mocks/foldertree.json";
 import { AppDispatch, RootState } from "../../reducers";
-import { actAsyncConfirm, ConfirmDialogType } from "../../reducers/confirm";
 import {
   addFolder,
   bulkDeleteContent,
@@ -16,15 +16,18 @@ import {
   deleteContent,
   deleteFolder,
   folderContentLists,
+  getUserSetting,
   moveFolderBulk,
   pendingContentLists,
   privateContentLists,
   publishContent,
+  setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { FolderTree, FolderTreeProps, ROOT_ID, useFolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -95,10 +98,9 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const [pageSize, setPageSize] = useState(20);
-  const [, setRemoveId] = useState("");
+  const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch<AppDispatch>();
+  const { folderTreeActive, closeFolderTree } = useFolderTree();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -113,7 +115,7 @@ export default function MyContentList() {
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
-    setPageSize(page_size);
+    refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size })));
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type, dir_path) => {
     if (content_type === ContentType.material || content_type === ContentType.plan) {
@@ -142,7 +144,7 @@ export default function MyContentList() {
     }
   };
   const handleRememberMoveFolder: ContentCardListProps["onRemeberMoveFolder"] = (id) => {
-    setRemoveId(id);
+    // setRemoveId(id);
     // dispatch(moveFolder({item_id: id, dist:{dist: "5fbf4cf9b9678f45f4e7954b"}}))
   };
   // const handleRemoveFolder = (id: string) => {
@@ -153,25 +155,8 @@ export default function MyContentList() {
   };
   let parent_id: string;
   parent_id = (condition?.path || "").split("/").pop() || "";
-  const handleAddFolder = async () => {
-    let partition: string = FolderName.pandm;
-    if (condition.publish_status === PublishStatus.published) {
-      partition = FolderName.pandm;
-    }
-    if (condition.content_type === String(ContentType.assets)) {
-      partition = FolderName.assets;
-    }
-    const title = "Add a Folder";
-    const content = "Folder Name";
-    const placeholder = "name";
-    const type = ConfirmDialogType.onlyInput;
-    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, placeholder, type })));
-    if (isConfirmed) {
-      console.log(text, isConfirmed);
-    }
-    console.log(condition.path);
-    if (isConfirmed) refreshWithDispatch(dispatch(addFolder({ name: text, partition: partition, owner_type: 1, parent_id: parent_id })));
-    // refreshWithDispatch(addFolder({name: "folder1", partition: partition, owner_type: 1}))
+  const handleAddFolder = async (id: string) => {
+    refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: id })));
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
     refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
@@ -182,6 +167,9 @@ export default function MyContentList() {
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
     history.go(-1);
   };
+  const handleMove: FolderTreeProps["onMove"] = (id) => {
+    console.log("onMove id = ", id);
+  };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -191,22 +179,23 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
+      await dispatch(getUserSetting());
       if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
-        await dispatch(pendingContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(pendingContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else if (
         condition.publish_status === PublishStatus.draft ||
         condition.publish_status === PublishStatus.rejected ||
         (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
       ) {
-        await dispatch(privateContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(privateContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else if (condition.publish_status === PublishStatus.published) {
-        await dispatch(folderContentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(folderContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else {
-        await dispatch(contentLists({ ...condition, page_size: pageSize, metaLoading: true }));
+        await dispatch(contentLists({ ...condition, page_size: page_size, metaLoading: true }));
       }
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey, pageSize]);
+  }, [condition, reset, dispatch, refreshKey, page_size]);
 
   return (
     <div>
@@ -235,7 +224,7 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={handleAddFolder}
+        onAddFolder={() => handleAddFolder(ROOT_ID)}
         onBulkMove={handleBulkMove}
       />
       <ThirdSearchHeaderMb
@@ -243,7 +232,7 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={handleAddFolder}
+        onAddFolder={() => handleAddFolder(ROOT_ID)}
         onBulkMove={handleBulkMove}
       />
       <PermissionOr
@@ -261,7 +250,7 @@ export default function MyContentList() {
                 formMethods={formMethods}
                 list={contentsList}
                 total={total}
-                amountPerPage={pageSize}
+                amountPerPage={page_size}
                 queryCondition={condition}
                 onChangePage={handleChangePage}
                 onChangePageSize={handleChangePageSize}
@@ -280,6 +269,14 @@ export default function MyContentList() {
             <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
           )
         }
+      />
+      <FolderTree
+        folders={mockTreeData}
+        rootFolderName={condition.content_type === SearchContentsRequestContentType.assets ? "Assets" : "Organization Content"}
+        onClose={closeFolderTree}
+        open={folderTreeActive}
+        onMove={handleMove}
+        onAddFolder={handleAddFolder}
       />
     </div>
   );

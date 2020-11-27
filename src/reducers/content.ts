@@ -9,7 +9,7 @@ import {
   EntityCreateContentRequest,
   EntityFolderContent,
 } from "../api/api.auto";
-import { ContentType, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
+import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -29,6 +29,7 @@ interface IContentState {
   lesson_types: LinkedMockOptionsItem[];
   visibility_settings: LinkedMockOptionsItem[];
   token: string;
+  page_size: number;
 }
 
 interface RootState {
@@ -152,7 +153,16 @@ const initialState: IContentState = {
     is_mine: false,
   },
   token: "",
+  page_size: 20,
 };
+
+const ADD_FOLDER_MODEL_INFO = {
+  title: "Add a Folder",
+  content: "Folder Name",
+  placeholder: "name",
+  type: ConfirmDialogType.onlyInput,
+};
+
 export enum Action {
   remove = "remove",
   delete = "delete",
@@ -455,6 +465,18 @@ export const lockContent = createAsyncThunk<
   return await api.contents.lockContent(content_id);
 });
 
+type IQuerySetUserSettingParams = Parameters<typeof api.userSettings.setUserSetting>[0] & LoadingMetaPayload;
+type IQuerySetUserSettingResult = AsyncReturnType<typeof api.userSettings.setUserSetting>;
+export const setUserSetting = createAsyncThunk<IQuerySetUserSettingResult, IQuerySetUserSettingParams>(
+  "content/setUserSetting",
+  ({ cms_page_size }) => api.userSettings.setUserSetting({ cms_page_size })
+);
+
+type IQueryGetUserSettingResult = AsyncReturnType<typeof api.userSettings.getUserSettingByOperator>;
+export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult>("content/getUserSetting", () => {
+  return api.userSettings.getUserSettingByOperator();
+});
+
 interface LiveContentPayload extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentLiveToken>[0];
 }
@@ -473,11 +495,16 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
   }
 );
 
-type IQueryAddFolderParams = Parameters<typeof api.folders.createFolder>[0];
+type IQueryAddFolderParams = { content_type?: string; parent_id: string };
 type IQueryAddFolderResult = AsyncReturnType<typeof api.folders.createFolder>;
 export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolderParams>(
   "content/addFolder",
-  ({ name, partition, owner_type, parent_id }) => api.folders.createFolder({ name, partition, owner_type, parent_id })
+  async ({ content_type, parent_id }, { dispatch }) => {
+    const { isConfirmed, text: name } = unwrapResult(await dispatch(actAsyncConfirm(ADD_FOLDER_MODEL_INFO)));
+    if (!isConfirmed) return { id: undefined };
+    const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    return api.folders.createFolder({ name, partition, owner_type: 1, parent_id });
+  }
 );
 
 type IQueryMOveFolderParams = {
@@ -714,6 +741,9 @@ const { actions, reducer } = createSlice({
     },
     [getContentLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.token = payload.token;
+    },
+    [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.page_size = payload.cms_page_size;
     },
   },
 });

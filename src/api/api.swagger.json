@@ -4915,6 +4915,75 @@
         }
       }
     },
+    "/user_settings": {
+      "get": {
+        "description": "get user setting by user id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["userSetting"],
+        "summary": "getUserSettingByOperator",
+        "operationId": "getUserSettingByOperator",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.UserSettingJsonContent"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "set user setting",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["userSetting"],
+        "summary": "setUserSetting",
+        "operationId": "setUserSetting",
+        "parameters": [
+          {
+            "description": "user setting json content",
+            "name": "userSetting",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UserSettingJsonContent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/visibility_settings": {
       "get": {
         "description": "get visibilitySetting",
@@ -7220,6 +7289,15 @@
         },
         "thumbnail": {
           "type": "string"
+        }
+      }
+    },
+    "entity.UserSettingJsonContent": {
+      "type": "object",
+      "required": ["cms_page_size"],
+      "properties": {
+        "cms_page_size": {
+          "type": "integer"
         }
       }
     },

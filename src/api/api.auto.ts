@@ -773,6 +773,10 @@ export interface EntityUpdateFolderRequest {
   thumbnail?: string;
 }
 
+export interface EntityUserSettingJsonContent {
+  cms_page_size: number;
+}
+
 export interface EntityVisibilitySetting {
   createAt?: number;
   createID?: string;
@@ -2340,6 +2344,27 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     deleteSubject: (id: string, params?: RequestParams) =>
       this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/subjects/${id}`, "DELETE", params),
+  };
+  userSettings = {
+    /**
+     * @tags userSetting
+     * @name getUserSettingByOperator
+     * @summary getUserSettingByOperator
+     * @request GET:/user_settings
+     * @description get user setting by user id
+     */
+    getUserSettingByOperator: (params?: RequestParams) =>
+      this.request<EntityUserSettingJsonContent, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/user_settings`, "GET", params),
+
+    /**
+     * @tags userSetting
+     * @name setUserSetting
+     * @summary setUserSetting
+     * @request POST:/user_settings
+     * @description set user setting
+     */
+    setUserSetting: (userSetting: EntityUserSettingJsonContent, params?: RequestParams) =>
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/user_settings`, "POST", params, userSetting),
   };
   visibilitySettings = {
     /**

@@ -17,8 +17,8 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { CancelRounded, CloudUploadOutlined } from "@material-ui/icons";
-import React, { useCallback } from "react";
+import { CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import React, { useCallback, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
@@ -31,6 +31,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
+import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
     minHeight: 800,
@@ -74,6 +75,15 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     position: "absolute",
     top: "56%",
     cursor: "pointer",
+  },
+  progress: {
+    width: 36,
+    height: 36,
+  },
+  label: {
+    zIndex: 1,
+    marginTop: -10,
+    marginLeft: 10,
   },
 }));
 
@@ -123,7 +133,6 @@ export default function Details(props: DetailsProps) {
     onDrawingActivity,
     permission,
   } = props;
-  // console.log("allDefaultValueAndKey = ", allDefaultValueAndKey);
 
   const css = useStyles();
   const { lesson } = useParams();
@@ -151,8 +160,21 @@ export default function Details(props: DetailsProps) {
   };
   const handleDeleteManual = useCallback(() => {
     setValue("teacher_manual", "", { shouldDirty: true });
+    setValue("teacher_manual_name", "", { shouldDirty: true });
   }, [setValue]);
-
+  const handleChangeTeacherManualName = useMemo(
+    () => (filename?: string) => {
+      setValue("teacher_manual_name", filename, { shouldDirty: true });
+    },
+    [setValue]
+  );
+  const teacherInfo = (
+    <div style={{ color: "#000" }}>
+      <span style={{ fontWeight: 700 }}>{d("Max Size").t("library_label_max_size")}</span>: 500MB
+      <br />
+      <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf
+    </div>
+  );
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
@@ -531,19 +553,63 @@ export default function Details(props: DetailsProps) {
             render={({ ref, ...props }) => (
               <SingleUploader
                 ref={ref}
+                onChangeOther={(filename?: string) => handleChangeTeacherManualName(filename)}
                 partition="teacher_manual"
                 accept=".pdf"
                 {...props}
-                render={({ btnRef, value }) => (
+                render={({ btnRef, value, isUploading, item }) => (
                   <Box style={{ position: "relative" }}>
-                    <TextField
-                      disabled
+                    {/* <Controller
+                      as={TextField}
+                      control={control}
+                      name="teacher_manual_name"
+                      defaultValue={allDefaultValueAndKey.teacher_manual_name?.value}
+                      key={allDefaultValueAndKey.teacher_manual_name?.key}
                       className={css.fieldset}
-                      value={value}
-                      label={d("Teacher Manual").t("library_label_teacher_manual")}
-                    ></TextField>
-                    <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
-                    {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}
+                      multiline
+                      label={
+                        <div style={{display:"flex", alignItems:"center"}}>
+                          {d("Teacher Manual").t("library_label_teacher_manual")}
+                          <Tooltip title={teacherInfo}>
+                            <InfoOutlined
+                              style={{display: value ? "none" : "block", color: "darkgrey",cursor:"pointer"}}
+                              onMouseOver={() => console.log(" icon mouse over")}
+                            />
+                          </Tooltip>
+                        </div>
+                      }
+                      disabled
+                    /> */}
+
+                    <Controller
+                      control={control}
+                      name="teacher_manual_name"
+                      defaultValue={allDefaultValueAndKey.teacher_manual_name?.value}
+                      key={allDefaultValueAndKey.teacher_manual_name?.key}
+                      render={(props) => (
+                        <FormControl className={css.fieldset}>
+                          <InputLabel htmlFor="teacherManual" className={css.label}>
+                            <div style={{ alignItems: "center", display: value ? "none" : "flex" }}>
+                              {d("Teacher Manual").t("library_label_teacher_manual")}
+                              <HtmlTooltip title={teacherInfo}>
+                                <InfoOutlined style={{ color: "darkgrey" }} />
+                              </HtmlTooltip>
+                            </div>
+                          </InputLabel>
+                          <OutlinedInput id="teacherManual" multiline value={props.value} disabled></OutlinedInput>
+                        </FormControl>
+                      )}
+                    />
+                    {isUploading ? (
+                      <Box style={{ right: "10px", position: "absolute", top: "47%" }}>
+                        <ProgressWithText value={item?.completed} className={css.progress} />
+                      </Box>
+                    ) : (
+                      <>
+                        <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
+                        {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}{" "}
+                      </>
+                    )}
                   </Box>
                 )}
               />

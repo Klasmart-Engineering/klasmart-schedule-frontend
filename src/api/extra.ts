@@ -1,5 +1,7 @@
 import Cookies from "js-cookie";
+import api from ".";
 import { LangRecordId } from "../locale/lang/type";
+import { EntityFolderItem } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
@@ -109,6 +111,30 @@ export const apiWaitForOrganizationOfPage = () => {
       return resolve(orgId);
     }, 100);
   });
+};
+
+export interface RecursiveFolderItem extends EntityFolderItem {
+  next: RecursiveFolderItem[];
+}
+export const recursiveListFolderItems = async (
+  folder_id: number,
+  query: { item_type: number; partition: string }
+): Promise<RecursiveFolderItem[]> => {
+  const { item_type, partition } = query;
+  const { items: rootFolders } = await api.folders.searchOrgFolderItems({ path: "/", item_type });
+  if (!rootFolders) return [];
+  async function forEachFolder(folders: EntityFolderItem[]): Promise<RecursiveFolderItem[]> {
+    return Promise.all(
+      folders.map(async (folder) => {
+        const { id, item_type } = folder;
+        const { items } = await api.folders.listFolderItems(id as string, { item_type, partition });
+        if (!items) return { ...folder, next: [] };
+        const next = await forEachFolder(items);
+        return { ...folder, next };
+      })
+    );
+  }
+  return forEachFolder(rootFolders);
 };
 
 export const apiAddOrganizationToPageUrl = (id: string) => {

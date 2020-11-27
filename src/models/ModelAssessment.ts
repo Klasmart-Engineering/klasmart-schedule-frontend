@@ -30,7 +30,10 @@ export const ModelAssessment = {
   toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestDataOmitAction): GetAssessmentResult {
     const draft = cloneDeep(defaultDetail);
     const attendanceHash = toHash(defaultDetail.attendances || []);
-    draft.attendances = defaultDetail.id ? value.attendance_ids?.map((id) => attendanceHash[id]) || [] : [];
+    draft.attendances = value.attendance_ids?.map((id) => attendanceHash[id]) || [];
+    if (!draft.attendances[0]) {
+      draft.attendances = [];
+    }
     return draft;
 
     // return produce(defaultDetail, draft => {

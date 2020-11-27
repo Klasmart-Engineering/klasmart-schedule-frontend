@@ -2,6 +2,34 @@ import * as Types from "./api-ko-schema.auto";
 
 import { gql } from "@apollo/client";
 import * as Apollo from "@apollo/client";
+export type RoleBasedUsersByOrgnizationQueryVariables = Types.Exact<{
+  organization_id: Types.Scalars["ID"];
+}>;
+
+export type RoleBasedUsersByOrgnizationQuery = { __typename?: "Query" } & {
+  organization?: Types.Maybe<
+    { __typename?: "Organization" } & {
+      roles?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Role" } & Pick<Types.Role, "role_name"> & {
+                memberships?: Types.Maybe<
+                  Array<
+                    Types.Maybe<
+                      { __typename?: "OrganizationMembership" } & {
+                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
+                      }
+                    >
+                  >
+                >;
+              }
+          >
+        >
+      >;
+    }
+  >;
+};
+
 export type TeachersByOrgnizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
 }>;
@@ -85,6 +113,60 @@ export type QeuryMeQuery = { __typename?: "Query" } & {
   >;
 };
 
+export const RoleBasedUsersByOrgnizationDocument = gql`
+  query roleBasedUsersByOrgnization($organization_id: ID!) {
+    organization(organization_id: $organization_id) {
+      roles {
+        role_name
+        memberships {
+          user {
+            user_id
+            user_name
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useRoleBasedUsersByOrgnizationQuery__
+ *
+ * To run a query within a React component, call `useRoleBasedUsersByOrgnizationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoleBasedUsersByOrgnizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoleBasedUsersByOrgnizationQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useRoleBasedUsersByOrgnizationQuery(
+  baseOptions: Apollo.QueryHookOptions<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>
+) {
+  return Apollo.useQuery<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>(
+    RoleBasedUsersByOrgnizationDocument,
+    baseOptions
+  );
+}
+export function useRoleBasedUsersByOrgnizationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>
+) {
+  return Apollo.useLazyQuery<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>(
+    RoleBasedUsersByOrgnizationDocument,
+    baseOptions
+  );
+}
+export type RoleBasedUsersByOrgnizationQueryHookResult = ReturnType<typeof useRoleBasedUsersByOrgnizationQuery>;
+export type RoleBasedUsersByOrgnizationLazyQueryHookResult = ReturnType<typeof useRoleBasedUsersByOrgnizationLazyQuery>;
+export type RoleBasedUsersByOrgnizationQueryResult = Apollo.QueryResult<
+  RoleBasedUsersByOrgnizationQuery,
+  RoleBasedUsersByOrgnizationQueryVariables
+>;
 export const TeachersByOrgnizationDocument = gql`
   query teachersByOrgnization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
@@ -115,7 +197,7 @@ export const TeachersByOrgnizationDocument = gql`
  * });
  */
 export function useTeachersByOrgnizationQuery(
-  baseOptions?: Apollo.QueryHookOptions<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>
 ) {
   return Apollo.useQuery<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>(TeachersByOrgnizationDocument, baseOptions);
 }
@@ -154,7 +236,7 @@ export const ClassesByTeacherDocument = gql`
  *   },
  * });
  */
-export function useClassesByTeacherQuery(baseOptions?: Apollo.QueryHookOptions<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>) {
+export function useClassesByTeacherQuery(baseOptions: Apollo.QueryHookOptions<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>) {
   return Apollo.useQuery<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>(ClassesByTeacherDocument, baseOptions);
 }
 export function useClassesByTeacherLazyQuery(
@@ -193,7 +275,7 @@ export const ClassesByOrganizationDocument = gql`
  * });
  */
 export function useClassesByOrganizationQuery(
-  baseOptions?: Apollo.QueryHookOptions<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>
 ) {
   return Apollo.useQuery<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>(ClassesByOrganizationDocument, baseOptions);
 }
@@ -237,7 +319,7 @@ export const ParticipantsByClassDocument = gql`
  * });
  */
 export function useParticipantsByClassQuery(
-  baseOptions?: Apollo.QueryHookOptions<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>
 ) {
   return Apollo.useQuery<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>(ParticipantsByClassDocument, baseOptions);
 }
@@ -280,7 +362,7 @@ export const QeuryMeDocument = gql`
  *   },
  * });
  */
-export function useQeuryMeQuery(baseOptions?: Apollo.QueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
+export function useQeuryMeQuery(baseOptions: Apollo.QueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
   return Apollo.useQuery<QeuryMeQuery, QeuryMeQueryVariables>(QeuryMeDocument, baseOptions);
 }
 export function useQeuryMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {

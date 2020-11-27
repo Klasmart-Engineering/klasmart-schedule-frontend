@@ -282,9 +282,10 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             disabled
             className={css.fieldset}
-            value={contentPreview.teacher_manual}
+            value={contentPreview.teacher_manual_name}
             label={d("Teacher Manual").t("library_label_teacher_manual")}
             fullWidth
+            multiline
           ></TextField>
           <a href={apiResourcePathById(contentPreview.teacher_manual)} target="_blank" rel="noopener noreferrer">
             {contentPreview.teacher_manual && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px", color: "#000" }} />}
