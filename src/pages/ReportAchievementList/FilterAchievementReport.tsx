@@ -181,7 +181,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     ));
   };
   const getClassList = (list: ClassList | undefined | null) => {
-    if (list === null || list === undefined) return;
+    if (list === null || list === undefined || list.user === undefined) return;
     return list.user.classesTeaching.map((item) => (
       <MenuItem key={item.class_id} value={item.class_id}>
         {item.class_name}

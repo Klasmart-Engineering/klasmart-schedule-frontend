@@ -3,20 +3,8 @@
     "teachers": [
       {
         "user": {
-          "user_id": "Teacher-1",
-          "user_name": "Teacher1"
-        }
-      },
-      {
-        "user": {
-          "user_id": "Teacher-2",
-          "user_name": "Teacher2"
-        }
-      },
-      {
-        "user": {
-          "user_id": "Teacher-3",
-          "user_name": "Teacher3"
+          "user_id": "8abc02cb-1c64-5dd0-8410-41baa11818f7",
+          "user_name": "Catherine Sullivan"
         }
       }
     ]

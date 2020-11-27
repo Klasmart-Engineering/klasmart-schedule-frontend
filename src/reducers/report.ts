@@ -12,9 +12,7 @@ import {
   RoleBasedUsersByOrgnizationDocument,
   RoleBasedUsersByOrgnizationQuery,
   RoleBasedUsersByOrgnizationQueryVariables,
-  TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
-  TeachersByOrgnizationQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityScheduleShortInfo,
@@ -100,6 +98,19 @@ export const getLessonPlan = createAsyncThunk<
   return await api.schedulesLessonPlans.getLessonPlans({ teacher_id, class_id });
 });
 
+export const getClassList = createAsyncThunk<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>(
+  "getLessonPlan",
+  async ({ user_id }) => {
+    const { data } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
+      query: ClassesByTeacherDocument,
+      variables: {
+        user_id,
+      },
+    });
+    return data;
+  }
+);
+
 export interface GetReportMockOptionsResponse {
   teacherList: TeachersByOrgnizationQuery;
   classList: ClassesByTeacherQuery;
@@ -122,15 +133,15 @@ export const getReportMockOptions = createAsyncThunk<GetReportMockOptionsRespons
   "getTeacherList",
   async ({ teacher_id, class_id }) => {
     // const organization_id = apiOrganizationOfPage() as string;
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
-      query: TeachersByOrgnizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
+    // const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
+    //   query: TeachersByOrgnizationDocument,
+    //   variables: {
+    //     organization_id,
+    //   },
+    // });
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
-    const teacherList = MOCK ? mockResult : data;
+    const teacherList = mockResult;
     const user_id = (teacherList && teacherList.organization && teacherList.organization.teachers
       ? teacherList.organization?.teachers[0]?.user?.user_id
       : undefined) as string;
@@ -177,17 +188,19 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
     });
     const myTearchId = meInfo.me?.user_id || "";
     // 拉取本组织的teacherList
-    const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
-      query: TeachersByOrgnizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
+    // const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
+    //   query: TeachersByOrgnizationDocument,
+    //   variables: {
+    //     organization_id,
+    //   },
+    // });
+    // 使用mock数据
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
-    const teacherList = MOCK ? mockResult : data;
+    const teacherList = mockResult;
     const user_id = (teacherList && teacherList.organization && teacherList.organization.teachers
       ? teacherList.organization?.teachers[0]?.user?.user_id
       : undefined) as string;
+
     const firstTearchId = teacher_id ? teacher_id : user_id ? user_id : "";
 
     const finalTearchId = view_my_report ? myTearchId : firstTearchId;
@@ -297,10 +310,11 @@ const { reducer } = createSlice({
       // alert("success");
       state.reportList = initialState.reportList;
     },
-    [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
-      state.reportMockOptions.lessonPlanList = payload;
+
+    [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
+      state.reportMockOptions.classList = payload;
     },
-    [getLessonPlan.rejected.type]: (state, { error }: any) => {
+    [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getAchievementDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementDetail>>) => {
