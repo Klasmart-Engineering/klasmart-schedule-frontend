@@ -1,38 +1,32 @@
 [
   {
     "name": "Organization Content",
-    "id": "1",
+    "id": "11",
+    "next": []
+  },
+  {
+    "name": "Badanamu Zoo",
+    "id": "12",
     "next": [
       {
-        "name": "Organization Content",
-        "id": "11",
+        "name": "Sub Badanamu Zoo",
+        "id": "121",
         "next": []
-      },
+      }
+    ]
+  },
+  {
+    "name": "Badanamu Zoo",
+    "id": "13",
+    "next": [
       {
-        "name": "Badanamu Zoo",
-        "id": "12",
+        "name": "Sub Badanamu Zoo",
+        "id": "131",
         "next": [
           {
-            "name": "Sub Badanamu Zoo",
-            "id": "121",
+            "name": "hello",
+            "id": "1311",
             "next": []
-          }
-        ]
-      },
-      {
-        "name": "Badanamu Zoo",
-        "id": "13",
-        "next": [
-          {
-            "name": "Sub Badanamu Zoo",
-            "id": "131",
-            "next": [
-              {
-                "name": "hello",
-                "id": "1311",
-                "next": []
-              }
-            ]
           }
         ]
       }

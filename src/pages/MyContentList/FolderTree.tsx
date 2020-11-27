@@ -1,7 +1,7 @@
 import { Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, makeStyles } from "@material-ui/core";
 import { AddBoxOutlined, Close, CreateNewFolderOutlined, Folder, IndeterminateCheckBoxOutlined } from "@material-ui/icons";
 import { TreeItem, TreeView } from "@material-ui/lab";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { RecursiveFolderItem } from "../../api/extra";
 import { d, reportMiss } from "../../locale/LocaleManager";
 
@@ -41,17 +41,23 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-interface FolderTreeProps {
+const ROOT_ID = "/";
+
+export interface FolderTreeProps {
   folders: RecursiveFolderItem[];
-  onClose?: () => any;
+  rootFolderName: string;
+  onClose: () => any;
+  onAddFolder: (id: string) => any;
+  onMove: (id: string) => any;
+  open: boolean;
 }
 export function FolderTree(props: FolderTreeProps) {
   const css = useStyles();
-  const { onClose } = props;
-  function renderItemList(props: FolderTreeProps) {
-    const { folders } = props;
-    if (folders.length === 0) return null;
-    return folders.map((folder) => (
+  const { onClose, folders, open, onMove, onAddFolder, rootFolderName } = props;
+  const [value, setValue] = useState(ROOT_ID);
+  function renderItemList(folderList: RecursiveFolderItem[]) {
+    if (folderList.length === 0) return null;
+    return folderList.map((folder) => (
       <TreeItem
         key={folder.id}
         nodeId={folder.id as string}
@@ -62,12 +68,12 @@ export function FolderTree(props: FolderTreeProps) {
           </div>
         }
       >
-        {renderItemList({ ...props, folders: folder.next })}
+        {renderItemList(folder.next)}
       </TreeItem>
     ));
   }
   return (
-    <Dialog open={false}>
+    <Dialog open={open}>
       <DialogTitle>
         {reportMiss("Move To", "library_label_move_to")}
         <IconButton onClick={onClose} className={css.closeBtn}>
@@ -76,24 +82,49 @@ export function FolderTree(props: FolderTreeProps) {
       </DialogTitle>
       <DialogContent dividers>
         <div className={css.dialog}>
-          <TreeView defaultCollapseIcon={<IndeterminateCheckBoxOutlined />} defaultExpandIcon={<AddBoxOutlined />} defaultExpanded={["1"]}>
-            {renderItemList(props)}
+          <TreeView
+            defaultCollapseIcon={<IndeterminateCheckBoxOutlined />}
+            defaultExpandIcon={<AddBoxOutlined />}
+            defaultExpanded={[ROOT_ID]}
+            onNodeSelect={(e: any, id: string) => setValue(id)}
+          >
+            <TreeItem nodeId={ROOT_ID} label={rootFolderName}>
+              {renderItemList(folders)}
+            </TreeItem>
           </TreeView>
         </div>
       </DialogContent>
       <DialogActions>
         <div className={css.dialogActions}>
-          <Button color="primary" variant="outlined" startIcon={<CreateNewFolderOutlined />} className={css.addFolderBtn}>
+          <Button
+            color="primary"
+            variant="outlined"
+            startIcon={<CreateNewFolderOutlined />}
+            className={css.addFolderBtn}
+            onClick={() => onAddFolder(value)}
+          >
             {reportMiss("Add a Folder", "library_label_add_folder")}
           </Button>
-          <Button color="primary" variant="outlined">
+          <Button color="primary" variant="outlined" onClick={onClose}>
             {d("Cancel").t("library_label_cancel")}
           </Button>
-          <Button color="primary" variant="contained" className={css.okBtn}>
+          <Button color="primary" variant="contained" className={css.okBtn} onClick={() => onMove(value)}>
             {d("OK").t("library_label_ok")}
           </Button>
         </div>
       </DialogActions>
     </Dialog>
+  );
+}
+
+export function useFolderTree() {
+  const [active, setActive] = useState(false);
+  return useMemo(
+    () => ({
+      folderTreeActive: active,
+      openFolderTree: () => setActive(true),
+      closeFolderTree: () => setActive(false),
+    }),
+    [setActive, active]
   );
 }

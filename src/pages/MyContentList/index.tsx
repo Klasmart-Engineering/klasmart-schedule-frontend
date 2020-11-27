@@ -17,12 +17,13 @@ import {
   pendingContentLists,
   privateContentLists,
   publishContent,
+  setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { FolderTree } from "./FolderTree";
+import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -94,6 +95,7 @@ export default function MyContentList() {
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch<AppDispatch>();
+  const { folderTreeActive, openFolderTree, closeFolderTree } = useFolderTree();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -130,7 +132,13 @@ export default function MyContentList() {
       history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
     }
   };
-
+  const handleMove: FolderTreeProps["onMove"] = (id) => {
+    console.log("onMove id = ", id);
+  };
+  const handleAddFolder: FolderTreeProps["onAddFolder"] = (id) => {
+    console.log("onAddFolder id = ", id);
+  };
+  (window as any).openFolderTree = openFolderTree;
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -211,7 +219,14 @@ export default function MyContentList() {
           )
         }
       />
-      <FolderTree folders={mockTreeData} />
+      <FolderTree
+        folders={mockTreeData}
+        rootFolderName={condition.content_type === SearchContentsRequestContentType.assets ? "Assets" : "Organization Content"}
+        onClose={closeFolderTree}
+        open={folderTreeActive}
+        onMove={handleMove}
+        onAddFolder={handleAddFolder}
+      />
     </div>
   );
 }
