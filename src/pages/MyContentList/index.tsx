@@ -17,7 +17,6 @@ import {
   pendingContentLists,
   privateContentLists,
   publishContent,
-  setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
