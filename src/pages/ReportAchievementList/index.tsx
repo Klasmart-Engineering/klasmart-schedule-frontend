@@ -77,11 +77,13 @@ export function ReportAchievementList() {
         if (payload) {
           const classlist = payload.user?.classesTeaching;
           const class_id = (classlist && classlist[0] && classlist[0].class_id) || "";
-          class_id
-            ? getFirstLessonPlanId(value, class_id)
-            : history.push({
-                search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
-              });
+          if (class_id) {
+            getFirstLessonPlanId(value, class_id);
+          } else {
+            history.push({
+              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
+            });
+          }
         }
       }
       if (tab === "class_id") {
