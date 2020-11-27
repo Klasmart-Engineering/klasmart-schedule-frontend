@@ -102,13 +102,15 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                     >
                       {d("Student Achievement").t("report_label_student_achievement")}
                     </Button>
-                    <Button
-                      onClick={createHandleClick(Category.learningOutcomes)}
-                      className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
-                      startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
-                    >
-                      {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
-                    </Button>
+                    {false && (
+                      <Button
+                        onClick={createHandleClick(Category.learningOutcomes)}
+                        className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
+                        startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
+                      >
+                        {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
+                      </Button>
+                    )}
                   </Grid>
                 </Grid>
               </Hidden>
@@ -149,11 +151,13 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                         label={d("Student Achievement").t("report_label_student_achievement")}
                         className={classes.capitalize}
                       />
-                      <Tab
-                        value={Category.learningOutcomes}
-                        label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
-                        className={classes.capitalize}
-                      />
+                      {false && (
+                        <Tab
+                          value={Category.learningOutcomes}
+                          label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
+                          className={classes.capitalize}
+                        />
+                      )}
                     </Tabs>
                   </AppBar>
                 </Grid>
