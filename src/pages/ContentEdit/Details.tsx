@@ -80,6 +80,11 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     width: 36,
     height: 36,
   },
+  label: {
+    zIndex: 1,
+    marginTop: -10,
+    marginLeft: 10,
+  },
 }));
 
 function ProgressWithText(props: CircularProgressProps) {
@@ -554,7 +559,7 @@ export default function Details(props: DetailsProps) {
                 {...props}
                 render={({ btnRef, value, isUploading, item }) => (
                   <Box style={{ position: "relative" }}>
-                    <Controller
+                    {/* <Controller
                       as={TextField}
                       control={control}
                       name="teacher_manual_name"
@@ -562,15 +567,39 @@ export default function Details(props: DetailsProps) {
                       key={allDefaultValueAndKey.teacher_manual_name?.key}
                       className={css.fieldset}
                       multiline
-                      label={d("Teacher Manual").t("library_label_teacher_manual")}
+                      label={
+                        <div style={{display:"flex", alignItems:"center"}}>
+                          {d("Teacher Manual").t("library_label_teacher_manual")}
+                          <Tooltip title={teacherInfo}>
+                            <InfoOutlined
+                              style={{display: value ? "none" : "block", color: "darkgrey",cursor:"pointer"}}
+                              onMouseOver={() => console.log(" icon mouse over")}
+                            />
+                          </Tooltip>
+                        </div>
+                      }
                       disabled
+                    /> */}
+
+                    <Controller
+                      control={control}
+                      name="teacher_manual_name"
+                      defaultValue={allDefaultValueAndKey.teacher_manual_name?.value}
+                      key={allDefaultValueAndKey.teacher_manual_name?.key}
+                      render={(props) => (
+                        <FormControl className={css.fieldset}>
+                          <InputLabel htmlFor="teacherManual" className={css.label}>
+                            <div style={{ alignItems: "center", display: value ? "none" : "flex" }}>
+                              {d("Teacher Manual").t("library_label_teacher_manual")}
+                              <HtmlTooltip title={teacherInfo}>
+                                <InfoOutlined style={{ color: "darkgrey" }} />
+                              </HtmlTooltip>
+                            </div>
+                          </InputLabel>
+                          <OutlinedInput id="teacherManual" multiline value={props.value} disabled></OutlinedInput>
+                        </FormControl>
+                      )}
                     />
-                    <HtmlTooltip title={teacherInfo}>
-                      <InfoOutlined
-                        className={css.iconField}
-                        style={{ left: "90px", display: value ? "none" : "block", color: "darkgrey" }}
-                      />
-                    </HtmlTooltip>
                     {isUploading ? (
                       <Box style={{ right: "10px", position: "absolute", top: "47%" }}>
                         <ProgressWithText value={item?.completed} className={css.progress} />
