@@ -1,10 +1,10 @@
 import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { setQuery } from "../../models/ModelContentDetailForm";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
 import { ClassItem, QueryCondition, TeacherItem } from "./types";
 
@@ -93,6 +93,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   const { value, student_name, backByLessonPlan, reportMockOptions } = props;
   const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
+  const history = useHistory();
   const [lessonPlanName, setLessonPlanName] = React.useState("");
 
   React.useEffect(() => {
@@ -105,15 +106,17 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   }, [backByLessonPlan, lessonPlanList, value.lesson_plan_id]);
 
   const handleClick = () => {
-    const urlParams =
-      "?" +
-      setQuery("", {
-        teacher_id: value.teacher_id as string,
-        class_id: value.class_id as string,
-        lesson_plan_id: value.lesson_plan_id as string,
-      });
-    if (backByLessonPlan) backByLessonPlan(urlParams);
-    // history.push({ pathname: '/report/achievement-list', search: '?' + setQuery('', { teacher_id: value.teacher_id as string, class_id: value.class_id as string, lesson_plan_id: value.lesson_plan_id as string }) });
+    // history.go(-1)
+    // const urlParams =
+    //   "?" +
+    //   setQuery("", {
+    //     teacher_id: value.teacher_id as string,
+    //     class_id: value.class_id as string,
+    //     lesson_plan_id: value.lesson_plan_id as string,
+    //   });
+    if (backByLessonPlan) {
+      history.go(-1);
+    }
   };
 
   return (

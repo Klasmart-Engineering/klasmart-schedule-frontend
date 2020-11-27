@@ -6,7 +6,7 @@ import { PermissionType, usePermission } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getClassList, getLessonPlan, reportOnload } from "../../reducers/report";
+import { AsyncTrunkReturned, getAchievementList, getClassList, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -56,12 +56,13 @@ export function ReportAchievementList() {
 
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
-      const { payload } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
+      const { payload: data } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
-      if (payload) {
-        const lesson_plan_id = (payload[0] && payload[0].id) || "";
+      if (data) {
+        const lesson_plan_id = (data[0] && data[0].id) || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
+        dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
       }
     },
     [dispatch, history]
@@ -89,8 +90,14 @@ export function ReportAchievementList() {
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
       }
+      if (tab === "lesson_plan_id") {
+        dispatch(
+          getAchievementList({ metaLoading: true, teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: value })
+        );
+      }
     },
-    [condition.teacher_id, dispatch, getFirstLessonPlanId, history]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, getFirstLessonPlanId, history]
   );
   useEffect(() => {
     dispatch(
@@ -106,14 +113,14 @@ export function ReportAchievementList() {
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.lesson_plan_id, condition.sort_by, condition.status, dispatch, viewMyReport, viewReport]);
+  }, [condition.sort_by, condition.status, dispatch, viewMyReport, viewReport]);
 
   useEffect(() => {
     if (reportMockOptions) {
       const { teacher_id, class_id, lesson_plan_id } = reportMockOptions;
       teacher_id &&
-        // class_id &&
-        // lesson_plan_id &&
+        class_id &&
+        lesson_plan_id &&
         history.push({
           search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }),
         });

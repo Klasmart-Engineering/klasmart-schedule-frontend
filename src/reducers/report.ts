@@ -98,18 +98,15 @@ export const getLessonPlan = createAsyncThunk<
   return await api.schedulesLessonPlans.getLessonPlans({ teacher_id, class_id });
 });
 
-export const getClassList = createAsyncThunk<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>(
-  "getLessonPlan",
-  async ({ user_id }) => {
-    const { data } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
-      query: ClassesByTeacherDocument,
-      variables: {
-        user_id,
-      },
-    });
-    return data;
-  }
-);
+export const getClassList = createAsyncThunk<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>("getClassList", async ({ user_id }) => {
+  const { data } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
+    query: ClassesByTeacherDocument,
+    variables: {
+      user_id,
+    },
+  });
+  return data;
+});
 
 export interface GetReportMockOptionsResponse {
   teacherList: TeachersByOrgnizationQuery;
@@ -313,8 +310,18 @@ const { reducer } = createSlice({
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
       state.reportMockOptions.classList = payload;
+      state.reportMockOptions.class_id = (payload.user && payload.user.classesTeaching
+        ? payload.user.classesTeaching[0]?.class_id
+        : undefined) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+      state.reportMockOptions.lessonPlanList = payload;
+      state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
+    },
+    [getLessonPlan.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getAchievementDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementDetail>>) => {

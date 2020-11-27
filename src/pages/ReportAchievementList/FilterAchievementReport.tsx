@@ -138,6 +138,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const viewReport = usePermission(PermissionType.view_reports_610);
   const viewMyReport = usePermission(PermissionType.view_my_reports_614);
   const getOptions = (list: MockOptionsItem[]) =>
+    list &&
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
