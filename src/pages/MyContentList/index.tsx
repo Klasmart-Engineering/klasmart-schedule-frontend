@@ -8,7 +8,7 @@ import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestConte
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import mockTreeData from "../../mocks/foldertree.json";
-import { ids2Content } from "../../models/ModelEntityFolderContent";
+import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
@@ -23,6 +23,7 @@ import {
   pendingContentLists,
   privateContentLists,
   publishContent,
+  renameFolder,
   setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
@@ -102,8 +103,9 @@ export default function MyContentList() {
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
-  const { folderTreeActive, closeFolderTree, openFolderTree, setReferContent } = useFolderTree<EntityFolderContent[]>();
+  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent } = useFolderTree<EntityFolderContent[]>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -146,22 +148,27 @@ export default function MyContentList() {
       history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
     }
   };
-  const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
-    setReferContent([content]);
-    openFolderTree();
-  };
-  // const handleRemoveFolder = (id: string) => {
-  //   dispatch(moveFolder(removeId, id))
-  // }
-  const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (id) => {
-    // refreshWithDispatch(dispatch(renameFolder({item_id: id, name: {name: "folder2"}})))
-    return Promise.resolve();
+
+  const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (content) => {
+    return refreshWithDispatch(dispatch(renameFolder({ item_id: content?.id as string, defaultName: content?.name as string })));
   };
   const handleAddFolder = async (id: string) => {
     refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: id })));
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
     return refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
+  };
+  const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
+    setReferContent([content]);
+    // todo:mock换成函数
+    // await dispatch(searchOrgFolderItems())
+    openFolderTree();
+  };
+  const handleMove: FolderTreeProps["onMove"] = async (parent_id) => {
+    await refreshWithDispatch(
+      dispatch(moveFolderBulk({ dist: parent_id, contents: referContent, content_type: condition.content_type })).then(unwrapResult)
+    );
+    closeFolderTree();
   };
   const handleBulkMove: ThirdSearchHeaderProps["onBulkMove"] = () => {
     setReferContent(ids2Content(contentsList, ids));
@@ -171,16 +178,17 @@ export default function MyContentList() {
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
     history.go(-1);
   };
-  const handleMove: FolderTreeProps["onMove"] = async (parent_id) => {
-    await refreshWithDispatch(dispatch(moveFolderBulk({ dist: parent_id, ids })).then(unwrapResult));
-    closeFolderTree();
-  };
+
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
       history.push({ search: toQueryString({ ...condition, page }) });
     }
   }, [condition, contentsList, history, total]);
+
+  useEffect(() => {
+    setActionObj(ids2removeOrDelete(contentsList, ids));
+  }, [contentsList, ids]);
 
   useEffect(() => {
     (async () => {
@@ -231,6 +239,7 @@ export default function MyContentList() {
         onBulkDelete={handleBulkDelete}
         onAddFolder={() => handleAddFolder(ROOT_ID)}
         onBulkMove={handleBulkMove}
+        actionObj={actionObj}
       />
       <ThirdSearchHeaderMb
         value={condition}
@@ -239,6 +248,7 @@ export default function MyContentList() {
         onBulkDelete={handleBulkDelete}
         onAddFolder={() => handleAddFolder(ROOT_ID)}
         onBulkMove={handleBulkMove}
+        actionObj={actionObj}
       />
       <PermissionOr
         value={[

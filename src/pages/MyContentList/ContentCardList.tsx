@@ -286,7 +286,7 @@ function ContentCard(props: ContentProps) {
             {content?.name}
           </Typography>
           {content.content_type === ContentType.folder && (
-            <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content.id as string)}>
+            <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
               <EditOutlinedIcon />
             </IconButton>
           )}
@@ -409,7 +409,7 @@ interface ContentActionProps {
   onPublish: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onDelete: (id: NonNullable<EntityFolderContent["id"]>, type: string) => ReturnType<LButtonProps["onClick"]>;
   onClickMoveBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
-  onRenameFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onRenameFolder: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
   onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
 }
 

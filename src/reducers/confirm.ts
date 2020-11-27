@@ -17,6 +17,7 @@ export interface ConfirmRequest {
   cancelText?: string;
   placeholder?: string;
   rules?: ControllerProps<"input">["rules"];
+  defaultValue?: string;
 }
 
 export interface IConfirmState extends ConfirmRequest {

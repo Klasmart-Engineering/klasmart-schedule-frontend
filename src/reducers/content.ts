@@ -12,6 +12,7 @@ import {
 import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
+import { content2FileType } from "../models/ModelEntityFolderContent";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -158,12 +159,17 @@ const initialState: IContentState = {
 };
 
 const ADD_FOLDER_MODEL_INFO = {
-  title: "Add a Folder",
+  title: "Add a New Folder",
   content: "Folder Name",
   placeholder: "name",
   type: ConfirmDialogType.onlyInput,
 };
 const UNKNOW_ERROR_LABEL: LangRecordId = "general_error_unknown";
+const RENAME_FOLDER_NAME_MODEL_INFO = {
+  title: "Rename the Folder",
+  content: "Folder Name",
+  type: ConfirmDialogType.onlyInput,
+};
 
 export enum Action {
   remove = "remove",
@@ -515,6 +521,25 @@ export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolder
   }
 );
 
+type IQueryRenameFolderParams = {
+  item_id: Parameters<typeof api.folders.updateFolderItem>[0];
+  defaultName: string;
+};
+type IQueryRenameFolderResult = AsyncReturnType<typeof api.folders.updateFolderItem>;
+export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRenameFolderParams>(
+  "content/renameFolder",
+  async ({ item_id, defaultName }, { dispatch }) => {
+    const validate = (name: string) => {
+      return api.folders
+        .updateFolderItem(item_id, { name: name })
+        .then(() => true)
+        .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
+    };
+    await dispatch(actAsyncConfirm({ ...RENAME_FOLDER_NAME_MODEL_INFO, defaultValue: defaultName, rules: { validate } }));
+    return "";
+  }
+);
+
 type IQueryMOveFolderParams = {
   item_id: Parameters<typeof api.folders.moveFolderItem>[0];
   dist: Parameters<typeof api.folders.moveFolderItem>[1];
@@ -524,21 +549,19 @@ export const moveFolder = createAsyncThunk<IQueryMoveFolderResult, IQueryMOveFol
   api.folders.moveFolderItem(item_id, dist)
 );
 
-type IQueryBulkMoveFolderParams = Parameters<typeof api.folders.moveFolderItemBulk>[0];
+type IQueryBulkMoveFolderParams = {
+  dist: string;
+  contents?: EntityFolderContent[];
+  content_type?: string;
+};
 type IQueryBulkMoveFolderResult = AsyncReturnType<typeof api.folders.moveFolderItemBulk>;
 export const moveFolderBulk = createAsyncThunk<IQueryBulkMoveFolderResult, IQueryBulkMoveFolderParams>(
   "content/moveFolderBulk",
-  ({ dist, ids }) => api.folders.moveFolderItemBulk({ dist, ids })
-);
-
-type IQueryRenameFolderParams = {
-  item_id: Parameters<typeof api.folders.updateFolderItem>[0];
-  name: Parameters<typeof api.folders.updateFolderItem>[1];
-};
-type IQueryRenameFolderResult = AsyncReturnType<typeof api.folders.updateFolderItem>;
-export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRenameFolderParams>(
-  "content/renameFolder",
-  ({ item_id, name }) => api.folders.updateFolderItem(item_id, name)
+  async ({ dist, contents, content_type }) => {
+    const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    const folder_info = content2FileType(contents);
+    return api.folders.moveFolderItemBulk({ dist, folder_info, owner_type: 1, partition });
+  }
 );
 
 type IQueryRemoveFolderParams = {
@@ -555,6 +578,20 @@ export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRem
     return api.folders.removeFolderItem(item_id, params);
   }
 );
+
+// type IQuerySearchOrgFolderItemsParams = Parameters<typeof recursiveListFolderItems>[0]
+// {
+//   folder_id: Parameters<typeof recursiveListFolderItems>[0],
+//   query: Parameters<typeof recursiveListFolderItems>[1]
+// }
+// type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFolderItems>
+// export const searchOrgFolderItems = createAsyncThunk<any, IQuerySearchOrgFolderItemsParams>(
+//   "content/searchOrgFolderItems",
+//   ({ item_type }, { dispatch }) => {
+//     return dispatch(recursiveListFolderItems(item_type))
+//   }
+// )
+// recursiveListFolderItems(123,{item_type：2})
 
 const { actions, reducer } = createSlice({
   name: "content",

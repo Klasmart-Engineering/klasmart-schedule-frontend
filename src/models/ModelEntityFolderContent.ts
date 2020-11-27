@@ -1,5 +1,5 @@
-import { EntityFolderContent } from "../api/api.auto";
-import { ContentType } from "../api/type";
+import { EntityFolderContent, EntityFolderIdWithFileType } from "../api/api.auto";
+import { ContentType, FolderFileTyoe } from "../api/type";
 
 function toHash(contents: EntityFolderContent[], ids: string[]): Record<string, EntityFolderContent> {
   return contents.reduce((result, content) => {
@@ -9,26 +9,41 @@ function toHash(contents: EntityFolderContent[], ids: string[]): Record<string, 
 }
 
 export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[]) {
-  const types = contents.map((item) => {
-    if (ids.includes(item.id as string)) return item.content_type;
-    return null;
-  });
-  if (
-    types.every((item) => {
-      return item === ContentType.folder;
-    })
-  )
-    return "folder";
-  if (
-    types.every((item) => {
-      return item === ContentType.material || item === ContentType.plan;
-    })
-  )
-    return "plama";
-  return "foplma";
+  const obj = {
+    folder: false,
+    planAndMaterial: false,
+    bothHave: false,
+  };
+  const hash = toHash(contents, ids);
+  if (!ids || ids.length === 0) return obj;
+  const arr = ids.map((id) => hash[id]);
+  if (arr.every((item) => item.content_type === ContentType.folder)) {
+    obj.folder = true;
+    obj.planAndMaterial = false;
+    obj.bothHave = false;
+  } else if (arr.every((item) => item.content_type === ContentType.plan || item.content_type === ContentType.material)) {
+    obj.planAndMaterial = true;
+    obj.folder = false;
+    obj.bothHave = false;
+  } else {
+    obj.folder = false;
+    obj.planAndMaterial = false;
+    obj.bothHave = true;
+  }
+  return obj;
 }
 
 export function ids2Content(contents: EntityFolderContent[], ids: string[]): EntityFolderContent[] {
   const hash = toHash(contents, ids);
   return ids.map((id) => hash[id]);
+}
+
+export function content2FileType(contents: EntityFolderContent[] | undefined): EntityFolderIdWithFileType[] {
+  if (!contents) return [];
+  return contents.map((item) => {
+    return {
+      folder_file_type: item.content_type === 0 ? FolderFileTyoe.folder : FolderFileTyoe.content,
+      id: item.id,
+    };
+  });
 }

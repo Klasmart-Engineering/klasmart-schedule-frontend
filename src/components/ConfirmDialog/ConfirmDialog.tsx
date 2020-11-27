@@ -39,9 +39,10 @@ const REJECT_REASON_VALUES = () => [
 ];
 
 export function ConfirmDialog() {
-  const { open, title, content, type, label, confirmText, cancelText, rules, placeholder } = useSelector<RootState, RootState["confirm"]>(
-    (state) => state.confirm
-  );
+  const { open, title, content, type, label, confirmText, cancelText, rules, placeholder, defaultValue } = useSelector<
+    RootState,
+    RootState["confirm"]
+  >((state) => state.confirm);
   const dispatch = useDispatch();
   const { control, setError, errors, watch, handleSubmit } = useForm({ mode: "onSubmit", reValidateMode: "onSubmit" });
   console.log("errors = ", errors);
@@ -141,11 +142,11 @@ export function ConfirmDialog() {
             name={INPUT_NAME}
             as={TextField}
             variant="standard"
-            defaultValue={""}
+            defaultValue={defaultValue}
             autoFocus={true}
             fullWidth
             label={label}
-            placeholder={placeholder || d("Reason").t("library_label_reason")}
+            placeholder={placeholder}
             rules={{ required: reportMiss("Please Input something!", "general_error_no_input_empty"), ...rules }}
             control={control}
             error={!!errors[INPUT_NAME]}
