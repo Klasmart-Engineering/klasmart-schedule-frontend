@@ -49,7 +49,7 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
 }));
 
 interface GetTeacherItemProps {
-  list: SecondSearchHeaderProps['teacherList'];
+  list: SecondSearchHeaderProps["teacherList"];
   value: QueryCondition;
   onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   tab: keyof QueryCondition;
@@ -73,7 +73,7 @@ const GetTeacherItem = forwardRef<React.RefObject<HTMLElement>, GetTeacherItemPr
 export interface SecondSearchHeaderProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
-  teacherList: Pick<User, 'user_id' | 'user_name'>[];
+  teacherList: Pick<User, "user_id" | "user_name">[];
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const { onChange, value, teacherList } = props;
@@ -100,7 +100,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               className={css.selectButton}
               onChange={(e) => onChange(e.target.value, "teacher_id")}
               label={d("Teacher").t("report_label_teacher")}
-              value={value.teacher_id || teacherList[0]?.user_id}
+              value={value.teacher_id || teacherList[0]?.user_id || ""}
               select
               disabled={teacherList.length < 2}
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

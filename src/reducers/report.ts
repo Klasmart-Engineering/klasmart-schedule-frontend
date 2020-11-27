@@ -280,13 +280,13 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
       // teacherList 不存在，不需要拉取 categories
       if (!teacherList || !teacherList[0]) return { teacherList: [], categories: [] };
       // 如果 teacher_id 就直接使用，不然就用列表第一项
-      const { categories = [] } = await api.reports.getTeacherReport(teacher_id || teacherList[0]?.user_id);
-      return { teacherList, categories };
+      const { categories } = { ...(await api.reports.getTeacherReport(teacher_id || teacherList[0]?.user_id)) };
+      return { teacherList, categories: categories ?? [] };
     }
     if (!my_id) return { teacherList: [], categories: [] };
     if (perm.view_my_reports_614) {
-      const { categories = [] } = await api.reports.getTeacherReport(my_id);
-      return { teacherList: [], categories };
+      const { categories } = { ...(await api.reports.getTeacherReport(my_id)) };
+      return { teacherList: [], categories: categories ?? [] };
     }
     return { teacherList: [], categories: [] };
   }
