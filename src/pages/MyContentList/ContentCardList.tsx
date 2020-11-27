@@ -33,7 +33,7 @@ import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
-import { LButton } from "../../components/LButton";
+import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
@@ -237,7 +237,7 @@ function ContentCard(props: ContentProps) {
     onDelete,
     onPublish,
     onClickContent,
-    onRemeberMoveFolder,
+    onClickMoveBtn,
     onRenameFolder,
     onDeleteFolder,
   } = props;
@@ -319,7 +319,7 @@ function ContentCard(props: ContentProps) {
               as={IconButton}
               replace
               className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-              onClick={() => onRemeberMoveFolder(content.id as string, content.content_type as number)}
+              onClick={() => onClickMoveBtn(content)}
             >
               <FolderOpenIcon />
             </LButton>
@@ -406,11 +406,11 @@ function ContentCard(props: ContentProps) {
 }
 
 interface ContentActionProps {
-  onPublish: (id: NonNullable<EntityFolderContent["id"]>) => any;
-  onDelete: (id: NonNullable<EntityFolderContent["id"]>, type: string) => any;
-  onRemeberMoveFolder: (id: NonNullable<EntityFolderContent["id"]>, content_type: NonNullable<EntityFolderContent["content_type"]>) => any;
-  onRenameFolder: (id: NonNullable<EntityFolderContent["id"]>) => any;
-  onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => any;
+  onPublish: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onDelete: (id: NonNullable<EntityFolderContent["id"]>, type: string) => ReturnType<LButtonProps["onClick"]>;
+  onClickMoveBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
+  onRenameFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
@@ -441,7 +441,7 @@ export function ContentCardList(props: ContentCardListProps) {
     onChangePage,
     onClickContent,
     onChangePageSize,
-    onRemeberMoveFolder,
+    onClickMoveBtn,
     onRenameFolder,
     onDeleteFolder,
     onGoBack,
@@ -491,7 +491,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           queryCondition,
                           selectedContentGroupContext,
                           onClickContent,
-                          onRemeberMoveFolder,
+                          onClickMoveBtn,
                           onRenameFolder,
                           onDeleteFolder,
                         }}

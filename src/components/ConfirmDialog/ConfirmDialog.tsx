@@ -9,10 +9,10 @@ import {
   FormControlLabel,
   TextField,
 } from "@material-ui/core";
-import React, { Fragment, useCallback } from "react";
+import React, { Fragment, useCallback, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { actExitConfirm, ConfirmDialogType } from "../../reducers/confirm";
 import { CheckboxGroup } from "../CheckboxGroup";
@@ -43,38 +43,31 @@ export function ConfirmDialog() {
     (state) => state.confirm
   );
   const dispatch = useDispatch();
-  const { control, setError, errors, watch, handleSubmit } = useForm();
+  const { control, setError, errors, watch, handleSubmit } = useForm({ mode: "onSubmit", reValidateMode: "onSubmit" });
+  console.log("errors = ", errors);
   const values = watch();
+  console.log("values = ", values);
   const disableConfirm =
     type === ConfirmDialogType.textField && !values[REJECT_REASON]?.length && !values[OTHER_REASON] && !values[INPUT_NAME];
   const handleCancel = useCallback(() => dispatch(actExitConfirm({ isConfirmed: false })), [dispatch]);
-  const handleConfirm = useCallback(() => {
-    if (type === ConfirmDialogType.onlyInput) {
-      if (values[OTHER_REASON] && !values[INPUT_NAME]) {
-        return setError(INPUT_NAME, {
-          type: "manual",
-          message: "Please input the folder name",
-        });
-      }
-      const text = values[INPUT_NAME];
-      dispatch(actExitConfirm({ isConfirmed: true, text }));
-    }
-    handleSubmit((values, error) => {
-      console.log(error);
-
-      if (type === ConfirmDialogType.text) return dispatch(actExitConfirm({ isConfirmed: true }));
-      if (values[OTHER_REASON] && !values[INPUT_NAME]) {
-        return setError(INPUT_NAME, {
-          type: "manual",
-          message: d("Please specify the reason for rejection.").t("library_msg_reject_reason"),
-        });
-      }
-      const reasonValue = [...values[REJECT_REASON]];
-      const otherValue = values[INPUT_NAME] ? values[INPUT_NAME] : "";
-      // const value = values[INPUT_NAME] ? [...values[REJECT_REASON], values[INPUT_NAME]] : values[REJECT_REASON];
-      if (type === ConfirmDialogType.textField) dispatch(actExitConfirm({ isConfirmed: true, reasonValue, otherValue }));
-    });
-  }, [type, handleSubmit, values, dispatch, setError]);
+  const handleConfirm = useMemo(
+    () =>
+      handleSubmit((values) => {
+        if (type === ConfirmDialogType.text || type === ConfirmDialogType.onlyInput) return dispatch(actExitConfirm({ isConfirmed: true }));
+        if (type === ConfirmDialogType.textField) {
+          if (values[OTHER_REASON] && !values[INPUT_NAME]) {
+            return setError(INPUT_NAME, {
+              type: "manual",
+              message: d("Please specify the reason for rejection.").t("library_msg_reject_reason"),
+            });
+          }
+          const reasonValue = [...values[REJECT_REASON]];
+          const otherValue = values[INPUT_NAME] ? values[INPUT_NAME] : "";
+          dispatch(actExitConfirm({ isConfirmed: true, reasonValue, otherValue }));
+        }
+      }),
+    [type, handleSubmit, dispatch, setError]
+  );
   return (
     <Dialog open={open} maxWidth="xs" aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" disableBackdropClick>
       <DialogTitle>{title}</DialogTitle>
@@ -153,7 +146,7 @@ export function ConfirmDialog() {
             fullWidth
             label={label}
             placeholder={placeholder || d("Reason").t("library_label_reason")}
-            rules={{ required: true, ...rules }}
+            rules={{ required: reportMiss("Please Input something!", "general_error_no_input_empty"), ...rules }}
             control={control}
             error={!!errors[INPUT_NAME]}
             helperText={errors[INPUT_NAME]?.message}

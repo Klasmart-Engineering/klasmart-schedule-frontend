@@ -1,12 +1,14 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
+import { EntityFolderContent } from "../../api/api.auto";
 import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import mockTreeData from "../../mocks/foldertree.json";
+import { ids2Content } from "../../models/ModelEntityFolderContent";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
@@ -52,7 +54,8 @@ const useQuery = (): QueryCondition => {
     const content_type = query.get("content_type");
     const program = query.get("program");
     const path = query.get("path") || "";
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path });
+    const parent_id = (path || "").split("/").pop() || "";
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path, parent_id });
   }, [search]);
 };
 
@@ -66,7 +69,7 @@ const toFullUrl = (location: RouteProps["location"]) => {
 };
 
 interface RefreshWithDispatch {
-  <T>(result: Promise<PayloadAction<T>>): Promise<PayloadAction<T>>;
+  <T>(result: Promise<T>): Promise<T>;
 }
 
 function useRefreshWithDispatch() {
@@ -100,7 +103,7 @@ export default function MyContentList() {
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const dispatch = useDispatch<AppDispatch>();
-  const { folderTreeActive, closeFolderTree } = useFolderTree();
+  const { folderTreeActive, closeFolderTree, openFolderTree, setReferContent } = useFolderTree<EntityFolderContent[]>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -143,32 +146,34 @@ export default function MyContentList() {
       history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
     }
   };
-  const handleRememberMoveFolder: ContentCardListProps["onRemeberMoveFolder"] = (id) => {
-    // setRemoveId(id);
-    // dispatch(moveFolder({item_id: id, dist:{dist: "5fbf4cf9b9678f45f4e7954b"}}))
+  const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
+    setReferContent([content]);
+    openFolderTree();
   };
   // const handleRemoveFolder = (id: string) => {
   //   dispatch(moveFolder(removeId, id))
   // }
   const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (id) => {
     // refreshWithDispatch(dispatch(renameFolder({item_id: id, name: {name: "folder2"}})))
+    return Promise.resolve();
   };
-  let parent_id: string;
-  parent_id = (condition?.path || "").split("/").pop() || "";
   const handleAddFolder = async (id: string) => {
     refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: id })));
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
-    refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
+    return refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
   };
   const handleBulkMove: ThirdSearchHeaderProps["onBulkMove"] = () => {
-    refreshWithDispatch(dispatch(moveFolderBulk({ dist: parent_id, ids })));
+    setReferContent(ids2Content(contentsList, ids));
+    openFolderTree();
+    // refreshWithDispatch(dispatch(moveFolderBulk({ dist: parent_id, ids })));
   };
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
     history.go(-1);
   };
-  const handleMove: FolderTreeProps["onMove"] = (id) => {
-    console.log("onMove id = ", id);
+  const handleMove: FolderTreeProps["onMove"] = async (parent_id) => {
+    await refreshWithDispatch(dispatch(moveFolderBulk({ dist: parent_id, ids })).then(unwrapResult));
+    closeFolderTree();
   };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
@@ -257,7 +262,7 @@ export default function MyContentList() {
                 onClickContent={handleClickConent}
                 onPublish={handlePublish}
                 onDelete={handleDelete}
-                onRemeberMoveFolder={handleRememberMoveFolder}
+                onClickMoveBtn={handleClickMoveBtn}
                 onRenameFolder={handleRenameFolder}
                 onDeleteFolder={handleDeleteFolder}
                 onGoBack={handleGoback}

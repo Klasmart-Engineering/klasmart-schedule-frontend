@@ -3,6 +3,7 @@ import { AddBoxOutlined, Close, CreateNewFolderOutlined, Folder, IndeterminateCh
 import { TreeItem, TreeView } from "@material-ui/lab";
 import React, { useMemo, useState } from "react";
 import { RecursiveFolderItem } from "../../api/extra";
+import { LButton, LButtonProps } from "../../components/LButton";
 import { d, reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) =>
@@ -48,7 +49,7 @@ export interface FolderTreeProps {
   rootFolderName: string;
   onClose: () => any;
   onAddFolder: (id: string) => any;
-  onMove: (id: string) => any;
+  onMove: (id: string) => ReturnType<LButtonProps["onClick"]>;
   open: boolean;
 }
 export function FolderTree(props: FolderTreeProps) {
@@ -108,23 +109,26 @@ export function FolderTree(props: FolderTreeProps) {
           <Button color="primary" variant="outlined" onClick={onClose}>
             {d("Cancel").t("library_label_cancel")}
           </Button>
-          <Button color="primary" variant="contained" className={css.okBtn} onClick={() => onMove(value)}>
+          <LButton color="primary" variant="contained" className={css.okBtn} onClick={() => onMove(value)}>
             {d("OK").t("library_label_ok")}
-          </Button>
+          </LButton>
         </div>
       </DialogActions>
     </Dialog>
   );
 }
 
-export function useFolderTree() {
+export function useFolderTree<T>() {
   const [active, setActive] = useState(false);
+  const [referContent, setReferContent] = useState<T>();
   return useMemo(
     () => ({
       folderTreeActive: active,
       openFolderTree: () => setActive(true),
       closeFolderTree: () => setActive(false),
+      setReferContent,
+      referContent,
     }),
-    [setActive, active]
+    [setActive, active, referContent, setReferContent]
   );
 }

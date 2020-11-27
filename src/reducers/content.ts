@@ -10,7 +10,8 @@ import {
   EntityFolderContent,
 } from "../api/api.auto";
 import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
-import { d } from "../locale/LocaleManager";
+import { LangRecordId } from "../locale/lang/type";
+import { d, t } from "../locale/LocaleManager";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -162,6 +163,7 @@ const ADD_FOLDER_MODEL_INFO = {
   placeholder: "name",
   type: ConfirmDialogType.onlyInput,
 };
+const UNKNOW_ERROR_LABEL: LangRecordId = "general_error_unknown";
 
 export enum Action {
   remove = "remove",
@@ -500,10 +502,16 @@ type IQueryAddFolderResult = AsyncReturnType<typeof api.folders.createFolder>;
 export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolderParams>(
   "content/addFolder",
   async ({ content_type, parent_id }, { dispatch }) => {
-    const { isConfirmed, text: name } = unwrapResult(await dispatch(actAsyncConfirm(ADD_FOLDER_MODEL_INFO)));
-    if (!isConfirmed) return { id: undefined };
+    let id;
     const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
-    return api.folders.createFolder({ name, partition, owner_type: 1, parent_id });
+    const validate = (name: string) => {
+      return api.folders
+        .createFolder({ name, partition, owner_type: 1, parent_id })
+        .then(() => true)
+        .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
+    };
+    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO, rules: { validate } }));
+    return { id };
   }
 );
 
