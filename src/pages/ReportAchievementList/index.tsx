@@ -88,16 +88,23 @@ export function ReportAchievementList() {
         }
       }
       if (tab === "class_id") {
-        getFirstLessonPlanId(condition.teacher_id, value);
+        getFirstLessonPlanId(reportMockOptions.teacher_id, value);
       }
       if (tab === "lesson_plan_id") {
-        dispatch(
-          getAchievementList({ metaLoading: true, teacher_id: condition.teacher_id, class_id: condition.class_id, lesson_plan_id: value })
-        );
+        if (reportMockOptions.teacher_id && reportMockOptions.class_id) {
+          dispatch(
+            getAchievementList({
+              metaLoading: true,
+              teacher_id: reportMockOptions.teacher_id,
+              class_id: reportMockOptions.class_id,
+              lesson_plan_id: value,
+            })
+          );
+        }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch, getFirstLessonPlanId, history]
+
+    [dispatch, getFirstLessonPlanId, history, reportMockOptions.teacher_id, reportMockOptions.class_id]
   );
   useEffect(() => {
     dispatch(
