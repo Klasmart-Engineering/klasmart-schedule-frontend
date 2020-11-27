@@ -5,7 +5,6 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
-    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -1996,7 +1995,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.MoveFolderIDBulk"
+              "$ref": "#/definitions/entity.MoveFolderIDBulkRequest"
             }
           }
         ],
@@ -2101,7 +2100,7 @@
     },
     "/folders/items/list/{folder_id}": {
       "get": {
-        "description": "list folder items",
+        "description": "list folder items (deprecated)",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["folder"],
@@ -2131,7 +2130,7 @@
         }
       }
     },
-    "/folders/items/move/{item_id}": {
+    "/folders/items/move": {
       "put": {
         "description": "move folder item",
         "consumes": ["application/json"],
@@ -5079,10 +5078,30 @@
       }
     },
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "enum": ["content", "folder"],
+          "example": "unknown"
+        }
+      }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "enum": ["content", "folder"],
+          "example": "unknown"
+        }
+      }
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -5108,19 +5127,6 @@
         },
         "developmental_name": {
           "type": "string"
-        }
-      }
-    },
-    "api.ErrorResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "enum": ["unknown"],
-          "example": "unknown"
         }
       }
     },
@@ -5150,7 +5156,17 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "enum": ["content", "folder"],
+          "example": "unknown"
+        }
+      }
     },
     "api.Grade": {
       "type": "object",
@@ -5164,10 +5180,30 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "enum": ["content", "folder"],
+          "example": "unknown"
+        }
+      }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "enum": ["content", "folder"],
+          "example": "unknown"
+        }
+      }
     },
     "api.OutcomeCreateResponse": {
       "type": "object",
@@ -5673,7 +5709,6 @@
           "type": "string"
         },
         "subject": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentSubject"
         },
         "teachers": {
@@ -5700,14 +5735,12 @@
           "type": "string"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
           "type": "string"
         },
         "subject": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentSubject"
         },
         "teachers": {
@@ -6101,10 +6134,14 @@
     "entity.CreateFolderItemRequest": {
       "type": "object",
       "properties": {
-        "folder_id": {
+        "link": {
           "type": "string"
         },
-        "link": {
+        "owner_type": {
+          "type": "integer"
+        },
+        "parent_folder_id": {
+          "description": "ID string `json:\"id\"`",
           "type": "string"
         },
         "partition": {
@@ -6226,6 +6263,17 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.FolderIdWithFileType": {
+      "type": "object",
+      "properties": {
+        "folder_file_type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
         }
       }
     },
@@ -6429,17 +6477,23 @@
         }
       }
     },
-    "entity.MoveFolderIDBulk": {
+    "entity.MoveFolderIDBulkRequest": {
       "type": "object",
       "properties": {
         "dist": {
           "type": "string"
         },
-        "ids": {
+        "folder_info": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.FolderIdWithFileType"
           }
+        },
+        "owner_type": {
+          "type": "integer"
+        },
+        "partition": {
+          "type": "string"
         }
       }
     },
@@ -6447,6 +6501,19 @@
       "type": "object",
       "properties": {
         "dist": {
+          "type": "string"
+        },
+        "folder_file_type": {
+          "type": "string",
+          "enum": ["unknown"]
+        },
+        "id": {
+          "type": "string"
+        },
+        "owner_type": {
+          "type": "integer"
+        },
+        "partition": {
           "type": "string"
         }
       }
@@ -6619,7 +6686,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6646,7 +6712,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6673,11 +6738,9 @@
       "type": "object",
       "properties": {
         "daily": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -6685,11 +6748,9 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -6698,7 +6759,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6717,7 +6777,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6751,7 +6810,6 @@
       "required": ["class_id", "end_at", "start_at", "teacher_ids", "title"],
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -6789,7 +6847,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -6820,11 +6877,9 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_type": {
@@ -6850,7 +6905,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -6863,11 +6917,9 @@
           "type": "string"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -6881,7 +6933,6 @@
           "type": "integer"
         },
         "subject": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "teachers": {
@@ -6947,7 +6998,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "end_at": {
@@ -6957,7 +7007,6 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -6967,7 +7016,6 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -6977,7 +7025,6 @@
           "type": "integer"
         },
         "subject": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "teachers": {
@@ -7007,7 +7054,6 @@
       "required": ["class_id", "end_at", "start_at", "teacher_ids", "title"],
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -7048,7 +7094,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {

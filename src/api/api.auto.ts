@@ -15,9 +15,15 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export type ApiBadRequestResponse = ApiErrorResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: "content" | "folder";
+}
 
-export type ApiConflictResponse = ApiErrorResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: "content" | "folder";
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -32,11 +38,6 @@ export interface ApiDevelopmental {
   developmental_name?: string;
 }
 
-export interface ApiErrorResponse {
-  data?: object;
-  label?: "unknown";
-}
-
 export interface ApiFolderItemsResponse {
   items?: EntityFolderItem[];
 }
@@ -46,16 +47,25 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiErrorResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: "content" | "folder";
+}
 
 export interface ApiGrade {
   grade_id?: string;
   grade_name?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiErrorResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: "content" | "folder";
+}
 
-export type ApiNotFoundResponse = ApiErrorResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: "content" | "folder";
+}
 
 export interface ApiOutcomeCreateResponse {
   age?: string[];
@@ -355,8 +365,11 @@ export interface EntityCreateContentRequest {
 }
 
 export interface EntityCreateFolderItemRequest {
-  folder_id?: string;
   link?: string;
+  owner_type?: number;
+
+  /** ID string `json:"id"` */
+  parent_folder_id?: string;
 
   /** ItemType  ItemType  `json:"item_type"` */
   partition?: string;
@@ -403,6 +416,11 @@ export interface EntityFolderContent {
 export interface EntityFolderContentInfoWithDetailsResponse {
   list?: EntityFolderContent[];
   total?: number;
+}
+
+export interface EntityFolderIdWithFileType {
+  folder_file_type?: string;
+  id?: string;
 }
 
 export interface EntityFolderItem {
@@ -479,13 +497,19 @@ export interface EntityLiveTokenView {
   token?: string;
 }
 
-export interface EntityMoveFolderIDBulk {
+export interface EntityMoveFolderIDBulkRequest {
   dist?: string;
-  ids?: string[];
+  folder_info?: EntityFolderIdWithFileType[];
+  owner_type?: number;
+  partition?: string;
 }
 
 export interface EntityMoveFolderRequest {
   dist?: string;
+  folder_file_type?: "unknown";
+  id?: string;
+  owner_type?: number;
+  partition?: string;
 }
 
 export interface EntityOutcome {
@@ -1495,7 +1519,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/folders/items/bulk/move
      * @description bulk move folder item
      */
-    moveFolderItemBulk: (content: EntityMoveFolderIDBulk, params?: RequestParams) =>
+    moveFolderItemBulk: (content: EntityMoveFolderIDBulkRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/bulk/move`, "PUT", params, content),
 
     /**
@@ -1532,9 +1556,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @name listFolderItems
      * @summary listFolderItems
      * @request GET:/folders/items/list/{folder_id}
-     * @description list folder items
+     * @description list folder items (deprecated)
      */
-    listFolderItems: (folder_id: string, query?: { item_type?: number; partition?: string }, params?: RequestParams) =>
+    listFolderItems: (folder_id: string, query?: { item_type?: number }, params?: RequestParams) =>
       this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
         `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
         "GET",
@@ -1545,16 +1569,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags folder
      * @name moveFolderItem
      * @summary moveFolderItem
-     * @request PUT:/folders/items/move/{item_id}
+     * @request PUT:/folders/items/move
      * @description move folder item
      */
-    moveFolderItem: (item_id: string, content: EntityMoveFolderRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/folders/items/move/${item_id}`,
-        "PUT",
-        params,
-        content
-      ),
+    moveFolderItem: (content: EntityMoveFolderRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/move`, "PUT", params, content),
 
     /**
      * @tags folder
