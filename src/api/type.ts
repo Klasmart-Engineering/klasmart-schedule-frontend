@@ -117,3 +117,8 @@ export enum FolderOwnerType {
   org = 1,
   private = 2,
 }
+
+export enum FolderFileTyoe {
+  folder = "folder",
+  content = "content",
+}
