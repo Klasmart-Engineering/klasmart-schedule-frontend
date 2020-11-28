@@ -139,9 +139,6 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
     if (!attendance_ids?.length)
       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
     toggle();
-    // assessmentDetail?.outcome_attendance_maps?.map((item, index)=>{
-    //   setValue(`${item}[${index}].attendance_ids`, attendance_ids||[])
-    // })
     if (onChange) return onChange(attendance_ids || []);
   }, [dispatch, formMethods, onChange]);
   return (

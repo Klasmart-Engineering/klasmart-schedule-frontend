@@ -31,7 +31,9 @@ export const ModelAssessment = {
     const draft = cloneDeep(defaultDetail);
     const attendanceHash = toHash(defaultDetail.attendances || []);
     draft.attendances = value.attendance_ids?.map((id) => attendanceHash[id]) || [];
-    if (!draft.attendances[0]) {
+    const list = cloneDeep(draft.attendances);
+    const bb = list.filter((item) => item === undefined);
+    if (bb.length > 0) {
       draft.attendances = [];
     }
     return draft;
