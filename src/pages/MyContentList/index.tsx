@@ -24,7 +24,8 @@ import {
   privateContentLists,
   publishContent,
   renameFolder,
-  setUserSetting,
+
+  searchOrgFolderItems, setUserSetting
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
@@ -55,8 +56,8 @@ const useQuery = (): QueryCondition => {
     const content_type = query.get("content_type");
     const program = query.get("program");
     const path = query.get("path") || "";
-    const parent_id = (path || "").split("/").pop() || "";
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path, parent_id });
+    // const parent_id = (path || "").split("/").pop() || "";
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path });
   }, [search]);
 };
 
@@ -105,6 +106,7 @@ export default function MyContentList() {
   const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
+  const parent_id = (condition.path || "").split("/").pop() || "";
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent } = useFolderTree<EntityFolderContent[]>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
@@ -161,7 +163,8 @@ export default function MyContentList() {
   const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
     setReferContent([content]);
     // todo:mock换成函数
-    // await dispatch(searchOrgFolderItems())
+    // 根目录时folder_id传什么值
+    await dispatch(searchOrgFolderItems({query: {item_type: 1}}))
     openFolderTree();
   };
   const handleMove: FolderTreeProps["onMove"] = async (parent_id) => {

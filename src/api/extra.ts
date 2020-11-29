@@ -117,7 +117,7 @@ export interface RecursiveFolderItem extends EntityFolderItem {
   next: RecursiveFolderItem[];
 }
 export const recursiveListFolderItems = async (
-  // folder_id: string,
+  // folder_id: number,
   query: { item_type: number }
 ): Promise<RecursiveFolderItem[]> => {
   const { item_type } = query;

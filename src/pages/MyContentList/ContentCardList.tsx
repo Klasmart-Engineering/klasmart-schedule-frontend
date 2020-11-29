@@ -14,7 +14,7 @@ import {
   MenuItem,
   Select,
   styled,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank, ExpandMore } from "@material-ui/icons";
@@ -202,6 +202,20 @@ const useStyles = makeStyles((theme) =>
       height: 32,
       fontSize: "12px",
     },
+    fileCount: {
+      borderRadius: 16,
+      background: '#F7A107',
+      color: "#ffe69f",
+      fontSize: 18,
+      width: "14%",
+      height: "15%",
+      position: "absolute",
+      left: "55%",
+      top: "63%",
+      display: "flex",
+      justifyContent: "center",
+      alignContent: "center",
+    }
   })
 );
 
@@ -277,7 +291,9 @@ function ContentCard(props: ContentProps) {
           {content.content_type === ContentType.folder && (
             <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
           )}
-          {/* {content.content_type === ContentType.folder && <img className={css.cardImg} src={folderBigIconUrl} alt="" />} */}
+          {content.content_type === ContentType.folder && (
+            <Grid className={css.fileCount}>{content.items_count}</Grid>
+          )}
         </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>

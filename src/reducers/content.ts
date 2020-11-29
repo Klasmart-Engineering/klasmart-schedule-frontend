@@ -7,8 +7,9 @@ import {
   ApiOutcomeView,
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
-  EntityFolderContent,
+  EntityFolderContent
 } from "../api/api.auto";
+import { recursiveListFolderItems } from "../api/extra";
 import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -579,18 +580,18 @@ export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRem
   }
 );
 
-// type IQuerySearchOrgFolderItemsParams = Parameters<typeof recursiveListFolderItems>[0]
-// {
-//   folder_id: Parameters<typeof recursiveListFolderItems>[0],
-//   query: Parameters<typeof recursiveListFolderItems>[1]
-// }
-// type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFolderItems>
-// export const searchOrgFolderItems = createAsyncThunk<any, IQuerySearchOrgFolderItemsParams>(
-//   "content/searchOrgFolderItems",
-//   ({ item_type }, { dispatch }) => {
-//     return dispatch(recursiveListFolderItems(item_type))
-//   }
-// )
+type IQuerySearchOrgFolderItemsParams = {
+  // folder_id: Parameters<typeof recursiveListFolderItems>[0],
+  query: Parameters<typeof recursiveListFolderItems>[0]
+}
+type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFolderItems>
+export const searchOrgFolderItems = createAsyncThunk<IQuerySearchOrgFolderItemsResult, IQuerySearchOrgFolderItemsParams>(
+  "content/searchOrgFolderItems",
+  ({ query }) => {
+    return recursiveListFolderItems( query)
+  }
+)
+// export const searchOrgFolderItems = recursiveListFolderItems(folder_id, ...query)
 // recursiveListFolderItems(123,{item_type：2})
 
 const { actions, reducer } = createSlice({
