@@ -120,14 +120,14 @@ export const recursiveListFolderItems = async (
   folder_id: number,
   query: { item_type: number; partition: string }
 ): Promise<RecursiveFolderItem[]> => {
-  const { item_type, partition } = query;
+  const { item_type } = query;
   const { items: rootFolders } = await api.folders.searchOrgFolderItems({ path: "/", item_type });
   if (!rootFolders) return [];
   async function forEachFolder(folders: EntityFolderItem[]): Promise<RecursiveFolderItem[]> {
     return Promise.all(
       folders.map(async (folder) => {
         const { id, item_type } = folder;
-        const { items } = await api.folders.listFolderItems(id as string, { item_type, partition });
+        const { items } = await api.folders.listFolderItems(id as string, { item_type });
         if (!items) return { ...folder, next: [] };
         const next = await forEachFolder(items);
         return { ...folder, next };
