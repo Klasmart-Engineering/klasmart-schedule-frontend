@@ -113,23 +113,26 @@ export const apiWaitForOrganizationOfPage = () => {
   });
 };
 
+type recursiveListFolderItemsProps = NonNullable<Parameters<typeof api.folders.searchOrgFolderItems>[0]>;
 export interface RecursiveFolderItem extends EntityFolderItem {
   next: RecursiveFolderItem[];
 }
-export const recursiveListFolderItems = async (
-  // folder_id: number,
-  partition: string,
-  query: { item_type: number }
-): Promise<RecursiveFolderItem[]> => {
-  const { item_type } = query;
-  const { items: rootFolders } = await api.folders.searchOrgFolderItems({ path: "/", item_type, partition });
+export const recursiveListFolderItems = async ({
+  path,
+  partition,
+  item_type,
+}: recursiveListFolderItemsProps): Promise<RecursiveFolderItem[]> => {
+  const { items: rootFolders } = await api.folders.searchOrgFolderItems({ path, item_type, partition });
   if (!rootFolders) return [];
+  function resolvePath(base: string, path: string): string {
+    if (base.slice(-1)[0] === "/") return `${base}${path}`;
+    return `${base}/${path}`;
+  }
   async function forEachFolder(folders: EntityFolderItem[]): Promise<RecursiveFolderItem[]> {
     return Promise.all(
       folders.map(async (folder) => {
-        const path = `${folder.dir_path}${folder.id}`;
-        const { item_type } = folder;
-        // const { dir_path: path, item_type } = folder;
+        const { item_type, dir_path, id } = folder;
+        const path = resolvePath(dir_path as string, id as string);
         const { items } = await api.folders.searchOrgFolderItems({ path, item_type, partition });
         if (!items) return { ...folder, next: [] };
         const next = await forEachFolder(items);
