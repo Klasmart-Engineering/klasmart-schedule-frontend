@@ -75,7 +75,7 @@ function MyCalendar(props: CalendarProps) {
   );
 
   /**
-   * close Customization template && show delete template
+   * close Customization template && show delete templates
    */
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoProps) => {
