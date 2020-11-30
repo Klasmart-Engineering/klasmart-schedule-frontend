@@ -118,16 +118,19 @@ export interface RecursiveFolderItem extends EntityFolderItem {
 }
 export const recursiveListFolderItems = async (
   // folder_id: number,
+  partition: string,
   query: { item_type: number }
 ): Promise<RecursiveFolderItem[]> => {
   const { item_type } = query;
-  const { items: rootFolders } = await api.folders.searchOrgFolderItems({ path: "/", item_type });
+  const { items: rootFolders } = await api.folders.searchOrgFolderItems({ path: "/", item_type, partition });
   if (!rootFolders) return [];
   async function forEachFolder(folders: EntityFolderItem[]): Promise<RecursiveFolderItem[]> {
     return Promise.all(
       folders.map(async (folder) => {
-        const { dir_path: path, item_type } = folder;
-        const { items } = await api.folders.searchOrgFolderItems({ path, item_type });
+        const path = `${folder.dir_path}${folder.id}`;
+        const { item_type } = folder;
+        // const { dir_path: path, item_type } = folder;
+        const { items } = await api.folders.searchOrgFolderItems({ path, item_type, partition });
         if (!items) return { ...folder, next: [] };
         const next = await forEachFolder(items);
         return { ...folder, next };

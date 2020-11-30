@@ -7,31 +7,32 @@ import { EntityFolderContent } from "../../api/api.auto";
 import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
-import mockTreeData from "../../mocks/foldertree.json";
+import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
   bulkDeleteContent,
+  bulkMoveFolder,
   bulkPublishContent,
   contentLists,
   deleteContent,
   deleteFolder,
   folderContentLists,
   getUserSetting,
-  moveFolderBulk,
   pendingContentLists,
   privateContentLists,
   publishContent,
   renameFolder,
-
-  searchOrgFolderItems, setUserSetting
+  searchOrgFolderItems,
+  setUserSetting,
 } from "../../reducers/content";
+import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { FolderTree, FolderTreeProps, ROOT_ID, useFolderTree } from "./FolderTree";
+import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -103,10 +104,9 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentsList, total, page_size, folderTree } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
-  const parent_id = (condition.path || "").split("/").pop() || "";
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent } = useFolderTree<EntityFolderContent[]>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
@@ -154,29 +154,32 @@ export default function MyContentList() {
   const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (content) => {
     return refreshWithDispatch(dispatch(renameFolder({ item_id: content?.id as string, defaultName: content?.name as string })));
   };
-  const handleAddFolder = async (id: string) => {
-    refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: id })));
+  const handleAddFolder = async () => {
+    const parent_id = (condition.path || "").split("/").pop() || "";
+    await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
     return refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
   };
   const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
     setReferContent([content]);
-    // todo:mock换成函数
-    // 根目录时folder_id传什么值
-    await dispatch(searchOrgFolderItems({query: {item_type: 1}}))
+    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, query: { item_type: 1 } }));
     openFolderTree();
   };
   const handleMove: FolderTreeProps["onMove"] = async (parent_id) => {
     await refreshWithDispatch(
-      dispatch(moveFolderBulk({ dist: parent_id, contents: referContent, content_type: condition.content_type })).then(unwrapResult)
+      dispatch(bulkMoveFolder({ dist: parent_id, contents: referContent, content_type: condition.content_type })).then(unwrapResult)
     );
     closeFolderTree();
   };
-  const handleBulkMove: ThirdSearchHeaderProps["onBulkMove"] = () => {
+  const handleClickBulkMove: ThirdSearchHeaderProps["onBulkMove"] = async () => {
+    console.log(ids);
+    if (!ids || !ids.length) {
+      return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
+    }
     setReferContent(ids2Content(contentsList, ids));
+    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, query: { item_type: 1 } }));
     openFolderTree();
-    // refreshWithDispatch(dispatch(moveFolderBulk({ dist: parent_id, ids })));
   };
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
     history.go(-1);
@@ -206,9 +209,12 @@ export default function MyContentList() {
         await dispatch(privateContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else if (condition.publish_status === PublishStatus.published) {
         await dispatch(folderContentLists({ ...condition, page_size: page_size, metaLoading: true }));
+      } else if (condition.content_type && condition.content_type === String(ContentType.assets)) {
+        await dispatch(folderContentLists({ ...condition, page_size: page_size, metaLoading: true }));
       } else {
         await dispatch(contentLists({ ...condition, page_size: page_size, metaLoading: true }));
       }
+      debugger;
       setTimeout(reset, 500);
     })();
   }, [condition, reset, dispatch, refreshKey, page_size]);
@@ -240,8 +246,8 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={() => handleAddFolder(ROOT_ID)}
-        onBulkMove={handleBulkMove}
+        onAddFolder={() => handleAddFolder()}
+        onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
       />
       <ThirdSearchHeaderMb
@@ -249,8 +255,8 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={() => handleAddFolder(ROOT_ID)}
-        onBulkMove={handleBulkMove}
+        onAddFolder={() => handleAddFolder()}
+        onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
       />
       <PermissionOr
@@ -289,7 +295,7 @@ export default function MyContentList() {
         }
       />
       <FolderTree
-        folders={mockTreeData}
+        folders={folderTree}
         rootFolderName={condition.content_type === SearchContentsRequestContentType.assets ? "Assets" : "Organization Content"}
         onClose={closeFolderTree}
         open={folderTreeActive}

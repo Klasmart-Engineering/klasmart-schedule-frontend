@@ -11,7 +11,7 @@ import React, { ChangeEvent } from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
@@ -137,20 +137,20 @@ function getBulkAction(
     case PublishStatus.published:
       let res = [
         { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-        { label: "Move to Folder", value: BulkAction.move },
-        { label: "Delete", value: BulkAction.delete },
+        { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+        { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
       ];
       if (actionObj?.folder)
         res = [
-          { label: "Move to Folder", value: BulkAction.move },
-          { label: "Delete", value: BulkAction.delete },
+          { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+          { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
         ];
       if (actionObj?.planAndMaterial && perm.archive_published_content_273)
         res = [
           { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-          { label: "Move to Folder", value: BulkAction.move },
+          { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
         ];
-      if (actionObj?.bothHave) res = [{ label: "Move to Folder", value: BulkAction.move }];
+      if (actionObj?.bothHave) res = [{ label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move }];
       return res;
     case PublishStatus.pending:
       return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
@@ -240,7 +240,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               )}
               {(value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets) && (
                 <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
-                  Add a Folder
+                  {reportMiss("Add a Folder", "library_label_add_a_folder")}
                 </Button>
               )}
             </Grid>

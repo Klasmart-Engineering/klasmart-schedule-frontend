@@ -14,7 +14,7 @@ import {
   MenuItem,
   Select,
   styled,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank, ExpandMore } from "@material-ui/icons";
@@ -36,7 +36,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { isUnpublish } from "./FirstSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
@@ -204,7 +204,7 @@ const useStyles = makeStyles((theme) =>
     },
     fileCount: {
       borderRadius: 16,
-      background: '#F7A107',
+      background: "#F7A107",
       color: "#ffe69f",
       fontSize: 18,
       width: "14%",
@@ -214,8 +214,8 @@ const useStyles = makeStyles((theme) =>
       top: "63%",
       display: "flex",
       justifyContent: "center",
-      alignContent: "center",
-    }
+      alignItems: "center",
+    },
   })
 );
 
@@ -291,9 +291,7 @@ function ContentCard(props: ContentProps) {
           {content.content_type === ContentType.folder && (
             <Thumbnail className={css.cardImg} type={content.content_type} id={content.thumbnail}></Thumbnail>
           )}
-          {content.content_type === ContentType.folder && (
-            <Grid className={css.fileCount}>{content.items_count}</Grid>
-          )}
+          {content.content_type === ContentType.folder && <div className={css.fileCount}>{content.items_count}</div>}
         </CardMedia>
       </CardActionArea>
       <CardContent className={css.cardContent}>
@@ -319,7 +317,7 @@ function ContentCard(props: ContentProps) {
       <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
         {content?.content_type === ContentType.material && d("Material").t("library_label_material")}
         {content?.content_type === ContentType.plan && d("Plan").t("library_label_plan")}
-        {content?.content_type === ContentType.folder && "Folder"}
+        {content?.content_type === ContentType.folder && reportMiss("Folder", "library_label_folder")}
         {content?.content_type === ContentType.assets && file_type === ContentType.image % 10 && d("Image").t("library_label_image")}
         {content?.content_type === ContentType.assets && file_type === ContentType.video % 10 && d("Video").t("library_label_video")}
         {content?.content_type === ContentType.assets && file_type === ContentType.audio % 10 && d("Audio").t("library_label_audio")}
@@ -468,7 +466,6 @@ export function ContentCardList(props: ContentCardListProps) {
     onChangePageSize(event.target.value as number);
   };
   const pageSizes = [20, 100, 500];
-  console.log(queryCondition);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Controller
@@ -492,7 +489,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           <Typography variant="h6">Badanamu Zoo</Typography>
                         </Box>
                         <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-                          ({10} items. 6 available)
+                          ({} items. {total} available)
                         </Typography>
                       </Box>
                     </Grid>

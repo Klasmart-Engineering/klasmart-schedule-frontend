@@ -45,9 +45,7 @@ export function ConfirmDialog() {
   >((state) => state.confirm);
   const dispatch = useDispatch();
   const { control, setError, errors, watch, handleSubmit } = useForm({ mode: "onSubmit", reValidateMode: "onSubmit" });
-  console.log("errors = ", errors);
   const values = watch();
-  console.log("values = ", values);
   const disableConfirm =
     type === ConfirmDialogType.textField && !values[REJECT_REASON]?.length && !values[OTHER_REASON] && !values[INPUT_NAME];
   const handleCancel = useCallback(() => dispatch(actExitConfirm({ isConfirmed: false })), [dispatch]);

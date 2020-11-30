@@ -7,12 +7,12 @@ import {
   ApiOutcomeView,
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
-  EntityFolderContent
+  EntityFolderContent,
 } from "../api/api.auto";
-import { recursiveListFolderItems } from "../api/extra";
+import { RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
-import { d, t } from "../locale/LocaleManager";
+import { d, reportMiss, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -33,6 +33,7 @@ interface IContentState {
   visibility_settings: LinkedMockOptionsItem[];
   token: string;
   page_size: number;
+  folderTree: RecursiveFolderItem[];
 }
 
 interface RootState {
@@ -157,6 +158,7 @@ const initialState: IContentState = {
   },
   token: "",
   page_size: 20,
+  folderTree: [],
 };
 
 const ADD_FOLDER_MODEL_INFO = {
@@ -427,7 +429,9 @@ export const bulkDeleteContent = createAsyncThunk<IQueryBulkDeleteResult, IQuery
     if (!ids?.length)
       return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
     const content =
-      type === Action.remove ? "Are you sure you want to remove these contents?" : "Are you sure you want to delete these contents?";
+      type === Action.remove
+        ? reportMiss("Are you sure you want to remove these contents?", "library_msg_bulk_remove")
+        : reportMiss("Are you sure you want to delete these contents?", "library_msg_bulk_delete");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.contentsBulk.deleteContentBulk({ id: ids });
@@ -517,7 +521,7 @@ export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolder
         .then(() => true)
         .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
     };
-    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO, rules: { validate } }));
+    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO, defaultValue: "", rules: { validate } }));
     return { id };
   }
 );
@@ -556,8 +560,8 @@ type IQueryBulkMoveFolderParams = {
   content_type?: string;
 };
 type IQueryBulkMoveFolderResult = AsyncReturnType<typeof api.folders.moveFolderItemBulk>;
-export const moveFolderBulk = createAsyncThunk<IQueryBulkMoveFolderResult, IQueryBulkMoveFolderParams>(
-  "content/moveFolderBulk",
+export const bulkMoveFolder = createAsyncThunk<IQueryBulkMoveFolderResult, IQueryBulkMoveFolderParams>(
+  "content/bulkMoveFolder",
   async ({ dist, contents, content_type }) => {
     const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
     const folder_info = content2FileType(contents);
@@ -573,7 +577,7 @@ type IQueryRemoveFolderResult = AsyncReturnType<typeof api.folders.removeFolderI
 export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRemoveFolderParams>(
   "content/deleteFolder",
   async ({ item_id, params }, { dispatch }) => {
-    const content = "Are you sure you want to delete this folder?";
+    const content = reportMiss("Are you sure you want to delete this folder?", "library_msg_delete_folder");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.folders.removeFolderItem(item_id, params);
@@ -582,17 +586,17 @@ export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRem
 
 type IQuerySearchOrgFolderItemsParams = {
   // folder_id: Parameters<typeof recursiveListFolderItems>[0],
-  query: Parameters<typeof recursiveListFolderItems>[0]
-}
-type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFolderItems>
+  content_type: Parameters<typeof recursiveListFolderItems>[0];
+  query: Parameters<typeof recursiveListFolderItems>[1];
+};
+type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFolderItems>;
 export const searchOrgFolderItems = createAsyncThunk<IQuerySearchOrgFolderItemsResult, IQuerySearchOrgFolderItemsParams>(
   "content/searchOrgFolderItems",
-  ({ query }) => {
-    return recursiveListFolderItems( query)
+  ({ content_type, query }) => {
+    const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    return recursiveListFolderItems(partition, query);
   }
-)
-// export const searchOrgFolderItems = recursiveListFolderItems(folder_id, ...query)
-// recursiveListFolderItems(123,{item_type：2})
+);
 
 const { actions, reducer } = createSlice({
   name: "content",
@@ -790,6 +794,9 @@ const { actions, reducer } = createSlice({
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.page_size = payload.cms_page_size;
+    },
+    [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.folderTree = payload;
     },
   },
 });
