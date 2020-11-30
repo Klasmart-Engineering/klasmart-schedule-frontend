@@ -1022,14 +1022,14 @@ function EditBox(props: CalendarStateProps) {
         >
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={4}>
+              <Grid item xs={5}>
                 <FormControlLabel
                   disabled={isScheduleExpired()}
                   control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
                   label={d("Due Date").t("schedule_detail_due_date")}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={7}>
                 <KeyboardDatePicker
                   disableToolbar
                   variant="inline"
