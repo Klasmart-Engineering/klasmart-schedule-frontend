@@ -17,6 +17,7 @@ import {
   pendingContentLists,
   privateContentLists,
   publishContent,
+  setUserSetting,
 } from "../../reducers/content";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
@@ -109,7 +110,7 @@ export default function MyContentList() {
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
-    // refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size })));
+    refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size })));
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type) => {
     if (content_type !== ContentType.material && content_type !== ContentType.plan) {
