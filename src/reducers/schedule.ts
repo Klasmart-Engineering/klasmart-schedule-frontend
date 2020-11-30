@@ -186,6 +186,18 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   }
 );
 
+type UpdateStatusResourseParams = {
+  schedule_id: Parameters<typeof api.schedules.updateStatus>[0];
+  status: Parameters<typeof api.schedules.updateStatus>[1];
+};
+type UpdateStatusResourseResult = ReturnType<typeof api.schedules.updateStatus>;
+export const scheduleUpdateStatus = createAsyncThunk<UpdateStatusResourseResult, UpdateStatusResourseParams>(
+  "content/getContentResourceUploadPath",
+  ({ schedule_id, status }) => {
+    return api.schedules.updateStatus(schedule_id, status);
+  }
+);
+
 export interface getScheduleParticipantsPayLoad {
   class_id: string;
 }
@@ -340,6 +352,9 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.participantMockOptions = payload;
+    },
+    [scheduleUpdateStatus.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof scheduleUpdateStatus>>) => {
+      console.log(payload);
     },
   },
 });

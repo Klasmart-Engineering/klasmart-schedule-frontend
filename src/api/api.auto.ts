@@ -355,9 +355,11 @@ export interface EntityCreateContentRequest {
 }
 
 export interface EntityCreateFolderItemRequest {
-  folder_id?: string;
   link?: string;
   owner_type?: number;
+
+  /** ID string `json:"id"` */
+  parent_folder_id?: string;
 
   /** ItemType  ItemType  `json:"item_type"` */
   partition?: string;
@@ -1535,7 +1537,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/folders/items/list/{folder_id}
      * @description list folder items
      */
-    listFolderItems: (folder_id: string, query?: { item_type?: number; partition?: string }, params?: RequestParams) =>
+    listFolderItems: (folder_id: string, query?: { item_type?: number }, params?: RequestParams) =>
       this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
         `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
         "GET",

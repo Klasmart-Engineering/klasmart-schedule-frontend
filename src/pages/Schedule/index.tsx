@@ -20,6 +20,7 @@ import {
   getScheduleParticipant,
   getScheduleTimeViewData,
   getSearchScheduleList,
+  scheduleUpdateStatus,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -120,12 +121,12 @@ function ScheduleContent() {
   };
 
   const toLive = () => {
+    dispatch(scheduleUpdateStatus({ schedule_id: scheduleId, status: { status: "Started" } }));
     if (liveToken) window.open(apiLivePath(liveToken));
   };
 
   React.useEffect(() => {
     if (teacherName) {
-      console.log(111111111);
       const data = {
         teacher_name: teacherName,
         page: 1,

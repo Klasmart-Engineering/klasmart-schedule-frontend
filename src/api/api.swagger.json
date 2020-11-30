@@ -6101,14 +6101,15 @@
     "entity.CreateFolderItemRequest": {
       "type": "object",
       "properties": {
-        "folder_id": {
-          "type": "string"
-        },
         "link": {
           "type": "string"
         },
         "owner_type": {
           "type": "integer"
+        },
+        "parent_folder_id": {
+          "description": "ID string `json:\"id\"`",
+          "type": "string"
         },
         "partition": {
           "description": "ItemType  ItemType  `json:\"item_type\"`",
