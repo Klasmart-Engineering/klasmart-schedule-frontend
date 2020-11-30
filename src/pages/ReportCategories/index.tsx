@@ -25,6 +25,9 @@ export function ReportCategories() {
   const handleChangeFilter: SecondSearchHeaderProps["onChange"] = (value, tab) => {
     history.replace({ search: toQueryString({ [tab]: value }) });
   };
+  const chart = <CategoriesChart data={categories} />;
+  const permissionTip = <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />;
+  const emptyTip = <TipImages type={TipImagesType.empty} text="library_label_empty" />;
   useEffect(() => {
     dispatch(reportCategoriesOnload({ teacher_id, metaLoading: true }));
   }, [teacher_id, dispatch]);
@@ -33,11 +36,7 @@ export function ReportCategories() {
       <FirstSearchHeader value={Category.learningOutcomes} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.learningOutcomes} onChange={handleChange} />
       <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
-      {perm.view_reports_610 || perm.view_my_reports_614 ? (
-        <CategoriesChart data={categories} />
-      ) : (
-        <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
-      )}
+      {perm.view_reports_610 || perm.view_my_reports_614 ? (categories.length > 0 ? chart : emptyTip) : permissionTip}
     </>
   );
 }
