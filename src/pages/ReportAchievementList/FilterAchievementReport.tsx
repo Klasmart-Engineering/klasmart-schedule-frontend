@@ -5,12 +5,13 @@ import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined"
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
+import { User } from "../../api/api-ko-schema.auto";
 import { MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
-import { ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy, SingleTeacherItem, TeacherItem } from "./types";
+import { ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -81,7 +82,7 @@ const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((
 });
 
 interface GetTeacherItemProps {
-  list: SingleTeacherItem[];
+  list: Pick<User, "user_id" | "user_name">[];
   value: QueryCondition;
   onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   tab: keyof QueryCondition;
@@ -145,7 +146,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   const classs = reportMockOptions.classList.user?.classesTeaching || [];
-  const teachers = reportMockOptions.teacherList?.organization?.teachers || [];
+  const teachers = reportMockOptions.teacherList || [];
   const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
@@ -173,11 +174,11 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     onChange(value, tab);
   };
 
-  const getTeacherList = (teacherList: TeacherItem[] | undefined | null) => {
+  const getTeacherList = (teacherList: Pick<User, "user_id" | "user_name">[] | undefined | null) => {
     if (teacherList === null || teacherList === undefined) return;
     return teacherList.map((item) => (
-      <MenuItem key={item.user.user_id} value={item.user.user_id}>
-        {item.user.user_name}
+      <MenuItem key={item.user_id} value={item.user_id}>
+        {item.user_name}
       </MenuItem>
     ));
   };
@@ -206,7 +207,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 disabled={teachers.length <= 0}
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
-                {getTeacherList((reportMockOptions.teacherList?.organization?.teachers as TeacherItem[]) || [])}
+                {getTeacherList(reportMockOptions.teacherList)}
               </TextField>
             )}
             <TextField
@@ -272,7 +273,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             )}
             <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
               <GetTeacherItem
-                list={reportMockOptions.teacherList.organization?.teachers as SingleTeacherItem[]}
+                list={reportMockOptions.teacherList}
                 value={value}
                 onChangeMenu={handleChangeMenu}
                 tab="teacher_id"

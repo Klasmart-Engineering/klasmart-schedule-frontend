@@ -102,7 +102,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                     >
                       {d("Student Achievement").t("report_label_student_achievement")}
                     </Button>
-                    {false && (
+                    {true && (
                       <Button
                         onClick={createHandleClick(Category.learningOutcomes)}
                         className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
@@ -151,7 +151,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                         label={d("Student Achievement").t("report_label_student_achievement")}
                         className={classes.capitalize}
                       />
-                      {false && (
+                      {true && (
                         <Tab
                           value={Category.learningOutcomes}
                           label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}

@@ -6,7 +6,7 @@ import { PermissionType, usePermission } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAchievementList, getClassList, getLessonPlan, reportOnload } from "../../reducers/report";
+import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -62,7 +62,7 @@ export function ReportAchievementList() {
       if (data) {
         const lesson_plan_id = (data[0] && data[0].id) || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
-        dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
+        lesson_plan_id && dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
       }
     },
     [dispatch, history]
@@ -72,20 +72,9 @@ export function ReportAchievementList() {
     () => async (tab: keyof QueryCondition, value: string) => {
       history.push({ search: setQuery(history.location.search, { [tab]: value }) });
       if (tab === "teacher_id") {
-        const { payload } = ((await dispatch(getClassList({ user_id: value }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof getClassList>
-        >;
-        if (payload) {
-          const classlist = payload.user?.classesTeaching;
-          const class_id = (classlist && classlist[0] && classlist[0].class_id) || "";
-          if (class_id) {
-            getFirstLessonPlanId(value, class_id);
-          } else {
-            history.push({
-              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
-            });
-          }
-        }
+        history.push({
+          search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
+        });
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(reportMockOptions.teacher_id, value);
@@ -103,7 +92,6 @@ export function ReportAchievementList() {
         }
       }
     },
-
     [dispatch, getFirstLessonPlanId, history, reportMockOptions.teacher_id, reportMockOptions.class_id]
   );
   useEffect(() => {
@@ -120,14 +108,12 @@ export function ReportAchievementList() {
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.sort_by, condition.status, dispatch, viewMyReport, viewReport]);
+  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch, viewMyReport, viewReport]);
 
   useEffect(() => {
     if (reportMockOptions) {
       const { teacher_id, class_id, lesson_plan_id } = reportMockOptions;
       teacher_id &&
-        class_id &&
-        lesson_plan_id &&
         history.push({
           search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }),
         });
@@ -145,7 +131,7 @@ export function ReportAchievementList() {
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
       {true &&
-        (reportList && reportList.length > 0 ? (
+        (reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
         ) : (
           <TipImages type={TipImagesType.empty} text="library_label_empty" />
