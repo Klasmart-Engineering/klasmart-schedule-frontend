@@ -157,7 +157,7 @@ function MyCalendar(props: CalendarProps) {
    */
   const creteSchedule = (e: any) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (getTimestamp(e.start) < currentTime || !perm.create_schedule_page_501) return;
+    if (getTimestamp(e.start) + 86400 < currentTime || !perm.create_schedule_page_501) return;
     changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
     setSpecificStatus(false);
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
