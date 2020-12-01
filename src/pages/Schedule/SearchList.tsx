@@ -5,7 +5,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import emptyBox from "../../../src/assets/icons/empty.svg";
-import { EntityScheduleSearchView } from "../../api/api.auto";
+import { EntityScheduleSearchView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getSearchScheduleList } from "../../reducers/schedule";
@@ -166,7 +166,6 @@ export default function SearchList(props: SearchListProps) {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    // console.log(value)
     setPage(value);
     const data = {
       teacher_name: name,
@@ -177,6 +176,13 @@ export default function SearchList(props: SearchListProps) {
     };
     dispatch(getSearchScheduleList({ data, metaLoading: true }));
     document.documentElement.scrollTop = 0;
+  };
+
+  const getTeacherList = (item: EntityScheduleShortInfo[] | undefined, student_num: number | undefined) => {
+    if (!item) return `(${student_num})`;
+    const temp = item.map((teacherItem: EntityScheduleShortInfo) => teacherItem.name);
+    const list = temp.join(", ");
+    return `${list} (${student_num})`;
   };
 
   return (
@@ -206,12 +212,7 @@ export default function SearchList(props: SearchListProps) {
                     <span className={classes.timeItem}>
                       <PeopleOutlineOutlined className={classes.clockIcon} />
                     </span>
-                    <span className={classes.timeItem}>
-                      {
-                        // item.teachers[0].name
-                        item?.teachers?.map((item) => `${item.name} `)
-                      }
-                    </span>
+                    <span className={classes.timeItem}>{getTeacherList(item.member_teachers, item.student_count)}</span>
                   </Grid>
                   <Grid item xs={5} sm={5} md={5} lg={5} xl={5}>
                     <span className={classes.timeItem}>{item?.program?.name}</span>
