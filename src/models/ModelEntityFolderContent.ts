@@ -14,10 +14,10 @@ export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[
     planAndMaterial: false,
     bothHave: false,
   };
-  const hash = toHash(contents, ids);
   if (!ids || ids.length === 0) return obj;
-  const arr = ids.map((id) => hash[id]);
-  if (arr.every((item) => item.content_type === ContentType.folder)) {
+  const arr = ids2Content(contents, ids);
+  if (!arr[0]) return obj;
+  if (arr && arr.every((item) => item.content_type === ContentType.folder)) {
     obj.folder = true;
     obj.planAndMaterial = false;
     obj.bothHave = false;
