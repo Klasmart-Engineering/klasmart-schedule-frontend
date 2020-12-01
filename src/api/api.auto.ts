@@ -17,12 +17,12 @@ export interface ApiAge {
 
 export interface ApiBadRequestResponse {
   data?: object;
-  label?: "content" | "folder";
+  label?: string;
 }
 
 export interface ApiConflictResponse {
   data?: object;
-  label?: "content" | "folder";
+  label?: string;
 }
 
 export interface ApiCreateContentResponse {
@@ -49,7 +49,7 @@ export interface ApiFolderItemsResponseWithTotal {
 
 export interface ApiForbiddenResponse {
   data?: object;
-  label?: "content" | "folder";
+  label?: string;
 }
 
 export interface ApiGrade {
@@ -59,12 +59,12 @@ export interface ApiGrade {
 
 export interface ApiInternalServerErrorResponse {
   data?: object;
-  label?: "content" | "folder";
+  label?: string;
 }
 
 export interface ApiNotFoundResponse {
   data?: object;
-  label?: "content" | "folder";
+  label?: string;
 }
 
 export interface ApiOutcomeCreateResponse {
@@ -419,7 +419,7 @@ export interface EntityFolderContentInfoWithDetailsResponse {
 }
 
 export interface EntityFolderIdWithFileType {
-  folder_file_type?: string;
+  folder_file_type?: "content" | "folder";
   id?: string;
 }
 
@@ -506,7 +506,7 @@ export interface EntityMoveFolderIDBulkRequest {
 
 export interface EntityMoveFolderRequest {
   dist?: string;
-  folder_file_type?: "unknown";
+  folder_file_type?: "content" | "folder";
   id?: string;
   owner_type?: number;
   partition?: string;
@@ -568,6 +568,10 @@ export interface EntityProgram {
   number?: number;
   updateAt?: number;
   updateID?: string;
+}
+
+export interface EntityRemoveItemBulk {
+  folder_ids?: string[];
 }
 
 export interface EntityRepeatDaily {
@@ -1514,6 +1518,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags folder
+     * @name removeFolderItemBulk
+     * @summary removeFolderItemBulk
+     * @request DELETE:/folders/items
+     * @description remove folder items bulk
+     */
+    removeFolderItemBulk: (content: EntityRemoveItemBulk, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items`, "DELETE", params, content),
+
+    /**
+     * @tags folder
      * @name moveFolderItemBulk
      * @summary moveFolderItemBulk
      * @request PUT:/folders/items/bulk/move
@@ -1636,8 +1650,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request DELETE:/folders/items/{item_id}
      * @description remove folder item
      */
-    removeFolderItem: (item_id: string, content: EntityCreateFolderItemRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/${item_id}`, "DELETE", params, content),
+    removeFolderItem: (item_id: string, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/${item_id}`, "DELETE", params),
   };
   grades = {
     /**

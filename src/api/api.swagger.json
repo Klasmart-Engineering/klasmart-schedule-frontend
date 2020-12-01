@@ -1978,6 +1978,45 @@
             }
           }
         }
+      },
+      "delete": {
+        "description": "remove folder items bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "removeFolderItemBulk",
+        "operationId": "removeFolderItemBulk",
+        "parameters": [
+          {
+            "description": "remove folder ids",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.RemoveItemBulk"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/folders/items/bulk/move": {
@@ -2066,6 +2105,13 @@
         "summary": "updateFolderItem",
         "operationId": "updateFolderItem",
         "parameters": [
+          {
+            "type": "string",
+            "description": "folder item id to delete",
+            "name": "item_id",
+            "in": "path",
+            "required": true
+          },
           {
             "description": "update request",
             "name": "content",
@@ -2349,13 +2395,11 @@
         "operationId": "removeFolderItem",
         "parameters": [
           {
-            "description": "create request",
-            "name": "content",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/entity.CreateFolderItemRequest"
-            }
+            "type": "string",
+            "description": "folder item id to delete",
+            "name": "item_id",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -5085,7 +5129,6 @@
         },
         "label": {
           "type": "string",
-          "enum": ["content", "folder"],
           "example": "unknown"
         }
       }
@@ -5098,7 +5141,6 @@
         },
         "label": {
           "type": "string",
-          "enum": ["content", "folder"],
           "example": "unknown"
         }
       }
@@ -5163,7 +5205,6 @@
         },
         "label": {
           "type": "string",
-          "enum": ["content", "folder"],
           "example": "unknown"
         }
       }
@@ -5187,7 +5228,6 @@
         },
         "label": {
           "type": "string",
-          "enum": ["content", "folder"],
           "example": "unknown"
         }
       }
@@ -5200,7 +5240,6 @@
         },
         "label": {
           "type": "string",
-          "enum": ["content", "folder"],
           "example": "unknown"
         }
       }
@@ -6270,7 +6309,8 @@
       "type": "object",
       "properties": {
         "folder_file_type": {
-          "type": "string"
+          "type": "string",
+          "enum": ["content", "folder"]
         },
         "id": {
           "type": "string"
@@ -6505,7 +6545,7 @@
         },
         "folder_file_type": {
           "type": "string",
-          "enum": ["unknown"]
+          "enum": ["content", "folder"]
         },
         "id": {
           "type": "string"
@@ -6679,6 +6719,17 @@
         },
         "updateID": {
           "type": "string"
+        }
+      }
+    },
+    "entity.RemoveItemBulk": {
+      "type": "object",
+      "properties": {
+        "folder_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
