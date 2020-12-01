@@ -117,6 +117,7 @@ export enum BulkAction {
   remove = "remove",
   delete = "delete",
   move = "move",
+  deleteFolder = "deleteFolder",
 }
 
 interface BulkActionOption {
@@ -131,19 +132,24 @@ function getBulkAction(
 ): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
   if (condition.content_type === SearchContentsRequestContentType.assets) {
-    return perm.delete_asset_340 ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
+    return perm.delete_asset_340
+      ? [
+          { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+          { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
+        ]
+      : [{ label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move }];
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
       let res = [
         { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
         { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
-        { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
+        { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
       ];
       if (actionObj?.folder)
         res = [
           { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
-          { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
+          { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
         ];
       if (actionObj?.planAndMaterial && perm.archive_published_content_273)
         res = [
@@ -180,10 +186,11 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkMove: () => any;
   onAddFolder: () => any;
   actionObj: { folder: boolean; planAndMaterial: boolean; bothHave: boolean } | undefined;
+  onBulkDeleteFolder: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, onAddFolder, actionObj } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, onAddFolder, actionObj, onBulkDeleteFolder } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -196,6 +203,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
     if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
     if (event.target.value === BulkAction.move) onBulkMove();
+    if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
@@ -275,7 +283,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, actionObj } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, actionObj, onBulkDeleteFolder } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -294,6 +302,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
     if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
     if (event.target.value === BulkAction.move) onBulkMove();
+    if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
   };
   const handleClose = () => {
     setAnchorElLeft(null);
