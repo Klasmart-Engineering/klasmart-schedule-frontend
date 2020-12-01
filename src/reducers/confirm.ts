@@ -68,5 +68,10 @@ export const actAsyncConfirm = createAsyncThunk<ConfirmResult, ConfirmRequest>(
   }
 );
 
+export const unwrapConfirm = (result: ConfirmResult) => {
+  if (!result.isConfirmed) return Promise.reject(result);
+  return result;
+};
+
 export const { actExitConfirm } = actions;
 export default reducer;
