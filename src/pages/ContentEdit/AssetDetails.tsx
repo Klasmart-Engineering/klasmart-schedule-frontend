@@ -18,7 +18,7 @@ import { Controller, FieldError, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById, MockOptionsItem } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
-import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
@@ -135,202 +135,204 @@ export default function AssetsDetails(props: AssetDetailsProps) {
   return (
     <div className={css.detailBox}>
       <Box className={css.assetsHeader}>{d("Details").t("library_label_details")}</Box>
-    <ThemeProvider theme={theme}>
-      <Box component="form" p="7.8% 8.5%">
-        <Controller
-          as={TextField}
-          control={control}
-          name="name"
-          label={d("Asset Name").t("library_label_asset_name")}
-          required
-          rules={{ required: true }}
-          defaultValue={allDefaultValueAndKey.name?.value}
-          key={allDefaultValueAndKey.name?.key}
-          disabled={isIdExist()}
-          error={errorValidator(errors.name)}
-        />
-        <Controller
-          name="thumbnail"
-          defaultValue={allDefaultValueAndKey.thumbnail?.value}
-          key={allDefaultValueAndKey.thumbnail?.key}
-          control={control}
-          render={(props: any) => (
-            <CropImage
-              render={({ crop }) => (
-                <SingleUploader
-                  partition="thumbnail"
-                  accept="image/*"
-                  transformFile={crop}
-                  {...props}
-                  render={({ uploady, item, btnRef, value, isUploading }) => (
-                    <Box display="flex" className={css.fieldset}>
-                      <Button
-                        className={css.thumbnailButton}
-                        ref={btnRef}
-                        size={sm ? "medium" : "large"}
-                        variant="contained"
-                        component="span"
-                        color="primary"
-                        style={{ visibility: isIdExist() ? "hidden" : "visible" }}
-                        endIcon={<CloudUploadOutlined />}
-                      >
-                        {d("Thumbnail").t("library_label_thumbnail")}
-                      </Button>
-                      {isUploading && <ProgressWithText value={item?.completed} />}
-                      {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
-                    </Box>
-                  )}
-                />
-              )}
-            />
-          )}
-        />
-
-        <Controller
-          name="program"
-          defaultValue={allDefaultValueAndKey.program?.value}
-          key={allDefaultValueAndKey.program?.key}
-          control={control}
-          rules={{ required: true }}
-          render={(props: any) => (
-            <TextField
-              select
-              className={css.fieldset}
-              label={d("Program").t("library_label_program")}
-              {...props}
-              onChange={(e) => {
-                onChangeProgram(e.target.value);
-                props.onChange(e.target.value);
-              }}
-              disabled={isIdExist()}
-              required
-              error={errorValidator(errors.program)}
-            >
-              {menuItemList(flattenedMockOptions.program || [])}
-            </TextField>
-          )}
-        />
-
-        <Controller
-          as={TextField}
-          select
-          className={css.fieldset}
-          label={d("Subject").t("library_label_subject")}
-          name="subject"
-          control={control}
-          SelectProps={{ multiple: true }}
-          defaultValue={allDefaultValueAndKey.subject?.value}
-          key={allDefaultValueAndKey.subject?.key}
-          disabled={isIdExist()}
-        >
-          {menuItemList(flattenedMockOptions.subject || [])}
-        </Controller>
-        <Box>
+      <ThemeProvider theme={theme}>
+        <Box component="form" p="7.8% 8.5%">
           <Controller
-            name="developmental"
-            defaultValue={allDefaultValueAndKey.developmental?.value}
-            key={allDefaultValueAndKey.developmental?.key}
+            as={FormattedTextField}
+            control={control}
+            name="name"
+            label={d("Asset Name").t("library_label_asset_name")}
+            required
+            encode={frontTrim}
+            decode={frontTrim}
+            rules={{ required: true }}
+            defaultValue={allDefaultValueAndKey.name?.value}
+            key={allDefaultValueAndKey.name?.key}
+            disabled={isIdExist()}
+            error={errorValidator(errors.name)}
+          />
+          <Controller
+            name="thumbnail"
+            defaultValue={allDefaultValueAndKey.thumbnail?.value}
+            key={allDefaultValueAndKey.thumbnail?.key}
+            control={control}
+            render={(props: any) => (
+              <CropImage
+                render={({ crop }) => (
+                  <SingleUploader
+                    partition="thumbnail"
+                    accept="image/*"
+                    transformFile={crop}
+                    {...props}
+                    render={({ uploady, item, btnRef, value, isUploading }) => (
+                      <Box display="flex" className={css.fieldset}>
+                        <Button
+                          className={css.thumbnailButton}
+                          ref={btnRef}
+                          size={sm ? "medium" : "large"}
+                          variant="contained"
+                          component="span"
+                          color="primary"
+                          style={{ visibility: isIdExist() ? "hidden" : "visible" }}
+                          endIcon={<CloudUploadOutlined />}
+                        >
+                          {d("Thumbnail").t("library_label_thumbnail")}
+                        </Button>
+                        {isUploading && <ProgressWithText value={item?.completed} />}
+                        {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
+                      </Box>
+                    )}
+                  />
+                )}
+              />
+            )}
+          />
+
+          <Controller
+            name="program"
+            defaultValue={allDefaultValueAndKey.program?.value}
+            key={allDefaultValueAndKey.program?.key}
             control={control}
             rules={{ required: true }}
             render={(props: any) => (
-              <FormattedTextField
+              <TextField
                 select
-                className={sm ? css.fieldset : css.halfFieldset}
-                label={d("Category").t("library_label_category")}
-                encode={encodeOneItemArray}
-                decode={decodeOneItemArray}
+                className={css.fieldset}
+                label={d("Program").t("library_label_program")}
                 {...props}
-                onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-                  onChangeDevelopmental(value);
-                  props.onChange(value);
+                onChange={(e) => {
+                  onChangeProgram(e.target.value);
+                  props.onChange(e.target.value);
                 }}
-                fullWidth={sm}
-                required
-                error={errorValidator(errors.developmental)}
                 disabled={isIdExist()}
+                required
+                error={errorValidator(errors.program)}
               >
-                {menuItemList(flattenedMockOptions.developmental || [])}
-              </FormattedTextField>
+                {menuItemList(flattenedMockOptions.program || [])}
+              </TextField>
             )}
           />
 
           <Controller
             as={TextField}
-            name="skills"
-            control={control}
             select
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label={d("Subcategory").t("library_label_subcategory")}
-            rules={{ required: true }}
-            error={errorValidator(errors.skills)}
+            className={css.fieldset}
+            label={d("Subject").t("library_label_subject")}
+            name="subject"
+            control={control}
             SelectProps={{ multiple: true }}
-            defaultValue={allDefaultValueAndKey.skills?.value}
-            key={allDefaultValueAndKey.skills?.key}
+            defaultValue={allDefaultValueAndKey.subject?.value}
+            key={allDefaultValueAndKey.subject?.key}
             disabled={isIdExist()}
           >
-            {menuItemList(flattenedMockOptions.skills || [])}
+            {menuItemList(flattenedMockOptions.subject || [])}
           </Controller>
-        </Box>
-        <Box>
+          <Box>
+            <Controller
+              name="developmental"
+              defaultValue={allDefaultValueAndKey.developmental?.value}
+              key={allDefaultValueAndKey.developmental?.key}
+              control={control}
+              rules={{ required: true }}
+              render={(props: any) => (
+                <FormattedTextField
+                  select
+                  className={sm ? css.fieldset : css.halfFieldset}
+                  label={d("Category").t("library_label_category")}
+                  encode={encodeOneItemArray}
+                  decode={decodeOneItemArray}
+                  {...props}
+                  onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                    onChangeDevelopmental(value);
+                    props.onChange(value);
+                  }}
+                  fullWidth={sm}
+                  required
+                  error={errorValidator(errors.developmental)}
+                  disabled={isIdExist()}
+                >
+                  {menuItemList(flattenedMockOptions.developmental || [])}
+                </FormattedTextField>
+              )}
+            />
+
+            <Controller
+              as={TextField}
+              name="skills"
+              control={control}
+              select
+              className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth={sm}
+              label={d("Subcategory").t("library_label_subcategory")}
+              rules={{ required: true }}
+              error={errorValidator(errors.skills)}
+              SelectProps={{ multiple: true }}
+              defaultValue={allDefaultValueAndKey.skills?.value}
+              key={allDefaultValueAndKey.skills?.key}
+              disabled={isIdExist()}
+            >
+              {menuItemList(flattenedMockOptions.skills || [])}
+            </Controller>
+          </Box>
+          <Box>
+            <Controller
+              as={TextField}
+              name="age"
+              control={control}
+              select
+              className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth={sm}
+              label={d("Age").t("library_label_age")}
+              rules={{ required: true }}
+              error={errorValidator(errors.age)}
+              SelectProps={{ multiple: true }}
+              defaultValue={allDefaultValueAndKey.age?.value}
+              key={allDefaultValueAndKey.age?.key}
+              disabled={isIdExist()}
+            >
+              {menuItemList(flattenedMockOptions.age || [])}
+            </Controller>
+            <Controller
+              as={TextField}
+              name="grade"
+              control={control}
+              select
+              className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth={sm}
+              label={d("Grade").t("library_label_grade")}
+              rules={{ required: true }}
+              error={errorValidator(errors.grade)}
+              SelectProps={{ multiple: true }}
+              defaultValue={allDefaultValueAndKey.grade?.value}
+              key={allDefaultValueAndKey.grade?.key}
+              disabled={isIdExist()}
+            >
+              {menuItemList(flattenedMockOptions.grade || [])}
+            </Controller>
+          </Box>
           <Controller
             as={TextField}
-            name="age"
             control={control}
-            select
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label={d("Age").t("library_label_age")}
-            rules={{ required: true }}
-            error={errorValidator(errors.age)}
-            SelectProps={{ multiple: true }}
-            defaultValue={allDefaultValueAndKey.age?.value}
-            key={allDefaultValueAndKey.age?.key}
+            name="description"
+            className={css.fieldset}
+            label={d("Description").t("library_label_description")}
+            defaultValue={allDefaultValueAndKey.description?.value}
+            key={allDefaultValueAndKey.description?.key}
             disabled={isIdExist()}
-          >
-            {menuItemList(flattenedMockOptions.age || [])}
-          </Controller>
+          />
           <Controller
-            as={TextField}
-            name="grade"
+            as={FormattedTextField}
             control={control}
-            select
-            className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth={sm}
-            label={d("Grade").t("library_label_grade")}
-            rules={{ required: true }}
-            error={errorValidator(errors.grade)}
-            SelectProps={{ multiple: true }}
-            defaultValue={allDefaultValueAndKey.grade?.value}
-            key={allDefaultValueAndKey.grade?.key}
+            name="keywords"
+            decode={decodeArray}
+            className={css.fieldset}
+            label={d("Keywords").t("library_label_keywords")}
+            defaultValue={allDefaultValueAndKey.keywords?.value}
+            key={allDefaultValueAndKey.keywords?.key}
             disabled={isIdExist()}
-          >
-            {menuItemList(flattenedMockOptions.grade || [])}
-          </Controller>
+          />
         </Box>
-        <Controller
-          as={TextField}
-          control={control}
-          name="description"
-          className={css.fieldset}
-          label={d("Description").t("library_label_description")}
-          defaultValue={allDefaultValueAndKey.description?.value}
-          key={allDefaultValueAndKey.description?.key}
-          disabled={isIdExist()}
-        />
-        <Controller
-          as={FormattedTextField}
-          control={control}
-          name="keywords"
-          decode={decodeArray}
-          className={css.fieldset}
-          label={d("Keywords").t("library_label_keywords")}
-          defaultValue={allDefaultValueAndKey.keywords?.value}
-          key={allDefaultValueAndKey.keywords?.key}
-          disabled={isIdExist()}
-        />
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
     </div>
   );
 }

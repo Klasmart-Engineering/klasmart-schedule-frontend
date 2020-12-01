@@ -24,7 +24,7 @@ import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
-import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
@@ -214,11 +214,13 @@ export default function Details(props: DetailsProps) {
           </FormControl>
         )}
         <Controller
-          as={TextField}
+          as={FormattedTextField}
           control={control}
           name="name"
           label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required
+          encode={frontTrim}
+          decode={frontTrim}
           defaultValue={allDefaultValueAndKey.name?.value}
           key={allDefaultValueAndKey.name?.key}
           rules={{
