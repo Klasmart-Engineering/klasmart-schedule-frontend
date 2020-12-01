@@ -137,7 +137,6 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const { onChange, value, reportMockOptions } = props;
   const css = useStyles();
   const viewReport = usePermission(PermissionType.view_reports_610);
-  const viewMyReport = usePermission(PermissionType.view_my_reports_614);
   const getOptions = (list: MockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -190,13 +189,12 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   };
-
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Hidden smDown>
         <Box position="relative" className={css.box}>
           <Box>
-            {viewReport && !viewMyReport && (
+            {viewReport && (
               <TextField
                 size="small"
                 className={css.selectButton}
@@ -264,7 +262,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       <Hidden mdUp>
         <Box display="flex">
           <Box flex={3}>
-            {viewReport && !viewMyReport && (
+            {viewReport && (
               <PersonOutlinedIcon
                 fontSize="large"
                 className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}

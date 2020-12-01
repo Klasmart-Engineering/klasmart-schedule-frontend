@@ -126,6 +126,8 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     let reportList: EntityStudentReportItem[] = [];
     let lessonPlanList: EntityScheduleShortInfo[] = [];
+    let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
+    let finalTearchId: string = "";
     // 拉取我的user_id
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
       query: QeuryMeDocument,
@@ -142,32 +144,33 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
     //   },
     // });
     // 用permission的接口获取teacherList
-    const { data: teachersInfo } = await gqlapi.query<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>({
-      query: RoleBasedUsersByOrgnizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
-    const teacherList = teachersInfo.organization?.roles
-      ?.find((role) => role?.role_name?.toLocaleLowerCase() === "teacher")
-      ?.memberships?.map((membership) => membership?.user as Pick<User, "user_id" | "user_name">);
-    // // 使用mock数据
-    // const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
-    // const teacherList = mockResult;
-    // const user_id = (teacherList && teacherList.organization && teacherList.organization.teachers
-    //   ? teacherList.organization?.teachers[0]?.user?.user_id
-    //   : undefined) as string;
+    const perm = hasPermissionOfMe([PermissionType.view_my_reports_614, PermissionType.view_reports_610], meInfo.me);
+    if (perm.view_my_reports_614 && !perm.view_reports_610) {
+      teacherList = [];
+      finalTearchId = myTearchId;
+    }
+    if (perm.view_reports_610) {
+      const { data: teachersInfo } = await gqlapi.query<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>({
+        query: RoleBasedUsersByOrgnizationDocument,
+        variables: {
+          organization_id,
+        },
+      });
+      teacherList = teachersInfo.organization?.roles
+        ?.find((role) => role?.role_name?.toLocaleLowerCase() === "teacher")
+        ?.memberships?.map((membership) => membership?.user as Pick<User, "user_id" | "user_name">);
+      finalTearchId = teacher_id || (teacherList && teacherList[0]?.user_id) || "";
+      if (!teacherList || !teacherList[0])
+        return {
+          teacherList: [],
+          classList: { user: { classesTeaching: [] } },
+          lessonPlanList: [],
+          teacher_id: "",
+          class_id: "",
+          lesson_plan_id: "",
+        };
+    }
 
-    if (!teacherList || !teacherList[0])
-      return {
-        teacherList: [],
-        classList: { user: { classesTeaching: [] } },
-        lessonPlanList: [],
-        teacher_id: "",
-        class_id: "",
-        lesson_plan_id: "",
-      };
-    const finalTearchId = view_my_report ? myTearchId : teacher_id || teacherList[0]?.user_id;
     // 用teacher_id 拉取classlist
     const { data: result } = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
       query: ClassesByTeacherDocument,
@@ -205,8 +208,8 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       classList: classList || { user: { classesTeaching: [] } },
       lessonPlanList: lessonPlanList,
       teacher_id: finalTearchId,
-      class_id: finalClassId,
-      lesson_plan_id: finalPlanId as string,
+      class_id: finalClassId || "",
+      lesson_plan_id: finalPlanId || "",
       reportList,
     };
   }

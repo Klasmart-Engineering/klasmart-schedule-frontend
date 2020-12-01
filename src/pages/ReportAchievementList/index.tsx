@@ -2,7 +2,6 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
@@ -40,8 +39,6 @@ export function ReportAchievementList() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const viewMyReport = usePermission(PermissionType.view_my_reports_614);
-  const viewReport = usePermission(PermissionType.view_reports_610);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -102,13 +99,12 @@ export function ReportAchievementList() {
         lesson_plan_id: condition.lesson_plan_id,
         status: condition.status,
         sort_by: condition.sort_by,
-        view_my_report: !viewReport && viewMyReport,
         metaLoading: true,
       })
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch, viewMyReport, viewReport]);
+  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch]);
 
   useEffect(() => {
     if (reportMockOptions) {
