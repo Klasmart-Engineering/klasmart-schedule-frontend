@@ -27,7 +27,7 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityFolderContent } from "../../api/api.auto";
+import { EntityFolderContent, EntityFolderItemInfo } from "../../api/api.auto";
 import { ContentType, PublishStatus } from "../../api/type";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
@@ -441,6 +441,7 @@ export interface ContentCardListProps extends ContentActionProps {
   ) => any;
   onChangePageSize: (page_size: number) => void;
   onGoBack: () => any;
+  parentFolderInfo: EntityFolderItemInfo;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
@@ -459,6 +460,7 @@ export function ContentCardList(props: ContentCardListProps) {
     onRenameFolder,
     onDeleteFolder,
     onGoBack,
+    parentFolderInfo,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -486,10 +488,10 @@ export function ContentCardList(props: ContentCardListProps) {
                         </Box>
                         <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                           <img src={folderIconUrl} alt="" />
-                          <Typography variant="h6">Badanamu Zoo</Typography>
+                          <Typography variant="h6">{parentFolderInfo.name}</Typography>
                         </Box>
                         <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-                          ({} items. {total} available)
+                          ({parentFolderInfo.items_count} items. {total} available)
                         </Typography>
                       </Box>
                     </Grid>
@@ -537,5 +539,31 @@ export function ContentCardList(props: ContentCardListProps) {
         </FormControl>
       </div>
     </LayoutBox>
+  );
+}
+
+interface BackToPrevePageProps {
+  onGoBack: () => any;
+}
+export function BackToPrevPage(props: BackToPrevePageProps) {
+  const css = useStyles();
+  const { onGoBack } = props;
+  return (
+    <>
+      <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+        <Box className={css.card}>
+          <Box className={css.cardMedia} style={{ marginTop: 10, cursor: "pointer" }} onClick={onGoBack}>
+            <img className={css.prevImg} src={prevPageUrl} alt="" />
+          </Box>
+          <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <img src={folderIconUrl} alt="" />
+            <Typography variant="h6">{}</Typography>
+          </Box>
+          <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
+            ({} items. {} available)
+          </Typography>
+        </Box>
+      </Grid>
+    </>
   );
 }

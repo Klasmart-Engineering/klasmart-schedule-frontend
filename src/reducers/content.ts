@@ -8,13 +8,14 @@ import {
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
   EntityFolderContent,
+  EntityFolderItemInfo,
 } from "../api/api.auto";
 import { RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, reportMiss, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
-import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
+import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 
@@ -34,6 +35,7 @@ interface IContentState {
   token: string;
   page_size: number;
   folderTree: RecursiveFolderItem[];
+  parentFolderInfo: EntityFolderItemInfo;
 }
 
 interface RootState {
@@ -159,18 +161,18 @@ const initialState: IContentState = {
   token: "",
   page_size: 20,
   folderTree: [],
+  parentFolderInfo: {},
 };
 
 const ADD_FOLDER_MODEL_INFO = {
-  title: "Add a New Folder",
-  content: "Folder Name",
-  placeholder: "name",
+  title: reportMiss("Add a New Folder", "content_add_a_new_folder"),
+  content: reportMiss("Folder Name", "content_folder_name"),
   type: ConfirmDialogType.onlyInput,
 };
 const UNKNOW_ERROR_LABEL: LangRecordId = "general_error_unknown";
 const RENAME_FOLDER_NAME_MODEL_INFO = {
-  title: "Rename the Folder",
-  content: "Folder Name",
+  title: reportMiss("Rename the Folder", "content_rename_the_folder"),
+  content: reportMiss("Folder Name", "content_folder_name"),
   type: ConfirmDialogType.onlyInput,
 };
 
@@ -521,7 +523,9 @@ export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolder
         .then(() => true)
         .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
     };
-    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO, defaultValue: "", rules: { validate } }));
+    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO, defaultValue: "", rules: { validate } }))
+      .then(unwrapResult)
+      .then(unwrapConfirm);
     return { id };
   }
 );
@@ -540,7 +544,9 @@ export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRen
         .then(() => true)
         .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
     };
-    await dispatch(actAsyncConfirm({ ...RENAME_FOLDER_NAME_MODEL_INFO, defaultValue: defaultName, rules: { validate } }));
+    await dispatch(actAsyncConfirm({ ...RENAME_FOLDER_NAME_MODEL_INFO, defaultValue: defaultName, rules: { validate } }))
+      .then(unwrapResult)
+      .then(unwrapConfirm);
     return "";
   }
 );
@@ -583,18 +589,35 @@ export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRem
     return api.folders.removeFolderItem(item_id, params);
   }
 );
+type IQueryBulkDeleteFolderParams = Parameters<typeof api.folders.removeFolderItemBulk>[0];
+type IQueryBulkDeleteFolderResult = AsyncReturnType<typeof api.folders.removeFolderItemBulk>;
+export const bulkDeleteFolder = createAsyncThunk<IQueryBulkDeleteFolderResult, IQueryBulkDeleteFolderParams>(
+  "content/bulkDeleteContent",
+  async ({ folder_ids }, { dispatch }) => {
+    if (!folder_ids?.length)
+      return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
+    const content = reportMiss("Are you sure you want to delete these contents?", "library_msg_bulk_delete");
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.folders.removeFolderItemBulk({ folder_ids });
+  }
+);
+type IQueryGetFolderItemByIdParams = Parameters<typeof api.folders.getFolderItemById>[0];
+type IQueryGetFolderItemByIdResult = AsyncReturnType<typeof api.folders.getFolderItemById>;
+export const getFolderItemById = createAsyncThunk<IQueryGetFolderItemByIdResult, IQueryGetFolderItemByIdParams>(
+  "content/getFolderItemById",
+  (folder_id) => {
+    return api.folders.getFolderItemById(folder_id);
+  }
+);
 
-type IQuerySearchOrgFolderItemsParams = {
-  // folder_id: Parameters<typeof recursiveListFolderItems>[0],
-  content_type: Parameters<typeof recursiveListFolderItems>[0];
-  query: Parameters<typeof recursiveListFolderItems>[1];
-};
+type IQuerySearchOrgFolderItemsParams = { content_type: string } & LoadingMetaPayload;
 type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFolderItems>;
 export const searchOrgFolderItems = createAsyncThunk<IQuerySearchOrgFolderItemsResult, IQuerySearchOrgFolderItemsParams>(
   "content/searchOrgFolderItems",
-  ({ content_type, query }) => {
+  ({ content_type }) => {
     const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
-    return recursiveListFolderItems(partition, query);
+    return recursiveListFolderItems({ partition, item_type: 1, path: "/" });
   }
 );
 
@@ -797,6 +820,9 @@ const { actions, reducer } = createSlice({
     },
     [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.folderTree = payload;
+    },
+    [getFolderItemById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.parentFolderInfo = payload;
     },
   },
 });

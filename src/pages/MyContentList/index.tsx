@@ -13,12 +13,14 @@ import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
   bulkDeleteContent,
+  bulkDeleteFolder,
   bulkMoveFolder,
   bulkPublishContent,
   contentLists,
   deleteContent,
   deleteFolder,
   folderContentLists,
+  getFolderItemById,
   getUserSetting,
   pendingContentLists,
   privateContentLists,
@@ -104,7 +106,9 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentsList, total, page_size, folderTree, parentFolderInfo } = useSelector<RootState, RootState["content"]>(
+    (state) => state.content
+  );
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent } = useFolderTree<EntityFolderContent[]>();
@@ -152,18 +156,23 @@ export default function MyContentList() {
   };
 
   const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (content) => {
-    return refreshWithDispatch(dispatch(renameFolder({ item_id: content?.id as string, defaultName: content?.name as string })));
+    return refreshWithDispatch(
+      dispatch(renameFolder({ item_id: content?.id as string, defaultName: content?.name as string })).then(unwrapResult)
+    );
   };
   const handleAddFolder = async () => {
     const parent_id = (condition.path || "").split("/").pop() || "";
     await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
-    return refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })));
+    return refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })).then(unwrapResult));
+  };
+  const handleBulkDeleteFolder: ThirdSearchHeaderProps["onBulkDeleteFolder"] = () => {
+    return refreshWithDispatch(dispatch(bulkDeleteFolder({ folder_ids: ids })));
   };
   const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
     setReferContent([content]);
-    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, query: { item_type: 1 } }));
+    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
   };
   const handleMove: FolderTreeProps["onMove"] = async (parent_id) => {
@@ -173,12 +182,11 @@ export default function MyContentList() {
     closeFolderTree();
   };
   const handleClickBulkMove: ThirdSearchHeaderProps["onBulkMove"] = async () => {
-    console.log(ids);
     if (!ids || !ids.length) {
       return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
     }
     setReferContent(ids2Content(contentsList, ids));
-    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, query: { item_type: 1 } }));
+    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
   };
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
@@ -193,7 +201,9 @@ export default function MyContentList() {
   }, [condition, contentsList, history, total]);
 
   useEffect(() => {
-    setActionObj(ids2removeOrDelete(contentsList, ids));
+    if (ids && ids.length > 0) {
+      setActionObj(ids2removeOrDelete(contentsList, ids));
+    }
   }, [contentsList, ids]);
 
   useEffect(() => {
@@ -214,8 +224,9 @@ export default function MyContentList() {
       } else {
         await dispatch(contentLists({ ...condition, page_size: page_size, metaLoading: true }));
       }
-      debugger;
       setTimeout(reset, 500);
+      const parent_id = (condition.path || "").split("/").pop() || "";
+      if (parent_id) await dispatch(getFolderItemById(parent_id));
     })();
   }, [condition, reset, dispatch, refreshKey, page_size]);
 
@@ -249,6 +260,7 @@ export default function MyContentList() {
         onAddFolder={() => handleAddFolder()}
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
+        onBulkDeleteFolder={handleBulkDeleteFolder}
       />
       <ThirdSearchHeaderMb
         value={condition}
@@ -258,6 +270,7 @@ export default function MyContentList() {
         onAddFolder={() => handleAddFolder()}
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
+        onBulkDeleteFolder={handleBulkDeleteFolder}
       />
       <PermissionOr
         value={[
@@ -285,6 +298,7 @@ export default function MyContentList() {
                 onRenameFolder={handleRenameFolder}
                 onDeleteFolder={handleDeleteFolder}
                 onGoBack={handleGoback}
+                parentFolderInfo={parentFolderInfo}
               />
             ) : (
               <TipImages type={TipImagesType.empty} text="library_label_empty" />
