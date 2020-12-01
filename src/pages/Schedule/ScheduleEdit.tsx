@@ -266,11 +266,11 @@ function EditBox(props: CalendarStateProps) {
         is_all_day: scheduleDetial.is_all_day,
         is_force: true,
         is_repeat: true,
-        lesson_plan_id: scheduleDetial.lesson_plan!.id || "",
-        program_id: scheduleDetial.program!.id || "",
+        lesson_plan_id: scheduleDetial.lesson_plan?.id || "",
+        program_id: scheduleDetial.program?.id || "",
         repeat: {},
         start_at: scheduleDetial.start_at || 0,
-        subject_id: scheduleDetial.subject!.id || "",
+        subject_id: scheduleDetial.subject?.id || "",
         teacher_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title || "",
       };
@@ -859,6 +859,18 @@ function EditBox(props: CalendarStateProps) {
           ></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
+        <TextField
+          className={css.fieldset}
+          label={d("Class Type").t("schedule_detail_class_type")}
+          value={scheduleList.class_type}
+          onChange={(e) => handleTopicListChange(e, "class_type")}
+          error={validator.class_type}
+          select
+          required
+          disabled={isScheduleExpired()}
+        >
+          {menuItemListClassType(scheduleMockOptions.classTypeList)}
+        </TextField>
         <Autocomplete
           id="combo-box-demo"
           options={getClassOption(scheduleMockOptions.classList.organization)}
@@ -1003,18 +1015,6 @@ function EditBox(props: CalendarStateProps) {
             )}
           />
         )}
-        <TextField
-          className={css.fieldset}
-          label={d("Class Type").t("schedule_detail_class_type")}
-          value={scheduleList.class_type}
-          onChange={(e) => handleTopicListChange(e, "class_type")}
-          error={validator.class_type}
-          select
-          required
-          disabled={isScheduleExpired()}
-        >
-          {menuItemListClassType(scheduleMockOptions.classTypeList)}
-        </TextField>
         <Box
           style={{
             display: scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework" ? "block" : "none",
@@ -1022,14 +1022,14 @@ function EditBox(props: CalendarStateProps) {
         >
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={4}>
+              <Grid item xs={5}>
                 <FormControlLabel
                   disabled={isScheduleExpired()}
                   control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
                   label={d("Due Date").t("schedule_detail_due_date")}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={7}>
                 <KeyboardDatePicker
                   disableToolbar
                   variant="inline"

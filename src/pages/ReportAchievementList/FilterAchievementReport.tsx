@@ -5,12 +5,13 @@ import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined"
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
+import { User } from "../../api/api-ko-schema.auto";
 import { MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
-import { ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy, SingleTeacherItem, TeacherItem } from "./types";
+import { ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -81,7 +82,7 @@ const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((
 });
 
 interface GetTeacherItemProps {
-  list: SingleTeacherItem[];
+  list: Pick<User, "user_id" | "user_name">[];
   value: QueryCondition;
   onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   tab: keyof QueryCondition;
@@ -136,15 +137,15 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const { onChange, value, reportMockOptions } = props;
   const css = useStyles();
   const viewReport = usePermission(PermissionType.view_reports_610);
-  const viewMyReport = usePermission(PermissionType.view_my_reports_614);
   const getOptions = (list: MockOptionsItem[]) =>
+    list &&
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
       </MenuItem>
     ));
   const classs = reportMockOptions.classList.user?.classesTeaching || [];
-  const teachers = reportMockOptions.teacherList?.organization?.teachers || [];
+  const teachers = reportMockOptions.teacherList || [];
   const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
@@ -172,29 +173,28 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     onChange(value, tab);
   };
 
-  const getTeacherList = (teacherList: TeacherItem[] | undefined | null) => {
+  const getTeacherList = (teacherList: Pick<User, "user_id" | "user_name">[] | undefined | null) => {
     if (teacherList === null || teacherList === undefined) return;
     return teacherList.map((item) => (
-      <MenuItem key={item.user.user_id} value={item.user.user_id}>
-        {item.user.user_name}
+      <MenuItem key={item.user_id} value={item.user_id}>
+        {item.user_name}
       </MenuItem>
     ));
   };
   const getClassList = (list: ClassList | undefined | null) => {
-    if (list === null || list === undefined) return;
+    if (list === null || list === undefined || list.user === undefined) return;
     return list.user.classesTeaching.map((item) => (
       <MenuItem key={item.class_id} value={item.class_id}>
         {item.class_name}
       </MenuItem>
     ));
   };
-
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Hidden smDown>
         <Box position="relative" className={css.box}>
           <Box>
-            {viewReport && !viewMyReport && (
+            {viewReport && (
               <TextField
                 size="small"
                 className={css.selectButton}
@@ -205,7 +205,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 disabled={teachers.length <= 0}
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
-                {getTeacherList((reportMockOptions.teacherList?.organization?.teachers as TeacherItem[]) || [])}
+                {getTeacherList(reportMockOptions.teacherList)}
               </TextField>
             )}
             <TextField
@@ -262,7 +262,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       <Hidden mdUp>
         <Box display="flex">
           <Box flex={3}>
-            {viewReport && !viewMyReport && (
+            {viewReport && (
               <PersonOutlinedIcon
                 fontSize="large"
                 className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
@@ -271,7 +271,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
             )}
             <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
               <GetTeacherItem
-                list={reportMockOptions.teacherList.organization?.teachers as SingleTeacherItem[]}
+                list={reportMockOptions.teacherList}
                 value={value}
                 onChangeMenu={handleChangeMenu}
                 tab="teacher_id"

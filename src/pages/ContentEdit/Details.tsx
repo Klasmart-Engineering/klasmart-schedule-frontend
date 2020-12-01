@@ -24,11 +24,12 @@ import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
-import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
@@ -124,7 +125,7 @@ export default function Details(props: DetailsProps) {
   const {
     allDefaultValueAndKey,
     contentDetail,
-    formMethods: { control, errors, setValue },
+    formMethods: { control, errors, setValue, watch },
     linkedMockOptions,
     visibility_settings,
     lesson_types,
@@ -175,6 +176,15 @@ export default function Details(props: DetailsProps) {
       <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf
     </div>
   );
+  const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
+  const suggest_timeKey = `${watch("data")}${contentDetail.suggest_time}${min}`;
+  const suggestTimeFun = useMemo(
+    () => (value: string | number) => {
+      const result = Number(value) > min ? Number(value) : min;
+      return result;
+    },
+    [min]
+  );
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
     props: {
@@ -214,11 +224,13 @@ export default function Details(props: DetailsProps) {
           </FormControl>
         )}
         <Controller
-          as={TextField}
+          as={FormattedTextField}
           control={control}
           name="name"
           label={lesson === "material" ? d("Material Name").t("library_label_material_name") : d("Plan Name").t("library_label_plan_name")}
           required
+          encode={frontTrim}
+          decode={frontTrim}
           defaultValue={allDefaultValueAndKey.name?.value}
           key={allDefaultValueAndKey.name?.key}
           rules={{
@@ -288,12 +300,14 @@ export default function Details(props: DetailsProps) {
           as={FormattedTextField}
           control={control}
           name="suggest_time"
-          decode={Number}
+          decode={lesson === "plan" ? suggestTimeFun : Number}
           type="number"
           className={css.fieldset}
           label={d("Duration(Minutes)").t("library_label_duration")}
-          defaultValue={allDefaultValueAndKey.suggest_time?.value}
-          key={allDefaultValueAndKey.suggest_time?.key}
+          defaultValue={
+            lesson === "plan" ? suggestTimeFun(allDefaultValueAndKey.suggest_time?.value || 0) : allDefaultValueAndKey.suggest_time?.value
+          }
+          key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
           disabled={permission}
         />
         <Box>

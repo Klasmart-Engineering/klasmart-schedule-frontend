@@ -33,9 +33,9 @@ function AssessmentsEditIner() {
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;
-  // 切换的时候formValue的数据是旧的
   const formValue = watch();
   const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
+  // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
   const filteredOutcomelist = assessmentDetail.outcome_attendance_maps;
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
@@ -141,7 +141,6 @@ function AssessmentsEditIner() {
 }
 export function AssessmentsEdit() {
   const { id, editindex } = useQuery();
-  // debugger;
   return <AssessmentsEditIner key={`${id}${editindex}`}></AssessmentsEditIner>;
 }
 AssessmentsEdit.routeBasePath = "/assessments/assessments-detail";

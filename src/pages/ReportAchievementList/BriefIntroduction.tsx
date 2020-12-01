@@ -1,12 +1,13 @@
 import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
+import { useHistory } from "react-router-dom";
+import { User } from "../../api/api-ko-schema.auto";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { setQuery } from "../../models/ModelContentDetailForm";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
-import { ClassItem, QueryCondition, TeacherItem } from "./types";
+import { ClassItem, QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
@@ -62,18 +63,13 @@ const useStyles = makeStyles(({ breakpoints }) => ({
 }));
 
 function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: string, id: string) {
-  const teacherList =
-    reportMockOptions.teacherList &&
-    reportMockOptions.teacherList.organization &&
-    (reportMockOptions.teacherList.organization.teachers as TeacherItem[]);
+  const teacherList = reportMockOptions.teacherList;
   const classList =
     reportMockOptions.classList &&
     reportMockOptions.classList.user?.classesTeaching &&
     (reportMockOptions.classList.user.classesTeaching as ClassItem[]);
   if (type === "teacher" && teacherList) {
-    const temp =
-      teacherList.filter((item: TeacherItem) => item.user.user_id === id)[0] &&
-      teacherList.filter((item: TeacherItem) => item.user.user_id === id)[0].user;
+    const temp = teacherList.filter((item: Pick<User, "user_id" | "user_name">) => item.user_id === id)[0];
     return temp ? temp.user_name : "";
   }
   if (type === "class" && classList) {
@@ -93,6 +89,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   const { value, student_name, backByLessonPlan, reportMockOptions } = props;
   const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
+  const history = useHistory();
   const [lessonPlanName, setLessonPlanName] = React.useState("");
 
   React.useEffect(() => {
@@ -105,15 +102,17 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   }, [backByLessonPlan, lessonPlanList, value.lesson_plan_id]);
 
   const handleClick = () => {
-    const urlParams =
-      "?" +
-      setQuery("", {
-        teacher_id: value.teacher_id as string,
-        class_id: value.class_id as string,
-        lesson_plan_id: value.lesson_plan_id as string,
-      });
-    if (backByLessonPlan) backByLessonPlan(urlParams);
-    // history.push({ pathname: '/report/achievement-list', search: '?' + setQuery('', { teacher_id: value.teacher_id as string, class_id: value.class_id as string, lesson_plan_id: value.lesson_plan_id as string }) });
+    // history.go(-1)
+    // const urlParams =
+    //   "?" +
+    //   setQuery("", {
+    //     teacher_id: value.teacher_id as string,
+    //     class_id: value.class_id as string,
+    //     lesson_plan_id: value.lesson_plan_id as string,
+    //   });
+    if (backByLessonPlan) {
+      history.go(-1);
+    }
   };
 
   return (

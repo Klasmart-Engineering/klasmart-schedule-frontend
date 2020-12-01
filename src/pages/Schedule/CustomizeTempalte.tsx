@@ -7,8 +7,9 @@ import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import ContentPreview from "../ContentPreview";
 import { apiLivePath } from "../../api/extra";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
+import { scheduleUpdateStatus } from "../../reducers/schedule";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -78,6 +79,7 @@ interface InfoProps {
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const { handleDelete, handleClose, scheduleInfo } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -153,6 +155,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
           onClick={() => {
             handleClose();
+            dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
             window.open(apiLivePath(liveToken));
           }}
         >

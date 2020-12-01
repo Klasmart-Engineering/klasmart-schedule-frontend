@@ -6,10 +6,10 @@ import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutli
 import clsx from "clsx";
 import React from "react";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
-import { d, t } from "../../locale/LocaleManager";
-import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../../components/Permission";
+import { d, t } from "../../locale/LocaleManager";
 import { getScheduleMockOptionsResponse } from "../../reducers/schedule";
+import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -191,7 +191,7 @@ function FilterTemplate(props: FilterProps) {
             handleActiveAll(e);
           }}
         />
-        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>{d("All My Schedule").t("scheudule_filter_all_my_schedule")}</span>
+        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>{d("My Schedule").t("scheudule_filter_all_my_schedule")}</span>
       </Grid>
       {filterGather.map((gather: ScheduleFilterProps, key: number) => (
         <Grid

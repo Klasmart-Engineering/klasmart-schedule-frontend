@@ -28,3 +28,4 @@ export const FormattedTextField = forwardRef((props: FormatedTextFieldProps<any>
 export const decodeArray = (value: string) => value.split(",");
 export const encodeOneItemArray = (value: string[]): string => value[0] || "";
 export const decodeOneItemArray = (value: string): string[] => (value ? [value] : []);
+export const frontTrim = (value: string): string => value.replace(/^[\s\n\t]+/g, "");

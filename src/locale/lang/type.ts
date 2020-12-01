@@ -70,6 +70,7 @@ type LangRecord<T = string> =
   | { id: "library_label_view_in"; description: "View in"; values: undefined }
   | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
   | { id: "library_label_approve"; description: "Approve"; values: undefined }
+  | { id: "library_msg_approve_content"; description: "Are you sure you want to approve these contents?"; values: undefined }
   | { id: "library_label_reject"; description: "Reject"; values: undefined }
   | { id: "library_label_inappropriate_content"; description: "Inappropriate Content"; values: undefined }
   | { id: "library_label_quality_of_lesson"; description: "Quality of Lesson is Poor"; values: undefined }
@@ -119,7 +120,7 @@ type LangRecord<T = string> =
   | { id: "library_error_no_content"; description: "Content does not exist"; values: undefined }
   | {
       id: "library_error_content_locked";
-      description: "This content is locked by editor at {email}. To use this content, ask the editor to check their drafts or rejected content, republish, then get it approved.";
+      description: "This content is locked by editor at {email}. To use this content, ask the editor to check their Draft or Waiting for Approval or Rejected content, publish, then get it approved.";
       values: { email: string | number };
     }
   | {
@@ -404,7 +405,7 @@ type LangRecord<T = string> =
   | { id: "schedule_preview_class"; description: "KidsLoop Class"; values: undefined }
   | { id: "schedule_preview_study"; description: "KidsLoop Study"; values: undefined }
   | { id: "schedule_detail_participants"; description: "Add Participants"; values: undefined }
-  | { id: "scheudule_filter_all_my_schedule"; description: "All My Schedule"; values: undefined }
+  | { id: "scheudule_filter_all_my_schedule"; description: "My Schedule"; values: undefined }
   | { id: "schedule_filter_schools"; description: "Schools"; values: undefined }
   | { id: "schedule_filter_teachers"; description: "Teachers"; values: undefined }
   | { id: "schedule_filter_classes"; description: "Classes"; values: undefined }

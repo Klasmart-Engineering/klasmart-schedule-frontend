@@ -120,6 +120,15 @@ export class ModelLessonPlan {
 
     return result;
   }
+  static sumSuggestTime(plan: Segment): number {
+    let sum: number = 0;
+    produce(plan, (draft) => {
+      ModelLessonPlan.forEach(draft, (item) => {
+        if (item.material) sum = sum + (item.material?.suggest_time || 0);
+      });
+    });
+    return sum;
+  }
 
   // 这里只考虑了单节点情况，如果将来有condition 分叉，需要修改实现
   static remove(plan: Segment, segmentId: Segment["segmentId"]): Segment {

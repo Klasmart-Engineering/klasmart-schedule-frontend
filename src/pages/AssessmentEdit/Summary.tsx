@@ -139,9 +139,6 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
     if (!attendance_ids?.length)
       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
     toggle();
-    // assessmentDetail?.outcome_attendance_maps?.map((item, index)=>{
-    //   setValue(`${item}[${index}].attendance_ids`, attendance_ids||[])
-    // })
     if (onChange) return onChange(attendance_ids || []);
   }, [dispatch, formMethods, onChange]);
   return (
@@ -255,7 +252,7 @@ export function Summary(props: SummaryProps) {
               fullWidth
               disabled
               name="classLength"
-              value={assessmentDetail.class_length || ""}
+              value={assessmentDetail.class_length && assessmentDetail.class_length / 60}
               className={css.fieldset}
               label={d("Class Length").t("assess_detail_class_length")}
             />
@@ -265,7 +262,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="numberofActivities"
-            value={assessmentDetail.number_of_activities || ""}
+            value={assessmentDetail.number_of_activities || 0}
             className={css.fieldset}
             label={d("Number of Activities").t("assess_detail_number_activity")}
           />
@@ -273,7 +270,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="numberofLearningOutcomes"
-            value={assessmentDetail.number_of_outcomes || ""}
+            value={assessmentDetail.number_of_outcomes || 0}
             className={css.fieldset}
             label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
           />

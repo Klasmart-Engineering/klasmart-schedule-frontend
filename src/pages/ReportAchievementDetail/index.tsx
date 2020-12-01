@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { RootState } from "../../reducers";
-import { getAchievementDetail, getLessonPlan, getReportMockOptions } from "../../reducers/report";
+import { getAchievementDetail } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
@@ -53,14 +53,6 @@ export function ReportAchievementDetail() {
       );
     }
   }, [condition.class_id, condition.lesson_plan_id, condition.student_id, condition.teacher_id, dispatch]);
-
-  useEffect(() => {
-    dispatch(getLessonPlan({ teacher_id: condition.teacher_id, class_id: condition.class_id }));
-  }, [condition.class_id, condition.teacher_id, dispatch]);
-
-  useEffect(() => {
-    dispatch(getReportMockOptions({ metaLoading: true }));
-  }, [dispatch]);
 
   return (
     <>

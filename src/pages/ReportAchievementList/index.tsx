@@ -2,11 +2,10 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getLessonPlan, reportOnload } from "../../reducers/report";
+import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -40,8 +39,6 @@ export function ReportAchievementList() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const viewMyReport = usePermission(PermissionType.view_my_reports_614);
-  const viewReport = usePermission(PermissionType.view_reports_610);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -56,34 +53,43 @@ export function ReportAchievementList() {
 
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
-      const { payload } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
+      const { payload: data } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
-      if (payload) {
-        const lesson_plan_id = (payload[0] && payload[0].id) || "";
+      if (data) {
+        const lesson_plan_id = (data[0] && data[0].id) || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
+        lesson_plan_id && dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
       }
     },
     [dispatch, history]
   );
 
   const computeFilter = useMemo(
-    () => (tab: keyof QueryCondition, value: string) => {
+    () => async (tab: keyof QueryCondition, value: string) => {
       history.push({ search: setQuery(history.location.search, { [tab]: value }) });
       if (tab === "teacher_id") {
-        const classlist = reportMockOptions.classList.user?.classesTeaching;
-        const class_id = (classlist && classlist[0] && classlist[0].class_id) || "";
-        class_id
-          ? getFirstLessonPlanId(value, class_id)
-          : history.push({
-              search: setQuery(history.location.search, { teacher_id: value, class_id, lesson_plan_id: "" }),
-            });
+        history.push({
+          search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
+        });
       }
       if (tab === "class_id") {
-        getFirstLessonPlanId(condition.teacher_id, value);
+        getFirstLessonPlanId(reportMockOptions.teacher_id, value);
+      }
+      if (tab === "lesson_plan_id") {
+        if (reportMockOptions.teacher_id && reportMockOptions.class_id) {
+          dispatch(
+            getAchievementList({
+              metaLoading: true,
+              teacher_id: reportMockOptions.teacher_id,
+              class_id: reportMockOptions.class_id,
+              lesson_plan_id: value,
+            })
+          );
+        }
       }
     },
-    [condition.teacher_id, getFirstLessonPlanId, history, reportMockOptions.classList.user]
+    [dispatch, getFirstLessonPlanId, history, reportMockOptions.teacher_id, reportMockOptions.class_id]
   );
   useEffect(() => {
     dispatch(
@@ -93,19 +99,17 @@ export function ReportAchievementList() {
         lesson_plan_id: condition.lesson_plan_id,
         status: condition.status,
         sort_by: condition.sort_by,
-        view_my_report: !viewReport && viewMyReport,
         metaLoading: true,
       })
     );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.lesson_plan_id, condition.sort_by, condition.status, dispatch]);
+  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch]);
 
   useEffect(() => {
     if (reportMockOptions) {
       const { teacher_id, class_id, lesson_plan_id } = reportMockOptions;
       teacher_id &&
-        class_id &&
-        lesson_plan_id &&
         history.push({
           search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }),
         });
@@ -123,7 +127,7 @@ export function ReportAchievementList() {
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
       {true &&
-        (reportList && reportList.length > 0 ? (
+        (reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
         ) : (
           <TipImages type={TipImagesType.empty} text="library_label_empty" />
