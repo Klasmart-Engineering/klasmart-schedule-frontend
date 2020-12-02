@@ -26,7 +26,7 @@ export function AssetPreview(props: PreviewProps) {
       {(fileType === "video" || fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetVideo src={path} />}
       {(fileType === "audio" || fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetAudio src={path} />}
       {(fileType === "document" || fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0) && <AssetFile src={path} />}
-      <Typography variant="body1" style={{ marginTop: "40px" }}>
+      <Typography variant="body1" style={{ marginTop: "20px" }}>
         {d("File Type").t("library_label_file_type")} : {getSuffix(source)}
       </Typography>
     </Box>
