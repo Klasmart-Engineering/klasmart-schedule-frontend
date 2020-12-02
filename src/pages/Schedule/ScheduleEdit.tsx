@@ -1088,6 +1088,7 @@ function EditBox(props: CalendarStateProps) {
           <Button
             variant="contained"
             color="primary"
+            disabled={scheduleDetial.status === "Closed"}
             style={{
               width: "45%",
             }}
