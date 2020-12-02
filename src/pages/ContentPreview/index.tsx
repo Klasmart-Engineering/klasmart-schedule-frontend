@@ -32,15 +32,16 @@ import { TabValue } from "./type";
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const id = query.get("id") || "";
-  const sid = query.get("sid") || "";
+  const id = query.get("id") as string;
+  const sid = query.get("sid") as string;
   const author = query.get("author");
-  return { id, search, sid, author };
+  const class_id = query.get("class_id") as string;
+  return { id, search, sid, author, class_id };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, search, sid, author } = useQuery();
+  const { id, search, sid, author, class_id } = useQuery();
   const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
@@ -150,9 +151,9 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
-    dispatch(getContentLiveToken({ content_id: id, metaLoading: true }));
+    dispatch(getContentLiveToken({ content_id: id, class_id: class_id, metaLoading: true }));
     if (sid) dispatch(getScheduleInfo(sid));
-  }, [dispatch, id, sid]);
+  }, [class_id, dispatch, id, sid]);
   return (
     <Fragment>
       <LayoutPair breakpoint="md" leftWidth={434} rightWidth={1400} spacing={0} basePadding={0} padding={0}>

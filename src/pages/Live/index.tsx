@@ -11,11 +11,12 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const content_id = query.get("content_id") as string;
   const schedule_id = query.get("schedule_id") as string;
-  return { content_id, schedule_id };
+  const class_id = query.get("class_id") as string;
+  return { content_id, schedule_id, class_id };
 };
 
 export default function Live() {
-  const { content_id, schedule_id } = useQuery();
+  const { content_id, schedule_id, class_id } = useQuery();
   const dispatch = useDispatch();
   React.useEffect(() => {
     async function asynsGetliveToken() {
@@ -25,13 +26,13 @@ export default function Live() {
           AsyncTrunkReturned<typeof getScheduleLiveToken>
         >;
       if (content_id)
-        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, metaLoading: true }))) as unknown) as PayloadAction<
+        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, class_id, metaLoading: true }))) as unknown) as PayloadAction<
           AsyncTrunkReturned<typeof getContentLiveToken>
         >;
       if (tokenInfo) window.location.href = apiLivePath(tokenInfo?.payload.token);
     }
     asynsGetliveToken();
-  }, [schedule_id, content_id, dispatch]);
+  }, [schedule_id, content_id, dispatch, class_id]);
   return null;
 }
 

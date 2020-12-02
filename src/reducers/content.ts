@@ -494,11 +494,15 @@ export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult>("cont
 
 interface LiveContentPayload extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentLiveToken>[0];
+  class_id: Parameters<typeof api.contents.getContentLiveToken>[1];
 }
 type LiveContentResult = ReturnType<typeof api.contents.getContentLiveToken>;
-export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>("contents/live", async ({ content_id }) => {
-  return api.contents.getContentLiveToken(content_id);
-});
+export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>(
+  "contents/live",
+  async ({ content_id, class_id }) => {
+    return api.contents.getContentLiveToken(content_id, class_id);
+  }
+);
 
 type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
 type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
