@@ -42,38 +42,33 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   rejectBtn: createContainedColor(palette.error, palette),
   previewContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
-    height: "100%",
     position: "relative",
-    minHeight: "calc(100vh - 60px)",
+    minHeight: "100%",
     // [breakpoints.up("md")]: {
     //   minHeight: 'calc(100vh - 60px)',
     // },
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
   },
   h5pCon: {
     width: "90%",
     height: "80%",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "Translate(-50%, -50%)",
     textAlign: "center",
     background: "grey",
   },
   btnCon: {
     width: "100%",
-    position: "absolute",
-    top: "90%",
-    left: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 20,
   },
   viewBtn: {
-    width: 244,
+    width: 204,
     height: 68,
     borderRadius: 34,
-    position: "absolute",
-    right: "5%",
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
@@ -82,13 +77,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     background: "#d32f2f",
     color: "#fff",
     cursor: "pointer",
+    marginTop: 20,
+    marginLeft: "calc(90% - 204px)",
   },
   viewMbBtn: {
     width: 100,
     height: 40,
     borderRadius: 20,
-    position: "absolute",
-    right: "5%",
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
@@ -96,6 +91,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     alignItems: "center",
     background: "#d32f2f",
     color: "#fff",
+    marginTop: 20,
+    marginLeft: "calc(90% - 100px)",
   },
   iconBtn: {
     width: 48,
@@ -196,39 +193,33 @@ export function H5pPreview(props: H5pPreview) {
             </Box>
           </Box>
         )}
-        <Hidden only={["xs", "sm"]}>
-          <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-            {d("View in").t("library_label_view_in") !== "-" && (
-              <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
-            )}
-            {classType === "OnlineClass" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-            )}
-            {classType === "OfflineClass" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-            )}
-            {classType === "Homework" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
-            )}
-            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-          </Box>
-        </Hidden>
-        <Hidden only={["md", "lg", "xl"]}>
-          <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
-            {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
-            {classType === "OnlineClass" && (
-              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-            )}
-            {classType === "OfflineClass" && (
-              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-            )}
-            {classType === "Homework" && (
-              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
-            )}
-            {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-          </Box>
-        </Hidden>
       </Box>
+      <Hidden only={["xs", "sm"]}>
+        <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
+          {d("View in").t("library_label_view_in") !== "-" && <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>}
+          {classType === "OnlineClass" && (
+            <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+          )}
+          {classType === "OfflineClass" && (
+            <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+          )}
+          {classType === "Homework" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>}
+          {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
+        </Box>
+      </Hidden>
+      <Hidden only={["md", "lg", "xl"]}>
+        <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
+          {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
+          {classType === "OnlineClass" && (
+            <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+          )}
+          {classType === "OfflineClass" && (
+            <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+          )}
+          {classType === "Homework" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>}
+          {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
+        </Box>
+      </Hidden>
     </Box>
   );
 }

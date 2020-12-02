@@ -15,15 +15,15 @@ const useStyles = makeStyles({
     position: "relative",
   },
   video: {
-    width: "80%",
+    width: "100%",
     marginTop: "36px",
   },
   controls: {
-    width: "80%",
+    width: "100%",
     height: "50px",
     backgroundColor: "#0e78d5",
     marginTop: "-4px",
-    marginLeft: "10%",
+    // marginLeft: "10%",
     display: "flex",
     alignItems: "center",
   },
