@@ -77,7 +77,7 @@ type LangRecord<T = string> =
   | { id: "library_label_no_permissions_use_assets"; description: "No Permissions to Use Assets"; values: undefined }
   | { id: "library_label_add_remove_learning_outcomes"; description: "Add/Remove Learning Outcomes"; values: undefined }
   | { id: "library_label_other"; description: "Other"; values: undefined }
-  | { id: "library_msg_reject_content"; description: "Are you sure you want to reject this content?"; values: undefined }
+  | { id: "library_msg_reject_content"; description: "Are you sure you want to reject these contents?"; values: undefined }
   | { id: "library_msg_reject_reason"; description: "Please specify the reason for rejection."; values: undefined }
   | { id: "library_label_reason"; description: "Reason"; values: undefined }
   | { id: "library_msg_file_deleted"; description: "The file has been deleted"; values: undefined }
@@ -136,6 +136,16 @@ type LangRecord<T = string> =
   | { id: "library_label_teacher_manual"; description: "Teacher Manual"; values: undefined }
   | { id: "library_label_supported_format"; description: "Supported Format"; values: undefined }
   | { id: "library_label_max_size"; description: "Max Size"; values: undefined }
+  | { id: "library_label_new_folder"; description: "New Folder"; values: undefined }
+  | { id: "library_label_folder_name"; description: "Folder Name"; values: undefined }
+  | { id: "library_error_duplicate_folder_name"; description: "Folder name should be unique, please use another name."; values: undefined }
+  | { id: "library_label_folder"; description: "Folder"; values: undefined }
+  | { id: "library_label_items"; description: "items"; values: undefined }
+  | { id: "library_label_visible"; description: "visible"; values: undefined }
+  | { id: "library_label_rename"; description: "Rename"; values: undefined }
+  | { id: "library_label_move"; description: "Move to"; values: undefined }
+  | { id: "library_error_move_folder_to_own"; description: "Folder cannot be moved to itself or a subdirectory"; values: undefined }
+  | { id: "library_error_delete_folder"; description: "Folder cannot be deleted unless it is empty"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
