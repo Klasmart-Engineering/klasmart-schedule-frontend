@@ -15,15 +15,9 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiErrorResponse;
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiErrorResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -38,6 +32,11 @@ export interface ApiDevelopmental {
   developmental_name?: string;
 }
 
+export interface ApiErrorResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiFolderItemsResponse {
   items?: EntityFolderItem[];
 }
@@ -47,24 +46,20 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiErrorResponse;
 
 export interface ApiGrade {
   grade_id?: string;
   grade_name?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiErrorResponse;
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
+export type ApiNotFoundResponse = ApiErrorResponse;
+
+export interface ApiOutcomeBulkRejectRequest {
+  outcome_ids?: string[];
+  reject_reason?: string;
 }
 
 export interface ApiOutcomeCreateResponse {
@@ -164,6 +159,12 @@ export interface ApiPublishContentRequest {
 
 export interface ApiPublishOutcomeReq {
   scope?: string;
+}
+
+export interface ApiRejectReasonBulkRequest {
+  ids?: string[];
+  reject_reason?: string[];
+  remark?: string;
 }
 
 export interface ApiRejectReasonRequest {
@@ -668,6 +669,7 @@ export interface EntityScheduleDetailsView {
 }
 
 export interface EntityScheduleListView {
+  class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   end_at?: number;
   id?: string;
@@ -1013,7 +1015,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add assessments
      */
     addAssessment: (assessment: EntityAddAssessmentCommand, params?: RequestParams) =>
-      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/assessments`,
         "POST",
         params,
@@ -1048,6 +1050,22 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         update_assessment_command
       ),
   };
+  assessmentsForTest = {
+    /**
+     * @tags assessments
+     * @name addAssessmentForTest
+     * @summary add assessments for test
+     * @request POST:/assessments_for_test
+     * @description add assessments for test
+     */
+    addAssessmentForTest: (assessment: EntityAddAssessmentCommand, params?: RequestParams) =>
+      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/assessments_for_test`,
+        "POST",
+        params,
+        assessment
+      ),
+  };
   bulk = {
     /**
      * @tags learning_outcomes
@@ -1064,6 +1082,22 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         id_list
       ),
   };
+  bulkApprove = {
+    /**
+     * @tags learning_outcomes
+     * @name approveLearningOutcomesBulk
+     * @summary bulk approve learning outcome
+     * @request PUT:/bulk_approve/learning_outcomes
+     * @description approve learning outcomes
+     */
+    approveLearningOutcomesBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk_approve/learning_outcomes`,
+        "PUT",
+        params,
+        id_list
+      ),
+  };
   bulkPublish = {
     /**
      * @tags learning_outcomes
@@ -1075,6 +1109,22 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     publishLearningOutcomesBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk_publish/learning_outcomes`,
+        "PUT",
+        params,
+        id_list
+      ),
+  };
+  bulkReject = {
+    /**
+     * @tags learning_outcomes
+     * @name rejectLearningOutcomesBulk
+     * @summary bulk reject learning outcome
+     * @request PUT:/bulk_reject/learning_outcomes
+     * @description reject learning outcomes
+     */
+    rejectLearningOutcomesBulk: (id_list: ApiOutcomeBulkRejectRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk_reject/learning_outcomes`,
         "PUT",
         params,
         id_list
@@ -1143,6 +1193,36 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
+     * @name approveContentReviewBulk
+     * @summary approve content bulk
+     * @request PUT:/contents/review/approve
+     * @description approve content bulk
+     */
+    approveContentReviewBulk: (RejectReasonRequest: ApiRejectReasonBulkRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/contents/review/approve`,
+        "PUT",
+        params,
+        RejectReasonRequest
+      ),
+
+    /**
+     * @tags content
+     * @name rejectContentReviewBulk
+     * @summary reject content bulk
+     * @request PUT:/contents/review/reject
+     * @description reject content bulk
+     */
+    rejectContentReviewBulk: (RejectReasonRequest: ApiRejectReasonBulkRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/contents/review/reject`,
+        "PUT",
+        params,
+        RejectReasonRequest
+      ),
+
+    /**
+     * @tags content
      * @name getContentById
      * @summary getContent
      * @request GET:/contents/{content_id}
@@ -1182,7 +1262,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents/{content_id}/live/token
      * @description get content live token
      */
-    getContentLiveToken: (content_id: string, params?: RequestParams) =>
+    getContentLiveToken: (content_id: string, class_id: string, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/live/token`,
         "GET",
@@ -1540,12 +1620,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags folder
      * @name getFolderItemByID
      * @summary getFolderItemByID
-     * @request GET:/folders/items/details/{folder_id}
+     * @request GET:/folders/items/details/{item_id}
      * @description get a folder item by id
      */
-    getFolderItemById: (folder_id: string, params?: RequestParams) =>
+    getFolderItemById: (item_id: string, params?: RequestParams) =>
       this.request<EntityFolderItemInfo, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/folders/items/details/${folder_id}`,
+        `/folders/items/details/${item_id}`,
         "GET",
         params
       ),
@@ -1569,12 +1649,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags folder
      * @name listFolderItems
      * @summary listFolderItems
-     * @request GET:/folders/items/list/{folder_id}
+     * @request GET:/folders/items/list/{item_id}
      * @description list folder items (deprecated)
      */
-    listFolderItems: (folder_id: string, query?: { item_type?: number }, params?: RequestParams) =>
+    listFolderItems: (item_id: string, query?: { item_type?: number }, params?: RequestParams) =>
       this.request<ApiFolderItemsResponse, ApiInternalServerErrorResponse>(
-        `/folders/items/list/${folder_id}${this.addQueryParams(query)}`,
+        `/folders/items/list/${item_id}${this.addQueryParams(query)}`,
         "GET",
         params
       ),

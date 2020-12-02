@@ -5,6 +5,7 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
+    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -296,12 +297,6 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -414,6 +409,47 @@
         }
       }
     },
+    "/assessments_for_test": {
+      "post": {
+        "description": "add assessments for test",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "add assessments for test",
+        "operationId": "addAssessmentForTest",
+        "parameters": [
+          {
+            "description": "add assessment command",
+            "name": "assessment",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.AddAssessmentCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AddAssessmentResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/bulk/learning_outcomes": {
       "delete": {
         "description": "bulk delete learning outcomes",
@@ -422,6 +458,59 @@
         "tags": ["learning_outcomes"],
         "summary": "bulk delete learning outcome",
         "operationId": "deleteOutcomeBulk",
+        "parameters": [
+          {
+            "description": "outcome id list",
+            "name": "id_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeIDList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bulk_approve/learning_outcomes": {
+      "put": {
+        "description": "approve learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "bulk approve learning outcome",
+        "operationId": "approveLearningOutcomesBulk",
         "parameters": [
           {
             "description": "outcome id list",
@@ -483,6 +572,59 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/api.OutcomeIDList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bulk_reject/learning_outcomes": {
+      "put": {
+        "description": "reject learning outcomes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "bulk reject learning outcome",
+        "operationId": "rejectLearningOutcomesBulk",
+        "parameters": [
+          {
+            "description": "outcome id list",
+            "name": "id_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeBulkRejectRequest"
             }
           }
         ],
@@ -725,6 +867,112 @@
         }
       }
     },
+    "/contents/review/approve": {
+      "put": {
+        "description": "approve content bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "approve content bulk",
+        "operationId": "approveContentReviewBulk",
+        "parameters": [
+          {
+            "description": "reject_reason",
+            "name": "RejectReasonRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RejectReasonBulkRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/review/reject": {
+      "put": {
+        "description": "reject content bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "reject content bulk",
+        "operationId": "rejectContentReviewBulk",
+        "parameters": [
+          {
+            "description": "reject_reason",
+            "name": "RejectReasonRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RejectReasonBulkRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/contents/{content_id}": {
       "get": {
         "description": "get a content by id",
@@ -860,6 +1108,13 @@
             "type": "string",
             "description": "content id",
             "name": "content_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "class id",
+            "name": "class_id",
             "in": "path",
             "required": true
           }
@@ -2066,7 +2321,7 @@
         }
       }
     },
-    "/folders/items/details/{folder_id}": {
+    "/folders/items/details/{item_id}": {
       "get": {
         "description": "get a folder item by id",
         "consumes": ["application/json"],
@@ -2094,9 +2349,7 @@
             }
           }
         }
-      }
-    },
-    "/folders/items/details/{item_id}": {
+      },
       "put": {
         "description": "update folder item info",
         "consumes": ["application/json"],
@@ -2144,7 +2397,7 @@
         }
       }
     },
-    "/folders/items/list/{folder_id}": {
+    "/folders/items/list/{item_id}": {
       "get": {
         "description": "list folder items (deprecated)",
         "consumes": ["application/json"],
@@ -5122,28 +5375,10 @@
       }
     },
     "api.BadRequestResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.ConflictResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -5169,6 +5404,18 @@
         },
         "developmental_name": {
           "type": "string"
+        }
+      }
+    },
+    "api.ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
         }
       }
     },
@@ -5198,16 +5445,7 @@
       }
     },
     "api.ForbiddenResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.Grade": {
       "type": "object",
@@ -5221,26 +5459,22 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.NotFoundResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.OutcomeBulkRejectRequest": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object"
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "label": {
-          "type": "string",
-          "example": "unknown"
+        "reject_reason": {
+          "type": "string"
         }
       }
     },
@@ -5574,6 +5808,26 @@
         }
       }
     },
+    "api.RejectReasonBulkRequest": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reject_reason": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remark": {
+          "type": "string"
+        }
+      }
+    },
     "api.RejectReasonRequest": {
       "type": "object",
       "properties": {
@@ -5748,6 +6002,7 @@
           "type": "string"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.AssessmentSubject"
         },
         "teachers": {
@@ -5774,12 +6029,14 @@
           "type": "string"
         },
         "program": {
+          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
           "type": "string"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.AssessmentSubject"
         },
         "teachers": {
@@ -6737,6 +6994,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6763,6 +7021,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6789,9 +7048,11 @@
       "type": "object",
       "properties": {
         "daily": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -6799,9 +7060,11 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -6810,6 +7073,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6828,6 +7092,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -6861,6 +7126,7 @@
       "required": ["class_id", "end_at", "start_at", "teacher_ids", "title"],
       "properties": {
         "attachment": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -6898,6 +7164,7 @@
           "type": "string"
         },
         "repeat": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -6928,9 +7195,11 @@
       "type": "object",
       "properties": {
         "attachment": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_type": {
@@ -6956,6 +7225,7 @@
           "type": "boolean"
         },
         "lesson_plan": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -6968,9 +7238,11 @@
           "type": "string"
         },
         "program": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "repeat": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -6984,6 +7256,7 @@
           "type": "integer"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "teachers": {
@@ -7003,6 +7276,9 @@
     "entity.ScheduleListView": {
       "type": "object",
       "properties": {
+        "class_id": {
+          "type": "string"
+        },
         "class_type": {
           "type": "string",
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
@@ -7049,6 +7325,7 @@
       "type": "object",
       "properties": {
         "class": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "end_at": {
@@ -7058,6 +7335,7 @@
           "type": "string"
         },
         "lesson_plan": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -7067,6 +7345,7 @@
           }
         },
         "program": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -7076,6 +7355,7 @@
           "type": "integer"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "teachers": {
@@ -7105,6 +7385,7 @@
       "required": ["class_id", "end_at", "start_at", "teacher_ids", "title"],
       "properties": {
         "attachment": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -7145,6 +7426,7 @@
           "type": "string"
         },
         "repeat": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {
