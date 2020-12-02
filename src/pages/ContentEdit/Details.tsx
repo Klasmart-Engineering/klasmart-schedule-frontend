@@ -21,6 +21,7 @@ import { CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/i
 import React, { useCallback, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { useQueryCms } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
@@ -125,7 +126,13 @@ export default function Details(props: DetailsProps) {
   const {
     allDefaultValueAndKey,
     contentDetail,
-    formMethods: { control, errors, setValue, watch },
+    formMethods: {
+      control,
+      errors,
+      setValue,
+      watch,
+      formState: { isDirty },
+    },
     linkedMockOptions,
     visibility_settings,
     lesson_types,
@@ -137,6 +144,7 @@ export default function Details(props: DetailsProps) {
 
   const css = useStyles();
   const { lesson } = useParams();
+  const { id } = useQueryCms();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
@@ -177,13 +185,22 @@ export default function Details(props: DetailsProps) {
     </div>
   );
   const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
-  const suggest_timeKey = `${watch("data")}${contentDetail.suggest_time}${min}`;
+  const suggest_timeKey = `${contentDetail.suggest_time}${min}`;
   const suggestTimeFun = useMemo(
     () => (value: string | number) => {
       const result = Number(value) > min ? Number(value) : min;
       return result;
     },
     [min]
+  );
+  const suggestTimeFunEdit = useMemo(
+    () => (value: string | number) => {
+      if (!isDirty) return Number(value);
+      const watchTime = watch("suggest_time") || 0;
+      const result = watchTime > min ? watchTime : min;
+      return result;
+    },
+    [isDirty, min, watch]
   );
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, {
@@ -305,7 +322,11 @@ export default function Details(props: DetailsProps) {
           className={css.fieldset}
           label={d("Duration(Minutes)").t("library_label_duration")}
           defaultValue={
-            lesson === "plan" ? suggestTimeFun(allDefaultValueAndKey.suggest_time?.value || 0) : allDefaultValueAndKey.suggest_time?.value
+            lesson === "plan"
+              ? id
+                ? suggestTimeFunEdit(allDefaultValueAndKey.suggest_time?.value || 0)
+                : suggestTimeFun(watch("suggest_time") || 0)
+              : allDefaultValueAndKey.suggest_time?.value
           }
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
           disabled={permission}
@@ -573,28 +594,6 @@ export default function Details(props: DetailsProps) {
                 {...props}
                 render={({ btnRef, value, isUploading, item }) => (
                   <Box style={{ position: "relative" }}>
-                    {/* <Controller
-                      as={TextField}
-                      control={control}
-                      name="teacher_manual_name"
-                      defaultValue={allDefaultValueAndKey.teacher_manual_name?.value}
-                      key={allDefaultValueAndKey.teacher_manual_name?.key}
-                      className={css.fieldset}
-                      multiline
-                      label={
-                        <div style={{display:"flex", alignItems:"center"}}>
-                          {d("Teacher Manual").t("library_label_teacher_manual")}
-                          <Tooltip title={teacherInfo}>
-                            <InfoOutlined
-                              style={{display: value ? "none" : "block", color: "darkgrey",cursor:"pointer"}}
-                              onMouseOver={() => console.log(" icon mouse over")}
-                            />
-                          </Tooltip>
-                        </div>
-                      }
-                      disabled
-                    /> */}
-
                     <Controller
                       control={control}
                       name="teacher_manual_name"

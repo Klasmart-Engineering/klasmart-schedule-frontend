@@ -252,7 +252,7 @@ export function Summary(props: SummaryProps) {
               fullWidth
               disabled
               name="classLength"
-              value={assessmentDetail.class_length && assessmentDetail.class_length / 60}
+              value={assessmentDetail.class_length && Math.ceil(assessmentDetail.class_length / 60)}
               className={css.fieldset}
               label={d("Class Length").t("assess_detail_class_length")}
             />

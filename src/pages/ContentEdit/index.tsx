@@ -46,7 +46,7 @@ interface RouteParams {
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
 
-const useQuery = () => {
+export const useQueryCms = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const id = query.get("id");
@@ -89,7 +89,7 @@ function ContentEditForm() {
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
 
   const { lesson, tab, rightside } = useParams();
-  const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQuery();
+  const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
@@ -457,7 +457,7 @@ function ContentEditForm() {
 }
 
 export default function ContentEdit() {
-  const { id, editindex } = useQuery();
+  const { id, editindex } = useQueryCms();
   const { lesson } = useParams();
   return <ContentEditForm key={`id${id},editindex${editindex}lesson${lesson}`} />;
 }
