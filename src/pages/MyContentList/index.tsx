@@ -161,7 +161,11 @@ export default function MyContentList() {
       dispatch(renameFolder({ item_id: content?.id as string, defaultName: content?.name as string })).then(unwrapResult)
     );
   };
-  const handleAddFolder = async () => {
+  const handleAddFolder: FolderTreeProps["onAddFolder"] = async (parent_id) => {
+    await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
+    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
+  };
+  const handlePageAddFolder = async () => {
     const parent_id = (condition.path || "").split("/").pop() || "";
     await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
   };
@@ -258,7 +262,7 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={() => handleAddFolder()}
+        onAddFolder={() => handlePageAddFolder()}
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
         onBulkDeleteFolder={handleBulkDeleteFolder}
@@ -268,7 +272,7 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={() => handleAddFolder()}
+        onAddFolder={() => handlePageAddFolder()}
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
         onBulkDeleteFolder={handleBulkDeleteFolder}
