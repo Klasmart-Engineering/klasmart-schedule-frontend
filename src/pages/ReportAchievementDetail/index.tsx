@@ -33,7 +33,11 @@ export function ReportAchievementDetail() {
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { achievementDetail = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  // const { achievementDetail = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const achievementDetail = totalData.achievementDetail ?? [];
+  const student_name = totalData.student_name;
+  const reportMockOptions = totalData.reportMockOptions;
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);

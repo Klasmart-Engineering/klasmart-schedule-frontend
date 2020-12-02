@@ -38,7 +38,11 @@ export function ReportAchievementList() {
   const condition = useReportQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  // const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const reportList = totalData.reportList ?? [];
+  const student_name = totalData.student_name;
+  const reportMockOptions = totalData.reportMockOptions;
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);

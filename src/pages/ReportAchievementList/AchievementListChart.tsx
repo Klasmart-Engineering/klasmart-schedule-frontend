@@ -126,7 +126,10 @@ type RatioExtendedEntityStudentReportItem = EntityStudentReportItem &
   };
 const mapRatio = (data: EntityStudentReportItem[]): RatioExtendedEntityStudentReportItem[] => {
   return data.map((item) => {
-    const { achieved_count = 0, not_achieved_count = 0, not_attempted_count = 0 } = item;
+    // const { achieved_count = 0, not_achieved_count = 0, not_attempted_count = 0 } = item;
+    const achieved_count = item.achieved_count ?? 0;
+    const not_achieved_count = item.not_achieved_count ?? 0;
+    const not_attempted_count = item.not_attempted_count ?? 0;
     const sum = achieved_count + not_achieved_count + not_attempted_count;
     return {
       ...item,
