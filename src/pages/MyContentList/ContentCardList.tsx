@@ -36,7 +36,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { isUnpublish } from "./FirstSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
@@ -317,7 +317,7 @@ function ContentCard(props: ContentProps) {
       <Typography className={css.body2} style={{ marginLeft: "10px" }} variant="body2">
         {content?.content_type === ContentType.material && d("Material").t("library_label_material")}
         {content?.content_type === ContentType.plan && d("Plan").t("library_label_plan")}
-        {content?.content_type === ContentType.folder && reportMiss("Folder", "library_label_folder")}
+        {content?.content_type === ContentType.folder && "Folder"}
         {content?.content_type === ContentType.assets && file_type === ContentType.image % 10 && d("Image").t("library_label_image")}
         {content?.content_type === ContentType.assets && file_type === ContentType.video % 10 && d("Video").t("library_label_video")}
         {content?.content_type === ContentType.assets && file_type === ContentType.audio % 10 && d("Audio").t("library_label_audio")}

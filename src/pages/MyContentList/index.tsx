@@ -305,12 +305,12 @@ export default function MyContentList() {
                 onGoBack={handleGoback}
                 parentFolderInfo={parentFolderInfo}
               />
-            ) : JSON.stringify(parentFolderInfo) === "{}" ? (
-              <TipImages type={TipImagesType.empty} text="library_label_empty" />
-            ) : (
+            ) : JSON.stringify(parentFolderInfo) !== "{}" && condition.publish_status === PublishStatus.published ? (
               <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
                 <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} total={total} />
               </LayoutBox>
+            ) : (
+              <TipImages type={TipImagesType.empty} text="library_label_empty" />
             )
           ) : (
             <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />

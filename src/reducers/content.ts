@@ -164,17 +164,25 @@ const initialState: IContentState = {
   parentFolderInfo: {},
 };
 
-const ADD_FOLDER_MODEL_INFO = {
-  title: reportMiss("Add a New Folder", "content_add_a_new_folder"),
-  content: reportMiss("Folder Name", "content_folder_name"),
-  type: ConfirmDialogType.onlyInput,
-};
+const ADD_FOLDER_MODEL_INFO = [
+  {
+    // title: d("New Folder").t("library_label_new_folder"),
+    // content: d("Folder Name").t("library_label_folder_name"),
+    title: "New Folder",
+    content: "Folder Name",
+    type: ConfirmDialogType.onlyInput,
+  },
+];
 const UNKNOW_ERROR_LABEL: LangRecordId = "general_error_unknown";
-const RENAME_FOLDER_NAME_MODEL_INFO = {
-  title: reportMiss("Rename the Folder", "content_rename_the_folder"),
-  content: reportMiss("Folder Name", "content_folder_name"),
-  type: ConfirmDialogType.onlyInput,
-};
+const RENAME_FOLDER_NAME_MODEL_INFO = [
+  {
+    // title: d("Rename").t("library_label_rename"),
+    // content: d("Folder Name").t("library_label_folder_name"),
+    title: "Rename",
+    content: "Folder Name",
+    type: ConfirmDialogType.onlyInput,
+  },
+];
 
 export enum Action {
   remove = "remove",
@@ -527,7 +535,7 @@ export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolder
         .then(() => true)
         .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
     };
-    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO, defaultValue: "", rules: { validate } }))
+    await dispatch(actAsyncConfirm({ ...ADD_FOLDER_MODEL_INFO[0], defaultValue: "", rules: { validate } }))
       .then(unwrapResult)
       .then(unwrapConfirm);
     return { id };
@@ -548,7 +556,7 @@ export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRen
         .then(() => true)
         .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
     };
-    await dispatch(actAsyncConfirm({ ...RENAME_FOLDER_NAME_MODEL_INFO, defaultValue: defaultName, rules: { validate } }))
+    await dispatch(actAsyncConfirm({ ...RENAME_FOLDER_NAME_MODEL_INFO[0], defaultValue: defaultName, rules: { validate } }))
       .then(unwrapResult)
       .then(unwrapConfirm);
     return "";
