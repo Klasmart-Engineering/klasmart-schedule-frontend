@@ -18,7 +18,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
-import React, { useCallback, useMemo } from "react";
+import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useQueryCms } from ".";
@@ -108,6 +108,54 @@ type NeedTransilationMenuItem =
   | "library_label_visibility_organization"
   | "library_label_test"
   | "library_label_not_test";
+
+interface SuggestTimeProps {
+  value?: number;
+  onChange?: (value: SuggestTimeProps["value"]) => any;
+  watch: UseFormMethods["watch"];
+  permission: boolean;
+}
+const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) => {
+  const { value, onChange, watch, permission } = props;
+  const css = useStyles();
+  const { lesson } = useParams();
+  const [suggestTime, SetSuggestTime] = useState(value);
+  const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
+  const suggestTimeFun = useMemo(
+    () => (value: string | number) => {
+      const result = Number(value) > min ? Number(value) : min;
+      return result;
+    },
+    [min]
+  );
+  const handleChangeIner = useMemo(
+    () => (value: number) => {
+      SetSuggestTime(value);
+    },
+    []
+  );
+  const handleBlur = useCallback(() => {
+    if (onChange && suggestTime) {
+      if (lesson === "plan") {
+        onChange(suggestTimeFun(suggestTime));
+        SetSuggestTime(suggestTimeFun(suggestTime));
+        console.log("suggestTime=", suggestTime);
+      } else onChange(suggestTime);
+    }
+  }, [lesson, onChange, suggestTime, suggestTimeFun]);
+  return (
+    <TextField
+      ref={ref}
+      type="number"
+      className={css.fieldset}
+      label={d("Duration(Minutes)").t("library_label_duration")}
+      disabled={permission}
+      value={suggestTime}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeIner(Number(e.target.value))}
+      onBlur={handleBlur}
+    />
+  );
+});
 
 export interface DetailsProps {
   allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
@@ -314,7 +362,7 @@ export default function Details(props: DetailsProps) {
           </Box>
         )}
 
-        <Controller
+        {/* <Controller
           as={FormattedTextField}
           control={control}
           name="suggest_time"
@@ -331,8 +379,8 @@ export default function Details(props: DetailsProps) {
           }
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
           disabled={permission}
-        />
-        {/* <Controller
+        /> */}
+        <Controller
           control={control}
           name="suggest_time"
           defaultValue={
@@ -343,19 +391,8 @@ export default function Details(props: DetailsProps) {
               : allDefaultValueAndKey.suggest_time?.value
           }
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
-          render={({onChange,onBlur, ...props}) => (
-           <FormattedTextField
-           {...props}
-            decode={lesson === "plan" ? suggestTimeFun : Number}
-            type="number"
-            className={css.fieldset}
-            label={d("Duration(Minutes)").t("library_label_duration")}
-            disabled={permission}
-            onChange={()=>{}}
-            onBlur={onChange}
-            />
-          )}
-        /> */}
+          render={({ ref, ...props }) => <SuggestTime {...props} ref={ref} watch={watch} permission={permission} />}
+        />
 
         <Box>
           <Controller
