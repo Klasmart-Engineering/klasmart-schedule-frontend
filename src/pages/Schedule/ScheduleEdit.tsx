@@ -65,7 +65,7 @@ const useStyles = makeStyles(({ shadows }) => ({
   iconField: {
     position: "absolute",
     right: "10px",
-    top: "48%",
+    top: "22%",
   },
   descFiled: {
     height: "100px",
@@ -408,7 +408,7 @@ function EditBox(props: CalendarStateProps) {
     name: string
   ) => {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
-    if (name === "title" && (event.target.value as string).length > 20) return;
+    if (name === "title" && (event.target.value as string).trim().split(/\s+/).length > 60) return;
     if (name === "description" && (event.target.value as string).length > 100) return;
     setScheduleData(name, value);
   };
@@ -851,6 +851,8 @@ function EditBox(props: CalendarStateProps) {
           <TextField
             error={validator.title}
             className={css.fieldset}
+            multiline
+            rows={6}
             label={d("Lesson Name").t("schedule_detail_lesson_name")}
             value={scheduleList.title}
             onChange={(e) => handleTopicListChange(e, "title")}
@@ -1081,7 +1083,7 @@ function EditBox(props: CalendarStateProps) {
               marginRight: "10%",
             }}
             disabled={scheduleList.class_type === "Task"}
-            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}`}
+            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
           >
             {d("Preview").t("schedule_button_preview")}
           </Button>

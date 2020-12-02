@@ -37,6 +37,7 @@ interface scheduleViewData {
   lesson_plan_id: string;
   status: "NotStart" | "Started" | "Closed";
   class_type: string;
+  class_id: string;
 }
 
 export interface ScheduleState {

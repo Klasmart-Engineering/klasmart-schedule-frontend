@@ -26,6 +26,7 @@ interface scheduleInfoProps {
   lesson_plan_id: string;
   status: string;
   class_type: string;
+  class_id: string;
 }
 
 const useStyles = makeStyles(({ shadows }) => ({
