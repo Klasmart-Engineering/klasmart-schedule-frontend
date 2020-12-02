@@ -1,7 +1,9 @@
 import { Checkbox, createStyles, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
+import ClearIcon from "@material-ui/icons/Clear";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import DoneIcon from "@material-ui/icons/Done";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { useMemo } from "react";
@@ -20,6 +22,10 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     iconColor: {
       color: "#D32F2F",
+      padding: "0 0 0 10px",
+    },
+    approveIconColor: {
+      color: "#4CAF50",
       padding: "0 0 0 10px",
     },
     rePublishColor: {
@@ -65,7 +71,7 @@ interface OutcomeProps extends OutcomeActionProps {
 }
 function OutomeRow(props: OutcomeProps) {
   const css = useStyles();
-  const { outcome, selectedContentGroupContext, onDelete, onClickOutcome, userId } = props;
+  const { outcome, selectedContentGroupContext, onDelete, onClickOutcome, userId, onApprove, onReject } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
@@ -128,6 +134,30 @@ function OutomeRow(props: OutcomeProps) {
             </LButton>
           </Permission>
         )}
+        {outcome.publish_status === OutcomePublishStatus.pending && (
+          <Permission value={PermissionType.approve_pending_learning_outcome_481}>
+            <LButton
+              as={IconButton}
+              replace
+              className={css.approveIconColor}
+              onClick={stopPropagation((e) => onApprove(outcome.outcome_id as string))}
+            >
+              <DoneIcon />
+            </LButton>
+          </Permission>
+        )}
+        {outcome.publish_status === OutcomePublishStatus.pending && (
+          <Permission value={PermissionType.reject_pending_learning_outcome_482}>
+            <LButton
+              as={IconButton}
+              replace
+              className={css.iconColor}
+              onClick={stopPropagation((e) => onReject(outcome.outcome_id as string))}
+            >
+              <ClearIcon />
+            </LButton>
+          </Permission>
+        )}
         {userId !== outcome.author_id &&
           (outcome.publish_status === OutcomePublishStatus.draft || outcome.publish_status === OutcomePublishStatus.rejected) && (
             <Permission value={PermissionType.delete_org_unpublished_learning_outcome_445}>
@@ -162,6 +192,8 @@ function OutomeRow(props: OutcomeProps) {
 interface OutcomeActionProps {
   onPublish: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
   onDelete: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
+  onApprove: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
+  onReject: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
 }
 
 export interface OutcomeTableProps extends OutcomeActionProps {
@@ -176,7 +208,20 @@ export interface OutcomeTableProps extends OutcomeActionProps {
 }
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();
-  const { formMethods, list, total, userId, amountPerPage = 20, queryCondition, onPublish, onDelete, onChangePage, onClickOutcome } = props;
+  const {
+    formMethods,
+    list,
+    total,
+    userId,
+    amountPerPage = 20,
+    queryCondition,
+    onPublish,
+    onDelete,
+    onChangePage,
+    onClickOutcome,
+    onApprove,
+    onReject,
+  } = props;
   const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -224,7 +269,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
                         key={item.outcome_id}
                         userId={userId}
                         outcome={item}
-                        {...{ onPublish, onDelete, queryCondition, selectedContentGroupContext, onClickOutcome }}
+                        {...{ onPublish, onDelete, queryCondition, selectedContentGroupContext, onClickOutcome, onApprove, onReject }}
                       />
                     ))}
                   </TableBody>

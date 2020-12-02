@@ -12,9 +12,12 @@ import {
   actOutcomeList,
   actPendingOutcomeList,
   actPrivateOutcomeList,
+  approve,
+  bulkApprove,
   bulkDeleteOutcome,
   bulkPublishOutcome,
   deleteOutcome,
+  newReject,
   publishOutcome,
 } from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
@@ -117,6 +120,19 @@ export function OutcomeList() {
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(clearNull(value)) });
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
 
+  const handleBulkApprove: ThirdSearchHeaderProps["onBulkApprove"] = () => {
+    console.log(ids);
+    return refreshWithDispatch(dispatch(bulkApprove(ids)));
+  };
+  const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {
+    // return refreshWithDispatch(dispatch())
+  };
+  const handleApprove: OutcomeTableProps["onApprove"] = (id) => {
+    return refreshWithDispatch(dispatch(approve(id)));
+  };
+  const handleReject: OutcomeTableProps["onReject"] = (id) => {
+    return refreshWithDispatch(dispatch(newReject({ id: id })));
+  };
   useEffect(() => {
     let page = condition.page;
     if (outcomeList.length === 0 && total > 1) {
@@ -150,8 +166,22 @@ export function OutcomeList() {
       <FirstSearchHeaderMb value={condition} onChange={handleChange} onChangeCategory={handleChangeCategory} />
       <SecondSearchHeader value={condition} onChange={handleChange} />
       <SecondSearchHeaderMb value={condition} onChange={handleChange} />
-      <ThirdSearchHeader value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
-      <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkPublish={handleBulkPublish} onBulkDelete={handleBulkDelete} />
+      <ThirdSearchHeader
+        value={condition}
+        onChange={handleChange}
+        onBulkPublish={handleBulkPublish}
+        onBulkDelete={handleBulkDelete}
+        onBulkApprove={handleBulkApprove}
+        onBulkReject={handleBulkReject}
+      />
+      <ThirdSearchHeaderMb
+        value={condition}
+        onChange={handleChange}
+        onBulkPublish={handleBulkPublish}
+        onBulkDelete={handleBulkDelete}
+        onBulkApprove={handleBulkApprove}
+        onBulkReject={handleBulkReject}
+      />
       {assess_msg_no_permission === false ? (
         <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
       ) : outcomeList && outcomeList.length > 0 ? (
@@ -165,6 +195,8 @@ export function OutcomeList() {
           onClickOutcome={handleClickOutcome}
           onPublish={handlePublish}
           onDelete={handleDelete}
+          onApprove={handleApprove}
+          onReject={handleReject}
         />
       ) : (
         <div style={{ margin: "0 auto", textAlign: "center" }}>

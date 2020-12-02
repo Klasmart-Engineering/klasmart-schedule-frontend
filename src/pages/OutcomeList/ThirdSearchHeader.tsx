@@ -107,6 +107,8 @@ function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
 enum BulkAction {
   publish = "publish",
   remove = "remove",
+  approve = "approve",
+  reject = "reject",
 }
 
 interface BulkActionOption {
@@ -119,9 +121,17 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
     case OutcomePublishStatus.published:
       return perm.delete_published_learning_outcome_448 ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
     case OutcomePublishStatus.pending:
-      return perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446
-        ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }]
-        : [];
+      const res = [];
+      if (perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446) {
+        res.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
+      }
+      if (perm.approve_pending_learning_outcome_481) {
+        res.push({ label: d("Approve").t("assess_label_approve"), value: BulkAction.approve });
+      }
+      // if(perm.reject_pending_learning_outcome_482) {
+      //   res.push({ label: d("Reject").t("assess_label_reject"), value: BulkAction.reject })
+      // }
+      return res;
     default:
       return perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learninng_outcome_444
         ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }]
@@ -141,21 +151,27 @@ const sortOptions = () => {
 export interface ThirdSearchHeaderProps extends OutcomeQueryConditionBaseProps {
   onBulkPublish: () => any;
   onBulkDelete: () => any;
+  onBulkApprove: () => any;
+  onBulkReject: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject } = props;
   const perm = usePermission([
     PermissionType.delete_published_learning_outcome_448,
     PermissionType.delete_org_pending_learning_outcome_447,
     PermissionType.delete_my_pending_learning_outcome_446,
     PermissionType.delete_org_unpublished_learning_outcome_445,
     PermissionType.delete_my_unpublished_learninng_outcome_444,
+    PermissionType.approve_pending_learning_outcome_481,
+    PermissionType.reject_pending_learning_outcome_482,
   ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
     if (event.target.value === BulkAction.remove) onBulkDelete();
+    if (event.target.value === BulkAction.approve) onBulkApprove();
+    if (event.target.value === BulkAction.reject) onBulkReject();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OutcomeOrderBy | undefined;
@@ -228,13 +244,15 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject } = props;
   const perm = usePermission([
     PermissionType.delete_published_learning_outcome_448,
     PermissionType.delete_org_pending_learning_outcome_447,
     PermissionType.delete_my_pending_learning_outcome_446,
     PermissionType.delete_org_unpublished_learning_outcome_445,
     PermissionType.delete_my_unpublished_learninng_outcome_444,
+    PermissionType.approve_pending_learning_outcome_481,
+    PermissionType.reject_pending_learning_outcome_482,
   ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -246,6 +264,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
     if (bulkaction === BulkAction.remove) onBulkDelete();
+    if (event.target.value === BulkAction.approve) onBulkApprove();
+    if (event.target.value === BulkAction.reject) onBulkReject();
   };
   const handleClose = () => {
     setAnchorElLeft(null);

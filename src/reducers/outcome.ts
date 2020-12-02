@@ -16,7 +16,7 @@ import {
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
-import { actAsyncConfirm } from "./confirm";
+import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 import { IPermissionState } from "./type";
@@ -316,6 +316,46 @@ export const approve = createAsyncThunk<any, any>("outcome/approve", (id) => {
 export const getMockOptions = createAsyncThunk<MockOptions>("apiGetMockOptions", async () => {
   return await apiGetMockOptions();
 });
+
+type ResultNewRejectOutcome = AsyncReturnType<typeof api.learningOutcomes.rejectLearningOutcomes>;
+type ParamsNewRejectOutcome = {
+  id: Parameters<typeof api.learningOutcomes.rejectLearningOutcomes>[0];
+};
+export const newReject = createAsyncThunk<ResultNewRejectOutcome, ParamsNewRejectOutcome>(
+  "outcome/reject",
+  async ({ id }, { dispatch }) => {
+    const title = d("Reason").t("library_label_reason");
+    const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
+    const type = ConfirmDialogType.onlyInput;
+    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
+    if (!isConfirmed) return Promise.reject();
+    return await api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason: text });
+  }
+);
+
+type IQueryBulkRejectResult = AsyncReturnType<typeof api.bulkApprove.approveLearningOutcomesBulk>;
+export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<ApiOutcomeIDList>["outcome_ids"]>(
+  "outcone/bulkApprove",
+  async (ids, { dispatch }) => {
+    if (!ids || !ids.length)
+      return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    return api.bulkApprove.approveLearningOutcomesBulk({ outcome_ids: ids });
+  }
+);
+
+// type ResultBulkRejectOutcome = AsyncReturnType<typeof api.learningOutcomes.rejectLearningOutcomes>;
+// type ParamsBulkRejectOutcome = {
+//   ids: Parameters<typeof api.bulkReject.rejectLearningOutcomesBulk>[0];
+// };
+// export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, ParamsBulkRejectOutcome>(
+//   "outcome/reject", async ({ ids }, {dispatch}) => {
+//     const title = d("Reason").t("library_label_reason");
+//     const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
+//     const type = ConfirmDialogType.onlyInput;
+//     const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
+//     if (!isConfirmed) return Promise.reject();
+//   return await api.bulkReject.rejectLearningOutcomesBulk( ids );
+// });
 
 const { reducer } = createSlice({
   name: "outcome",
