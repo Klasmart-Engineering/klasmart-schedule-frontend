@@ -17,7 +17,7 @@ interface RatioExtendedEntityTeacherReportCategory extends EntityTeacherReportCa
 
 // todo: 如果颜色超过10个， 需要 doris 补颜色
 const categoryColors = ["#89C4F9", "#FF9492", "#A4DDFF", "#CB9BFF", "#8693F0", "#FFA966", "#FB7575", "#9E46FF", "#77DCB7", "#FBD775"];
-const LEGEND_WIDTH = 130;
+const LEGEND_WIDTH = 210;
 
 const useStyle = makeStyles(({ breakpoints }) => ({
   chart: {
@@ -58,14 +58,14 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     marginRight: 12,
   },
   legendTitle: {
-    width: 88,
-    fontSize: 16,
+    width: LEGEND_WIDTH - 32 - 12,
+    fontSize: 14,
     fontWeight: "lighter",
     lineHeight: 20 / 16,
     [breakpoints.down("sm")]: {
       width: "auto",
       height: 20,
-      minWidth: LEGEND_WIDTH - 32 - 12,
+      minWidth: LEGEND_WIDTH - 80 - 32 - 12,
       maxWidth: 2 * LEGEND_WIDTH - 32 - 12,
       overflowX: "hidden",
       textOverflow: "ellipsis",
@@ -103,7 +103,7 @@ const getInlineStyles = (px: number) => ({
     backgroundColor: "white" as const,
     color: "rgb(102, 102, 102)",
     borderRadius: 3 * px,
-    boxShadow: "rgba(33, 33, 33, 0.2) 0px 1px 2px",
+    boxShadow: "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 1px 10px 0px rgba(0,0,0,0.12), 0px 4px 5px 0px rgba(0,0,0,0.14)",
     pointerEvents: "none" as const,
     padding: 12 * px,
   },
@@ -116,7 +116,6 @@ const getInlineStyles = (px: number) => ({
     fontSize: 14 * px,
     fontWeight: "bold" as const,
     lineHeight: 1,
-    marginTop: 11 * px,
     marginBottom: 5 * px,
     color: "#0E78D5" as const,
   },
@@ -156,7 +155,7 @@ const sig = (x: boolean) => (x ? 1 : -1);
 interface TooltipData {
   yProperty: "top" | "bottom";
   xProperty: "left" | "right";
-  data: EntityTeacherReportCategory;
+  data: RatioExtendedEntityTeacherReportCategory;
 }
 interface PieItemProps {
   pie: ProvidedProps<RatioExtendedEntityTeacherReportCategory>;
@@ -208,7 +207,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
           }}
         />
         <Text x={centroidX} y={centroidY} style={inlineStyles.pieText}>
-          {arc.data.items_ratio < 0.05 ? '' : (100 * arc.data.items_ratio).toFixed(0) + "%"}
+          {arc.data.items_ratio < 0.05 ? "" : (100 * arc.data.items_ratio).toFixed(0) + "%"}
         </Text>
         {activeCategoryName === arc.data.name && (
           <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.data.name)} {...inlineStyles.tooltipLinker} />
@@ -236,7 +235,10 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
       {tooltipOpen && tooltipData && (
         <Tooltip top={tooltipTop} left={tooltipLeft} offsetTop={0} offsetLeft={0} style={{ position: "absolute" }}>
           <div style={{ ...inlineStyles.tooltip, [tooltipData.yProperty]: 0, [tooltipData.xProperty]: 0 }}>
-            <div style={inlineStyles.tooltipTitle}>{tooltipData.data.items?.length}&nbsp;LOs</div>
+            <div style={inlineStyles.tooltipTitle}>
+              {(tooltipData.data.items_ratio * 100).toFixed(0)}%&nbsp;
+              {tooltipData.data.items?.length}&nbsp;LOs
+            </div>
             {tooltipData.data.items?.map((desc, idx) => (
               <div key={idx} style={inlineStyles.tooltipContent}>
                 {desc}
