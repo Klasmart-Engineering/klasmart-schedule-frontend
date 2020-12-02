@@ -203,7 +203,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
     const pixels = getPixels(px);
     return barStacks.slice(-1)[0].bars.map((bar) => (
       <text key={`desc-${bar.index}`} x={bar.x + bar.width + pixels.descMarginLeft} y={bar.y + 0.5 * bar.height} style={inlineStyles.desc}>
-        {filter === ReportFilter.all ? 100 : data[bar.index][RATIO_KEYS[filter]].toFixed(0)}%,&nbsp;
+        {filter === ReportFilter.all ? (bar.bar.data.sum === 0 ? 0 : 100) : data[bar.index][RATIO_KEYS[filter]].toFixed(0)}%,&nbsp;
         {filter === ReportFilter.all ? data[bar.index].sum : data[bar.index][COUNT_KEYS[filter]]}&nbsp;LOs
       </text>
     ));
