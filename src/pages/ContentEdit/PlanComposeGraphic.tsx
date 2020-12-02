@@ -230,7 +230,8 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
       </Card>
     );
   } else {
-    const { material = {}, onRemove } = props;
+    const { onRemove } = props;
+    const material = props.material ?? {};
     const { thumbnail, author_name, name, content_type } = material;
     return (
       <Card ref={ref}>
@@ -407,7 +408,8 @@ interface PlanComposeGraphicProps {
   onChange?: (value: Segment) => any;
 }
 export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicProps>((props, ref) => {
-  const { value = {}, onChange = doNothing } = props;
+  const onChange = props.onChange ?? doNothing;
+  const value = props.value ?? {};
   const plan = ModelLessonPlan.toSegment(JSON.stringify(value));
   const { palette } = useTheme<Theme>();
   const css = useStyles();

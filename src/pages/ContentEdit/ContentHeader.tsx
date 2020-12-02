@@ -337,7 +337,8 @@ interface SelectPublishTypeProps {
   onChange?: (value: SelectPublishTypeProps["value"]) => any;
 }
 export function SelectPublishType(props: SelectPublishTypeProps) {
-  const { value = "onlyMaterial", onChange } = props;
+  const { onChange } = props;
+  const value = props.value ?? "onlyMaterial";
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));

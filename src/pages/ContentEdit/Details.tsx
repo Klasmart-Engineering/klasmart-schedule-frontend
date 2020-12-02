@@ -313,6 +313,7 @@ export default function Details(props: DetailsProps) {
             ></TextField>
           </Box>
         )}
+
         <Controller
           as={FormattedTextField}
           control={control}
@@ -331,6 +332,31 @@ export default function Details(props: DetailsProps) {
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
           disabled={permission}
         />
+        {/* <Controller
+          control={control}
+          name="suggest_time"
+          defaultValue={
+            lesson === "plan"
+              ? id
+                ? suggestTimeFunEdit(allDefaultValueAndKey.suggest_time?.value || 0)
+                : suggestTimeFun(watch("suggest_time") || 0)
+              : allDefaultValueAndKey.suggest_time?.value
+          }
+          key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
+          render={({onChange,onBlur, ...props}) => (
+           <FormattedTextField
+           {...props}
+            decode={lesson === "plan" ? suggestTimeFun : Number}
+            type="number"
+            className={css.fieldset}
+            label={d("Duration(Minutes)").t("library_label_duration")}
+            disabled={permission}
+            onChange={()=>{}}
+            onBlur={onChange}
+            />
+          )}
+        /> */}
+
         <Box>
           <Controller
             name="program"

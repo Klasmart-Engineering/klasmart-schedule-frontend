@@ -22,14 +22,14 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id");
   const editindex: number = Number(query.get("editindex") || 0);
-  const filterOutcomes = query.get("filterOutcomes") || undefined;
+  const filterOutcomes = query.get("filterOutcomes") || "all";
   return { id, filterOutcomes, editindex };
 };
 
 function AssessmentsEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { filterOutcomes = "all", id, editindex } = useQuery();
+  const { filterOutcomes, id, editindex } = useQuery();
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;

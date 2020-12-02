@@ -2,12 +2,12 @@ import React, { forwardRef, Fragment, useReducer } from "react";
 import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import docImg from "../../assets/icons/doc.svg";
+import folderImg from "../../assets/icons/folderbigicon.svg";
 import materialImg from "../../assets/icons/material.svg";
 import audioImg from "../../assets/icons/music.svg";
 import imageImg from "../../assets/icons/pic.svg";
 import planImg from "../../assets/icons/plan.svg";
 import videoImg from "../../assets/icons/video.svg";
-import folderImg from "../../assets/icons/folderbigicon.svg";
 
 const type2svg = {
   [ContentType.image]: imageImg,
@@ -25,7 +25,8 @@ interface ThumbnailProps extends React.DetailedHTMLProps<React.ImgHTMLAttributes
   type?: ContentType;
 }
 export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, ref) => {
-  const { type = ContentType.material, id } = props;
+  const { id } = props;
+  const type = props.type ?? ContentType.material;
   const [loaded, dispatchLoaded] = useReducer(() => true, false);
   const thumbail = id && apiResourcePathById(id);
   const defaultThumbail = type2svg[type];

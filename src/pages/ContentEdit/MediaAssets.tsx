@@ -154,7 +154,8 @@ export interface MediaAssetsProps {
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
-  const { list, comingsoon, value, onSearch, total, amountPerPage = 10, onChangePage, mediaPage } = props;
+  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage } = props;
+  const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
       onChangePage(page);

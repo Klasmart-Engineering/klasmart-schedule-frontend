@@ -23,7 +23,8 @@ export type LButtonProps<TAs extends ComponentType<any> | "button" = typeof Butt
 };
 
 export function LButton<TAs extends ComponentType<any> | "button" = typeof Button>(props: LButtonProps<TAs>) {
-  const { onClick, children, as: As = Button, replace, disabled, ...restProps } = props;
+  const { onClick, children, replace, disabled, ...restProps } = props;
+  const As = props.as ?? Button;
   const css = useStyles(props);
   const validRef = useRef<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);

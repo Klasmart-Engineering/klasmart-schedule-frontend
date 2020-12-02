@@ -41,7 +41,8 @@ export interface OutcomesFilterProps {
 }
 export function OutcomesFilter(props: OutcomesFilterProps) {
   const css = useStyles();
-  const { value = "all", onChange } = props;
+  const { onChange } = props;
+  const value = props.value ?? "all";
   const handleChange = useCallback(
     (e) => {
       if (onChange) onChange(e.target.value);

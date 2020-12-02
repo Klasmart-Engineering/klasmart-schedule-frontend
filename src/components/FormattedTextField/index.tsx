@@ -12,7 +12,8 @@ interface FormatedTextFieldProps<T> extends Omit<TextFieldProps, "onChange" | "v
 type IRef<T> = Parameters<ForwardRefRenderFunction<T>>[1];
 // todo: 移除 any
 export const FormattedTextField = forwardRef((props: FormatedTextFieldProps<any>, ref: IRef<any>) => {
-  const { encode = String, decode, value, defaultValue, onChange, ...rest } = props;
+  const { decode, value, defaultValue, onChange, ...rest } = props;
+  const encode = props.encode ?? String;
   const handleClick = useMemo(
     () => (e: ChangeEvent<HTMLInputElement>) => {
       if (onChange) onChange(decode(e.target.value));

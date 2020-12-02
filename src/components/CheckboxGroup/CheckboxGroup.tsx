@@ -28,7 +28,9 @@ function toHash(list: string[]): HashValue {
 }
 
 export function CheckboxGroup(props: CheckboxGroupProps) {
-  const { render, value = [], onChange, allValue = [] } = props;
+  const { render, onChange } = props;
+  const value = props.value ?? [];
+  const allValue = props.value ?? [];
   const hashValue = useMemo(() => toHash(value), [value]);
   const isAllvalue = allValue.length > 0 && value.length === allValue.length;
   const registerChange = useMemo<CheckboxGroupContext["registerChange"]>(

@@ -150,7 +150,8 @@ export class ModelMockOptions {
           };
       }
     });
-    const { input_source, source = "" } = JSON.parse(contentDetail.data || "{}");
+    const { input_source } = JSON.parse(contentDetail.data || "{}");
+    const source = JSON.parse(contentDetail.data || "{}").source ?? "";
     result["data.input_source"] = {
       key: ModelMockOptions.createSelectKey([], input_source, "data.input_source"),
       value: input_source,
