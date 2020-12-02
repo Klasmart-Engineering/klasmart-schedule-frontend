@@ -43,7 +43,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   previewContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
     position: "relative",
-    minHeight: "100%",
+    height: "100%",
+    minHeight: "calc(100vh - 60px)",
     // [breakpoints.up("md")]: {
     //   minHeight: 'calc(100vh - 60px)',
     // },
@@ -53,10 +54,11 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     flexDirection: "column",
   },
   h5pCon: {
-    width: "90%",
-    height: "80%",
-    textAlign: "center",
-    background: "grey",
+    width: "80%",
+    height: "90vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   btnCon: {
     width: "100%",

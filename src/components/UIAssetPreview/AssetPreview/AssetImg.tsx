@@ -5,8 +5,7 @@ import AssetLoading from "./AssetLoading";
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
     maxWidth: "100%",
-    maxHeight: "80%",
-    marginTop: "30px",
+    maxHeight: "100%",
   },
 }));
 

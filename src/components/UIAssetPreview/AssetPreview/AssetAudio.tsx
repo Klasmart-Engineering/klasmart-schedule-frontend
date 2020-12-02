@@ -11,7 +11,8 @@ import AssetLoading from "./AssetLoading";
 const useStyles = makeStyles({
   wrap: {
     width: "100%",
-    height: "494px",
+    height: "100%",
+    textAlign: "center",
   },
   audioCon: {
     margin: "137px auto",

@@ -10,20 +10,22 @@ import AssetLoading from "./AssetLoading";
 
 const useStyles = makeStyles({
   wrap: {
-    width: "100%",
     height: "100%",
-    position: "relative",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   video: {
-    width: "100%",
-    marginTop: "36px",
+    maxWidth: "100%",
+    maxHeight: "calc(100% - 50px)",
+    objectFit: "fill",
   },
   controls: {
+    // maxWidth: "100%",
     width: "100%",
     height: "50px",
     backgroundColor: "#0e78d5",
     marginTop: "-4px",
-    // marginLeft: "10%",
     display: "flex",
     alignItems: "center",
   },
@@ -42,12 +44,6 @@ const useStyles = makeStyles({
     marginRight: "10px",
     color: "#fff",
   },
-  videoTool: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-  },
 });
 
 interface video {
@@ -59,7 +55,7 @@ export default function AssetVideo(props: video) {
   const [value, setValue] = React.useState<number>(0);
   const [isplay, setIsplay] = React.useState<boolean>(false);
   const [loaded, dispatchLoaded] = useReducer(() => true, false);
-  const display = loaded ? "block" : "none";
+  const display = loaded ? "flex" : "none";
   const handleChange = (event: any, newValue: number | number[]) => {
     const video = document.getElementById("video") as HTMLVideoElement;
     setValue(newValue as number);
