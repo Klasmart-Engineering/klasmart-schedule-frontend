@@ -481,20 +481,7 @@ export function ContentCardList(props: ContentCardListProps) {
               render={(selectedContentGroupContext) => (
                 <Fragment>
                   {queryCondition.path && queryCondition.path !== "/" && queryCondition.page === 1 && (
-                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-                      <Box className={css.card}>
-                        <Box className={css.cardMedia} style={{ marginTop: 10, cursor: "pointer" }} onClick={onGoBack}>
-                          <img className={css.prevImg} src={prevPageUrl} alt="" />
-                        </Box>
-                        <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                          <img src={folderIconUrl} alt="" />
-                          <Typography variant="h6">{parentFolderInfo.name}</Typography>
-                        </Box>
-                        <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-                          ({parentFolderInfo.items_count} items. {total} available)
-                        </Typography>
-                      </Box>
-                    </Grid>
+                    <BackToPrevPage onGoBack={onGoBack} parentFolderInfo={parentFolderInfo} total={total} />
                   )}
                   {list.map((item, idx) => (
                     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
@@ -544,10 +531,12 @@ export function ContentCardList(props: ContentCardListProps) {
 
 interface BackToPrevePageProps {
   onGoBack: () => any;
+  parentFolderInfo: EntityFolderItemInfo;
+  total: number;
 }
 export function BackToPrevPage(props: BackToPrevePageProps) {
   const css = useStyles();
-  const { onGoBack } = props;
+  const { onGoBack, parentFolderInfo, total } = props;
   return (
     <>
       <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
@@ -557,10 +546,10 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
           </Box>
           <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <img src={folderIconUrl} alt="" />
-            <Typography variant="h6">{}</Typography>
+            <Typography variant="h6">{parentFolderInfo.name}</Typography>
           </Box>
           <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-            ({} items. {} available)
+            ({parentFolderInfo.items_count} items. {total} available)
           </Typography>
         </Box>
       </Grid>

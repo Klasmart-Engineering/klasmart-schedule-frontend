@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { EntityFolderContent } from "../../api/api.auto";
 import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
@@ -32,7 +33,7 @@ import {
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
-import { ContentCardList, ContentCardListProps } from "./ContentCardList";
+import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
@@ -300,8 +301,12 @@ export default function MyContentList() {
                 onGoBack={handleGoback}
                 parentFolderInfo={parentFolderInfo}
               />
-            ) : (
+            ) : JSON.stringify(parentFolderInfo) === "{}" ? (
               <TipImages type={TipImagesType.empty} text="library_label_empty" />
+            ) : (
+              <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+                <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} total={total} />
+              </LayoutBox>
             )
           ) : (
             <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
