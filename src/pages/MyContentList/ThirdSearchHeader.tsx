@@ -11,7 +11,7 @@ import React, { ChangeEvent } from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
@@ -134,29 +134,29 @@ function getBulkAction(
   if (condition.content_type === SearchContentsRequestContentType.assets) {
     return perm.delete_asset_340
       ? [
-          { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
           { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
         ]
-      : [{ label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move }];
+      : [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
       let res = [
         { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-        { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
         { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
       ];
       if (actionObj?.folder)
         res = [
-          { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
           { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
         ];
       if (actionObj?.planAndMaterial && perm.archive_published_content_273)
         res = [
           { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-          { label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move },
+          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
         ];
-      if (actionObj?.bothHave) res = [{ label: reportMiss("Move to Folder", "library_label_move_to_folder"), value: BulkAction.move }];
+      if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
       return res;
     case PublishStatus.pending:
       return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
@@ -248,7 +248,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               )}
               {(value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets) && (
                 <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
-                  {reportMiss("Add a Folder", "library_label_add_a_folder")}
+                  {d("New Folder").t("library_label_new_folder")}
                 </Button>
               )}
             </Grid>

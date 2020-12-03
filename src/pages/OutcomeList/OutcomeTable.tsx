@@ -213,7 +213,6 @@ export function OutcomeTable(props: OutcomeTableProps) {
     list,
     total,
     userId,
-    amountPerPage = 20,
     queryCondition,
     onPublish,
     onDelete,
@@ -222,6 +221,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
     onApprove,
     onReject,
   } = props;
+  const amountPerPage = props.amountPerPage ?? 20;
   const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);

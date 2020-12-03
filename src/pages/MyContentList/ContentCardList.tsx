@@ -549,7 +549,7 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
             <Typography variant="h6">{parentFolderInfo.name}</Typography>
           </Box>
           <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-            ({parentFolderInfo.items_count} items. {total} available)
+            ({parentFolderInfo.items_count} {d("items").t("library_label_items")}. {total} {d("visible").t("library_label_visible")})
           </Typography>
         </Box>
       </Grid>

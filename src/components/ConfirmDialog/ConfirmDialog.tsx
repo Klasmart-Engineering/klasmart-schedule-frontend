@@ -52,7 +52,11 @@ export function ConfirmDialog() {
   const handleConfirm = useMemo(
     () =>
       handleSubmit((values) => {
-        if (type === ConfirmDialogType.text || type === ConfirmDialogType.onlyInput) return dispatch(actExitConfirm({ isConfirmed: true }));
+        if (type === ConfirmDialogType.text) return dispatch(actExitConfirm({ isConfirmed: true }));
+        if (type === ConfirmDialogType.onlyInput) {
+          const text = values[INPUT_NAME] ? values[INPUT_NAME] : "";
+          dispatch(actExitConfirm({ isConfirmed: true, text }));
+        }
         if (type === ConfirmDialogType.textField) {
           if (values[OTHER_REASON] && !values[INPUT_NAME]) {
             return setError(INPUT_NAME, {
