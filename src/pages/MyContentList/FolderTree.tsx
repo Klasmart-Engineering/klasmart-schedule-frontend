@@ -4,7 +4,7 @@ import { TreeItem, TreeView } from "@material-ui/lab";
 import React, { useMemo, useState } from "react";
 import { RecursiveFolderItem } from "../../api/extra";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -76,7 +76,7 @@ export function FolderTree(props: FolderTreeProps) {
   return (
     <Dialog open={open}>
       <DialogTitle>
-        {reportMiss("Move To", "library_label_move_to")}
+        {d("Move to").t("library_label_move")}
         <IconButton onClick={onClose} className={css.closeBtn}>
           <Close />
         </IconButton>
@@ -104,7 +104,7 @@ export function FolderTree(props: FolderTreeProps) {
             className={css.addFolderBtn}
             onClick={() => onAddFolder(value)}
           >
-            {reportMiss("Add a Folder", "library_label_add_folder")}
+            {d("New Folder").t("library_label_new_folder")}
           </Button>
           <Button color="primary" variant="outlined" onClick={onClose}>
             {d("Cancel").t("library_label_cancel")}
@@ -120,15 +120,20 @@ export function FolderTree(props: FolderTreeProps) {
 
 export function useFolderTree<T>() {
   const [active, setActive] = useState(false);
+  const [folderTreeShowIndex, setFolderTreeShowIndex] = useState(0);
   const [referContent, setReferContent] = useState<T>();
   return useMemo(
     () => ({
+      folderTreeShowIndex,
       folderTreeActive: active,
-      openFolderTree: () => setActive(true),
+      openFolderTree: () => {
+        setFolderTreeShowIndex(folderTreeShowIndex + 1);
+        setActive(true);
+      },
       closeFolderTree: () => setActive(false),
       setReferContent,
       referContent,
     }),
-    [setActive, active, referContent, setReferContent]
+    [setActive, active, referContent, setReferContent, folderTreeShowIndex, setFolderTreeShowIndex]
   );
 }

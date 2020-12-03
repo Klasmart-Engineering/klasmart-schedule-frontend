@@ -10,6 +10,7 @@ import { PermissionOr, PermissionType } from "../../components/Permission/Permis
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
+import { excludeFolderOfTree } from "../../models/ModelFolderTree";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
@@ -110,9 +111,12 @@ export default function MyContentList() {
   const { contentsList, total, page_size, folderTree, parentFolderInfo } = useSelector<RootState, RootState["content"]>(
     (state) => state.content
   );
+  const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
-  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent } = useFolderTree<EntityFolderContent[]>();
+  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
+    EntityFolderContent[]
+  >();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -318,12 +322,13 @@ export default function MyContentList() {
         }
       />
       <FolderTree
-        folders={folderTree}
+        folders={filteredFolderTree}
         rootFolderName={condition.content_type === SearchContentsRequestContentType.assets ? "Assets" : "Organization Content"}
         onClose={closeFolderTree}
         open={folderTreeActive}
         onMove={handleMove}
         onAddFolder={handleAddFolder}
+        key={folderTreeShowIndex}
       />
     </div>
   );
