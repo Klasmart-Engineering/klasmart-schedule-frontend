@@ -160,7 +160,7 @@ export interface DetailsProps {
   visibility_settings: LinkedMockOptionsItem[];
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
-  onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
+  // onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
   permission: boolean;
 }
 export default function Details(props: DetailsProps) {
@@ -179,7 +179,7 @@ export default function Details(props: DetailsProps) {
     lesson_types,
     onChangeDevelopmental,
     onChangeProgram,
-    onDrawingActivity,
+    // onDrawingActivity,
     permission,
   } = props;
 
@@ -560,7 +560,7 @@ export default function Details(props: DetailsProps) {
                       right: 0,
                     }}
                     checked={props.value || false}
-                    onChange={(e) => onDrawingActivity(e, "self_study")}
+                    onChange={(e) => props.onChange(e.target.checked)}
                     color="primary"
                   />
                 }
@@ -595,7 +595,7 @@ export default function Details(props: DetailsProps) {
                         right: 0,
                       }}
                       checked={props.value || false}
-                      onChange={(e) => onDrawingActivity(e, "draw_activity")}
+                      onChange={(e) => props.onChange(e.target.checked)}
                       color="primary"
                     />
                   }

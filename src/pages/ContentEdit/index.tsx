@@ -250,12 +250,12 @@ function ContentEditForm() {
     setValue("data.source", "", { shouldDirty: true });
   }, [setValue]);
 
-  const handleDrawingActivity = useMemo(
-    () => (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
-      setValue(name, e.target.checked, { shouldDirty: true });
-    },
-    [setValue]
-  );
+  // const handleDrawingActivity = useMemo(
+  //   () => (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
+  //     setValue(name, e.target.checked, { shouldDirty: true });
+  //   },
+  //   [setValue]
+  // );
 
   const handleChangeProgram = useMemo(
     () => async (programId: string) => {
@@ -307,7 +307,7 @@ function ContentEditForm() {
             lesson_types={lesson_types}
             onChangeProgram={handleChangeProgram}
             onChangeDevelopmental={handleChangeDevelopmental}
-            onDrawingActivity={handleDrawingActivity}
+            // onDrawingActivity={handleDrawingActivity}
             permission={!value}
           />
         )}
