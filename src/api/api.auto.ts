@@ -1122,12 +1122,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/bulk_reject/learning_outcomes
      * @description reject learning outcomes
      */
-    rejectLearningOutcomesBulk: (id_list: ApiOutcomeBulkRejectRequest, params?: RequestParams) =>
+    rejectLearningOutcomesBulk: (bulk_reject_list: ApiOutcomeBulkRejectRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk_reject/learning_outcomes`,
         "PUT",
         params,
-        id_list
+        bulk_reject_list
       ),
   };
   classTypes = {

@@ -620,7 +620,7 @@
         "parameters": [
           {
             "description": "outcome id list",
-            "name": "id_list",
+            "name": "bulk_reject_list",
             "in": "body",
             "required": true,
             "schema": {
