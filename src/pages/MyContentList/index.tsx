@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { EntityFolderContent } from "../../api/api.auto";
-import { Author, ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
@@ -21,14 +21,11 @@ import {
   bulkMoveFolder,
   bulkPublishContent,
   bulkReject,
-  contentLists,
   deleteContent,
   deleteFolder,
-  folderContentLists,
   getFolderItemById,
   getUserSetting,
-  pendingContentLists,
-  privateContentLists,
+  onLoadContentList,
   publishContent,
   rejectContent,
   renameFolder,
@@ -46,7 +43,7 @@ import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
-const clearNull = (obj: Record<string, any>) => {
+export const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];
   });
@@ -135,7 +132,7 @@ export default function MyContentList() {
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
-    refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size })));
+    refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size, metaLoading: true })));
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type, dir_path) => {
     if (content_type === ContentType.material || content_type === ContentType.plan) {
@@ -233,26 +230,12 @@ export default function MyContentList() {
   useEffect(() => {
     (async () => {
       await dispatch(getUserSetting());
-      if (condition.publish_status === PublishStatus.pending && condition.author !== Author.self) {
-        await dispatch(pendingContentLists({ ...condition, page_size: page_size, metaLoading: true }));
-      } else if (
-        condition.publish_status === PublishStatus.draft ||
-        condition.publish_status === PublishStatus.rejected ||
-        (condition.publish_status === PublishStatus.pending && condition.author === Author.self)
-      ) {
-        await dispatch(privateContentLists({ ...condition, page_size: page_size, metaLoading: true }));
-      } else if (condition.publish_status === PublishStatus.published) {
-        await dispatch(folderContentLists({ ...condition, page_size: page_size, metaLoading: true }));
-      } else if (condition.content_type && condition.content_type === String(ContentType.assets)) {
-        await dispatch(folderContentLists({ ...condition, page_size: page_size, metaLoading: true }));
-      } else {
-        await dispatch(contentLists({ ...condition, page_size: page_size, metaLoading: true }));
-      }
+      await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
       const parent_id = (condition.path || "").split("/").pop() || "";
       if (parent_id) await dispatch(getFolderItemById(parent_id));
     })();
-  }, [condition, reset, dispatch, refreshKey, page_size]);
+  }, [condition, reset, dispatch, refreshKey]);
 
   return (
     <div>

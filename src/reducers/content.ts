@@ -11,10 +11,12 @@ import {
   EntityFolderItemInfo,
 } from "../api/api.auto";
 import { RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
-import { ContentType, FolderPartition, OutcomePublishStatus, SearchContentsRequestContentType } from "../api/type";
+import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, reportMiss, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
+import { clearNull } from "../pages/MyContentList";
+import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -347,32 +349,89 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
 
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0] & LoadingMetaPayload;
 type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
-export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams, { state: RootState }>(
   "content/contentLists",
-  async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.contents.searchContents(query);
+  async ({ metaLoading, ...query }, { getState }) => {
+    const {
+      content: { page_size },
+    } = getState();
+    const { list, total } = await api.contents.searchContents({ ...query, page_size });
     return { list, total };
   }
 );
 type IQueryPendingContentsParams = Parameters<typeof api.contentsPending.searchPendingContents>[0] & LoadingMetaPayload;
 type IQueryPendingContentsResult = AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
-export const pendingContentLists = createAsyncThunk<IQueryPendingContentsResult, IQueryPendingContentsParams>(
+export const pendingContentLists = createAsyncThunk<IQueryPendingContentsResult, IQueryPendingContentsParams, { state: RootState }>(
   "content/pendingContentLists",
-  async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.contentsPending.searchPendingContents(query);
+  async ({ metaLoading, ...query }, { getState }) => {
+    const {
+      content: { page_size },
+    } = getState();
+    const { list, total } = await api.contentsPending.searchPendingContents({ ...query, page_size });
     return { list, total };
   }
 );
 
 type IQueryPrivateContentsParams = Parameters<typeof api.contentsPrivate.searchPrivateContents>[0] & LoadingMetaPayload;
 type IQueryPrivateContentsResult = AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
-export const privateContentLists = createAsyncThunk<IQueryPrivateContentsResult, IQueryPrivateContentsParams>(
+export const privateContentLists = createAsyncThunk<IQueryPrivateContentsResult, IQueryPrivateContentsParams, { state: RootState }>(
   "content/privateContentLists",
-  async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.contentsPrivate.searchPrivateContents(query);
+  async ({ metaLoading, ...query }, { getState }) => {
+    const {
+      content: { page_size },
+    } = getState();
+    const { list, total } = await api.contentsPrivate.searchPrivateContents({ ...query, page_size });
     return { list, total };
   }
 );
+
+type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
+type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
+export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, IQueryFolderContentParams, { state: RootState }>(
+  "content/folderContentLists",
+  async ({ metaLoading, ...query }, { getState }) => {
+    const {
+      content: { page_size },
+    } = getState();
+    const { list, total } = await api.contentsFolders.queryFolderContent({ ...query, page_size });
+    return { list, total };
+  }
+);
+type IQueryOnLoadContentList = QueryCondition & LoadingMetaPayload;
+interface IQyertOnLoadContentListResult {
+  folderRes?: AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
+  pendingRes?: AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
+  privateRes?: AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
+  contentRes?: AsyncReturnType<typeof api.contents.searchContents>;
+}
+export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
+  "content/onLoadContentList",
+  async (query, { getState }) => {
+    const {
+      content: { page_size },
+    } = getState();
+    const { publish_status, author, content_type } = query;
+
+    if (publish_status === PublishStatus.published || content_type === String(ContentType.assets)) {
+      const folderRes = await api.contentsFolders.queryFolderContent(clearNull({ ...query, page_size }));
+      return { folderRes };
+    } else if (publish_status === PublishStatus.pending && author !== Author.self) {
+      const pendingRes = await api.contentsPending.searchPendingContents(clearNull({ ...query, page_size }));
+      return { pendingRes };
+    } else if (
+      publish_status === PublishStatus.draft ||
+      publish_status === PublishStatus.rejected ||
+      (publish_status === PublishStatus.pending && author === Author.self)
+    ) {
+      const privateRes = await api.contentsPrivate.searchPrivateContents(clearNull({ ...query, page_size }));
+      return { privateRes };
+    } else {
+      const contentRes = await api.contents.searchContents(clearNull({ ...query, page_size }));
+      return { contentRes };
+    }
+  }
+);
+
 type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
@@ -484,11 +543,12 @@ type IQuerySetUserSettingParams = Parameters<typeof api.userSettings.setUserSett
 type IQuerySetUserSettingResult = AsyncReturnType<typeof api.userSettings.setUserSetting>;
 export const setUserSetting = createAsyncThunk<IQuerySetUserSettingResult, IQuerySetUserSettingParams>(
   "content/setUserSetting",
-  ({ cms_page_size }) => api.userSettings.setUserSetting({ cms_page_size })
+  async ({ cms_page_size }) => await api.userSettings.setUserSetting({ cms_page_size })
 );
 
+type IQueryGetUserSettingParams = Parameters<typeof api.userSettings.getUserSettingByOperator>[0];
 type IQueryGetUserSettingResult = AsyncReturnType<typeof api.userSettings.getUserSettingByOperator>;
-export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult>("content/getUserSetting", () => {
+export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult, IQueryGetUserSettingParams>("content/getUserSetting", () => {
   return api.userSettings.getUserSettingByOperator();
 });
 
@@ -501,16 +561,6 @@ export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveConte
   "contents/live",
   async ({ content_id, class_id }) => {
     return api.contents.getContentLiveToken(content_id, class_id);
-  }
-);
-
-type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
-type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
-export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, IQueryFolderContentParams>(
-  "content/folderContentLists",
-  async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.contentsFolders.queryFolderContent(query);
-    return { list, total };
   }
 );
 
@@ -737,30 +787,39 @@ const { actions, reducer } = createSlice({
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
+    [contentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.contentsList = initialState.contentsList;
+      state.total = initialState.total;
+    },
     [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
       state.contentsList = payload.list;
       state.mediaList = payload.list;
       state.total = payload.total;
+    },
+    [folderContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.contentsList = initialState.contentsList;
+      state.total = initialState.total;
     },
     [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.contentsList = payload.list;
       state.total = payload.total;
     },
-    [contentLists.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
+    [contentLists.rejected.type]: (state, { error }: any) => {},
+    [pendingContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.contentsList = initialState.contentsList;
+      state.total = initialState.total;
     },
     [pendingContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
       state.contentsList = payload.list;
       state.mediaList = payload.list;
       state.total = payload.total;
     },
-    [pendingContentLists.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
+    [pendingContentLists.rejected.type]: (state, { error }: any) => {},
+    [privateContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.contentsList = initialState.contentsList;
+      state.total = initialState.total;
     },
     [privateContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
       state.contentsList = payload.list;
       state.mediaList = payload.list;
       state.total = payload.total;
@@ -860,11 +919,36 @@ const { actions, reducer } = createSlice({
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.page_size = payload.cms_page_size;
     },
+    [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.page_size = payload.cms_page_size;
+    },
     [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.folderTree = payload;
     },
     [getFolderItemById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.parentFolderInfo = payload;
+    },
+    [onLoadContentList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.contentsList = initialState.contentsList;
+      state.total = initialState.total;
+    },
+    [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      if (payload.folderRes) {
+        state.total = payload.folderRes.total;
+        state.contentsList = payload.folderRes.list;
+      }
+      if (payload.pendingRes) {
+        state.total = payload.pendingRes.total;
+        state.contentsList = payload.pendingRes.list;
+      }
+      if (payload.privateRes) {
+        state.total = payload.privateRes.total;
+        state.contentsList = payload.privateRes.list;
+      }
+      if (payload.contentRes) {
+        state.total = payload.contentRes.total;
+        state.contentsList = payload.contentRes.list;
+      }
     },
   },
 });
