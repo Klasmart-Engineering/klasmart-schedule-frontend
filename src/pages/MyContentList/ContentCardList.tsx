@@ -18,7 +18,9 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank, ExpandMore } from "@material-ui/icons";
+import ClearIcon from "@material-ui/icons/Clear";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import DoneIcon from "@material-ui/icons/Done";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
@@ -28,7 +30,7 @@ import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityFolderContent, EntityFolderItemInfo } from "../../api/api.auto";
-import { ContentType, PublishStatus } from "../../api/type";
+import { Author, ContentType, PublishStatus } from "../../api/type";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
@@ -216,6 +218,10 @@ const useStyles = makeStyles((theme) =>
       justifyContent: "center",
       alignItems: "center",
     },
+    approveIconColor: {
+      color: "#4CAF50",
+      padding: "0 0 0 10px",
+    },
   })
 );
 
@@ -254,6 +260,8 @@ function ContentCard(props: ContentProps) {
     onClickMoveBtn,
     onRenameFolder,
     onDeleteFolder,
+    onApprove,
+    onReject,
   } = props;
   let file_type: number = 0;
   if (content?.content_type === ContentType.assets) {
@@ -413,6 +421,30 @@ function ContentCard(props: ContentProps) {
               </LButton>
             </Permission>
           )}
+          {!queryCondition.program && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
+            <Permission value={PermissionType.reject_pending_content_272}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                onClick={() => onReject(content.id as string)}
+              >
+                <ClearIcon />
+              </LButton>
+            </Permission>
+          )}
+          {!queryCondition.program && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
+            <Permission value={PermissionType.approve_pending_content_271}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.approveIconColor, css.MuiIconButtonRoot)}
+                onClick={() => onApprove(content.id as string)}
+              >
+                <DoneIcon />
+              </LButton>
+            </Permission>
+          )}
         </div>
       </CardActions>
     </Card>
@@ -425,6 +457,8 @@ interface ContentActionProps {
   onClickMoveBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
   onRenameFolder: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
   onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onApprove: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onReject: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
@@ -461,6 +495,8 @@ export function ContentCardList(props: ContentCardListProps) {
     onDeleteFolder,
     onGoBack,
     parentFolderInfo,
+    onApprove,
+    onReject,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -496,6 +532,8 @@ export function ContentCardList(props: ContentCardListProps) {
                           onClickMoveBtn,
                           onRenameFolder,
                           onDeleteFolder,
+                          onApprove,
+                          onReject,
                         }}
                       />
                     </Grid>

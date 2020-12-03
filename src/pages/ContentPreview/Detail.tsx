@@ -1,7 +1,6 @@
 import { Box, Checkbox, Chip, FormControlLabel, Grid, InputAdornment, TextField } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { CloudDownloadOutlined } from "@material-ui/icons";
-import clsx from "clsx";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
@@ -40,11 +39,6 @@ const useStyles = makeStyles(() => ({
     top: "40%",
     cursor: "pointer",
   },
-  description: {
-    "& .MuiInputBase-input": {
-      overflow: "scroll",
-    },
-  },
 }));
 interface ContentPreviewProps {
   contentPreview: EntityContentInfoWithDetails;
@@ -56,7 +50,7 @@ export function Detail(props: ContentPreviewProps) {
   return (
     <>
       <TextField
-        className={clsx(css.textFiled, css.description)}
+        className={css.textFiled}
         margin="normal"
         fullWidth
         multiline

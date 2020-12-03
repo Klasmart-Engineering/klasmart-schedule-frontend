@@ -14,10 +14,13 @@ import { excludeFolderOfTree } from "../../models/ModelFolderTree";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
+  approveContent,
+  bulkApprove,
   bulkDeleteContent,
   bulkDeleteFolder,
   bulkMoveFolder,
   bulkPublishContent,
+  bulkReject,
   contentLists,
   deleteContent,
   deleteFolder,
@@ -27,6 +30,7 @@ import {
   pendingContentLists,
   privateContentLists,
   publishContent,
+  rejectContent,
   renameFolder,
   searchOrgFolderItems,
   setUserSetting,
@@ -202,6 +206,19 @@ export default function MyContentList() {
     history.go(-1);
   };
 
+  const handleApprove: ContentCardListProps["onApprove"] = (id) => {
+    return refreshWithDispatch(dispatch(approveContent(id)));
+  };
+  const handleReject: ContentCardListProps["onReject"] = (id) => {
+    return refreshWithDispatch(dispatch(rejectContent({ id: id })));
+  };
+  const handleBulkApprove: ThirdSearchHeaderProps["onBulkApprove"] = () => {
+    return refreshWithDispatch(dispatch(bulkApprove(ids)).then(unwrapResult));
+  };
+  const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {
+    return refreshWithDispatch(dispatch(bulkReject({ ids: ids })).then(unwrapResult));
+  };
+
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -268,6 +285,8 @@ export default function MyContentList() {
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
         onBulkDeleteFolder={handleBulkDeleteFolder}
+        onBulkApprove={handleBulkApprove}
+        onBulkReject={handleBulkReject}
       />
       <ThirdSearchHeaderMb
         value={condition}
@@ -278,6 +297,8 @@ export default function MyContentList() {
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
         onBulkDeleteFolder={handleBulkDeleteFolder}
+        onBulkApprove={handleBulkApprove}
+        onBulkReject={handleBulkReject}
       />
       <PermissionOr
         value={[
@@ -306,6 +327,8 @@ export default function MyContentList() {
                 onDeleteFolder={handleDeleteFolder}
                 onGoBack={handleGoback}
                 parentFolderInfo={parentFolderInfo}
+                onApprove={handleApprove}
+                onReject={handleReject}
               />
             ) : JSON.stringify(parentFolderInfo) !== "{}" && condition.publish_status === PublishStatus.published ? (
               <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>

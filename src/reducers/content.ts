@@ -631,6 +631,38 @@ export const searchOrgFolderItems = createAsyncThunk<IQuerySearchOrgFolderItemsR
   }
 );
 
+type IQueryBulkApproveParams = Parameters<typeof api.contentsReview.approveContentReviewBulk>[0]["ids"];
+type IQueryBulkApproveResult = AsyncReturnType<typeof api.contentsReview.approveContentReviewBulk>;
+export const bulkApprove = createAsyncThunk<IQueryBulkApproveResult, IQueryBulkApproveParams>(
+  "content/bulkApprove",
+  async (ids, { dispatch }) => {
+    if (!ids?.length)
+      return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
+    const content = d("Are you sure you want to approve these contents?").t("library_msg_approve_content");
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    return api.contentsReview.approveContentReviewBulk({ ids: ids });
+  }
+);
+
+type IQueryBulkRejectParams = {
+  ids: Parameters<typeof api.contentsReview.rejectContentReviewBulk>[0]["ids"];
+};
+type IQueryBulkRejectResult = AsyncReturnType<typeof api.contentsReview.rejectContentReviewBulk>;
+export const bulkReject = createAsyncThunk<IQueryBulkRejectResult, IQueryBulkRejectParams>(
+  "content/bulkReject",
+  async ({ ids }, { dispatch }) => {
+    if (!ids?.length)
+      return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
+    const title = d("Reason").t("library_label_reason");
+    const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
+    const type = ConfirmDialogType.textField;
+    const { isConfirmed, reasonValue, otherValue } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
+    if (!isConfirmed) return Promise.reject();
+    return api.contentsReview.rejectContentReviewBulk({ ids: ids, reject_reason: reasonValue, remark: otherValue });
+  }
+);
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,

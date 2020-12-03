@@ -118,6 +118,8 @@ export enum BulkAction {
   delete = "delete",
   move = "move",
   deleteFolder = "deleteFolder",
+  approve = "approve",
+  reject = "reject",
 }
 
 interface BulkActionOption {
@@ -159,7 +161,18 @@ function getBulkAction(
       if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
       return res;
     case PublishStatus.pending:
-      return unpublish ? [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }] : [];
+      const pendingRes = [];
+      if (unpublish) {
+        pendingRes.push({ label: d("Delete").t("library_label_delete"), value: BulkAction.delete });
+      } else {
+        if (perm.approve_pending_content_271) {
+          pendingRes.push({ label: d("Approve").t("library_label_approve"), value: BulkAction.approve });
+        }
+        if (perm.reject_pending_content_272) {
+          pendingRes.push({ label: d("Reject").t("library_label_reject"), value: BulkAction.reject });
+        }
+      }
+      return pendingRes;
     case PublishStatus.archive:
       const result = [];
       if (perm.republish_archived_content_274)
@@ -187,15 +200,30 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onAddFolder: () => any;
   actionObj: { folder: boolean; planAndMaterial: boolean; bothHave: boolean } | undefined;
   onBulkDeleteFolder: () => any;
+  onBulkApprove: () => any;
+  onBulkReject: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, onAddFolder, actionObj, onBulkDeleteFolder } = props;
+  const {
+    value,
+    onChange,
+    onBulkDelete,
+    onBulkPublish,
+    onBulkMove,
+    onAddFolder,
+    actionObj,
+    onBulkDeleteFolder,
+    onBulkApprove,
+    onBulkReject,
+  } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
     PermissionType.republish_archived_content_274,
     PermissionType.delete_archived_content_275,
+    PermissionType.approve_pending_content_271,
+    PermissionType.reject_pending_content_272,
   ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
@@ -204,6 +232,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
     if (event.target.value === BulkAction.move) onBulkMove();
     if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
+    if (event.target.value === BulkAction.approve) onBulkApprove();
+    if (event.target.value === BulkAction.reject) onBulkReject();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
@@ -283,12 +313,14 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, actionObj, onBulkDeleteFolder } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, actionObj, onBulkDeleteFolder, onBulkApprove, onBulkReject } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
     PermissionType.republish_archived_content_274,
     PermissionType.delete_archived_content_275,
+    PermissionType.approve_pending_content_271,
+    PermissionType.reject_pending_content_272,
   ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -303,6 +335,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
     if (event.target.value === BulkAction.move) onBulkMove();
     if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
+    if (event.target.value === BulkAction.approve) onBulkApprove();
+    if (event.target.value === BulkAction.reject) onBulkReject();
   };
   const handleClose = () => {
     setAnchorElLeft(null);
