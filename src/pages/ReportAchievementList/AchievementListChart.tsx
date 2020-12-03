@@ -229,6 +229,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
           <AxisLeft
             hideTicks
             scale={yScale}
+            numTicks={data.length}
             axisLineClassName={css.axiosLine}
             tickLabelProps={() => inlineStyles.yAxiosTickLabel}
             tickComponent={({ formattedValue, ...tickTextProps }) =>
