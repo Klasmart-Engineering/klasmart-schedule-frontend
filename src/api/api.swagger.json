@@ -867,112 +867,6 @@
         }
       }
     },
-    "/contents/review/approve": {
-      "put": {
-        "description": "approve content bulk",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["content"],
-        "summary": "approve content bulk",
-        "operationId": "approveContentReviewBulk",
-        "parameters": [
-          {
-            "description": "reject_reason",
-            "name": "RejectReasonRequest",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/api.RejectReasonBulkRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/contents/review/reject": {
-      "put": {
-        "description": "reject content bulk",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["content"],
-        "summary": "reject content bulk",
-        "operationId": "rejectContentReviewBulk",
-        "parameters": [
-          {
-            "description": "reject_reason",
-            "name": "RejectReasonRequest",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/api.RejectReasonBulkRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/contents/{content_id}": {
       "get": {
         "description": "get a content by id",
@@ -1888,6 +1782,112 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_review/approve": {
+      "put": {
+        "description": "approve content bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "approve content bulk",
+        "operationId": "approveContentReviewBulk",
+        "parameters": [
+          {
+            "description": "reject_reason",
+            "name": "RejectReasonRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RejectReasonBulkRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_review/reject": {
+      "put": {
+        "description": "reject content bulk",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "reject content bulk",
+        "operationId": "rejectContentReviewBulk",
+        "parameters": [
+          {
+            "description": "reject_reason",
+            "name": "RejectReasonRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RejectReasonBulkRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
@@ -5280,6 +5280,214 @@
         }
       }
     },
+    "/users/forgotten_pwd": {
+      "post": {
+        "description": "forget password",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "summary": "forget password",
+        "operationId": "forgottenPassword",
+        "parameters": [
+          {
+            "description": "login by new password and update password",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.ForgottenPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "description": "user login",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "summary": "login",
+        "operationId": "userLogin",
+        "parameters": [
+          {
+            "description": "user login",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.LoginResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/api.UnAuthorizedResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "description": "user register",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "summary": "register",
+        "operationId": "userRegister",
+        "parameters": [
+          {
+            "description": "user register",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.RegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.LoginResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/api.UnAuthorizedResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/users/reset_password": {
+      "post": {
+        "description": "reset password after login",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "summary": "reset password",
+        "operationId": "resetPassword",
+        "parameters": [
+          {
+            "description": "user reset password",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.ResetPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/users/verification": {
+      "post": {
+        "description": "send verify code or uri",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "summary": "send verify code",
+        "operationId": "sendCode",
+        "parameters": [
+          {
+            "description": "send verify code",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.SendCodeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/visibility_settings": {
       "get": {
         "description": "get visibilitySetting",
@@ -5447,6 +5655,9 @@
     "api.ForbiddenResponse": {
       "$ref": "#/definitions/api.ErrorResponse"
     },
+    "api.ForgottenPasswordRequest": {
+      "type": "object"
+    },
     "api.Grade": {
       "type": "object",
       "properties": {
@@ -5460,6 +5671,28 @@
     },
     "api.InternalServerErrorResponse": {
       "$ref": "#/definitions/api.ErrorResponse"
+    },
+    "api.LoginRequest": {
+      "type": "object",
+      "properties": {
+        "auth_code": {
+          "type": "string"
+        },
+        "auth_to": {
+          "type": "string"
+        },
+        "auth_type": {
+          "type": "string"
+        }
+      }
+    },
+    "api.LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
     },
     "api.NotFoundResponse": {
       "$ref": "#/definitions/api.ErrorResponse"
@@ -5808,6 +6041,27 @@
         }
       }
     },
+    "api.RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "description": "当前是电话号码",
+          "type": "string"
+        },
+        "act_type": {
+          "description": "注册类型",
+          "type": "string"
+        },
+        "auth_code": {
+          "description": "验证码",
+          "type": "string"
+        },
+        "password": {
+          "description": "密码",
+          "type": "string"
+        }
+      }
+    },
     "api.RejectReasonBulkRequest": {
       "type": "object",
       "properties": {
@@ -5838,6 +6092,20 @@
           }
         },
         "remark": {
+          "type": "string"
+        }
+      }
+    },
+    "api.ResetPasswordRequest": {
+      "type": "object"
+    },
+    "api.SendCodeRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "mobile": {
           "type": "string"
         }
       }
@@ -5879,6 +6147,9 @@
           "type": "string"
         }
       }
+    },
+    "api.UnAuthorizedResponse": {
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.contentBulkOperateRequest": {
       "type": "object",

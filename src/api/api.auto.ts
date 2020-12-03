@@ -48,12 +48,24 @@ export interface ApiFolderItemsResponseWithTotal {
 
 export type ApiForbiddenResponse = ApiErrorResponse;
 
+export type ApiForgottenPasswordRequest = object;
+
 export interface ApiGrade {
   grade_id?: string;
   grade_name?: string;
 }
 
 export type ApiInternalServerErrorResponse = ApiErrorResponse;
+
+export interface ApiLoginRequest {
+  auth_code?: string;
+  auth_to?: string;
+  auth_type?: string;
+}
+
+export interface ApiLoginResponse {
+  token?: string;
+}
 
 export type ApiNotFoundResponse = ApiErrorResponse;
 
@@ -161,6 +173,20 @@ export interface ApiPublishOutcomeReq {
   scope?: string;
 }
 
+export interface ApiRegisterRequest {
+  /** 当前是电话号码 */
+  account?: string;
+
+  /** 注册类型 */
+  act_type?: string;
+
+  /** 验证码 */
+  auth_code?: string;
+
+  /** 密码 */
+  password?: string;
+}
+
 export interface ApiRejectReasonBulkRequest {
   ids?: string[];
   reject_reason?: string[];
@@ -170,6 +196,13 @@ export interface ApiRejectReasonBulkRequest {
 export interface ApiRejectReasonRequest {
   reject_reason?: string[];
   remark?: string;
+}
+
+export type ApiResetPasswordRequest = object;
+
+export interface ApiSendCodeRequest {
+  email?: string;
+  mobile?: string;
 }
 
 export interface ApiSignatureResponse {
@@ -189,6 +222,8 @@ export interface ApiSubject {
 export interface ApiTokenResponse {
   token?: string;
 }
+
+export type ApiUnAuthorizedResponse = ApiErrorResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -1193,36 +1228,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
-     * @name approveContentReviewBulk
-     * @summary approve content bulk
-     * @request PUT:/contents/review/approve
-     * @description approve content bulk
-     */
-    approveContentReviewBulk: (RejectReasonRequest: ApiRejectReasonBulkRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/contents/review/approve`,
-        "PUT",
-        params,
-        RejectReasonRequest
-      ),
-
-    /**
-     * @tags content
-     * @name rejectContentReviewBulk
-     * @summary reject content bulk
-     * @request PUT:/contents/review/reject
-     * @description reject content bulk
-     */
-    rejectContentReviewBulk: (RejectReasonRequest: ApiRejectReasonBulkRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/contents/review/reject`,
-        "PUT",
-        params,
-        RejectReasonRequest
-      ),
-
-    /**
-     * @tags content
      * @name getContentById
      * @summary getContent
      * @request GET:/contents/{content_id}
@@ -1487,6 +1492,37 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         `/contents_resources/${resource_id}`,
         "GET",
         params
+      ),
+  };
+  contentsReview = {
+    /**
+     * @tags content
+     * @name approveContentReviewBulk
+     * @summary approve content bulk
+     * @request PUT:/contents_review/approve
+     * @description approve content bulk
+     */
+    approveContentReviewBulk: (RejectReasonRequest: ApiRejectReasonBulkRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/contents_review/approve`,
+        "PUT",
+        params,
+        RejectReasonRequest
+      ),
+
+    /**
+     * @tags content
+     * @name rejectContentReviewBulk
+     * @summary reject content bulk
+     * @request PUT:/contents_review/reject
+     * @description reject content bulk
+     */
+    rejectContentReviewBulk: (RejectReasonRequest: ApiRejectReasonBulkRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/contents_review/reject`,
+        "PUT",
+        params,
+        RejectReasonRequest
       ),
   };
   crypto = {
@@ -2478,6 +2514,65 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     setUserSetting: (userSetting: EntityUserSettingJsonContent, params?: RequestParams) =>
       this.request<EntityIDResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/user_settings`, "POST", params, userSetting),
+  };
+  users = {
+    /**
+     * @tags user
+     * @name forgottenPassword
+     * @summary forget password
+     * @request POST:/users/forgotten_pwd
+     * @description forget password
+     */
+    forgottenPassword: (outcome: ApiForgottenPasswordRequest, params?: RequestParams) =>
+      this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/forgotten_pwd`, "POST", params, outcome),
+
+    /**
+     * @tags user
+     * @name userLogin
+     * @summary login
+     * @request POST:/users/login
+     * @description user login
+     */
+    userLogin: (outcome: ApiLoginRequest, params?: RequestParams) =>
+      this.request<ApiLoginResponse, ApiBadRequestResponse | ApiUnAuthorizedResponse | ApiInternalServerErrorResponse>(
+        `/users/login`,
+        "POST",
+        params,
+        outcome
+      ),
+
+    /**
+     * @tags user
+     * @name userRegister
+     * @summary register
+     * @request POST:/users/register
+     * @description user register
+     */
+    userRegister: (outcome: ApiRegisterRequest, params?: RequestParams) =>
+      this.request<
+        ApiLoginResponse,
+        ApiBadRequestResponse | ApiUnAuthorizedResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/users/register`, "POST", params, outcome),
+
+    /**
+     * @tags user
+     * @name resetPassword
+     * @summary reset password
+     * @request POST:/users/reset_password
+     * @description reset password after login
+     */
+    resetPassword: (outcome: ApiResetPasswordRequest, params?: RequestParams) =>
+      this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/reset_password`, "POST", params, outcome),
+
+    /**
+     * @tags user
+     * @name sendCode
+     * @summary send verify code
+     * @request POST:/users/verification
+     * @description send verify code or uri
+     */
+    sendCode: (outcome: ApiSendCodeRequest, params?: RequestParams) =>
+      this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/verification`, "POST", params, outcome),
   };
   visibilitySettings = {
     /**
