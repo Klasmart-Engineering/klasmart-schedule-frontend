@@ -128,18 +128,11 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
     },
     [min]
   );
-  const handleChangeIner = useMemo(
-    () => (value: number) => {
-      SetSuggestTime(value);
-    },
-    []
-  );
   const handleBlur = useCallback(() => {
-    if (onChange && suggestTime) {
+    if (onChange && suggestTime !== undefined) {
       if (lesson === "plan") {
         onChange(suggestTimeFun(suggestTime));
         SetSuggestTime(suggestTimeFun(suggestTime));
-        console.log("suggestTime=", suggestTime);
       } else onChange(suggestTime);
     }
   }, [lesson, onChange, suggestTime, suggestTimeFun]);
@@ -148,10 +141,10 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
       ref={ref}
       type="number"
       className={css.fieldset}
-      label={d("Duration(Minutes)").t("library_label_duration")}
+      label={lesson === "plan" ? t("library_label_plan_duration") : t("library_label_duration")}
       disabled={permission}
       value={suggestTime}
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeIner(Number(e.target.value))}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(Number(e.target.value))}
       onBlur={handleBlur}
     />
   );

@@ -6,7 +6,7 @@ import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 const useStyles = makeStyles(() => ({
   textFiled: {
@@ -156,7 +156,7 @@ export function Detail(props: ContentPreviewProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            label={d("Duration(Minutes)").t("library_label_duration")}
+            label={t("library_label_duration")}
             fullWidth
             disabled={true}
             variant="outlined"

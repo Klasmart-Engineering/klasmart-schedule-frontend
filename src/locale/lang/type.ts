@@ -22,7 +22,8 @@ type LangRecord<T = string> =
   | { id: "library_label_material_name"; description: "Material Name"; values: undefined }
   | { id: "library_label_thumbnail"; description: "Thumbnail"; values: undefined }
   | { id: "library_label_clip_image"; description: "Clip Image"; values: undefined }
-  | { id: "library_label_duration"; description: "Duration(Minutes)"; values: undefined }
+  | { id: "library_label_duration"; description: "Duration:min"; values: undefined }
+  | { id: "library_label_plan_duration"; description: "Duration:min(Should be greater than lesson materials' sum)"; values: undefined }
   | { id: "library_label_program"; description: "Program"; values: undefined }
   | { id: "library_label_subject"; description: "Subject"; values: undefined }
   | { id: "library_label_category"; description: "Category"; values: undefined }

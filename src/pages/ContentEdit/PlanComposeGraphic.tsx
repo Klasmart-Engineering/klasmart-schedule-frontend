@@ -232,14 +232,20 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
   } else {
     const { onRemove } = props;
     const material = props.material ?? {};
-    const { thumbnail, author_name, name, content_type } = material;
+    const { thumbnail, author_name, name, content_type, suggest_time } = material;
     return (
       <Card ref={ref}>
         <Thumbnail className={css.cardMedia} type={content_type} id={thumbnail} />
         <CardContent className={css.cardContent}>
-          <Typography component="div" variant="caption" noWrap>
-            {name}
-          </Typography>
+          <Box pr={8} position="relative">
+            <Typography component="div" variant="caption" noWrap>
+              {name}
+            </Typography>
+            <Typography component="span" variant="caption" style={{ position: "absolute", right: 0, top: 0 }}>
+              ({suggest_time}
+              {d("Minutes").t("assess_detail_minutes")})
+            </Typography>
+          </Box>
           <Typography component="div" variant="caption" color="textSecondary" noWrap>
             {author_name}
           </Typography>
