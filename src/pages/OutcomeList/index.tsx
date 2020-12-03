@@ -16,6 +16,7 @@ import {
   bulkApprove,
   bulkDeleteOutcome,
   bulkPublishOutcome,
+  bulkReject,
   deleteOutcome,
   newReject,
   publishOutcome,
@@ -126,6 +127,7 @@ export function OutcomeList() {
   };
   const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {
     // return refreshWithDispatch(dispatch())
+    return refreshWithDispatch(dispatch(bulkReject(ids)));
   };
   const handleApprove: OutcomeTableProps["onApprove"] = (id) => {
     return refreshWithDispatch(dispatch(approve(id)));

@@ -2,6 +2,7 @@ import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult 
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import {
+  ApiOutcomeBulkRejectRequest,
   ApiOutcomeCreateResponse,
   ApiOutcomeCreateView,
   ApiOutcomeIDList,
@@ -327,7 +328,9 @@ export const newReject = createAsyncThunk<ResultNewRejectOutcome, ParamsNewRejec
     const title = d("Reason").t("library_label_reason");
     const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
     const type = ConfirmDialogType.onlyInput;
-    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
+    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, defaultValue: "", content, type })));
+    console.log(text);
+    debugger;
     if (!isConfirmed) return Promise.reject();
     return await api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason: text });
   }
@@ -335,7 +338,7 @@ export const newReject = createAsyncThunk<ResultNewRejectOutcome, ParamsNewRejec
 
 type IQueryBulkRejectResult = AsyncReturnType<typeof api.bulkApprove.approveLearningOutcomesBulk>;
 export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<ApiOutcomeIDList>["outcome_ids"]>(
-  "outcone/bulkApprove",
+  "outcome/bulkApprove",
   async (ids, { dispatch }) => {
     if (!ids || !ids.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
@@ -343,19 +346,21 @@ export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<Api
   }
 );
 
-// type ResultBulkRejectOutcome = AsyncReturnType<typeof api.learningOutcomes.rejectLearningOutcomes>;
-// type ParamsBulkRejectOutcome = {
-//   ids: Parameters<typeof api.bulkReject.rejectLearningOutcomesBulk>[0];
-// };
-// export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, ParamsBulkRejectOutcome>(
-//   "outcome/reject", async ({ ids }, {dispatch}) => {
-//     const title = d("Reason").t("library_label_reason");
-//     const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
-//     const type = ConfirmDialogType.onlyInput;
-//     const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type })));
-//     if (!isConfirmed) return Promise.reject();
-//   return await api.bulkReject.rejectLearningOutcomesBulk( ids );
-// });
+type ResultBulkRejectOutcome = AsyncReturnType<typeof api.bulkReject.rejectLearningOutcomesBulk>;
+
+export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, Required<ApiOutcomeBulkRejectRequest>["outcome_ids"]>(
+  "outcome/bulkReject",
+  async (ids, { dispatch }) => {
+    if (!ids || !ids.length)
+      return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    const title = d("Reason").t("library_label_reason");
+    const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
+    const type = ConfirmDialogType.onlyInput;
+    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, defaultValue: "", content, type })));
+    if (!isConfirmed) return Promise.reject();
+    return await api.bulkReject.rejectLearningOutcomesBulk({ outcome_ids: ids, reject_reason: text });
+  }
+);
 
 const { reducer } = createSlice({
   name: "outcome",

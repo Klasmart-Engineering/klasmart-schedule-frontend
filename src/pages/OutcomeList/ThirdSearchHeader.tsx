@@ -128,9 +128,9 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
       if (perm.approve_pending_learning_outcome_481) {
         res.push({ label: d("Approve").t("assess_label_approve"), value: BulkAction.approve });
       }
-      // if(perm.reject_pending_learning_outcome_482) {
-      //   res.push({ label: d("Reject").t("assess_label_reject"), value: BulkAction.reject })
-      // }
+      if (perm.reject_pending_learning_outcome_482) {
+        res.push({ label: d("Reject").t("assess_label_reject"), value: BulkAction.reject });
+      }
       return res;
     default:
       return perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learninng_outcome_444
