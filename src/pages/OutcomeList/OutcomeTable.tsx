@@ -16,6 +16,7 @@ import { LButton } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { isUnpublish } from "./FirstSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
 const useStyles = makeStyles((theme) =>
@@ -71,7 +72,7 @@ interface OutcomeProps extends OutcomeActionProps {
 }
 function OutomeRow(props: OutcomeProps) {
   const css = useStyles();
-  const { outcome, selectedContentGroupContext, onDelete, onClickOutcome, userId, onApprove, onReject } = props;
+  const { outcome, queryCondition, selectedContentGroupContext, onDelete, onClickOutcome, userId, onApprove, onReject } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
@@ -134,7 +135,7 @@ function OutomeRow(props: OutcomeProps) {
             </LButton>
           </Permission>
         )}
-        {outcome.publish_status === OutcomePublishStatus.pending && (
+        {outcome.publish_status === OutcomePublishStatus.pending && !isUnpublish(queryCondition) && (
           <Permission value={PermissionType.approve_pending_learning_outcome_481}>
             <LButton
               as={IconButton}
@@ -146,7 +147,7 @@ function OutomeRow(props: OutcomeProps) {
             </LButton>
           </Permission>
         )}
-        {outcome.publish_status === OutcomePublishStatus.pending && (
+        {outcome.publish_status === OutcomePublishStatus.pending && !isUnpublish(queryCondition) && (
           <Permission value={PermissionType.reject_pending_learning_outcome_482}>
             <LButton
               as={IconButton}
