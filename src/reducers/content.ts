@@ -396,7 +396,7 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
     return { list, total };
   }
 );
-type IQueryOnLoadContentList = QueryCondition;
+type IQueryOnLoadContentList = QueryCondition & LoadingMetaPayload;
 interface IQyertOnLoadContentListResult {
   folderRes?: AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
   pendingRes?: AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
