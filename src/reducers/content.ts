@@ -15,7 +15,6 @@ import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStat
 import { LangRecordId } from "../locale/lang/type";
 import { d, reportMiss, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
-import { clearNull } from "../pages/MyContentList";
 import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -397,7 +396,7 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
     return { list, total };
   }
 );
-type IQueryOnLoadContentList = QueryCondition & LoadingMetaPayload;
+type IQueryOnLoadContentList = QueryCondition;
 interface IQyertOnLoadContentListResult {
   folderRes?: AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
   pendingRes?: AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
@@ -410,23 +409,60 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const {
       content: { page_size },
     } = getState();
-    const { publish_status, author, content_type } = query;
+    const { name, publish_status, author, content_type, page, program, order_by, path } = query;
 
     if (publish_status === PublishStatus.published || content_type === String(ContentType.assets)) {
-      const folderRes = await api.contentsFolders.queryFolderContent(clearNull({ ...query, page_size }));
+      const folderRes = await api.contentsFolders.queryFolderContent({
+        name,
+        publish_status,
+        author,
+        content_type,
+        page,
+        program,
+        order_by,
+        path,
+        page_size,
+      });
       return { folderRes };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
-      const pendingRes = await api.contentsPending.searchPendingContents(clearNull({ ...query, page_size }));
+      const pendingRes = await api.contentsPending.searchPendingContents({
+        name,
+        publish_status,
+        author,
+        content_type,
+        page,
+        program,
+        order_by,
+        page_size,
+      });
       return { pendingRes };
     } else if (
       publish_status === PublishStatus.draft ||
       publish_status === PublishStatus.rejected ||
       (publish_status === PublishStatus.pending && author === Author.self)
     ) {
-      const privateRes = await api.contentsPrivate.searchPrivateContents(clearNull({ ...query, page_size }));
+      const privateRes = await api.contentsPrivate.searchPrivateContents({
+        name,
+        publish_status,
+        author,
+        content_type,
+        page,
+        program,
+        order_by,
+        page_size,
+      });
       return { privateRes };
     } else {
-      const contentRes = await api.contents.searchContents(clearNull({ ...query, page_size }));
+      const contentRes = await api.contents.searchContents({
+        name,
+        publish_status,
+        author,
+        content_type,
+        page,
+        program,
+        order_by,
+        page_size,
+      });
       return { contentRes };
     }
   }
@@ -924,6 +960,9 @@ const { actions, reducer } = createSlice({
     },
     [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.folderTree = payload;
+    },
+    [getFolderItemById.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.parentFolderInfo = initialState.parentFolderInfo;
     },
     [getFolderItemById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.parentFolderInfo = payload;
