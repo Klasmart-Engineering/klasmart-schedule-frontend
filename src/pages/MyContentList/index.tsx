@@ -210,9 +210,7 @@ export default function MyContentList() {
   }, [condition, contentsList, history, total]);
 
   useEffect(() => {
-    if (ids && ids.length > 0) {
-      setActionObj(ids2removeOrDelete(contentsList, ids));
-    }
+    setActionObj(ids2removeOrDelete(contentsList, ids));
   }, [contentsList, ids]);
 
   useEffect(() => {

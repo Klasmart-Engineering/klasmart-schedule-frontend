@@ -16,7 +16,7 @@ export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[
   };
   if (!ids || ids.length === 0) return obj;
   const arr = ids2Content(contents, ids);
-  if (!arr.find((item) => !item)) return obj;
+  if (arr.findIndex((item) => !item) !== -1) return obj;
   if (arr && arr.every((item) => item.content_type === ContentType.folder)) {
     obj.folder = true;
     obj.planAndMaterial = false;
