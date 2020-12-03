@@ -970,6 +970,7 @@ const { actions, reducer } = createSlice({
     [onLoadContentList.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
+      state.parentFolderInfo = initialState.parentFolderInfo;
     },
     [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       if (payload.folderRes) {

@@ -516,9 +516,12 @@ export function ContentCardList(props: ContentCardListProps) {
               {...props}
               render={(selectedContentGroupContext) => (
                 <Fragment>
-                  {queryCondition.path && queryCondition.path !== "/" && queryCondition.page === 1 && (
-                    <BackToPrevPage onGoBack={onGoBack} parentFolderInfo={parentFolderInfo} total={total} />
-                  )}
+                  {queryCondition.path &&
+                    queryCondition.path !== "/" &&
+                    queryCondition.page === 1 &&
+                    JSON.stringify(parentFolderInfo) !== "{}" && (
+                      <BackToPrevPage onGoBack={onGoBack} parentFolderInfo={parentFolderInfo} total={total} />
+                    )}
                   {list.map((item, idx) => (
                     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
                       <ContentCard
