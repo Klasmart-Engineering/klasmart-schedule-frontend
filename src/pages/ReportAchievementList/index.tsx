@@ -57,13 +57,15 @@ export function ReportAchievementList() {
 
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
-      const { payload: data } = ((await dispatch(getLessonPlan({ teacher_id, class_id }))) as unknown) as PayloadAction<
+      const { payload: data } = ((await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
       if (data) {
         const lesson_plan_id = (data[0] && data[0].id) || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
         lesson_plan_id && dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
+      } else {
+        history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id: "" }) });
       }
     },
     [dispatch, history]
@@ -118,7 +120,8 @@ export function ReportAchievementList() {
           search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }),
         });
     }
-  }, [history, reportMockOptions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history, reportMockOptions.teacher_id]);
 
   return (
     <>

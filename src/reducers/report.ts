@@ -87,8 +87,8 @@ export const getAchievementDetail = createAsyncThunk<AsyncReturnType<typeof api.
 
 export const getLessonPlan = createAsyncThunk<
   AsyncReturnType<typeof api.schedulesLessonPlans.getLessonPlans>,
-  Parameters<typeof api.schedulesLessonPlans.getLessonPlans>[0]
->("getLessonPlan", async ({ teacher_id, class_id }) => {
+  Parameters<typeof api.schedulesLessonPlans.getLessonPlans>[0] & LoadingMetaPayload
+>("getLessonPlan", async ({ metaLoading, teacher_id, class_id }) => {
   return await api.schedulesLessonPlans.getLessonPlans({ teacher_id, class_id });
 });
 
