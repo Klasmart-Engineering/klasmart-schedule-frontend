@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     weeklyDay: {
       display: "inline-block",
-      width: "13.8%",
+      width: "12.8%",
       height: "32px",
       border: "1px solid #979797",
       borderRight: "none",
