@@ -137,7 +137,7 @@ function getBulkAction(
     return perm.delete_asset_340
       ? [
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
+          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
         ]
       : [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
   }
@@ -146,12 +146,12 @@ function getBulkAction(
       let res = [
         { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
         { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-        { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
+        { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
       ];
       if (actionObj?.folder)
         res = [
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete").t("library_label_delete"), value: BulkAction.deleteFolder },
+          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
         ];
       if (actionObj?.planAndMaterial && perm.archive_published_content_273)
         res = [

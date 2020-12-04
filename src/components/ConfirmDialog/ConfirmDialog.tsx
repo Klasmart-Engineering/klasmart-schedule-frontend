@@ -12,18 +12,23 @@ import {
 import React, { Fragment, useCallback, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { actExitConfirm, ConfirmDialogType } from "../../reducers/confirm";
 import { CheckboxGroup } from "../CheckboxGroup";
-
 const INPUT_NAME = "CONFIRM_INPUT";
 const REJECT_REASON = "REJECT_REASON";
-const OTHER_REASON = "OTHER_REASON";
-// 这些是翻译的 label
+const OTHER_REASON = "OTHER_REASON"; // 这些是翻译的 label
+
 const REJECT_REASON_VALUES = () => [
-  { label: d("Inappropriate Content").t("library_label_inappropriate_content"), value: "library_label_inappropriate_content" },
-  { label: d("Quality of Lesson is Poor").t("library_label_quality_of_lesson"), value: "library_label_quality_of_lesson" },
+  {
+    label: d("Inappropriate Content").t("library_label_inappropriate_content"),
+    value: "library_label_inappropriate_content",
+  },
+  {
+    label: d("Quality of Lesson is Poor").t("library_label_quality_of_lesson"),
+    value: "library_label_quality_of_lesson",
+  },
   {
     label: d("No Permissions to Use Assets").t("library_label_no_permissions_use_assets"),
     value: "library_label_no_permissions_use_assets",
@@ -31,8 +36,7 @@ const REJECT_REASON_VALUES = () => [
   {
     label: d("Add/Remove Learning Outcomes").t("library_label_add_remove_learning_outcomes"),
     value: "library_label_add_remove_learning_outcomes",
-  },
-  // "library_label_inappropriate_content",
+  }, // "library_label_inappropriate_content",
   // "library_label_quality_of_lesson",
   // "library_label_no_permissions_use_assets",
   // "library_label_add_remove_learning_outcomes",
@@ -44,19 +48,42 @@ export function ConfirmDialog() {
     RootState["confirm"]
   >((state) => state.confirm);
   const dispatch = useDispatch();
-  const { control, setError, errors, watch, handleSubmit } = useForm({ mode: "onSubmit", reValidateMode: "onSubmit" });
+  const { control, setError, errors, watch, handleSubmit } = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+  });
   const values = watch();
   const disableConfirm =
     type === ConfirmDialogType.textField && !values[REJECT_REASON]?.length && !values[OTHER_REASON] && !values[INPUT_NAME];
-  const handleCancel = useCallback(() => dispatch(actExitConfirm({ isConfirmed: false })), [dispatch]);
+  const handleCancel = useCallback(
+    () =>
+      dispatch(
+        actExitConfirm({
+          isConfirmed: false,
+        })
+      ),
+    [dispatch]
+  );
   const handleConfirm = useMemo(
     () =>
       handleSubmit((values) => {
-        if (type === ConfirmDialogType.text) return dispatch(actExitConfirm({ isConfirmed: true }));
+        if (type === ConfirmDialogType.text)
+          return dispatch(
+            actExitConfirm({
+              isConfirmed: true,
+            })
+          );
+
         if (type === ConfirmDialogType.onlyInput) {
           const text = values[INPUT_NAME] ? values[INPUT_NAME] : "";
-          dispatch(actExitConfirm({ isConfirmed: true, text }));
+          dispatch(
+            actExitConfirm({
+              isConfirmed: true,
+              text,
+            })
+          );
         }
+
         if (type === ConfirmDialogType.textField) {
           if (values[OTHER_REASON] && !values[INPUT_NAME]) {
             return setError(INPUT_NAME, {
@@ -64,9 +91,16 @@ export function ConfirmDialog() {
               message: d("Please specify the reason for rejection.").t("library_msg_reject_reason"),
             });
           }
+
           const reasonValue = [...values[REJECT_REASON]];
           const otherValue = values[INPUT_NAME] ? values[INPUT_NAME] : "";
-          dispatch(actExitConfirm({ isConfirmed: true, reasonValue, otherValue }));
+          dispatch(
+            actExitConfirm({
+              isConfirmed: true,
+              reasonValue,
+              otherValue,
+            })
+          );
         }
       }),
     [type, handleSubmit, dispatch, setError]
@@ -82,7 +116,9 @@ export function ConfirmDialog() {
               name={REJECT_REASON}
               control={control}
               defaultValue={[]}
-              rules={{ required: true }}
+              rules={{
+                required: true,
+              }}
               error={"Please Select"}
               render={(props) => (
                 <CheckboxGroup
@@ -91,7 +127,9 @@ export function ConfirmDialog() {
                     <Fragment>
                       {REJECT_REASON_VALUES().map((item) => (
                         <FormControlLabel
-                          style={{ display: "block" }}
+                          style={{
+                            display: "block",
+                          }}
                           control={
                             <Checkbox
                               color="primary"
@@ -105,7 +143,9 @@ export function ConfirmDialog() {
                         />
                       ))}
                       <FormControlLabel
-                        style={{ display: "block" }}
+                        style={{
+                          display: "block",
+                        }}
                         control={
                           <Controller
                             defaultValue={false}
@@ -132,7 +172,10 @@ export function ConfirmDialog() {
               fullWidth
               label={label}
               placeholder={placeholder || d("Reason").t("library_label_reason")}
-              rules={{ required: true, ...rules }}
+              rules={{
+                required: true,
+                ...rules,
+              }}
               control={control}
               error={!!errors[INPUT_NAME]}
               helperText={errors[INPUT_NAME]?.message}
@@ -149,7 +192,10 @@ export function ConfirmDialog() {
             fullWidth
             label={label}
             placeholder={placeholder}
-            rules={{ required: reportMiss("Please Input something!", "general_error_no_input_empty"), ...rules }}
+            rules={{
+              required: d("Server request failed").t("general_error_unknown"),
+              ...rules,
+            }}
             control={control}
             error={!!errors[INPUT_NAME]}
             helperText={errors[INPUT_NAME]?.message}
