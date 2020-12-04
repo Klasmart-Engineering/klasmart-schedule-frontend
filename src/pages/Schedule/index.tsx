@@ -184,6 +184,7 @@ function ScheduleContent() {
               modelView={modelView}
               changeTimesTamp={changeTimesTamp}
               timesTamp={timesTamp}
+              scheduleId={scheduleId}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={4} lg={3}>

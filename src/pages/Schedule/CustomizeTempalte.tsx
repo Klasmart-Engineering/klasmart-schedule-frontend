@@ -3,7 +3,7 @@ import Button from "@material-ui/core/Button";
 import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import ContentPreview from "../ContentPreview";
 import { apiLivePath } from "../../api/extra";
@@ -85,6 +85,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
 
   const timestampToTime = (timestamp: Date | null): string => {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -144,6 +145,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           color="primary"
           variant="contained"
           disabled={scheduleInfo.class_type === "Task"}
+          style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
           href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
         >
           {d("Preview").t("schedule_button_preview")}

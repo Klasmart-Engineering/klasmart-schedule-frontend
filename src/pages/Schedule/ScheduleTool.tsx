@@ -81,7 +81,7 @@ function Tool(props: ToolProps) {
   const css = useStyles();
   const [teacherName, setTeacherName] = React.useState(useQuery());
   const history = useHistory();
-  const { includeList, changeTimesTamp, changeModelView, modelView } = props;
+  const { includeList, changeTimesTamp, changeModelView, modelView, scheduleId } = props;
 
   const selectToday = (): void => {
     changeTimesTamp({
@@ -92,6 +92,7 @@ function Tool(props: ToolProps) {
 
   const toolRouter = (place: string = "create"): void => {
     if (place === "create") {
+      if (scheduleId) selectToday();
       history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
     } else if (place === "search") {
       if (!teacherName) return;
@@ -200,10 +201,11 @@ interface ToolProps extends CalendarStateProps {
   includeList: boolean;
   modelView: modeViewType;
   changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  scheduleId: string;
 }
 
 export default function ScheduleTool(props: ToolProps) {
-  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView } = props;
+  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView, scheduleId } = props;
   return (
     <Tool
       includeList={includeList}
@@ -211,6 +213,7 @@ export default function ScheduleTool(props: ToolProps) {
       timesTamp={timesTamp}
       changeModelView={changeModelView}
       modelView={modelView}
+      scheduleId={scheduleId}
     />
   );
 }

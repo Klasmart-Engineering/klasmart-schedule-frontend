@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
@@ -178,6 +178,7 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
+  const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -1081,6 +1082,7 @@ function EditBox(props: CalendarStateProps) {
             style={{
               width: "45%",
               marginRight: "10%",
+              visibility: permissionShowPreview ? "visible" : "hidden",
             }}
             disabled={scheduleList.class_type === "Task"}
             href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
