@@ -24,6 +24,7 @@ import {
   publish,
   publishWidthAssets,
   save,
+  searchContentLists,
   searchOutcomeList,
 } from "../../reducers/content";
 import MyContentList from "../MyContentList";
@@ -75,19 +76,17 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  // const [hasCreateSituationFirstOnload, setHasCreateSituationFirstOnload] = useState(false);
   const { handleSubmit, control, setValue, watch, errors } = formMethods;
   const {
     contentDetail,
     mediaList,
-    MediaListTotal,
+    mediaListTotal,
     OutcomesListTotal,
     outcomeList,
     linkedMockOptions,
     visibility_settings,
     lesson_types,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
-
   const { lesson, tab, rightside } = useParams();
   const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
@@ -214,9 +213,11 @@ function ContentEditForm() {
     () => (page: number) => {
       setMediaPage(page);
       dispatch(
-        contentLists({
+        searchContentLists({
+          metaLoading: true,
           content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
           publish_status: "published",
+          page_size: 10,
           page,
           name: searchMedia,
         })
@@ -229,6 +230,7 @@ function ContentEditForm() {
       setOutcomePage(page);
       dispatch(
         searchOutcomeList({
+          metaLoading: true,
           page,
           publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
@@ -249,13 +251,6 @@ function ContentEditForm() {
   const handleClosePreview = useCallback(() => {
     setValue("data.source", "", { shouldDirty: true });
   }, [setValue]);
-
-  // const handleDrawingActivity = useMemo(
-  //   () => (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
-  //     setValue(name, e.target.checked, { shouldDirty: true });
-  //   },
-  //   [setValue]
-  // );
 
   const handleChangeProgram = useMemo(
     () => async (programId: string) => {
@@ -333,7 +328,7 @@ function ContentEditForm() {
         onSearch={handleSearchMedia}
         value={searchMedia}
         onChangePage={handleChangePage}
-        total={MediaListTotal}
+        total={mediaListTotal}
         mediaPage={mediaPage}
       />
     </ContentTabs>

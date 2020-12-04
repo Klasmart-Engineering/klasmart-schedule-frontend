@@ -28,7 +28,7 @@ interface IContentState {
   total: number;
   contentsList: EntityFolderContent[];
   contentPreview: EntityContentInfoWithDetails;
-  MediaListTotal: number;
+  mediaListTotal: number;
   OutcomesListTotal: number;
   linkedMockOptions: LinkedMockOptions;
   lesson_types: LinkedMockOptionsItem[];
@@ -97,7 +97,7 @@ const initialState: IContentState = {
     teacher_manual_name: "",
   },
   mediaList: [],
-  MediaListTotal: 0,
+  mediaListTotal: 0,
   OutcomesListTotal: 0,
   outcomeList: [],
   linkedMockOptions: {
@@ -307,6 +307,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
         ? api.contents.searchContents({
             content_type: type === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
             publish_status: "published",
+            page_size: 10,
             name: searchMedia,
           })
         : undefined,
@@ -469,7 +470,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     }
   }
 );
-
+// contentEdit搜索outcomeListist
 type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
@@ -479,7 +480,14 @@ export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQuer
     return { list, total };
   }
 );
-// content_id: Parameters<typeof api.contents.getLiveToken>[0];
+// contentEdit搜索contentlist
+export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams, { state: RootState }>(
+  "searchContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contents.searchContents({ ...query });
+    return { list, total };
+  }
+);
 interface IQueryGetContentDetailByIdParams extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentById>[0];
 }
@@ -760,6 +768,7 @@ const { actions, reducer } = createSlice({
     },
   },
   extraReducers: {
+    // contentEdit
     // todo: PayloadAction<Content>  应该从 save 中获取类型
     [save.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof save>>) => {
       // alert("success");
@@ -778,7 +787,7 @@ const { actions, reducer } = createSlice({
     [onLoadContentEdit.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentEdit>>) => {
       const {
         contentDetail,
-        MediaListTotal,
+        mediaListTotal,
         mediaList,
         outcomeList,
         OutcomesListTotal,
@@ -788,7 +797,7 @@ const { actions, reducer } = createSlice({
       } = initialState;
       Object.assign(state, {
         contentDetail,
-        MediaListTotal,
+        mediaListTotal,
         mediaList,
         outcomeList,
         OutcomesListTotal,
@@ -804,7 +813,7 @@ const { actions, reducer } = createSlice({
         state.contentDetail = payload.contentDetail as Required<EntityContentInfoWithDetails>;
       }
       if (payload.mediaList?.total) {
-        state.MediaListTotal = payload.mediaList.total;
+        state.mediaListTotal = payload.mediaList.total;
       }
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;
@@ -825,6 +834,38 @@ const { actions, reducer } = createSlice({
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
+    [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.linkedMockOptions = payload;
+    },
+    [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.linkedMockOptions.skills = payload;
+    },
+    [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [searchOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = payload.list;
+      state.OutcomesListTotal = payload.total;
+    },
+    [searchOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = initialState.outcomeList;
+      state.OutcomesListTotal = initialState.OutcomesListTotal;
+    },
+    [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.mediaList = payload.list;
+      state.mediaListTotal = payload.total;
+    },
+    [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.mediaList = initialState.mediaList;
+      state.mediaListTotal = initialState.mediaListTotal;
+    },
+
+    // contentList页面
     [contentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
@@ -865,25 +906,7 @@ const { actions, reducer } = createSlice({
     [privateContentLists.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
-      state.linkedMockOptions = payload;
-    },
-    [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
-    [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
-      state.linkedMockOptions.skills = payload;
-    },
-    [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
-    [searchOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
-      state.outcomeList = payload.list;
-      state.OutcomesListTotal = payload.total;
-    },
+
     [searchOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
