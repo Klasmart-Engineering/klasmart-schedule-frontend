@@ -4,14 +4,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
+import { OrderBy, OutcomeOrderBy } from "../../api/type";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import {
-  actOutcomeList,
-  actPendingOutcomeList,
-  actPrivateOutcomeList,
   approve,
   bulkApprove,
   bulkDeleteOutcome,
@@ -19,17 +16,16 @@ import {
   bulkReject,
   deleteOutcome,
   newReject,
+  onLoadOutcomeList,
   publishOutcome,
 } from "../../reducers/outcome";
 import { AssessmentList } from "../AssesmentList";
 import CreateOutcomings from "../OutcomeEdit";
-import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps, isUnpublish } from "./FirstSearchHeader";
+import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
-
-const PAGE_SIZE = 20;
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -89,7 +85,6 @@ export function OutcomeList() {
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const formMethods = useForm<BulkListForm>();
   const { watch, reset } = formMethods;
-  const unpublish = isUnpublish(condition);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
   const {
     outcomeList,
@@ -145,22 +140,10 @@ export function OutcomeList() {
 
   useEffect(() => {
     (async () => {
-      if (condition.publish_status === OutcomePublishStatus.pending && !condition.is_unpub) {
-        await dispatch(actPendingOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
-      } else if (
-        condition.publish_status === OutcomePublishStatus.draft ||
-        condition.publish_status === OutcomePublishStatus.rejected ||
-        (condition.publish_status === OutcomePublishStatus.pending && condition.is_unpub)
-      ) {
-        let newCondition: OutcomeQueryCondition = JSON.parse(JSON.stringify(condition));
-        if (newCondition.is_unpub) delete newCondition.is_unpub;
-        await dispatch(actPrivateOutcomeList({ ...newCondition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
-      } else {
-        await dispatch(actOutcomeList({ ...condition, page_size: PAGE_SIZE, assumed: -1, metaLoading: true }));
-      }
+      await dispatch(onLoadOutcomeList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey, unpublish]);
+  }, [condition, reset, dispatch, refreshKey]);
 
   return (
     <div>

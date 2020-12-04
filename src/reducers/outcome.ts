@@ -15,8 +15,11 @@ import {
   EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
+import { OutcomePublishStatus } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
+import { isUnpublish } from "../pages/OutcomeList/FirstSearchHeader";
+import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -130,6 +133,7 @@ export interface ResultGetNewOptions {
   skills: EntitySkill[];
   user_id: string | undefined;
 }
+const PAGE_SIZE = 20;
 export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions & LoadingMetaPayload>(
   "getNewOptions",
   async ({ development_id, program_id }) => {
@@ -222,6 +226,62 @@ export const actPrivateOutcomeList = createAsyncThunk<IQueryPrivateOutcomeListRe
     });
     const { list, total } = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(query);
     return { list, total, user_id: meInfo.me?.user_id };
+  }
+);
+
+type IQueryOnLoadOutcomeListParams = OutcomeQueryCondition & LoadingMetaPayload;
+type IQueryOnLoadOutcomeListResult = {
+  pendingRes?: AsyncReturnType<typeof api.pendingLearningOutcomes.searchPendingLearningOutcomes>;
+  privateRes?: AsyncReturnType<typeof api.privateLearningOutcomes.searchPrivateLearningOutcomes>;
+  outcomeRes?: AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
+  user_id?: string | undefined;
+};
+export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult, IQueryOnLoadOutcomeListParams>(
+  "outcome/onLoadOutcomeList",
+  async (query) => {
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const resObj: IQueryOnLoadOutcomeListResult = {};
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    resObj.user_id = meInfo.me?.user_id;
+    const { search_key, publish_status, author_name, page, order_by, is_unpub } = query;
+    if (publish_status === OutcomePublishStatus.pending && !is_unpub) {
+      resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes({
+        search_key,
+        publish_status,
+        author_name,
+        page,
+        order_by,
+        page_size: PAGE_SIZE,
+        assumed: -1,
+      });
+    } else if (isUnpublish({ ...query })) {
+      resObj.privateRes = await api.privateLearningOutcomes.searchPrivateLearningOutcomes({
+        search_key,
+        publish_status,
+        author_name,
+        page,
+        order_by,
+        page_size: PAGE_SIZE,
+        assumed: -1,
+      });
+    } else {
+      resObj.outcomeRes = await api.learningOutcomes.searchLearningOutcomes({
+        search_key,
+        publish_status,
+        author_name,
+        page,
+        order_by,
+        page_size: PAGE_SIZE,
+        assumed: -1,
+      });
+    }
+    return resObj;
   }
 );
 
@@ -340,6 +400,10 @@ export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<Api
   async (ids, { dispatch }) => {
     if (!ids || !ids.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    // 翻译需要改
+    const content = d("Are you sure you want to approve these contents?").t("library_msg_approve_content");
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
     return api.bulkApprove.approveLearningOutcomesBulk({ outcome_ids: ids });
   }
 );
@@ -463,6 +527,36 @@ const { reducer } = createSlice({
     },
     [getSpecialSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSpecialSkills>>) => {
       state.newOptions.skills = payload;
+    },
+    [onLoadOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.permission[assess_msg_no_permission] = undefined;
+      if (payload.pendingRes) {
+        state.outcomeList = payload.pendingRes.list;
+        state.total = payload.pendingRes.total;
+        state.user_id = payload.pendingRes.user_id;
+      }
+      if (payload.privateRes) {
+        state.outcomeList = payload.privateRes.list;
+        state.total = payload.privateRes.total;
+        state.user_id = payload.privateRes.user_id;
+      }
+      if (payload.outcomeRes) {
+        state.outcomeList = payload.outcomeRes.list;
+        state.total = payload.outcomeRes.total;
+        state.user_id = payload.outcomeRes.user_id;
+      }
+    },
+    [onLoadOutcomeList.rejected.type]: (state, { error }: any) => {
+      state.permission[assess_msg_no_permission] = false;
+    },
+    [newReject.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [bulkApprove.rejected.type]: (state, { error }: any) => {
+      throw error;
+    },
+    [bulkReject.rejected.type]: (state, { error }: any) => {
+      throw error;
     },
   },
 });
