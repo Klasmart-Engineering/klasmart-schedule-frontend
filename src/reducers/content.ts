@@ -13,7 +13,7 @@ import {
 import { RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
-import { d, reportMiss, t } from "../locale/LocaleManager";
+import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
 import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
@@ -529,8 +529,8 @@ export const bulkDeleteContent = createAsyncThunk<IQueryBulkDeleteResult, IQuery
       return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
     const content =
       type === Action.remove
-        ? reportMiss("Are you sure you want to remove these contents?", "library_msg_bulk_remove")
-        : reportMiss("Are you sure you want to delete these contents?", "library_msg_bulk_delete");
+        ? d("Are you sure you want to remove these contents?").t("library_msg_bulk_remove_content")
+        : d("Are you sure you want to delete these contents?").t("library_msg_bulk_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.contentsBulk.deleteContentBulk({ id: ids });
@@ -611,14 +611,14 @@ export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolder
     const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
     const validate = (name: string) => {
       return api.folders
-        .createFolder({ name, partition, owner_type: 1, parent_id })
+        .createFolder({ name, owner_type: 1, parent_id, partition })
         .then(() => true)
         .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
     };
     const title = d("New Folder").t("library_label_new_folder");
     const content = d("Folder Name").t("library_label_folder_name");
     const type = ConfirmDialogType.onlyInput;
-    await dispatch(actAsyncConfirm({ title, content, type, defaultValue: "", rules: { validate } }))
+    await dispatch(actAsyncConfirm({ title, content, type, rules: { validate }, defaultValue: "" }))
       .then(unwrapResult)
       .then(unwrapConfirm);
     return { id };
@@ -642,7 +642,7 @@ export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRen
     const title = d("Rename").t("library_label_rename");
     const content = d("Folder Name").t("library_label_folder_name");
     const type = ConfirmDialogType.onlyInput;
-    await dispatch(actAsyncConfirm({ title, content, type, defaultValue: defaultName, rules: { validate } }))
+    await dispatch(actAsyncConfirm({ title, content, type, rules: { validate }, defaultValue: defaultName }))
       .then(unwrapResult)
       .then(unwrapConfirm);
     return "";
@@ -681,7 +681,7 @@ type IQueryRemoveFolderResult = AsyncReturnType<typeof api.folders.removeFolderI
 export const deleteFolder = createAsyncThunk<IQueryRemoveFolderResult, IQueryRemoveFolderParams>(
   "content/deleteFolder",
   async ({ item_id, params }, { dispatch }) => {
-    const content = reportMiss("Are you sure you want to delete this folder?", "library_msg_delete_folder");
+    const content = d("Are you sure you want to delete this content?").t("library_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.folders.removeFolderItem(item_id, params);
@@ -694,7 +694,7 @@ export const bulkDeleteFolder = createAsyncThunk<IQueryBulkDeleteFolderResult, I
   async ({ folder_ids }, { dispatch }) => {
     if (!folder_ids?.length)
       return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
-    const content = reportMiss("Are you sure you want to delete these contents?", "library_msg_bulk_delete");
+    const content = d("Are you sure you want to delete these contents?").t("library_msg_bulk_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.folders.removeFolderItemBulk({ folder_ids });
