@@ -9,7 +9,7 @@ import {
   FormControlLabel,
   TextField,
 } from "@material-ui/core";
-import React, { Fragment, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { d } from "../../locale/LocaleManager";
@@ -120,11 +120,11 @@ export function ConfirmDialog() {
                 required: true,
               }}
               error={"Please Select"}
-              render={(props) => (
+              render={({ ref, ...props }) => (
                 <CheckboxGroup
                   {...props}
                   render={(selectedContentGroupContext) => (
-                    <Fragment>
+                    <div {...{ ref }}>
                       {REJECT_REASON_VALUES().map((item) => (
                         <FormControlLabel
                           style={{
@@ -158,7 +158,7 @@ export function ConfirmDialog() {
                         }
                         label={d("Other").t("library_label_other")}
                       />
-                    </Fragment>
+                    </div>
                   )}
                 />
               )}
