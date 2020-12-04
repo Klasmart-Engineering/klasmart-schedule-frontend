@@ -405,12 +405,14 @@ interface IQyertOnLoadContentListResult {
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
-  async (query, { getState }) => {
+  async (query, { getState, dispatch }) => {
+    await dispatch(getUserSetting());
     const {
       content: { page_size },
     } = getState();
     const { name, publish_status, author, content_type, page, program, order_by, path } = query;
-
+    const parent_id = path?.split("/").pop();
+    if (parent_id) dispatch(getFolderItemById(parent_id));
     if (publish_status === PublishStatus.published || content_type === String(ContentType.assets)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
         name,

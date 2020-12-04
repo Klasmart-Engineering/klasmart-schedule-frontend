@@ -23,8 +23,6 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
-  getFolderItemById,
-  getUserSetting,
   onLoadContentList,
   publishContent,
   rejectContent,
@@ -229,11 +227,8 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      await dispatch(getUserSetting());
       await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
-      const parent_id = (condition.path || "").split("/").pop() || "";
-      if (parent_id) await dispatch(getFolderItemById(parent_id));
     })();
   }, [condition, reset, dispatch, refreshKey]);
 
