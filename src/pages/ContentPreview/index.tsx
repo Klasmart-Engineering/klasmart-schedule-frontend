@@ -135,7 +135,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     if (contentPreview.content_type === ContentType.plan) {
       const segment: Segment = JSON.parse(contentPreview.data || "{}");
       const h5pArray = ModelLessonPlan.toArray(segment);
-      console.log(h5pArray);
       if (!h5pArray.length) return h5pArray;
       const h5ps: any[] = h5pArray.map((item, index) => {
         return JSON.parse(item?.data || "{}");

@@ -329,8 +329,6 @@ export const newReject = createAsyncThunk<ResultNewRejectOutcome, ParamsNewRejec
     const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
     const type = ConfirmDialogType.onlyInput;
     const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, defaultValue: "", content, type })));
-    console.log(text);
-    debugger;
     if (!isConfirmed) return Promise.reject();
     return await api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason: text });
   }
