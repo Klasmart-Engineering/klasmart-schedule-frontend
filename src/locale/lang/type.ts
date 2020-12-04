@@ -151,6 +151,7 @@ type LangRecord<T = string> =
   | { id: "library_label_delete_folder"; description: "Delete Folder"; values: undefined }
   | { id: "library_msg_delete_folder"; description: "Are you sure you want to delete these folders?"; values: undefined }
   | { id: "library_error_delete_folder"; description: "Folder cannot be deleted unless it is empty"; values: undefined }
+  | { id: "library_label_export_as_csv"; description: "Export as CSV"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -259,6 +260,7 @@ type LangRecord<T = string> =
   | { id: "assess_error_no_permissions"; description: "No permissions"; values: undefined }
   | { id: "assess_error_no_network_connection"; description: "No network connection"; values: undefined }
   | { id: "assess_error_unknown_error"; description: "Unknown error"; values: undefined }
+  | { id: "assess_bulk_approval"; description: "Are you sure you want to approve these learning outcomes?"; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
