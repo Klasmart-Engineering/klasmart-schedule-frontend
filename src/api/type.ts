@@ -14,7 +14,7 @@ export enum ContentType {
   assets = 3,
   plan = 2,
   material = 1,
-  folder = 0,
+  folder = 10,
 }
 export enum MaterialType {
   h5p = 1,
@@ -92,7 +92,8 @@ export enum SearchContentsRequestContentType {
   material = "1",
   plan = "2",
   assets = "3",
-  materialandplan = "1,2",
+  materialandplan = "1,2,10",
+  folder = "10",
 }
 
 export enum H5pSub {

@@ -1,5 +1,6 @@
 import { EntityFolderContent, EntityFolderIdWithFileType } from "../api/api.auto";
 import { ContentType, FolderFileTyoe } from "../api/type";
+import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 function toHash(contents: EntityFolderContent[], ids: string[]): Record<string, EntityFolderContent> {
   return contents.reduce((result, content) => {
@@ -46,4 +47,20 @@ export function content2FileType(contents: EntityFolderContent[] | undefined): E
       id: item.id,
     };
   });
+}
+
+export function content2ids(contents: EntityFolderContent[], ids: string[]) {
+  const contentsArr = ids2Content(contents, ids);
+  const content_ids: (string | undefined)[] = [];
+  console.log(contentsArr);
+  contentsArr.forEach((item) => {
+    content_ids.push(item.id);
+    if (item.data) {
+      const segment: Segment = JSON.parse(item.data);
+      // content_ids.concat(segmentToArray(segment));
+      const materialArray = ModelLessonPlan.genHash({}, segment);
+      console.log(materialArray);
+    }
+  });
+  return content_ids;
 }

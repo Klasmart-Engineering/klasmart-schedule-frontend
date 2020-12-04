@@ -37,7 +37,7 @@ import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./Content
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
-import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
+import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -213,6 +213,11 @@ export default function MyContentList() {
   const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {
     return refreshWithDispatch(dispatch(bulkReject({ ids: ids })).then(unwrapResult));
   };
+  const handleExportCSV: ThirdSearchHeaderProps["onExportCSV"] = () => {};
+  const handleChangeFilterOption: SecondSearchHeaderProps["onChangeFilterOption"] = (value) => {
+    console.log(value);
+    history.push({ search: toQueryString({ ...condition, content_type: value }) });
+  };
 
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
@@ -252,8 +257,18 @@ export default function MyContentList() {
           onCreateContent={handleCreateContent}
         />
       )}
-      <SecondSearchHeader value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
-      <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
+      <SecondSearchHeader
+        value={condition}
+        onChange={handleChange}
+        onCreateContent={handleCreateContent}
+        onChangeFilterOption={handleChangeFilterOption}
+      />
+      <SecondSearchHeaderMb
+        value={condition}
+        onChange={handleChange}
+        onCreateContent={handleCreateContent}
+        onChangeFilterOption={handleChangeFilterOption}
+      />
       <ThirdSearchHeader
         value={condition}
         onChange={handleChange}
@@ -265,6 +280,7 @@ export default function MyContentList() {
         onBulkDeleteFolder={handleBulkDeleteFolder}
         onBulkApprove={handleBulkApprove}
         onBulkReject={handleBulkReject}
+        onExportCSV={handleExportCSV}
       />
       <ThirdSearchHeaderMb
         value={condition}
@@ -277,6 +293,7 @@ export default function MyContentList() {
         onBulkDeleteFolder={handleBulkDeleteFolder}
         onBulkApprove={handleBulkApprove}
         onBulkReject={handleBulkReject}
+        onExportCSV={handleExportCSV}
       />
       <PermissionOr
         value={[

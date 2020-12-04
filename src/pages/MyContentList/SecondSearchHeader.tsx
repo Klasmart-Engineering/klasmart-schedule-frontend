@@ -12,7 +12,7 @@ import { Author, PublishStatus, SearchContentsRequestContentType } from "../../a
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { QueryConditionBaseProps } from "./types";
+import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 
@@ -77,6 +77,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//todo接口
+export interface options {
+  label?: string;
+  value?: string;
+}
+const filterOptions = (value: QueryCondition) => {
+  if (value.publish_status === PublishStatus.published) {
+    return [
+      { label: d("All").t("report_label_all"), value: SearchContentsRequestContentType.materialandplan },
+      { label: d("Folder").t("library_label_folder"), value: SearchContentsRequestContentType.folder },
+      { label: d("Lesson Plan").t("library_label_lesson_plan"), value: SearchContentsRequestContentType.plan },
+      { label: d("Lesson Material").t("library_label_lesson_material"), value: SearchContentsRequestContentType.material },
+    ];
+  } else {
+    return [
+      { label: d("All").t("report_label_all"), value: SearchContentsRequestContentType.materialandplan },
+      { label: d("Lesson Plan").t("library_label_lesson_plan"), value: SearchContentsRequestContentType.plan },
+      { label: d("Lesson Material").t("library_label_lesson_material"), value: SearchContentsRequestContentType.material },
+    ];
+  }
+};
+const menuItemList = (list: options[]) =>
+  list.map((item) => (
+    <MenuItem key={item.label} value={item.value}>
+      {item.label}
+    </MenuItem>
+  ));
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onCreateContent } = props;
@@ -165,11 +192,12 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
   onCreateContent: () => any;
+  onChangeFilterOption: (value: string) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { control, reset, getValues } = useForm();
-  const { value, onChange } = props;
+  const { value, onChange, onChangeFilterOption } = props;
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
       const searchText = getValues()[SEARCH_TEXT_KEY];
@@ -188,6 +216,11 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   };
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
+  };
+  const handleChangeFilterOption = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    onChangeFilterOption(event.target.value);
+    // if(event.target.value === SearchContentsRequestContentType.assets)
   };
   useEffect(() => {
     reset();
@@ -211,6 +244,19 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("library_label_search")}
               </Button>
+              {value.content_type !== SearchContentsRequestContentType.assets && (
+                <TextField
+                  style={{ width: 160, marginLeft: 10 }}
+                  size="small"
+                  onChange={handleChangeFilterOption}
+                  label="Content Type"
+                  value={value.content_type}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                >
+                  {menuItemList(filterOptions(value))}
+                </TextField>
+              )}
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
               {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (

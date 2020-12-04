@@ -120,6 +120,7 @@ export enum BulkAction {
   deleteFolder = "deleteFolder",
   approve = "approve",
   reject = "reject",
+  exportCsv = "exportCsv",
 }
 
 interface BulkActionOption {
@@ -147,6 +148,7 @@ function getBulkAction(
         { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
         { label: d("Move to").t("library_label_move"), value: BulkAction.move },
         { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+        { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
       ];
       if (actionObj?.folder)
         res = [
@@ -157,6 +159,7 @@ function getBulkAction(
         res = [
           { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
         ];
       if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
       return res;
@@ -202,6 +205,7 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkDeleteFolder: () => any;
   onBulkApprove: () => any;
   onBulkReject: () => any;
+  onExportCSV: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
@@ -216,6 +220,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     onBulkDeleteFolder,
     onBulkApprove,
     onBulkReject,
+    onExportCSV,
   } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
@@ -234,6 +239,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
     if (event.target.value === BulkAction.approve) onBulkApprove();
     if (event.target.value === BulkAction.reject) onBulkReject();
+    if (event.target.value === BulkAction.exportCsv) onExportCSV();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
@@ -313,7 +319,18 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkMove, actionObj, onBulkDeleteFolder, onBulkApprove, onBulkReject } = props;
+  const {
+    value,
+    onChange,
+    onBulkDelete,
+    onBulkPublish,
+    onBulkMove,
+    actionObj,
+    onBulkDeleteFolder,
+    onBulkApprove,
+    onBulkReject,
+    onExportCSV,
+  } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -337,6 +354,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
     if (event.target.value === BulkAction.approve) onBulkApprove();
     if (event.target.value === BulkAction.reject) onBulkReject();
+    if (event.target.value === BulkAction.exportCsv) onExportCSV();
   };
   const handleClose = () => {
     setAnchorElLeft(null);
