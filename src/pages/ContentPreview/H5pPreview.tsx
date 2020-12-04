@@ -163,15 +163,16 @@ export function H5pPreview(props: H5pPreview) {
     if (source?.split(".").length === 1) return false;
     return source?.split(".").pop();
   };
-  const path = apiResourcePathById(h5pItem.source);
+  const path = h5pItem ? apiResourcePathById(h5pItem.source) : "";
   return (
     <Box className={css.previewContainer}>
       <Box className={css.h5pCon}>
-        {fileFormat.image.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetImg src={path} />}
-        {fileFormat.video.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetVideo src={path} />}
-        {fileFormat.audio.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetAudio src={path} />}
-        {fileFormat.document.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetFile src={path} />}
-        {!getSuffix(h5pItem.source) &&
+        {h5pItem && fileFormat.image.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetImg src={path} />}
+        {h5pItem && fileFormat.video.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetVideo src={path} />}
+        {h5pItem && fileFormat.audio.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetAudio src={path} />}
+        {h5pItem && fileFormat.document.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetFile src={path} />}
+        {h5pItem &&
+          !getSuffix(h5pItem.source) &&
           (JSON.stringify(h5pItem) === JSON.stringify({}) ? (
             <EmptyContent />
           ) : (
