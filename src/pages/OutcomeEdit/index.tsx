@@ -199,14 +199,14 @@ export default function CreateOutcomings() {
   };
 
   const handlePublish: OutcomeHeaderProps["handlePublish"] = async () => {
-    if (outcomeDetail.publish_status === "draft") {
-      const { payload } = ((await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown) as PayloadAction<
-        AsyncTrunkReturned<typeof publishOutcome>
-      >;
-      if (payload === "ok") {
-        history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
-      }
+    // if (outcomeDetail.publish_status === "draft") {
+    const { payload } = ((await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof publishOutcome>
+    >;
+    if (payload === "ok") {
+      history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
     }
+    // }
   };
 
   const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
