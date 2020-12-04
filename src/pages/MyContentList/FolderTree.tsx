@@ -88,6 +88,7 @@ export function FolderTree(props: FolderTreeProps) {
             defaultExpandIcon={<AddBoxOutlined />}
             defaultExpanded={[ROOT_ID]}
             onNodeSelect={(e: any, id: string) => setValue(id)}
+            defaultSelected={ROOT_ID}
           >
             <TreeItem nodeId={ROOT_ID} label={rootFolderName}>
               {renderItemList(folders)}
