@@ -207,7 +207,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
           }}
         />
         <Text x={centroidX} y={centroidY} style={inlineStyles.pieText}>
-          {arc.data.items_ratio < 0.05 ? "" : (100 * arc.data.items_ratio).toFixed(0) + "%"}
+          {arc.data.items_ratio < 0.05 ? "" : (100 * arc.data.items_ratio).toFixed(1) + "%"}
         </Text>
         {activeCategoryName === arc.data.name && (
           <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.data.name)} {...inlineStyles.tooltipLinker} />
@@ -236,7 +236,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
         <Tooltip top={tooltipTop} left={tooltipLeft} offsetTop={0} offsetLeft={0} style={{ position: "absolute" }}>
           <div style={{ ...inlineStyles.tooltip, [tooltipData.yProperty]: 0, [tooltipData.xProperty]: 0 }}>
             <div style={inlineStyles.tooltipTitle}>
-              {(tooltipData.data.items_ratio * 100).toFixed(0)}%&nbsp;
+              {(tooltipData.data.items_ratio * 100).toFixed(1)}%&nbsp;
               {tooltipData.data.items?.length}&nbsp;LOs
             </div>
             {tooltipData.data.items?.map((desc, idx) => (
