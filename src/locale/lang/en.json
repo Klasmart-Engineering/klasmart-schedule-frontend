@@ -44,6 +44,7 @@
   "library_label_bulk_actions": "Bulk Actions",
   "library_label_remove": "Remove",
   "library_msg_remove_content": "Are you sure you want to remove this content?",
+  "library_msg_bulk_remove_content": "Are you sure you want to remove these contents?",
   "library_msg_remove_select_one": "At least one content should be selected.",
   "library_label_sort_by": "Sort By",
   "library_label_content_name_atoz": "Content Name(A-Z)",
@@ -54,6 +55,7 @@
   "library_label_plan": "Plan",
   "library_label_delete": "Delete",
   "library_msg_delete_content": "Are you sure you want to delete this content?",
+  "library_msg_bulk_delete_content": "Are you sure you want to delete these contents?",
   "library_label_draft": "Draft",
   "library_label_waiting_for_approval": "Waiting for Approval",
   "library_label_rejected": "Rejected",
@@ -129,6 +131,8 @@
   "library_label_rename": "Rename",
   "library_label_move": "Move to",
   "library_error_move_folder_to_own": "Folder cannot be moved to itself or a subdirectory",
+  "library_label_delete_folder": "Delete Folder",
+  "library_msg_delete_folder": "Are you sure you want to delete these folders?",
   "library_error_delete_folder": "Folder cannot be deleted unless it is empty",
   "assess_tab_assessments": "Assessments",
   "assess_button_search": "Search",
@@ -417,5 +421,5 @@
   "report_label_lo": "LOs",
   "general_error_unauthorized": "User not logged in, please log in",
   "general_error_no_organization": "You have no organization",
-  "general_error_unknown": "Unknown Error"
+  "general_error_unknown": "Server request failed"
 }

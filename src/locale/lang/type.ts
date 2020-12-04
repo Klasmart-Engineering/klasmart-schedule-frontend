@@ -49,6 +49,7 @@ type LangRecord<T = string> =
   | { id: "library_label_bulk_actions"; description: "Bulk Actions"; values: undefined }
   | { id: "library_label_remove"; description: "Remove"; values: undefined }
   | { id: "library_msg_remove_content"; description: "Are you sure you want to remove this content?"; values: undefined }
+  | { id: "library_msg_bulk_remove_content"; description: "Are you sure you want to remove these contents?"; values: undefined }
   | { id: "library_msg_remove_select_one"; description: "At least one content should be selected."; values: undefined }
   | { id: "library_label_sort_by"; description: "Sort By"; values: undefined }
   | { id: "library_label_content_name_atoz"; description: "Content Name(A-Z)"; values: undefined }
@@ -59,6 +60,7 @@ type LangRecord<T = string> =
   | { id: "library_label_plan"; description: "Plan"; values: undefined }
   | { id: "library_label_delete"; description: "Delete"; values: undefined }
   | { id: "library_msg_delete_content"; description: "Are you sure you want to delete this content?"; values: undefined }
+  | { id: "library_msg_bulk_delete_content"; description: "Are you sure you want to delete these contents?"; values: undefined }
   | { id: "library_label_draft"; description: "Draft"; values: undefined }
   | { id: "library_label_waiting_for_approval"; description: "Waiting for Approval"; values: undefined }
   | { id: "library_label_rejected"; description: "Rejected"; values: undefined }
@@ -146,6 +148,8 @@ type LangRecord<T = string> =
   | { id: "library_label_rename"; description: "Rename"; values: undefined }
   | { id: "library_label_move"; description: "Move to"; values: undefined }
   | { id: "library_error_move_folder_to_own"; description: "Folder cannot be moved to itself or a subdirectory"; values: undefined }
+  | { id: "library_label_delete_folder"; description: "Delete Folder"; values: undefined }
+  | { id: "library_msg_delete_folder"; description: "Are you sure you want to delete these folders?"; values: undefined }
   | { id: "library_error_delete_folder"; description: "Folder cannot be deleted unless it is empty"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
@@ -446,7 +450,7 @@ type LangRecord<T = string> =
   | { id: "report_label_lo"; description: "LOs"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
-  | { id: "general_error_unknown"; description: "Unknown Error"; values: undefined };
+  | { id: "general_error_unknown"; description: "Server request failed"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
