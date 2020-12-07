@@ -130,13 +130,17 @@ export default function MyContentList() {
   const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = (type) => {
     return refreshWithDispatch(dispatch(bulkDeleteContent({ ids, type })));
   };
-  const handleChangePage: ContentCardListProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
+  const handleChangePage: ContentCardListProps["onChangePage"] = (page) => {
+    if (parentFolderInfo) {
+      history.replace({ search: toQueryString({ ...condition, page }) });
+    } else {
+      history.push({ search: toQueryString({ ...condition, page }) });
+    }
+  };
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
     refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size, metaLoading: true })));
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type, dir_path) => {
-    console.log(parentFolderInfo);
-
     if (content_type === ContentType.material || content_type === ContentType.plan) {
       history.push({
         pathname: ContentPreview.routeRedirectDefault,
@@ -144,9 +148,9 @@ export default function MyContentList() {
       });
     } else if (content_type === ContentType.folder) {
       if (dir_path === ROOT_PATH) {
-        history.push({ search: toQueryString({ ...condition, path: `${dir_path}${id}` }) });
+        history.push({ search: toQueryString({ ...condition, page: 1, path: `${dir_path}${id}` }) });
       } else {
-        history.push({ search: toQueryString({ ...condition, path: `${dir_path}${ROOT_PATH}${id}` }) });
+        history.push({ search: toQueryString({ ...condition, page: 1, path: `${dir_path}${ROOT_PATH}${id}` }) });
       }
     } else {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
@@ -202,7 +206,8 @@ export default function MyContentList() {
     openFolderTree();
   };
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
-    history.push({ search: toQueryString({ ...condition, path: `${parentFolderInfo.dir_path}` }) });
+    // history.push({ search: toQueryString({ ...condition, path: `${parentFolderInfo.dir_path}` }) });
+    history.goBack();
   };
 
   const handleApprove: ContentCardListProps["onApprove"] = (id) => {

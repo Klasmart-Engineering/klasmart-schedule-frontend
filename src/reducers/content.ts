@@ -413,7 +413,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     } = getState();
     const { name, publish_status, author, content_type, page, program, order_by, path } = query;
     const parent_id = path?.split("/").pop();
-    if (parent_id) dispatch(getFolderItemById(parent_id));
+    if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     if (publish_status === PublishStatus.published || content_type === String(ContentType.assets)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
         name,
