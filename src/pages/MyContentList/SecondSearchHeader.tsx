@@ -218,9 +218,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     if (event.key === "Enter") handleClickSearch();
   };
   const handleChangeFilterOption = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
     onChangeFilterOption(event.target.value);
-    // if(event.target.value === SearchContentsRequestContentType.assets)
   };
   useEffect(() => {
     reset();

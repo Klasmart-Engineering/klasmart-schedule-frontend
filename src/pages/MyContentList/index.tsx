@@ -10,6 +10,7 @@ import { PermissionOr, PermissionType } from "../../components/Permission/Permis
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { content2ids, ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
+import { exportCSV } from "../../models/ModelExportCSV";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
 import { AppDispatch, RootState } from "../../reducers";
 import {
@@ -41,6 +42,7 @@ import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } fro
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
+const ROOT_PATH = "/";
 export const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];
@@ -133,16 +135,18 @@ export default function MyContentList() {
     refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size, metaLoading: true })));
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type, dir_path) => {
+    console.log(parentFolderInfo);
+
     if (content_type === ContentType.material || content_type === ContentType.plan) {
       history.push({
         pathname: ContentPreview.routeRedirectDefault,
         search: toQueryString(clearNull({ id: id, content_type: content_type, author: condition.author })),
       });
     } else if (content_type === ContentType.folder) {
-      if (dir_path === "/") {
+      if (dir_path === ROOT_PATH) {
         history.push({ search: toQueryString({ ...condition, path: `${dir_path}${id}` }) });
       } else {
-        history.push({ search: toQueryString({ ...condition, path: `${dir_path}/${id}` }) });
+        history.push({ search: toQueryString({ ...condition, path: `${dir_path}${ROOT_PATH}${id}` }) });
       }
     } else {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
@@ -198,7 +202,7 @@ export default function MyContentList() {
     openFolderTree();
   };
   const handleGoback: ContentCardListProps["onGoBack"] = () => {
-    history.go(-1);
+    history.push({ search: toQueryString({ ...condition, path: `${parentFolderInfo.dir_path}` }) });
   };
 
   const handleApprove: ContentCardListProps["onApprove"] = (id) => {
@@ -214,7 +218,7 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkReject({ ids: ids })).then(unwrapResult));
   };
   const handleExportCSV: ThirdSearchHeaderProps["onExportCSV"] = () => {
-    console.log(content2ids(contentsList, ids));
+    exportCSV("Export result", "Content ID", content2ids(contentsList, ids));
   };
   const handleChangeFilterOption: SecondSearchHeaderProps["onChangeFilterOption"] = (value) => {
     history.push({ search: toQueryString({ ...condition, content_type: value }) });
