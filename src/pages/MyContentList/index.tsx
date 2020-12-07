@@ -9,7 +9,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
-import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
+import { content2ids, ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
 import { AppDispatch, RootState } from "../../reducers";
 import {
@@ -213,9 +213,10 @@ export default function MyContentList() {
   const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {
     return refreshWithDispatch(dispatch(bulkReject({ ids: ids })).then(unwrapResult));
   };
-  const handleExportCSV: ThirdSearchHeaderProps["onExportCSV"] = () => {};
+  const handleExportCSV: ThirdSearchHeaderProps["onExportCSV"] = () => {
+    console.log(content2ids(contentsList, ids));
+  };
   const handleChangeFilterOption: SecondSearchHeaderProps["onChangeFilterOption"] = (value) => {
-    console.log(value);
     history.push({ search: toQueryString({ ...condition, content_type: value }) });
   };
 

@@ -1,6 +1,6 @@
 import { EntityFolderContent, EntityFolderIdWithFileType } from "../api/api.auto";
 import { ContentType, FolderFileTyoe } from "../api/type";
-import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
+import { Segment } from "./ModelLessonPlan";
 
 function toHash(contents: EntityFolderContent[], ids: string[]): Record<string, EntityFolderContent> {
   return contents.reduce((result, content) => {
@@ -43,23 +43,27 @@ export function content2FileType(contents: EntityFolderContent[] | undefined): E
   if (!contents) return [];
   return contents.map((item) => {
     return {
-      folder_file_type: item.content_type === 0 ? FolderFileTyoe.folder : FolderFileTyoe.content,
+      folder_file_type: item.content_type === ContentType.folder ? FolderFileTyoe.folder : FolderFileTyoe.content,
       id: item.id,
     };
   });
 }
 
+export function segment2Ids(segment: Segment, content_ids: string[]) {
+  if (segment.materialId) content_ids.push(segment.materialId);
+  if (segment.next && segment.next.length) {
+    segment2Ids(segment.next[0], content_ids);
+  }
+}
+
 export function content2ids(contents: EntityFolderContent[], ids: string[]) {
   const contentsArr = ids2Content(contents, ids);
-  const content_ids: (string | undefined)[] = [];
-  console.log(contentsArr);
+  const content_ids: string[] = [];
   contentsArr.forEach((item) => {
-    content_ids.push(item.id);
+    content_ids.push(item.id as string);
     if (item.data) {
       const segment: Segment = JSON.parse(item.data);
-      // content_ids.concat(segmentToArray(segment));
-      const materialArray = ModelLessonPlan.genHash({}, segment);
-      console.log(materialArray);
+      segment2Ids(segment, content_ids);
     }
   });
   return content_ids;
