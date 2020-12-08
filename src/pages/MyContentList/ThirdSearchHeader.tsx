@@ -439,7 +439,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
                 {actions.map((item, index) => (
                   <MenuItem key={item.label} onClick={(event) => handleClickActionItem(event, item.value)}>
-                    {item.value}
+                    {item.label}
                   </MenuItem>
                 ))}
               </Menu>

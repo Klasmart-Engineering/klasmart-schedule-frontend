@@ -149,9 +149,29 @@ export default function MyContentList() {
       });
     } else if (content_type === ContentType.folder) {
       if (dir_path === ROOT_PATH) {
-        history.push({ search: toQueryString({ ...condition, page: 1, path: `${dir_path}${id}` }) });
+        history.push({
+          search: toQueryString({
+            ...condition,
+            page: 1,
+            path: `${dir_path}${id}`,
+            content_type: SearchContentsRequestContentType.materialandplan,
+            order_by: OrderBy._updated_at,
+            author: "",
+            name: "",
+          }),
+        });
       } else {
-        history.push({ search: toQueryString({ ...condition, page: 1, path: `${dir_path}${ROOT_PATH}${id}` }) });
+        history.push({
+          search: toQueryString({
+            ...condition,
+            page: 1,
+            path: `${dir_path}${ROOT_PATH}${id}`,
+            content_type: SearchContentsRequestContentType.materialandplan,
+            order_by: OrderBy._updated_at,
+            author: "",
+            name: "",
+          }),
+        });
       }
     } else {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
