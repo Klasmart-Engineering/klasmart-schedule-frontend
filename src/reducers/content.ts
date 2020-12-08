@@ -44,7 +44,6 @@ interface RootState {
 }
 
 const initialState: IContentState = {
-  history: undefined,
   contentDetail: {
     id: "",
     content_type: ContentType.material,
@@ -758,7 +757,6 @@ export const bulkReject = createAsyncThunk<IQueryBulkRejectResult, IQueryBulkRej
     return api.contentsReview.rejectContentReviewBulk({ ids: ids, reject_reason: reasonValue, remark: otherValue });
   }
 );
-
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,

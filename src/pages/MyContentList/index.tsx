@@ -38,7 +38,7 @@ import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./Content
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
-import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
+import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -114,6 +114,7 @@ export default function MyContentList() {
   );
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
+  // const historyArr: QueryCondition[] = [];
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
     EntityFolderContent[]
@@ -131,7 +132,7 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkDeleteContent({ ids, type })));
   };
   const handleChangePage: ContentCardListProps["onChangePage"] = (page) => {
-    if (parentFolderInfo) {
+    if (condition.path && condition.path !== ROOT_PATH) {
       history.replace({ search: toQueryString({ ...condition, page }) });
     } else {
       history.push({ search: toQueryString({ ...condition, page }) });
@@ -156,7 +157,13 @@ export default function MyContentList() {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
     }
   };
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(clearNull(value)) });
+  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+    if (condition.path && condition.path !== ROOT_PATH) {
+      history.replace({ search: toQueryString(clearNull(value)) });
+    } else {
+      history.push({ search: toQueryString(clearNull(value)) });
+    }
+  };
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
@@ -223,10 +230,9 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkReject({ ids: ids })).then(unwrapResult));
   };
   const handleExportCSV: ThirdSearchHeaderProps["onExportCSV"] = () => {
+    if (!ids?.length)
+      return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
     exportCSV("Export result", "Content ID", content2ids(contentsList, ids));
-  };
-  const handleChangeFilterOption: SecondSearchHeaderProps["onChangeFilterOption"] = (value) => {
-    history.push({ search: toQueryString({ ...condition, content_type: value }) });
   };
 
   useEffect(() => {
@@ -267,18 +273,8 @@ export default function MyContentList() {
           onCreateContent={handleCreateContent}
         />
       )}
-      <SecondSearchHeader
-        value={condition}
-        onChange={handleChange}
-        onCreateContent={handleCreateContent}
-        onChangeFilterOption={handleChangeFilterOption}
-      />
-      <SecondSearchHeaderMb
-        value={condition}
-        onChange={handleChange}
-        onCreateContent={handleCreateContent}
-        onChangeFilterOption={handleChangeFilterOption}
-      />
+      <SecondSearchHeader value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
+      <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
       <ThirdSearchHeader
         value={condition}
         onChange={handleChange}

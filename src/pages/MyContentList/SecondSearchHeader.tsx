@@ -192,12 +192,11 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
   onCreateContent: () => any;
-  onChangeFilterOption: (value: string) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { control, reset, getValues } = useForm();
-  const { value, onChange, onChangeFilterOption } = props;
+  const { value, onChange } = props;
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
       const searchText = getValues()[SEARCH_TEXT_KEY];
@@ -218,7 +217,11 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     if (event.key === "Enter") handleClickSearch();
   };
   const handleChangeFilterOption = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangeFilterOption(event.target.value);
+    const newValue = produce(value, (draft) => {
+      const content_type = event.target.value;
+      draft.content_type = content_type;
+    });
+    onChange({ ...newValue });
   };
   useEffect(() => {
     reset();
