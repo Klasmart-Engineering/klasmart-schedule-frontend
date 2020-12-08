@@ -127,7 +127,9 @@ function ContentEditForm() {
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
-            history.push(`${MyContentList.routeBasePath}?content_type=3&order_by=-update_at&page=1`);
+            history.push(
+              `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.assetsandfolder}&order_by=-update_at&page=1`
+            );
           } else {
             history.replace({
               search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
