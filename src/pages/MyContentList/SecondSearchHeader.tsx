@@ -82,7 +82,7 @@ export interface options {
   label?: string;
   value?: string;
 }
-const filterOptions = (value: QueryCondition) => {
+export const filterOptions = (value: QueryCondition) => {
   if (value.publish_status === PublishStatus.published) {
     return [
       { label: d("All").t("report_label_all"), value: SearchContentsRequestContentType.materialandplan },

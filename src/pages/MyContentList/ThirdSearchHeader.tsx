@@ -5,6 +5,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { MoreHoriz } from "@material-ui/icons";
 import CreateNewFolderOutlinedIcon from "@material-ui/icons/CreateNewFolderOutlined";
+import FilterListIcon from "@material-ui/icons/FilterList";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
@@ -14,6 +15,7 @@ import { PermissionResult, PermissionType, usePermission } from "../../component
 import { d } from "../../locale/LocaleManager";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
+import { filterOptions } from "./SecondSearchHeader";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -339,6 +341,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     onBulkDelete,
     onBulkPublish,
     onBulkMove,
+    onAddFolder,
     actionObj,
     onBulkDeleteFolder,
     onBulkApprove,
@@ -356,19 +359,20 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
+  const [anchorFilter, setAnchorFilter] = React.useState<null | HTMLElement>(null);
   const handleClickBulkActionButton = (event: any) => {
     setAnchorElLeft(event.currentTarget);
   };
   const handleClickActionItem = (event: any, bulkaction: BulkAction) => {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
-    if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
-    if (event.target.value === BulkAction.remove) onBulkDelete(Action.remove);
-    if (event.target.value === BulkAction.move) onBulkMove();
-    if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
-    if (event.target.value === BulkAction.approve) onBulkApprove();
-    if (event.target.value === BulkAction.reject) onBulkReject();
-    if (event.target.value === BulkAction.exportCsv) onExportCSV();
+    if (bulkaction === BulkAction.delete) onBulkDelete(Action.delete);
+    if (bulkaction === BulkAction.remove) onBulkDelete(Action.remove);
+    if (bulkaction === BulkAction.move) onBulkMove();
+    if (bulkaction === BulkAction.deleteFolder) onBulkDeleteFolder();
+    if (bulkaction === BulkAction.approve) onBulkApprove();
+    if (bulkaction === BulkAction.reject) onBulkReject();
+    if (bulkaction === BulkAction.exportCsv) onExportCSV();
   };
   const handleClose = () => {
     setAnchorElLeft(null);
@@ -387,7 +391,22 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleSortClose = () => {
     setAnchorEl(null);
   };
+  const handleClickNewFolderIcon = () => {
+    onAddFolder();
+  };
   const actions = getBulkAction(value, perm, actionObj);
+  const handleClickFilterIcon = (event: any) => {
+    setAnchorFilter(event?.currentTarget);
+  };
+  const handleClickFilterItem = (event: any, content_type: SearchContentsRequestContentType) => {
+    setAnchorFilter(null);
+    onChange(
+      produce(value, (draft) => {
+        draft.content_type = content_type;
+      })
+    );
+  };
+  const handleFilterClose = () => setAnchorFilter(null);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -395,9 +414,27 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
           <Divider />
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
             <Grid item sm={10} xs={10}>
+              {(value.publish_status === PublishStatus.published ||
+                value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
+                <CreateNewFolderOutlinedIcon onClick={handleClickNewFolderIcon} />
+              )}
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
+              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && (
+                <FilterListIcon onClick={handleClickFilterIcon} />
+              )}
+              <Menu anchorEl={anchorFilter} keepMounted open={Boolean(anchorFilter)} onClose={handleFilterClose}>
+                {filterOptions(value).map((item, index) => (
+                  <MenuItem
+                    key={item.label}
+                    selected={value.content_type === item.value}
+                    onClick={(event) => handleClickFilterItem(event, item.value)}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Menu>
               {actions.length > 0 && <MoreHoriz onClick={handleClickBulkActionButton} />}
               <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
                 {actions.map((item, index) => (
