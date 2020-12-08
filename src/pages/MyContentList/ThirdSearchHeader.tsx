@@ -135,12 +135,25 @@ function getBulkAction(
 ): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
   if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
-    return perm.delete_asset_340
-      ? [
-          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-        ]
-      : [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+    let res = [
+      { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+      { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+      { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
+    ];
+    if (perm.delete_asset_340 && actionObj?.notFolder) {
+      res = [
+        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+        { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
+      ];
+    }
+    if (actionObj?.folder) {
+      res = [
+        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+        { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+      ];
+    }
+    if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+    return res;
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
@@ -155,7 +168,7 @@ function getBulkAction(
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
           { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
         ];
-      if (actionObj?.planAndMaterial && perm.archive_published_content_273)
+      if (actionObj?.notFolder && perm.archive_published_content_273)
         res = [
           { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
@@ -201,7 +214,7 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkDelete: (type: Action) => any;
   onBulkMove: () => any;
   onAddFolder: () => any;
-  actionObj: { folder: boolean; planAndMaterial: boolean; bothHave: boolean } | undefined;
+  actionObj: { folder: boolean; notFolder: boolean; bothHave: boolean } | undefined;
   onBulkDeleteFolder: () => any;
   onBulkApprove: () => any;
   onBulkReject: () => any;

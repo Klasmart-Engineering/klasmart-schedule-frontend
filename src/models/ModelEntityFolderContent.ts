@@ -12,7 +12,7 @@ function toHash(contents: EntityFolderContent[], ids: string[]): Record<string, 
 export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[]) {
   const obj = {
     folder: false,
-    planAndMaterial: false,
+    notFolder: false,
     bothHave: false,
   };
   if (!ids || ids.length === 0) return obj;
@@ -20,15 +20,15 @@ export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[
   if (arr.findIndex((item) => !item) !== -1) return obj;
   if (arr && arr.every((item) => item.content_type === ContentType.folder)) {
     obj.folder = true;
-    obj.planAndMaterial = false;
+    obj.notFolder = false;
     obj.bothHave = false;
-  } else if (arr.every((item) => item.content_type === ContentType.plan || item.content_type === ContentType.material)) {
-    obj.planAndMaterial = true;
+  } else if (arr.every((item) => item.content_type !== ContentType.folder)) {
+    obj.notFolder = true;
     obj.folder = false;
     obj.bothHave = false;
   } else {
     obj.folder = false;
-    obj.planAndMaterial = false;
+    obj.notFolder = false;
     obj.bothHave = true;
   }
   return obj;
