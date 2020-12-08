@@ -167,7 +167,7 @@ export default function MyContentList() {
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
-    if (condition.content_type === SearchContentsRequestContentType.assets) {
+    if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
     } else {
       history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
@@ -345,7 +345,7 @@ export default function MyContentList() {
       />
       <FolderTree
         folders={filteredFolderTree}
-        rootFolderName={condition.content_type === SearchContentsRequestContentType.assets ? "Assets" : "Organization Content"}
+        rootFolderName={condition.content_type === SearchContentsRequestContentType.assetsandfolder ? "Assets" : "Organization Content"}
         onClose={closeFolderTree}
         open={folderTreeActive}
         onMove={handleMove}

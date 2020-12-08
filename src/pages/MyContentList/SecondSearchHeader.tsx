@@ -153,7 +153,8 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               </PermissionOr>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
-              {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (
+              {value.publish_status === PublishStatus.published ||
+              value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
                 <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
               ) : (
                 ""
@@ -245,7 +246,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("library_label_search")}
               </Button>
-              {value.content_type !== SearchContentsRequestContentType.assets && (
+              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && (
                 <TextField
                   style={{ width: 160, marginLeft: 10 }}
                   size="small"
@@ -260,7 +261,8 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               )}
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets ? (
+              {value.publish_status === PublishStatus.published ||
+              value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}

@@ -305,7 +305,8 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
     const [mediaList, outcomeList, lesson_types, visibility_settings] = await Promise.all([
       type === "material" || type === "plan"
         ? api.contents.searchContents({
-            content_type: type === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
+            content_type:
+              type === "material" ? SearchContentsRequestContentType.assetsandfolder : SearchContentsRequestContentType.material,
             publish_status: "published",
             page_size: 10,
             name: searchMedia,
@@ -414,7 +415,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const { name, publish_status, author, content_type, page, program, order_by, path } = query;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
-    if (publish_status === PublishStatus.published || content_type === String(ContentType.assets)) {
+    if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
         name,
         publish_status,
@@ -616,7 +617,8 @@ export const addFolder = createAsyncThunk<IQueryAddFolderResult, IQueryAddFolder
   "content/addFolder",
   async ({ content_type, parent_id }, { dispatch }) => {
     let id;
-    const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    const partition =
+      content_type === SearchContentsRequestContentType.assetsandfolder ? FolderPartition.assets : FolderPartition.plansAndMaterials;
     const validate = (name: string) => {
       return api.folders
         .createFolder({ name, owner_type: 1, parent_id, partition })
@@ -675,7 +677,8 @@ type IQueryBulkMoveFolderResult = AsyncReturnType<typeof api.folders.moveFolderI
 export const bulkMoveFolder = createAsyncThunk<IQueryBulkMoveFolderResult, IQueryBulkMoveFolderParams>(
   "content/bulkMoveFolder",
   async ({ dist, contents, content_type }) => {
-    const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    const partition =
+      content_type === SearchContentsRequestContentType.assetsandfolder ? FolderPartition.assets : FolderPartition.plansAndMaterials;
     const folder_info = content2FileType(contents);
     return api.folders.moveFolderItemBulk({ dist, folder_info, owner_type: 1, partition });
   }
@@ -722,7 +725,8 @@ type IQuerySearchOrgFolderItemsResult = AsyncReturnType<typeof recursiveListFold
 export const searchOrgFolderItems = createAsyncThunk<IQuerySearchOrgFolderItemsResult, IQuerySearchOrgFolderItemsParams>(
   "content/searchOrgFolderItems",
   ({ content_type }) => {
-    const partition = content_type === SearchContentsRequestContentType.assets ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    const partition =
+      content_type === SearchContentsRequestContentType.assetsandfolder ? FolderPartition.assets : FolderPartition.plansAndMaterials;
     return recursiveListFolderItems({ partition, item_type: 1, path: "/" });
   }
 );

@@ -170,8 +170,8 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               </Permission>
               <Permission value={PermissionType.create_asset_page_301}>
                 <Button
-                  onClick={assetsHandleClick(SearchContentsRequestContentType.assets)}
-                  className={clsx(css.nav, { [css.actives]: value?.content_type === SearchContentsRequestContentType.assets })}
+                  onClick={assetsHandleClick(SearchContentsRequestContentType.assetsandfolder)}
+                  className={clsx(css.nav, { [css.actives]: value?.content_type === SearchContentsRequestContentType.assetsandfolder })}
                   startIcon={<PermMediaOutlined />}
                 >
                   {d("Assets").t("library_label_assets")}
@@ -197,10 +197,10 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   ]);
   const handleChange = (
     event: React.ChangeEvent<{}>,
-    publish_status: QueryCondition["publish_status"] | SearchContentsRequestContentType.assets
+    publish_status: QueryCondition["publish_status"] | SearchContentsRequestContentType.assetsandfolder
   ) => {
-    if (publish_status === SearchContentsRequestContentType.assets) {
-      return onChangeAssets(SearchContentsRequestContentType.assets, "default");
+    if (publish_status === SearchContentsRequestContentType.assetsandfolder) {
+      return onChangeAssets(SearchContentsRequestContentType.assetsandfolder, "default");
     }
     onChange({
       publish_status,
@@ -261,7 +261,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                 )}
                 {perm.create_asset_page_301 && (
                   <Tab
-                    value={SearchContentsRequestContentType.assets}
+                    value={SearchContentsRequestContentType.assetsandfolder}
                     label={d("Assets").t("library_label_assets")}
                     className={classes.capitalize}
                   />

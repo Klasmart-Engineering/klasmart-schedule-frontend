@@ -94,6 +94,7 @@ export enum SearchContentsRequestContentType {
   assets = "3",
   materialandplan = "1,2,10",
   folder = "10",
+  assetsandfolder = "3,10",
 }
 
 export enum H5pSub {

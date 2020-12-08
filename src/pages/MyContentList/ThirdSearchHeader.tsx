@@ -134,7 +134,7 @@ function getBulkAction(
   actionObj: ThirdSearchHeaderProps["actionObj"]
 ): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
-  if (condition.content_type === SearchContentsRequestContentType.assets) {
+  if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
     return perm.delete_asset_340
       ? [
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
@@ -282,7 +282,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   {bulkOptions}
                 </TextField>
               )}
-              {(value.publish_status === PublishStatus.published || value.content_type === SearchContentsRequestContentType.assets) && (
+              {(value.publish_status === PublishStatus.published ||
+                value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
                 <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
                   {d("New Folder").t("library_label_new_folder")}
                 </Button>
