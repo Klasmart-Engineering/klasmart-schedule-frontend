@@ -110,7 +110,7 @@ type NeedTransilationMenuItem =
   | "library_label_not_test";
 
 interface SuggestTimeProps {
-  value?: string;
+  value?: number;
   onChange?: (value: SuggestTimeProps["value"]) => any;
   watch: UseFormMethods["watch"];
   permission: boolean;
@@ -119,12 +119,12 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
   const { value, onChange, watch, permission } = props;
   const css = useStyles();
   const { lesson } = useParams();
-  const [suggestTime, SetSuggestTime] = useState(value);
+  const [suggestTime, SetSuggestTime] = useState(String(value));
   const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
   const suggestTimeFun = useMemo(
     () => (value: string | number) => {
       const result = Number(value) > min ? Number(value) : min;
-      return String(result);
+      return Number(result);
     },
     [min]
   );
@@ -132,10 +132,10 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
     if (onChange && suggestTime !== undefined) {
       if (lesson === "plan") {
         onChange(suggestTimeFun(suggestTime));
-        SetSuggestTime(suggestTimeFun(suggestTime));
+        SetSuggestTime(String(suggestTimeFun(suggestTime)));
       } else {
         SetSuggestTime(String(Number(suggestTime)));
-        onChange(String(Number(suggestTime)));
+        onChange(Number(suggestTime));
       }
     }
   }, [lesson, onChange, suggestTime, suggestTimeFun]);
@@ -364,9 +364,9 @@ export default function Details(props: DetailsProps) {
           defaultValue={
             lesson === "plan"
               ? id
-                ? suggestTimeFunEdit(String(allDefaultValueAndKey.suggest_time?.value) || "")
-                : suggestTimeFun(String(watch("suggest_time")) || "")
-              : String(allDefaultValueAndKey.suggest_time?.value)
+                ? suggestTimeFunEdit(allDefaultValueAndKey.suggest_time?.value || 0)
+                : suggestTimeFun(watch("suggest_time") || 0)
+              : allDefaultValueAndKey.suggest_time?.value
           }
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
           render={({ ref, ...props }) => <SuggestTime {...props} ref={ref} watch={watch} permission={permission} />}
