@@ -149,6 +149,7 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
       value={suggestTime}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(e.target.value)}
       onBlur={handleBlur}
+      onFocus={(e) => SetSuggestTime(String(Number(e.target.value) || ""))}
     />
   );
 });
