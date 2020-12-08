@@ -855,18 +855,18 @@ const { actions, reducer } = createSlice({
       state.outcomeList = payload.list;
       state.OutcomesListTotal = payload.total;
     },
-    [searchOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.outcomeList = initialState.outcomeList;
-      state.OutcomesListTotal = initialState.OutcomesListTotal;
-    },
+    // [searchOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   state.outcomeList = initialState.outcomeList;
+    //   state.OutcomesListTotal = initialState.OutcomesListTotal;
+    // },
     [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.mediaList = payload.list;
       state.mediaListTotal = payload.total;
     },
-    [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.mediaList = initialState.mediaList;
-      state.mediaListTotal = initialState.mediaListTotal;
-    },
+    // [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   state.mediaList = initialState.mediaList;
+    //   state.mediaListTotal = initialState.mediaListTotal;
+    // },
 
     // contentList页面
     [contentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {

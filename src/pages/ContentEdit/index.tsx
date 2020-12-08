@@ -16,7 +16,6 @@ import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,
-  contentLists,
   deleteContent,
   getLinkedMockOptions,
   getLinkedMockOptionsSkills,
@@ -161,7 +160,8 @@ function ContentEditForm() {
         search: setQuery(history.location.search, { searchMedia }),
       });
       dispatch(
-        contentLists({
+        searchContentLists({
+          metaLoading: true,
           content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
           publish_status: "published",
           name: searchMedia,
@@ -178,6 +178,7 @@ function ContentEditForm() {
       });
       dispatch(
         searchOutcomeList({
+          metaLoading: true,
           publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
           page_size: 10,
@@ -195,6 +196,7 @@ function ContentEditForm() {
       });
       dispatch(
         searchOutcomeList({
+          metaLoading: true,
           publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
           page_size: 10,
