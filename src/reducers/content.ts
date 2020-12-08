@@ -44,6 +44,7 @@ interface RootState {
 }
 
 const initialState: IContentState = {
+  history: undefined,
   contentDetail: {
     id: "",
     content_type: ContentType.material,
