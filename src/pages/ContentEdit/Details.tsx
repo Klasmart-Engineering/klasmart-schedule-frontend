@@ -110,7 +110,7 @@ type NeedTransilationMenuItem =
   | "library_label_not_test";
 
 interface SuggestTimeProps {
-  value?: number;
+  value?: string;
   onChange?: (value: SuggestTimeProps["value"]) => any;
   watch: UseFormMethods["watch"];
   permission: boolean;
@@ -124,7 +124,7 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
   const suggestTimeFun = useMemo(
     () => (value: string | number) => {
       const result = Number(value) > min ? Number(value) : min;
-      return result;
+      return String(result);
     },
     [min]
   );
@@ -133,7 +133,10 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
       if (lesson === "plan") {
         onChange(suggestTimeFun(suggestTime));
         SetSuggestTime(suggestTimeFun(suggestTime));
-      } else onChange(suggestTime);
+      } else {
+        SetSuggestTime(String(Number(suggestTime)));
+        onChange(String(Number(suggestTime)));
+      }
     }
   }, [lesson, onChange, suggestTime, suggestTimeFun]);
   return (
@@ -144,7 +147,7 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
       label={lesson === "plan" ? t("library_label_plan_duration") : t("library_label_duration")}
       disabled={permission}
       value={suggestTime}
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(Number(e.target.value))}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(e.target.value)}
       onBlur={handleBlur}
     />
   );
@@ -160,7 +163,6 @@ export interface DetailsProps {
   visibility_settings: LinkedMockOptionsItem[];
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
-  // onDrawingActivity: (event: React.ChangeEvent<HTMLInputElement>, label: string) => any;
   permission: boolean;
 }
 export default function Details(props: DetailsProps) {
@@ -355,33 +357,15 @@ export default function Details(props: DetailsProps) {
           </Box>
         )}
 
-        {/* <Controller
-          as={FormattedTextField}
-          control={control}
-          name="suggest_time"
-          decode={lesson === "plan" ? suggestTimeFun : Number}
-          type="number"
-          className={css.fieldset}
-          label={d("Duration(Minutes)").t("library_label_duration")}
-          defaultValue={
-            lesson === "plan"
-              ? id
-                ? suggestTimeFunEdit(allDefaultValueAndKey.suggest_time?.value || 0)
-                : suggestTimeFun(watch("suggest_time") || 0)
-              : allDefaultValueAndKey.suggest_time?.value
-          }
-          key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
-          disabled={permission}
-        /> */}
         <Controller
           control={control}
           name="suggest_time"
           defaultValue={
             lesson === "plan"
               ? id
-                ? suggestTimeFunEdit(allDefaultValueAndKey.suggest_time?.value || 0)
-                : suggestTimeFun(watch("suggest_time") || 0)
-              : allDefaultValueAndKey.suggest_time?.value
+                ? suggestTimeFunEdit(String(allDefaultValueAndKey.suggest_time?.value) || "")
+                : suggestTimeFun(String(watch("suggest_time")) || "")
+              : String(allDefaultValueAndKey.suggest_time?.value)
           }
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
           render={({ ref, ...props }) => <SuggestTime {...props} ref={ref} watch={watch} permission={permission} />}
