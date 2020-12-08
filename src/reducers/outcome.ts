@@ -400,8 +400,7 @@ export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<Api
   async (ids, { dispatch }) => {
     if (!ids || !ids.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
-    // 翻译需要改
-    const content = d("Are you sure you want to approve these contents?").t("library_msg_approve_content");
+    const content = d("Are you sure you want to approve these learning outcomes?").t("assess_bulk_approval");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.bulkApprove.approveLearningOutcomesBulk({ outcome_ids: ids });
