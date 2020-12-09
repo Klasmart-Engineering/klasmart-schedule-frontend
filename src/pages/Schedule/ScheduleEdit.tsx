@@ -468,7 +468,6 @@ function EditBox(props: CalendarStateProps) {
   /**
    * save schedule data
    */
-
   const saveSchedule = async (repeat_edit_options: repeatOptionsType = "only_current", is_force: boolean = true) => {
     if (!validatorFun()) return;
     changeModalDate({
@@ -487,9 +486,8 @@ function EditBox(props: CalendarStateProps) {
 
       addData["due_at"] = dueDateTimestamp;
     }
-
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleList.start_at < currentTime) {
+    if (scheduleList.start_at < currentTime && !checkedStatus.repeatCheck) {
       dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
