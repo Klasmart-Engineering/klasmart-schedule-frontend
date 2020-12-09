@@ -135,20 +135,23 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     if (contentPreview.content_type === ContentType.plan) {
       const segment: Segment = JSON.parse(contentPreview.data || "{}");
       const h5pArray = ModelLessonPlan.toArray(segment);
-      if (!h5pArray.length) return h5pArray;
-      const h5ps: any[] = h5pArray.map((item, index) => {
-        return JSON.parse(item?.data || "{}");
-      });
-      return h5ps;
+      console.log(h5pArray);
+      return h5pArray;
     } else {
-      const h5pItem = JSON.parse(contentPreview.data || "{}");
-      return [h5pItem];
+      return [contentPreview];
     }
   };
 
   const rightside = (
     <Fragment>
-      {contentPreview.id && <H5pPreview classType={scheduleDetial.class_type} h5pArray={planRes()} onGoLive={handleGoLive}></H5pPreview>}
+      {contentPreview.id && (
+        <H5pPreview
+          content_type={contentPreview.content_type}
+          classType={scheduleDetial.class_type}
+          h5pArray={planRes()}
+          onGoLive={handleGoLive}
+        ></H5pPreview>
+      )}
     </Fragment>
   );
   useEffect(() => {

@@ -4,10 +4,11 @@ import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
-import { EntityScheduleDetailsView } from "../../api/api.auto";
+import { EntityContentInfoWithDetails, EntityScheduleDetailsView } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
-import { H5pSub } from "../../api/type";
+import { ContentType, H5pSub } from "../../api/type";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
+import { Thumbnail } from "../../components/Thumbnail";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
 import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
 import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
@@ -49,7 +50,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     //   minHeight: 'calc(100vh - 60px)',
     // },
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "column",
   },
@@ -62,10 +63,12 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
   btnCon: {
     width: "100%",
+    height: "80px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
+    position: "relative",
   },
   viewBtn: {
     width: 204,
@@ -79,8 +82,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     background: "#d32f2f",
     color: "#fff",
     cursor: "pointer",
-    marginTop: 20,
-    marginLeft: "calc(90% - 204px)",
+    position: "absolute",
+    left: "calc(90% - 204px)",
   },
   viewMbBtn: {
     width: 100,
@@ -93,8 +96,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     alignItems: "center",
     background: "#d32f2f",
     color: "#fff",
-    marginTop: 20,
-    marginLeft: "calc(90% - 100px)",
+    position: "absolute",
+    left: "calc(90% - 100px)",
   },
   iconBtn: {
     width: 48,
@@ -125,6 +128,73 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     marginBottom: "auto",
     color: "#fff",
   },
+  mapCon: {
+    width: "100%",
+    height: 200,
+    background: "rgba(0,0,0,0.32)",
+    display: "flex",
+    flexWrap: "wrap",
+    overflowY: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  mapItem: {
+    width: 195,
+    marginLeft: 20,
+    marginRight: 20,
+    cursor: "pointer",
+  },
+  cardImg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    maxWidth: "100%",
+    maxHeight: "100%",
+    borderRadius: "4px",
+  },
+  mapText: {
+    width: "100%",
+    fontSize: "14px",
+    color: "#ffffff",
+    wordWrap: "break-word",
+    wordBreak: "normal",
+    overflow: "hidden",
+    display: "-webkit-box",
+    textOverflow: "ellipsis",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 2,
+    marginTop: 10,
+  },
+  active: {
+    border: "4px solid #fff",
+    borderRadius: "8px",
+    marginTop: -15,
+    position: "relative",
+    marginBottom: 10,
+    width: "102%",
+  },
+  arrow: {
+    position: "absolute",
+    top: "calc(100% + 4px)",
+    left: "50%",
+    width: 0,
+    height: 0,
+    borderTop: "6px solid #fff",
+    borderLeft: "6px solid transparent",
+    borderRight: "6px solid transparent",
+  },
+  thumbnailCon: {
+    width: "100%",
+    paddingTop: "56.25%",
+    position: "relative",
+  },
+  planViewBtn: {
+    marginTop: -92,
+  },
+  planBViewBtn: {
+    marginTop: -58,
+  },
 }));
 
 function EmptyContent() {
@@ -141,11 +211,12 @@ function EmptyContent() {
 interface H5pPreview extends PreviewBaseProps {
   h5pArray: any[];
   classType: EntityScheduleDetailsView["class_type"];
+  content_type: EntityContentInfoWithDetails["content_type"];
 }
 export function H5pPreview(props: H5pPreview) {
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
-  const { h5pArray, onGoLive, classType } = props;
+  const { h5pArray, onGoLive, classType, content_type } = props;
   let h5pItem = h5pArray[currIndex];
   const handlePrev = () => {
     if (currIndex > 0) {
@@ -163,20 +234,33 @@ export function H5pPreview(props: H5pPreview) {
     if (source?.split(".").length === 1) return false;
     return source?.split(".").pop();
   };
-  const path = h5pItem ? apiResourcePathById(h5pItem.source) : "";
+  const handleClickItem = (index: number): void => {
+    setCurrIndex(index);
+    h5pItem = h5pArray[currIndex];
+  };
+  const path = h5pItem ? (JSON.parse(h5pItem.data) ? apiResourcePathById(JSON.parse(h5pItem.data).source) : "") : "";
   return (
     <Box className={css.previewContainer}>
       <Box className={css.h5pCon}>
-        {h5pItem && fileFormat.image.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetImg src={path} />}
-        {h5pItem && fileFormat.video.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetVideo src={path} />}
-        {h5pItem && fileFormat.audio.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetAudio src={path} />}
-        {h5pItem && fileFormat.document.indexOf(`.${getSuffix(h5pItem.source)}`) >= 0 && <AssetFile src={path} />}
+        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.image.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+          <AssetImg src={path} />
+        )}
+        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.video.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+          <AssetVideo src={path} />
+        )}
+        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.audio.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+          <AssetAudio src={path} />
+        )}
+        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.document.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+          <AssetFile src={path} />
+        )}
         {h5pItem &&
-          !getSuffix(h5pItem.source) &&
-          (JSON.stringify(h5pItem) === JSON.stringify({}) ? (
+          JSON.parse(h5pItem.data) &&
+          !getSuffix(JSON.parse(h5pItem.data).source) &&
+          (JSON.stringify(JSON.parse(h5pItem.data)) === JSON.stringify({}) ? (
             <EmptyContent />
           ) : (
-            <ContentH5p sub={H5pSub.view} valueSource={h5pItem.source} />
+            <ContentH5p sub={H5pSub.view} valueSource={JSON.parse(h5pItem.data).source} />
           ))}
       </Box>
       <Box className={css.btnCon}>
@@ -196,33 +280,71 @@ export function H5pPreview(props: H5pPreview) {
             </Box>
           </Box>
         )}
+        <Hidden only={["xs", "sm"]}>
+          <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
+            {d("View in").t("library_label_view_in") !== "-" && (
+              <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
+            )}
+            {classType === "OnlineClass" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            )}
+            {classType === "OfflineClass" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+            )}
+            {classType === "Homework" && (
+              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+            )}
+            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
+          </Box>
+        </Hidden>
+        <Hidden only={["md", "lg", "xl"]}>
+          <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
+            {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
+            {classType === "OnlineClass" && (
+              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            )}
+            {classType === "OfflineClass" && (
+              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+            )}
+            {classType === "Homework" && (
+              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+            )}
+            {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
+          </Box>
+        </Hidden>
       </Box>
-      <Hidden only={["xs", "sm"]}>
-        <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-          {d("View in").t("library_label_view_in") !== "-" && <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>}
-          {classType === "OnlineClass" && (
-            <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-          )}
-          {classType === "OfflineClass" && (
-            <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-          )}
-          {classType === "Homework" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>}
-          {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-        </Box>
-      </Hidden>
-      <Hidden only={["md", "lg", "xl"]}>
-        <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
-          {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
-          {classType === "OnlineClass" && (
-            <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-          )}
-          {classType === "OfflineClass" && (
-            <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-          )}
-          {classType === "Homework" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>}
-          {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-        </Box>
-      </Hidden>
+      {h5pItem && content_type === ContentType.plan && (
+        <div className={css.mapCon}>
+          <div style={{ display: "flex", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
+            {h5pArray.map((material, index) => (
+              <div key={material.id} className={css.mapItem}>
+                {currIndex === index && (
+                  <div className={clsx(css.active, css.thumbnailCon)}>
+                    <Thumbnail
+                      className={css.cardImg}
+                      type={ContentType.material}
+                      id={material.thumbnail}
+                      onClick={() => handleClickItem(index)}
+                    ></Thumbnail>
+                    <div className={css.arrow}></div>
+                  </div>
+                )}
+                {currIndex !== index && (
+                  <div className={css.thumbnailCon}>
+                    <Thumbnail
+                      className={css.cardImg}
+                      type={ContentType.material}
+                      id={material.thumbnail}
+                      onClick={() => handleClickItem(index)}
+                    ></Thumbnail>
+                  </div>
+                )}
+                <Typography className={css.mapText}>{material.name}</Typography>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </Box>
   );
 }
