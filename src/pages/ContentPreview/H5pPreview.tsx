@@ -177,7 +177,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   arrow: {
     position: "absolute",
     top: "calc(100% + 4px)",
-    left: "50%",
+    left: "calc(50% - 3px)",
     width: 0,
     height: 0,
     borderTop: "6px solid #fff",
@@ -318,28 +318,18 @@ export function H5pPreview(props: H5pPreview) {
           <div style={{ display: "flex", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
             {h5pArray.map((material, index) => (
               <div key={material.id} className={css.mapItem}>
-                {currIndex === index && (
-                  <div className={clsx(css.active, css.thumbnailCon)}>
-                    <Thumbnail
-                      className={css.cardImg}
-                      type={ContentType.material}
-                      id={material.thumbnail}
-                      onClick={() => handleClickItem(index)}
-                    ></Thumbnail>
-                    <div className={css.arrow}></div>
-                  </div>
-                )}
-                {currIndex !== index && (
-                  <div className={css.thumbnailCon}>
-                    <Thumbnail
-                      className={css.cardImg}
-                      type={ContentType.material}
-                      id={material.thumbnail}
-                      onClick={() => handleClickItem(index)}
-                    ></Thumbnail>
-                  </div>
-                )}
-                <Typography className={css.mapText}>{material.name}</Typography>
+                <div className={clsx(css.thumbnailCon, { [css.active]: currIndex === index })}>
+                  <Thumbnail
+                    className={css.cardImg}
+                    type={ContentType.material}
+                    id={material.thumbnail}
+                    onClick={() => handleClickItem(index)}
+                  ></Thumbnail>
+                  {currIndex === index && <div className={css.arrow}></div>}
+                </div>
+                <Typography className={css.mapText}>
+                  {material.name}({material.suggest_time} min)
+                </Typography>
               </div>
             ))}
           </div>
