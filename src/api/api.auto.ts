@@ -17,6 +17,10 @@ export interface ApiAge {
 
 export type ApiBadRequestResponse = ApiErrorResponse;
 
+export interface ApiCheckAccountResponse {
+  status?: string;
+}
+
 export type ApiConflictResponse = ApiErrorResponse;
 
 export interface ApiCreateContentResponse {
@@ -48,7 +52,11 @@ export interface ApiFolderItemsResponseWithTotal {
 
 export type ApiForbiddenResponse = ApiErrorResponse;
 
-export type ApiForgottenPasswordRequest = object;
+export interface ApiForgottenPasswordRequest {
+  auth_code?: string;
+  auth_to?: string;
+  password?: string;
+}
 
 export interface ApiGrade {
   grade_id?: string;
@@ -198,7 +206,10 @@ export interface ApiRejectReasonRequest {
   remark?: string;
 }
 
-export type ApiResetPasswordRequest = object;
+export interface ApiResetPasswordRequest {
+  new_password?: string;
+  old_password?: string;
+}
 
 export interface ApiSendCodeRequest {
   email?: string;
@@ -234,6 +245,7 @@ export interface EntityAddAssessmentCommand {
   class_end_time?: number;
   class_length?: number;
   schedule_id?: string;
+  type?: "preview" | "live";
 }
 
 export interface EntityAddAssessmentResult {
@@ -478,6 +490,7 @@ export interface EntityFolderItem {
 }
 
 export interface EntityFolderItemInfo {
+  available?: number;
   create_at?: number;
   creator?: string;
   dir_path?: string;
@@ -2518,6 +2531,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   users = {
     /**
      * @tags user
+     * @name checkAccount
+     * @summary checkAccount
+     * @request GET:/users/check_account
+     * @description check account register
+     */
+    checkAccount: (query: { account: string }, params?: RequestParams) =>
+      this.request<ApiCheckAccountResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/users/check_account${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags user
      * @name forgottenPassword
      * @summary forget password
      * @request POST:/users/forgotten_pwd
@@ -2568,11 +2595,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags user
      * @name sendCode
      * @summary send verify code
-     * @request POST:/users/verification
+     * @request POST:/users/send_code
      * @description send verify code or uri
      */
     sendCode: (outcome: ApiSendCodeRequest, params?: RequestParams) =>
-      this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/verification`, "POST", params, outcome),
+      this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/send_code`, "POST", params, outcome),
   };
   visibilitySettings = {
     /**

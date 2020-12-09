@@ -5280,6 +5280,46 @@
         }
       }
     },
+    "/users/check_account": {
+      "get": {
+        "description": "check account register",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["user"],
+        "summary": "checkAccount",
+        "operationId": "checkAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "account",
+            "name": "account",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CheckAccountResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "409": {},
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/users/forgotten_pwd": {
       "post": {
         "description": "forget password",
@@ -5452,7 +5492,7 @@
         }
       }
     },
-    "/users/verification": {
+    "/users/send_code": {
       "post": {
         "description": "send verify code or uri",
         "consumes": ["application/json"],
@@ -5585,6 +5625,14 @@
     "api.BadRequestResponse": {
       "$ref": "#/definitions/api.ErrorResponse"
     },
+    "api.CheckAccountResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
     "api.ConflictResponse": {
       "$ref": "#/definitions/api.ErrorResponse"
     },
@@ -5656,7 +5704,18 @@
       "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.ForgottenPasswordRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "auth_code": {
+          "type": "string"
+        },
+        "auth_to": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
     },
     "api.Grade": {
       "type": "object",
@@ -6097,7 +6156,15 @@
       }
     },
     "api.ResetPasswordRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "new_password": {
+          "type": "string"
+        },
+        "old_password": {
+          "type": "string"
+        }
+      }
     },
     "api.SendCodeRequest": {
       "type": "object",
@@ -6179,6 +6246,10 @@
         },
         "schedule_id": {
           "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["preview", "live"]
         }
       }
     },
@@ -6898,6 +6969,9 @@
     "entity.FolderItemInfo": {
       "type": "object",
       "properties": {
+        "available": {
+          "type": "integer"
+        },
         "create_at": {
           "type": "integer"
         },
