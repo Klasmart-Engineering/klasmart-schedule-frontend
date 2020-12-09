@@ -130,16 +130,21 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
   mapCon: {
     width: "100%",
+    display: "flex",
     height: 200,
     background: "rgba(0,0,0,0.32)",
-    display: "flex",
-    flexWrap: "wrap",
     overflowY: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
+    overflowX: "scroll",
     marginTop: 20,
   },
+  barContainer: {
+    display: "flex",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   mapItem: {
+    flexShrink: 0,
     width: 195,
     marginLeft: 20,
     marginRight: 20,
@@ -315,7 +320,7 @@ export function H5pPreview(props: H5pPreview) {
       </Box>
       {h5pItem && content_type === ContentType.plan && (
         <div className={css.mapCon}>
-          <div style={{ display: "flex", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
+          <div className={css.barContainer}>
             {h5pArray.map((material, index) => (
               <div key={material.id} className={css.mapItem}>
                 <div className={clsx(css.thumbnailCon, { [css.active]: currIndex === index })}>
