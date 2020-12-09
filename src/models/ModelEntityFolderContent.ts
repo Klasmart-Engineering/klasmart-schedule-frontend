@@ -57,6 +57,7 @@ export function segment2Ids(segment: Segment, content_ids: string[]) {
 }
 
 export function content2ids(contents: EntityFolderContent[], ids: string[]) {
+  if (!ids) return [];
   const contentsArr = ids2Content(contents, ids);
   const content_ids: string[] = [];
   contentsArr.forEach((item) => {

@@ -9,10 +9,13 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
+import { EntityFolderContent } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
+import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
 import { filterOptions } from "./SecondSearchHeader";
@@ -220,7 +223,9 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkDeleteFolder: () => any;
   onBulkApprove: () => any;
   onBulkReject: () => any;
-  onExportCSV: () => any;
+  onExportCSV: ExportCSVBtnProps["onClick"];
+  ids: string[];
+  contentList: EntityFolderContent[];
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
@@ -236,6 +241,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     onBulkApprove,
     onBulkReject,
     onExportCSV,
+    ids,
+    contentList,
   } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
@@ -254,7 +261,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
     if (event.target.value === BulkAction.approve) onBulkApprove();
     if (event.target.value === BulkAction.reject) onBulkReject();
-    if (event.target.value === BulkAction.exportCsv) onExportCSV();
+    // if (event.target.value === BulkAction.exportCsv) onExportCSV();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
@@ -269,7 +276,17 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   };
   const bulkOptions = getBulkAction(value, perm, actionObj).map((item) => (
     <MenuItem key={item.label} value={item.value}>
-      {item.label}
+      {item.value !== BulkAction.exportCsv ? (
+        item.label
+      ) : (
+        <ExportCSVBtn
+          name={"Export result"}
+          title={"Content Id"}
+          data={content2ids(contentList, ids)}
+          label={item.label}
+          onClick={onExportCSV}
+        />
+      )}
     </MenuItem>
   ));
   const orderbyOptions = sortOptions().map((item) => (
@@ -347,6 +364,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     onBulkApprove,
     onBulkReject,
     onExportCSV,
+    contentList,
+    ids,
   } = props;
   const perm = usePermission([
     PermissionType.delete_asset_340,
@@ -372,7 +391,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     if (bulkaction === BulkAction.deleteFolder) onBulkDeleteFolder();
     if (bulkaction === BulkAction.approve) onBulkApprove();
     if (bulkaction === BulkAction.reject) onBulkReject();
-    if (bulkaction === BulkAction.exportCsv) onExportCSV();
+    // if (bulkaction === BulkAction.exportCsv) onExportCSV();
   };
   const handleClose = () => {
     setAnchorElLeft(null);
@@ -439,7 +458,17 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
                 {actions.map((item, index) => (
                   <MenuItem key={item.label} onClick={(event) => handleClickActionItem(event, item.value)}>
-                    {item.label}
+                    {item.value !== BulkAction.exportCsv ? (
+                      item.label
+                    ) : (
+                      <ExportCSVBtn
+                        name={"Export result"}
+                        title={"Content Id"}
+                        data={content2ids(contentList, ids)}
+                        label={item.label}
+                        onClick={onExportCSV}
+                      />
+                    )}
                   </MenuItem>
                 ))}
               </Menu>

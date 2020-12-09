@@ -9,8 +9,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
-import { content2ids, ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
-import { exportCSV } from "../../models/ModelExportCSV";
+import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
 import { AppDispatch, RootState } from "../../reducers";
 import {
@@ -250,9 +249,9 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkReject({ ids: ids })).then(unwrapResult));
   };
   const handleExportCSV: ThirdSearchHeaderProps["onExportCSV"] = () => {
-    if (!ids?.length)
-      return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
-    exportCSV("Export result", "Content ID", content2ids(contentsList, ids));
+    if (ids?.length > 0) return true;
+    dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one")));
+    return false;
   };
 
   useEffect(() => {
@@ -307,6 +306,8 @@ export default function MyContentList() {
         onBulkApprove={handleBulkApprove}
         onBulkReject={handleBulkReject}
         onExportCSV={handleExportCSV}
+        ids={ids}
+        contentList={contentsList}
       />
       <ThirdSearchHeaderMb
         value={condition}
@@ -320,6 +321,8 @@ export default function MyContentList() {
         onBulkApprove={handleBulkApprove}
         onBulkReject={handleBulkReject}
         onExportCSV={handleExportCSV}
+        ids={ids}
+        contentList={contentsList}
       />
       <PermissionOr
         value={[
