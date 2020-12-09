@@ -519,9 +519,7 @@ export function ContentCardList(props: ContentCardListProps) {
                   {queryCondition.path &&
                     queryCondition.path !== "/" &&
                     queryCondition.page === 1 &&
-                    JSON.stringify(parentFolderInfo) !== "{}" && (
-                      <BackToPrevPage onGoBack={onGoBack} parentFolderInfo={parentFolderInfo} total={total} />
-                    )}
+                    JSON.stringify(parentFolderInfo) !== "{}" && <BackToPrevPage onGoBack={onGoBack} parentFolderInfo={parentFolderInfo} />}
                   {list.map((item, idx) => (
                     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
                       <ContentCard
@@ -573,11 +571,10 @@ export function ContentCardList(props: ContentCardListProps) {
 interface BackToPrevePageProps {
   onGoBack: () => any;
   parentFolderInfo: EntityFolderItemInfo;
-  total: number;
 }
 export function BackToPrevPage(props: BackToPrevePageProps) {
   const css = useStyles();
-  const { onGoBack, parentFolderInfo, total } = props;
+  const { onGoBack, parentFolderInfo } = props;
   return (
     <>
       <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
@@ -590,7 +587,8 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
             <Typography variant="h6">{parentFolderInfo.name}</Typography>
           </Box>
           <Typography style={{ textAlign: "center", color: "#666" }} variant="body2">
-            ({parentFolderInfo.items_count} {d("items").t("library_label_items")}. {total} {d("visible").t("library_label_visible")})
+            ({parentFolderInfo.items_count} {d("items").t("library_label_items")}. {parentFolderInfo.available}{" "}
+            {d("visible").t("library_label_visible")})
           </Typography>
         </Box>
       </Grid>

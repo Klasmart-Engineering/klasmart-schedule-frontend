@@ -355,7 +355,7 @@ export default function MyContentList() {
               (condition.publish_status === PublishStatus.published ||
                 condition.content_type === SearchContentsRequestContentType.assetsandfolder) ? (
               <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-                <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} total={total} />
+                <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} />
               </LayoutBox>
             ) : (
               <TipImages type={TipImagesType.empty} text="library_label_empty" />
