@@ -497,6 +497,11 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
+    if (scheduleId && checkedStatus.repeatCheck && scheduleList.start_at < currentTime && repeat_edit_options === "only_current") {
+      dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
+      return;
+    }
+
     const participant: any = participantMockOptions.participantList;
     const participantSet = participant.class.teachers.concat(participant.class.students);
     let ids: any[] = [];
@@ -588,7 +593,7 @@ function EditBox(props: CalendarStateProps) {
                   openStatus: false,
                 });
               }}
-              title={d("Edit").t("assess_button_edit")}
+              title="Edit"
             />
           ),
         });
