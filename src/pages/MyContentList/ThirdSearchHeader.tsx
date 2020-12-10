@@ -8,7 +8,7 @@ import CreateNewFolderOutlinedIcon from "@material-ui/icons/CreateNewFolderOutli
 import FilterListIcon from "@material-ui/icons/FilterList";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useMemo } from "react";
 import { EntityFolderContent } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
@@ -244,6 +244,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     ids,
     contentList,
   } = props;
+  const collectedIds = useMemo(() => content2ids(contentList, ids), [contentList, ids]);
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -279,13 +280,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       {item.value !== BulkAction.exportCsv ? (
         item.label
       ) : (
-        <ExportCSVBtn
-          name={"Export result"}
-          title={"Content Id"}
-          data={content2ids(contentList, ids)}
-          label={item.label}
-          onClick={onExportCSV}
-        />
+        <ExportCSVBtn name={"Export result"} title={"Content Id"} data={collectedIds} label={item.label} onClick={onExportCSV} />
       )}
     </MenuItem>
   ));
@@ -367,6 +362,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     contentList,
     ids,
   } = props;
+  const collectedIds = useMemo(() => content2ids(contentList, ids), [contentList, ids]);
   const perm = usePermission([
     PermissionType.delete_asset_340,
     PermissionType.archive_published_content_273,
@@ -464,7 +460,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                       <ExportCSVBtn
                         name={"Export result"}
                         title={"Content Id"}
-                        data={content2ids(contentList, ids)}
+                        data={collectedIds}
                         label={item.label}
                         onClick={onExportCSV}
                       />

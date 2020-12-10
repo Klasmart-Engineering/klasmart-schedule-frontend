@@ -2,7 +2,7 @@ import { EntityFolderContent, EntityFolderIdWithFileType } from "../api/api.auto
 import { ContentType, FolderFileTyoe } from "../api/type";
 import { Segment } from "./ModelLessonPlan";
 
-function toHash(contents: EntityFolderContent[], ids: string[]): Record<string, EntityFolderContent> {
+function toHash(contents: EntityFolderContent[]): Partial<Record<string, EntityFolderContent>> {
   return contents.reduce((result, content) => {
     result[content.id as string] = content;
     return result;
@@ -35,8 +35,8 @@ export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[
 }
 
 export function ids2Content(contents: EntityFolderContent[], ids: string[]): EntityFolderContent[] {
-  const hash = toHash(contents, ids);
-  return ids.map((id) => hash[id]);
+  const hash = toHash(contents);
+  return ids.reduce((result, id) => result.concat(hash[id] ?? []), [] as EntityFolderContent[]);
 }
 
 export function content2FileType(contents: EntityFolderContent[] | undefined): EntityFolderIdWithFileType[] {
@@ -60,6 +60,7 @@ export function content2ids(contents: EntityFolderContent[], ids: string[]) {
   if (!ids) return [];
   const contentsArr = ids2Content(contents, ids);
   const content_ids: string[] = [];
+  debugger;
   contentsArr.forEach((item) => {
     content_ids.push(item.id as string);
     if (item.data) {
