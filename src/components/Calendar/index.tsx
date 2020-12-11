@@ -16,6 +16,8 @@ import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
+import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
+import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 
 interface scheduleInfoProps {
   end: Date;
@@ -33,6 +35,18 @@ const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
     boxShadow: shadows[3],
   },
+  calendarNav: {
+    height: "50px",
+    display: "flex",
+    alignItems: "center",
+  },
+  chevron: {
+    marginLeft: "20px",
+    fontSize: "26px",
+    color: "#757575",
+    cursor: "pointer",
+    marginRight: "10px",
+  },
 }));
 
 const views = { work_week: true, day: true, agenda: true, month: true, week: true };
@@ -48,6 +62,7 @@ function MyCalendar(props: CalendarProps) {
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
+  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
 
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoProps) => {
@@ -74,6 +89,98 @@ function MyCalendar(props: CalendarProps) {
     },
     [changeModalDate, dispatch, history, modelView, timesTamp]
   );
+
+  /**
+   * rander data
+   * @param timesTamp
+   */
+  const getPeriod = (timesTamp: timestampType) => {
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const timesTampData = new Date(timesTamp.start * 1000);
+    const [Y, M, D] = [
+      (timesTampData as Date).getFullYear(),
+      (timesTampData as Date).getMonth(),
+      (timesTampData as Date).getDate(),
+      (timesTampData as Date).getDay(),
+      dateNumFun((timesTampData as Date).getHours()),
+      dateNumFun((timesTampData as Date).getMinutes()),
+    ];
+    switch (modelView) {
+      case "day":
+        return `${monthArr[M]} ${D}, ${Y}`;
+      case "month":
+        return `${Y} ${monthArr[M]}`;
+      case "week":
+      case "work_week":
+        let startWeek = 1;
+        let endWeek = 7;
+        let month = "";
+        if (document.getElementsByClassName("rbc-time-header-cell").length > 0) {
+          const firstNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].firstChild;
+          const lastNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].lastChild;
+          startWeek = firstNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;
+          endWeek = lastNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;
+          month = startWeek < endWeek ? "" : monthArr[M === 11 ? 1 : M + 1];
+        }
+        return `${Y}, ${monthArr[M]} ${startWeek} - ${month} ${endWeek}`;
+    }
+  };
+
+  /**
+   * change week data
+   * @param week_type
+   * @param type
+   * @param year
+   * @param month
+   */
+  const changeWeek = (week_type: string, type: string, year: number, month: number) => {
+    const offsets = week_type === "week" ? 604800 : 432000;
+    if (document.getElementsByClassName("rbc-time-header-cell").length > 0) {
+      const firstNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].firstChild;
+      const startWeek = firstNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;
+      const timestampResult =
+        type === "preve"
+          ? getTimestamp(`${year}-${month + 1}-${startWeek}`) - offsets
+          : getTimestamp(`${year}-${month + 1}-${startWeek}`) + offsets;
+      changeTimesTamp({ start: timestampResult, end: timestampResult });
+    }
+  };
+
+  /**
+   *  switch calendar
+   * @param type
+   */
+  const switchData = (type: "preve" | "next") => {
+    const timesTampData = new Date(timesTamp.start * 1000);
+    const [Y, M] = [(timesTampData as Date).getFullYear(), (timesTampData as Date).getMonth()];
+    switch (modelView) {
+      case "day":
+        const times = type === "preve" ? timesTamp.start - 86400 : timesTamp.start + 86400;
+        changeTimesTamp({ start: times, end: times });
+        break;
+      case "month":
+        let offsetYear = 0;
+        let offsetMonth = 0;
+        if (type === "preve") {
+          offsetYear = M === 0 ? Y - 1 : Y;
+          offsetMonth = M === 0 ? 11 : M - 1;
+        } else {
+          offsetYear = M === 11 ? Y + 1 : Y;
+          offsetMonth = M === 11 ? 0 : M + 1;
+        }
+        changeTimesTamp({
+          start: getTimestamp(`${offsetYear}-${offsetMonth + 1}-01`),
+          end: getTimestamp(`${offsetYear}-${offsetMonth + 1}-01`),
+        });
+        break;
+      case "week":
+        changeWeek("week", type, Y, M);
+        break;
+      case "work_week":
+        changeWeek("work_week", type, Y, M);
+        break;
+    }
+  };
 
   /**
    * close Customization template && show delete templates
@@ -166,6 +273,21 @@ function MyCalendar(props: CalendarProps) {
 
   return (
     <Box className={css.calendarBox}>
+      <Box className={css.calendarNav}>
+        <ChevronLeftOutlinedIcon
+          className={css.chevron}
+          onClick={() => {
+            switchData("preve");
+          }}
+        />
+        <ChevronRightOutlinedIcon
+          className={css.chevron}
+          onClick={() => {
+            switchData("next");
+          }}
+        />
+        <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
+      </Box>
       <Calendar
         date={new Date(timesTamp.start * 1000)}
         onView={() => {}}
