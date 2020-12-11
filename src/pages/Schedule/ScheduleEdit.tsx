@@ -16,7 +16,7 @@ import { EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleShortIn
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { d, reportMiss, t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
@@ -808,7 +808,7 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
-        text: reportMiss("You can only start a class 15 minutes before the start time.", "schedule_msg_start_minutes"),
+        text: d("You can only start a class15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [

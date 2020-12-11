@@ -7,7 +7,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
@@ -191,7 +191,7 @@ function MyCalendar(props: CalendarProps) {
       if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
         changeModalDate({
           title: "",
-          text: reportMiss("You can only delete a class at least 15 minutes before the start time.", "schedule_msg_delete_minutes"),
+          text: d("You can not delete a class 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
