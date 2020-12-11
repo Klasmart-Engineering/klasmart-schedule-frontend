@@ -7,7 +7,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
@@ -187,6 +187,27 @@ function MyCalendar(props: CalendarProps) {
    */
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoProps) => {
+      const currentTime = Math.floor(new Date().getTime());
+      if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
+        changeModalDate({
+          title: "",
+          text: reportMiss("You can only delete a class at least 15 minutes before the start time.", "schedule_msg_delete_minutes"),
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+        return;
+      }
       if (scheduleInfo.is_repeat) {
         changeModalDate({
           openStatus: true,
@@ -248,6 +269,7 @@ function MyCalendar(props: CalendarProps) {
           }}
           scheduleInfo={event}
           toLive={toLive}
+          changeModalDate={changeModalDate}
         />
       ),
       openStatus: true,
@@ -322,6 +344,7 @@ interface CalendarProps {
 
 export default function KidsCalendar(props: CalendarProps) {
   const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus } = props;
+
   return (
     <MyCalendar
       modelView={modelView}
