@@ -269,6 +269,7 @@ function MyCalendar(props: CalendarProps) {
           }}
           scheduleInfo={event}
           toLive={toLive}
+          changeModalDate={changeModalDate}
         />
       ),
       openStatus: true,
@@ -311,8 +312,8 @@ function MyCalendar(props: CalendarProps) {
       </Box>
       <Calendar
         date={new Date(timesTamp.start * 1000)}
-        onView={() => {}}
-        onNavigate={() => {}}
+        onView={() => { }}
+        onNavigate={() => { }}
         view={modelView}
         views={views}
         popup={true}
