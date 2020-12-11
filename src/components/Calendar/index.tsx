@@ -1,5 +1,7 @@
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
+import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 import { PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
 import React, { useCallback } from "react";
@@ -16,8 +18,6 @@ import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
-import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
-import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 
 interface scheduleInfoProps {
   end: Date;
@@ -269,7 +269,6 @@ function MyCalendar(props: CalendarProps) {
           }}
           scheduleInfo={event}
           toLive={toLive}
-          changeModalDate={changeModalDate}
         />
       ),
       openStatus: true,

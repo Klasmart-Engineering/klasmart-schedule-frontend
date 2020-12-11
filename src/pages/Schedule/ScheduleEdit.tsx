@@ -29,7 +29,7 @@ import {
   removeSchedule,
   resetParticipantList,
   resetScheduleDetial,
-  saveScheduleData,
+  saveScheduleData
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import { FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
@@ -581,6 +581,29 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const saveTheTest = () => {
+    const currentTime = Math.floor(new Date().getTime());
+    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
+      changeModalDate({
+        title: "",
+        // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
+        text: d("You can not edit a class 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+        openStatus: true,
+        enableCustomization: false,
+        buttons: [
+          {
+            label: d("OK").t("schedule_button_ok"),
+            event: () => {
+              changeModalDate({ openStatus: false, enableCustomization: false });
+            },
+          },
+        ],
+        handleClose: () => {
+          changeModalDate({ openStatus: false, enableCustomization: false });
+        },
+      });
+      return;
+    }
+
     if (scheduleId && scheduleDetial.is_repeat && checkedStatus.repeatCheck) {
       if (isRepeatSame) {
         changeModalDate({

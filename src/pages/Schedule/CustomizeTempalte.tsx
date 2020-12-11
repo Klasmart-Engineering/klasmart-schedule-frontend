@@ -59,42 +59,29 @@ const useStyles = makeStyles({
   },
 });
 
-// type scheduleInfoProps = {
-//   end: Date;
-//   id: string;
-//   start: Date;
-//   title: string;
-//   lesson_plan_id: string;
-//   status: string;
-//   class_type: string;
-//   class_id: string;
-// };
-
-interface scheduleInfoProps {
+type scheduleInfoProps = {
   end: Date;
   id: string;
   start: Date;
   title: string;
-  is_repeat: boolean;
   lesson_plan_id: string;
   status: string;
   class_type: string;
   class_id: string;
-}
+};
 
 interface InfoProps {
   handleDelete: (scheduleInfo: scheduleInfoProps) => void;
   handleClose: () => void;
   scheduleInfo: scheduleInfoProps;
   toLive: () => void;
-  changeModalDate: (data: object) => void;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive } = props;
+  const { handleDelete, handleClose, scheduleInfo } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -113,79 +100,9 @@ export default function CustomizeTempalte(props: InfoProps) {
     return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
 
-  const handleEditSchedule = (scheduleInfo: scheduleInfoProps): void => {
-    // if (scheduleInfo.is_repeat) {
-    const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
-      changeModalDate({
-        title: "",
-        text: d("You can not edit a class 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
-        openStatus: true,
-        enableCustomization: false,
-        buttons: [
-          {
-            label: d("OK").t("schedule_button_ok"),
-            event: () => {
-              changeModalDate({ openStatus: false, enableCustomization: false });
-            },
-          },
-        ],
-        handleClose: () => {
-          changeModalDate({ openStatus: false, enableCustomization: false });
-        },
-      });
-      return;
-    }
-    // }
+  const handleEditSchedule = (): void => {
     handleClose();
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
-  };
-
-  const handleGoLive = (scheduleInfo: scheduleInfoProps) => {
-    const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {
-      changeModalDate({
-        title: "",
-        text: d("You can only start a class15 minutes before the start time.").t("schedule_msg_start_minutes"),
-        openStatus: true,
-        enableCustomization: false,
-        buttons: [
-          {
-            label: d("OK").t("schedule_button_ok"),
-            event: () => {
-              changeModalDate({
-                enableCustomization: true,
-                customizeTemplate: (
-                  <CustomizeTempalte
-                    handleDelete={() => {
-                      handleDelete(scheduleInfo);
-                    }}
-                    handleClose={() => {
-                      changeModalDate({ openStatus: false, enableCustomization: false });
-                    }}
-                    scheduleInfo={scheduleInfo}
-                    toLive={toLive}
-                    changeModalDate={changeModalDate}
-                  />
-                ),
-                openStatus: true,
-                handleClose: () => {
-                  changeModalDate({ openStatus: false });
-                },
-              });
-            },
-          },
-        ],
-        handleClose: () => {
-          changeModalDate({ openStatus: false, enableCustomization: false });
-        },
-      });
-      return;
-    }
-
-    handleClose();
-    dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
-    window.open(apiLivePath(liveToken));
   };
 
   return (
@@ -204,7 +121,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       <div className={classes.iconPart}>
         <Permission
           value={PermissionType.edit_event_530}
-          render={(value) => value && <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />}
+          render={(value) => value && <EditOutlined className={classes.firstIcon} onClick={handleEditSchedule} />}
         />
         {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
         {scheduleInfo.status === "NotStart" && (
@@ -239,7 +156,11 @@ export default function CustomizeTempalte(props: InfoProps) {
           autoFocus
           className={classes.lastButton}
           disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
-          onClick={() => handleGoLive(scheduleInfo)}
+          onClick={() => {
+            handleClose();
+            dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
+            window.open(apiLivePath(liveToken));
+          }}
         >
           {d("Go Live").t("schedule_button_go_live")}
         </Button>
