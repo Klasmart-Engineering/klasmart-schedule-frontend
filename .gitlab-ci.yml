@@ -36,7 +36,7 @@ buildAndUploadBucketAws:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\b/'
       when: manual
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(dev|test|demo)\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(test|demo)\b/'
       when: always
 
 buildAndUploadBucketAwsCn:
@@ -45,5 +45,5 @@ buildAndUploadBucketAwsCn:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\b/'
       when: manual
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(test|demo)\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(dev|test|demo)\b/'
       when: manual
