@@ -851,6 +851,18 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Grid>
         </Box>
+        <TextField
+          className={css.fieldset}
+          label={d("Class Type").t("schedule_detail_class_type")}
+          value={scheduleList.class_type}
+          onChange={(e) => handleTopicListChange(e, "class_type")}
+          error={validator.class_type}
+          select
+          required
+          disabled={isScheduleExpired()}
+        >
+          {menuItemListClassType(scheduleMockOptions.classTypeList)}
+        </TextField>
         <Box className={css.fieldBox}>
           <TextField
             error={validator.title}
@@ -865,18 +877,6 @@ function EditBox(props: CalendarStateProps) {
           ></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
-        <TextField
-          className={css.fieldset}
-          label={d("Class Type").t("schedule_detail_class_type")}
-          value={scheduleList.class_type}
-          onChange={(e) => handleTopicListChange(e, "class_type")}
-          error={validator.class_type}
-          select
-          required
-          disabled={isScheduleExpired()}
-        >
-          {menuItemListClassType(scheduleMockOptions.classTypeList)}
-        </TextField>
         <Autocomplete
           id="combo-box-demo"
           options={getClassOption(scheduleMockOptions.classList.organization)}
@@ -1072,6 +1072,24 @@ function EditBox(props: CalendarStateProps) {
           setAttachmentName={setAttachmentName}
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
+        />
+        <Permission
+          value={PermissionType.create_event_520}
+          render={(value) =>
+            value && (
+              <Box
+                className={css.fieldset}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
+                  Click to Schedule
+                </Button>
+              </Box>
+            )
+          }
         />
         <Box
           className={css.fieldset}
