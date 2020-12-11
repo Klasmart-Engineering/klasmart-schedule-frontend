@@ -134,7 +134,7 @@ function MyCalendar(props: CalendarProps) {
    * @param month
    */
   const changeWeek = (week_type: string, type: string, year: number, month: number) => {
-    const offsets = week_type === "week" ? 604800 : 432000;
+    const offsets = 604800;
     if (document.getElementsByClassName("rbc-time-header-cell").length > 0) {
       const firstNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].firstChild;
       const startWeek = firstNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;

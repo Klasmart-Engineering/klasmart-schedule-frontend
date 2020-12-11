@@ -638,8 +638,8 @@ function EditBox(props: CalendarStateProps) {
     if (event.target.name === "allDayCheck" && event.target.checked) {
       const newTopocList = {
         ...scheduleList,
-        start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
-        end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
+        start_at: (timestampToTime(scheduleList.start_at, "all_day_start") as number) + 60,
+        end_at: (timestampToTime(scheduleList.end_at, "all_day_end") as number) + 60,
       };
       setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
