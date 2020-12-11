@@ -66,13 +66,14 @@ export enum PermissionType {
   teacher_reports_603 = "teacher_reports_603",
   view_reports_610 = "view_reports_610",
   view_my_reports_614 = "view_my_reports_614",
+  create_my_schedule_events_521 = "create_my_schedule_events_521",
 }
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);
 
 export type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
 
-export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(value: V, me: QeuryMeQuery['me']): PermissionResult<V> {
+export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(value: V, me: QeuryMeQuery["me"]): PermissionResult<V> {
   const permissionList: PermissionType[] = [];
   let result: PermissionResult<PermissionType> | PermissionResult<PermissionType[]>;
   me?.membership?.roles?.forEach((role) => {
@@ -93,7 +94,7 @@ export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(v
 
 export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
   const organization_id = apiOrganizationOfPage() || "";
-  const { data } = useQeuryMeQuery({ variables: { organization_id }, fetchPolicy: 'cache-first' });
+  const { data } = useQeuryMeQuery({ variables: { organization_id }, fetchPolicy: "cache-first" });
   return hasPermissionOfMe<V>(value, data?.me);
 }
 

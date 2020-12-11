@@ -27,6 +27,7 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import { PermissionType, usePermission } from "../../components/Permission";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -147,10 +148,12 @@ function ScheduleContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, dispatch]);
 
+  const getTeacherByClass = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+
   React.useEffect(() => {
     dispatch(getMockOptions());
-    dispatch(getScheduleMockOptions({ organization_id: "3f135b91-a616-4c80-914a-e4463104dbac" }));
-  }, [dispatch]);
+    dispatch(getScheduleMockOptions({ is_teacher: getTeacherByClass }));
+  }, [dispatch, getTeacherByClass]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
