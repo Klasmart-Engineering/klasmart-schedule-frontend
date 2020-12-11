@@ -65,7 +65,8 @@ type LangRecord<T = string> =
   | { id: "library_label_waiting_for_approval"; description: "Waiting for Approval"; values: undefined }
   | { id: "library_label_rejected"; description: "Rejected"; values: undefined }
   | { id: "library_label_republish"; description: "Republish"; values: undefined }
-  | { id: "library_msg_republish_content"; description: "Are you sure you want to republish these contents?"; values: undefined }
+  | { id: "library_msg_republish_content"; description: "Are you sure you want to republish this content?"; values: undefined }
+  | { id: "library_msg_bulk_republish_content"; description: "Are you sure you want to republish these contents?"; values: undefined }
   | { id: "library_label_name"; description: "Name"; values: undefined }
   | { id: "library_label_created_on"; description: "Created On"; values: undefined }
   | { id: "library_label_author"; description: "Author"; values: undefined }
