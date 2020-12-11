@@ -432,6 +432,10 @@ type LangRecord<T = string> =
   | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined }
   | { id: "schedule_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
   | { id: "schedule_msg_no_student"; description: "There is no student in this class"; values: undefined }
+  | { id: "schedule_msg_delete_minutes"; description: "You can not delete a class 15 minutes before the start time."; values: undefined }
+  | { id: "schedule_msg_edit_minutes"; description: "You can not edit a class 15 minutes before the start time."; values: undefined }
+  | { id: "schedule_msg_start_minutes"; description: "You can only start a class15 minutes before the start time."; values: undefined }
+  | { id: "schedule_button_click_to schedule"; description: "Click to Schedule"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

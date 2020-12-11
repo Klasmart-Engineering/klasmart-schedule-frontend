@@ -5,7 +5,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { Close, DeleteOutlineOutlined, FileCopyOutlined, Save } from "@material-ui/icons";
+import { Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -358,7 +358,8 @@ function EditBox(props: CalendarStateProps) {
     ];
 
     if (type === "all_day_start") {
-      return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
+      // return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
+      return currentTime;
     } else if (type === "all_day_end") {
       return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 23, 59, 59).getTime() / 1000);
     } else {
@@ -832,21 +833,6 @@ function EditBox(props: CalendarStateProps) {
                   className={css.toolset}
                   onClick={handleDelete}
                 />
-                <Permission
-                  value={PermissionType.create_event_520}
-                  render={(value) =>
-                    value && (
-                      <Save
-                        style={{
-                          color: "#0E78D5",
-                          marginLeft: "10px",
-                        }}
-                        className={css.toolset}
-                        onClick={saveTheTest}
-                      />
-                    )
-                  }
-                />
               </Grid>
             )}
           </Grid>
@@ -1085,7 +1071,7 @@ function EditBox(props: CalendarStateProps) {
                 }}
               >
                 <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
-                  Click to Schedule
+                  {d("Click to Schedule").t("schedule_button_click_to schedule")}
                 </Button>
               </Box>
             )
