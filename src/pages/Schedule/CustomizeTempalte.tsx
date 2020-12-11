@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { apiLivePath } from "../../api/extra";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
@@ -114,29 +114,6 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const handleEditSchedule = (scheduleInfo: scheduleInfoProps): void => {
-    // if (scheduleInfo.is_repeat) {
-    const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
-      changeModalDate({
-        title: "",
-        text: reportMiss("You can only edit a class at least 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-        openStatus: true,
-        enableCustomization: false,
-        buttons: [
-          {
-            label: d("OK").t("schedule_button_ok"),
-            event: () => {
-              changeModalDate({ openStatus: false, enableCustomization: false });
-            },
-          },
-        ],
-        handleClose: () => {
-          changeModalDate({ openStatus: false, enableCustomization: false });
-        },
-      });
-      return;
-    }
-    // }
     handleClose();
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
   };
@@ -146,7 +123,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {
       changeModalDate({
         title: "",
-        text: reportMiss("You can only start a class 15 minutes before the start time.", "schedule_msg_start_minutes"),
+        text: d("You can only start a class15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
