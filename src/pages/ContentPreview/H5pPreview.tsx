@@ -237,7 +237,7 @@ export function H5pPreview(props: H5pPreview) {
   };
   const getSuffix = (source: string | undefined) => {
     if (source?.split(".").length === 1) return false;
-    return source?.split(".").pop();
+    return source?.split(".").pop()?.toLowerCase();
   };
   const handleClickItem = (index: number): void => {
     setCurrIndex(index);

@@ -163,8 +163,9 @@ function AssetEdit(props: AssetEditProps) {
             // defaultValue={JSON.parse(contentDetail.data || "{}")}
             defaultValue={allDefaultValueAndKey["data.source"]?.value}
             key={allDefaultValueAndKey["data.source"]?.key}
-            render={(props: any) => (
+            render={({ ref, ...props }) => (
               <SingleUploader
+                ref={ref}
                 partition="assets"
                 onChangeOther={handleChangeFileType}
                 accept={"image/*,audio/*,video/*"}
