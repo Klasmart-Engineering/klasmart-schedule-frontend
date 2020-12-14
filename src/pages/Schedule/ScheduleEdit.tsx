@@ -292,7 +292,7 @@ function EditBox(props: CalendarStateProps) {
       const currentTime = Math.floor(new Date().getTime());
       if (
         (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
-        newData.start_at - currentTime > 15 * 60 * 1000
+        newData.start_at * 1000 - currentTime < 15 * 60 * 1000
       ) {
         dispatch(getScheduleLiveToken({ schedule_id: scheduleId, metaLoading: true }));
       }
@@ -1120,24 +1120,26 @@ function EditBox(props: CalendarStateProps) {
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
         />
-        <Permission
-          value={PermissionType.create_event_520}
-          render={(value) =>
-            value && (
-              <Box
-                className={css.fieldset}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
-                  {d("Click to Schedule").t("schedule_button_click_to schedule")}
-                </Button>
-              </Box>
-            )
-          }
-        />
+        {!isScheduleExpired() && (
+          <Permission
+            value={PermissionType.create_event_520}
+            render={(value) =>
+              value && (
+                <Box
+                  className={css.fieldset}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
+                    {d("Click to Schedule").t("schedule_button_click_to schedule")}
+                  </Button>
+                </Box>
+              )
+            }
+          />
+        )}
         <Box
           className={css.fieldset}
           style={{
