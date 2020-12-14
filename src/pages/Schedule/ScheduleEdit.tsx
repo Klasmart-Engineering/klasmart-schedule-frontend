@@ -29,7 +29,7 @@ import {
   removeSchedule,
   resetParticipantList,
   resetScheduleDetial,
-  saveScheduleData
+  saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import { FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
@@ -581,12 +581,13 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const saveTheTest = () => {
-    const currentTime = Math.floor(new Date().getTime());
+    const currentTime = Math.floor(new Date().getTime() / 1000);
     if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
+      console.log(scheduleDetial.start_at, currentTime);
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-        text: d("You can not edit a class 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+        text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
@@ -831,7 +832,7 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class15 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
