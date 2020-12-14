@@ -593,8 +593,9 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const saveTheTest = () => {
-    const currentTime = Math.floor(new Date().getTime());
+    const currentTime = Math.floor(new Date().getTime() / 1000);
     if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
+      console.log(scheduleDetial.start_at, currentTime);
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
