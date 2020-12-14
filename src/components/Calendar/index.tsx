@@ -191,7 +191,7 @@ function MyCalendar(props: CalendarProps) {
       if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
         changeModalDate({
           title: "",
-          text: d("You can not delete a class 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
+          text: d("You can only delete a class at least 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
@@ -254,7 +254,8 @@ function MyCalendar(props: CalendarProps) {
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
-    if (event.status === "NotStart" || event.status === "Started") {
+    const currentTime = Math.floor(new Date().getTime());
+    if ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime > 15 * 60 * 1000) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, metaLoading: true }));
     }
     changeModalDate({
@@ -312,8 +313,8 @@ function MyCalendar(props: CalendarProps) {
       </Box>
       <Calendar
         date={new Date(timesTamp.start * 1000)}
-        onView={() => { }}
-        onNavigate={() => { }}
+        onView={() => {}}
+        onNavigate={() => {}}
         view={modelView}
         views={views}
         popup={true}

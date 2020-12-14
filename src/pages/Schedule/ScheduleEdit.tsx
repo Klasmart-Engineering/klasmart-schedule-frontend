@@ -21,6 +21,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
+  getScheduleLiveToken,
   getScheduleMockOptionsResponse,
   getScheduleParticipant,
   getScheduleParticipantsMockOptionsResponse,
@@ -29,7 +30,7 @@ import {
   removeSchedule,
   resetParticipantList,
   resetScheduleDetial,
-  saveScheduleData
+  saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import { FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
@@ -288,6 +289,13 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newData);
       setInitScheduleList(newData);
       // getParticipantOptions("");
+      const currentTime = Math.floor(new Date().getTime());
+      if (
+        (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
+        newData.start_at - currentTime > 15 * 60 * 1000
+      ) {
+        dispatch(getScheduleLiveToken({ schedule_id: scheduleId, metaLoading: true }));
+      }
       dispatch(getScheduleParticipant({ class_id: newData.class_id }));
     }
   }, [dispatch, scheduleDetial, scheduleId]);
@@ -358,8 +366,12 @@ function EditBox(props: CalendarStateProps) {
     ];
 
     if (type === "all_day_start") {
-      // return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
-      return currentTime;
+      const currentDate = new Date();
+      if (currentDate.getMonth() + 1 === M && currentDate.getDate() === D) {
+        return (currentTime as number) + 60;
+      } else {
+        return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
+      }
     } else if (type === "all_day_end") {
       return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 23, 59, 59).getTime() / 1000);
     } else {
@@ -586,7 +598,7 @@ function EditBox(props: CalendarStateProps) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-        text: d("You can not edit a class 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+        text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
@@ -661,8 +673,8 @@ function EditBox(props: CalendarStateProps) {
     if (event.target.name === "allDayCheck" && event.target.checked) {
       const newTopocList = {
         ...scheduleList,
-        start_at: (timestampToTime(scheduleList.start_at, "all_day_start") as number) + 60,
-        end_at: (timestampToTime(scheduleList.end_at, "all_day_end") as number) + 60,
+        start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
+        end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
       setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
@@ -831,7 +843,7 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class15 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [

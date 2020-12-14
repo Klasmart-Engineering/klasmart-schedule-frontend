@@ -15,7 +15,6 @@ import { actError } from "../../reducers/notify";
 import {
   getMockOptions,
   getScheduleInfo,
-  getScheduleLiveToken,
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
@@ -158,7 +157,6 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
     if (scheduleId) {
-      dispatch(getScheduleLiveToken({ schedule_id: scheduleId, metaLoading: true }));
       dispatch(getScheduleInfo(scheduleId));
     }
     setModalDate({
