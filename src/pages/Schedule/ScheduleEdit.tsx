@@ -688,7 +688,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const deleteScheduleByid = async (repeat_edit_options: repeatOptionsType = "only_current") => {
-    await dispatch(
+    const res: any = await dispatch(
       removeSchedule({
         schedule_id: scheduleDetial.id as string,
         repeat_edit_options: {
@@ -696,29 +696,58 @@ function EditBox(props: CalendarStateProps) {
         },
       })
     );
-    dispatch(
-      getScheduleTimeViewData({
-        view_type: modelView,
-        time_at: timesTamp.start,
-        time_zone_offset: -new Date().getTimezoneOffset() * 60,
-      })
-    );
-    dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
-    /*    changeTimesTamp({
-      start: Math.floor(new Date().getTime() / 1000),
-      end: Math.floor(new Date().getTime() / 1000),
-    });*/
+    if (res.payload === "OK") {
+      dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
+      dispatch(
+        getScheduleTimeViewData({
+          view_type: modelView,
+          time_at: timesTamp.start,
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+        })
+      );
+      /*    changeTimesTamp({
+        start: Math.floor(new Date().getTime() / 1000),
+        end: Math.floor(new Date().getTime() / 1000),
+      });*/
 
+      changeModalDate({
+        openStatus: false,
+      });
+      history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+      return;
+    }
     changeModalDate({
       openStatus: false,
     });
-    history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
   };
   /**
    * modal type delete
    */
 
   const handleDelete = () => {
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
+      console.log(scheduleDetial.start_at, currentTime);
+      changeModalDate({
+        title: "",
+        // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
+        text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+        openStatus: true,
+        enableCustomization: false,
+        buttons: [
+          {
+            label: d("OK").t("schedule_button_ok"),
+            event: () => {
+              changeModalDate({ openStatus: false, enableCustomization: false });
+            },
+          },
+        ],
+        handleClose: () => {
+          changeModalDate({ openStatus: false, enableCustomization: false });
+        },
+      });
+      return;
+    }
     if (scheduleDetial.is_repeat) {
       changeModalDate({
         openStatus: true,
