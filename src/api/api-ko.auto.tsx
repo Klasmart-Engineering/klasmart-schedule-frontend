@@ -12,12 +12,12 @@ export type RoleBasedUsersByOrgnizationQuery = { __typename?: "Query" } & {
       roles?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Role" } & Pick<Types.Role, "role_name"> & {
+            { __typename?: "Role" } & Pick<Types.Role, "[object Object]"> & {
                 memberships?: Types.Maybe<
                   Array<
                     Types.Maybe<
                       { __typename?: "OrganizationMembership" } & {
-                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
+                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>;
                       }
                     >
                   >
@@ -41,7 +41,7 @@ export type TeachersByOrgnizationQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "OrganizationMembership" } & {
-              user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
+              user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>;
             }
           >
         >
@@ -57,7 +57,9 @@ export type ClassesByTeacherQueryVariables = Types.Exact<{
 export type ClassesByTeacherQuery = { __typename?: "Query" } & {
   user?: Types.Maybe<
     { __typename?: "User" } & {
-      classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
+      classesTeaching?: Types.Maybe<
+        Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]">>>
+      >;
     }
   >;
 };
@@ -69,7 +71,7 @@ export type ClassesByOrganizationQueryVariables = Types.Exact<{
 export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]">>>>;
     }
   >;
 };
@@ -81,8 +83,8 @@ export type ParticipantsByClassQueryVariables = Types.Exact<{
 export type ParticipantsByClassQuery = { __typename?: "Query" } & {
   class?: Types.Maybe<
     { __typename?: "Class" } & {
-      teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
-      students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+      teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>>;
+      students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>>;
     }
   >;
 };
@@ -93,7 +95,7 @@ export type QeuryMeQueryVariables = Types.Exact<{
 
 export type QeuryMeQuery = { __typename?: "Query" } & {
   me?: Types.Maybe<
-    { __typename?: "User" } & Pick<Types.User, "user_id"> & {
+    { __typename?: "User" } & Pick<Types.User, "[object Object]"> & {
         membership?: Types.Maybe<
           { __typename?: "OrganizationMembership" } & {
             roles?: Types.Maybe<
@@ -101,7 +103,7 @@ export type QeuryMeQuery = { __typename?: "Query" } & {
                 Types.Maybe<
                   { __typename?: "Role" } & {
                     permissions?: Types.Maybe<
-                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "permission_name">>>
+                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "[object Object]">>>
                     >;
                   }
                 >
@@ -110,6 +112,14 @@ export type QeuryMeQuery = { __typename?: "Query" } & {
           }
         >;
       }
+  >;
+};
+
+export type OrganizationsQueryVariables = Types.Exact<{ [key: string]: never }>;
+
+export type OrganizationsQuery = { __typename?: "Query" } & {
+  organizations?: Types.Maybe<
+    Array<Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "[object Object]" | "[object Object]">>>
   >;
 };
 
@@ -146,7 +156,7 @@ export const RoleBasedUsersByOrgnizationDocument = gql`
  * });
  */
 export function useRoleBasedUsersByOrgnizationQuery(
-  baseOptions: Apollo.QueryHookOptions<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>
+  baseOptions?: Apollo.QueryHookOptions<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>
 ) {
   return Apollo.useQuery<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>(
     RoleBasedUsersByOrgnizationDocument,
@@ -197,7 +207,7 @@ export const TeachersByOrgnizationDocument = gql`
  * });
  */
 export function useTeachersByOrgnizationQuery(
-  baseOptions: Apollo.QueryHookOptions<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>
+  baseOptions?: Apollo.QueryHookOptions<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>
 ) {
   return Apollo.useQuery<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>(TeachersByOrgnizationDocument, baseOptions);
 }
@@ -236,7 +246,7 @@ export const ClassesByTeacherDocument = gql`
  *   },
  * });
  */
-export function useClassesByTeacherQuery(baseOptions: Apollo.QueryHookOptions<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>) {
+export function useClassesByTeacherQuery(baseOptions?: Apollo.QueryHookOptions<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>) {
   return Apollo.useQuery<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>(ClassesByTeacherDocument, baseOptions);
 }
 export function useClassesByTeacherLazyQuery(
@@ -275,7 +285,7 @@ export const ClassesByOrganizationDocument = gql`
  * });
  */
 export function useClassesByOrganizationQuery(
-  baseOptions: Apollo.QueryHookOptions<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>
+  baseOptions?: Apollo.QueryHookOptions<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>
 ) {
   return Apollo.useQuery<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>(ClassesByOrganizationDocument, baseOptions);
 }
@@ -319,7 +329,7 @@ export const ParticipantsByClassDocument = gql`
  * });
  */
 export function useParticipantsByClassQuery(
-  baseOptions: Apollo.QueryHookOptions<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>
+  baseOptions?: Apollo.QueryHookOptions<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>
 ) {
   return Apollo.useQuery<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>(ParticipantsByClassDocument, baseOptions);
 }
@@ -362,7 +372,7 @@ export const QeuryMeDocument = gql`
  *   },
  * });
  */
-export function useQeuryMeQuery(baseOptions: Apollo.QueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
+export function useQeuryMeQuery(baseOptions?: Apollo.QueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
   return Apollo.useQuery<QeuryMeQuery, QeuryMeQueryVariables>(QeuryMeDocument, baseOptions);
 }
 export function useQeuryMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
@@ -371,3 +381,36 @@ export function useQeuryMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Qe
 export type QeuryMeQueryHookResult = ReturnType<typeof useQeuryMeQuery>;
 export type QeuryMeLazyQueryHookResult = ReturnType<typeof useQeuryMeLazyQuery>;
 export type QeuryMeQueryResult = Apollo.QueryResult<QeuryMeQuery, QeuryMeQueryVariables>;
+export const OrganizationsDocument = gql`
+  query organizations {
+    organizations {
+      organization_id
+      organization_name
+    }
+  }
+`;
+
+/**
+ * __useOrganizationsQuery__
+ *
+ * To run a query within a React component, call `useOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOrganizationsQuery(baseOptions?: Apollo.QueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>) {
+  return Apollo.useQuery<OrganizationsQuery, OrganizationsQueryVariables>(OrganizationsDocument, baseOptions);
+}
+export function useOrganizationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>) {
+  return Apollo.useLazyQuery<OrganizationsQuery, OrganizationsQueryVariables>(OrganizationsDocument, baseOptions);
+}
+export type OrganizationsQueryHookResult = ReturnType<typeof useOrganizationsQuery>;
+export type OrganizationsLazyQueryHookResult = ReturnType<typeof useOrganizationsLazyQuery>;
+export type OrganizationsQueryResult = Apollo.QueryResult<OrganizationsQuery, OrganizationsQueryVariables>;

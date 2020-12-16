@@ -67,3 +67,10 @@ query qeuryMe($organization_id: ID!) {
     }
   }
 }
+
+query organizations {
+  organizations {
+    organization_id
+    organization_name
+  }
+}

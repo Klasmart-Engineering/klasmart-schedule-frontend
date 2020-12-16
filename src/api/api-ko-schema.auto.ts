@@ -108,6 +108,7 @@ export type User = {
   given_name?: Maybe<Scalars["String"]>;
   family_name?: Maybe<Scalars["String"]>;
   email?: Maybe<Scalars["String"]>;
+  phone?: Maybe<Scalars["String"]>;
   avatar?: Maybe<Scalars["String"]>;
   /** 'my_organization' is the Organization that this user has created */
   my_organization?: Maybe<Organization>;
@@ -173,6 +174,7 @@ export type Organization = {
   address2?: Maybe<Scalars["String"]>;
   phone?: Maybe<Scalars["String"]>;
   shortCode?: Maybe<Scalars["String"]>;
+  status?: Maybe<Scalars["String"]>;
   /** 'owner' is the User that created this Organization */
   owner?: Maybe<User>;
   primary_contact?: Maybe<User>;
@@ -194,6 +196,7 @@ export type Organization = {
   resetDefaultRolesPermissions?: Maybe<Array<Maybe<Role>>>;
   createSchool?: Maybe<School>;
   createClass?: Maybe<Class>;
+  delete?: Maybe<Scalars["Boolean"]>;
 };
 
 export type OrganizationMembersWithPermissionArgs = {
@@ -222,7 +225,8 @@ export type OrganizationAddUserArgs = {
 };
 
 export type OrganizationInviteUserArgs = {
-  email: Scalars["String"];
+  email?: Maybe<Scalars["String"]>;
+  phone?: Maybe<Scalars["String"]>;
   given_name?: Maybe<Scalars["String"]>;
   family_name?: Maybe<Scalars["String"]>;
   organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
@@ -231,7 +235,8 @@ export type OrganizationInviteUserArgs = {
 };
 
 export type OrganizationEditMembershipArgs = {
-  email: Scalars["String"];
+  email?: Maybe<Scalars["String"]>;
+  phone?: Maybe<Scalars["String"]>;
   given_name?: Maybe<Scalars["String"]>;
   family_name?: Maybe<Scalars["String"]>;
   organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
@@ -259,6 +264,10 @@ export type OrganizationCreateClassArgs = {
   class_name?: Maybe<Scalars["String"]>;
 };
 
+export type OrganizationDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
 export type MembershipUpdate = {
   __typename?: "MembershipUpdate";
   user?: Maybe<User>;
@@ -271,15 +280,21 @@ export type OrganizationMembership = {
   user_id: Scalars["ID"];
   organization_id: Scalars["ID"];
   join_timestamp?: Maybe<Scalars["Date"]>;
+  status?: Maybe<Scalars["String"]>;
   organization?: Maybe<Organization>;
   user?: Maybe<User>;
   roles?: Maybe<Array<Maybe<Role>>>;
+  classes?: Maybe<Array<Maybe<Class>>>;
   schoolMemberships?: Maybe<Array<Maybe<SchoolMembership>>>;
   checkAllowed?: Maybe<Scalars["Boolean"]>;
   addRole?: Maybe<Role>;
   addRoles?: Maybe<Array<Maybe<Role>>>;
   removeRole?: Maybe<OrganizationMembership>;
   leave?: Maybe<Scalars["Boolean"]>;
+};
+
+export type OrganizationMembershipSchoolMembershipsArgs = {
+  permission_name?: Maybe<Scalars["String"]>;
 };
 
 export type OrganizationMembershipCheckAllowedArgs = {
@@ -353,12 +368,14 @@ export type School = {
   __typename?: "School";
   school_id: Scalars["ID"];
   school_name?: Maybe<Scalars["String"]>;
+  status?: Maybe<Scalars["String"]>;
   organization?: Maybe<Organization>;
   memberships?: Maybe<Array<Maybe<SchoolMembership>>>;
   membership?: Maybe<SchoolMembership>;
   classes?: Maybe<Array<Maybe<Class>>>;
   set?: Maybe<School>;
   addUser?: Maybe<SchoolMembership>;
+  delete?: Maybe<Scalars["Boolean"]>;
 };
 
 export type SchoolMembershipArgs = {
@@ -373,11 +390,16 @@ export type SchoolAddUserArgs = {
   user_id: Scalars["ID"];
 };
 
+export type SchoolDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
 export type SchoolMembership = {
   __typename?: "SchoolMembership";
   user_id: Scalars["ID"];
   school_id: Scalars["ID"];
   join_timestamp?: Maybe<Scalars["Date"]>;
+  status?: Maybe<Scalars["String"]>;
   user?: Maybe<User>;
   school?: Maybe<School>;
   roles?: Maybe<Array<Maybe<Role>>>;
@@ -412,6 +434,7 @@ export type Class = {
   __typename?: "Class";
   class_id: Scalars["ID"];
   class_name?: Maybe<Scalars["String"]>;
+  status?: Maybe<Scalars["String"]>;
   organization?: Maybe<Organization>;
   schools?: Maybe<Array<Maybe<School>>>;
   teachers?: Maybe<Array<Maybe<User>>>;
@@ -420,9 +443,12 @@ export type Class = {
   eligibleStudents?: Maybe<Array<Maybe<User>>>;
   set?: Maybe<Class>;
   addTeacher?: Maybe<User>;
+  editTeachers?: Maybe<Array<Maybe<User>>>;
   removeTeacher?: Maybe<Scalars["Boolean"]>;
   addStudent?: Maybe<User>;
+  editStudents?: Maybe<Array<Maybe<User>>>;
   removeStudent?: Maybe<Scalars["Boolean"]>;
+  editSchools?: Maybe<Array<Maybe<School>>>;
   addSchool?: Maybe<School>;
   removeSchool?: Maybe<Scalars["Boolean"]>;
   delete?: Maybe<Scalars["Boolean"]>;
@@ -436,6 +462,10 @@ export type ClassAddTeacherArgs = {
   user_id: Scalars["ID"];
 };
 
+export type ClassEditTeachersArgs = {
+  teacher_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type ClassRemoveTeacherArgs = {
   user_id: Scalars["ID"];
 };
@@ -444,8 +474,16 @@ export type ClassAddStudentArgs = {
   user_id: Scalars["ID"];
 };
 
+export type ClassEditStudentsArgs = {
+  student_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type ClassRemoveStudentArgs = {
   user_id: Scalars["ID"];
+};
+
+export type ClassEditSchoolsArgs = {
+  school_ids?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type ClassAddSchoolArgs = {
