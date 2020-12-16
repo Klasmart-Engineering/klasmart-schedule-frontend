@@ -116,8 +116,8 @@ const ratioKey2countKey = (ratioKey: RatioKey): CountKey => {
   return result;
 };
 
-const isAttend = (studentName: string | undefined, data: EntityStudentReportItem[]): boolean => {
-  return data.find((item) => item.student_name === studentName)?.attend || false;
+const isAttend = (studentId: string | undefined, data: EntityStudentReportItem[]): boolean => {
+  return data.find((item) => item.student_id === studentId)?.attend || false;
 };
 
 type RatioExtendedEntityStudentReportItem = EntityStudentReportItem &
@@ -141,8 +141,8 @@ const mapRatio = (data: EntityStudentReportItem[]): RatioExtendedEntityStudentRe
   });
 };
 
-const studentName2studentId = (name: string, data: EntityStudentReportItem[]) => {
-  return data.find((item) => item.student_name === name)?.student_id as string;
+const studentId2studentName = (id: string, data: EntityStudentReportItem[]) => {
+  return data.find((item) => item.student_id === id)?.student_name as string;
 };
 
 const computed = (props: AchievementListStaticChartProps) => {
@@ -153,13 +153,13 @@ const computed = (props: AchievementListStaticChartProps) => {
   const xScale = scaleLinear({ domain: [0, 100], range: [0, pixels.barStackWidth] });
   const xAxiosScale = scaleLinear({ domain: [0, 100], range: [0, pixels.barStackWidth + pixels.yMarginRight] });
   const paddingRatio = pixels.barStackMargin / (pixels.barStackMargin + pixels.barStackHeight);
-  const yScale = scaleBand({ domain: data.map((item) => item.student_name as string), range: [0, barStacksHeight], padding: paddingRatio });
+  const yScale = scaleBand({ domain: data.map((item) => item.student_id as string), range: [0, barStacksHeight], padding: paddingRatio });
   const ratioKeys = filter === ReportFilter.all ? Object.values(RATIO_KEYS) : [RATIO_KEYS[filter]];
   const colorScale = scaleOrdinal({
     domain: ratioKeys,
     range: filter === ReportFilter.all ? Object.values(StatusColor) : [StatusColor[filter]],
   });
-  const getY = (data: EntityStudentReportItem) => data.student_name as string;
+  const getY = (data: EntityStudentReportItem) => data.student_id as string;
   const viewPort = [0, 0, pixels.barStackWidth + pixels.yMarginLeft + pixels.yMarginRight, barStacksHeight];
   return { data, xScale, xAxiosScale, yScale, colorScale, getY, ratioKeys, barStacksHeight, viewPort };
 };
@@ -234,13 +234,13 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             tickLabelProps={() => inlineStyles.yAxiosTickLabel}
             tickComponent={({ formattedValue, ...tickTextProps }) =>
               isAttend(formattedValue, data) ? (
-                <Text {...tickTextProps} onClick={() => onClickStudent(studentName2studentId(formattedValue as string, data))}>
-                  {formattedValue}
+                <Text {...tickTextProps} onClick={() => onClickStudent(formattedValue as string)}>
+                  {studentId2studentName(formattedValue as string, data)}
                 </Text>
               ) : (
                 [
                   <Text {...tickTextProps} {...inlineStyles.yAxiosTickLabel__disable}>
-                    {formattedValue}
+                    {studentId2studentName(formattedValue as string, data)}
                   </Text>,
                   <Text {...tickTextProps} {...inlineStyles.yAxiosTickLabelSub}>
                     (Absent)
