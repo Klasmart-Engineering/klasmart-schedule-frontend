@@ -43,10 +43,10 @@ export default function ContentH5p(props: ContentH5pProps) {
   const { valueSource, children, sub, allDefaultValueAndKey, formMethods } = props;
   const css = useStyles();
   const src = useH5pSrc(sub, valueSource);
-  // console.log("h5p origin contentId = ", valueSource);
+  console.log("h5p origin contentId = ", valueSource);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      // console.log("h5p iframe message event = ", event);
+      console.log("h5p iframe message event = ", event);
       const { contentId } = event.data;
       const source_type = event.data.source_type ?? "";
       if (!contentId) return;
