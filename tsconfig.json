@@ -3,6 +3,7 @@
     "experimentalDecorators": true,
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "typeRoots": ["./node_modules/@types", "./src/typings.d.ts"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
