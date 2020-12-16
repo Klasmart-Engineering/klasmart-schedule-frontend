@@ -54,9 +54,17 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     alignItems: "center",
     flexDirection: "column",
   },
+  contentBtnCon: {
+    width: "100%",
+    minHeight: "calc(100% - 200px)",
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    flexDirection: "column",
+  },
   h5pCon: {
     width: "80%",
-    height: "90vh",
+    height: "90%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -135,7 +143,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     background: "rgba(0,0,0,0.32)",
     overflowY: "hidden",
     overflowX: "scroll",
-    marginTop: 20,
   },
   barContainer: {
     display: "flex",
@@ -246,77 +253,83 @@ export function H5pPreview(props: H5pPreview) {
   const path = h5pItem ? (JSON.parse(h5pItem.data) ? apiResourcePathById(JSON.parse(h5pItem.data).source) : "") : "";
   return (
     <Box className={css.previewContainer}>
-      <Box className={css.h5pCon}>
-        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.image.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-          <AssetImg src={path} />
-        )}
-        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.video.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-          <AssetVideo src={path} />
-        )}
-        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.audio.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-          <AssetAudio src={path} />
-        )}
-        {h5pItem && JSON.parse(h5pItem.data) && fileFormat.document.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-          <AssetFile src={path} />
-        )}
-        {h5pItem &&
-          JSON.parse(h5pItem.data) &&
-          !getSuffix(JSON.parse(h5pItem.data).source) &&
-          (JSON.stringify(JSON.parse(h5pItem.data)) === JSON.stringify({}) ? (
-            <EmptyContent />
-          ) : (
-            <ContentH5p sub={H5pSub.view} valueSource={JSON.parse(h5pItem.data).source} />
-          ))}
-      </Box>
-      <Box className={css.btnCon}>
-        {h5pArray.length > 1 && (
-          <Box className={css.iconCon}>
-            <Box className={css.optionCon}>
-              <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
-                <ArrowBackIosOutlinedIcon />
-              </IconButton>
-              <Typography>{d("Previous").t("library_label_previous")}</Typography>
+      <Box className={css.contentBtnCon}>
+        <Box className={css.h5pCon}>
+          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.image.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+            <AssetImg src={path} />
+          )}
+          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.video.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+            <AssetVideo src={path} />
+          )}
+          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.audio.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+            <AssetAudio src={path} />
+          )}
+          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.document.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
+            <AssetFile src={path} />
+          )}
+          {h5pItem &&
+            JSON.parse(h5pItem.data) &&
+            !getSuffix(JSON.parse(h5pItem.data).source) &&
+            (JSON.stringify(JSON.parse(h5pItem.data)) === JSON.stringify({}) ? (
+              <EmptyContent />
+            ) : (
+              <ContentH5p sub={H5pSub.view} valueSource={JSON.parse(h5pItem.data).source} />
+            ))}
+        </Box>
+        <Box className={css.btnCon}>
+          {h5pArray.length > 1 && (
+            <Box className={css.iconCon}>
+              <Box className={css.optionCon}>
+                <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
+                  <ArrowBackIosOutlinedIcon />
+                </IconButton>
+                <Typography>{d("Previous").t("library_label_previous")}</Typography>
+              </Box>
+              <Box className={css.optionCon}>
+                <IconButton
+                  disabled={currIndex >= h5pArray.length - 1}
+                  className={clsx(css.iconBtn, css.whiteIconBtn)}
+                  onClick={handleNext}
+                >
+                  <ArrowForwardIosOutlinedIcon />
+                </IconButton>
+                <Typography>{d("Next").t("library_label_next")}</Typography>
+              </Box>
             </Box>
-            <Box className={css.optionCon}>
-              <IconButton disabled={currIndex >= h5pArray.length - 1} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handleNext}>
-                <ArrowForwardIosOutlinedIcon />
-              </IconButton>
-              <Typography>{d("Next").t("library_label_next")}</Typography>
+          )}
+          <Hidden only={["xs", "sm"]}>
+            <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
+              {d("View in").t("library_label_view_in") !== "-" && (
+                <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
+              )}
+              {classType === "OnlineClass" && (
+                <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+              )}
+              {classType === "OfflineClass" && (
+                <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+              )}
+              {classType === "Homework" && (
+                <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+              )}
+              {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
             </Box>
-          </Box>
-        )}
-        <Hidden only={["xs", "sm"]}>
-          <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-            {d("View in").t("library_label_view_in") !== "-" && (
-              <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
-            )}
-            {classType === "OnlineClass" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-            )}
-            {classType === "OfflineClass" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-            )}
-            {classType === "Homework" && (
-              <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
-            )}
-            {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-          </Box>
-        </Hidden>
-        <Hidden only={["md", "lg", "xl"]}>
-          <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
-            {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
-            {classType === "OnlineClass" && (
-              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-            )}
-            {classType === "OfflineClass" && (
-              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-            )}
-            {classType === "Homework" && (
-              <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
-            )}
-            {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-          </Box>
-        </Hidden>
+          </Hidden>
+          <Hidden only={["md", "lg", "xl"]}>
+            <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
+              {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
+              {classType === "OnlineClass" && (
+                <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+              )}
+              {classType === "OfflineClass" && (
+                <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+              )}
+              {classType === "Homework" && (
+                <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+              )}
+              {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
+            </Box>
+          </Hidden>
+        </Box>
       </Box>
       {h5pItem && content_type === ContentType.plan && (
         <div className={css.mapCon}>

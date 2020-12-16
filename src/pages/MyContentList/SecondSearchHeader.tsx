@@ -251,7 +251,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                   style={{ width: 160, marginLeft: 10 }}
                   size="small"
                   onChange={handleChangeFilterOption}
-                  label="Content Type"
+                  // label={d("Content Type").t("library")}
                   value={value.content_type}
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
