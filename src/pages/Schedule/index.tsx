@@ -59,6 +59,7 @@ function ScheduleContent() {
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [, setChangeProgram] = React.useState<string>("");
+  const [modelYear, setModelYear] = React.useState<boolean>(false);
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
@@ -93,7 +94,12 @@ function ScheduleContent() {
    */
   const [modelView, setModelView] = React.useState<modeViewType>("month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setModelView(event.target.value as modeViewType);
+    if (event.target.value === "year") {
+      setModelYear(true);
+    } else {
+      setModelYear(false);
+      setModelView(event.target.value as modeViewType);
+    }
   };
 
   /**
@@ -186,6 +192,7 @@ function ScheduleContent() {
               changeTimesTamp={changeTimesTamp}
               timesTamp={timesTamp}
               scheduleId={scheduleId}
+              modelYear={modelYear}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={4} lg={3}>
@@ -217,6 +224,7 @@ function ScheduleContent() {
                 toLive={toLive}
                 changeModalDate={changeModalDate}
                 setSpecificStatus={setSpecificStatus}
+                modelYear={modelYear}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}

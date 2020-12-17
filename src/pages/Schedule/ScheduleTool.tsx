@@ -81,7 +81,7 @@ function Tool(props: ToolProps) {
   const css = useStyles();
   const [teacherName, setTeacherName] = React.useState(useQuery());
   const history = useHistory();
-  const { includeList, changeTimesTamp, changeModelView, modelView, scheduleId } = props;
+  const { includeList, changeTimesTamp, changeModelView, modelView, scheduleId, modelYear } = props;
 
   const selectToday = (): void => {
     changeTimesTamp({
@@ -178,11 +178,17 @@ function Tool(props: ToolProps) {
           )}
           {!includeList && (
             <FormControl>
-              <NativeSelect id="demo-customized-select-native" value={modelView} onChange={changeModelView} input={<BootstrapInput />}>
+              <NativeSelect
+                id="demo-customized-select-native"
+                value={modelYear ? "year" : modelView}
+                onChange={changeModelView}
+                input={<BootstrapInput />}
+              >
                 <option value="work_week">{d("Workweek").t("schedule_option_workweek")}</option>
                 <option value="day">{d("Day").t("schedule_option_day")}</option>
                 <option value="week">{d("Week").t("schedule_option_week")}</option>
                 <option value="month">{d("Month").t("schedule_detail_month")}</option>
+                <option value="year">{d("Year").t("schedule_detail_year")}</option>
               </NativeSelect>
             </FormControl>
           )}
@@ -202,10 +208,11 @@ interface ToolProps extends CalendarStateProps {
   modelView: modeViewType;
   changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
   scheduleId: string;
+  modelYear: boolean;
 }
 
 export default function ScheduleTool(props: ToolProps) {
-  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView, scheduleId } = props;
+  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView, scheduleId, modelYear } = props;
   return (
     <Tool
       includeList={includeList}
@@ -214,6 +221,7 @@ export default function ScheduleTool(props: ToolProps) {
       changeModelView={changeModelView}
       modelView={modelView}
       scheduleId={scheduleId}
+      modelYear={modelYear}
     />
   );
 }
