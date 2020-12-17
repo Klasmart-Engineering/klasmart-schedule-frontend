@@ -52,10 +52,10 @@ type LangRecord<T = string> =
   | { id: "library_msg_bulk_remove_content"; description: "Are you sure you want to remove these contents?"; values: undefined }
   | { id: "library_msg_remove_select_one"; description: "At least one content should be selected."; values: undefined }
   | { id: "library_label_sort_by"; description: "Sort By"; values: undefined }
-  | { id: "library_label_content_name_atoz"; description: "Content Name(A-Z)"; values: undefined }
-  | { id: "library_label_content_name_ztoa"; description: "Content Name(Z-A)"; values: undefined }
-  | { id: "library_label_created_on_newtoold"; description: "Created On(New-Old)"; values: undefined }
-  | { id: "library_label_created_on_oldtonew"; description: "Created On(Old-New)"; values: undefined }
+  | { id: "library_label_content_name_atoz"; description: "Content Name (A-Z)"; values: undefined }
+  | { id: "library_label_content_name_ztoa"; description: "Content Name (Z-A)"; values: undefined }
+  | { id: "library_label_created_on_newtoold"; description: "Created On (New-Old)"; values: undefined }
+  | { id: "library_label_created_on_oldtonew"; description: "Created On (Old-New)"; values: undefined }
   | { id: "library_label_material"; description: "Material"; values: undefined }
   | { id: "library_label_plan"; description: "Plan"; values: undefined }
   | { id: "library_label_delete"; description: "Delete"; values: undefined }
@@ -444,6 +444,7 @@ type LangRecord<T = string> =
     }
   | { id: "schedule_msg_start_minutes"; description: "You can only start a class 15 minutes before the start time."; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: "Click to Schedule"; values: undefined }
+  | { id: "schedule_msg_time_expired"; description: "Time expired"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

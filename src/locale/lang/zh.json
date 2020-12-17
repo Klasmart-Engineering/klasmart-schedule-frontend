@@ -407,6 +407,7 @@
   "schedule_msg_edit_minutes": "您只能于开课时间15分钟之前编辑该课程",
   "schedule_msg_start_minutes": "您只能于开课时间15分钟之内开始上课",
   "schedule_button_click_to schedule": "点击排课",
+  "schedule_msg_time_expired": "时间过期",
   "report_label_student_achievement": "学生成绩",
   "report_label_teacher": "老师",
   "report_label_class": "班级",
