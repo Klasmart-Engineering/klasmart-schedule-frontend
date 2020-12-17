@@ -209,10 +209,10 @@ function getBulkAction(
 }
 
 const sortOptions = () => [
-  { label: d("Content Name(A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
-  { label: d("Content Name(Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
-  { label: d("Created On(New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
-  { label: d("Created On(Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.updated_at },
+  { label: d("Content Name (A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
+  { label: d("Content Name (Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
+  { label: d("Created On (New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
+  { label: d("Created On (Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.updated_at },
 ];
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
