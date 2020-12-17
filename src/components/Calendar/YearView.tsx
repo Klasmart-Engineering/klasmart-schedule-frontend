@@ -17,6 +17,7 @@ const useStyles = makeStyles(() => ({
   weekDayTd: {
     width: "36px",
     textAlign: "center",
+    position: "relative",
   },
   weekDayTr: {
     display: "flex",
@@ -26,10 +27,20 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#0E78D5",
     color: "white",
   },
+  yearTag: {
+    width: "4px",
+    height: "4px",
+    display: "block",
+    position: "absolute",
+    borderRadius: "10px",
+    backgroundColor: "#D32F2F",
+    left: "16px",
+    top: "26px",
+  },
 }));
 
 function MyCalendar(props: CalendarProps) {
-  const { timesTamp } = props;
+  const { timesTamp, scheduleTimeViewYearData } = props;
   const css = useStyles();
 
   const weekDay = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -72,6 +83,15 @@ function MyCalendar(props: CalendarProps) {
     return new Date().getMonth() === month && new Date().getDate() === day;
   };
 
+  const checkCurrentExist = (month: number, day: number) => {
+    if (!day) return;
+    return scheduleTimeViewYearData.includes(
+      `${new Date(timesTamp.start * 1000).getFullYear()}-${month < 9 ? "0" + (month + 1) : month + 1}-${
+        day < 10 ? "0" + day : day
+      }` as never
+    );
+  };
+
   return (
     <>
       {monthArr.map((m: string, key: number) => {
@@ -88,7 +108,12 @@ function MyCalendar(props: CalendarProps) {
                 return (
                   <p className={css.weekDayTr}>
                     {val.map((v: number) => {
-                      return <span className={clsx(css.weekDayTd, checkCurrentTime(key, v) ? css.currentBox : "")}>{v}</span>;
+                      return (
+                        <span className={clsx(css.weekDayTd, checkCurrentTime(key, v) ? css.currentBox : "")}>
+                          {v}
+                          {checkCurrentExist(key, v) && <span className={css.yearTag}></span>}
+                        </span>
+                      );
                     })}
                   </p>
                 );
@@ -103,13 +128,14 @@ function MyCalendar(props: CalendarProps) {
 
 interface CalendarProps {
   timesTamp: timestampType;
+  scheduleTimeViewYearData: [];
 }
 
 export default function YearCalendar(props: CalendarProps) {
-  const { timesTamp } = props;
+  const { timesTamp, scheduleTimeViewYearData } = props;
   return (
     <Grid container spacing={2}>
-      <MyCalendar timesTamp={timesTamp} />
+      <MyCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />
     </Grid>
   );
 }

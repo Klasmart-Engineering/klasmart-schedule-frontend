@@ -58,7 +58,7 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear, scheduleTimeViewYearData } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -319,7 +319,7 @@ function MyCalendar(props: CalendarProps) {
         />
         <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
       </Box>
-      {modelYear && <YearCalendar timesTamp={timesTamp} />}
+      {modelYear && <YearCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />}
       {!modelYear && (
         <Calendar
           date={new Date(timesTamp.start * 1000)}
@@ -353,10 +353,11 @@ interface CalendarProps {
   changeModalDate: (data: object) => void;
   setSpecificStatus: (value: boolean) => void;
   modelYear: boolean;
+  scheduleTimeViewYearData: [];
 }
 
 export default function KidsCalendar(props: CalendarProps) {
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear, scheduleTimeViewYearData } = props;
 
   return (
     <MyCalendar
@@ -367,6 +368,7 @@ export default function KidsCalendar(props: CalendarProps) {
       changeModalDate={changeModalDate}
       setSpecificStatus={setSpecificStatus}
       modelYear={modelYear}
+      scheduleTimeViewYearData={scheduleTimeViewYearData}
     />
   );
 }

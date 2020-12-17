@@ -51,6 +51,7 @@ export interface ScheduleState {
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
   scheduleTimeViewData: scheduleViewData[];
+  scheduleTimeViewYearData: [];
   attachement_id: string;
   attachment_path: string;
   searchFlag: boolean;
@@ -90,6 +91,7 @@ const initialState: ScheduleState = {
   searchScheduleList: [],
   scheduleDetial: initScheduleDetial,
   scheduleTimeViewData: [],
+  scheduleTimeViewYearData: [],
   attachement_id: "",
   attachment_path: "",
   searchFlag: false,
@@ -132,6 +134,12 @@ const initialState: ScheduleState = {
   liveToken: "",
 };
 
+type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
+  ? U
+  : T extends (...args: any) => infer U
+  ? U
+  : any;
+
 type querySchedulesParams = { data: Parameters<typeof api.schedules.querySchedule>[0] } & LoadingMetaPayload;
 type querySchedulesResult = ReturnType<typeof api.schedules.querySchedule>;
 export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, querySchedulesParams>("schedule/scheduleList", ({ data }) => {
@@ -156,12 +164,20 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
   }
 );
 
+export interface viewSchedulesResultResponse {
+  scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
+  scheduleTimeViewYearData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
+}
+
 type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeView>[0] & LoadingMetaPayload;
-type viewSchedulesResult = ReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
-export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResult, viewSchedulesParams>(
+export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(
   "schedule/schedules_time_view",
-  (query) => {
-    return api.schedulesTimeView.getScheduleTimeView({ ...query });
+  async (query) => {
+    const [scheduleTimeViewData, scheduleTimeViewYearData] = await Promise.all([
+      api.schedulesTimeView.getScheduleTimeView({ ...query }),
+      api.schedulesTimeView.getScheduledDates({ ...query }),
+    ]);
+    return { scheduleTimeViewData, scheduleTimeViewYearData };
   }
 );
 
@@ -347,7 +363,8 @@ const { actions, reducer } = createSlice({
       state.errorLable = error.message;
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload);
+      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload.scheduleTimeViewData);
+      state.scheduleTimeViewYearData = payload.scheduleTimeViewYearData;
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = initScheduleDetial;

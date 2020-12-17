@@ -245,7 +245,6 @@ export interface EntityAddAssessmentCommand {
   class_end_time?: number;
   class_length?: number;
   schedule_id?: string;
-  type?: "preview" | "live";
 }
 
 export interface EntityAddAssessmentResult {
@@ -561,6 +560,11 @@ export interface EntityMoveFolderRequest {
   partition?: string;
 }
 
+export interface EntityOrganizationProperty {
+  id?: string;
+  type?: "normal" | "headquarters";
+}
+
 export interface EntityOutcome {
   age?: string;
   ancestor_id?: string;
@@ -615,6 +619,7 @@ export interface EntityProgram {
   id?: string;
   name?: string;
   number?: number;
+  org_type?: string;
   updateAt?: number;
   updateID?: string;
 }
@@ -2000,6 +2005,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getLessonTypeById: (id: string, params?: RequestParams) =>
       this.request<EntityLessonType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/lesson_types/${id}`, "GET", params),
   };
+  organizationsPropertys = {
+    /**
+     * @tags organizationProperty
+     * @name getOrganizationPropertyByID
+     * @summary getOrganizationPropertyByID
+     * @request GET:/organizations_propertys/{id}
+     * @description get organization property by id
+     */
+    getOrganizationPropertyById: (id: string, params?: RequestParams) =>
+      this.request<EntityOrganizationProperty, ApiInternalServerErrorResponse>(`/organizations_propertys/${id}`, "GET", params),
+  };
   pendingLearningOutcomes = {
     /**
      * @tags learning_outcomes
@@ -2388,7 +2404,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduleTimeView: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month";
+        view_type: "day" | "work_week" | "week" | "month" | "year";
         time_at: number;
         time_zone_offset: number;
         school_ids?: string;
@@ -2401,6 +2417,32 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityScheduleListView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduledDates
+     * @summary getScheduledDates
+     * @request GET:/schedules_time_view/dates
+     * @description get schedules dates(format:2006-01-02)
+     */
+    getScheduledDates: (
+      query: {
+        view_type: "day" | "work_week" | "week" | "month" | "year";
+        time_at: number;
+        time_zone_offset: number;
+        school_ids?: string;
+        teacher_ids?: string;
+        class_ids?: string;
+        subject_ids?: string;
+        program_ids?: string;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<string[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view/dates${this.addQueryParams(query)}`,
         "GET",
         params
       ),

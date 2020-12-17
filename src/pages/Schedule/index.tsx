@@ -51,9 +51,10 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken } = useSelector<RootState, RootState["schedule"]>(
-    (state) => state.schedule
-  );
+  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData } = useSelector<
+    RootState,
+    RootState["schedule"]
+  >((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
@@ -225,6 +226,7 @@ function ScheduleContent() {
                 changeModalDate={changeModalDate}
                 setSpecificStatus={setSpecificStatus}
                 modelYear={modelYear}
+                scheduleTimeViewYearData={scheduleTimeViewYearData}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}

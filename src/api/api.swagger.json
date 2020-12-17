@@ -3433,6 +3433,39 @@
         }
       }
     },
+    "/organizations_propertys/{id}": {
+      "get": {
+        "description": "get organization property by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["organizationProperty"],
+        "summary": "getOrganizationPropertyByID",
+        "operationId": "getOrganizationPropertyByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "organization id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.OrganizationProperty"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/pending_learning_outcomes": {
       "get": {
         "description": "search pending learning outcomes",
@@ -4757,7 +4790,7 @@
         "operationId": "getScheduleTimeView",
         "parameters": [
           {
-            "enum": ["day", "work_week", "week", "month"],
+            "enum": ["day", "work_week", "week", "month", "year"],
             "type": "string",
             "description": "search schedules by view_type",
             "name": "view_type",
@@ -4826,6 +4859,93 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_time_view/dates": {
+      "get": {
+        "description": "get schedules dates(format:2006-01-02)",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduledDates",
+        "operationId": "getScheduledDates",
+        "parameters": [
+          {
+            "enum": ["day", "work_week", "week", "month", "year"],
+            "type": "string",
+            "description": "search schedules by view_type",
+            "name": "view_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "search schedules by time_at",
+            "name": "time_at",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "time zone offset",
+            "name": "time_zone_offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "school ids,separated by comma",
+            "name": "school_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher id,separated by comma",
+            "name": "teacher_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class id,separated by comma",
+            "name": "class_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "subject id,separated by comma",
+            "name": "subject_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "program id,separated by comma",
+            "name": "program_ids",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
@@ -6246,10 +6366,6 @@
         },
         "schedule_id": {
           "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["preview", "live"]
         }
       }
     },
@@ -7160,6 +7276,18 @@
         }
       }
     },
+    "entity.OrganizationProperty": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["normal", "headquarters"]
+        }
+      }
+    },
     "entity.Outcome": {
       "type": "object",
       "properties": {
@@ -7315,6 +7443,9 @@
         },
         "number": {
           "type": "integer"
+        },
+        "org_type": {
+          "type": "string"
         },
         "updateAt": {
           "type": "integer"
