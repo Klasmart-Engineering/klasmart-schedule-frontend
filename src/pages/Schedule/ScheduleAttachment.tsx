@@ -33,23 +33,25 @@ export const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-const tipsText = (
-  <div style={{ paddingBottom: "8px" }}>
-    <div style={{ color: "#000000", fontWeight: "bold" }}>
-      <p>{d("Max").t("schedule_detail_max")}: 10MB</p>
-      <span>{d("Support files in").t("schedule_detail_support_files_in")}:</span>
+const getTipsText = () => {
+  return (
+    <div style={{ paddingBottom: "8px" }}>
+      <div style={{ color: "#000000", fontWeight: "bold" }}>
+        <p>{d("Max").t("schedule_detail_max")}: 10MB</p>
+        <span>{d("Support files in").t("schedule_detail_support_files_in")}:</span>
+      </div>
+      <div style={{ color: "#666666" }}>
+        <span>{d("Video").t("schedule_detail_video")} (avi, mov,mp4)</span>
+        <br />
+        <span>{d("Audio").t("schedule_detail_audio")} (mp3, wav)</span>
+        <br />
+        <span>{d("Image").t("schedule_detail_image")} (jpg, jpeg, png, gif, bmp)</span>
+        <br />
+        <span>{d("Document").t("schedule_detail_document")} (doc, docx, ppt, pptx, xls, xlsx, pdf)</span>
+      </div>
     </div>
-    <div style={{ color: "#666666" }}>
-      <span>{d("Video").t("schedule_detail_video")} (avi, mov,mp4)</span>
-      <br />
-      <span>{d("Audio").t("schedule_detail_audio")} (mp3, wav)</span>
-      <br />
-      <span>{d("Image").t("schedule_detail_image")} (jpg, jpeg, png, gif, bmp)</span>
-      <br />
-      <span>{d("Document").t("schedule_detail_document")} (doc, docx, ppt, pptx, xls, xlsx, pdf)</span>
-    </div>
-  </div>
-);
+  );
+};
 
 const format: string[] = [
   "avi",
@@ -178,7 +180,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
               label={d("Attachment").t("schedule_detail_attachment")}
               value={specificStatus ? (item ? getFileName(item.file.name) : attachmentName) : attachmentName}
             ></TextField>
-            <HtmlTooltip title={tipsText}>
+            <HtmlTooltip title={getTipsText()}>
               <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
             </HtmlTooltip>
             <input type="file" style={{ display: "none" }} />
