@@ -25,6 +25,7 @@ import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
+import ShareIcon from "@material-ui/icons/Share";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
@@ -173,15 +174,19 @@ const useStyles = makeStyles((theme) =>
     },
     iconColor: {
       color: "#D32F2F",
-      padding: "0 0 0 10px",
+      padding: "5px",
     },
     rePublishColor: {
       color: "#0E78D5",
-      padding: "0 0 0 10px",
+      padding: "5px",
     },
     folderColor: {
       color: "#0e78d5",
-      padding: "0 0 0 10px",
+      padding: "5px",
+    },
+    shareColor: {
+      color: "#000",
+      padding: "5px",
     },
     MuiIconButtonRoot: {
       "&:hover": {
@@ -262,6 +267,7 @@ function ContentCard(props: ContentProps) {
     onDeleteFolder,
     onApprove,
     onReject,
+    onClickShareBtn,
   } = props;
   let file_type: number = 0;
   if (content?.content_type === ContentType.assets) {
@@ -336,6 +342,16 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
+          {!queryCondition.program && content?.publish_status === PublishStatus.published && content?.content_type === ContentType.folder && (
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.shareColor, css.MuiIconButtonRoot)}
+              onClick={() => onClickShareBtn(content)}
+            >
+              <ShareIcon />
+            </LButton>
+          )}
           {!queryCondition.program && (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
             <LButton
               as={IconButton}
@@ -459,6 +475,7 @@ interface ContentActionProps {
   onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onApprove: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onReject: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onClickShareBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
@@ -497,6 +514,7 @@ export function ContentCardList(props: ContentCardListProps) {
     parentFolderInfo,
     onApprove,
     onReject,
+    onClickShareBtn,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -535,6 +553,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           onDeleteFolder,
                           onApprove,
                           onReject,
+                          onClickShareBtn,
                         }}
                       />
                     </Grid>

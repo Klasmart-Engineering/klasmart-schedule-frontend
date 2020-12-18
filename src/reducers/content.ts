@@ -1,6 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
-import api from "../api";
+import api, { gqlapi } from "../api";
+import { OrganizationsDocument, OrganizationsQuery, OrganizationsQueryVariables } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
@@ -9,12 +10,14 @@ import {
   EntityCreateContentRequest,
   EntityFolderContent,
   EntityFolderItemInfo,
+  EntityOrganizationProperty,
 } from "../api/api.auto";
-import { RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
+import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -37,6 +40,9 @@ interface IContentState {
   page_size: number;
   folderTree: RecursiveFolderItem[];
   parentFolderInfo: EntityFolderItemInfo;
+  orgProperty: EntityOrganizationProperty;
+  orgList: OrgInfoProps[];
+  selectedOrg: string[];
 }
 
 interface RootState {
@@ -163,6 +169,9 @@ const initialState: IContentState = {
   page_size: 20,
   folderTree: [],
   parentFolderInfo: {},
+  orgProperty: {},
+  orgList: [],
+  selectedOrg: ["2136d74b-27dc-42d7-a77a-c48093d545e0"], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -762,6 +771,48 @@ export const bulkReject = createAsyncThunk<IQueryBulkRejectResult, IQueryBulkRej
     return api.contentsReview.rejectContentReviewBulk({ ids: ids, reject_reason: reasonValue, remark: otherValue });
   }
 );
+
+type IQueryOrganizationPropertysResult = AsyncReturnType<typeof api.organizationsPropertys.getOrganizationPropertyById>;
+export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult>("content/getOrgProperty", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const orgProperty = api.organizationsPropertys.getOrganizationPropertyById(organization_id);
+  return orgProperty;
+});
+
+export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload>(
+  "content/getOrgList",
+  async (folder_ids, { dispatch }) => {
+    const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
+      query: OrganizationsDocument,
+    });
+    // await dispatch(getFoldersSharedRecords(folder_ids))
+    return data.organizations;
+  }
+);
+
+// type IQueryShareFoldersParams = {
+//   shareFolder: EntityFolderContent | undefined,
+//   shareOrg_ids: string[],
+// }
+// // Parameters<typeof api.folders.shareFolders>[0];
+// type IQueryShareFolderResult = AsyncReturnType<typeof api.folders.shareFolders>;
+// export const shareFolders = createAsyncThunk<IQueryShareFolderResult, IQueryShareFoldersParams>(
+//   "content/shareFolders",
+//   async ({shareFolder, shareOrg_ids}) => {
+//     // return api.folders.shareFolders({folder_id: shareFolder?.id, shareOrg_ids})
+//     return api.folders.shareFolders();
+//   }
+// )
+// type IQueryGetFoldersSharedRecordsParams = Parameters<typeof api.folders.getFoldersSharedRecords>[0];
+// type IQueryGetFoldersSharedRecordsResult = AsyncReturnType<typeof api.folders.getFoldersSharedRecords>;
+// export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRecordsResult, IQueryGetFoldersSharedRecordsParams>(
+//   "content/getFoldersSharedRecords",
+//   async (folder_ids) => {
+//     const res =  await api.folders.getFoldersSharedRecords(folder_ids)
+//     console.log(res)
+//     return res
+//   }
+// )
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -1017,6 +1068,12 @@ const { actions, reducer } = createSlice({
         state.total = payload.contentRes.total;
         state.contentsList = payload.contentRes.list;
       }
+    },
+    [getOrgProperty.fulfilled.type]: (state, { payload }: any) => {
+      state.orgProperty = payload;
+    },
+    [getOrgList.fulfilled.type]: (state, { payload }: any) => {
+      state.orgList = payload;
     },
   },
 });

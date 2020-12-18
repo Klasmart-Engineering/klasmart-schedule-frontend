@@ -23,6 +23,7 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
+  getOrgList,
   onLoadContentList,
   publishContent,
   rejectContent,
@@ -36,6 +37,7 @@ import ContentPreview from "../ContentPreview";
 import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
+import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -108,16 +110,24 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree, parentFolderInfo } = useSelector<RootState, RootState["content"]>(
-    (state) => state.content
-  );
+  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg } = useSelector<
+    RootState,
+    RootState["content"]
+  >((state) => state.content);
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
-  // const historyArr: QueryCondition[] = [];
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
     EntityFolderContent[]
   >();
+  const {
+    organizationListActive,
+    closeOrganizationList,
+    openOrganizationList,
+    organizationListShowIndex,
+    shareFolder,
+    setShareFolder,
+  } = useOrganizationList<OrgInfoProps[]>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -253,7 +263,26 @@ export default function MyContentList() {
     dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one")));
     return false;
   };
-
+  const handleClickShareBtn: ContentCardListProps["onClickShareBtn"] = async (content) => {
+    setShareFolder(content);
+    await dispatch(getOrgList({ folder_ids: content.id, metaLoading: true }));
+    openOrganizationList();
+  };
+  const handleShareFolder: OrganizationListProps["onShareFolder"] = async (org_ids) => {
+    console.log(org_ids);
+    console.log(shareFolder);
+    // await dispatch(shareFolders({shareFolder: shareFolder, shareOrg_ids: org_ids}));
+    closeOrganizationList();
+  };
+  // const handleRadioChange: OrganizationListProps["handleChange"] = (value: string) => {
+  //   if(value === ShareScope.share_all) {
+  //     setRadioValue(ShareScope.share_all)
+  //     setNewSelectedOrg([ShareScope.share_all])
+  //   } else {
+  //     setRadioValue(ShareScope.share_to_org)
+  //     setNewSelectedOrg([])
+  //   }
+  // }
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -353,6 +382,7 @@ export default function MyContentList() {
                 parentFolderInfo={parentFolderInfo}
                 onApprove={handleApprove}
                 onReject={handleReject}
+                onClickShareBtn={handleClickShareBtn}
               />
             ) : JSON.stringify(parentFolderInfo) !== "{}" &&
               (condition.publish_status === PublishStatus.published ||
@@ -376,6 +406,14 @@ export default function MyContentList() {
         onMove={handleMove}
         onAddFolder={handleAddFolder}
         key={folderTreeShowIndex}
+      />
+      <OrganizationList
+        orgList={orgList}
+        onClose={closeOrganizationList}
+        open={organizationListActive}
+        onShareFolder={handleShareFolder}
+        selectedOrg={selectedOrg}
+        key={organizationListShowIndex}
       />
     </div>
   );
