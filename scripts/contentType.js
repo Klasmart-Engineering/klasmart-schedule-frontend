@@ -7,7 +7,7 @@ const chalk = require('chalk');
 
 const g = chalk.bold.green;
 const r = chalk.bold.red;
-const assetDir = path.resolve(__dirname, '../src/assets/h5p');
+const assetDir = path.resolve(__dirname, '../src/assets/h5p/libraries');
 const contentTypeFilePath = path.resolve(assetDir, 'content-types.auto.json');
 
 

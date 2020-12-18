@@ -13,6 +13,7 @@ import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit/index";
 import ContentPreview from "./pages/ContentPreview";
+import { H5pDemo } from "./pages/H5pDemo";
 import { H5pEditor } from "./pages/H5pEditor";
 import Live from "./pages/Live";
 import MyContentList from "./pages/MyContentList/index";
@@ -84,6 +85,9 @@ function App() {
                   </Route>
                   <Route path={H5pEditor.routeBasePath}>
                     <H5pEditor />
+                  </Route>
+                  <Route path={H5pDemo.routeBasePath}>
+                    <H5pDemo />
                   </Route>
                   <Route path="/">
                     <Redirect to={MyContentList.routeRedirectDefault} />

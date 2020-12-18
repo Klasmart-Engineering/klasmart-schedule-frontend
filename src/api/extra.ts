@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import api from ".";
+import requireContentType from '../../scripts/contentType.macro';
 import { LangRecordId } from "../locale/lang/type";
 import { EntityFolderItem } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -152,3 +153,7 @@ export const apiAddOrganizationToPageUrl = (id: string) => {
 export const apiLocaleInCookie = () => {
   return Cookies.get(LOCALE_KEY)?.slice(0, 2);
 };
+
+export const apiCreateContentTypeLibrary = (id: string) => {
+  return requireContentType(id);
+}
