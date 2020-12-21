@@ -23,7 +23,7 @@ import { useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList, SearchcmsListProps } from "../../components/SearchcmsList";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { comingsoonTip, resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -274,7 +274,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
-        <TipImages text="library_msg_coming_soon" type={TipImagesType.commingSoon} />
+        comingsoonTip
       ) : (
         <>
           <SearchcmsList searchName="searchOutcome" onSearch={onSearch} value={searchName} onCheck={onCheck} assumed={assumed} />
@@ -284,7 +284,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
               {pagination}
             </>
           ) : (
-            <TipImages text="library_msg_no_results_found" type={TipImagesType.noResults} />
+            resultsTip
           )}
           <OutComesInput value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
         </>

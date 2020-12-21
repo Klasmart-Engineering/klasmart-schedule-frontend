@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { User } from "../../api/api-ko-schema.auto";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
 import { ClassItem, QueryCondition } from "./types";
@@ -91,7 +92,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   const css = useStyles();
   const history = useHistory();
   const [lessonPlanName, setLessonPlanName] = React.useState("");
-
+  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
   React.useEffect(() => {
     if (lessonPlanList && lessonPlanList.length) {
       const res = lessonPlanList.filter((item: EntityScheduleShortInfo) => item.id === value.lesson_plan_id)[0];
@@ -118,42 +119,44 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Divider className={css.divider} />
-      <Box className={css.container_intro}>
-        <Box className={css.leftName}>
-          {value.teacher_id && (
-            <span className={css.teacherAndClass}>
-              {getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "teacher", value.teacher_id)}
-            </span>
-          )}
-          {value.class_id && (
-            <span className={css.teacherAndClass}>
-              {" - " + getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "class", value.class_id)}
-            </span>
-          )}
-          {value.lesson_plan_id && (
-            <span style={{ cursor: value.student_id ? "pointer" : "default" }} className={css.lessonPlan} onClick={handleClick}>
-              {" - " + lessonPlanName}
-            </span>
-          )}
-          {value.student_id && <span className={css.teacherAndClass}>{"- " + student_name}</span>}
+      {(perm.view_my_reports_614 || perm.view_reports_610) && (
+        <Box className={css.container_intro}>
+          <Box className={css.leftName}>
+            {value.teacher_id && (
+              <span className={css.teacherAndClass}>
+                {getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "teacher", value.teacher_id)}
+              </span>
+            )}
+            {value.class_id && (
+              <span className={css.teacherAndClass}>
+                {" - " + getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "class", value.class_id)}
+              </span>
+            )}
+            {value.lesson_plan_id && (
+              <span style={{ cursor: value.student_id ? "pointer" : "default" }} className={css.lessonPlan} onClick={handleClick}>
+                {" - " + lessonPlanName}
+              </span>
+            )}
+            {value.student_id && <span className={css.teacherAndClass}>{"- " + student_name}</span>}
+          </Box>
+          <Box className={css.rightContainer}>
+            <Box className={clsx(css.rightContainer, css.marginItem)}>
+              <div className={clsx(css.colorPart, css.blue)}></div>
+              <span>
+                {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
+              </span>
+            </Box>
+            <Box className={clsx(css.rightContainer, css.marginItem)}>
+              <div className={clsx(css.colorPart, css.pink)}></div>
+              <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
+            </Box>
+            <Box className={clsx(css.rightContainer, css.marginItem)}>
+              <div className={clsx(css.colorPart, css.gray)}></div>
+              <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
+            </Box>
+          </Box>
         </Box>
-        <Box className={css.rightContainer}>
-          <Box className={clsx(css.rightContainer, css.marginItem)}>
-            <div className={clsx(css.colorPart, css.blue)}></div>
-            <span>
-              {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
-            </span>
-          </Box>
-          <Box className={clsx(css.rightContainer, css.marginItem)}>
-            <div className={clsx(css.colorPart, css.pink)}></div>
-            <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
-          </Box>
-          <Box className={clsx(css.rightContainer, css.marginItem)}>
-            <div className={clsx(css.colorPart, css.gray)}></div>
-            <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
-          </Box>
-        </Box>
-      </Box>
+      )}
     </LayoutBox>
   );
 }

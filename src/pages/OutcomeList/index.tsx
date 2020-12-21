@@ -1,12 +1,10 @@
-import { Typography } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { OrderBy, OutcomeOrderBy } from "../../api/type";
-import emptyIconUrl from "../../assets/icons/empty.svg";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   approve,
@@ -167,30 +165,34 @@ export function OutcomeList() {
         onBulkApprove={handleBulkApprove}
         onBulkReject={handleBulkReject}
       />
-      {assess_msg_no_permission === false ? (
-        <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
-      ) : outcomeList && outcomeList.length > 0 ? (
-        <OutcomeTable
-          formMethods={formMethods}
-          list={outcomeList}
-          total={total}
-          userId={user_id}
-          queryCondition={condition}
-          onChangePage={handleChangePage}
-          onClickOutcome={handleClickOutcome}
-          onPublish={handlePublish}
-          onDelete={handleDelete}
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
-      ) : (
-        <div style={{ margin: "0 auto", textAlign: "center" }}>
-          <img src={emptyIconUrl} alt="" />
-          <Typography variant="body1" color="textSecondary">
-            Empty...
-          </Typography>
-        </div>
-      )}
+      {
+        assess_msg_no_permission === false ? (
+          permissionTip
+        ) : outcomeList && outcomeList.length > 0 ? (
+          <OutcomeTable
+            formMethods={formMethods}
+            list={outcomeList}
+            total={total}
+            userId={user_id}
+            queryCondition={condition}
+            onChangePage={handleChangePage}
+            onClickOutcome={handleClickOutcome}
+            onPublish={handlePublish}
+            onDelete={handleDelete}
+            onApprove={handleApprove}
+            onReject={handleReject}
+          />
+        ) : (
+          emptyTip
+        )
+        //   <div style={{ margin: "0 auto", textAlign: "center" }}>
+        //     <img src={emptyIconUrl} alt="" />
+        //     <Typography variant="body1" color="textSecondary">
+        //       Empty...
+        //     </Typography>
+        //   </div>
+        // )
+      }
     </div>
   );
 }

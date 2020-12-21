@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { reportCategoriesOnload } from "../../reducers/report";
@@ -26,8 +26,6 @@ export function ReportCategories() {
     history.replace({ search: toQueryString({ [tab]: value }) });
   };
   const chart = <CategoriesChart data={categories} />;
-  const permissionTip = <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />;
-  const emptyTip = <TipImages type={TipImagesType.empty} text="library_label_empty" />;
   useEffect(() => {
     dispatch(reportCategoriesOnload({ teacher_id, metaLoading: true }));
   }, [teacher_id, dispatch]);

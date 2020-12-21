@@ -7,7 +7,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { comingsoonTip, resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -207,11 +207,11 @@ export default function MediaAssets(props: MediaAssetsProps) {
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
-        <TipImages text="library_msg_coming_soon" type={TipImagesType.commingSoon} />
+        comingsoonTip
       ) : (
         <>
           <SearchcmsList searchName="searchMedia" onSearch={onSearch} value={value} />
-          {list.length > 0 ? table : <TipImages text="library_msg_no_results_found" type={TipImagesType.noResults} />}
+          {list.length > 0 ? table : resultsTip}
         </>
       )}
     </Box>

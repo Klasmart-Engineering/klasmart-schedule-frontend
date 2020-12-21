@@ -8,7 +8,7 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { ContentType, H5pSub, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -446,7 +446,7 @@ function ContentEditForm() {
               {rightsideArea}
             </LayoutPair>
           ) : (
-            <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+            permissionTip
           )
         }
       />

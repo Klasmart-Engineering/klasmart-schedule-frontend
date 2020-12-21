@@ -136,7 +136,7 @@ export interface FilterAchievementReportProps {
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const { onChange, value, reportMockOptions } = props;
   const css = useStyles();
-  const viewReport = usePermission(PermissionType.view_reports_610);
+  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
   const getOptions = (list: MockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -191,135 +191,139 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <Hidden smDown>
-        <Box position="relative" className={css.box}>
-          <Box>
-            {viewReport && (
+      {(perm.view_reports_610 || perm.view_my_reports_614) && (
+        <Hidden smDown>
+          <Box position="relative" className={css.box}>
+            <Box>
+              {perm.view_reports_610 && (
+                <TextField
+                  size="small"
+                  className={css.selectButton}
+                  onChange={(e) => onChange(e.target.value, "teacher_id")}
+                  label={d("Teacher").t("report_label_teacher")}
+                  value={value.teacher_id}
+                  select
+                  disabled={teachers.length <= 0}
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                >
+                  {getTeacherList(reportMockOptions.teacherList)}
+                </TextField>
+              )}
               <TextField
                 size="small"
                 className={css.selectButton}
-                onChange={(e) => onChange(e.target.value, "teacher_id")}
-                label={d("Teacher").t("report_label_teacher")}
-                value={value.teacher_id}
+                onChange={(e) => onChange(e.target.value, "class_id")}
+                label={d("Class").t("report_label_class")}
+                value={value.class_id}
                 select
-                disabled={teachers.length <= 0}
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                disabled={classs.length <= 0}
+              >
+                {getClassList(reportMockOptions.classList as ClassList)}
+              </TextField>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => onChange(e.target.value, "lesson_plan_id")}
+                label={d("Lesson Plan").t("report_label_lesson_plan")}
+                value={value.lesson_plan_id}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                disabled={planIsDisabled}
+              >
+                {getOptions(reportMockOptions.lessonPlanList)}
+              </TextField>
+            </Box>
+            <Box className={css.boxRight}>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => onChange(e.target.value, "status")}
+                value={value.status}
+                select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
-                {getTeacherList(reportMockOptions.teacherList)}
+                {getOptions(statusList())}
               </TextField>
-            )}
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => onChange(e.target.value, "class_id")}
-              label={d("Class").t("report_label_class")}
-              value={value.class_id}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              disabled={classs.length <= 0}
-            >
-              {getClassList(reportMockOptions.classList as ClassList)}
-            </TextField>
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => onChange(e.target.value, "lesson_plan_id")}
-              label={d("Lesson Plan").t("report_label_lesson_plan")}
-              value={value.lesson_plan_id}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              disabled={planIsDisabled}
-            >
-              {getOptions(reportMockOptions.lessonPlanList)}
-            </TextField>
-          </Box>
-          <Box className={css.boxRight}>
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => onChange(e.target.value, "status")}
-              value={value.status}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-            >
-              {getOptions(statusList())}
-            </TextField>
 
-            <TextField
-              size="small"
-              className={clsx(css.selectButton, css.lastButton)}
-              onChange={(e) => onChange(e.target.value, "sort_by")}
-              label={d("Sort By").t("report_label_sort_by")}
-              value={value.sort_by}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-            >
-              {getOptions(sortOptions())}
-            </TextField>
+              <TextField
+                size="small"
+                className={clsx(css.selectButton, css.lastButton)}
+                onChange={(e) => onChange(e.target.value, "sort_by")}
+                label={d("Sort By").t("report_label_sort_by")}
+                value={value.sort_by}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {getOptions(sortOptions())}
+              </TextField>
+            </Box>
           </Box>
-        </Box>
-      </Hidden>
-      <Hidden mdUp>
-        <Box display="flex">
-          <Box flex={3}>
-            {viewReport && (
-              <PersonOutlinedIcon
+        </Hidden>
+      )}
+      {(perm.view_reports_610 || perm.view_my_reports_614) && (
+        <Hidden mdUp>
+          <Box display="flex">
+            <Box flex={3}>
+              {perm.view_reports_610 && (
+                <PersonOutlinedIcon
+                  fontSize="large"
+                  className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
+                  onClick={(e) => showItem(e, "teacher_id")}
+                />
+              )}
+              <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
+                <GetTeacherItem
+                  list={reportMockOptions.teacherList}
+                  value={value}
+                  onChangeMenu={handleChangeMenu}
+                  tab="teacher_id"
+                ></GetTeacherItem>
+              </Menu>
+
+              <PeopleOutlineOutlinedIcon
                 fontSize="large"
                 className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
-                onClick={(e) => showItem(e, "teacher_id")}
+                onClick={(e) => showItem(e, "class_id")}
               />
-            )}
-            <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
-              <GetTeacherItem
-                list={reportMockOptions.teacherList}
-                value={value}
-                onChangeMenu={handleChangeMenu}
-                tab="teacher_id"
-              ></GetTeacherItem>
-            </Menu>
+              <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
+                <GetClassItem
+                  list={reportMockOptions.classList.user?.classesTeaching as ClassItem[]}
+                  value={value}
+                  onChangeMenu={handleChangeMenu}
+                  tab="class_id"
+                ></GetClassItem>
+              </Menu>
 
-            <PeopleOutlineOutlinedIcon
-              fontSize="large"
-              className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
-              onClick={(e) => showItem(e, "class_id")}
-            />
-            <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
-              <GetClassItem
-                list={reportMockOptions.classList.user?.classesTeaching as ClassItem[]}
-                value={value}
-                onChangeMenu={handleChangeMenu}
-                tab="class_id"
-              ></GetClassItem>
-            </Menu>
+              <ClassOutlined
+                fontSize="large"
+                className={clsx(css.selectIcon, planIsDisabled && css.selectIconDisabled)}
+                onClick={(e) => showItem(e, "lesson_plan_id")}
+              />
+              <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
+                <GetMenuItem
+                  list={reportMockOptions.lessonPlanList}
+                  value={value}
+                  onChangeMenu={handleChangeMenu}
+                  tab="lesson_plan_id"
+                ></GetMenuItem>
+              </Menu>
+            </Box>
 
-            <ClassOutlined
-              fontSize="large"
-              className={clsx(css.selectIcon, planIsDisabled && css.selectIconDisabled)}
-              onClick={(e) => showItem(e, "lesson_plan_id")}
-            />
-            <Menu anchorEl={anchorElPlan} keepMounted open={Boolean(anchorElPlan)} onClose={(e) => handleClose(e, "lesson_plan_id")}>
-              <GetMenuItem
-                list={reportMockOptions.lessonPlanList}
-                value={value}
-                onChangeMenu={handleChangeMenu}
-                tab="lesson_plan_id"
-              ></GetMenuItem>
-            </Menu>
+            <Box flex={2} display="flex" justifyContent="flex-end">
+              <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
+              <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
+                <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
+              </Menu>
+
+              <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
+              <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
+                <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
+              </Menu>
+            </Box>
           </Box>
-
-          <Box flex={2} display="flex" justifyContent="flex-end">
-            <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
-            <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
-              <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
-            </Menu>
-
-            <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
-            <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
-              <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
-            </Menu>
-          </Box>
-        </Box>
-      </Hidden>
+        </Hidden>
+      )}
     </LayoutBox>
   );
 }

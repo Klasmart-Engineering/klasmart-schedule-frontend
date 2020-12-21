@@ -2,7 +2,8 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { PermissionType, usePermission } from "../../components/Permission";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
@@ -41,6 +42,7 @@ export function ReportAchievementList() {
   // const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   const reportList = totalData.reportList ?? [];
+  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
   const student_name = totalData.student_name;
   const reportMockOptions = totalData.reportMockOptions;
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
@@ -133,13 +135,15 @@ export function ReportAchievementList() {
         reportMockOptions={reportMockOptions}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
-      {true &&
-        (reportList && reportList.length > 0 && condition.lesson_plan_id ? (
+      {perm.view_reports_610 || perm.view_my_reports_614 ? (
+        reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
         ) : (
-          <TipImages type={TipImagesType.empty} text="library_label_empty" />
-        ))}
-      {/* {<AchievementListChart data={mockAchievementList} filter={condition.status} onClickStudent={handleChangeStudent} />} */}
+          emptyTip
+        )
+      ) : (
+        permissionTip
+      )}
     </>
   );
 }

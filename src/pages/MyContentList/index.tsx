@@ -7,7 +7,7 @@ import { EntityFolderContent } from "../../api/api.auto";
 import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
@@ -361,10 +361,10 @@ export default function MyContentList() {
                 <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} />
               </LayoutBox>
             ) : (
-              <TipImages type={TipImagesType.empty} text="library_label_empty" />
+              emptyTip
             )
           ) : (
-            <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+            permissionTip
           )
         }
       />

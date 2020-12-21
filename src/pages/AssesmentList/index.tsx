@@ -1,10 +1,9 @@
-import { Typography } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus } from "../../api/type";
-import emptyIconUrl from "../../assets/icons/empty.svg";
+import { emptyTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";
@@ -68,22 +67,27 @@ export function AssessmentList() {
       <SecondSearchHeaderMb value={condition} onChange={handleChange} />
       <ThirdSearchHeader value={condition} onChange={handleChange} />
       <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
-      {assessmentList && assessmentList.length > 0 ? (
-        <AssessmentTable
-          list={assessmentList}
-          total={total}
-          queryCondition={condition}
-          onChangePage={handleChangePage}
-          onClickAssessment={handleClickAssessment}
-        />
-      ) : (
-        <div style={{ margin: "0 auto", textAlign: "center" }}>
-          <img src={emptyIconUrl} alt="" />
-          <Typography variant="body1" color="textSecondary">
-            Empty...
-          </Typography>
-        </div>
-      )}
+      {
+        assessmentList && assessmentList.length > 0 ? (
+          <AssessmentTable
+            list={assessmentList}
+            total={total}
+            queryCondition={condition}
+            onChangePage={handleChangePage}
+            onClickAssessment={handleClickAssessment}
+          />
+        ) : (
+          emptyTip
+        )
+        // (
+        //   <div style={{ margin: "0 auto", textAlign: "center" }}>
+        //     <img src={emptyIconUrl} alt="" />
+        //     <Typography variant="body1" color="textSecondary">
+        //       Empty...
+        //     </Typography>
+        //   </div>
+        // )
+      }
     </div>
   );
 }
