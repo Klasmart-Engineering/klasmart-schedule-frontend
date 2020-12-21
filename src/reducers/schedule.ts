@@ -270,7 +270,7 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
           user_id: meInfo.me?.user_id as string,
         },
       });
-      classResult.data.organization.classes = teacherByClass.data.user.classesTeaching;
+      classResult = { data: { organization: { classes: teacherByClass.data.user.classesTeaching } } };
     } else {
       classResult = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
         query: ClassesByOrganizationDocument,
