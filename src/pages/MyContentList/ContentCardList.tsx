@@ -30,7 +30,7 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityFolderContent, EntityFolderItemInfo } from "../../api/api.auto";
+import { EntityFolderContent, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
 import { Author, ContentType, PublishStatus } from "../../api/type";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
@@ -246,11 +246,16 @@ interface ContentProps extends ContentActionProps {
   content: EntityFolderContent;
   queryCondition: QueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
+  orgProperty: EntityOrganizationProperty;
   onClickContent: ContentCardListProps["onClickContent"];
 }
 enum DeleteText {
   delete = "delete",
   remove = "remove",
+}
+enum OrgType {
+  normal = "normal",
+  headquarters = "headquarters",
 }
 function ContentCard(props: ContentProps) {
   const css = useStyles();
@@ -259,6 +264,7 @@ function ContentCard(props: ContentProps) {
     content,
     queryCondition,
     selectedContentGroupContext,
+    orgProperty,
     onDelete,
     onPublish,
     onClickContent,
@@ -342,16 +348,20 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {!queryCondition.program && content?.publish_status === PublishStatus.published && content?.content_type === ContentType.folder && (
-            <LButton
-              as={IconButton}
-              replace
-              className={clsx(css.shareColor, css.MuiIconButtonRoot)}
-              onClick={() => onClickShareBtn(content)}
-            >
-              <ShareIcon />
-            </LButton>
-          )}
+          {!queryCondition.program &&
+            content?.publish_status === PublishStatus.published &&
+            content?.content_type === ContentType.folder &&
+            orgProperty.type === OrgType.headquarters &&
+            (!queryCondition.path || (queryCondition.path && queryCondition.path === "/")) && (
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.shareColor, css.MuiIconButtonRoot)}
+                onClick={() => onClickShareBtn(content)}
+              >
+                <ShareIcon />
+              </LButton>
+            )}
           {!queryCondition.program && (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
             <LButton
               as={IconButton}
@@ -493,6 +503,7 @@ export interface ContentCardListProps extends ContentActionProps {
   onChangePageSize: (page_size: number) => void;
   onGoBack: () => any;
   parentFolderInfo: EntityFolderItemInfo;
+  orgProperty: EntityOrganizationProperty;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
@@ -515,6 +526,7 @@ export function ContentCardList(props: ContentCardListProps) {
     onApprove,
     onReject,
     onClickShareBtn,
+    orgProperty,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -546,6 +558,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           onPublish,
                           onDelete,
                           queryCondition,
+                          orgProperty,
                           selectedContentGroupContext,
                           onClickContent,
                           onClickMoveBtn,

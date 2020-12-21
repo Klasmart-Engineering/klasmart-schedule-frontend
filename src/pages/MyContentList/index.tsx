@@ -11,6 +11,7 @@ import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
+import { orgs2id } from "../../models/ModelOrgProperty";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
@@ -30,6 +31,7 @@ import {
   renameFolder,
   searchOrgFolderItems,
   setUserSetting,
+  shareFolders,
 } from "../../reducers/content";
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
@@ -110,7 +112,7 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg } = useSelector<
+  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty } = useSelector<
     RootState,
     RootState["content"]
   >((state) => state.content);
@@ -120,6 +122,7 @@ export default function MyContentList() {
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
     EntityFolderContent[]
   >();
+  const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
   const {
     organizationListActive,
     closeOrganizationList,
@@ -269,20 +272,9 @@ export default function MyContentList() {
     openOrganizationList();
   };
   const handleShareFolder: OrganizationListProps["onShareFolder"] = async (org_ids) => {
-    console.log(org_ids);
-    console.log(shareFolder);
-    // await dispatch(shareFolders({shareFolder: shareFolder, shareOrg_ids: org_ids}));
+    await refreshWithDispatch(dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true })).then(unwrapResult));
     closeOrganizationList();
   };
-  // const handleRadioChange: OrganizationListProps["handleChange"] = (value: string) => {
-  //   if(value === ShareScope.share_all) {
-  //     setRadioValue(ShareScope.share_all)
-  //     setNewSelectedOrg([ShareScope.share_all])
-  //   } else {
-  //     setRadioValue(ShareScope.share_to_org)
-  //     setNewSelectedOrg([])
-  //   }
-  // }
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -370,6 +362,7 @@ export default function MyContentList() {
                 total={total}
                 amountPerPage={page_size}
                 queryCondition={condition}
+                orgProperty={orgProperty}
                 onChangePage={handleChangePage}
                 onChangePageSize={handleChangePageSize}
                 onClickContent={handleClickConent}
@@ -409,10 +402,10 @@ export default function MyContentList() {
       />
       <OrganizationList
         orgList={orgList}
+        selectedOrg={selctedOrgIds}
         onClose={closeOrganizationList}
         open={organizationListActive}
         onShareFolder={handleShareFolder}
-        selectedOrg={selectedOrg}
         key={organizationListShowIndex}
       />
     </div>

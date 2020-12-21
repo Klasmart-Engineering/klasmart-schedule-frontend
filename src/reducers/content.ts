@@ -10,6 +10,7 @@ import {
   EntityCreateContentRequest,
   EntityFolderContent,
   EntityFolderItemInfo,
+  EntityOrganizationInfo,
   EntityOrganizationProperty,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
@@ -42,7 +43,7 @@ interface IContentState {
   parentFolderInfo: EntityFolderItemInfo;
   orgProperty: EntityOrganizationProperty;
   orgList: OrgInfoProps[];
-  selectedOrg: string[];
+  selectedOrg: EntityOrganizationInfo[];
 }
 
 interface RootState {
@@ -171,7 +172,7 @@ const initialState: IContentState = {
   parentFolderInfo: {},
   orgProperty: {},
   orgList: [],
-  selectedOrg: ["2136d74b-27dc-42d7-a77a-c48093d545e0"], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
+  selectedOrg: [], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -424,6 +425,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const { name, publish_status, author, content_type, page, program, order_by, path } = query;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
+    await dispatch(getOrgProperty());
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
         name,
@@ -785,34 +787,32 @@ export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], 
     const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
       query: OrganizationsDocument,
     });
-    // await dispatch(getFoldersSharedRecords(folder_ids))
+    await dispatch(getFoldersSharedRecords(folder_ids));
     return data.organizations;
   }
 );
 
-// type IQueryShareFoldersParams = {
-//   shareFolder: EntityFolderContent | undefined,
-//   shareOrg_ids: string[],
-// }
-// // Parameters<typeof api.folders.shareFolders>[0];
-// type IQueryShareFolderResult = AsyncReturnType<typeof api.folders.shareFolders>;
-// export const shareFolders = createAsyncThunk<IQueryShareFolderResult, IQueryShareFoldersParams>(
-//   "content/shareFolders",
-//   async ({shareFolder, shareOrg_ids}) => {
-//     // return api.folders.shareFolders({folder_id: shareFolder?.id, shareOrg_ids})
-//     return api.folders.shareFolders();
-//   }
-// )
-// type IQueryGetFoldersSharedRecordsParams = Parameters<typeof api.folders.getFoldersSharedRecords>[0];
-// type IQueryGetFoldersSharedRecordsResult = AsyncReturnType<typeof api.folders.getFoldersSharedRecords>;
-// export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRecordsResult, IQueryGetFoldersSharedRecordsParams>(
-//   "content/getFoldersSharedRecords",
-//   async (folder_ids) => {
-//     const res =  await api.folders.getFoldersSharedRecords(folder_ids)
-//     console.log(res)
-//     return res
-//   }
-// )
+type IQueryShareFoldersParams = {
+  shareFolder: EntityFolderContent | undefined;
+  org_ids: Parameters<typeof api.folders.shareFolders>[0]["org_ids"];
+} & LoadingMetaPayload;
+type IQueryShareFolderResult = AsyncReturnType<typeof api.folders.shareFolders>;
+export const shareFolders = createAsyncThunk<IQueryShareFolderResult, IQueryShareFoldersParams>(
+  "content/shareFolders",
+  async ({ shareFolder, org_ids }) => {
+    const res = await api.folders.shareFolders({ folder_ids: [shareFolder?.id as string], org_ids });
+    return res;
+  }
+);
+type IQueryGetFoldersSharedRecordsParams = Parameters<typeof api.folders.getFoldersSharedRecords>[0];
+type IQueryGetFoldersSharedRecordsResult = AsyncReturnType<typeof api.folders.getFoldersSharedRecords>;
+export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRecordsResult, IQueryGetFoldersSharedRecordsParams>(
+  "content/getFoldersSharedRecords",
+  async (folder_ids) => {
+    const res = await api.folders.getFoldersSharedRecords(folder_ids);
+    return res;
+  }
+);
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -1074,6 +1074,9 @@ const { actions, reducer } = createSlice({
     },
     [getOrgList.fulfilled.type]: (state, { payload }: any) => {
       state.orgList = payload;
+    },
+    [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: any) => {
+      state.selectedOrg = payload.data[0].orgs || [];
     },
   },
 });

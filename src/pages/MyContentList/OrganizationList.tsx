@@ -10,7 +10,11 @@ import {
   makeStyles,
   Radio,
   RadioGroup,
+  Theme,
+  Tooltip,
+  withStyles,
 } from "@material-ui/core";
+import { InfoOutlined } from "@material-ui/icons";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { EntityFolderContent } from "../../api/api.auto";
@@ -23,19 +27,28 @@ export interface OrgInfoProps {
   organization_name: string;
 }
 
+const LightTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    boxShadow: theme.shadows[1],
+    fontSize: 12,
+  },
+}))(Tooltip);
+
 const useStyles = makeStyles(() =>
   createStyles({
     okBtn: {
       marginLeft: "40px !important",
     },
-    // dialogActions: {
-    //   width: "100%",
-    //   padding: "16px 22px",
-    //   display: "flex",
-    // },
     dialogContent: {
       maxHeight: 280,
       // inWidth: 300
+    },
+    tooltipIcon: {
+      color: "#666",
+      verticalAlign: "middle",
+      marginLeft: "5px",
     },
   })
 );
@@ -59,18 +72,43 @@ export function OrganizationList(props: OrganizationListProps) {
   const values = watch()[SELECTED_ORG];
   const allValue = useMemo(() => orgList.map((org) => org.organization_id), [orgList]);
   const [radioValue, setRadioValue] = useState(
-    selectedOrg[0] ? (selectedOrg[0] === ShareScope.share_all ? ShareScope.share_all : ShareScope.share_to_org) : ""
+    selectedOrg && selectedOrg.length > 0 ? (selectedOrg[0] === ShareScope.share_all ? ShareScope.share_all : ShareScope.share_to_org) : ""
   );
+  const [newSelectedOrgIds, setNewSelectedOrgIds] = useState<string[]>(["default"]);
+  useMemo(() => {
+    const radioNewValue =
+      selectedOrg && selectedOrg.length > 0
+        ? selectedOrg[0] === ShareScope.share_all
+          ? ShareScope.share_all
+          : ShareScope.share_to_org
+        : "";
+    setRadioValue(radioNewValue);
+  }, [selectedOrg]);
+  let selectedOrgIds = useMemo(() => {
+    const ids = radioValue ? (radioValue === ShareScope.share_all ? [ShareScope.share_all] : values || selectedOrg) : [];
+    return ids;
+  }, [radioValue, selectedOrg, values]);
   const handleChange = (value: string) => {
     setRadioValue(value);
+    setNewSelectedOrgIds([]);
   };
-  const selectedOrgIds = radioValue ? (radioValue === ShareScope.share_all ? [ShareScope.share_all] : values || selectedOrg) : [];
   return (
     <Dialog open={open}>
       <DialogTitle id="confirmation-dialog-title">{reportMiss("Distribute with", "library_label_distribute_with")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
-          <FormControlLabel value={ShareScope.share_all} control={<Radio />} label={reportMiss("Preset", "library_label_share_preset")} />
+          <FormControlLabel
+            value={ShareScope.share_all}
+            control={<Radio />}
+            label={
+              <>
+                <span>{reportMiss("Preset", "library_label_share_preset")}</span>{" "}
+                <LightTooltip placement="right" title={"test tetwewtewewrewrewrewrwe"}>
+                  <InfoOutlined className={css.tooltipIcon} />
+                </LightTooltip>
+              </>
+            }
+          />
           <FormControlLabel
             value={ShareScope.share_to_org}
             control={<Radio />}
@@ -81,7 +119,7 @@ export function OrganizationList(props: OrganizationListProps) {
           <Controller
             name={SELECTED_ORG}
             control={control}
-            defaultValue={selectedOrg}
+            defaultValue={newSelectedOrgIds.length ? selectedOrg : newSelectedOrgIds}
             rules={{ required: true }}
             error={"Please Select"}
             render={({ ref, ...props }) => (
@@ -145,7 +183,6 @@ export function useOrganizationList<T>() {
   const [active, setActive] = useState(false);
   const [organizationListShowIndex, setOrganizationListShowInex] = useState(100);
   const [shareFolder, setShareFolder] = useState<EntityFolderContent>();
-  console.log(organizationListShowIndex);
   return useMemo(
     () => ({
       organizationListShowIndex,
