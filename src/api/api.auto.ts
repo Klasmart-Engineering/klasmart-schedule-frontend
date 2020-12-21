@@ -251,6 +251,12 @@ export interface EntityAddAssessmentResult {
   id?: string;
 }
 
+export interface EntityAddAuthedContentRequest {
+  content_id?: string;
+  from_folder_id?: string;
+  org_id?: string;
+}
+
 export interface EntityAge {
   createAt?: number;
   createID?: string;
@@ -308,6 +314,88 @@ export interface EntityAssessmentSubject {
 export interface EntityAssessmentTeacher {
   id?: string;
   name?: string;
+}
+
+export interface EntityAuthedContentRecordInfo {
+  age?: string[];
+  age_name?: string[];
+  author?: string;
+  author_name?: string;
+  content_id?: string;
+  content_type?: number;
+  content_type_name?: string;
+  create_at?: number;
+  created_at?: number;
+  creator?: string;
+
+  /** AuthorName string `json:"author_name"` */
+  creator_name?: string;
+  data?: string;
+  delete_at?: number;
+  description?: string;
+  developmental?: string[];
+  developmental_name?: string[];
+  draw_activity?: boolean;
+  duration?: number;
+  extra?: string;
+  from_folder_id?: string;
+  grade?: string[];
+  grade_name?: string[];
+  id?: string;
+  is_mine?: boolean;
+  keywords?: string[];
+  latest_id?: string;
+  lesson_type?: string;
+  lesson_type_name?: string;
+  locked_by?: string;
+  name?: string;
+  org?: string;
+  org_id?: string;
+  org_name?: string;
+  outcome_entities?: EntityOutcome[];
+  outcomes?: string[];
+  program?: string;
+  program_name?: string;
+  publish_scope?: string;
+  publish_scope_name?: string;
+  publish_status?: string;
+  record_id?: string;
+  reject_reason?: string[];
+  remark?: string;
+  self_study?: boolean;
+  skills?: string[];
+  skills_name?: string[];
+  source_id?: string;
+  source_type?: string;
+  subject?: string[];
+  subject_name?: string[];
+  suggest_time?: number;
+  teacher_manual?: string;
+  teacher_manual_name?: string;
+  thumbnail?: string;
+  updated_at?: number;
+  version?: number;
+}
+
+export interface EntityAuthedContentRecordInfoResponse {
+  list?: EntityAuthedContentRecordInfo[];
+  total?: number;
+}
+
+export interface EntityAuthedOrgList {
+  orgs?: EntityOrganizationInfo[];
+  total?: number;
+}
+
+export interface EntityBatchAddAuthedContentRequest {
+  content_ids?: string[];
+  folder_id?: string;
+  org_id?: string;
+}
+
+export interface EntityBatchDeleteAuthedContentByOrgsRequest {
+  content_ids?: string[];
+  org_ids?: string[];
 }
 
 export interface EntityClassType {
@@ -430,6 +518,11 @@ export interface EntityCreateFolderRequest {
   thumbnail?: string;
 }
 
+export interface EntityDeleteAuthedContentRequest {
+  content_id?: string;
+  org_id?: string;
+}
+
 export interface EntityDevelopmental {
   createAt?: number;
   createID?: string;
@@ -508,6 +601,15 @@ export interface EntityFolderItemInfo {
   update_at?: number;
 }
 
+export interface EntityFolderShareRecord {
+  folder_id?: string;
+  orgs?: EntityOrganizationInfo[];
+}
+
+export interface EntityFolderShareRecords {
+  data?: EntityFolderShareRecord[];
+}
+
 export interface EntityGrade {
   createAt?: number;
   createID?: string;
@@ -558,6 +660,11 @@ export interface EntityMoveFolderRequest {
   id?: string;
   owner_type?: number;
   partition?: string;
+}
+
+export interface EntityOrganizationInfo {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityOrganizationProperty {
@@ -781,6 +888,11 @@ export interface EntityScheduleUpdateView {
   time_zone_offset?: number;
   title: string;
   version?: number;
+}
+
+export interface EntityShareFoldersRequest {
+  folder_ids?: string[];
+  org_ids?: string[];
 }
 
 export interface EntitySkill {
@@ -1246,6 +1358,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
+     * @name copyContent
+     * @summary copyContent
+     * @request POST:/contents/copy
+     * @description copy lesson plan, lesson material
+     */
+    copyContent: (content: EntityCreateContentRequest, params?: RequestParams) =>
+      this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/copy`,
+        "POST",
+        params,
+        content
+      ),
+
+    /**
+     * @tags content
      * @name getContentById
      * @summary getContent
      * @request GET:/contents/{content_id}
@@ -1370,6 +1497,101 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getContentsStatistics: (content_id: string, params?: RequestParams) =>
       this.request<EntityContentStatisticsInfo, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/statistics`,
+        "GET",
+        params
+      ),
+  };
+  contentsAuth = {
+    /**
+     * @tags content
+     * @name addAuthedContent
+     * @summary addAuthedContent
+     * @request POST:/contents_auth
+     * @description add authed content to org
+     */
+    addAuthedContent: (content: EntityAddAuthedContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth`, "POST", params, content),
+
+    /**
+     * @tags content
+     * @name deleteAuthedContent
+     * @summary deleteAuthedContent
+     * @request DELETE:/contents_auth
+     * @description delete authed content to org
+     */
+    deleteAuthedContent: (content: EntityDeleteAuthedContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth`, "DELETE", params, content),
+
+    /**
+     * @tags content
+     * @name batchAddAuthedContent
+     * @summary batchAddAuthedContent
+     * @request POST:/contents_auth/batch
+     * @description batch add authed content to org
+     */
+    batchAddAuthedContent: (content: EntityBatchAddAuthedContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth/batch`, "POST", params, content),
+
+    /**
+     * @tags content
+     * @name batchDeleteAuthedContent
+     * @summary batchDeleteAuthedContent
+     * @request DELETE:/contents_auth/batch
+     * @description batch delete authed content to org
+     */
+    batchDeleteAuthedContent: (content: EntityBatchDeleteAuthedContentByOrgsRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth/batch`, "DELETE", params, content),
+
+    /**
+     * @tags content
+     * @name getContentAuthedOrg
+     * @summary getContentAuthedOrg
+     * @request GET:/contents_auth/content
+     * @description get content authed org list
+     */
+    getContentAuthedOrg: (query?: { content_id?: string }, params?: RequestParams) =>
+      this.request<EntityAuthedOrgList, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_auth/content${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags content
+     * @name getOrgAuthedContent
+     * @summary getOrgAuthedContent
+     * @request GET:/contents_auth/org
+     * @description get org authed content list
+     */
+    getOrgAuthedContent: (query?: { org_id?: string }, params?: RequestParams) =>
+      this.request<EntityAuthedContentRecordInfoResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_auth/org${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  contentsAuthed = {
+    /**
+     * @tags content
+     * @name queryAuthContent
+     * @summary queryAuthContent
+     * @request GET:/contents_authed
+     * @description query authed content by condition
+     */
+    queryAuthContent: (
+      query?: {
+        name?: string;
+        content_type?: string;
+        program?: string;
+        source_type?: string;
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page_size?: number;
+        page?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_authed${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -1786,6 +2008,30 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     removeFolderItem: (item_id: string, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/${item_id}`, "DELETE", params),
+
+    /**
+     * @tags folder
+     * @name getFoldersSharedRecords
+     * @summary getFoldersSharedRecords
+     * @request GET:/folders/share
+     * @description get folders shared records
+     */
+    getFoldersSharedRecords: (query?: { folder_ids?: string }, params?: RequestParams) =>
+      this.request<EntityFolderShareRecords, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/share${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags folder
+     * @name shareFolders
+     * @summary shareFolders
+     * @request PUT:/folders/share
+     * @description share folders to org
+     */
+    shareFolders: (content: EntityShareFoldersRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/share`, "PUT", params, content),
   };
   grades = {
     /**
