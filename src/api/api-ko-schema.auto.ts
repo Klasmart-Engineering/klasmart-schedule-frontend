@@ -57,6 +57,7 @@ export type Mutation = {
   me?: Maybe<User>;
   user?: Maybe<User>;
   newUser?: Maybe<User>;
+  newOrganizationOwnership?: Maybe<OrganizationMembership>;
   organization?: Maybe<Organization>;
   role?: Maybe<Role>;
   roles?: Maybe<Array<Maybe<Role>>>;
@@ -78,6 +79,11 @@ export type MutationNewUserArgs = {
   family_name?: Maybe<Scalars["String"]>;
   email?: Maybe<Scalars["String"]>;
   avatar?: Maybe<Scalars["String"]>;
+};
+
+export type MutationNewOrganizationOwnershipArgs = {
+  user_id: Scalars["ID"];
+  organization_id: Scalars["ID"];
 };
 
 export type MutationOrganizationArgs = {
@@ -112,6 +118,7 @@ export type User = {
   avatar?: Maybe<Scalars["String"]>;
   /** 'my_organization' is the Organization that this user has created */
   my_organization?: Maybe<Organization>;
+  organization_ownerships?: Maybe<Array<Maybe<OrganizationOwnership>>>;
   memberships?: Maybe<Array<Maybe<OrganizationMembership>>>;
   membership?: Maybe<OrganizationMembership>;
   school_memberships?: Maybe<Array<Maybe<SchoolMembership>>>;
@@ -287,6 +294,7 @@ export type OrganizationMembership = {
   classes?: Maybe<Array<Maybe<Class>>>;
   schoolMemberships?: Maybe<Array<Maybe<SchoolMembership>>>;
   checkAllowed?: Maybe<Scalars["Boolean"]>;
+  classesTeaching?: Maybe<Array<Maybe<Class>>>;
   addRole?: Maybe<Role>;
   addRoles?: Maybe<Array<Maybe<Role>>>;
   removeRole?: Maybe<OrganizationMembership>;
@@ -315,6 +323,15 @@ export type OrganizationMembershipRemoveRoleArgs = {
 
 export type OrganizationMembershipLeaveArgs = {
   _?: Maybe<Scalars["Int"]>;
+};
+
+export type OrganizationOwnership = {
+  __typename?: "OrganizationOwnership";
+  user_id: Scalars["ID"];
+  organization_id: Scalars["ID"];
+  status?: Maybe<Scalars["String"]>;
+  organization?: Maybe<Organization>;
+  user?: Maybe<User>;
 };
 
 export type Role = {

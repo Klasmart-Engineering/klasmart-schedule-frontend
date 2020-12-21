@@ -12,12 +12,12 @@ export type RoleBasedUsersByOrgnizationQuery = { __typename?: "Query" } & {
       roles?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Role" } & Pick<Types.Role, "[object Object]"> & {
+            { __typename?: "Role" } & Pick<Types.Role, "role_name"> & {
                 memberships?: Types.Maybe<
                   Array<
                     Types.Maybe<
                       { __typename?: "OrganizationMembership" } & {
-                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>;
+                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
                       }
                     >
                   >
@@ -41,7 +41,7 @@ export type TeachersByOrgnizationQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "OrganizationMembership" } & {
-              user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>;
+              user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
             }
           >
         >
@@ -57,9 +57,7 @@ export type ClassesByTeacherQueryVariables = Types.Exact<{
 export type ClassesByTeacherQuery = { __typename?: "Query" } & {
   user?: Types.Maybe<
     { __typename?: "User" } & {
-      classesTeaching?: Types.Maybe<
-        Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]">>>
-      >;
+      classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
     }
   >;
 };
@@ -71,7 +69,7 @@ export type ClassesByOrganizationQueryVariables = Types.Exact<{
 export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]">>>>;
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
     }
   >;
 };
@@ -83,8 +81,8 @@ export type ParticipantsByClassQueryVariables = Types.Exact<{
 export type ParticipantsByClassQuery = { __typename?: "Query" } & {
   class?: Types.Maybe<
     { __typename?: "Class" } & {
-      teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>>;
-      students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>>;
+      teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+      students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
     }
   >;
 };
@@ -95,7 +93,7 @@ export type QeuryMeQueryVariables = Types.Exact<{
 
 export type QeuryMeQuery = { __typename?: "Query" } & {
   me?: Types.Maybe<
-    { __typename?: "User" } & Pick<Types.User, "[object Object]"> & {
+    { __typename?: "User" } & Pick<Types.User, "user_id"> & {
         membership?: Types.Maybe<
           { __typename?: "OrganizationMembership" } & {
             roles?: Types.Maybe<
@@ -103,7 +101,7 @@ export type QeuryMeQuery = { __typename?: "Query" } & {
                 Types.Maybe<
                   { __typename?: "Role" } & {
                     permissions?: Types.Maybe<
-                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "[object Object]">>>
+                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "permission_name">>>
                     >;
                   }
                 >
@@ -119,7 +117,7 @@ export type OrganizationsQueryVariables = Types.Exact<{ [key: string]: never }>;
 
 export type OrganizationsQuery = { __typename?: "Query" } & {
   organizations?: Types.Maybe<
-    Array<Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "[object Object]" | "[object Object]">>>
+    Array<Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "organization_id" | "organization_name">>>
   >;
 };
 
@@ -156,7 +154,7 @@ export const RoleBasedUsersByOrgnizationDocument = gql`
  * });
  */
 export function useRoleBasedUsersByOrgnizationQuery(
-  baseOptions?: Apollo.QueryHookOptions<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>
 ) {
   return Apollo.useQuery<RoleBasedUsersByOrgnizationQuery, RoleBasedUsersByOrgnizationQueryVariables>(
     RoleBasedUsersByOrgnizationDocument,
@@ -207,7 +205,7 @@ export const TeachersByOrgnizationDocument = gql`
  * });
  */
 export function useTeachersByOrgnizationQuery(
-  baseOptions?: Apollo.QueryHookOptions<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>
 ) {
   return Apollo.useQuery<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>(TeachersByOrgnizationDocument, baseOptions);
 }
@@ -246,7 +244,7 @@ export const ClassesByTeacherDocument = gql`
  *   },
  * });
  */
-export function useClassesByTeacherQuery(baseOptions?: Apollo.QueryHookOptions<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>) {
+export function useClassesByTeacherQuery(baseOptions: Apollo.QueryHookOptions<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>) {
   return Apollo.useQuery<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>(ClassesByTeacherDocument, baseOptions);
 }
 export function useClassesByTeacherLazyQuery(
@@ -285,7 +283,7 @@ export const ClassesByOrganizationDocument = gql`
  * });
  */
 export function useClassesByOrganizationQuery(
-  baseOptions?: Apollo.QueryHookOptions<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>
 ) {
   return Apollo.useQuery<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>(ClassesByOrganizationDocument, baseOptions);
 }
@@ -329,7 +327,7 @@ export const ParticipantsByClassDocument = gql`
  * });
  */
 export function useParticipantsByClassQuery(
-  baseOptions?: Apollo.QueryHookOptions<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>
+  baseOptions: Apollo.QueryHookOptions<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>
 ) {
   return Apollo.useQuery<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>(ParticipantsByClassDocument, baseOptions);
 }
@@ -372,7 +370,7 @@ export const QeuryMeDocument = gql`
  *   },
  * });
  */
-export function useQeuryMeQuery(baseOptions?: Apollo.QueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
+export function useQeuryMeQuery(baseOptions: Apollo.QueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
   return Apollo.useQuery<QeuryMeQuery, QeuryMeQueryVariables>(QeuryMeDocument, baseOptions);
 }
 export function useQeuryMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<QeuryMeQuery, QeuryMeQueryVariables>) {
