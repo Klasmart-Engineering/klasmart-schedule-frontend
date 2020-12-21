@@ -154,7 +154,7 @@ function ScheduleContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, dispatch]);
 
-  const getTeacherByClass = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+  const getTeacherByClass = usePermission(PermissionType.create_my_schedule_events_521);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
