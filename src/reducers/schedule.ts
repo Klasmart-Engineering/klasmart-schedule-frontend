@@ -388,9 +388,6 @@ const { actions, reducer } = createSlice({
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
       state.scheduleMockOptions = payload;
     },
-    [getScheduleMockOptions.rejected.type]: (state, { error }: any) => {
-      state.scheduleMockOptions.classList.organization = { classes: [] };
-    },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.participantMockOptions = payload;
     },
