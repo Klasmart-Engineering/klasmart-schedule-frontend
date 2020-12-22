@@ -12,6 +12,7 @@ import {
   EntityFolderItemInfo,
   EntityOrganizationInfo,
   EntityOrganizationProperty,
+  EntityProgram,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
@@ -44,6 +45,8 @@ interface IContentState {
   orgProperty: EntityOrganizationProperty;
   orgList: OrgInfoProps[];
   selectedOrg: EntityOrganizationInfo[];
+  programs: EntityProgram[];
+  myOrgId: string;
 }
 
 interface RootState {
@@ -173,6 +176,8 @@ const initialState: IContentState = {
   orgProperty: {},
   orgList: [],
   selectedOrg: [], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
+  programs: [],
+  myOrgId: "",
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -408,12 +413,18 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
     return { list, total };
   }
 );
+type IQueryGetProgramResult = AsyncReturnType<typeof api.programs.getProgram>;
+export const getProgram = createAsyncThunk<IQueryGetProgramResult>("content/getProgram", () => {
+  return api.programs.getProgram();
+});
 type IQueryOnLoadContentList = QueryCondition & LoadingMetaPayload;
 interface IQyertOnLoadContentListResult {
   folderRes?: AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
   pendingRes?: AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
   privateRes?: AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
   contentRes?: AsyncReturnType<typeof api.contents.searchContents>;
+  badaContent?: AsyncReturnType<typeof api.contentsAuthed.queryAuthContent>;
+  organization_id: string;
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
@@ -425,6 +436,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const { name, publish_status, author, content_type, page, program, order_by, path } = query;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
@@ -438,7 +450,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         path,
         page_size,
       });
-      return { folderRes };
+      return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
       const pendingRes = await api.contentsPending.searchPendingContents({
         name,
@@ -450,7 +462,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         page_size,
       });
-      return { pendingRes };
+      return { pendingRes, organization_id };
     } else if (
       publish_status === PublishStatus.draft ||
       publish_status === PublishStatus.rejected ||
@@ -466,7 +478,10 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         page_size,
       });
-      return { privateRes };
+      return { privateRes, organization_id };
+    } else if (program) {
+      const badaContent = await api.contentsAuthed.queryAuthContent({ program, page, order_by, page_size });
+      return { badaContent, organization_id };
     } else {
       const contentRes = await api.contents.searchContents({
         name,
@@ -478,7 +493,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         page_size,
       });
-      return { contentRes };
+      return { contentRes, organization_id };
     }
   }
 );
@@ -1052,6 +1067,7 @@ const { actions, reducer } = createSlice({
       state.parentFolderInfo = initialState.parentFolderInfo;
     },
     [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.myOrgId = payload.organization_id;
       if (payload.folderRes) {
         state.total = payload.folderRes.total;
         state.contentsList = payload.folderRes.list;
@@ -1068,6 +1084,10 @@ const { actions, reducer } = createSlice({
         state.total = payload.contentRes.total;
         state.contentsList = payload.contentRes.list;
       }
+      if (payload.badaContent) {
+        state.total = payload.badaContent.total;
+        state.contentsList = payload.badaContent.list;
+      }
     },
     [getOrgProperty.fulfilled.type]: (state, { payload }: any) => {
       state.orgProperty = payload;
@@ -1076,7 +1096,14 @@ const { actions, reducer } = createSlice({
       state.orgList = payload;
     },
     [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: any) => {
-      state.selectedOrg = payload.data[0].orgs || [];
+      if (payload.data) {
+        state.selectedOrg = payload.data[0].orgs || [];
+      } else {
+        state.selectedOrg = [];
+      }
+    },
+    [getProgram.fulfilled.type]: (state, { payload }: any) => {
+      state.programs = payload;
     },
   },
 });

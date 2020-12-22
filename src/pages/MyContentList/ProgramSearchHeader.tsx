@@ -83,7 +83,6 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
   const createHandleClick = (program: QueryCondition["program"]) => () =>
     onChange({
       program,
-      content_type: SearchContentsRequestContentType.materialandplan,
       order_by: OrderBy._updated_at,
       page: 1,
     });

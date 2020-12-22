@@ -11,7 +11,7 @@ import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
-import { orgs2id } from "../../models/ModelOrgProperty";
+import { excludeMyOrg, orgs2id } from "../../models/ModelOrgProperty";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
@@ -25,6 +25,7 @@ import {
   deleteContent,
   deleteFolder,
   getOrgList,
+  getProgram,
   onLoadContentList,
   publishContent,
   rejectContent,
@@ -112,7 +113,7 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty } = useSelector<
+  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
     RootState,
     RootState["content"]
   >((state) => state.content);
@@ -123,6 +124,7 @@ export default function MyContentList() {
     EntityFolderContent[]
   >();
   const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
+  const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
   const {
     organizationListActive,
     closeOrganizationList,
@@ -288,6 +290,7 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
+      await dispatch(getProgram());
       await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
     })();
@@ -401,7 +404,7 @@ export default function MyContentList() {
         key={folderTreeShowIndex}
       />
       <OrganizationList
-        orgList={orgList}
+        orgList={filterOrgList}
         selectedOrg={selctedOrgIds}
         onClose={closeOrganizationList}
         open={organizationListActive}
