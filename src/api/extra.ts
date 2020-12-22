@@ -155,5 +155,13 @@ export const apiLocaleInCookie = () => {
 };
 
 export const apiCreateContentTypeLibrary = (id: string) => {
-  return requireContentType(id);
+  return requireContentType('asset', id);
+}
+
+export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string) {
+  const schema = {} as T;
+  for (const [name, value] of Object.entries(requireContentType<T>('schema', id))) {
+    schema[name as keyof T] = (await value).default;
+  }
+  return schema;
 }

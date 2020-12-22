@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-import { RichTextInput } from "../../components/RichTextInput";
+import React from "react";
+import { H5pDetails } from "./H5pDetails";
+// import { RichTextInput } from "../../components/RichTextInput";
+
+
 
 export function H5pEditor() {
-  const [value, setValue] = useState('');
-
-  return (
-    <RichTextInput defaultValue={value} onChange={setValue}/>
-  )
+  return <H5pDetails />
 }
 
 H5pEditor.routeBasePath = "/h5pEditor";

@@ -10,9 +10,12 @@ const librariesDir = path.resolve(publicDir, 'libraries');
 const coreDir = path.resolve(publicDir, 'core');
 const cacheLibIds = {};
 const cacheLibAssets = {};
+const cacheLibSchemas = {};
+const resolvePackage = x => path.relative(path.resolve(publicDir, '..'), x);
 
 let libHashExpression;
 let coreAssetsExpression;
+let libSchemaExpression;
 
 const contentTypeExpression = template.expression(`
   (function(){
@@ -26,17 +29,31 @@ const contentTypeExpression = template.expression(`
   }())
 `);
 
+const schemaExpression = template.expression(`
+  (function(){
+    const libSchemas = %%libSchemas%%;
+    return libSchemas[%%libId%%];
+  }())
+`);
+
 const requireExpression = template.expression(`require(%%path%%)`);
+const importExpression = template.expression(`import(%%path%%)`);
 
 module.exports = createMacro(contentTypeMacro)
 
 function contentTypeMacro({references, state, babel}) {
   references.default.forEach(nodePath => {
     if (nodePath.parent.type !== "CallExpression") return;
-    if (nodePath.parent.arguments.length !== 1) throw new MacroError(`${name} should be called with one parameters!`);
-    const [libIdExpression] = nodePath.parent.arguments;
-    const targetExpression = contentTypeExpression({ libHash: libHashExpression, libId: libIdExpression, coreAssets: coreAssetsExpression });
-    nodePath.parentPath.replaceWith(targetExpression);
+    if (nodePath.parent.arguments.length !== 2) throw new MacroError(`${name} should be called with two parameters!`);
+    const [kindExpression, libIdExpression] = nodePath.parent.arguments;
+    if (kindExpression.value === 'asset') {
+      const targetExpression = contentTypeExpression({ libHash: libHashExpression, libId: libIdExpression, coreAssets: coreAssetsExpression });
+      nodePath.parentPath.replaceWith(targetExpression);
+    }
+    if (kindExpression.value === 'schema') {
+      const targetExpression = schemaExpression({ libSchemas: libSchemaExpression, libId: libIdExpression });
+      nodePath.parentPath.replaceWith(targetExpression);
+    }
   })
 }
 
@@ -100,6 +117,16 @@ function createCoreDependencyAssets() {
   return { scripts, styles };
 }
 
+function createLibrarySchema(libraryId) {
+  const dependancyLibs = createDeppendancyLibraries(libraryId);
+  return dependancyLibs.reduce((schemas, libId) => {
+    const filePath = path.resolve(librariesDir, libId, 'semantics.json');
+    if (!existsSync(filePath)) return schemas;
+    schemas[libId] = filePath;
+    return schemas;
+  }, {});
+}
+
 function resolveAssetsExpression(assetsExpression) {
   assetsExpression.properties.forEach(theObjectProperty => {
     const prefix = theObjectProperty.key.name === 'styles' ? '!!file-loader!extract-loader!css-loader!' : '!!file-loader!';
@@ -108,6 +135,15 @@ function resolveAssetsExpression(assetsExpression) {
     });
     theObjectProperty.value.elements = elements;
   })
+}
+
+function resolveSchemaExpression(schemaExpression) {
+  schemaExpression.properties.forEach(theObjectProperty => {
+    theObjectProperty.value.properties.forEach(schemaObjectProperty => {
+      const pathExpression = stringLiteral(resolvePackage(schemaObjectProperty.value.value));
+      schemaObjectProperty.value = importExpression({ path: pathExpression });
+    });
+  });
 }
 
 function checkAssests(libHash) {
@@ -124,6 +160,7 @@ function onModuleLoad() {
     .filter(fileName => fileName !== 'content' && lstatSync(path.resolve(librariesDir, fileName)).isDirectory())
     .forEach((libraryId) => {
       cacheLibAssets[libraryId] = createDependancyAssets(libraryId);
+      cacheLibSchemas[libraryId] = createLibrarySchema(libraryId);
     })
   ;
   const coreAssets = createCoreDependencyAssets();
@@ -131,6 +168,8 @@ function onModuleLoad() {
   checkAssests({ core: coreAssets });
   libHashExpression = template.expression(JSON.stringify(cacheLibAssets))();
   coreAssetsExpression = template.expression(JSON.stringify(coreAssets))();
+  libSchemaExpression = template.expression(JSON.stringify(cacheLibSchemas))(); 
+  resolveSchemaExpression(libSchemaExpression);
 }
 
 onModuleLoad();
