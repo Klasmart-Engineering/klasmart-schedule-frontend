@@ -153,6 +153,15 @@ type LangRecord<T = string> =
   | { id: "library_msg_delete_folder"; description: "Are you sure you want to delete these folders?"; values: undefined }
   | { id: "library_error_delete_folder"; description: "Folder cannot be deleted unless it is empty"; values: undefined }
   | { id: "library_label_export_as_csv"; description: "Export as CSV"; values: undefined }
+  | { id: "library_label_distribute"; description: "Distribute"; values: undefined }
+  | { id: "library_label_preset"; description: "Preset"; values: undefined }
+  | {
+      id: "library_msg_preset";
+      description: "Choosing this option will make the selected content available to current and future organizations.";
+      values: undefined;
+    }
+  | { id: "library_label_select_organizations"; description: "Select Organizations"; values: undefined }
+  | { id: "library_label_all_organizations"; description: "All"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -445,6 +454,11 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_start_minutes"; description: "You can only start a class 15 minutes before the start time."; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: "Click to Schedule"; values: undefined }
   | { id: "schedule_msg_time_expired"; description: "Time expired"; values: undefined }
+  | {
+      id: "schedule_msg_recall_lesson_plan";
+      description: "Oops! The lesson plan included for this lesson has already been deleted!";
+      values: undefined;
+    }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
