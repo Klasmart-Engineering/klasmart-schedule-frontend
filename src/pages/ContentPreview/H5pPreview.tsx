@@ -3,7 +3,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { EntityContentInfoWithDetails, EntityScheduleDetailsView } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { ContentType, H5pSub } from "../../api/type";
@@ -126,20 +126,11 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     display: "flex",
     justifyContent: "space-between",
   },
-  noH5p: {
-    marginTop: 200,
-    marginBottom: 40,
-    width: 130,
-    height: 133,
-  },
-  emptyDesc: {
-    marginBottom: "auto",
-    color: "#fff",
-  },
+
   mapCon: {
     width: "100%",
     display: "flex",
-    height: 200,
+    height: 210,
     background: "rgba(0,0,0,0.32)",
     overflowY: "hidden",
     overflowX: "scroll",
@@ -165,8 +156,17 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     maxHeight: "100%",
     borderRadius: "4px",
   },
+  emptyImg: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+    borderRadius: "4px",
+    position: "absolute",
+    top: "calc(50% - 12px)",
+    left: "calc(50% - 12px)",
+  },
   mapText: {
     width: "100%",
+    height: "42px",
     fontSize: "14px",
     color: "#ffffff",
     wordWrap: "break-word",
@@ -207,17 +207,32 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   planBViewBtn: {
     marginTop: -58,
   },
+  emptyComponent: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  noH5p: {
+    marginTop: 200,
+    marginBottom: 40,
+    width: 130,
+    height: 133,
+  },
+  emptyDesc: {
+    marginBottom: "auto",
+    color: "#fff",
+  },
 }));
 
 function EmptyContent() {
   const css = useStyles();
   return (
-    <Fragment>
+    <div className={css.emptyComponent}>
       <img className={css.noH5p} src={noH5pUrl} alt="deleted" />
       <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
         {d("The file has been deleted").t("library_msg_file_deleted")}
       </Typography>
-    </Fragment>
+    </div>
   );
 }
 interface H5pPreview extends PreviewBaseProps {
@@ -267,6 +282,7 @@ export function H5pPreview(props: H5pPreview) {
           {h5pItem && JSON.parse(h5pItem.data) && fileFormat.document.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
             <AssetFile src={path} />
           )}
+          {!h5pItem && <EmptyContent />}
           {h5pItem &&
             JSON.parse(h5pItem.data) &&
             !getSuffix(JSON.parse(h5pItem.data).source) &&
@@ -331,23 +347,31 @@ export function H5pPreview(props: H5pPreview) {
           </Hidden>
         </Box>
       </Box>
-      {h5pItem && content_type === ContentType.plan && (
+      {h5pArray.length && content_type === ContentType.plan && (
         <div className={css.mapCon}>
           <div className={css.barContainer}>
             {h5pArray.map((material, index) => (
-              <div key={material.id} className={css.mapItem}>
-                <div className={clsx(css.thumbnailCon, { [css.active]: currIndex === index })}>
-                  <Thumbnail
-                    className={css.cardImg}
-                    type={ContentType.material}
-                    id={material.thumbnail}
-                    onClick={() => handleClickItem(index)}
-                  ></Thumbnail>
+              <div key={index} className={css.mapItem}>
+                <div onClick={() => handleClickItem(index)} className={clsx(css.thumbnailCon, { [css.active]: currIndex === index })}>
+                  {material ? (
+                    <Thumbnail
+                      className={css.cardImg}
+                      type={ContentType.material}
+                      id={material.thumbnail}
+                      onClick={() => handleClickItem(index)}
+                    ></Thumbnail>
+                  ) : (
+                    <img className={css.emptyImg} src={noH5pUrl} alt="deleted" />
+                  )}
                   {currIndex === index && <div className={css.arrow}></div>}
                 </div>
-                <Typography className={css.mapText}>
-                  {material.name} ({material.suggest_time} min)
-                </Typography>
+                {material ? (
+                  <Typography className={css.mapText}>
+                    {material.name} ({material.suggest_time} min)
+                  </Typography>
+                ) : (
+                  <Typography className={css.mapText}>{d("The file has been deleted").t("library_msg_file_deleted")}</Typography>
+                )}
               </div>
             ))}
           </div>
