@@ -26,7 +26,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   checkField: (props: SearchcmsListProps) => ({
     flexShrink: 0.5,
     marginRight: 100,
-    opacity: props.searchName === "searchOutcome" ? 1 : 0,
+    // opacity: props.searchName === "searchOutcome" ? 1 : 0,
     [breakpoints.down(1690)]: {
       marginRight: 24,
     },
@@ -56,27 +56,36 @@ const useStyles = makeStyles(({ breakpoints }) => ({
 }));
 
 export interface SearchcmsListProps {
-  searchName: "searchMedia" | "searchOutcome";
-  onSearch: (searchName: SearchcmsListProps["value"]) => any;
+  searchType: "searchMedia" | "searchOutcome";
+  lesson?: string;
   value?: string;
+  onSearch: (value: SearchcmsListProps["value"]) => any;
   assumed?: string;
-  onCheck?: (assumed: SearchcmsListProps["assumed"]) => any;
+  onCheckAssumed?: (assumed: SearchcmsListProps["assumed"]) => any;
+  isShare?: string;
+  onCheckShare?: (isShare: SearchcmsListProps["isShare"]) => any;
 }
 
 export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
-  const { onSearch, onCheck, value, assumed } = props;
-  const { getValues, control } = useForm<Pick<SearchcmsListProps, "searchName">>();
+  const { searchType, lesson, onSearch, onCheckAssumed, value, assumed, isShare, onCheckShare } = props;
+  const { getValues, control } = useForm<Pick<SearchcmsListProps, "value">>();
   const handleClickSearch = useCallback(() => {
-    const { searchName } = getValues();
-    onSearch(searchName);
+    const { value } = getValues();
+    onSearch(value);
   }, [getValues, onSearch]);
 
   const handleChangeAssumed = useCallback(
     (e) => {
-      if (onCheck) onCheck(e.target.checked ? "true" : "");
+      if (onCheckAssumed) onCheckAssumed(e.target.checked ? "true" : "");
     },
-    [onCheck]
+    [onCheckAssumed]
+  );
+  const handleChangeShare = useCallback(
+    (e) => {
+      if (onCheckShare) onCheckShare(e.target.checked ? "true" : "");
+    },
+    [onCheckShare]
   );
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
@@ -89,7 +98,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
           as={TextField}
           control={control}
           onKeyPress={handleKeyPress}
-          name="searchName"
+          name="value"
           defaultValue={value}
           size="small"
           className={clsx(css.fieldset, css.searchField)}
@@ -105,18 +114,13 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
         >
           {d("Search").t("library_label_search")}
         </Button>
-        <FormControlLabel
-          className={css.checkField}
-          control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
-          label={d("Assumed").t("assess_filter_assumed")}
-        />
       </Hidden>
       <Hidden mdUp>
         <Controller
           as={TextField}
           control={control}
           onKeyPress={handleKeyPress}
-          name="searchName"
+          name="value"
           defaultValue={value}
           size="small"
           className={clsx(css.fieldset, css.searchField)}
@@ -129,12 +133,22 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
             ),
           }}
         />
+      </Hidden>
+      {searchType === "searchOutcome" && (
         <FormControlLabel
           className={css.checkField}
           control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
           label={d("Assumed").t("assess_filter_assumed")}
         />
-      </Hidden>
+      )}
+
+      {searchType === "searchMedia" && lesson === "plan" && (
+        <FormControlLabel
+          className={css.checkField}
+          control={<Checkbox checked={Boolean(isShare)} onChange={handleChangeShare} color="primary" />}
+          label="Badanamu Content"
+        />
+      )}
     </Box>
   );
 };

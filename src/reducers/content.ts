@@ -301,6 +301,7 @@ interface onLoadContentEditPayload extends LoadingMetaPayload {
   searchMedia?: string;
   searchOutcome?: string;
   assumed?: string;
+  isShare?: boolean;
 }
 
 interface onLoadContentEditResult {
@@ -312,32 +313,22 @@ interface onLoadContentEditResult {
 }
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type, searchMedia, searchOutcome, assumed }, { dispatch }) => {
+  async ({ id, type, searchMedia, searchOutcome, assumed, isShare }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
-    const [mediaList, outcomeList, lesson_types, visibility_settings] = await Promise.all([
-      type === "material" || type === "plan"
-        ? api.contents.searchContents({
-            content_type:
-              type === "material" ? SearchContentsRequestContentType.assetsandfolder : SearchContentsRequestContentType.material,
-            publish_status: "published",
-            page_size: 10,
-            name: searchMedia,
-          })
-        : undefined,
-      type === "material" || type === "plan"
-        ? api.learningOutcomes.searchLearningOutcomes({
-            publish_status: OutcomePublishStatus.published,
-            search_key: searchOutcome,
-            page: 1,
-            page_size: 10,
-            assumed: assumed === "true" ? 1 : -1,
-          })
-        : undefined,
+    const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
       type === "material" || type === "plan"
         ? api.visibilitySettings.getVisibilitySetting({
             content_type: type === "material" ? SearchContentsRequestContentType.material : SearchContentsRequestContentType.plan,
           })
+        : undefined,
+      type === "material" || type === "plan"
+        ? isShare && type === "plan"
+          ? dispatch(searchAuthContentLists({ content_type: SearchContentsRequestContentType.material, name: searchMedia }))
+          : dispatch(searchContentLists({ content_type: SearchContentsRequestContentType.material, name: searchMedia }))
+        : undefined,
+      type === "material" || type === "plan"
+        ? dispatch(searchOutcomeList({ search_key: searchOutcome, page: 1, assumed: assumed === "true" ? 1 : -1 }))
         : undefined,
       dispatch(
         getLinkedMockOptions({
@@ -347,7 +338,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
       ),
     ]);
 
-    return { contentDetail, mediaList, outcomeList, lesson_types, visibility_settings };
+    return { contentDetail, lesson_types, visibility_settings };
   }
 );
 
@@ -492,15 +483,27 @@ type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searc
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "content/searchOutcomeList",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes({
+      publish_status: OutcomePublishStatus.published,
+      page_size: 10,
+      ...query,
+    });
     return { list, total };
   }
 );
 // contentEdit搜索contentlist
-export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams, { state: RootState }>(
+export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
   "searchContentLists",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.contents.searchContents({ ...query });
+    const { list, total } = await api.contents.searchContents({ publish_status: PublishStatus.published, page_size: 10, ...query });
+    return { list, total };
+  }
+);
+// contentEdit搜索contentlist
+export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
+  "searchAuthContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contentsAuthed.queryAuthContent({ page_size: 10, ...query });
     return { list, total };
   }
 );
@@ -915,6 +918,14 @@ const { actions, reducer } = createSlice({
     //   state.OutcomesListTotal = initialState.OutcomesListTotal;
     // },
     [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.mediaList = payload.list;
+      state.mediaListTotal = payload.total;
+    },
+    // [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   state.mediaList = initialState.mediaList;
+    //   state.mediaListTotal = initialState.mediaListTotal;
+    // },
+    [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.mediaList = payload.list;
       state.mediaListTotal = payload.total;
     },

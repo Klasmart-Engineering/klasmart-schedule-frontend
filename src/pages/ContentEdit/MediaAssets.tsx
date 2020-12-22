@@ -150,11 +150,13 @@ export interface MediaAssetsProps {
   onSearch: (searchText: MediaAssetsProps["value"]) => any;
   onChangePage: (page: number) => any;
   mediaPage: number;
+  isShare?: string;
+  onCheckShare: (isShare: MediaAssetsProps["isShare"]) => any;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
-  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage } = props;
+  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, onCheckShare, isShare } = props;
   const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -210,7 +212,14 @@ export default function MediaAssets(props: MediaAssetsProps) {
         comingsoonTip
       ) : (
         <>
-          <SearchcmsList searchName="searchMedia" onSearch={onSearch} value={value} />
+          <SearchcmsList
+            searchType="searchMedia"
+            onSearch={onSearch}
+            value={value}
+            lesson={lesson}
+            onCheckShare={onCheckShare}
+            isShare={isShare}
+          />
           {list.length > 0 ? table : resultsTip}
         </>
       )}
