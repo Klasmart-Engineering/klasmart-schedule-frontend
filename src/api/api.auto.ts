@@ -723,6 +723,7 @@ export interface EntityProgram {
   createID?: string;
   deleteAt?: number;
   deleteID?: string;
+  group_name?: string;
   id?: string;
   name?: string;
   number?: number;
@@ -1330,6 +1331,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         scope?: string;
+        program_group?: string;
         program?: string;
         path?: string;
         source_type?: string;
@@ -1583,6 +1585,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         name?: string;
         content_type?: string;
         program?: string;
+        program_group?: string;
         source_type?: string;
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
@@ -1632,6 +1635,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        program_group?: string;
         path?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -1662,6 +1666,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        program_group?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1690,6 +1695,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         program?: string;
+        program_group?: string;
         source_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";

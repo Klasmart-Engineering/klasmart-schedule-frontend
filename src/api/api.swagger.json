@@ -763,6 +763,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content program",
             "name": "program",
             "in": "query"
@@ -1632,6 +1638,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content source type",
             "name": "source_type",
             "in": "query"
@@ -1801,6 +1813,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content path",
             "name": "path",
             "in": "query"
@@ -1907,6 +1925,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content source type",
             "name": "source_type",
             "in": "query"
@@ -1991,6 +2015,12 @@
             "type": "string",
             "description": "search content program",
             "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search program group",
+            "name": "program_group",
             "in": "query"
           },
           {
@@ -8201,6 +8231,9 @@
           "type": "integer"
         },
         "deleteID": {
+          "type": "string"
+        },
+        "group_name": {
           "type": "string"
         },
         "id": {
