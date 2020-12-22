@@ -295,7 +295,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Divider />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
-            <Grid item sm={6} xs={6} md={5}>
+            <Grid item sm={unpublish ? 3 : 6} xs={unpublish ? 3 : 6} md={unpublish ? 3 : 6}>
               {bulkOptions.length > 0 && (
                 <TextField
                   style={{ width: 160 }}
@@ -316,16 +316,21 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 </Button>
               )}
             </Grid>
-            {unpublish ? (
-              <Grid item md={4}>
+            {unpublish && (
+              <Grid item sm={6} xs={6} md={6}>
                 <SubUnpublished value={value} onChange={onChange} />
               </Grid>
-            ) : (
-              <Hidden only={["xs", "sm"]}>
-                <Grid item md={4}></Grid>
-              </Hidden>
             )}
-            <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="center"
+              item
+              sm={unpublish ? 3 : 6}
+              xs={unpublish ? 3 : 6}
+              md={unpublish ? 3 : 6}
+            >
               <TextField
                 size="small"
                 style={{ width: 200 }}
