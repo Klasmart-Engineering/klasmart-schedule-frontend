@@ -54,7 +54,7 @@ const useStyles = makeStyles(() =>
 );
 const SELECTED_ORG = "SELECTED_ORG";
 export enum ShareScope {
-  share_all = "share_all",
+  share_all = "{share_all}",
   share_to_org = "share_to_org",
 }
 export interface OrganizationListProps {
