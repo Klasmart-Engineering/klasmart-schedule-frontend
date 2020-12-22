@@ -346,7 +346,7 @@ export function H5pPreview(props: H5pPreview) {
                   {currIndex === index && <div className={css.arrow}></div>}
                 </div>
                 <Typography className={css.mapText}>
-                  {material.name}({material.suggest_time} min)
+                  {material.name} ({material.suggest_time} min)
                 </Typography>
               </div>
             ))}
