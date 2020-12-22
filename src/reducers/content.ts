@@ -12,7 +12,6 @@ import {
   EntityFolderItemInfo,
   EntityOrganizationInfo,
   EntityOrganizationProperty,
-  EntityProgram,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
@@ -45,7 +44,6 @@ interface IContentState {
   orgProperty: EntityOrganizationProperty;
   orgList: OrgInfoProps[];
   selectedOrg: EntityOrganizationInfo[];
-  programs: EntityProgram[];
   myOrgId: string;
 }
 
@@ -176,7 +174,6 @@ const initialState: IContentState = {
   orgProperty: {},
   orgList: [],
   selectedOrg: [], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
-  programs: [],
   myOrgId: "",
 };
 
@@ -413,10 +410,6 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
     return { list, total };
   }
 );
-type IQueryGetProgramResult = AsyncReturnType<typeof api.programs.getProgram>;
-export const getProgram = createAsyncThunk<IQueryGetProgramResult>("content/getProgram", () => {
-  return api.programs.getProgram();
-});
 type IQueryOnLoadContentList = QueryCondition & LoadingMetaPayload;
 interface IQyertOnLoadContentListResult {
   folderRes?: AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
@@ -433,7 +426,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const {
       content: { page_size },
     } = getState();
-    const { name, publish_status, author, content_type, page, program, order_by, path } = query;
+    const { name, publish_status, author, content_type, page, program_group, order_by, path } = query;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
@@ -445,7 +438,6 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         path,
         page_size,
@@ -458,7 +450,6 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         page_size,
       });
@@ -474,13 +465,12 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         page_size,
       });
       return { privateRes, organization_id };
-    } else if (program) {
-      const badaContent = await api.contentsAuthed.queryAuthContent({ program, page, order_by, page_size });
+    } else if (program_group) {
+      const badaContent = await api.contentsAuthed.queryAuthContent({ program_group, page, order_by, page_size });
       return { badaContent, organization_id };
     } else {
       const contentRes = await api.contents.searchContents({
@@ -489,7 +479,6 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         page_size,
       });
@@ -1101,9 +1090,6 @@ const { actions, reducer } = createSlice({
       } else {
         state.selectedOrg = [];
       }
-    },
-    [getProgram.fulfilled.type]: (state, { payload }: any) => {
-      state.programs = payload;
     },
   },
 });

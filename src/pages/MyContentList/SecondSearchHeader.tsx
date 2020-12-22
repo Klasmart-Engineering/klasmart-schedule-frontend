@@ -246,7 +246,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("library_label_search")}
               </Button>
-              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && (
+              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && !value.program_group && (
                 <TextField
                   style={{ width: 160, marginLeft: 10 }}
                   size="small"

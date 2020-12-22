@@ -25,7 +25,6 @@ import {
   deleteContent,
   deleteFolder,
   getOrgList,
-  getProgram,
   onLoadContentList,
   publishContent,
   rejectContent,
@@ -64,10 +63,9 @@ const useQuery = (): QueryCondition => {
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
-    const program = query.get("program");
+    const program_group = query.get("program_group");
     const path = query.get("path") || "";
-    // const parent_id = (path || "").split("/").pop() || "";
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path });
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path });
   }, [search]);
 };
 
@@ -290,7 +288,6 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      await dispatch(getProgram());
       await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
     })();
@@ -298,9 +295,9 @@ export default function MyContentList() {
 
   return (
     <div>
-      {condition.program && <ProgramSearchHeader value={condition} onChange={handleChange} />}
-      {condition.program && <ProgramSearchHeaderMb value={condition} onChange={handleChange} />}
-      {!condition.program && (
+      {condition.program_group && <ProgramSearchHeader value={condition} onChange={handleChange} />}
+      {condition.program_group && <ProgramSearchHeaderMb value={condition} onChange={handleChange} />}
+      {!condition.program_group && (
         <FirstSearchHeader
           value={condition}
           onChange={handleChange}
@@ -308,7 +305,7 @@ export default function MyContentList() {
           onCreateContent={handleCreateContent}
         />
       )}
-      {!condition.program && (
+      {!condition.program_group && (
         <FirstSearchHeaderMb
           value={condition}
           onChange={handleChange}

@@ -436,7 +436,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
-              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && (
+              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && !value.program_group && (
                 <FilterListIcon onClick={handleClickFilterIcon} />
               )}
               <Menu anchorEl={anchorFilter} keepMounted open={Boolean(anchorFilter)} onClose={handleFilterClose}>

@@ -19,8 +19,8 @@ import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { EntityFolderContent } from "../../api/api.auto";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
-import { LButton } from "../../components/LButton";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { LButton, LButtonProps } from "../../components/LButton";
+import { d } from "../../locale/LocaleManager";
 
 export interface OrgInfoProps {
   organization_id: string;
@@ -61,7 +61,7 @@ export interface OrganizationListProps {
   open: boolean;
   orgList: OrgInfoProps[];
   onClose: () => any;
-  onShareFolder: (ids: string[]) => any; //ReturnType<LButtonProps["onClick"]>
+  onShareFolder: (ids: string[]) => ReturnType<LButtonProps["onClick"]>; //ReturnType<LButtonProps["onClick"]>
   selectedOrg: string[];
 }
 
@@ -74,7 +74,7 @@ export function OrganizationList(props: OrganizationListProps) {
   const [radioValue, setRadioValue] = useState(
     selectedOrg && selectedOrg.length > 0 ? (selectedOrg[0] === ShareScope.share_all ? ShareScope.share_all : ShareScope.share_to_org) : ""
   );
-  const [newSelectedOrgIds, setNewSelectedOrgIds] = useState<string[]>(["default"]);
+  const [newSelectedOrgIds, setNewSelectedOrgIds] = useState(true);
   useMemo(() => {
     const radioNewValue =
       selectedOrg && selectedOrg.length > 0
@@ -90,11 +90,11 @@ export function OrganizationList(props: OrganizationListProps) {
   }, [radioValue, selectedOrg, values]);
   const handleChange = (value: string) => {
     setRadioValue(value);
-    setNewSelectedOrgIds([]);
+    setNewSelectedOrgIds(false);
   };
   return (
     <Dialog open={open}>
-      <DialogTitle id="confirmation-dialog-title">{reportMiss("Distribute with", "library_label_distribute_with")}</DialogTitle>
+      <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
           <FormControlLabel
@@ -102,8 +102,13 @@ export function OrganizationList(props: OrganizationListProps) {
             control={<Radio />}
             label={
               <>
-                <span>{reportMiss("Preset", "library_label_share_preset")}</span>{" "}
-                <LightTooltip placement="right" title={"test tetwewtewewrewrewrewrwe"}>
+                <span>{d("Preset").t("library_label_preset")}</span>{" "}
+                <LightTooltip
+                  placement="right"
+                  title={d("Choosing this option will make the selected content available to current and future organizations.").t(
+                    "library_msg_preset"
+                  )}
+                >
                   <InfoOutlined className={css.tooltipIcon} />
                 </LightTooltip>
               </>
@@ -112,16 +117,15 @@ export function OrganizationList(props: OrganizationListProps) {
           <FormControlLabel
             value={ShareScope.share_to_org}
             control={<Radio />}
-            label={reportMiss("Select by Organization", "library_label_select_organization")}
+            label={d("Select Organizations").t("library_label_select_organizations")}
           />
         </RadioGroup>
         {radioValue && radioValue !== ShareScope.share_all && (
           <Controller
             name={SELECTED_ORG}
             control={control}
-            defaultValue={newSelectedOrgIds.length ? selectedOrg : newSelectedOrgIds}
+            defaultValue={newSelectedOrgIds ? selectedOrg : newSelectedOrgIds}
             rules={{ required: true }}
-            error={"Please Select"}
             render={({ ref, ...props }) => (
               <CheckboxGroup
                 allValue={allValue}
@@ -137,7 +141,7 @@ export function OrganizationList(props: OrganizationListProps) {
                           onChange={selectedContentGroupContext.registerAllChange}
                         />
                       }
-                      label={reportMiss("All Organizations", "library_label_all_organization")}
+                      label={d("All").t("library_label_all_organizations")}
                     />
                     {orgList?.map((item) => (
                       <FormControlLabel
