@@ -294,7 +294,7 @@ function EditBox(props: CalendarStateProps) {
         (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
         newData.start_at * 1000 - currentTime < 15 * 60 * 1000
       ) {
-        dispatch(getScheduleLiveToken({ schedule_id: scheduleId, metaLoading: true }));
+        dispatch(getScheduleLiveToken({ schedule_id: scheduleId, live_token_type: "live", metaLoading: true }));
       }
       dispatch(getScheduleParticipant({ class_id: newData.class_id }));
     }

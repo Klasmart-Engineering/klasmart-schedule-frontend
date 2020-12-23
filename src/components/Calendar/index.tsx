@@ -264,7 +264,7 @@ function MyCalendar(props: CalendarProps) {
   const scheduleSelected = async (event: scheduleInfoProps) => {
     const currentTime = Math.floor(new Date().getTime());
     if ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) {
-      await dispatch(getScheduleLiveToken({ schedule_id: event.id, metaLoading: true }));
+      await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
     changeModalDate({
       enableCustomization: true,

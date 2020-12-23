@@ -154,7 +154,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
-    if (sid) dispatch(getScheduleLiveToken({ schedule_id: sid, metaLoading: true }));
+    if (sid) dispatch(getScheduleLiveToken({ schedule_id: sid, live_token_type: "preview", metaLoading: true }));
     if (!sid) dispatch(getContentLiveToken({ content_id: id, metaLoading: true }));
     if (sid) dispatch(getScheduleInfo(sid));
   }, [class_id, dispatch, id, sid]);

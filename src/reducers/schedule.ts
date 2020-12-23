@@ -307,11 +307,15 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
 
 interface LiveSchedulePayload extends LoadingMetaPayload {
   schedule_id: Parameters<typeof api.schedules.getScheduleLiveToken>[0];
+  live_token_type: "preview" | "live";
 }
 type LiveScheduleResult = ReturnType<typeof api.schedules.getScheduleLiveToken>;
-export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>("schedule/live", async ({ schedule_id }) => {
-  return api.schedules.getScheduleLiveToken(schedule_id).catch((err) => Promise.reject(err.label));
-});
+export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>(
+  "schedule/live",
+  async ({ schedule_id, live_token_type }) => {
+    return api.schedules.getScheduleLiveToken(schedule_id, { live_token_type: live_token_type }).catch((err) => Promise.reject(err.label));
+  }
+);
 
 export const getMockOptions = createAsyncThunk("mock/options", async () => {
   return apiGetMockOptions();
@@ -321,6 +325,7 @@ const scheduleTimeViewDataFormat = (data: EntityScheduleListView[]) => {
   const newViewData: any = [];
   if (data.length > 0) {
     data.forEach((item: EntityScheduleListView) => {
+      if (!item) return;
       newViewData.push({
         ...item,
         end: new Date(Number(item.end_at) * 1000),
