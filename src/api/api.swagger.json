@@ -1051,13 +1051,6 @@
             "name": "content_id",
             "in": "path",
             "required": true
-          },
-          {
-            "type": "string",
-            "description": "class id",
-            "name": "class_id",
-            "in": "path",
-            "required": true
           }
         ],
         "responses": {
@@ -4890,6 +4883,12 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
           "409": {
             "description": "Conflict",
             "schema": {
@@ -5073,6 +5072,14 @@
             "description": "schedule id",
             "name": "schedule_id",
             "in": "path",
+            "required": true
+          },
+          {
+            "enum": ["preview", "live"],
+            "type": "string",
+            "description": "live token type",
+            "name": "live_token_type",
+            "in": "query",
             "required": true
           }
         ],
@@ -6077,8 +6084,8 @@
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["user"],
-        "summary": "send verify code",
-        "operationId": "sendCode",
+        "summary": "invite notify",
+        "operationId": "inviteNotify",
         "parameters": [
           {
             "description": "send verify code",
@@ -7279,6 +7286,12 @@
       "type": "object",
       "properties": {
         "content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "folder_i_ds": {
           "type": "array",
           "items": {
             "type": "string"

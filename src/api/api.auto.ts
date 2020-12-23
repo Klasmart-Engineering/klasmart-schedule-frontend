@@ -395,6 +395,7 @@ export interface EntityBatchAddAuthedContentRequest {
 
 export interface EntityBatchDeleteAuthedContentByOrgsRequest {
   content_ids?: string[];
+  folder_i_ds?: string[];
   org_ids?: string[];
 }
 
@@ -1414,7 +1415,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents/{content_id}/live/token
      * @description get content live token
      */
-    getContentLiveToken: (content_id: string, class_id: string, params?: RequestParams) =>
+    getContentLiveToken: (content_id: string, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/live/token`,
         "GET",
@@ -2542,7 +2543,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add a schedule data
      */
     addSchedule: (scheduleData: EntityScheduleAddView, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
         `/schedules`,
         "POST",
         params,
@@ -2599,9 +2600,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/schedules/{schedule_id}/live/token
      * @description get schedule live token
      */
-    getScheduleLiveToken: (schedule_id: string, params?: RequestParams) =>
+    getScheduleLiveToken: (schedule_id: string, query: { live_token_type: "preview" | "live" }, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/schedules/${schedule_id}/live/token`,
+        `/schedules/${schedule_id}/live/token${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -2887,12 +2888,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags user
-     * @name sendCode
-     * @summary send verify code
+     * @name inviteNotify
+     * @summary invite notify
      * @request POST:/users/send_code
      * @description send verify code or uri
      */
-    sendCode: (outcome: ApiSendCodeRequest, params?: RequestParams) =>
+    inviteNotify: (outcome: ApiSendCodeRequest, params?: RequestParams) =>
       this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/send_code`, "POST", params, outcome),
   };
   visibilitySettings = {
