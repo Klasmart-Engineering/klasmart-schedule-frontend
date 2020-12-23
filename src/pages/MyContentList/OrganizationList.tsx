@@ -165,13 +165,12 @@ export function OrganizationList(props: OrganizationListProps) {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary" variant="outlined">
+        <Button onClick={onClose} disableRipple={true} color="primary" variant="outlined">
           {d("Cancel").t("library_label_cancel")}
         </Button>
         <LButton
           color="primary"
           variant="contained"
-          disableRipple={true}
           className={css.okBtn}
           onClick={() => onShareFolder(selectedOrgIds)}
           disabled={!selectedOrgIds.length}
