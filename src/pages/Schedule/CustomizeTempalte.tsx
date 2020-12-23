@@ -210,16 +210,20 @@ export default function CustomizeTempalte(props: InfoProps) {
         >
           {d("Preview").t("schedule_button_preview")}
         </Button>
-        <Button
-          color="primary"
-          variant="contained"
-          autoFocus
-          className={classes.lastButton}
-          disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
-          onClick={() => handleGoLive(scheduleInfo)}
-        >
-          {d("Go Live").t("schedule_button_go_live")}
-        </Button>
+        {scheduleInfo.class_type !== "Task" && (
+          <Button
+            color="primary"
+            variant="contained"
+            autoFocus
+            className={classes.lastButton}
+            disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
+            onClick={() => handleGoLive(scheduleInfo)}
+          >
+            {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
+            {scheduleInfo.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+            {scheduleInfo.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+          </Button>
+        )}
       </div>
     </div>
   );

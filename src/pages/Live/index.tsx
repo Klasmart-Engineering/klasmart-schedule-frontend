@@ -26,7 +26,7 @@ export default function Live() {
           AsyncTrunkReturned<typeof getScheduleLiveToken>
         >;
       if (content_id)
-        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, class_id, metaLoading: true }))) as unknown) as PayloadAction<
+        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, metaLoading: true }))) as unknown) as PayloadAction<
           AsyncTrunkReturned<typeof getContentLiveToken>
         >;
       if (tokenInfo) window.location.href = apiLivePath(tokenInfo?.payload.token);

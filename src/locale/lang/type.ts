@@ -459,6 +459,8 @@ type LangRecord<T = string> =
       description: "Oops! The lesson plan included for this lesson has already been deleted!";
       values: undefined;
     }
+  | { id: "schedule_button_start_class"; description: "Start Class"; values: undefined }
+  | { id: "schedule_button_go_study"; description: "Go Study"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

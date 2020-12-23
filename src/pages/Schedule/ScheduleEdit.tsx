@@ -1188,17 +1188,21 @@ function EditBox(props: CalendarStateProps) {
           >
             {d("Preview").t("schedule_button_preview")}
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={scheduleDetial.status === "Closed"}
-            style={{
-              width: "45%",
-            }}
-            onClick={() => handleGoLive(scheduleDetial)}
-          >
-            {d("Go Live").t("schedule_button_go_live")}
-          </Button>
+          {scheduleList.class_type !== "Task" && (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={scheduleDetial.status === "Closed"}
+              style={{
+                width: "45%",
+              }}
+              onClick={() => handleGoLive(scheduleDetial)}
+            >
+              {scheduleList.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
+              {scheduleList.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+              {scheduleList.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+            </Button>
+          )}
         </Box>
         {checkedStatus.repeatCheck && (
           <Box className={css.repeatBox}>

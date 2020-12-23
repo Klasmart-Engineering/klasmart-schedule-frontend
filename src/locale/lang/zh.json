@@ -414,6 +414,8 @@
   "schedule_button_click_to schedule": "点击排课",
   "schedule_msg_time_expired": "时间过期",
   "schedule_msg_recall_lesson_plan": "这节课的教学计划已被删除！",
+  "schedule_button_start_class": "开始线下课堂",
+  "schedule_button_go_study": "开始家庭作业",
   "report_label_student_achievement": "学生成绩",
   "report_label_teacher": "老师",
   "report_label_class": "班级",

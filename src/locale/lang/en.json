@@ -414,6 +414,8 @@
   "schedule_button_click_to schedule": "Click to Schedule",
   "schedule_msg_time_expired": "Time expired",
   "schedule_msg_recall_lesson_plan": "Oops! The lesson plan included for this lesson has already been deleted!",
+  "schedule_button_start_class": "Start Class",
+  "schedule_button_go_study": "Go Study",
   "report_label_student_achievement": "Student Achievement",
   "report_label_teacher": "Teacher",
   "report_label_class": "Class",
