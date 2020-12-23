@@ -13,6 +13,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
+  getContentsAuthed,
   getMockOptions,
   getScheduleInfo,
   getScheduleMockOptions,
@@ -163,6 +164,7 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
+    dispatch(getContentsAuthed({ content_type: "2" }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
     }

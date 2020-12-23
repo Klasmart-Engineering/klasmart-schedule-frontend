@@ -33,7 +33,7 @@ import {
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
-import { FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
+import { EntityLessonPlanShortInfo, FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
@@ -152,6 +152,11 @@ function EditBox(props: CalendarStateProps) {
     id: "",
     name: "",
   };
+  const lessonPlanDefaults: EntityLessonPlanShortInfo = {
+    title: "",
+    id: "",
+    name: "",
+  };
   const {
     timesTamp,
     modelView,
@@ -167,15 +172,15 @@ function EditBox(props: CalendarStateProps) {
     setSpecificStatus,
     specificStatus,
   } = props;
-  const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { scheduleDetial, contentsAuthList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
-  const [lessonPlan, setLessonPlan] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [, setTeacherItem] = React.useState<any[] | undefined>([]);
-  const [contentsListSelect, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
+  const [, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
@@ -475,6 +480,9 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleList.class_type === "Task") {
       isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = false;
     }
+    if (scheduleList.class_type === "Homework") {
+      isValidator.start_at = isValidator.end_at = false;
+    }
     setValidator({ ...isValidator });
     return verificaPath;
   };
@@ -488,29 +496,40 @@ function EditBox(props: CalendarStateProps) {
     });
     const addData: any = {};
     addData["due_at"] = 0;
+    const currentTime = Math.floor(new Date().getTime() / 1000);
     if (checkedStatus.dueDateCheck) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
 
-      if (dueDateTimestamp <= scheduleList.end_at) {
+      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
+        return;
+      }
+
+      if (scheduleList.class_type === "Homework" && dueDateTimestamp <= currentTime) {
+        dispatch(actError(d("Due date cannot be earlier than today.").t("schedule_msg_earlier_today")));
         return;
       }
 
       addData["due_at"] = dueDateTimestamp;
     }
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleList.start_at < currentTime && !checkedStatus.repeatCheck) {
+    if (scheduleList.start_at < currentTime && !checkedStatus.repeatCheck && scheduleList.class_type !== "Homework") {
       dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
 
-    if (scheduleList.end_at <= scheduleList.start_at) {
+    if (scheduleList.end_at <= scheduleList.start_at && scheduleList.class_type !== "Homework") {
       dispatch(actError(d("End time cannot be earlier than start time").t("schedule_msg_end_time_earlier")));
       return;
     }
 
-    if (scheduleId && checkedStatus.repeatCheck && scheduleList.start_at < currentTime && repeat_edit_options === "only_current") {
+    if (
+      scheduleId &&
+      checkedStatus.repeatCheck &&
+      scheduleList.start_at < currentTime &&
+      repeat_edit_options === "only_current" &&
+      scheduleList.class_type !== "Homework"
+    ) {
       dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
@@ -893,6 +912,25 @@ function EditBox(props: CalendarStateProps) {
     toLive();
   };
 
+  const options = (): EntityLessonPlanShortInfo[] => {
+    const newContentsData: EntityLessonPlanShortInfo[] = [];
+    contentsList.forEach((item: EntityLessonPlanShortInfo) => {
+      newContentsData.push({
+        title: "Organization Content",
+        id: item.id,
+        name: item.name,
+      });
+    });
+    contentsAuthList.forEach((item: EntityLessonPlanShortInfo) => {
+      newContentsData.push({
+        title: "Badanamu Content",
+        id: item.id,
+        name: item.name,
+      });
+    });
+    return newContentsData;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -977,7 +1015,8 @@ function EditBox(props: CalendarStateProps) {
           <Autocomplete
             id="combo-box-demo"
             freeSolo
-            options={contentsListSelect}
+            options={options()}
+            groupBy={(option) => option.title as string}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "lesson_plan_id");
@@ -998,58 +1037,62 @@ function EditBox(props: CalendarStateProps) {
           />
         )}
         {menuItemListClassKr().length > 0 && <Box className={css.participantBox}>{menuItemListClassKr()}</Box>}
-        <Box>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={12}>
-                <TextField
-                  id="datetime-local"
-                  label={d("Start Time").t("schedule_detail_start_time")}
-                  type="datetime-local"
-                  className={css.fieldset}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  required
-                  error={validator.start_at}
-                  value={timestampToTime(scheduleList.start_at)}
-                  disabled={isScheduleExpired() || checkedStatus.allDayCheck}
-                  onChange={(e) => handleTopicListChange(e, "start_at")}
-                />
+        {scheduleList.class_type !== "Homework" && (
+          <Box>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid container justify="space-between" alignItems="center">
+                <Grid item xs={12}>
+                  <TextField
+                    id="datetime-local"
+                    label={d("Start Time").t("schedule_detail_start_time")}
+                    type="datetime-local"
+                    className={css.fieldset}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    required
+                    error={validator.start_at}
+                    value={timestampToTime(scheduleList.start_at)}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck}
+                    onChange={(e) => handleTopicListChange(e, "start_at")}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    id="datetime-local"
+                    label={d("End Time").t("schedule_detail_end_time")}
+                    type="datetime-local"
+                    className={css.fieldset}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    required
+                    error={validator.end_at}
+                    value={timestampToTime(scheduleList.end_at)}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck}
+                    onChange={(e) => handleTopicListChange(e, "end_at")}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="datetime-local"
-                  label={d("End Time").t("schedule_detail_end_time")}
-                  type="datetime-local"
-                  className={css.fieldset}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  required
-                  error={validator.end_at}
-                  value={timestampToTime(scheduleList.end_at)}
-                  disabled={isScheduleExpired() || checkedStatus.allDayCheck}
-                  onChange={(e) => handleTopicListChange(e, "end_at")}
-                />
-              </Grid>
-            </Grid>
-          </MuiPickersUtilsProvider>
-        </Box>
-        <Box>
-          <FormGroup row>
-            <FormControlLabel
-              disabled={isScheduleExpired()}
-              control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
-              label={d("All day").t("schedule_detail_all_day")}
-            />
-            <FormControlLabel
-              disabled={isScheduleExpired()}
-              control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
-              label={d("Repeat").t("schedule_detail_repeat")}
-            />
-          </FormGroup>
-        </Box>
+            </MuiPickersUtilsProvider>
+          </Box>
+        )}
+        {scheduleList.class_type !== "Homework" && (
+          <Box>
+            <FormGroup row>
+              <FormControlLabel
+                disabled={isScheduleExpired()}
+                control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
+                label={d("All day").t("schedule_detail_all_day")}
+              />
+              <FormControlLabel
+                disabled={isScheduleExpired()}
+                control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
+                label={d("Repeat").t("schedule_detail_repeat")}
+              />
+            </FormGroup>
+          </Box>
+        )}
         {scheduleList.class_type !== "Task" && (
           <Autocomplete
             id="combo-box-demo"

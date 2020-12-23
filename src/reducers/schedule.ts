@@ -19,6 +19,7 @@ import {
 } from "../api/api-ko.auto";
 import {
   EntityClassType,
+  EntityContentInfoWithDetails,
   EntityProgram,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
@@ -60,6 +61,7 @@ export interface ScheduleState {
   scheduleMockOptions: getScheduleMockOptionsResponse;
   participantMockOptions: getScheduleParticipantsMockOptionsResponse;
   liveToken: string;
+  contentsAuthList: EntityContentInfoWithDetails[];
 }
 
 interface Rootstate {
@@ -86,6 +88,7 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
 };
 
 const initialState: ScheduleState = {
+  contentsAuthList: [],
   saveResult: 1,
   total: 0,
   searchScheduleList: [],
@@ -305,6 +308,12 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
   }
 );
 
+type GetContentsAuthedParams = Parameters<typeof api.contentsAuthed.queryAuthContent>[0];
+type GetContentsAuthedResult = ReturnType<typeof api.contentsAuthed.queryAuthContent>;
+export const getContentsAuthed = createAsyncThunk<GetContentsAuthedResult, GetContentsAuthedParams>("getContentsAuthed", async (query) => {
+  return api.contentsAuthed.queryAuthContent({ ...query });
+});
+
 interface LiveSchedulePayload extends LoadingMetaPayload {
   schedule_id: Parameters<typeof api.schedules.getScheduleLiveToken>[0];
   live_token_type: "preview" | "live";
@@ -398,6 +407,9 @@ const { actions, reducer } = createSlice({
     },
     [scheduleUpdateStatus.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof scheduleUpdateStatus>>) => {
       console.log(payload);
+    },
+    [getContentsAuthed.fulfilled.type]: (state, { payload }: any) => {
+      state.contentsAuthList = payload.list;
     },
   },
 });

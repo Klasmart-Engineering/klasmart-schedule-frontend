@@ -97,3 +97,9 @@ export interface ClassOptionsItem {
   class_id?: string;
   class_name?: string;
 }
+
+export interface EntityLessonPlanShortInfo {
+  title?: string;
+  id?: string;
+  name?: string;
+}
