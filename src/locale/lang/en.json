@@ -416,6 +416,7 @@
   "schedule_msg_recall_lesson_plan": "Oops! The lesson plan included for this lesson has already been deleted!",
   "schedule_button_start_class": "Start Class",
   "schedule_button_go_study": "Go Study",
+  "schedule_msg_earlier_today": "Due date cannot be earlier than today.",
   "report_label_student_achievement": "Student Achievement",
   "report_label_teacher": "Teacher",
   "report_label_class": "Class",

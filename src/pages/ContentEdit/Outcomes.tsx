@@ -277,7 +277,9 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
         comingsoonTip
       ) : (
         <>
-          <SearchcmsList searchType="searchOutcome" onSearch={onSearch} value={searchName} onCheckAssumed={onCheck} assumed={assumed} />
+          <Box width="100%">
+            <SearchcmsList searchType="searchOutcome" onSearch={onSearch} value={searchName} onCheckAssumed={onCheck} assumed={assumed} />
+          </Box>
           {list.length > 0 ? (
             <>
               <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />

@@ -54,7 +54,7 @@ export const useQueryCms = () => {
   const searchMedia = query.get("searchMedia") || "";
   const searchOutcome = query.get("searchOutcome") || "";
   const assumed = query.get("assumed") || "";
-  const isShare = query.get("isShare") || "";
+  const isShare = query.get("isShare") || "org";
   const editindex: number = Number(query.get("editindex") || 0);
   const back = query.get("back") || "";
   return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back };
@@ -164,7 +164,7 @@ function ContentEditForm() {
       history.replace({
         search: setQuery(history.location.search, { searchMedia }),
       });
-      isShare === "true" && lesson === "plan"
+      isShare === "badanamu" && lesson === "plan"
         ? dispatch(
             searchAuthContentLists({
               metaLoading: true,
@@ -216,11 +216,11 @@ function ContentEditForm() {
     [dispatch, history, searchOutcome]
   );
   const handleCheckShare = useMemo(
-    () => (isShare: MediaAssetsProps["isShare"] = "") => {
+    () => (isShare: MediaAssetsProps["isShare"] = "org") => {
       history.replace({
         search: setQuery(history.location.search, { isShare }),
       });
-      isShare === "true" && lesson === "plan"
+      isShare === "badanamu" && lesson === "plan"
         ? dispatch(
             searchAuthContentLists({
               metaLoading: true,
@@ -245,7 +245,7 @@ function ContentEditForm() {
   const handleChangePage = useMemo(
     () => (page: number) => {
       setMediaPage(page);
-      isShare === "true" && lesson === "plan"
+      isShare === "badanamu" && lesson === "plan"
         ? dispatch(
             searchAuthContentLists({
               metaLoading: true,
@@ -307,7 +307,9 @@ function ContentEditForm() {
     [dispatch, program]
   );
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "true" }));
+    dispatch(
+      onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu" })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
   const assetDetails = (
@@ -369,7 +371,7 @@ function ContentEditForm() {
         onChangePage={handleChangePage}
         total={mediaListTotal}
         mediaPage={mediaPage}
-        isShare={String(isShare)}
+        isShare={isShare}
         onCheckShare={handleCheckShare}
       />
     </ContentTabs>

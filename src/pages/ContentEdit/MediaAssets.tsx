@@ -211,7 +211,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
       {comingsoon && lesson !== "plan" ? (
         comingsoonTip
       ) : (
-        <>
+        <Box width="100%">
           <SearchcmsList
             searchType="searchMedia"
             onSearch={onSearch}
@@ -221,7 +221,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
             isShare={isShare}
           />
           {list.length > 0 ? table : resultsTip}
-        </>
+        </Box>
       )}
     </Box>
   );

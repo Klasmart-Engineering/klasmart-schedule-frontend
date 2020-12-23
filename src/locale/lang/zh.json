@@ -416,6 +416,7 @@
   "schedule_msg_recall_lesson_plan": "这节课的教学计划已被删除！",
   "schedule_button_start_class": "开始线下课堂",
   "schedule_button_go_study": "开始家庭作业",
+  "schedule_msg_earlier_today": "截止日期不能早于当天",
   "report_label_student_achievement": "学生成绩",
   "report_label_teacher": "老师",
   "report_label_class": "班级",

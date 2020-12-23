@@ -461,6 +461,7 @@ type LangRecord<T = string> =
     }
   | { id: "schedule_button_start_class"; description: "Start Class"; values: undefined }
   | { id: "schedule_button_go_study"; description: "Go Study"; values: undefined }
+  | { id: "schedule_msg_earlier_today"; description: "Due date cannot be earlier than today."; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

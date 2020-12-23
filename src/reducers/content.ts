@@ -325,7 +325,12 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
       type === "material" || type === "plan"
         ? isShare && type === "plan"
           ? dispatch(searchAuthContentLists({ content_type: SearchContentsRequestContentType.material, name: searchMedia }))
-          : dispatch(searchContentLists({ content_type: SearchContentsRequestContentType.material, name: searchMedia }))
+          : dispatch(
+              searchContentLists({
+                content_type: type === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
+                name: searchMedia,
+              })
+            )
         : undefined,
       type === "material" || type === "plan"
         ? dispatch(searchOutcomeList({ search_key: searchOutcome, page: 1, assumed: assumed === "true" ? 1 : -1 }))
