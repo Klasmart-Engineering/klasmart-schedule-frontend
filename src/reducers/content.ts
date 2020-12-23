@@ -619,15 +619,11 @@ export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult, IQuer
 
 interface LiveContentPayload extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentLiveToken>[0];
-  class_id: Parameters<typeof api.contents.getContentLiveToken>[1];
 }
 type LiveContentResult = ReturnType<typeof api.contents.getContentLiveToken>;
-export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>(
-  "contents/live",
-  async ({ content_id, class_id }) => {
-    return api.contents.getContentLiveToken(content_id, class_id);
-  }
-);
+export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>("contents/live", async ({ content_id }) => {
+  return api.contents.getContentLiveToken(content_id);
+});
 
 type IQueryAddFolderParams = { content_type?: string; parent_id: string };
 type IQueryAddFolderResult = AsyncReturnType<typeof api.folders.createFolder>;
