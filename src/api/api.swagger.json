@@ -5111,6 +5111,45 @@
         }
       }
     },
+    "/schedules/{schedule_id}/real_time": {
+      "get": {
+        "description": "get schedule real-time status",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "get schedule real-time status",
+        "operationId": "getScheduleRealTimeStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleRealTimeView"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules/{schedule_id}/status": {
       "put": {
         "description": "update schedule status",
@@ -8608,6 +8647,17 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleRealTimeView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "lesson_plan_is_auth": {
+          "type": "boolean"
         }
       }
     },

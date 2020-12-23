@@ -15,7 +15,7 @@ import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { getScheduleLiveToken, getScheduleRealTimeStatusPath, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
@@ -266,6 +266,11 @@ function MyCalendar(props: CalendarProps) {
     if ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
+
+    let checkLessonPlan: any;
+    checkLessonPlan = ((await dispatch(
+      getScheduleRealTimeStatusPath({ schedule_id: event.id, metaLoading: true })
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleRealTimeStatusPath>>;
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -279,6 +284,7 @@ function MyCalendar(props: CalendarProps) {
           scheduleInfo={event}
           toLive={toLive}
           changeModalDate={changeModalDate}
+          checkLessonPlan={checkLessonPlan.payload.lesson_plan_is_auth}
         />
       ),
       openStatus: true,

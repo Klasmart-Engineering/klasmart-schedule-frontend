@@ -57,6 +57,11 @@ const useStyles = makeStyles({
     textAlign: "right",
     marginTop: "60px",
   },
+  checkPlan: {
+    color: "#E02020",
+    position: "absolute",
+    top: "0px",
+  },
 });
 
 // type scheduleInfoProps = {
@@ -88,13 +93,14 @@ interface InfoProps {
   scheduleInfo: scheduleInfoProps;
   toLive: () => void;
   changeModalDate: (data: object) => void;
+  checkLessonPlan: boolean;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive } = props;
+  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive, checkLessonPlan } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -143,6 +149,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                     scheduleInfo={scheduleInfo}
                     toLive={toLive}
                     changeModalDate={changeModalDate}
+                    checkLessonPlan={checkLessonPlan}
                   />
                 ),
                 openStatus: true,
@@ -167,6 +174,11 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   return (
     <div className={classes.previewContainer}>
+      {!checkLessonPlan && (
+        <p className={classes.checkPlan}>
+          {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
+        </p>
+      )}
       <div>
         <p className={classes.title}>{scheduleInfo.title}</p>
         <p className={classes.date}>
@@ -201,15 +213,17 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
       </div>
       <div className={classes.buttonPart}>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={scheduleInfo.class_type === "Task"}
-          style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
-          href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
-        >
-          {d("Preview").t("schedule_button_preview")}
-        </Button>
+        {!checkLessonPlan && (
+          <Button
+            color="primary"
+            variant="contained"
+            disabled={scheduleInfo.class_type === "Task"}
+            style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
+            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
+          >
+            {d("Preview").t("schedule_button_preview")}
+          </Button>
+        )}
         {scheduleInfo.class_type !== "Task" && (
           <Button
             color="primary"

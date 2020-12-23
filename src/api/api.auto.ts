@@ -847,6 +847,11 @@ export interface EntitySchedulePageView {
   total?: number;
 }
 
+export interface EntityScheduleRealTimeView {
+  id?: string;
+  lesson_plan_is_auth?: boolean;
+}
+
 export interface EntityScheduleSearchView {
   class?: EntityScheduleShortInfo;
   end_at?: number;
@@ -2603,6 +2608,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getScheduleLiveToken: (schedule_id: string, query: { live_token_type: "preview" | "live" }, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/live/token${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduleRealTimeStatus
+     * @summary get schedule real-time status
+     * @request GET:/schedules/{schedule_id}/real_time
+     * @description get schedule real-time status
+     */
+    getScheduleRealTimeStatus: (schedule_id: string, params?: RequestParams) =>
+      this.request<EntityScheduleRealTimeView, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}/real_time`,
         "GET",
         params
       ),

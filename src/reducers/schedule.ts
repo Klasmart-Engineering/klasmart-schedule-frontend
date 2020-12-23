@@ -211,6 +211,15 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   }
 );
 
+type getScheduleRealTimeStatusParams = { schedule_id: Parameters<typeof api.schedules.getScheduleRealTimeStatus>[0] } & LoadingMetaPayload;
+type getScheduleRealTimeStatusResult = ReturnType<typeof api.schedules.getScheduleRealTimeStatus>;
+export const getScheduleRealTimeStatusPath = createAsyncThunk<getScheduleRealTimeStatusResult, getScheduleRealTimeStatusParams>(
+  "schedule/getScheduleRealTimeStatus",
+  ({ schedule_id }) => {
+    return api.schedules.getScheduleRealTimeStatus(schedule_id);
+  }
+);
+
 type UpdateStatusResourseParams = {
   schedule_id: Parameters<typeof api.schedules.updateStatus>[0];
   status: Parameters<typeof api.schedules.updateStatus>[1];
