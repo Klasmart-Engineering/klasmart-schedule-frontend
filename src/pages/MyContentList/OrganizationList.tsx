@@ -43,7 +43,6 @@ const useStyles = makeStyles(() =>
     },
     dialogContent: {
       maxHeight: 280,
-      // inWidth: 300
     },
     tooltipIcon: {
       color: "#666",
@@ -172,6 +171,7 @@ export function OrganizationList(props: OrganizationListProps) {
         <LButton
           color="primary"
           variant="contained"
+          disableRipple={true}
           className={css.okBtn}
           onClick={() => onShareFolder(selectedOrgIds)}
           disabled={!selectedOrgIds.length}
