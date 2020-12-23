@@ -140,7 +140,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       return [contentPreview];
     }
   };
-  console.log(planRes());
   const rightside = (
     <Fragment>
       {contentPreview.id && (

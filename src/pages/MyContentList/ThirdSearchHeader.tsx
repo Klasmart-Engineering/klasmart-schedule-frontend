@@ -13,7 +13,7 @@ import { EntityFolderContent } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
+import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
@@ -311,9 +311,11 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               )}
               {(value.publish_status === PublishStatus.published ||
                 value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
-                <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
-                  {d("New Folder").t("library_label_new_folder")}
-                </Button>
+                <Permission value={PermissionType.create_folder_289}>
+                  <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
+                    {d("New Folder").t("library_label_new_folder")}
+                  </Button>
+                </Permission>
               )}
             </Grid>
             {unpublish && (
