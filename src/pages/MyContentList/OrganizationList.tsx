@@ -124,7 +124,7 @@ export function OrganizationList(props: OrganizationListProps) {
           <Controller
             name={SELECTED_ORG}
             control={control}
-            defaultValue={newSelectedOrgIds ? selectedOrg : newSelectedOrgIds}
+            defaultValue={newSelectedOrgIds ? selectedOrg : []}
             rules={{ required: true }}
             render={({ ref, ...props }) => (
               <CheckboxGroup
