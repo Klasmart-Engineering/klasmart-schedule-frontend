@@ -127,6 +127,10 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleGoLive = (scheduleInfo: scheduleInfoProps) => {
     const currentTime = Math.floor(new Date().getTime());
+    if (permissionShowLive && scheduleInfo.class_type === "Homework") {
+      toLive();
+      return;
+    }
     if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {
       changeModalDate({
         title: "",
@@ -230,7 +234,11 @@ export default function CustomizeTempalte(props: InfoProps) {
             autoFocus
             className={classes.lastButton}
             style={{ visibility: permissionShowLive && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible" }}
-            disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
+            disabled={
+              (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
+              (!permissionShowLive && scheduleInfo.class_type === "Homework") ||
+              !checkLessonPlan
+            }
             onClick={() => handleGoLive(scheduleInfo)}
           >
             {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}

@@ -896,6 +896,12 @@ function EditBox(props: CalendarStateProps) {
 
   const handleGoLive = (scheduleDetial: EntityScheduleDetailsView) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
+
+    if (permissionShowPreview && scheduleList.class_type === "Homework") {
+      toLive();
+      return;
+    }
+
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
@@ -1236,7 +1242,11 @@ function EditBox(props: CalendarStateProps) {
             <Button
               variant="contained"
               color="primary"
-              disabled={scheduleDetial.status === "Closed" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
+              disabled={
+                scheduleDetial.status === "Closed" ||
+                !scheduleDetial.real_time_status?.lesson_plan_is_auth ||
+                (!permissionShowPreview && scheduleList.class_type === "Homework")
+              }
               style={{
                 width: "45%",
                 visibility: perm.attend_live_class_as_a_student_187 ? "hidden" : "visible",
