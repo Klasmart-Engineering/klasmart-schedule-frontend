@@ -405,6 +405,9 @@ const { actions, reducer } = createSlice({
     [getScheduleLiveToken.fulfilled.type]: (state, { payload }: any) => {
       state.liveToken = payload.token;
     },
+    [getScheduleLiveToken.rejected.type]: (state, { error }: any) => {
+      state.liveToken = "";
+    },
     [getMockOptions.fulfilled.type]: (state, { payload }: any) => {
       state.mockOptions = payload;
     },
