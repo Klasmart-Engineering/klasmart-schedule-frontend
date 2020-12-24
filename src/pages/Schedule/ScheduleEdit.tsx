@@ -39,6 +39,7 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
+
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
     marginTop: 20,
@@ -189,6 +190,7 @@ function EditBox(props: CalendarStateProps) {
     PermissionType.create_event_520,
     PermissionType.create_my_schedule_events_521,
     PermissionType.create_my_schools_schedule_events_522,
+    PermissionType.attend_live_class_as_a_student_187,
   ]);
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
@@ -1237,6 +1239,7 @@ function EditBox(props: CalendarStateProps) {
               disabled={scheduleDetial.status === "Closed" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
               style={{
                 width: "45%",
+                visibility: perm.attend_live_class_as_a_student_187 ? "hidden" : "visible",
               }}
               onClick={() => handleGoLive(scheduleDetial)}
             >

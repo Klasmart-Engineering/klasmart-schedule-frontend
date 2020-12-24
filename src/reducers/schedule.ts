@@ -250,7 +250,7 @@ export interface getScheduleMockOptionsResponse {
 interface GetScheduleMockOptionsPayLoad {
   organization_id?: string | null;
   teacher_id?: string;
-  is_teacher?: boolean;
+  is_org?: boolean;
 }
 
 /**
@@ -258,7 +258,7 @@ interface GetScheduleMockOptionsPayLoad {
  */
 export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsResponse, GetScheduleMockOptionsPayLoad>(
   "getClassesList",
-  async ({ is_teacher }) => {
+  async ({ is_org }) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
       query: TeachersByOrgnizationDocument,
@@ -270,7 +270,14 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
     const teacherList = MOCK ? mockResult : data;
 
     let classResult: any;
-    if (is_teacher) {
+    if (is_org) {
+      classResult = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
+        query: ClassesByOrganizationDocument,
+        variables: {
+          organization_id,
+        },
+      });
+    } else {
       const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
         query: QeuryMeDocument,
         variables: {
@@ -284,13 +291,6 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
         },
       });
       classResult = { data: { organization: { classes: teacherByClass.data.user.classesTeaching } } };
-    } else {
-      classResult = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
-        query: ClassesByOrganizationDocument,
-        variables: {
-          organization_id,
-        },
-      });
     }
     const [subjectList, programList, classTypeList] = await Promise.all([
       api.subjects.getSubject(),

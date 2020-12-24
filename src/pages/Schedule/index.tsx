@@ -155,12 +155,12 @@ function ScheduleContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, dispatch]);
 
-  const getTeacherByClass = usePermission(PermissionType.create_event_520);
+  const getOrgByClass = usePermission(PermissionType.create_event_520);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
-    dispatch(getScheduleMockOptions({ is_teacher: !getTeacherByClass }));
-  }, [dispatch, getTeacherByClass]);
+    dispatch(getScheduleMockOptions({ is_org: getOrgByClass }));
+  }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));

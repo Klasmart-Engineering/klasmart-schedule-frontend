@@ -105,6 +105,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+  const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   const timestampToTime = (timestamp: Date | null): string => {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -228,6 +229,7 @@ export default function CustomizeTempalte(props: InfoProps) {
             variant="contained"
             autoFocus
             className={classes.lastButton}
+            style={{ visibility: permissionShowLive ? "hidden" : "visible" }}
             disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
             onClick={() => handleGoLive(scheduleInfo)}
           >
