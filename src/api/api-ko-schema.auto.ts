@@ -129,6 +129,7 @@ export type User = {
   schoolsWithPermission?: Maybe<Array<Maybe<SchoolMembership>>>;
   set?: Maybe<User>;
   createOrganization?: Maybe<Organization>;
+  merge?: Maybe<User>;
   addOrganization?: Maybe<OrganizationMembership>;
   addSchool?: Maybe<OrganizationMembership>;
 };
@@ -163,6 +164,10 @@ export type UserCreateOrganizationArgs = {
   address2?: Maybe<Scalars["String"]>;
   phone?: Maybe<Scalars["String"]>;
   shortCode?: Maybe<Scalars["String"]>;
+};
+
+export type UserMergeArgs = {
+  other_id?: Maybe<Scalars["String"]>;
 };
 
 export type UserAddOrganizationArgs = {
