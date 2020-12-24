@@ -466,7 +466,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       });
       return { privateRes, organization_id };
     } else if (program_group) {
-      const badaContent = await api.contentsAuthed.queryAuthContent({ program_group, page, order_by, page_size });
+      const badaContent = await api.contentsAuthed.queryAuthContent({ name, program_group, page, order_by, page_size });
       return { badaContent, organization_id };
     } else {
       const contentRes = await api.contents.searchContents({
