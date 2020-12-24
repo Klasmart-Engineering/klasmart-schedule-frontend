@@ -213,17 +213,17 @@ export default function CustomizeTempalte(props: InfoProps) {
           />
         )}
       </div>
-      <div className={classes.buttonPart}>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
-          style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
-          href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
-        >
-          {d("Preview").t("schedule_button_preview")}
-        </Button>
-        {scheduleInfo.class_type !== "Task" && (
+      {scheduleInfo.class_type !== "Task" && (
+        <div className={classes.buttonPart}>
+          <Button
+            color="primary"
+            variant="contained"
+            disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
+            style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
+            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
+          >
+            {d("Preview").t("schedule_button_preview")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -237,8 +237,8 @@ export default function CustomizeTempalte(props: InfoProps) {
             {scheduleInfo.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
             {scheduleInfo.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

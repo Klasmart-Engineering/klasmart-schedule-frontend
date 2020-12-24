@@ -1213,26 +1213,26 @@ function EditBox(props: CalendarStateProps) {
               </Button>
             </Box>
           )}
-        <Box
-          className={css.fieldset}
-          style={{
-            display: scheduleId ? "block" : "none",
-          }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
+        {scheduleList.class_type !== "Task" && (
+          <Box
+            className={css.fieldset}
             style={{
-              width: "45%",
-              marginRight: "10%",
-              visibility: permissionShowPreview ? "visible" : "hidden",
+              display: scheduleId ? "block" : "none",
             }}
-            disabled={scheduleList.class_type === "Task" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
-            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
           >
-            {d("Preview").t("schedule_button_preview")}
-          </Button>
-          {scheduleList.class_type !== "Task" && (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                width: "45%",
+                marginRight: "10%",
+                visibility: permissionShowPreview ? "visible" : "hidden",
+              }}
+              disabled={!scheduleDetial.real_time_status?.lesson_plan_is_auth}
+              href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
+            >
+              {d("Preview").t("schedule_button_preview")}
+            </Button>
             <Button
               variant="contained"
               color="primary"
@@ -1247,8 +1247,8 @@ function EditBox(props: CalendarStateProps) {
               {scheduleList.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
               {scheduleList.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
             </Button>
-          )}
-        </Box>
+          </Box>
+        )}
         {checkedStatus.repeatCheck && (
           <Box className={css.repeatBox}>
             <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
