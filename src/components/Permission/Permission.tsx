@@ -69,6 +69,7 @@ export enum PermissionType {
   create_my_schedule_events_521 = "create_my_schedule_events_521",
   create_folder_289 = "create_folder_289",
   publish_featured_content_for_all_hub_79000 = "publish_featured_content_for_all_hub_79000",
+  create_my_schools_schedule_events_522 = "create_my_schools_schedule_events_522",
 }
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);

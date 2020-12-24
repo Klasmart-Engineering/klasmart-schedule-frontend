@@ -213,17 +213,15 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
       </div>
       <div className={classes.buttonPart}>
-        {!checkLessonPlan && (
-          <Button
-            color="primary"
-            variant="contained"
-            disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
-            style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
-            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
-          >
-            {d("Preview").t("schedule_button_preview")}
-          </Button>
-        )}
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
+          style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
+          href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
+        >
+          {d("Preview").t("schedule_button_preview")}
+        </Button>
         {scheduleInfo.class_type !== "Task" && (
           <Button
             color="primary"

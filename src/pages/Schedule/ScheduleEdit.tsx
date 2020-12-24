@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
-import { Permission, PermissionType, usePermission } from "../../components/Permission";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
@@ -185,6 +185,11 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
   const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+  const perm = usePermission([
+    PermissionType.create_event_520,
+    PermissionType.create_my_schedule_events_521,
+    PermissionType.create_my_schools_schedule_events_522,
+  ]);
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -1192,26 +1197,20 @@ function EditBox(props: CalendarStateProps) {
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
         />
-        {!isScheduleExpired() && (
-          <Permission
-            value={PermissionType.create_event_520}
-            render={(value) =>
-              value && (
-                <Box
-                  className={css.fieldset}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
-                    {d("Click to Schedule").t("schedule_button_click_to schedule")}
-                  </Button>
-                </Box>
-              )
-            }
-          />
-        )}
+        {!isScheduleExpired() &&
+          (perm.create_event_520 || perm.create_my_schedule_events_521 || perm.create_my_schools_schedule_events_522) && (
+            <Box
+              className={css.fieldset}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
+                {d("Click to Schedule").t("schedule_button_click_to schedule")}
+              </Button>
+            </Box>
+          )}
         <Box
           className={css.fieldset}
           style={{
