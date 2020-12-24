@@ -229,7 +229,7 @@ export default function CustomizeTempalte(props: InfoProps) {
             variant="contained"
             autoFocus
             className={classes.lastButton}
-            style={{ visibility: permissionShowLive ? "hidden" : "visible" }}
+            style={{ visibility: permissionShowLive && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible" }}
             disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
             onClick={() => handleGoLive(scheduleInfo)}
           >
