@@ -175,7 +175,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   return (
     <div className={classes.previewContainer}>
-      {!checkLessonPlan && (
+      {!checkLessonPlan && scheduleInfo.class_type !== "Task" && (
         <p className={classes.checkPlan}>
           {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
         </p>
