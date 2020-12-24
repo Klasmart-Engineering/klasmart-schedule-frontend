@@ -353,14 +353,16 @@ function ContentCard(props: ContentProps) {
             content?.content_type === ContentType.folder &&
             orgProperty.type === OrgType.headquarters &&
             (!queryCondition.path || (queryCondition.path && queryCondition.path === "/")) && (
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.shareColor, css.MuiIconButtonRoot)}
-                onClick={() => onClickShareBtn(content)}
-              >
-                <ShareIcon />
-              </LButton>
+              <Permission value={PermissionType.publish_featured_content_for_all_hub_79000}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.shareColor, css.MuiIconButtonRoot)}
+                  onClick={() => onClickShareBtn(content)}
+                >
+                  <ShareIcon />
+                </LButton>
+              </Permission>
             )}
           {!queryCondition.program_group &&
             (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
