@@ -1,5 +1,6 @@
 {
   "library": "H5P.MultiChoice-1.14",
+  "subContentId": "123",
   "params": {
     "media": {
         "type": {

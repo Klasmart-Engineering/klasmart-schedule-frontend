@@ -1,10 +1,10 @@
 import React from "react";
-import mockMultichoiceContent from '../../mocks/multichoiceContent.json';
+import mockContent from '../../mocks/ArithmeticQuizContent.json';
 import { H5pPlayer } from "./H5pPlayer";
 
 export function H5pDemo() {
   return (
-    <H5pPlayer libraryId={'H5P.MultiChoice-1.14'} content={mockMultichoiceContent}/>
+    <H5pPlayer value={mockContent}/>
   );
 }
 

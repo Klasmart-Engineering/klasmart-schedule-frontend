@@ -2,6 +2,7 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import { iframeResizer } from 'iframe-resizer';
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { apiCreateContentTypeLibrary } from "../../api/extra";
+import { H5PLibraryContent } from "../../models/ModelH5pSchema";
 
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
   removeListeners: () => void;
@@ -12,7 +13,7 @@ const useStyle = makeStyles(() => createStyles({
   iframe: {
     width: 1, 
     minWidth: '100%',
-    border: "1px dashed red",
+    // border: "1px dashed red",
   }
 }))
 
@@ -106,11 +107,11 @@ const l10n = {
 };
 
 interface H5pPlayerProps {
-  libraryId: string;
-  content: any;
+  value: NonNullable<H5PLibraryContent>;
 }
 export function H5pPlayer(props: H5pPlayerProps) {
-  const { libraryId, content } = props;
+  const { value } = props;
+  const { library: libraryId, params: content } = value;
   const css = useStyle();
   const { library, core } = apiCreateContentTypeLibrary(libraryId);
   const inject = useMemo<InjectHandler>(() => async (root) => {
