@@ -128,7 +128,9 @@ export default function CustomizeTempalte(props: InfoProps) {
   const handleGoLive = (scheduleInfo: scheduleInfoProps) => {
     const currentTime = Math.floor(new Date().getTime());
     if (permissionShowLive && scheduleInfo.class_type === "Homework") {
-      toLive();
+      handleClose();
+      dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
+      window.open(apiLivePath(liveToken));
       return;
     }
     if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {

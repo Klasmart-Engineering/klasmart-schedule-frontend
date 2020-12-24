@@ -1245,7 +1245,7 @@ function EditBox(props: CalendarStateProps) {
               disabled={
                 scheduleDetial.status === "Closed" ||
                 !scheduleDetial.real_time_status?.lesson_plan_is_auth ||
-                (!permissionShowPreview && scheduleList.class_type === "Homework")
+                (!perm.attend_live_class_as_a_student_187 && scheduleList.class_type === "Homework")
               }
               style={{
                 width: "45%",

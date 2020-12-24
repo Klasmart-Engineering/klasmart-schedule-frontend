@@ -89,6 +89,7 @@ function MyCalendar(props: CalendarProps) {
     },
     [changeModalDate, dispatch, history, modelView, timesTamp]
   );
+  const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   /**
    * rander data
@@ -263,7 +264,10 @@ function MyCalendar(props: CalendarProps) {
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
     const currentTime = Math.floor(new Date().getTime());
-    if ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) {
+    if (
+      ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
+      (permissionShowLive && event.class_type === "Homework")
+    ) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
 
