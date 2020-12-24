@@ -59,8 +59,7 @@ const useStyles = makeStyles({
   },
   checkPlan: {
     color: "#E02020",
-    position: "absolute",
-    top: "0px",
+    fontWeight: "bold",
   },
 });
 
@@ -217,7 +216,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <Button
             color="primary"
             variant="contained"
-            disabled={scheduleInfo.class_type === "Task"}
+            disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
             style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
             href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
           >
@@ -230,7 +229,7 @@ export default function CustomizeTempalte(props: InfoProps) {
             variant="contained"
             autoFocus
             className={classes.lastButton}
-            disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
+            disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
             onClick={() => handleGoLive(scheduleInfo)}
           >
             {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}

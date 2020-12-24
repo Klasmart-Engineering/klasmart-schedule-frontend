@@ -12,12 +12,12 @@ export type RoleBasedUsersByOrgnizationQuery = { __typename?: "Query" } & {
       roles?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Role" } & Pick<Types.Role, "[object Object]"> & {
+            { __typename?: "Role" } & Pick<Types.Role, "role_name"> & {
                 memberships?: Types.Maybe<
                   Array<
                     Types.Maybe<
                       { __typename?: "OrganizationMembership" } & {
-                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>;
+                        user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
                       }
                     >
                   >
@@ -41,7 +41,7 @@ export type TeachersByOrgnizationQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "OrganizationMembership" } & {
-              user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>;
+              user?: Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>;
             }
           >
         >
@@ -57,9 +57,7 @@ export type ClassesByTeacherQueryVariables = Types.Exact<{
 export type ClassesByTeacherQuery = { __typename?: "Query" } & {
   user?: Types.Maybe<
     { __typename?: "User" } & {
-      classesTeaching?: Types.Maybe<
-        Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]">>>
-      >;
+      classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
     }
   >;
 };
@@ -71,7 +69,7 @@ export type ClassesByOrganizationQueryVariables = Types.Exact<{
 export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]">>>>;
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
     }
   >;
 };
@@ -83,8 +81,8 @@ export type ParticipantsByClassQueryVariables = Types.Exact<{
 export type ParticipantsByClassQuery = { __typename?: "Query" } & {
   class?: Types.Maybe<
     { __typename?: "Class" } & {
-      teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>>;
-      students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>>;
+      teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+      students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
     }
   >;
 };
@@ -95,7 +93,7 @@ export type QeuryMeQueryVariables = Types.Exact<{
 
 export type QeuryMeQuery = { __typename?: "Query" } & {
   me?: Types.Maybe<
-    { __typename?: "User" } & Pick<Types.User, "[object Object]"> & {
+    { __typename?: "User" } & Pick<Types.User, "user_id"> & {
         membership?: Types.Maybe<
           { __typename?: "OrganizationMembership" } & {
             roles?: Types.Maybe<
@@ -103,7 +101,7 @@ export type QeuryMeQuery = { __typename?: "Query" } & {
                 Types.Maybe<
                   { __typename?: "Role" } & {
                     permissions?: Types.Maybe<
-                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "[object Object]">>>
+                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "permission_name">>>
                     >;
                   }
                 >
@@ -119,7 +117,7 @@ export type OrganizationsQueryVariables = Types.Exact<{ [key: string]: never }>;
 
 export type OrganizationsQuery = { __typename?: "Query" } & {
   organizations?: Types.Maybe<
-    Array<Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "[object Object]" | "[object Object]">>>
+    Array<Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "organization_id" | "organization_name">>>
   >;
 };
 
@@ -135,15 +133,13 @@ export type GetSchoolTeacherQuery = { __typename?: "Query" } & {
           Types.Maybe<
             { __typename?: "SchoolMembership" } & {
               school?: Types.Maybe<
-                { __typename?: "School" } & Pick<Types.School, "[object Object]" | "[object Object]"> & {
-                    organization?: Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "[object Object]">>;
+                { __typename?: "School" } & Pick<Types.School, "school_id" | "school_name"> & {
+                    organization?: Types.Maybe<{ __typename?: "Organization" } & Pick<Types.Organization, "organization_id">>;
                     classes?: Types.Maybe<
                       Array<
                         Types.Maybe<
                           { __typename?: "Class" } & {
-                            teachers?: Types.Maybe<
-                              Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>
-                            >;
+                            teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
                           }
                         >
                       >
@@ -168,10 +164,8 @@ export type TeacherByOrgIdQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "[object Object]" | "[object Object]"> & {
-                teachers?: Types.Maybe<
-                  Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "[object Object]" | "[object Object]">>>
-                >;
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name"> & {
+                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
               }
           >
         >
