@@ -136,7 +136,12 @@ export interface FilterAchievementReportProps {
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const { onChange, value, reportMockOptions } = props;
   const css = useStyles();
-  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
+  const perm = usePermission([
+    PermissionType.view_reports_610,
+    PermissionType.view_my_reports_614,
+    PermissionType.view_my_organizations_reports_612,
+    PermissionType.view_my_school_reports_611,
+  ]);
   const getOptions = (list: MockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -191,11 +196,11 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      {(perm.view_reports_610 || perm.view_my_reports_614) && (
+      {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
         <Hidden smDown>
           <Box position="relative" className={css.box}>
             <Box>
-              {perm.view_reports_610 && (
+              {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
                 <TextField
                   size="small"
                   className={css.selectButton}
@@ -261,14 +266,14 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
           </Box>
         </Hidden>
       )}
-      {(perm.view_reports_610 || perm.view_my_reports_614) && (
+      {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
         <Hidden mdUp>
           <Box display="flex">
             <Box flex={3}>
-              {perm.view_reports_610 && (
+              {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
                 <PersonOutlinedIcon
                   fontSize="large"
-                  className={clsx(css.selectIcon, classs.length <= 0 && css.selectIconDisabled)}
+                  className={clsx(css.selectIcon, teachers.length <= 0 && css.selectIconDisabled)}
                   onClick={(e) => showItem(e, "teacher_id")}
                 />
               )}

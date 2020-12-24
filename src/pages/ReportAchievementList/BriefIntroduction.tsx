@@ -92,7 +92,12 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   const css = useStyles();
   const history = useHistory();
   const [lessonPlanName, setLessonPlanName] = React.useState("");
-  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
+  const perm = usePermission([
+    PermissionType.view_reports_610,
+    PermissionType.view_my_reports_614,
+    PermissionType.view_my_school_reports_611,
+    PermissionType.view_my_organizations_reports_612,
+  ]);
   React.useEffect(() => {
     if (lessonPlanList && lessonPlanList.length) {
       const res = lessonPlanList.filter((item: EntityScheduleShortInfo) => item.id === value.lesson_plan_id)[0];
@@ -119,7 +124,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Divider className={css.divider} />
-      {(perm.view_my_reports_614 || perm.view_reports_610) && (
+      {(perm.view_my_reports_614 || perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
         <Box className={css.container_intro}>
           <Box className={css.leftName}>
             {value.teacher_id && (

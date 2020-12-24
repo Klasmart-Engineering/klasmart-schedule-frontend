@@ -17,7 +17,12 @@ export function ReportCategories() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { teacherList, categories } = useSelector<RootState, RootState["report"]["categoriesPage"]>((state) => state.report.categoriesPage);
-  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
+  const perm = usePermission([
+    PermissionType.view_reports_610,
+    PermissionType.view_my_reports_614,
+    PermissionType.view_my_school_reports_611,
+    PermissionType.view_my_organizations_reports_612,
+  ]);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.learningOutcomes) return;
     if (value === Category.archived) history.push(ReportAchievementList.routeBasePath);
@@ -34,7 +39,11 @@ export function ReportCategories() {
       <FirstSearchHeader value={Category.learningOutcomes} onChange={handleChange} />
       <FirstSearchHeaderMb value={Category.learningOutcomes} onChange={handleChange} />
       <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
-      {perm.view_reports_610 || perm.view_my_reports_614 ? (categories.length > 0 ? chart : emptyTip) : permissionTip}
+      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612
+        ? categories.length > 0
+          ? chart
+          : emptyTip
+        : permissionTip}
     </>
   );
 }

@@ -42,7 +42,12 @@ export function ReportAchievementList() {
   // const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   const reportList = totalData.reportList ?? [];
-  const perm = usePermission([PermissionType.view_reports_610, PermissionType.view_my_reports_614]);
+  const perm = usePermission([
+    PermissionType.view_reports_610,
+    PermissionType.view_my_reports_614,
+    PermissionType.view_my_organizations_reports_612,
+    PermissionType.view_my_school_reports_611,
+  ]);
   const student_name = totalData.student_name;
   const reportMockOptions = totalData.reportMockOptions;
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
@@ -135,7 +140,7 @@ export function ReportAchievementList() {
         reportMockOptions={reportMockOptions}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
-      {perm.view_reports_610 || perm.view_my_reports_614 ? (
+      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612 ? (
         reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
         ) : (
