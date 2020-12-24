@@ -272,7 +272,7 @@ export default function MyContentList() {
     openOrganizationList();
   };
   const handleShareFolder: OrganizationListProps["onShareFolder"] = async (org_ids) => {
-    await refreshWithDispatch(dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true })).then(unwrapResult));
+    await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
     closeOrganizationList();
   };
   useEffect(() => {
