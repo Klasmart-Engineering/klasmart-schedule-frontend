@@ -820,6 +820,7 @@ export interface EntityScheduleDetailsView {
   member_teachers?: EntityScheduleShortInfo[];
   org_id?: string;
   program?: EntityScheduleShortInfo;
+  real_time_status?: EntityScheduleRealTimeView;
   repeat?: EntityRepeatOptions;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";

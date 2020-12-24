@@ -1225,7 +1225,7 @@ function EditBox(props: CalendarStateProps) {
               marginRight: "10%",
               visibility: permissionShowPreview ? "visible" : "hidden",
             }}
-            disabled={scheduleList.class_type === "Task"}
+            disabled={scheduleList.class_type === "Task" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
             href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
           >
             {d("Preview").t("schedule_button_preview")}
@@ -1234,7 +1234,7 @@ function EditBox(props: CalendarStateProps) {
             <Button
               variant="contained"
               color="primary"
-              disabled={scheduleDetial.status === "Closed"}
+              disabled={scheduleDetial.status === "Closed" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
               style={{
                 width: "45%",
               }}

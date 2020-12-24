@@ -85,6 +85,7 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
   attachment: {},
   is_all_day: true,
   is_repeat: false,
+  real_time_status: {},
 };
 
 const initialState: ScheduleState = {

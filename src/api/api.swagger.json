@@ -8570,6 +8570,10 @@
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
+        "real_time_status": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleRealTimeView"
+        },
         "repeat": {
           "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
