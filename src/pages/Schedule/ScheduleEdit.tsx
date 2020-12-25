@@ -173,7 +173,7 @@ function EditBox(props: CalendarStateProps) {
     setSpecificStatus,
     specificStatus,
   } = props;
-  const { scheduleDetial, contentsAuthList } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { scheduleDetial, contentsAuthList, classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -612,8 +612,11 @@ function EditBox(props: CalendarStateProps) {
     return scheduleId ? scheduleDetial.status !== "NotStart" : false;
   };
 
-  const getClassOption = (list: any) => {
-    return list.classes.map((item: any) => {
+  const getClassOption = (): any => {
+    const lists = perm.create_event_520
+      ? classOptions.classListOrg.organization?.classes
+      : classOptions.classListTeacher.user?.classesTeaching;
+    return lists?.map((item: any) => {
       return { id: item.class_id, name: item.class_name };
     });
   };
@@ -1006,7 +1009,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={getClassOption(scheduleMockOptions.classList.organization)}
+          options={getClassOption()}
           getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");

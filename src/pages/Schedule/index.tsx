@@ -13,6 +13,8 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
+  getClassesByOrg,
+  getClassesByTeacher,
   getContentsAuthed,
   getMockOptions,
   getScheduleInfo,
@@ -159,12 +161,20 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(getMockOptions());
-    dispatch(getScheduleMockOptions({ is_org: getOrgByClass }));
+    dispatch(getScheduleMockOptions({}));
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    if (getOrgByClass) {
+      dispatch(getClassesByOrg());
+    } else {
+      dispatch(getClassesByTeacher());
+    }
   }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
-    dispatch(getContentsAuthed({ content_type: "2" }));
+    dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
     }

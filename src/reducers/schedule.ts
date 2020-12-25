@@ -28,7 +28,6 @@ import {
   EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
-import classListByTeacher from "../mocks/classListByTeacher.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
@@ -44,6 +43,11 @@ interface scheduleViewData {
   status: "NotStart" | "Started" | "Closed";
   class_type: string;
   class_id: string;
+}
+
+interface classOptionsProp {
+  classListOrg: ClassesByOrganizationQuery;
+  classListTeacher: ClassesByTeacherQuery;
 }
 
 export interface ScheduleState {
@@ -62,6 +66,7 @@ export interface ScheduleState {
   participantMockOptions: getScheduleParticipantsMockOptionsResponse;
   liveToken: string;
   contentsAuthList: EntityContentInfoWithDetails[];
+  classOptions: classOptionsProp;
 }
 
 interface Rootstate {
@@ -113,11 +118,6 @@ const initialState: ScheduleState = {
   },
   errorLable: "",
   scheduleMockOptions: {
-    classList: {
-      organization: {
-        classes: [],
-      },
-    },
     teacherList: {
       organization: {
         teachers: [],
@@ -136,6 +136,18 @@ const initialState: ScheduleState = {
     },
   },
   liveToken: "",
+  classOptions: {
+    classListOrg: {
+      organization: {
+        classes: [],
+      },
+    },
+    classListTeacher: {
+      user: {
+        classesTeaching: [],
+      },
+    },
+  },
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -184,6 +196,38 @@ export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultRespo
     return { scheduleTimeViewData, scheduleTimeViewYearData };
   }
 );
+
+/**
+ *  get class by teacher
+ */
+export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
+    query: ClassesByTeacherDocument,
+    variables: {
+      user_id: meInfo.me?.user_id as string,
+    },
+  });
+});
+
+/**
+ *  get class by org
+ */
+export const getClassesByOrg = createAsyncThunk("getClassesByOrg", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  return gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
+    query: ClassesByOrganizationDocument,
+    variables: {
+      organization_id,
+    },
+  });
+});
 
 type deleteSchedulesParams = {
   schedule_id: Parameters<typeof api.schedules.deleteSchedule>[0];
@@ -242,7 +286,6 @@ export interface getScheduleParticipantsMockOptionsResponse {
 
 export interface getScheduleMockOptionsResponse {
   teacherList: TeachersByOrgnizationQuery;
-  classList: ClassesByOrganizationQuery;
   subjectList: EntitySubject[];
   programList: EntityProgram[];
   classTypeList: EntityClassType[];
@@ -250,7 +293,6 @@ export interface getScheduleMockOptionsResponse {
 interface GetScheduleMockOptionsPayLoad {
   organization_id?: string | null;
   teacher_id?: string;
-  is_org?: boolean;
 }
 
 /**
@@ -258,7 +300,7 @@ interface GetScheduleMockOptionsPayLoad {
  */
 export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsResponse, GetScheduleMockOptionsPayLoad>(
   "getClassesList",
-  async ({ is_org }) => {
+  async () => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
       query: TeachersByOrgnizationDocument,
@@ -269,37 +311,12 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
 
-    let classResult: any;
-    if (is_org) {
-      classResult = await gqlapi.query<ClassesByOrganizationQuery, ClassesByOrganizationQueryVariables>({
-        query: ClassesByOrganizationDocument,
-        variables: {
-          organization_id,
-        },
-      });
-    } else {
-      const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-        query: QeuryMeDocument,
-        variables: {
-          organization_id,
-        },
-      });
-      const teacherByClass: any = await gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
-        query: ClassesByTeacherDocument,
-        variables: {
-          user_id: meInfo.me?.user_id as string,
-        },
-      });
-      classResult = { data: { organization: { classes: teacherByClass.data.user.classesTeaching } } };
-    }
     const [subjectList, programList, classTypeList] = await Promise.all([
       api.subjects.getSubject(),
       api.programs.getProgram(),
       api.classTypes.getClassType(),
     ]);
-    const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
-    const classList = MOCK ? mockClassResult : classResult.data;
-    return { classList, subjectList, programList, classTypeList, teacherList };
+    return { subjectList, programList, classTypeList, teacherList };
   }
 );
 
@@ -423,6 +440,12 @@ const { actions, reducer } = createSlice({
     },
     [getContentsAuthed.fulfilled.type]: (state, { payload }: any) => {
       state.contentsAuthList = payload.list;
+    },
+    [getClassesByTeacher.fulfilled.type]: (state, { payload }: any) => {
+      state.classOptions.classListTeacher = payload.data;
+    },
+    [getClassesByOrg.fulfilled.type]: (state, { payload }: any) => {
+      state.classOptions.classListOrg = payload.data;
     },
   },
 });

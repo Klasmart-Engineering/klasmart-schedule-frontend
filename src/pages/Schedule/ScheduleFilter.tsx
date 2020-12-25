@@ -10,6 +10,8 @@ import { PermissionType, usePermission } from "../../components/Permission";
 import { d, t } from "../../locale/LocaleManager";
 import { getScheduleMockOptionsResponse } from "../../reducers/schedule";
 import { FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
+import { useSelector } from "react-redux";
+import { RootState } from "../../reducers";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -63,7 +65,13 @@ function FilterTemplate(props: FilterProps) {
   const css = useStyles();
   const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
 
-  const perm = usePermission([PermissionType.view_my_calendar_510, PermissionType.view_school_calendar_512]);
+  const perm = usePermission([
+    PermissionType.view_my_calendar_510,
+    PermissionType.view_school_calendar_512,
+    PermissionType.create_event_520,
+  ]);
+
+  const { classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
 
   const [activeStatus, setActiveStatus] = React.useState({
     Schools: false,
@@ -83,8 +91,11 @@ function FilterTemplate(props: FilterProps) {
     Programs: [],
   });
 
-  const getClassOption = (list: any) => {
-    return list.classes.map((item: any) => {
+  const getClassOption = (): any => {
+    const lists = perm.create_event_520
+      ? classOptions.classListOrg.organization?.classes
+      : classOptions.classListTeacher.user?.classesTeaching;
+    return lists?.map((item: any) => {
       return { id: item.class_id, name: item.class_name };
     });
   };
@@ -99,7 +110,7 @@ function FilterTemplate(props: FilterProps) {
   const [, setSubject] = React.useState<MockOptionsItem[]>([]);
 
   const myGather: ScheduleFilterProps[] = [
-    { name: "Classes", label: "schedule_filter_classes", child: getClassOption(scheduleMockOptions.classList.organization) },
+    { name: "Classes", label: "schedule_filter_classes", child: getClassOption() },
     { name: "Programs", label: "schedule_filter_programs", child: scheduleMockOptions.programList },
     { name: "Subjects", label: "schedule_filter_subjects", child: scheduleMockOptions.subjectList },
   ];
