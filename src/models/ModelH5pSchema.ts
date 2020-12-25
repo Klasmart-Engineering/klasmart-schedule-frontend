@@ -1,20 +1,20 @@
 import jsSHA from "jssha";
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from "lodash/cloneDeep";
 
-export const H5P_ROOT_NAME = 'ROOT';
+export const H5P_ROOT_NAME = "ROOT";
 
 export enum H5PItemType {
-  library = 'library',
-  group = 'group',
-  list = 'list',
-  text = 'text',
-  number = 'number',
-  boolean = 'boolean',
-  select = 'select',
-  image = 'image',
-  video = 'video',
-  audio = 'audio',
-  file = 'file',
+  library = "library",
+  group = "group",
+  list = "list",
+  text = "text",
+  number = "number",
+  boolean = "boolean",
+  select = "select",
+  image = "image",
+  video = "video",
+  audio = "audio",
+  file = "file",
 }
 
 interface IH5PCopyright {
@@ -27,49 +27,61 @@ export type H5PTextContent = string | undefined;
 export type H5PNumberContent = number | undefined;
 export type H5PBooleanContent = boolean | undefined;
 export type H5PSelectContent = string | undefined;
-export type H5PMediaContent = {
-  path: string;
-  mime: string;
-  copyright?: IH5PCopyright;
-  width?: number;
-  height?: number;
-} | undefined;
+export type H5PMediaContent =
+  | {
+      path: string;
+      mime: string;
+      copyright?: IH5PCopyright;
+      width?: number;
+      height?: number;
+    }
+  | undefined;
 
-export type H5PGroupContent = {
-  [key in string]: H5PItemContent;
-} | undefined
+export type H5PGroupContent =
+  | {
+      [key in string]: H5PItemContent;
+    }
+  | undefined;
 
-export type H5PLibraryContent = {
-  params?: Record<string, H5PItemContent>;
-  library: string;
-  subContentId?: string;
-} | undefined;
+export type H5PLibraryContent =
+  | {
+      params?: Record<string, H5PItemContent>;
+      library: string;
+      subContentId?: string;
+      metadata?: {
+        defaultLanguage?: string;
+      };
+    }
+  | undefined;
 
 export type H5PListContent = H5PItemContent[] | undefined;
 
-export type H5PItemContent = H5PLeafContent | H5PGroupContent | H5PLibraryContent | H5PListContent ;
+export type H5PItemContent = H5PLeafContent | H5PGroupContent | H5PLibraryContent | H5PListContent;
 
-export type H5PContentBySemantics<S extends H5PItemSemantic> = 
-  S extends H5PLeafSemantic ? H5PLeafContent :
-  S extends H5PListSemantic ? H5PListContent :
-  S extends H5PGroupSemantic ? H5PGroupContent :
-  S extends H5PLibrarySemantic ? H5PLibraryContent :
-  never;
+export type H5PContentBySemantics<S extends H5PItemSemantic> = S extends H5PLeafSemantic
+  ? H5PLeafContent
+  : S extends H5PListSemantic
+  ? H5PListContent
+  : S extends H5PGroupSemantic
+  ? H5PGroupContent
+  : S extends H5PLibrarySemantic
+  ? H5PLibraryContent
+  : never;
 
 export interface IH5PRegexp {
-  pattern: string,
-  modifiers?: "i" | "g"
-};
+  pattern: string;
+  modifiers?: "i" | "g";
+}
 
 export interface IH5PImportant {
-  description: string
-  example: string
+  description: string;
+  example: string;
 }
 
 export enum H5PImportance {
-  'low' = 'low',
-  'medium' = 'medium',
-  'high' = 'high',
+  "low" = "low",
+  "medium" = "medium",
+  "high" = "high",
 }
 
 export interface H5PBaseSemantic {
@@ -80,6 +92,7 @@ export interface H5PBaseSemantic {
   importance?: H5PImportance;
   common?: boolean;
   widget?: string;
+  extra?: Record<string, any>;
 }
 
 export interface H5PTextSemantic extends H5PBaseSemantic {
@@ -110,7 +123,7 @@ export interface H5PBooleanSemantic extends H5PBaseSemantic {
 export interface H5PSelectSemantic extends H5PBaseSemantic {
   type: H5PItemType.select;
   default?: string;
-  options: { value: string, label: string }[];
+  options: { value: string; label: string }[];
 }
 
 export interface H5PMediaSemantic extends H5PBaseSemantic {
@@ -123,9 +136,9 @@ export type H5PLeafSemantic = H5PTextSemantic | H5PNumberSemantic | H5PBooleanSe
 export interface H5PLibrarySemantic extends H5PBaseSemantic {
   type: H5PItemType.library;
   options?: string[];
-};
+}
 
-export interface H5PListSemantic extends Omit<H5PBaseSemantic, 'widget'> {
+export interface H5PListSemantic extends Omit<H5PBaseSemantic, "widget"> {
   type: H5PItemType.list;
   field: H5PItemSemantic;
   entity?: string;
@@ -157,19 +170,18 @@ export interface H5PItemInfo {
 export interface H5PLibraryInfo {
   path: string;
   content: H5PLibraryContent;
-  semantics: H5PItemSemantic;
+  semantics: H5PLibrarySemantic;
 }
 
+export type H5PSchema = Record<string, H5PItemSemantic[]>;
 
-export type H5PSchema = Record<string, H5PItemSemantic[]>
+export const h5pName2libId = (option: string) => option.replace(" ", "-");
 
-export const h5pName2libId = (option: string) => option.replace(' ', '-');
-
-export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | undefined,  mapHandler: MapHandler<T>): T => {
+export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | undefined, mapHandler: MapHandler<T>): T => {
   const { path, content, semantics } = h5pItemInfo;
   if (!schema) return mapHandler({ path, content, semantics }, [], { schema });
   switch (semantics.type) {
-    case H5PItemType.library:  
+    case H5PItemType.library:
       const libraryContent = content as H5PLibraryContent;
       if (!libraryContent || !libraryContent.library) return mapHandler({ path, content, semantics }, [], { schema });
       const librarySemantics = schema[h5pName2libId(libraryContent.library)];
@@ -190,10 +202,10 @@ export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | u
         const subItemInfo: H5PItemInfo = {
           path: `${path}[${idx}]`,
           content: subContent,
-          semantics: semantics.field
+          semantics: semantics.field,
         };
         return h5pItemMapper(subItemInfo, schema, mapHandler);
-      })
+      });
       return mapHandler({ path, content, semantics }, listChildren, { schema });
     case H5PItemType.group:
       const groupContent = content as H5PGroupContent;
@@ -209,26 +221,26 @@ export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | u
     default:
       return mapHandler({ path, content, semantics }, [], { schema });
   }
-}
+};
 
 const sha1 = (str: string) => {
   const sha = new jsSHA("SHA-1", "TEXT", { encoding: "UTF8" });
   sha.update(str);
-  return sha.getHash('HEX');
-}
+  return sha.getHash("HEX");
+};
 
 export const mapH5PContent: MapHandler<H5PItemContent> = (itemInfo, childList, { schema }) => {
   let value: H5PItemContent;
   if (!schema) return itemInfo.content;
-  const { path, content, semantics } = itemInfo;
-  switch(semantics.type) {
+  const { content, semantics } = itemInfo;
+  switch (semantics.type) {
     case H5PItemType.list:
       value = childList.length > 0 ? childList : createDefaultListContent(semantics, schema);
       break;
     case H5PItemType.group:
       value = childList.reduce((r, child) => Object.assign(r, child), {});
       break;
-    case H5PItemType.library:  
+    case H5PItemType.library:
       const libraryContent = content as H5PLibraryContent;
       if (!libraryContent) break;
       const params = childList.reduce((r, child) => Object.assign(r, child), {});
@@ -237,21 +249,22 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (itemInfo, childList, {
       const metadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
       value = { params, library: libraryContent.library, subContentId, metadata };
       break;
-    default: 
+    default:
       value = content || semantics.default;
   }
-  return semantics.name === H5P_ROOT_NAME ? value : {[semantics.name]: value};
-}
-
+  return semantics.name === H5P_ROOT_NAME ? value : { [semantics.name]: value };
+};
 
 export function createDefaultLibraryContent(library: string, schema: H5PSchema): H5PLibraryContent {
   const semantics: H5PLibrarySemantic = { type: H5PItemType.library, name: H5P_ROOT_NAME };
-  return h5pItemMapper({ path: '', content: { library }, semantics }, schema, mapH5PContent) as H5PLibraryContent;
+  return h5pItemMapper({ path: "", content: { library }, semantics }, schema, mapH5PContent) as H5PLibraryContent;
 }
 
 export function createDefaultListContent(semantics: H5PListSemantic, schema: H5PSchema): H5PListContent {
   const { field, defaultNum, min } = semantics;
   const amount = defaultNum ?? min ?? 1;
-  const defaultContent = h5pItemMapper({ path: '', semantics: field }, schema, mapH5PContent);
-  return Array(amount).fill(1).map(() => cloneDeep(defaultContent));
+  const defaultContent = h5pItemMapper({ path: "", semantics: field }, schema, mapH5PContent);
+  return Array(amount)
+    .fill(1)
+    .map(() => cloneDeep(defaultContent));
 }
