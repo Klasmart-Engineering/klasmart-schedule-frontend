@@ -1,5 +1,7 @@
 import React from "react";
 import { ContentTypeList } from "../../api/type";
+import H5pHeader from "./H5pHeader";
+import H5pList from "./H5pList";
 
 export interface H5pLibraryInputProps {
   contentTypeList: ContentTypeList;
@@ -11,7 +13,9 @@ export function H5pLibraryInput(props: H5pLibraryInputProps) {
   return (
     <div>
       <button onClick={() => onChange("H5P.MultiChoice-1.14")}>select library: H5P.MultiChoice-1.14</button>
-      <pre>{JSON.stringify(contentTypeList, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(contentTypeList, null, 2)}</pre> */}
+      <H5pHeader />
+      <H5pList contentTypeList={contentTypeList} onChange={onChange} />
     </div>
   );
 }
