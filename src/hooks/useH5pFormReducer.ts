@@ -72,7 +72,6 @@ export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSc
   const content = defaultValue
     ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent) as H5PLibraryContent)
     : undefined;
-  console.log("in useH5pFormReducer content = ", content);
   const [form, dispatch] = useReducer(produce(formReducer) as Reducer<H5PLibraryContent, H5pFormChangeAction>, content);
   const dispatchChange = useMemo(() => {
     if (!schema) return () => {};

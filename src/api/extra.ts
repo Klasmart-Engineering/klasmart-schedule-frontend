@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import api from ".";
-import requireContentType from '../../scripts/contentType.macro';
+import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { EntityFolderItem } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -155,13 +155,17 @@ export const apiLocaleInCookie = () => {
 };
 
 export const apiCreateContentTypeLibrary = (id: string) => {
-  return requireContentType('asset', id);
-}
+  return requireContentType("asset", id);
+};
 
 export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string) {
   const schema = {} as T;
-  for (const [name, value] of Object.entries(requireContentType<T>('schema', id))) {
+  for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
     schema[name as keyof T] = (await value).default;
   }
   return schema;
+}
+
+export function apiGetContentTypeList() {
+  return import("h5p/libraries/content-types.auto.json").then((x) => x.default.contentTypes);
 }

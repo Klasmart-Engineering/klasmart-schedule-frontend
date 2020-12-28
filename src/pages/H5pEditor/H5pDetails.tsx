@@ -207,7 +207,6 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
     return { uncommon, commonInline, common };
   };
 };
-
 interface H5pDetailsProps {
   value: H5PLibraryContent;
   schema: H5PSchema;
