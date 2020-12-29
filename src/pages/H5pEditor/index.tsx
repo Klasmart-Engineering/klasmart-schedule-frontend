@@ -4,6 +4,7 @@ import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/ext
 import { ContentTypeList } from "../../api/type";
 import { H5PSchema } from "../../models/ModelH5pSchema";
 import { H5pDetails } from "./H5pDetails";
+import H5pInfo from "./H5pInfo";
 import { H5pLibraryInput } from "./H5pLibraryInput";
 // import { RichTextInput } from "../../components/RichTextInput";
 
@@ -34,9 +35,15 @@ export function H5pEditor() {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const [library, setLibrary] = useLibrary(query.get("library") || undefined);
+  const h5p_id = query.get("h5p_id") || undefined;
   const contentTypeList = useContentTypeList();
   const schema = useSchema(library);
-  if (!library) return !contentTypeList ? null : <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} />;
+  if (!library)
+    return !contentTypeList ? null : h5p_id ? (
+      <H5pInfo contentTypeList={contentTypeList} />
+    ) : (
+      <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} />
+    );
   return !schema ? null : <H5pDetails value={{ library }} schema={schema} />;
 }
 
