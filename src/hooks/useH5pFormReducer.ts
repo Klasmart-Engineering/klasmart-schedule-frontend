@@ -5,51 +5,32 @@ import {
   createDefaultLibraryContent,
   H5PItemInfo,
   h5pItemMapper,
-  H5PItemSemantic,
   H5PItemType,
-  H5PLeafContent,
-  H5PLeafSemantic,
   H5PLibraryContent,
-  H5PLibrarySemantic,
   H5PSchema,
   H5P_ROOT_NAME,
+  isH5pLibraryItemInfo,
   mapH5PContent,
 } from "../models/ModelH5pSchema";
 
-interface H5pFormChangeLibraryPayload {
-  path: string;
-  value: Partial<H5PLibraryContent>;
-  semantics: H5PLibrarySemantic;
+interface H5pFormChangePayload extends H5PItemInfo {
   schema: H5PSchema;
 }
-
-interface H5pFormChangeLeafPayload {
-  path: string;
-  value: H5PLeafContent;
-  semantics: H5PLeafSemantic;
-  schema: H5PSchema;
-}
-
-export type H5pFormValueBySemantics<S extends H5PItemSemantic> = S extends H5PLibrarySemantic
-  ? H5pFormChangeLibraryPayload["value"]
-  : S extends H5PLeafSemantic
-  ? H5pFormChangeLeafPayload["value"]
-  : never;
-
-export type H5pFormChangePartialPayload = Omit<H5pFormChangeLeafPayload, "schema"> | Omit<H5pFormChangeLibraryPayload, "schema">;
 
 interface H5pFormChangeAction {
   type: "change";
-  payload: H5pFormChangeLeafPayload | H5pFormChangeLibraryPayload;
+  payload: H5pFormChangePayload;
 }
 
 const formReducer = (state: H5PLibraryContent, action: H5pFormChangeAction): H5PLibraryContent => {
   if (!state) return state;
   switch (action.type) {
     case "change":
-      const { path, value, semantics, schema } = action.payload;
-      if (semantics.type === H5PItemType.library) {
-        const { library, metadata } = value as NonNullable<H5pFormValueBySemantics<typeof semantics>>;
+      const { schema, ...itemInfo } = action.payload;
+      if (isH5pLibraryItemInfo(itemInfo)) {
+        const { content, path } = itemInfo;
+        if (!content) return state;
+        const { library, metadata } = content;
         // 修改公共区域的语言栏的情况
         if (metadata?.defaultLanguage) {
           setByPath(state, `${path}.metadata.defaultLanguage`, metadata?.defaultLanguage);
@@ -60,7 +41,8 @@ const formReducer = (state: H5PLibraryContent, action: H5pFormChangeAction): H5P
         setByPath(state, path, defaultLibraryContent);
         return state;
       }
-      setByPath(state, path, value);
+      const { content, path } = itemInfo;
+      setByPath(state, path, content);
       break;
     default:
       return state;
@@ -75,7 +57,7 @@ export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSc
   const [form, dispatch] = useReducer(produce(formReducer) as Reducer<H5PLibraryContent, H5pFormChangeAction>, content);
   const dispatchChange = useMemo(() => {
     if (!schema) return () => {};
-    return (payload: H5pFormChangePartialPayload) => dispatch({ type: "change", payload: { ...payload, schema } });
+    return (payload: H5PItemInfo) => dispatch({ type: "change", payload: { ...payload, schema } });
   }, [dispatch, schema]);
   return [form, { dispatchChange }] as const;
 }

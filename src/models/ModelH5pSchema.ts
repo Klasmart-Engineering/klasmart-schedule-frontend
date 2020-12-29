@@ -37,6 +37,11 @@ export type H5PMediaContent =
     }
   | undefined;
 
+export type H5PVideoContent = H5PMediaContent;
+export type H5PAudioContent = H5PMediaContent;
+export type H5PImageContent = H5PMediaContent;
+export type H5PFileContent = H5PMediaContent;
+
 export type H5PGroupContent =
   | {
       [key in string]: H5PItemContent;
@@ -58,8 +63,16 @@ export type H5PListContent = H5PItemContent[] | undefined;
 
 export type H5PItemContent = H5PLeafContent | H5PGroupContent | H5PLibraryContent | H5PListContent;
 
-export type H5PContentBySemantics<S extends H5PItemSemantic> = S extends H5PLeafSemantic
-  ? H5PLeafContent
+export type H5PContentBySemantics<S extends H5PItemSemantic> = S extends H5PTextSemantic
+  ? H5PTextContent
+  : S extends H5PNumberSemantic
+  ? H5PNumberContent
+  : S extends H5PBooleanSemantic
+  ? H5PBooleanContent
+  : S extends H5PSelectSemantic
+  ? H5PSelectContent
+  : S extends H5PMediaSemantic
+  ? H5PMediaContent
   : S extends H5PListSemantic
   ? H5PListContent
   : S extends H5PGroupSemantic
@@ -130,6 +143,10 @@ export interface H5PMediaSemantic extends H5PBaseSemantic {
   type: H5PItemType.image | H5PItemType.video | H5PItemType.audio | H5PItemType.file;
   default?: undefined;
 }
+export type H5PImageSemantic = H5PMediaSemantic;
+export type H5PVideoSemantic = H5PMediaSemantic;
+export type H5PAudioSemantic = H5PMediaSemantic;
+export type H5PFileSemantic = H5PMediaSemantic;
 
 export type H5PLeafSemantic = H5PTextSemantic | H5PNumberSemantic | H5PBooleanSemantic | H5PSelectSemantic | H5PMediaSemantic;
 
@@ -157,14 +174,29 @@ export interface H5PGroupSemantic extends H5PBaseSemantic {
 
 export type H5PItemSemantic = H5PLeafSemantic | H5PListSemantic | H5PGroupSemantic | H5PLibrarySemantic;
 
-export interface MapHandler<T> {
-  (itemInfo: H5PItemInfo, children: T[], context: { schema?: H5PSchema }): T;
+export interface MapHandlerContext {
+  schema?: H5PSchema;
 }
 
-export interface H5PItemInfo {
+export interface MapHandlerProps<T, F extends H5PItemInfo = H5PItemInfo> {
+  itemInfo: F;
+  children: T[];
+  context: MapHandlerContext;
+}
+export interface MapHandler<T> {
+  (props: MapHandlerProps<T>): T;
+}
+
+export interface H5PSingleItemInfo<S extends H5PItemSemantic> {
   path: string;
-  content?: H5PItemContent;
-  semantics: H5PItemSemantic;
+  content?: H5PContentBySemantics<S>;
+  semantics: S;
+}
+
+export interface H5PItemInfo<S extends H5PItemSemantic = H5PItemSemantic, C extends H5PItemContent = H5PItemContent> {
+  path: string;
+  content?: C;
+  semantics: S;
 }
 
 export interface H5PLibraryInfo {
@@ -177,13 +209,14 @@ export type H5PSchema = Record<string, H5PItemSemantic[]>;
 
 export const h5pName2libId = (option: string) => option.replace(" ", "-");
 
-export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | undefined, mapHandler: MapHandler<T>): T => {
-  const { path, content, semantics } = h5pItemInfo;
-  if (!schema) return mapHandler({ path, content, semantics }, [], { schema });
+export const h5pItemMapper = <T>(itemInfo: H5PItemInfo, schema: H5PSchema | undefined, mapHandler: MapHandler<T>): T => {
+  const { path, content, semantics } = itemInfo;
+  const context = { schema };
+  if (!schema) return mapHandler({ itemInfo, children: [], context });
   switch (semantics.type) {
     case H5PItemType.library:
       const libraryContent = content as H5PLibraryContent;
-      if (!libraryContent || !libraryContent.library) return mapHandler({ path, content, semantics }, [], { schema });
+      if (!libraryContent || !libraryContent.library) return mapHandler({ itemInfo, children: [], context });
       const librarySemantics = schema[h5pName2libId(libraryContent.library)];
       const libChildren = librarySemantics.map((itemSemantics) => {
         const { name } = itemSemantics;
@@ -194,9 +227,9 @@ export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | u
         };
         return h5pItemMapper(subItemInfo, schema, mapHandler);
       });
-      return mapHandler({ path, content, semantics }, libChildren, { schema });
+      return mapHandler({ itemInfo, children: libChildren, context });
     case H5PItemType.list:
-      if (!content) return mapHandler({ path, content, semantics }, [], { schema });
+      if (!content) return mapHandler({ itemInfo, children: [], context });
       const listContent = (content as H5PListContent) ?? [];
       const listChildren = listContent.map((subContent, idx) => {
         const subItemInfo: H5PItemInfo = {
@@ -206,7 +239,7 @@ export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | u
         };
         return h5pItemMapper(subItemInfo, schema, mapHandler);
       });
-      return mapHandler({ path, content, semantics }, listChildren, { schema });
+      return mapHandler({ itemInfo, children: listChildren, context });
     case H5PItemType.group:
       const groupContent = content as H5PGroupContent;
       const groupChildren = semantics.fields.map((itemSemantics) => {
@@ -217,9 +250,9 @@ export const h5pItemMapper = <T>(h5pItemInfo: H5PItemInfo, schema: H5PSchema | u
         };
         return h5pItemMapper(subItemInfo, schema, mapHandler);
       });
-      return mapHandler({ path, content, semantics }, groupChildren, { schema });
+      return mapHandler({ itemInfo, children: groupChildren, context });
     default:
-      return mapHandler({ path, content, semantics }, [], { schema });
+      return mapHandler({ itemInfo, children: [], context });
   }
 };
 
@@ -229,21 +262,26 @@ const sha1 = (str: string) => {
   return sha.getHash("HEX");
 };
 
-export const mapH5PContent: MapHandler<H5PItemContent> = (itemInfo, childList, { schema }) => {
+export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
+  const {
+    itemInfo,
+    children,
+    context: { schema },
+  } = props;
   let value: H5PItemContent;
   if (!schema) return itemInfo.content;
   const { content, semantics } = itemInfo;
   switch (semantics.type) {
     case H5PItemType.list:
-      value = childList.length > 0 ? childList : createDefaultListContent(semantics, schema);
+      value = children.length > 0 ? children : createDefaultListContent(semantics, schema);
       break;
     case H5PItemType.group:
-      value = childList.reduce((r, child) => Object.assign(r, child), {});
+      value = children.reduce((r, child) => Object.assign(r, child), {});
       break;
     case H5PItemType.library:
       const libraryContent = content as H5PLibraryContent;
       if (!libraryContent) break;
-      const params = childList.reduce((r, child) => Object.assign(r, child), {});
+      const params = children.reduce((r, child) => Object.assign(r, child), {});
       const subContentId = sha1(JSON.stringify(params));
       const contentType = `yyyy ${libraryContent.library}`;
       const metadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
@@ -267,4 +305,48 @@ export function createDefaultListContent(semantics: H5PListSemantic, schema: H5P
   return Array(amount)
     .fill(1)
     .map(() => cloneDeep(defaultContent));
+}
+
+export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PTextSemantic> {
+  return itemInfo.semantics.type === H5PItemType.text;
+}
+
+export function isH5pNumberItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PNumberSemantic> {
+  return itemInfo.semantics.type === H5PItemType.number;
+}
+
+export function isH5pBooleanItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PBooleanSemantic> {
+  return itemInfo.semantics.type === H5PItemType.boolean;
+}
+
+export function isH5pSelectItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PSelectSemantic> {
+  return itemInfo.semantics.type === H5PItemType.select;
+}
+
+export function isH5pImageItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PImageSemantic> {
+  return itemInfo.semantics.type === H5PItemType.image;
+}
+
+export function isH5pVideoItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PVideoSemantic> {
+  return itemInfo.semantics.type === H5PItemType.video;
+}
+
+export function isH5pAudioItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PAudioSemantic> {
+  return itemInfo.semantics.type === H5PItemType.audio;
+}
+
+export function isH5pFileItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PFileSemantic> {
+  return itemInfo.semantics.type === H5PItemType.file;
+}
+
+export function isH5pLibraryItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PLibrarySemantic> {
+  return itemInfo.semantics.type === H5PItemType.library;
+}
+
+export function isH5pGroupItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PGroupSemantic> {
+  return itemInfo.semantics.type === H5PItemType.group;
+}
+
+export function isH5pListItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PSingleItemInfo<H5PListSemantic> {
+  return itemInfo.semantics.type === H5PItemType.list;
 }

@@ -89,7 +89,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
 }));
 
-function ProgressWithText(props: CircularProgressProps) {
+export function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
   return (
     <Box position="relative" display="inline-flex" alignItems="center">
