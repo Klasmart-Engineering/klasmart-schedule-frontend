@@ -63,16 +63,19 @@ const useStyles = makeStyles((theme) => ({
 
 interface H5pHeaderProps {
   contentTypeList: ContentTypeList;
+  sortList: (type: string) => void;
+  searchChange: (value: string) => void;
 }
 
 export default function H5pHeader(props: H5pHeaderProps) {
-  const { contentTypeList } = props;
-  const [activeOption, setActiveOption] = React.useState("popularFirst");
+  const { contentTypeList, sortList, searchChange } = props;
+  const [activeOption, setActiveOption] = React.useState("");
 
   const css = useStyles();
 
   const handleSelect = (type: string) => {
     setActiveOption(type);
+    sortList(type);
   };
 
   return (
@@ -83,6 +86,7 @@ export default function H5pHeader(props: H5pHeaderProps) {
             placeholder="Search for Content Types"
             inputProps={{ "aria-label": "search for Content Types" }}
             className={css.searchInput}
+            onChange={(e) => searchChange(e.target.value)}
           />
           <IconButton className={css.searchButton} type="submit" aria-label="search">
             <Search />

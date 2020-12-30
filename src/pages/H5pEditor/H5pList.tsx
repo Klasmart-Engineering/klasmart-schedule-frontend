@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
     "& img": {
       height: "100%",
     },
+    padding: "0 10px",
   },
 }));
 
@@ -39,14 +40,13 @@ export default function H5pList(props: H5pListProps) {
   const history = useHistory();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  console.log(contentTypeList);
 
   const handleClick = (item: any) => {
     console.log(`${item.id}-${item.coreApiVersionNeeded.major}.${item.coreApiVersionNeeded.minor}`);
     onChange(`${item.id}-${item.coreApiVersionNeeded.major}.${item.coreApiVersionNeeded.minor}`);
   };
 
-  const getDetails = (e: any, id: string) => {
+  const getDetails = (e: React.KeyboardEvent | React.MouseEvent, id: string) => {
     e.stopPropagation();
     history.push(`/h5pEditor?h5p_id=${id}`);
   };
