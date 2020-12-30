@@ -154,15 +154,35 @@ const useStyles = makeStyles((theme) => ({
       width: "80%",
     },
   },
-  closeButton: {
+  dialogCommonButton: {
     position: "absolute",
-    right: "-50px",
-    top: "-50px",
     width: "35px",
     height: "35px",
     borderRadius: "50%",
     backgroundColor: "rgba(132,143,158,.8)",
     cursor: "pointer",
+  },
+  closeButton: {
+    right: "-50px",
+    top: "-50px",
+  },
+  leftButton: {
+    left: "-100px",
+    top: "50%",
+    transform: "translateY(-50)",
+  },
+  rightButton: {
+    right: "-100px",
+    top: "50%",
+    transform: "translateY(-50)",
+  },
+  imageCount: {
+    position: "absolute",
+    textAlign: "center",
+    left: "50%",
+    bottom: "-50px",
+    transform: "translateX(-50%)",
+    fontSize: "18px",
   },
 }));
 
@@ -181,7 +201,7 @@ export default function H5pInfo(props: H5pInfoProps) {
   const history = useHistory();
   const [leftPosition, setLeftPosition] = React.useState(0);
   const [open, setOpen] = React.useState(false);
-  const [bigImage, setBigImage] = React.useState("");
+  const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const goBack = () => {
     history.go(-1);
@@ -218,9 +238,19 @@ export default function H5pInfo(props: H5pInfoProps) {
     setOpen(false);
   };
 
-  const showDialog = (url: string) => {
-    setBigImage(url);
+  const showDialog = (index: number) => {
+    setCurrentIndex(index);
     setOpen(true);
+  };
+
+  const dialogPrev = () => {
+    if (currentIndex === 0) return;
+    setCurrentIndex(currentIndex - 1);
+  };
+
+  const dialogNext = () => {
+    if (currentIndex === h5pInfo.screenshots.length - 1) return;
+    setCurrentIndex(currentIndex + 1);
   };
 
   return (
@@ -256,9 +286,9 @@ export default function H5pInfo(props: H5pInfoProps) {
       <div className={css.outerBox}>
         <div className={css.navBox}>
           <Grid container className={css.imagesContainer} style={{ marginLeft: `${leftPosition}%` }}>
-            {h5pInfo.screenshots.map((item) => {
+            {h5pInfo.screenshots.map((item, index) => {
               return (
-                <Grid item key={item.url} className={css.itemImageBox} onClick={() => showDialog(item.url)}>
+                <Grid item key={item.url} className={css.itemImageBox} onClick={() => showDialog(index)}>
                   <img src={item.url} alt="" />
                 </Grid>
               );
@@ -306,10 +336,27 @@ export default function H5pInfo(props: H5pInfoProps) {
       <div>
         <Backdrop className={css.backdrop} open={open}>
           <div className={css.dialogImageBox}>
-            <img src={bigImage} alt="" className={css.dialogImage} />
-            <div className={css.closeButton} onClick={handleClose}>
+            <img src={h5pInfo.screenshots[currentIndex].url} alt="" className={css.dialogImage} />
+            <div className={clsx(css.closeButton, css.dialogCommonButton)} onClick={handleClose}>
               <Close fontSize="large" />
             </div>
+            <div
+              className={clsx(css.leftButton, css.dialogCommonButton)}
+              onClick={dialogPrev}
+              style={{ cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
+            >
+              <ArrowBack fontSize="large" />
+            </div>
+            <div
+              className={clsx(css.rightButton, css.dialogCommonButton)}
+              onClick={dialogNext}
+              style={{ cursor: currentIndex === h5pInfo.screenshots.length - 1 ? "not-allowed" : "pointer" }}
+            >
+              <ArrowForward fontSize="large" />
+            </div>
+            <p className={css.imageCount}>
+              {currentIndex + 1} / {h5pInfo.screenshots.length}
+            </p>
           </div>
         </Backdrop>
       </div>
