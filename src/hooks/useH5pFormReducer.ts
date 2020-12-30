@@ -13,9 +13,9 @@ import {
   mapH5PContent,
 } from "../models/ModelH5pSchema";
 
-interface H5pFormChangePayload extends H5PItemInfo {
+type H5pFormChangePayload = H5PItemInfo & {
   schema: H5PSchema;
-}
+};
 
 interface H5pFormChangeAction {
   type: "change";

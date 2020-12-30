@@ -14,23 +14,23 @@ import {
 } from "@material-ui/core";
 import { CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
-import React from "react";
+import React, { Fragment } from "react";
 import { apiResourcePathById } from "../../api/extra";
 import { d } from "../../locale/LocaleManager";
 import {
   H5PBooleanSemantic,
-  H5PContentBySemantics,
   H5PGroupSemantic,
   H5PImportance,
   H5PItemInfo,
   H5PItemSemantic,
+  H5PItemType,
   H5PLibrarySemantic,
   H5PListSemantic,
   H5PMediaSemantic,
   H5PNumberSemantic,
   H5PSelectSemantic,
-  H5PSingleItemInfo,
   H5PTextSemantic,
+  H5P_ROOT_NAME,
   MapHandlerProps,
 } from "../../models/ModelH5pSchema";
 import { ProgressWithText } from "../../pages/ContentEdit/Details";
@@ -38,11 +38,9 @@ import { SingleUploader } from "../SingleUploader";
 
 export const h5pName2libId = (option: string) => option.replace(" ", "-");
 
-export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PSingleItemInfo<S>> {
+export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemInfo<S>> {
   className?: string;
-}
-export interface H5PLeafElementProps<S extends H5PItemSemantic> extends H5PBaseElementProps<S> {
-  onChange(itemInfo: H5PItemInfo<S, H5PContentBySemantics<S>>): any;
+  onChange?(itemInfo: H5PItemInfo<S>): any;
 }
 
 const useStyles = makeStyles(({ palette }) =>
@@ -58,7 +56,62 @@ const useStyles = makeStyles(({ palette }) =>
   })
 );
 
-export function H5pElementText(props: H5PLeafElementProps<H5PTextSemantic>) {
+export type H5pElementProps =
+  | H5pElementTextProps
+  | H5pElementNumberProps
+  | H5pElementBooleanProps
+  | H5pElementSelectProps
+  | H5pElementMediaProps
+  | H5pElementListProps
+  | H5pElementGroupProps
+  | H5pElementRootLibraryProps
+  | H5pElementCommonLibraryProps
+  | H5pElementLibraryProps;
+export function H5pElement(props: H5pElementProps) {
+  if (isH5pElementText(props)) {
+    return <H5pElementText {...props} />;
+  }
+  if (isH5pElementNumber(props)) {
+    return <H5pElementNumber {...props} />;
+  }
+  if (isH5pElementBoolean(props)) {
+    return <H5pElementBoolean {...props} />;
+  }
+  if (isH5pElementSelect(props)) {
+    return <H5pElementSelect {...props} />;
+  }
+  if (isH5pElementImage(props)) {
+    return <H5pElementMedia {...props} />;
+  }
+  if (isH5pElementVideo(props)) {
+    return <H5pElementMedia {...props} />;
+  }
+  if (isH5pElementAudio(props)) {
+    return <H5pElementMedia {...props} />;
+  }
+  if (isH5pElementFile(props)) {
+    return <H5pElementMedia {...props} />;
+  }
+  if (isH5pElementList(props)) {
+    return <H5pElementList {...props} />;
+  }
+  if (isH5pElementGroup(props)) {
+    return <H5pElementGroup {...props} />;
+  }
+  if (isH5pElementLibrary(props)) {
+    return <H5pElementLibrary {...props} />;
+  }
+  if (isH5pElementCommonLibrary(props)) {
+    return <H5pElementCommonLibrary {...props} />;
+  }
+  if (isH5pElementRootLibrary(props)) {
+    return <H5pElementRootLibrary {...props} />;
+  }
+  return <Fragment />;
+}
+
+export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic>;
+export function H5pElementText(props: H5pElementTextProps) {
   const {
     itemInfo: { path, semantics },
     onChange,
@@ -70,12 +123,13 @@ export function H5pElementText(props: H5PLeafElementProps<H5PTextSemantic>) {
       required={!semantics.optional}
       name={path}
       label={semantics.label}
-      onChange={(e) => onChange({ semantics, path, content: e.target.value })}
+      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
     />
   );
 }
 
-export function H5pElementNumber(props: H5PLeafElementProps<H5PNumberSemantic>) {
+export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic>;
+export function H5pElementNumber(props: H5pElementNumberProps) {
   const {
     itemInfo: { path, semantics },
     onChange,
@@ -88,12 +142,13 @@ export function H5pElementNumber(props: H5PLeafElementProps<H5PNumberSemantic>) 
       name={path}
       type="number"
       label={semantics.label}
-      onChange={(e) => onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
+      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
     />
   );
 }
 
-export function H5pElementBoolean(props: H5PLeafElementProps<H5PBooleanSemantic>) {
+export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic>;
+export function H5pElementBoolean(props: H5pElementBooleanProps) {
   const {
     itemInfo: { path, semantics },
     onChange,
@@ -102,13 +157,14 @@ export function H5pElementBoolean(props: H5PLeafElementProps<H5PBooleanSemantic>
   return (
     <FormControlLabel
       className={className}
-      control={<Checkbox name={path} onChange={(e) => onChange({ semantics, path, content: !!e.target.value })} />}
+      control={<Checkbox name={path} onChange={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })} />}
       label={semantics.label}
     />
   );
 }
 
-export function H5pElementSelect(props: H5PLeafElementProps<H5PSelectSemantic>) {
+export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic>;
+export function H5pElementSelect(props: H5pElementSelectProps) {
   const {
     itemInfo: { path, semantics },
     onChange,
@@ -120,7 +176,7 @@ export function H5pElementSelect(props: H5PLeafElementProps<H5PSelectSemantic>) 
       required={!semantics.optional}
       label={semantics.label}
       className={className}
-      onChange={(e) => onChange({ semantics, path, content: e.target.value })}
+      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
     >
       {semantics.options.map(({ value, label }) => (
         <MenuItem key={value} value={value}>
@@ -131,7 +187,7 @@ export function H5pElementSelect(props: H5PLeafElementProps<H5PSelectSemantic>) 
   );
 }
 
-export interface H5pElementMediaProps extends H5PLeafElementProps<H5PMediaSemantic> {
+export interface H5pElementMediaProps extends H5PBaseElementProps<H5PMediaSemantic> {
   classes?: {
     root?: string;
     uploadButton?: string;
@@ -149,7 +205,7 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
     <SingleUploader
       partition="assets"
       accept="image/*,audio/*,video/*"
-      onChange={(id) => onChange({ semantics, path, content: { path: id as string, mime: "image/jpeg" } })}
+      onChange={(id) => onChange && onChange({ semantics, path, content: { path: id as string, mime: "image/jpeg" } })}
       render={({ uploady, item, btnRef, value, isUploading }) => (
         <Box className={clsx(className, classes?.root)} display="flex">
           <Button
@@ -170,6 +226,15 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
     />
   );
 }
+
+export type H5pElementImageProps = H5pElementMediaProps;
+export type H5pElementVideoProps = H5pElementMediaProps;
+export type H5pElementAudioProps = H5pElementMediaProps;
+export type H5pElementFileProps = H5pElementMediaProps;
+export const H5pElementImage = H5pElementMedia;
+export const H5pElementVideo = H5pElementMedia;
+export const H5pElementAudio = H5pElementMedia;
+export const H5pElementFile = H5pElementMedia;
 
 export interface H5pElementListProps extends H5PBaseElementProps<H5PListSemantic> {
   classes?: {
@@ -280,7 +345,7 @@ export function H5pElementCommonLibrary(props: H5pElementCommonLibraryProps) {
   );
 }
 
-export interface H5pElementLibraryProps extends H5PLeafElementProps<H5PLibrarySemantic> {
+export interface H5pElementLibraryProps extends H5PBaseElementProps<H5PLibrarySemantic> {
   classes?: {
     root?: string;
     paragraph?: string;
@@ -311,7 +376,7 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
         value={content?.library ?? ""}
         name={path}
         label={semantics.label}
-        onChange={(e) => onChange({ semantics, path, content: { library: e.target.value } })}
+        onChange={(e) => onChange && onChange({ semantics, path, content: { library: e.target.value } })}
       >
         {semantics.options?.map((name) => (
           <MenuItem key={name} value={h5pName2libId(name)}>
@@ -322,4 +387,60 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
       {children}
     </div>
   );
+}
+
+export function isH5pElementText(props: H5pElementProps): props is H5pElementTextProps {
+  return props.itemInfo.semantics.type === H5PItemType.text;
+}
+
+export function isH5pElementNumber(props: H5pElementProps): props is H5pElementNumberProps {
+  return props.itemInfo.semantics.type === H5PItemType.number;
+}
+
+export function isH5pElementBoolean(props: H5pElementProps): props is H5pElementBooleanProps {
+  return props.itemInfo.semantics.type === H5PItemType.boolean;
+}
+
+export function isH5pElementSelect(props: H5pElementProps): props is H5pElementSelectProps {
+  return props.itemInfo.semantics.type === H5PItemType.select;
+}
+
+export function isH5pElementImage(props: H5pElementProps): props is H5pElementImageProps {
+  return props.itemInfo.semantics.type === H5PItemType.image;
+}
+
+export function isH5pElementVideo(props: H5pElementProps): props is H5pElementVideoProps {
+  return props.itemInfo.semantics.type === H5PItemType.video;
+}
+
+export function isH5pElementAudio(props: H5pElementProps): props is H5pElementAudioProps {
+  return props.itemInfo.semantics.type === H5PItemType.audio;
+}
+
+export function isH5pElementFile(props: H5pElementProps): props is H5pElementFileProps {
+  return props.itemInfo.semantics.type === H5PItemType.file;
+}
+
+export function isH5pElementGroup(props: H5pElementProps): props is H5pElementGroupProps {
+  return props.itemInfo.semantics.type === H5PItemType.group;
+}
+
+export function isH5pElementList(props: H5pElementProps): props is H5pElementListProps {
+  return props.itemInfo.semantics.type === H5PItemType.list;
+}
+
+export function isH5pElementLibrary(props: H5pElementProps): props is H5pElementLibraryProps {
+  return (
+    props.itemInfo.semantics.type === H5PItemType.library &&
+    !props.itemInfo.semantics.extra?.isRenderCommon &&
+    props.itemInfo.semantics.name !== H5P_ROOT_NAME
+  );
+}
+
+export function isH5pElementCommonLibrary(props: H5pElementProps): props is H5pElementCommonLibraryProps {
+  return props.itemInfo.semantics.type === H5PItemType.library && props.itemInfo.semantics.extra?.isRenderCommon;
+}
+
+export function isH5pElementRootLibrary(props: H5pElementProps): props is H5pElementRootLibraryProps {
+  return props.itemInfo.semantics.type === H5PItemType.library && props.itemInfo.semantics.name === H5P_ROOT_NAME;
 }

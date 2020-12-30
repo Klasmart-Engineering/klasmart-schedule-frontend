@@ -14,19 +14,25 @@ import {
 import { ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
 import produce from "immer";
-import React, { Fragment } from "react";
+import React from "react";
 import {
-  H5pElementBoolean,
-  H5pElementCommonLibrary,
-  H5pElementGroup,
-  H5pElementLibrary,
-  H5pElementList,
-  H5pElementMedia,
-  H5pElementNumber,
-  H5pElementRootLibrary,
-  H5pElementSelect,
-  H5pElementText,
+  H5pElement,
+  H5pElementProps,
+  isH5pElementAudio,
+  isH5pElementBoolean,
+  isH5pElementCommonLibrary,
+  isH5pElementFile,
+  isH5pElementGroup,
+  isH5pElementImage,
+  isH5pElementLibrary,
+  isH5pElementList,
+  isH5pElementNumber,
+  isH5pElementRootLibrary,
+  isH5pElementSelect,
+  isH5pElementText,
+  isH5pElementVideo,
 } from "../../components/H5pElement";
+import { widgetElements } from "../../components/H5pWidget";
 import { useH5pFormReducer } from "../../hooks/useH5pFormReducer";
 import { localeManager, reportMiss } from "../../locale/LocaleManager";
 import {
@@ -37,17 +43,6 @@ import {
   H5PLibraryInfo,
   H5PSchema,
   H5P_ROOT_NAME,
-  isH5pAudioItemInfo,
-  isH5pBooleanItemInfo,
-  isH5pFileItemInfo,
-  isH5pGroupItemInfo,
-  isH5pImageItemInfo,
-  isH5pLibraryItemInfo,
-  isH5pListItemInfo,
-  isH5pNumberItemInfo,
-  isH5pSelectItemInfo,
-  isH5pTextItemInfo,
-  isH5pVideoItemInfo,
   MapHandler,
 } from "../../models/ModelH5pSchema";
 import commonOptions from "./commonOptions.json";
@@ -166,6 +161,7 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
     return { uncommon, commonInline, common };
   };
 };
+
 interface H5pDetailsProps {
   value: H5PLibraryContent;
   schema: H5PSchema;
@@ -179,6 +175,7 @@ export function H5pDetails(props: H5pDetailsProps) {
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange }] = useH5pFormReducer(value, schema);
   const libraryInfo: H5PLibraryInfo = { path: "", content: form, semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library } };
+
   if (!schema) return null;
   const { common, uncommon } = h5pItemMapper(
     libraryInfo,
@@ -186,104 +183,85 @@ export function H5pDetails(props: H5pDetailsProps) {
     makeCombinedNodeMapHandler(({ itemInfo, children, context }) => {
       const { semantics, path } = itemInfo;
       const widget =
-        (semantics.type !== H5PItemType.list && semantics.widget) || (semantics.type === H5PItemType.list && semantics.widgets?.[0]);
-      if (widget) {
-        return <div>h5p widget</div>;
+        (semantics.type !== H5PItemType.list && semantics.widget) ||
+        (semantics.type === H5PItemType.list && semantics.widgets?.[0].name) ||
+        undefined;
+      const Widget = widget && widgetElements[widget];
+      let elementProps = { itemInfo, children, context } as H5pElementProps;
+      if (
+        isH5pElementText(elementProps) ||
+        isH5pElementNumber(elementProps) ||
+        isH5pElementBoolean(elementProps) ||
+        isH5pElementSelect(elementProps) ||
+        isH5pElementImage(elementProps) ||
+        isH5pElementVideo(elementProps) ||
+        isH5pElementAudio(elementProps) ||
+        isH5pElementFile(elementProps)
+      ) {
+        const extendedProps: typeof elementProps = { ...elementProps, onChange: dispatchChange, className: css.h5pItem };
+        elementProps = extendedProps;
       }
-      if (isH5pTextItemInfo(itemInfo)) {
-        return <H5pElementText {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
+      if (isH5pElementList(elementProps)) {
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          classes: {
+            root: css.inlineSection,
+            paragraph: css.inlineSectionParagraph,
+            title: css.title,
+            description: css.description,
+          },
+        };
+        elementProps = extendedProps;
       }
-      if (isH5pNumberItemInfo(itemInfo)) {
-        return <H5pElementNumber {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
+      if (isH5pElementGroup(elementProps)) {
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          classes: {
+            root: css.section,
+            summary: css.sectionSummary,
+            details: css.sectionDetails,
+          },
+        };
+        elementProps = extendedProps;
       }
-      if (isH5pBooleanItemInfo(itemInfo)) {
-        return <H5pElementBoolean {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
+      if (isH5pElementLibrary(elementProps)) {
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          onChange: dispatchChange,
+          classes: {
+            root: css.inlineSection,
+            paragraph: css.inlineSectionParagraph,
+            title: css.title,
+            description: css.description,
+            input: clsx(css.h5pItem, css.h5pItemQuarter),
+          },
+        };
+        elementProps = extendedProps;
       }
-      if (isH5pSelectItemInfo(itemInfo)) {
-        return <H5pElementSelect {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
+      if (isH5pElementCommonLibrary(elementProps)) {
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          classes: {
+            root: css.section,
+            summary: css.sectionSummary,
+            details: css.sectionDetails,
+          },
+        };
+        elementProps = extendedProps;
       }
-      if (isH5pImageItemInfo(itemInfo)) {
-        return <H5pElementMedia {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
+      if (isH5pElementRootLibrary(elementProps)) {
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          classes: {
+            root: css.section,
+            summary: css.sectionSummary,
+            details: css.sectionDetails,
+          },
+        };
+        elementProps = extendedProps;
       }
-      if (isH5pVideoItemInfo(itemInfo)) {
-        return <H5pElementMedia {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
-      }
-      if (isH5pAudioItemInfo(itemInfo)) {
-        return <H5pElementMedia {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
-      }
-      if (isH5pFileItemInfo(itemInfo)) {
-        return <H5pElementMedia {...{ itemInfo, children, context }} onChange={dispatchChange} className={css.h5pItem} key={path} />;
-      }
-      if (isH5pListItemInfo(itemInfo)) {
-        return (
-          <H5pElementList
-            {...{ itemInfo, children, context }}
-            classes={{
-              root: css.inlineSection,
-              paragraph: css.inlineSectionParagraph,
-              title: css.title,
-              description: css.description,
-            }}
-            key={path}
-          />
-        );
-      }
-      if (isH5pGroupItemInfo(itemInfo)) {
-        return (
-          <H5pElementGroup
-            {...{ itemInfo, children, context }}
-            classes={{
-              root: css.section,
-              summary: css.sectionSummary,
-              details: css.sectionDetails,
-            }}
-            key={path}
-          />
-        );
-      }
-      if (isH5pLibraryItemInfo(itemInfo)) {
-        if (semantics.extra?.isRenderCommon) {
-          return (
-            <H5pElementCommonLibrary
-              {...{ itemInfo, children, context }}
-              classes={{
-                root: css.section,
-                summary: css.sectionSummary,
-                details: css.sectionDetails,
-              }}
-              key={path}
-            />
-          );
-        }
-        if (semantics.name === H5P_ROOT_NAME) {
-          return (
-            <H5pElementRootLibrary
-              {...{ itemInfo, children, context }}
-              classes={{
-                root: css.section,
-                summary: css.sectionSummary,
-                details: css.sectionDetails,
-              }}
-              key={path}
-            />
-          );
-        }
-        return (
-          <H5pElementLibrary
-            {...{ itemInfo, children, context }}
-            onChange={dispatchChange}
-            classes={{
-              root: css.inlineSection,
-              paragraph: css.inlineSectionParagraph,
-              title: css.title,
-              description: css.description,
-              input: clsx(css.h5pItem, css.h5pItemQuarter),
-            }}
-            key={path}
-          />
-        );
-      }
-      return <Fragment />;
+      if (Widget) return <Widget {...elementProps} key={path} />;
+      return <H5pElement {...elementProps} key={path} />;
     })
   );
   return (
@@ -303,7 +281,9 @@ export function H5pDetails(props: H5pDetailsProps) {
                   label={reportMiss("Language", "h5p_label_language")}
                   value={form?.metadata?.defaultLanguage ?? localeManager.intl?.locale ?? ""}
                   className={clsx(css.languageInput, css.h5pItemHalf)}
-                  onChange={(e) => dispatchChange({ ...libraryInfo, content: { metadata: { defaultLanguage: e.target.value } } })}
+                  onChange={(e) =>
+                    dispatchChange({ ...libraryInfo, content: { library: "", metadata: { defaultLanguage: e.target.value } } })
+                  }
                 >
                   {commonOptions.map(({ value, label }) => (
                     <MenuItem key={value} value={value}>
