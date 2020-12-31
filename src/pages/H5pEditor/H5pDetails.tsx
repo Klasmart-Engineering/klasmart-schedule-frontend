@@ -44,6 +44,7 @@ import {
   H5PSchema,
   H5P_ROOT_NAME,
   MapHandler,
+  rootParent,
 } from "../../models/ModelH5pSchema";
 import commonOptions from "./commonOptions.json";
 // import { RichTextInput } from "../../components/RichTextInput";
@@ -174,7 +175,12 @@ export function H5pDetails(props: H5pDetailsProps) {
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange }] = useH5pFormReducer(value, schema);
-  const libraryInfo: H5PLibraryInfo = { path: "", content: form, semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library } };
+  const libraryInfo: H5PLibraryInfo = {
+    path: "",
+    content: form,
+    semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library },
+    parent: rootParent,
+  };
 
   if (!schema) return null;
   const { common, uncommon } = h5pItemMapper(

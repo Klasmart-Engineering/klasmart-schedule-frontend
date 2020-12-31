@@ -11,6 +11,7 @@ import {
   H5P_ROOT_NAME,
   isH5pLibraryItemInfo,
   mapH5PContent,
+  rootParent,
 } from "../models/ModelH5pSchema";
 
 type H5pFormChangePayload = H5PItemInfo & {
@@ -50,7 +51,7 @@ const formReducer = (state: H5PLibraryContent, action: H5pFormChangeAction): H5P
 };
 
 export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSchema) {
-  const rootContentInfo: H5PItemInfo = { path: "", semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library } };
+  const rootContentInfo: H5PItemInfo = { path: "", semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library }, parent: rootParent };
   const content = defaultValue
     ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent) as H5PLibraryContent)
     : undefined;

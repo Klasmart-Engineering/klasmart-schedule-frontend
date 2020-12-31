@@ -113,7 +113,7 @@ export function H5pElement(props: H5pElementProps) {
 export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic>;
 export function H5pElementText(props: H5pElementTextProps) {
   const {
-    itemInfo: { path, semantics },
+    itemInfo: { path, semantics, parent },
     onChange,
     className,
   } = props;
@@ -123,7 +123,7 @@ export function H5pElementText(props: H5pElementTextProps) {
       required={!semantics.optional}
       name={path}
       label={semantics.label}
-      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
+      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value, parent })}
     />
   );
 }
@@ -131,7 +131,7 @@ export function H5pElementText(props: H5pElementTextProps) {
 export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic>;
 export function H5pElementNumber(props: H5pElementNumberProps) {
   const {
-    itemInfo: { path, semantics },
+    itemInfo: { path, semantics, parent },
     onChange,
     className,
   } = props;
@@ -142,7 +142,7 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
       name={path}
       type="number"
       label={semantics.label}
-      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
+      onChange={(e) => onChange && onChange({ semantics, path, parent, content: e.target.value ? Number(e.target.value) : undefined })}
     />
   );
 }
@@ -150,14 +150,14 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
 export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic>;
 export function H5pElementBoolean(props: H5pElementBooleanProps) {
   const {
-    itemInfo: { path, semantics },
+    itemInfo: { path, semantics, parent },
     onChange,
     className,
   } = props;
   return (
     <FormControlLabel
       className={className}
-      control={<Checkbox name={path} onChange={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })} />}
+      control={<Checkbox name={path} onChange={(e) => onChange && onChange({ semantics, path, parent, content: !!e.target.value })} />}
       label={semantics.label}
     />
   );
@@ -166,7 +166,7 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
 export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic>;
 export function H5pElementSelect(props: H5pElementSelectProps) {
   const {
-    itemInfo: { path, semantics },
+    itemInfo: { path, semantics, parent },
     onChange,
     className,
   } = props;
@@ -176,7 +176,7 @@ export function H5pElementSelect(props: H5pElementSelectProps) {
       required={!semantics.optional}
       label={semantics.label}
       className={className}
-      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
+      onChange={(e) => onChange && onChange({ semantics, path, parent, content: e.target.value })}
     >
       {semantics.options.map(({ value, label }) => (
         <MenuItem key={value} value={value}>
@@ -196,7 +196,7 @@ export interface H5pElementMediaProps extends H5PBaseElementProps<H5PMediaSemant
 }
 export function H5pElementMedia(props: H5pElementMediaProps) {
   const {
-    itemInfo: { path, semantics },
+    itemInfo: { path, semantics, parent },
     onChange,
     className,
     classes,
@@ -205,7 +205,7 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
     <SingleUploader
       partition="assets"
       accept="image/*,audio/*,video/*"
-      onChange={(id) => onChange && onChange({ semantics, path, content: { path: id as string, mime: "image/jpeg" } })}
+      onChange={(id) => onChange && onChange({ semantics, path, parent, content: { path: id as string, mime: "image/jpeg" } })}
       render={({ uploady, item, btnRef, value, isUploading }) => (
         <Box className={clsx(className, classes?.root)} display="flex">
           <Button
@@ -356,7 +356,7 @@ export interface H5pElementLibraryProps extends H5PBaseElementProps<H5PLibrarySe
 }
 export function H5pElementLibrary(props: H5pElementLibraryProps) {
   const {
-    itemInfo: { path, semantics, content },
+    itemInfo: { path, semantics, content, parent },
     className,
     classes,
     onChange,
@@ -376,7 +376,7 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
         value={content?.library ?? ""}
         name={path}
         label={semantics.label}
-        onChange={(e) => onChange && onChange({ semantics, path, content: { library: e.target.value } })}
+        onChange={(e) => onChange && onChange({ semantics, path, parent, content: { library: e.target.value } })}
       >
         {semantics.options?.map((name) => (
           <MenuItem key={name} value={h5pName2libId(name)}>

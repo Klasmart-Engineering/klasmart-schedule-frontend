@@ -202,21 +202,21 @@ export interface MapHandler<T> {
   (props: MapHandlerProps<T>): T;
 }
 
+export interface H5PItemInfoMethods {
+  parent: () => H5PItemInfo | void;
+}
+
 export type H5PItemInfo<S extends H5PItemSemantic = H5PItemSemantic> = S extends any
   ? {
       path: string;
       content?: H5PContentBySemantics<S>;
       semantics: S;
-    }
+    } & H5PItemInfoMethods
   : never;
 
-// export interface H5PItemInfo<S extends H5PItemSemantic = H5PItemSemantic, C extends H5PItemContent = H5PItemContent> {
-//   path: string;
-//   content?: C;
-//   semantics: S;
-// }
+export const rootParent = function () {};
 
-export interface H5PLibraryInfo {
+export interface H5PLibraryInfo extends H5PItemInfoMethods {
   path: string;
   content: H5PLibraryContent;
   semantics: H5PLibrarySemantic;
@@ -228,6 +228,7 @@ export const h5pName2libId = (option: string) => option.replace(" ", "-");
 
 export const h5pItemMapper = <T>(itemInfo: H5PItemInfo, schema: H5PSchema | undefined, mapHandler: MapHandler<T>): T => {
   const { path, content, semantics } = itemInfo;
+  itemInfo.parent = itemInfo.parent ?? rootParent;
   const context = { schema };
   if (!schema) return mapHandler({ itemInfo, children: [], context });
   switch (semantics.type) {
@@ -241,6 +242,7 @@ export const h5pItemMapper = <T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
           path: path ? `${path}.params.${name}` : `params.${name}`,
           content: libraryContent.params?.[name],
           semantics: itemSemantics,
+          parent: () => itemInfo,
         } as H5PItemInfo;
         return h5pItemMapper(subItemInfo, schema, mapHandler);
       });
@@ -253,6 +255,7 @@ export const h5pItemMapper = <T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
           path: `${path}[${idx}]`,
           content: subContent,
           semantics: semantics.field,
+          parent: () => itemInfo,
         } as H5PItemInfo;
         return h5pItemMapper(subItemInfo, schema, mapHandler);
       });
@@ -264,6 +267,7 @@ export const h5pItemMapper = <T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
           path: path ? `${path}.${itemSemantics.name}` : itemSemantics.name,
           content: groupContent ? groupContent[itemSemantics.name] : undefined,
           semantics: itemSemantics,
+          parent: () => itemInfo,
         } as H5PItemInfo;
         return h5pItemMapper(subItemInfo, schema, mapHandler);
       });
@@ -312,7 +316,7 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
 
 export function createDefaultLibraryContent(library: string, schema: H5PSchema): H5PLibraryContent {
   const semantics: H5PLibrarySemantic = { type: H5PItemType.library, name: H5P_ROOT_NAME };
-  return h5pItemMapper({ path: "", content: { library }, semantics }, schema, mapH5PContent) as H5PLibraryContent;
+  return h5pItemMapper({ path: "", content: { library }, semantics, parent: rootParent }, schema, mapH5PContent) as H5PLibraryContent;
 }
 
 export function createDefaultListContent(semantics: H5PListSemantic, schema: H5PSchema): H5PListContent {
@@ -322,6 +326,12 @@ export function createDefaultListContent(semantics: H5PListSemantic, schema: H5P
   return Array(amount)
     .fill(1)
     .map(() => cloneDeep(defaultContent));
+}
+
+export function resolveItemInfoByPath(itemInfo: H5PItemInfo, path: string) {
+  const pathList = path.split("/");
+  // todo
+  console.log(pathList);
 }
 
 export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PItemInfo<H5PTextSemantic> {
