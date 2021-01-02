@@ -11,7 +11,6 @@ import {
   H5P_ROOT_NAME,
   isH5pLibraryItemInfo,
   mapH5PContent,
-  rootParent,
 } from "../models/ModelH5pSchema";
 
 type H5pFormChangePayload = H5PItemInfo & {
@@ -51,9 +50,9 @@ const formReducer = (state: H5PLibraryContent, action: H5pFormChangeAction): H5P
 };
 
 export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSchema) {
-  const rootContentInfo: H5PItemInfo = { path: "", semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library }, parent: rootParent };
+  const rootContentInfo: H5PItemInfo = { path: "", semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library } };
   const content = defaultValue
-    ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent) as H5PLibraryContent)
+    ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent).result as H5PLibraryContent)
     : undefined;
   const [form, dispatch] = useReducer(produce(formReducer) as Reducer<H5PLibraryContent, H5pFormChangeAction>, content);
   const dispatchChange = useMemo(() => {

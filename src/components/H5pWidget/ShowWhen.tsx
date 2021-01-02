@@ -48,18 +48,17 @@ function getValue(itemInfo: H5PItemInfo) {
 
 export function WidgetElement(props: H5pElementProps) {
   const {
-    itemInfo: { semantics, path, parent },
+    itemHelper: { semantics, path, parentItem, childItems },
   } = props;
   if (isShowWhenAttributeSemantic(semantics)) {
     const { field, equals } = semantics.showWhen.rules[0];
-    const parentItemInfo = parent();
-    if (!parentItemInfo) return <H5pElement {...props} />;
-    if (isH5pGroupItemInfo(parentItemInfo)) {
+    if (!parentItem) return <H5pElement {...props} />;
+    if (isH5pGroupItemInfo(parentItem)) {
       // todo
       // const value = getValue(parentItemInfo.)
       // if (value !== equals) return null;
     }
-    console.log(path, field, equals, getValue);
+    console.log(path, field, equals, getValue, childItems);
   }
   return <H5pElement {...props} />;
 }

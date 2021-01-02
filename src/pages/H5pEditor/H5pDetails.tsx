@@ -13,7 +13,6 @@ import {
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
-import produce from "immer";
 import React from "react";
 import {
   H5pElement,
@@ -36,15 +35,15 @@ import { widgetElements } from "../../components/H5pWidget";
 import { useH5pFormReducer } from "../../hooks/useH5pFormReducer";
 import { localeManager, reportMiss } from "../../locale/LocaleManager";
 import {
-  H5PItemInfo,
+  H5PItemHelper,
   h5pItemMapper,
   H5PItemType,
   H5PLibraryContent,
   H5PLibraryInfo,
   H5PSchema,
   H5P_ROOT_NAME,
+  isH5pLibraryItemInfo,
   MapHandler,
-  rootParent,
 } from "../../models/ModelH5pSchema";
 import commonOptions from "./commonOptions.json";
 // import { RichTextInput } from "../../components/RichTextInput";
@@ -133,7 +132,7 @@ interface H5PFormCombinedNode {
 }
 const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandler<H5PFormCombinedNode> => {
   return function combinedNodeMapHandler(props) {
-    const { itemInfo, children, context } = props;
+    const { itemHelper, children, context } = props;
     const commonInline: H5PFormCombinedNode["commonInline"] = [];
     const common: H5PFormCombinedNode["common"] = [];
     const uncommonList = children.map(({ uncommon }) => uncommon).filter((x) => x) as JSX.Element[];
@@ -142,23 +141,27 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
       common.push(...child.common);
     });
     // library 元素的场景
-    if (itemInfo.semantics.type === H5PItemType.library) {
+    if (isH5pLibraryItemInfo(itemHelper)) {
       // library 的 common 值不能为真
-      const uncommon = handler({ itemInfo, children: uncommonList, context });
+      const uncommon = handler({ itemHelper, children: uncommonList, context });
       if (commonInline.length === 0) return { uncommon, commonInline, common };
-      const commonItemInfo = produce(itemInfo as unknown, (draft: H5PItemInfo) => {
-        draft.semantics.extra = { isRenderCommon: true };
-      }) as H5PItemInfo;
-      common.unshift(handler({ itemInfo: commonItemInfo, children: commonInline, context }));
+      const commonItemHelper: H5PItemHelper = {
+        ...itemHelper,
+        semantics: {
+          ...itemHelper.semantics,
+          extra: { isRenderCommon: true },
+        },
+      };
+      common.unshift(handler({ itemHelper: commonItemHelper, children: commonInline, context }));
       return { uncommon, common, commonInline: [] };
     }
     // common 元素的场景
-    if (itemInfo.semantics.common) {
-      commonInline.unshift(handler({ itemInfo, children: uncommonList, context }));
+    if (itemHelper.semantics.common) {
+      commonInline.unshift(handler({ itemHelper, children: uncommonList, context }));
       return { uncommon: undefined, commonInline, common };
     }
     // 非 common 元素的场景
-    const uncommon = handler({ itemInfo, children: uncommonList, context });
+    const uncommon = handler({ itemHelper, children: uncommonList, context });
     return { uncommon, commonInline, common };
   };
 };
@@ -179,21 +182,22 @@ export function H5pDetails(props: H5pDetailsProps) {
     path: "",
     content: form,
     semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library },
-    parent: rootParent,
   };
 
   if (!schema) return null;
-  const { common, uncommon } = h5pItemMapper(
+  const {
+    result: { common, uncommon },
+  } = h5pItemMapper<H5PFormCombinedNode>(
     libraryInfo,
     schema,
-    makeCombinedNodeMapHandler(({ itemInfo, children, context }) => {
-      const { semantics, path } = itemInfo;
+    makeCombinedNodeMapHandler(({ itemHelper, children, context }) => {
+      const { semantics, path } = itemHelper;
       const widget =
         (semantics.type !== H5PItemType.list && semantics.widget) ||
         (semantics.type === H5PItemType.list && semantics.widgets?.[0].name) ||
         undefined;
       const Widget = widget && widgetElements[widget];
-      let elementProps = { itemInfo, children, context } as H5pElementProps;
+      let elementProps = { itemHelper, children, context } as H5pElementProps;
       if (
         isH5pElementText(elementProps) ||
         isH5pElementNumber(elementProps) ||
