@@ -178,6 +178,7 @@ export function H5pDetails(props: H5pDetailsProps) {
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange }] = useH5pFormReducer(value, schema);
+  console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
     content: form,
