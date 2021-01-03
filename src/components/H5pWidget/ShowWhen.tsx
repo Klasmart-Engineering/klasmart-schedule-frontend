@@ -1,14 +1,14 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
-  H5PItemInfo,
   H5PItemSemantic,
   H5PLeafContent,
+  h5pName2libId,
   isH5pBooleanItemInfo,
-  isH5pGroupItemInfo,
   isH5pLibraryItemInfo,
   isH5pNumberItemInfo,
   isH5pSelectItemInfo,
   isH5pTextItemInfo,
+  resolveItemByPath,
 } from "../../models/ModelH5pSchema";
 import { H5pElement, H5pElementProps } from "../H5pElement";
 
@@ -36,29 +36,30 @@ function isShowWhenAttributeSemantic(semantic: H5PItemSemantic): semantic is H5P
   return true;
 }
 
-function getValue(itemInfo: H5PItemInfo) {
-  if (isH5pTextItemInfo(itemInfo) || isH5pNumberItemInfo(itemInfo) || isH5pBooleanItemInfo(itemInfo) || isH5pSelectItemInfo(itemInfo)) {
-    return itemInfo.content;
-  }
-  if (isH5pLibraryItemInfo(itemInfo)) {
-    return itemInfo.content?.library;
-  }
-  return undefined;
-}
-
 export function WidgetElement(props: H5pElementProps) {
-  const {
-    itemHelper: { semantics, path, parentItem, childItems },
-  } = props;
+  const { itemHelper } = props;
+  const { semantics } = itemHelper;
   if (isShowWhenAttributeSemantic(semantics)) {
-    const { field, equals } = semantics.showWhen.rules[0];
-    if (!parentItem) return <H5pElement {...props} />;
-    if (isH5pGroupItemInfo(parentItem)) {
-      // todo
-      // const value = getValue(parentItemInfo.)
-      // if (value !== equals) return null;
-    }
-    console.log(path, field, equals, getValue, childItems);
+    const condition = semantics.showWhen.rules.some(({ field, equals }) => {
+      const targetItemHelper = resolveItemByPath(itemHelper, field);
+      if (!targetItemHelper) return false;
+      if (isH5pLibraryItemInfo(targetItemHelper)) {
+        const value = targetItemHelper.content?.library || "";
+        const libIds = Array.isArray(equals) ? (equals as string[]).map(h5pName2libId) : [h5pName2libId(equals as string)];
+        return libIds.includes(value);
+      }
+      if (
+        isH5pTextItemInfo(targetItemHelper) ||
+        isH5pNumberItemInfo(targetItemHelper) ||
+        isH5pBooleanItemInfo(targetItemHelper) ||
+        isH5pSelectItemInfo(targetItemHelper)
+      ) {
+        const value = targetItemHelper.content;
+        return Array.isArray(equals) ? equals.includes(value) : equals === value;
+      }
+      return false;
+    });
+    if (!condition) return <Fragment />;
   }
   return <H5pElement {...props} />;
 }

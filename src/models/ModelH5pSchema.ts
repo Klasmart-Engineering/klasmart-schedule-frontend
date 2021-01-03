@@ -341,10 +341,19 @@ export function createDefaultListContent(semantics: H5PListSemantic, schema: H5P
     .map(() => cloneDeep(defaultContent));
 }
 
-export function resolveItemInfoByPath(itemInfo: H5PItemInfo, path: string) {
-  const pathList = path.split("/");
-  // todo
-  console.log(pathList);
+export function resolveItemByPath(itemHelper: H5PItemHelper, path: string): H5PItemHelper | undefined {
+  const resolveOnePath = (itemHelper: H5PItemHelper, onePath: string): H5PItemHelper | undefined => {
+    if (onePath === "..") return itemHelper.parentItem;
+    if (onePath === "." || onePath === "") return itemHelper;
+    return itemHelper.parentItem?.childItems.find((item) => item.semantics.name === onePath);
+  };
+  let resultItemHelper = itemHelper;
+  for (const onePath of path.split("/")) {
+    const result = resolveOnePath(resultItemHelper, onePath);
+    if (!result) return;
+    resultItemHelper = result;
+  }
+  return resultItemHelper;
 }
 
 export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PItemInfo<H5PTextSemantic> {
