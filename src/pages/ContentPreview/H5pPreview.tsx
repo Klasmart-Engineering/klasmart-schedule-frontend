@@ -64,7 +64,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
   h5pCon: {
     width: "80%",
-    height: "90%",
+    height: "90vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -130,7 +130,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   mapCon: {
     width: "100%",
     display: "flex",
-    height: 210,
+    height: 200,
     background: "rgba(0,0,0,0.32)",
     overflowY: "hidden",
     overflowX: "scroll",
