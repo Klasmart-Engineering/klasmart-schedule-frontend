@@ -166,8 +166,11 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
   };
 };
 
+// const pipe = <P,R>(f1: {(x: P): R}, f2: {(x:R):any}) => (x: P) => f2(f1(x));
+
 interface H5pDetailsProps {
   value: H5PLibraryContent;
+  // onChange: (value: H5PLibraryContent) => any;
   schema: H5PSchema;
 }
 export function H5pDetails(props: H5pDetailsProps) {
@@ -178,7 +181,6 @@ export function H5pDetails(props: H5pDetailsProps) {
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange }] = useH5pFormReducer(value, schema);
-  console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
     content: form,

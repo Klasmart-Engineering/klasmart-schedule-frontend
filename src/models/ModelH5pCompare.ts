@@ -2,7 +2,7 @@ import isEqual from "lodash/isEqual";
 
 export function formatCompareContent(content: any): any {
   if (content.library) {
-    content.subContentId = "subContentId";
+    content.subContentId = "";
     content.metadata.authors = [];
     content.metadata.changes = [];
     content.metadata.contentType = "";
@@ -22,12 +22,16 @@ export function formatCompareContent(content: any): any {
   return content;
 }
 
+export function formatTargetContent(content: any): any {
+  content.metadata = {};
+  delete content.h5p;
+  return formatCompareContent(content);
+}
+
 export function validate(content: any, target: any): boolean | string {
   const currentJSON = formatCompareContent(content);
-  const targetJSON = formatCompareContent(target);
+  const targetJSON = formatTargetContent(target);
   const equal = isEqual(currentJSON, targetJSON);
   if (equal) return true;
   return `本地格式化数据:\n${JSON.stringify(currentJSON, null, 2)}\n\nh5p格式化数据:\n${JSON.stringify(target, null, 2)}`;
 }
-
-// javascript:(()=>{const {jsonContent,library,metadata}=Object.values(H5PIntegration.contents)[0];const params=JSON.parse(jsonContent);document.documentElement.innerHTML=JSON.stringify({library,metadata,params})})()
