@@ -166,21 +166,22 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
   };
 };
 
-// const pipe = <P,R>(f1: {(x: P): R}, f2: {(x:R):any}) => (x: P) => f2(f1(x));
+const pipe = <P, R>(f1: { (x: P): R }, f2: { (x: R): any }) => (x: P) => f2(f1(x));
 
 interface H5pDetailsProps {
   value: H5PLibraryContent;
-  // onChange: (value: H5PLibraryContent) => any;
+  onChange: (value: H5PLibraryContent) => any;
   schema: H5PSchema;
 }
 export function H5pDetails(props: H5pDetailsProps) {
-  const { value, schema } = props;
+  const { value, schema, onChange } = props;
   const css = useStyles();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange }] = useH5pFormReducer(value, schema);
+  console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
     content: form,
@@ -194,6 +195,11 @@ export function H5pDetails(props: H5pDetailsProps) {
     libraryInfo,
     schema,
     makeCombinedNodeMapHandler(({ itemHelper, children, context }) => {
+      //debug
+      if (itemHelper.semantics.name === H5P_ROOT_NAME) {
+        console.log("root itemHelper = ", itemHelper);
+      }
+
       const { semantics, path } = itemHelper;
       const widget =
         (semantics.type !== H5PItemType.list && semantics.widget) ||
@@ -211,7 +217,7 @@ export function H5pDetails(props: H5pDetailsProps) {
         isH5pElementAudio(elementProps) ||
         isH5pElementFile(elementProps)
       ) {
-        const extendedProps: typeof elementProps = { ...elementProps, onChange: dispatchChange, className: css.h5pItem };
+        const extendedProps: typeof elementProps = { ...elementProps, onChange: pipe(dispatchChange, onChange), className: css.h5pItem };
         elementProps = extendedProps;
       }
       if (isH5pElementList(elementProps)) {
@@ -240,7 +246,7 @@ export function H5pDetails(props: H5pDetailsProps) {
       if (isH5pElementLibrary(elementProps)) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
-          onChange: dispatchChange,
+          onChange: pipe(dispatchChange, onChange),
           classes: {
             root: css.inlineSection,
             paragraph: css.inlineSectionParagraph,
@@ -295,7 +301,10 @@ export function H5pDetails(props: H5pDetailsProps) {
                   value={form?.metadata?.defaultLanguage ?? localeManager.intl?.locale ?? ""}
                   className={clsx(css.languageInput, css.h5pItemHalf)}
                   onChange={(e) =>
-                    dispatchChange({ ...libraryInfo, content: { library: "", metadata: { defaultLanguage: e.target.value } } })
+                    pipe(
+                      dispatchChange,
+                      onChange
+                    )({ ...libraryInfo, content: { library: "", metadata: { defaultLanguage: e.target.value } } })
                   }
                 >
                   {commonOptions.map(({ value, label }) => (

@@ -1,6 +1,6 @@
 import produce from "immer";
 import setByPath from "lodash/set";
-import { Reducer, useMemo, useReducer } from "react";
+import { Reducer, useMemo, useReducer, useRef } from "react";
 import {
   createDefaultLibraryContent,
   H5PItemInfo,
@@ -54,10 +54,17 @@ export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSc
   const content = defaultValue
     ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent).result as H5PLibraryContent)
     : undefined;
-  const [form, dispatch] = useReducer(produce(formReducer) as Reducer<H5PLibraryContent, H5pFormChangeAction>, content);
+  const formRef = useRef<H5PLibraryContent>(content);
+  const [form, dispatch] = useReducer((state: H5PLibraryContent, action: H5pFormChangeAction) => {
+    formRef.current = (produce(formReducer) as Reducer<H5PLibraryContent, H5pFormChangeAction>)(state, action);
+    return formRef.current;
+  }, content);
   const dispatchChange = useMemo(() => {
-    if (!schema) return () => {};
-    return (payload: H5PItemInfo) => dispatch({ type: "change", payload: { ...payload, schema } });
-  }, [dispatch, schema]);
+    if (!schema) return () => form;
+    return (payload: H5PItemInfo) => {
+      dispatch({ type: "change", payload: { ...payload, schema } });
+      return formRef.current;
+    };
+  }, [form, schema]);
   return [form, { dispatchChange }] as const;
 }

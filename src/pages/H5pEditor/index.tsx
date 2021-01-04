@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
-import { H5PSchema } from "../../models/ModelH5pSchema";
+import { H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
+import { H5pCompare } from "./H5pCompare";
 import { H5pDetails } from "./H5pDetails";
 import H5pInfo from "./H5pInfo";
 import { H5pLibraryInput } from "./H5pLibraryInput";
@@ -34,6 +35,8 @@ const useLibrary = (libraryOfContent?: string) => {
 export function H5pEditor() {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
+  const [libContent, setLibContent] = useState<H5PLibraryContent>();
+  console.log("libContent = ", libContent);
   const [library, setLibrary] = useLibrary(query.get("library") || undefined);
   const h5p_id = query.get("h5p_id") || undefined;
   const contentTypeList = useContentTypeList();
@@ -44,7 +47,12 @@ export function H5pEditor() {
     ) : (
       <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} />
     );
-  return !schema ? null : <H5pDetails value={{ library }} schema={schema} />;
+  return !schema ? null : (
+    <Fragment>
+      <H5pCompare value={libContent} />
+      <H5pDetails value={{ library }} schema={schema} onChange={setLibContent} />
+    </Fragment>
+  );
 }
 
 H5pEditor.routeBasePath = "/h5pEditor";

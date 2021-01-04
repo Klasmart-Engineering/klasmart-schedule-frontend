@@ -43,8 +43,8 @@ export default function H5pList(props: H5pListProps) {
   const sm = useMediaQuery(breakpoints.down("sm"));
 
   const handleClick = (item: any) => {
-    console.log(`${item.id}-${item.coreApiVersionNeeded.major}.${item.coreApiVersionNeeded.minor}`);
-    onChange(`${item.id}-${item.coreApiVersionNeeded.major}.${item.coreApiVersionNeeded.minor}`);
+    console.log(`${item.id}-${item.version.major}.${item.version.minor}`);
+    onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
   };
 
   const getDetails = (e: React.KeyboardEvent | React.MouseEvent, id: string) => {

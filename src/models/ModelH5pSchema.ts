@@ -50,14 +50,22 @@ export type H5PGroupContent =
     }
   | undefined;
 
+interface H5PLibraryMetadata {
+  defaultLanguage?: string;
+  language?: string;
+  authors?: string[];
+  changes?: string[];
+  contentType?: string;
+  extraTitle?: string;
+  license?: string;
+  title?: string;
+}
 export type H5PLibraryContent =
   | {
       params?: Record<string, H5PItemContent>;
       library: string;
       subContentId?: string;
-      metadata?: {
-        defaultLanguage?: string;
-      };
+      metadata?: H5PLibraryMetadata;
     }
   | undefined;
 
@@ -176,6 +184,7 @@ export interface H5PGroupSemantic extends H5PBaseSemantic {
 
 export enum H5PWidgetTitle {
   showWhen = "showWhen",
+  html = "html",
 }
 
 export type H5PItemSemantic =
@@ -195,13 +204,13 @@ export interface MapHandlerContext {
   schema?: H5PSchema;
 }
 
-export interface MapHandlerProps<T, F extends H5PItemHelper = H5PItemHelper> {
-  itemHelper: F;
-  children: T[];
+export interface MapHandlerProps<C, H extends H5PItemHelper = H5PItemHelper> {
+  itemHelper: H;
+  children: C[];
   context: MapHandlerContext;
 }
-export interface MapHandler<T> {
-  (props: MapHandlerProps<T>): T;
+export interface MapHandler<T, C = T, H extends H5PItemHelper = H5PItemHelper> {
+  (props: MapHandlerProps<C, H>): T;
 }
 
 export type H5PItemHelper<S extends H5PItemSemantic = H5PItemSemantic> = S extends any
@@ -296,6 +305,38 @@ const sha1 = (str: string) => {
   return sha.getHash("HEX");
 };
 
+export const mapH5PContentOrigin: MapHandler<H5PItemContent> = (props) => {
+  const {
+    itemHelper,
+    children,
+    context: { schema },
+  } = props;
+  let value: H5PItemContent;
+  if (!schema) return itemHelper.content;
+  if (isH5pListItemInfo(itemHelper)) {
+    const { semantics } = itemHelper;
+    value = children.length > 0 ? children : createDefaultListContent(semantics, schema);
+  } else if (isH5pGroupItemInfo(itemHelper)) {
+    value = children.reduce((r, child) => Object.assign(r, child), {});
+  } else if (isH5pLibraryItemInfo(itemHelper))
+    libraryBlock: {
+      const { content } = itemHelper;
+      if (!content) break libraryBlock;
+      const params = children.reduce((r, child) => Object.assign(r, child), {}) as Record<string, H5PItemContent>;
+      const subContentId = sha1(JSON.stringify(params));
+      const contentType = `yyyy ${content.library}`;
+      const metadata: H5PLibraryMetadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
+      value = { params, library: content.library, subContentId, metadata };
+    }
+  else {
+    const { content, semantics } = itemHelper;
+    value = content || semantics.default;
+  }
+  return itemHelper.semantics.name === H5P_ROOT_NAME || itemHelper.parentItem?.semantics.type === H5PItemType.list
+    ? value
+    : { [itemHelper.semantics.name]: value };
+};
+
 export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
   const {
     itemHelper,
@@ -313,17 +354,25 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
     libraryBlock: {
       const { content } = itemHelper;
       if (!content) break libraryBlock;
-      const params = children.reduce((r, child) => Object.assign(r, child), {});
+      const params = children.reduce((r, child) => Object.assign(r, child), {}) as Record<string, H5PItemContent>;
       const subContentId = sha1(JSON.stringify(params));
       const contentType = `yyyy ${content.library}`;
-      const metadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
+      const metadata: H5PLibraryMetadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
       value = { params, library: content.library, subContentId, metadata };
     }
-  else {
+  else if (isH5pTextItemInfo(itemHelper) && itemHelper.semantics.widget === H5PWidgetTitle.html) {
+    const { content, semantics } = itemHelper;
+    value = content || semantics.default || "";
+  } else if (isH5pBooleanItemInfo(itemHelper)) {
+    const { content, semantics } = itemHelper;
+    value = content || semantics.default || false;
+  } else {
     const { content, semantics } = itemHelper;
     value = content || semantics.default;
   }
-  return itemHelper.semantics.name === H5P_ROOT_NAME ? value : { [itemHelper.semantics.name]: value };
+  return itemHelper.semantics.name === H5P_ROOT_NAME || itemHelper.parentItem?.semantics.type === H5PItemType.list
+    ? value
+    : { [itemHelper.semantics.name]: value };
 };
 
 export function createDefaultLibraryContent(library: string, schema: H5PSchema): H5PLibraryContent {
@@ -335,7 +384,8 @@ export function createDefaultLibraryContent(library: string, schema: H5PSchema):
 export function createDefaultListContent(semantics: H5PListSemantic, schema: H5PSchema): H5PListContent {
   const { field, defaultNum, min } = semantics;
   const amount = defaultNum ?? min ?? 1;
-  const { result: defaultContent } = h5pItemMapper({ path: "", semantics: field } as H5PItemInfo, schema, mapH5PContent);
+  const { result } = h5pItemMapper({ path: "", semantics: field } as H5PItemInfo, schema, mapH5PContent);
+  const defaultContent = result?.[field.name as keyof typeof result];
   return Array(amount)
     .fill(1)
     .map(() => cloneDeep(defaultContent));

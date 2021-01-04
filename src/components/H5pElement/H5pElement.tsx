@@ -124,7 +124,7 @@ export function H5pElementText(props: H5pElementTextProps) {
       required={!semantics.optional}
       name={path}
       label={semantics.label}
-      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
+      onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
     />
   );
 }
@@ -143,7 +143,7 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
       name={path}
       type="number"
       label={semantics.label}
-      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
+      onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
     />
   );
 }
@@ -158,7 +158,7 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
   return (
     <FormControlLabel
       className={className}
-      control={<Checkbox name={path} onChange={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })} />}
+      control={<Checkbox name={path} onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })} />}
       label={semantics.label}
     />
   );
