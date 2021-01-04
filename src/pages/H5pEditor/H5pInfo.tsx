@@ -4,6 +4,7 @@ import clsx from "clsx";
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { ContentTypeList } from "../../api/type";
+import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
@@ -279,7 +280,7 @@ export default function H5pInfo(props: H5pInfoProps) {
           <div>{h5pInfo.owner}</div>
           <p>{h5pInfo.description}</p>
           <a href={h5pInfo.example} className={css.demo} target="_blank" rel="noopener noreferrer">
-            Content Demo
+            {reportMiss("Content Demo", "h5p_content_demo")}
           </a>
         </Grid>
       </Grid>
@@ -318,7 +319,7 @@ export default function H5pInfo(props: H5pInfoProps) {
       <div className={css.license}>
         <Accordion defaultExpanded={false}>
           <AccordionSummary expandIcon={<ExpandMore />} classes={{ root: css.sectionSummary }}>
-            License
+            {reportMiss("License", "h5p_license")}
           </AccordionSummary>
           <AccordionDetails>
             <ul>

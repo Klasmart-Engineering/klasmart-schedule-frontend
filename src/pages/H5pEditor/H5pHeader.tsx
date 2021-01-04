@@ -3,6 +3,7 @@ import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { ContentTypeList } from "../../api/type";
+import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
   header_container: {
@@ -83,7 +84,7 @@ export default function H5pHeader(props: H5pHeaderProps) {
       <Grid container style={{ width: "98%" }}>
         <Paper className={css.searchBox}>
           <InputBase
-            placeholder="Search for Content Types"
+            placeholder={reportMiss("Search for Content Types", "h5p_content_types")}
             inputProps={{ "aria-label": "search for Content Types" }}
             className={css.searchInput}
             onChange={(e) => searchChange(e.target.value)}
@@ -95,20 +96,22 @@ export default function H5pHeader(props: H5pHeaderProps) {
       </Grid>
       <Grid container alignItems="center">
         <Grid item>
-          <Typography variant="h6">All Content Types</Typography>
+          <Typography variant="h6">{reportMiss("All Content Types", "h5p_all_content_types")}</Typography>
         </Grid>
-        <Grid item>({contentTypeList.length} results)</Grid>
+        <Grid item>
+          ({contentTypeList.length} {reportMiss("results", "h5p_results")})
+        </Grid>
       </Grid>
       <Grid container spacing={5} alignItems="center" className={css.box_selected}>
         <Grid item xs={2} sm={2} md={2} lg={2} xl={2} className={css.firstChild}>
-          show:{" "}
+          {reportMiss("show", "h5p_show")}:{" "}
         </Grid>
         <Grid item xs={4} sm={3} md={3} lg={3} xl={3}>
           <Button
             className={clsx(css.selectButton, activeOption === "popularFirst" ? css.activeLink : "")}
             onClick={() => handleSelect("popularFirst")}
           >
-            Popular First
+            {reportMiss("Popular First", "h5p_popular_first")}
           </Button>
         </Grid>
         <Grid item xs={4} sm={3} md={3} lg={3} xl={3}>
@@ -116,12 +119,12 @@ export default function H5pHeader(props: H5pHeaderProps) {
             className={clsx(css.selectButton, activeOption === "NewestFirst" ? css.activeLink : "")}
             onClick={() => handleSelect("NewestFirst")}
           >
-            Newest First
+            {reportMiss("Newest First", "h5p_newest_first")}
           </Button>
         </Grid>
         <Grid item xs={2} sm={3} md={3} lg={3} xl={3}>
           <Button className={clsx(css.selectButton, activeOption === "aToZ" ? css.activeLink : "")} onClick={() => handleSelect("aToZ")}>
-            A to Z
+            {reportMiss("A to Z", "h5p_a_to_z")}
           </Button>
         </Grid>
       </Grid>

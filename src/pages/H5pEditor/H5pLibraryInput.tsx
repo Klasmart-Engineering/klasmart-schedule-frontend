@@ -34,7 +34,7 @@ export function H5pLibraryInput(props: H5pLibraryInputProps) {
 
   return (
     <div>
-      <button onClick={() => onChange("H5P.MultiChoice-1.14")}>select library: H5P.MultiChoice-1.14</button>
+      {/* <button onClick={() => onChange("H5P.MultiChoice-1.14")}>select library: H5P.MultiChoice-1.14</button> */}
       {/* <pre>{JSON.stringify(contentTypeList, null, 2)}</pre> */}
       <H5pHeader contentTypeList={newList} sortList={sortList} searchChange={searchChange} />
       <H5pList contentTypeList={newList} onChange={onChange} />

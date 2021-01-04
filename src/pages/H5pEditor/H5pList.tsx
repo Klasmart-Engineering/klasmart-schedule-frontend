@@ -2,6 +2,7 @@ import { Box, Button, List, ListItem, makeStyles, useMediaQuery, useTheme } from
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { ContentTypeList } from "../../api/type";
+import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(() => ({
   listItem: {
@@ -69,7 +70,7 @@ export default function H5pList(props: H5pListProps) {
               </Box>
               <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
                 <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item.id)}>
-                  Details
+                  {reportMiss("Detail", "h5p_detail")}
                 </Button>
               </Box>
             </ListItem>
