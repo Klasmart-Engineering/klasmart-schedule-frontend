@@ -39,7 +39,6 @@ export function ReportAchievementList() {
   const condition = useReportQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  // const { reportList = [], student_name, reportMockOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   const reportList = totalData.reportList ?? [];
   const perm = usePermission([
@@ -87,22 +86,22 @@ export function ReportAchievementList() {
         });
       }
       if (tab === "class_id") {
-        getFirstLessonPlanId(reportMockOptions.teacher_id, value);
+        getFirstLessonPlanId(condition.teacher_id, value);
       }
       if (tab === "lesson_plan_id") {
-        if (reportMockOptions.teacher_id && reportMockOptions.class_id) {
+        if (condition.teacher_id && condition.class_id) {
           dispatch(
             getAchievementList({
               metaLoading: true,
-              teacher_id: reportMockOptions.teacher_id,
-              class_id: reportMockOptions.class_id,
+              teacher_id: condition.teacher_id,
+              class_id: condition.class_id,
               lesson_plan_id: value,
             })
           );
         }
       }
     },
-    [dispatch, getFirstLessonPlanId, history, reportMockOptions.teacher_id, reportMockOptions.class_id]
+    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id]
   );
   useEffect(() => {
     dispatch(
