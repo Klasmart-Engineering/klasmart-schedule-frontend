@@ -335,5 +335,4 @@ export function H5pDetails(props: H5pDetailsProps) {
       </div>
     </ThemeProvider>
   );
-  // <RichTextInput defaultValue={value} onChange={setValue}/>
 }
