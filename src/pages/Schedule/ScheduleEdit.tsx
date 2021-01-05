@@ -613,9 +613,14 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const getClassOption = (): any => {
-    const lists = perm.create_event_520
-      ? classOptions.classListOrg.organization?.classes
-      : classOptions.classListTeacher.user?.classesTeaching;
+    let lists: any;
+    if (perm.create_event_520) {
+      lists = classOptions.classListOrg.organization?.classes;
+    } else if (perm.create_my_schools_schedule_events_522) {
+      lists = classOptions.classListSchool.school?.classes;
+    } else {
+      lists = classOptions.classListTeacher.user?.classesTeaching;
+    }
     return lists?.map((item: any) => {
       return { id: item.class_id, name: item.class_name };
     });

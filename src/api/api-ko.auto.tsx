@@ -192,32 +192,14 @@ export type MySchoolIDsQuery = { __typename?: "Query" } & {
   >;
 };
 
-export type ClassesInMySchoolsQueryVariables = Types.Exact<{
-  organization_id: Types.Scalars["ID"];
+export type ClassesBySchoolQueryVariables = Types.Exact<{
+  school_id: Types.Scalars["ID"];
 }>;
 
-export type ClassesInMySchoolsQuery = { __typename?: "Query" } & {
-  me?: Types.Maybe<
-    { __typename?: "User" } & {
-      membership?: Types.Maybe<
-        { __typename?: "OrganizationMembership" } & {
-          schoolMemberships?: Types.Maybe<
-            Array<
-              Types.Maybe<
-                { __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id"> & {
-                    school?: Types.Maybe<
-                      { __typename?: "School" } & Pick<Types.School, "school_name"> & {
-                          classes?: Types.Maybe<
-                            Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>
-                          >;
-                        }
-                    >;
-                  }
-              >
-            >
-          >;
-        }
-      >;
+export type ClassesBySchoolQuery = { __typename?: "Query" } & {
+  school?: Types.Maybe<
+    { __typename?: "School" } & {
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
     }
   >;
 };
@@ -681,54 +663,44 @@ export function useMySchoolIDsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type MySchoolIDsQueryHookResult = ReturnType<typeof useMySchoolIDsQuery>;
 export type MySchoolIDsLazyQueryHookResult = ReturnType<typeof useMySchoolIDsLazyQuery>;
 export type MySchoolIDsQueryResult = Apollo.QueryResult<MySchoolIDsQuery, MySchoolIDsQueryVariables>;
-export const ClassesInMySchoolsDocument = gql`
-  query classesInMySchools($organization_id: ID!) {
-    me {
-      membership(organization_id: $organization_id) {
-        schoolMemberships {
-          school_id
-          school {
-            school_name
-            classes {
-              class_id
-              class_name
-            }
-          }
-        }
+export const ClassesBySchoolDocument = gql`
+  query classesBySchool($school_id: ID!) {
+    school(school_id: $school_id) {
+      classes {
+        class_id
+        class_name
       }
     }
   }
 `;
 
 /**
- * __useClassesInMySchoolsQuery__
+ * __useClassesBySchoolQuery__
  *
- * To run a query within a React component, call `useClassesInMySchoolsQuery` and pass it any options that fit your needs.
- * When your component renders, `useClassesInMySchoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useClassesBySchoolQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClassesBySchoolQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useClassesInMySchoolsQuery({
+ * const { data, loading, error } = useClassesBySchoolQuery({
  *   variables: {
- *      organization_id: // value for 'organization_id'
+ *      school_id: // value for 'school_id'
  *   },
  * });
  */
-export function useClassesInMySchoolsQuery(
-  baseOptions?: Apollo.QueryHookOptions<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>
-) {
-  return Apollo.useQuery<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>(ClassesInMySchoolsDocument, baseOptions);
+export function useClassesBySchoolQuery(baseOptions?: Apollo.QueryHookOptions<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>) {
+  return Apollo.useQuery<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>(ClassesBySchoolDocument, baseOptions);
 }
-export function useClassesInMySchoolsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>
+export function useClassesBySchoolLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>
 ) {
-  return Apollo.useLazyQuery<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>(ClassesInMySchoolsDocument, baseOptions);
+  return Apollo.useLazyQuery<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>(ClassesBySchoolDocument, baseOptions);
 }
-export type ClassesInMySchoolsQueryHookResult = ReturnType<typeof useClassesInMySchoolsQuery>;
-export type ClassesInMySchoolsLazyQueryHookResult = ReturnType<typeof useClassesInMySchoolsLazyQuery>;
-export type ClassesInMySchoolsQueryResult = Apollo.QueryResult<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>;
+export type ClassesBySchoolQueryHookResult = ReturnType<typeof useClassesBySchoolQuery>;
+export type ClassesBySchoolLazyQueryHookResult = ReturnType<typeof useClassesBySchoolLazyQuery>;
+export type ClassesBySchoolQueryResult = Apollo.QueryResult<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>;
 export const ParticipantsBySchoolDocument = gql`
   query participantsBySchool($school_id: ID!) {
     school(school_id: $school_id) {
