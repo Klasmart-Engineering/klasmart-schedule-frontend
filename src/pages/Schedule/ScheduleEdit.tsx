@@ -513,7 +513,7 @@ function EditBox(props: CalendarStateProps) {
         return;
       }
 
-      if (scheduleList.class_type === "Homework" && dueDateTimestamp <= currentTime) {
+      if (scheduleList.class_type === "Homework" && timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime) {
         dispatch(actError(d("Due date cannot be earlier than today.").t("schedule_msg_earlier_today")));
         return;
       }
