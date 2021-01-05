@@ -349,7 +349,7 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
     const { semantics } = itemHelper;
     value = children.length > 0 ? children : createDefaultListContent(semantics, schema);
   } else if (isH5pGroupItemInfo(itemHelper)) {
-    value = children.reduce((r, child) => Object.assign(r, child), {});
+    value = children.length === 1 ? Object.values(children[0] ?? {})[0] : children.reduce((r, child) => Object.assign(r, child), {});
   } else if (isH5pLibraryItemInfo(itemHelper))
     libraryBlock: {
       const { content } = itemHelper;
