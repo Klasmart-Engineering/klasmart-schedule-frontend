@@ -10,12 +10,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import React from "react";
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   dialogContainer: {
     "& .MuiPaper-root": {
       // width: "25%",
-      padding: "30px 0 20px 40px",
+      padding: "30px 40px 20px 40px",
       position: "relative",
+      [theme.breakpoints.down("sm")]: {
+        padding: "20px 0px 20px 10px",
+      },
     },
   },
   header: {
@@ -27,7 +30,7 @@ const useStyles = makeStyles({
   content: {
     padding: "0 !important",
   },
-});
+}));
 
 interface AlertDialogProps {
   title?: string;
