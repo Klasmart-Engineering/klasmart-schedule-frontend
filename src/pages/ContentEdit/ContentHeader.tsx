@@ -135,11 +135,8 @@ export function ContentHeader(props: HeaderProps) {
   const { breakpoints } = useTheme();
   const {
     control,
-    formState: { isDirty, dirtyFields },
+    formState: { isDirty },
   } = formMethods;
-  console.log("isDirty=", isDirty);
-  console.log("dirtyFields=", dirtyFields);
-
   const sm = useMediaQuery(breakpoints.down("sm"));
   const xs = useMediaQuery(breakpoints.down("xs"));
   const size = sm ? "small" : "medium";
