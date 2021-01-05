@@ -3,29 +3,52 @@ import setByPath from "lodash/set";
 import { Reducer, useMemo, useReducer, useRef } from "react";
 import {
   createDefaultLibraryContent,
+  createDefaultListContent,
   H5PItemInfo,
   h5pItemMapper,
   H5PItemType,
   H5PLibraryContent,
+  H5PListSemantic,
   H5PSchema,
   H5P_ROOT_NAME,
   isH5pLibraryItemInfo,
   mapH5PContent,
 } from "../models/ModelH5pSchema";
 
-type H5pFormChangePayload = H5PItemInfo & {
+export type H5pFormChangePayload = H5PItemInfo & {
   schema: H5PSchema;
 };
+
+export type H5pFormAddListItemPayload = H5PItemInfo<H5PListSemantic> & {
+  schema: H5PSchema;
+};
+
+export type H5pFormRemoveListItemPayload = H5PItemInfo<H5PListSemantic> & {
+  schema: H5PSchema;
+  index: number;
+};
+
+interface H5pFormAddListItemAction {
+  type: "addListItem";
+  payload: H5pFormAddListItemPayload;
+}
+
+interface H5pFormRemoveListItemAction {
+  type: "removeListItem";
+  payload: H5pFormRemoveListItemPayload;
+}
 
 interface H5pFormChangeAction {
   type: "change";
   payload: H5pFormChangePayload;
 }
 
-const formReducer = (state: H5PLibraryContent, action: H5pFormChangeAction): H5PLibraryContent => {
+type H5pFormAction = H5pFormAddListItemAction | H5pFormChangeAction | H5pFormRemoveListItemAction;
+
+const formReducer = (state: H5PLibraryContent, action: H5pFormAction): H5PLibraryContent => {
   if (!state) return state;
   switch (action.type) {
-    case "change":
+    case "change": {
       const { schema, ...itemInfo } = action.payload;
       if (isH5pLibraryItemInfo(itemInfo)) {
         const { content, path } = itemInfo;
@@ -43,7 +66,20 @@ const formReducer = (state: H5PLibraryContent, action: H5pFormChangeAction): H5P
       }
       const { content, path } = itemInfo;
       setByPath(state, path, content);
-      break;
+      return state;
+    }
+    case "addListItem": {
+      const { content, semantics, path, schema } = action.payload;
+      const listContent = content?.concat(createDefaultListContent(semantics, schema, true));
+      setByPath(state, path, listContent);
+      return state;
+    }
+    case "removeListItem": {
+      const { content, path, index } = action.payload;
+      const listContent = content?.filter((_, idx) => idx !== index);
+      setByPath(state, path, listContent);
+      return state;
+    }
     default:
       return state;
   }
@@ -55,10 +91,24 @@ export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSc
     ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent).result as H5PLibraryContent)
     : undefined;
   const formRef = useRef<H5PLibraryContent>(content);
-  const [form, dispatch] = useReducer((state: H5PLibraryContent, action: H5pFormChangeAction) => {
-    formRef.current = (produce(formReducer) as Reducer<H5PLibraryContent, H5pFormChangeAction>)(state, action);
+  const [form, dispatch] = useReducer((state: H5PLibraryContent, action: H5pFormAction) => {
+    formRef.current = (produce(formReducer) as Reducer<H5PLibraryContent, H5pFormAction>)(state, action);
     return formRef.current;
   }, content);
+  const dispatchRemoveListItem = useMemo(() => {
+    if (!schema) return () => form;
+    return (payload: Omit<H5pFormRemoveListItemPayload, "schema">) => {
+      dispatch({ type: "removeListItem", payload: { ...payload, schema } });
+      return formRef.current;
+    };
+  }, [form, schema]);
+  const dispatchAddListItem = useMemo(() => {
+    if (!schema) return () => form;
+    return (payload: Omit<H5pFormAddListItemPayload, "schema">) => {
+      dispatch({ type: "addListItem", payload: { ...payload, schema } });
+      return formRef.current;
+    };
+  }, [form, schema]);
   const dispatchChange = useMemo(() => {
     if (!schema) return () => form;
     return (payload: H5PItemInfo) => {
@@ -66,5 +116,5 @@ export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSc
       return formRef.current;
     };
   }, [form, schema]);
-  return [form, { dispatchChange }] as const;
+  return [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] as const;
 }

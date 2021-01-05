@@ -56,7 +56,7 @@ const useStyles = makeStyles(({ palette }) =>
       margin: "0 auto",
     },
     h5pItem: {
-      marginBottom: 32,
+      marginTop: 32,
     },
     h5pItemQuarter: {
       width: "25%",
@@ -72,7 +72,13 @@ const useStyles = makeStyles(({ palette }) =>
     description: {
       fontSize: 12,
     },
-    inlineSection: {},
+    buttonAdd: {
+      fontWeight: "bold",
+      marginTop: 32,
+    },
+    inlineSection: {
+      marginTop: 32,
+    },
     inlineSectionParagraph: {
       padding: 8,
     },
@@ -90,7 +96,7 @@ const useStyles = makeStyles(({ palette }) =>
       top: 0,
     },
     section: {
-      marginBottom: 32,
+      marginTop: 32,
     },
     sectionSummary: {
       fontSize: 16,
@@ -98,8 +104,11 @@ const useStyles = makeStyles(({ palette }) =>
       flexDirection: "row-reverse",
       textIndent: 8,
     },
+    listEditorSummary: {
+      flexDirection: "row",
+    },
     sectionDetails: {
-      padding: 32,
+      padding: "0 32px 32px",
       flexDirection: "column",
       alignItems: "stretch",
     },
@@ -180,7 +189,7 @@ export function H5pDetails(props: H5pDetailsProps) {
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
-  const [form, { dispatchChange }] = useH5pFormReducer(value, schema);
+  const [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] = useH5pFormReducer(value, schema);
   console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
@@ -228,7 +237,12 @@ export function H5pDetails(props: H5pDetailsProps) {
             paragraph: css.inlineSectionParagraph,
             title: css.title,
             description: css.description,
+            button: css.buttonAdd,
+            summary: clsx(css.sectionSummary, css.listEditorSummary),
+            details: css.sectionDetails,
           },
+          onAddListItem: dispatchAddListItem,
+          onRemoveListItem: dispatchRemoveListItem,
         };
         elementProps = extendedProps;
       }

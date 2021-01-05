@@ -12,10 +12,11 @@ import {
   MenuItem,
   TextField,
 } from "@material-ui/core";
-import { CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
+import { Cancel, CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { apiResourcePathById } from "../../api/extra";
+import { H5pFormRemoveListItemPayload } from "../../hooks/useH5pFormReducer";
 import { d } from "../../locale/LocaleManager";
 import {
   H5PBooleanSemantic,
@@ -32,6 +33,7 @@ import {
   H5PSelectSemantic,
   H5PTextSemantic,
   H5P_ROOT_NAME,
+  isH5pListItemInfo,
   MapHandlerProps,
 } from "../../models/ModelH5pSchema";
 import { ProgressWithText } from "../../pages/ContentEdit/Details";
@@ -46,12 +48,11 @@ export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandl
 
 const useStyles = makeStyles(({ palette }) =>
   createStyles({
-    summary: ({ importance }: H5PItemSemantic) => ({
+    importanceBackgroundColor: ({ importance }: H5PItemSemantic) => ({
       backgroundColor:
         importance === H5PImportance.high ? palette.primary.dark : importance === H5PImportance.low ? palette.grey[200] : palette.grey[700],
-      color: importance === H5PImportance.low ? palette.text.primary : "white",
     }),
-    expandIcon: ({ importance }: H5PItemSemantic) => ({
+    importanceColor: ({ importance }: H5PItemSemantic) => ({
       color: importance === H5PImportance.low ? palette.text.primary : "white",
     }),
   })
@@ -238,20 +239,24 @@ export const H5pElementAudio = H5pElementMedia;
 export const H5pElementFile = H5pElementMedia;
 
 export interface H5pElementListProps extends H5PBaseElementProps<H5PListSemantic> {
+  onAddListItem(itemInfo: H5PItemInfo<H5PListSemantic>): any;
+  onRemoveListItem(itemInfo: Omit<H5pFormRemoveListItemPayload, "schema">): any;
   classes?: {
     root?: string;
     paragraph?: string;
     title?: string;
     description?: string;
+    button?: string;
+    closeIcon?: string;
+    summary?: string;
+    details?: string;
   };
 }
 export function H5pElementList(props: H5pElementListProps) {
-  const {
-    itemHelper: { semantics },
-    className,
-    classes,
-    children,
-  } = props;
+  const { itemHelper, className, classes, children, onAddListItem, onRemoveListItem } = props;
+  const { semantics } = itemHelper;
+  const css = useStyles(semantics);
+  const disableCloseBtn = children.length <= (semantics.min ?? 0);
   return (
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
@@ -260,7 +265,28 @@ export function H5pElementList(props: H5pElementListProps) {
         </InputLabel>
         <div className={classes?.description}>{semantics.description}</div>
       </div>
-      {children}
+      {children.map((childNode, idx) => (
+        <Accordion expanded key={itemHelper.childItems[idx].path}>
+          <AccordionSummary
+            expandIcon={<Cancel className={clsx(css.importanceColor, classes?.closeIcon)} />}
+            IconButtonProps={{
+              style: { display: disableCloseBtn ? "none" : undefined },
+              onClick: () => onRemoveListItem({ ...itemHelper, index: idx }),
+            }}
+            classes={{ root: clsx(css.importanceBackgroundColor, css.importanceColor, classes?.summary) }}
+          >
+            {semantics.field.label ?? semantics.field.name}
+          </AccordionSummary>
+          <AccordionDetails className={classes?.details}>{childNode}</AccordionDetails>
+        </Accordion>
+      ))}
+      <Button
+        className={clsx(css.importanceBackgroundColor, css.importanceColor, classes?.button)}
+        variant="contained"
+        onClick={() => onAddListItem(itemHelper)}
+      >
+        ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
+      </Button>
     </div>
   );
 }
@@ -275,18 +301,21 @@ export interface H5pElementGroupProps extends H5PBaseElementProps<H5PGroupSemant
 }
 export function H5pElementGroup(props: H5pElementGroupProps) {
   const {
-    itemHelper: { semantics },
+    itemHelper: { semantics, parentItem },
     className,
     classes,
     children,
   } = props;
   const css = useStyles(semantics);
+  if (parentItem && isH5pListItemInfo(parentItem)) {
+    return <Fragment>{children}</Fragment>;
+  }
   return (
     <div className={clsx(className, classes?.root)}>
       <Accordion defaultExpanded={semantics.expanded ?? !semantics.optional}>
         <AccordionSummary
-          expandIcon={<ExpandMore className={clsx(css.expandIcon, classes?.expandIcon)} />}
-          classes={{ root: clsx(css.summary, classes?.summary) }}
+          expandIcon={<ExpandMore className={clsx(css.importanceColor, classes?.expandIcon)} />}
+          classes={{ root: clsx(css.importanceBackgroundColor, css.importanceColor, classes?.summary) }}
         >
           {semantics.label}
         </AccordionSummary>
@@ -314,7 +343,9 @@ export function H5pElementRootLibrary(props: H5pElementRootLibraryProps) {
   return (
     <div className={clsx(className, classes?.root)}>
       <Accordion expanded>
-        <AccordionSummary classes={{ root: clsx(css.summary, classes?.summary) }}>{content?.library}</AccordionSummary>
+        <AccordionSummary classes={{ root: clsx(css.importanceBackgroundColor, css.importanceColor, classes?.summary) }}>
+          {content?.library}
+        </AccordionSummary>
         <AccordionDetails className={classes?.details}>{children}</AccordionDetails>
       </Accordion>
     </div>
@@ -339,7 +370,9 @@ export function H5pElementCommonLibrary(props: H5pElementCommonLibraryProps) {
   return (
     <div className={clsx(className, classes?.root)}>
       <Accordion expanded>
-        <AccordionSummary classes={{ root: clsx(css.summary, classes?.summary) }}>{content?.library}</AccordionSummary>
+        <AccordionSummary classes={{ root: clsx(css.importanceBackgroundColor, css.importanceColor, classes?.summary) }}>
+          {content?.library}
+        </AccordionSummary>
         <AccordionDetails className={classes?.details}>{children}</AccordionDetails>
       </Accordion>
     </div>

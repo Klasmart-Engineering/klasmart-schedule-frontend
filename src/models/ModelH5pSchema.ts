@@ -381,9 +381,9 @@ export function createDefaultLibraryContent(library: string, schema: H5PSchema):
   return result as H5PLibraryContent;
 }
 
-export function createDefaultListContent(semantics: H5PListSemantic, schema: H5PSchema): H5PListContent {
+export function createDefaultListContent(semantics: H5PListSemantic, schema: H5PSchema, one: boolean = false): H5PListContent {
   const { field, defaultNum, min } = semantics;
-  const amount = defaultNum ?? min ?? 1;
+  const amount = one ? 1 : defaultNum ?? min ?? 1;
   const { result } = h5pItemMapper({ path: "", semantics: field } as H5PItemInfo, schema, mapH5PContent);
   const defaultContent = result?.[field.name as keyof typeof result];
   return Array(amount)
