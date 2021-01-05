@@ -174,6 +174,96 @@ export type TeacherByOrgIdQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type MySchoolIDsQueryVariables = Types.Exact<{
+  organization_id: Types.Scalars["ID"];
+}>;
+
+export type MySchoolIDsQuery = { __typename?: "Query" } & {
+  me?: Types.Maybe<
+    { __typename?: "User" } & {
+      membership?: Types.Maybe<
+        { __typename?: "OrganizationMembership" } & {
+          schoolMemberships?: Types.Maybe<
+            Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+          >;
+        }
+      >;
+    }
+  >;
+};
+
+export type ClassesInMySchoolsQueryVariables = Types.Exact<{
+  organization_id: Types.Scalars["ID"];
+}>;
+
+export type ClassesInMySchoolsQuery = { __typename?: "Query" } & {
+  me?: Types.Maybe<
+    { __typename?: "User" } & {
+      membership?: Types.Maybe<
+        { __typename?: "OrganizationMembership" } & {
+          schoolMemberships?: Types.Maybe<
+            Array<
+              Types.Maybe<
+                { __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id"> & {
+                    school?: Types.Maybe<
+                      { __typename?: "School" } & Pick<Types.School, "school_name"> & {
+                          classes?: Types.Maybe<
+                            Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>
+                          >;
+                        }
+                    >;
+                  }
+              >
+            >
+          >;
+        }
+      >;
+    }
+  >;
+};
+
+export type ParticipantsBySchoolQueryVariables = Types.Exact<{
+  school_id: Types.Scalars["ID"];
+}>;
+
+export type ParticipantsBySchoolQuery = { __typename?: "Query" } & {
+  school?: Types.Maybe<
+    { __typename?: "School" } & {
+      classes?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Class" } & {
+              teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+              students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+            }
+          >
+        >
+      >;
+    }
+  >;
+};
+
+export type ParticipantsByOrganizationQueryVariables = Types.Exact<{
+  organization_id: Types.Scalars["ID"];
+}>;
+
+export type ParticipantsByOrganizationQuery = { __typename?: "Query" } & {
+  organization?: Types.Maybe<
+    { __typename?: "Organization" } & {
+      classes?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Class" } & {
+              teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+              students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+            }
+          >
+        >
+      >;
+    }
+  >;
+};
+
 export const RoleBasedUsersByOrgnizationDocument = gql`
   query roleBasedUsersByOrgnization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
@@ -554,3 +644,189 @@ export function useTeacherByOrgIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type TeacherByOrgIdQueryHookResult = ReturnType<typeof useTeacherByOrgIdQuery>;
 export type TeacherByOrgIdLazyQueryHookResult = ReturnType<typeof useTeacherByOrgIdLazyQuery>;
 export type TeacherByOrgIdQueryResult = Apollo.QueryResult<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>;
+export const MySchoolIDsDocument = gql`
+  query mySchoolIDs($organization_id: ID!) {
+    me {
+      membership(organization_id: $organization_id) {
+        schoolMemberships {
+          school_id
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useMySchoolIDsQuery__
+ *
+ * To run a query within a React component, call `useMySchoolIDsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMySchoolIDsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMySchoolIDsQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useMySchoolIDsQuery(baseOptions?: Apollo.QueryHookOptions<MySchoolIDsQuery, MySchoolIDsQueryVariables>) {
+  return Apollo.useQuery<MySchoolIDsQuery, MySchoolIDsQueryVariables>(MySchoolIDsDocument, baseOptions);
+}
+export function useMySchoolIDsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MySchoolIDsQuery, MySchoolIDsQueryVariables>) {
+  return Apollo.useLazyQuery<MySchoolIDsQuery, MySchoolIDsQueryVariables>(MySchoolIDsDocument, baseOptions);
+}
+export type MySchoolIDsQueryHookResult = ReturnType<typeof useMySchoolIDsQuery>;
+export type MySchoolIDsLazyQueryHookResult = ReturnType<typeof useMySchoolIDsLazyQuery>;
+export type MySchoolIDsQueryResult = Apollo.QueryResult<MySchoolIDsQuery, MySchoolIDsQueryVariables>;
+export const ClassesInMySchoolsDocument = gql`
+  query classesInMySchools($organization_id: ID!) {
+    me {
+      membership(organization_id: $organization_id) {
+        schoolMemberships {
+          school_id
+          school {
+            school_name
+            classes {
+              class_id
+              class_name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useClassesInMySchoolsQuery__
+ *
+ * To run a query within a React component, call `useClassesInMySchoolsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClassesInMySchoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClassesInMySchoolsQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useClassesInMySchoolsQuery(
+  baseOptions?: Apollo.QueryHookOptions<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>
+) {
+  return Apollo.useQuery<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>(ClassesInMySchoolsDocument, baseOptions);
+}
+export function useClassesInMySchoolsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>
+) {
+  return Apollo.useLazyQuery<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>(ClassesInMySchoolsDocument, baseOptions);
+}
+export type ClassesInMySchoolsQueryHookResult = ReturnType<typeof useClassesInMySchoolsQuery>;
+export type ClassesInMySchoolsLazyQueryHookResult = ReturnType<typeof useClassesInMySchoolsLazyQuery>;
+export type ClassesInMySchoolsQueryResult = Apollo.QueryResult<ClassesInMySchoolsQuery, ClassesInMySchoolsQueryVariables>;
+export const ParticipantsBySchoolDocument = gql`
+  query participantsBySchool($school_id: ID!) {
+    school(school_id: $school_id) {
+      classes {
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useParticipantsBySchoolQuery__
+ *
+ * To run a query within a React component, call `useParticipantsBySchoolQuery` and pass it any options that fit your needs.
+ * When your component renders, `useParticipantsBySchoolQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useParticipantsBySchoolQuery({
+ *   variables: {
+ *      school_id: // value for 'school_id'
+ *   },
+ * });
+ */
+export function useParticipantsBySchoolQuery(
+  baseOptions?: Apollo.QueryHookOptions<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>
+) {
+  return Apollo.useQuery<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>(ParticipantsBySchoolDocument, baseOptions);
+}
+export function useParticipantsBySchoolLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>
+) {
+  return Apollo.useLazyQuery<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>(ParticipantsBySchoolDocument, baseOptions);
+}
+export type ParticipantsBySchoolQueryHookResult = ReturnType<typeof useParticipantsBySchoolQuery>;
+export type ParticipantsBySchoolLazyQueryHookResult = ReturnType<typeof useParticipantsBySchoolLazyQuery>;
+export type ParticipantsBySchoolQueryResult = Apollo.QueryResult<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>;
+export const ParticipantsByOrganizationDocument = gql`
+  query participantsByOrganization($organization_id: ID!) {
+    organization(organization_id: $organization_id) {
+      classes {
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useParticipantsByOrganizationQuery__
+ *
+ * To run a query within a React component, call `useParticipantsByOrganizationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useParticipantsByOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useParticipantsByOrganizationQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useParticipantsByOrganizationQuery(
+  baseOptions?: Apollo.QueryHookOptions<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>
+) {
+  return Apollo.useQuery<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>(
+    ParticipantsByOrganizationDocument,
+    baseOptions
+  );
+}
+export function useParticipantsByOrganizationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>
+) {
+  return Apollo.useLazyQuery<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>(
+    ParticipantsByOrganizationDocument,
+    baseOptions
+  );
+}
+export type ParticipantsByOrganizationQueryHookResult = ReturnType<typeof useParticipantsByOrganizationQuery>;
+export type ParticipantsByOrganizationLazyQueryHookResult = ReturnType<typeof useParticipantsByOrganizationLazyQuery>;
+export type ParticipantsByOrganizationQueryResult = Apollo.QueryResult<
+  ParticipantsByOrganizationQuery,
+  ParticipantsByOrganizationQueryVariables
+>;
