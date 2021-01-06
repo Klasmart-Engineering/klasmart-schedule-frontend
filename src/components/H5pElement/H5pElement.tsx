@@ -124,7 +124,7 @@ export function H5pElementText(props: H5pElementTextProps) {
       className={className}
       required={!semantics.optional}
       name={path}
-      label={semantics.label}
+      label={semantics.label || semantics.name}
       onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
     />
   );
@@ -143,7 +143,7 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
       required={!semantics.optional}
       name={path}
       type="number"
-      label={semantics.label}
+      label={semantics.label || semantics.name}
       onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
     />
   );
@@ -160,7 +160,7 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
     <FormControlLabel
       className={className}
       control={<Checkbox name={path} onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })} />}
-      label={semantics.label}
+      label={semantics.label || semantics.name}
     />
   );
 }
@@ -176,7 +176,7 @@ export function H5pElementSelect(props: H5pElementSelectProps) {
     <TextField
       select
       required={!semantics.optional}
-      label={semantics.label}
+      label={semantics.label || semantics.name}
       className={className}
       onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
     >
@@ -261,7 +261,7 @@ export function H5pElementList(props: H5pElementListProps) {
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
         <InputLabel className={classes?.title} required={!semantics.optional}>
-          {semantics.label}
+          {semantics.label || semantics.name}
         </InputLabel>
         <div className={classes?.description}>{semantics.description}</div>
       </div>
@@ -317,7 +317,7 @@ export function H5pElementGroup(props: H5pElementGroupProps) {
           expandIcon={<ExpandMore className={clsx(css.importanceColor, classes?.expandIcon)} />}
           classes={{ root: clsx(css.importanceBackgroundColor, css.importanceColor, classes?.summary) }}
         >
-          {semantics.label}
+          {semantics.label || semantics.name}
         </AccordionSummary>
         <AccordionDetails className={classes?.details}>{children}</AccordionDetails>
       </Accordion>
@@ -400,7 +400,7 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
         <InputLabel className={classes?.title} required={!semantics.optional}>
-          {semantics.label}
+          {semantics.label || semantics.name}
         </InputLabel>
         <div className={classes?.description}>{semantics.description}</div>
       </div>
@@ -409,7 +409,7 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
         className={classes?.input}
         value={content?.library ?? ""}
         name={path}
-        label={semantics.label}
+        label={semantics.label || semantics.name}
         onChange={(e) => onChange && onChange({ semantics, path, content: { library: e.target.value } })}
       >
         {semantics.options?.map((name) => (

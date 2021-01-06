@@ -190,7 +190,6 @@ export function H5pDetails(props: H5pDetailsProps) {
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] = useH5pFormReducer(value, schema);
-  console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
     content: form,
@@ -204,11 +203,6 @@ export function H5pDetails(props: H5pDetailsProps) {
     libraryInfo,
     schema,
     makeCombinedNodeMapHandler(({ itemHelper, children, context }) => {
-      //debug
-      if (itemHelper.semantics.name === H5P_ROOT_NAME) {
-        console.log("root itemHelper = ", itemHelper);
-      }
-
       const { semantics, path } = itemHelper;
       const widget =
         (semantics.type !== H5PItemType.list && semantics.widget) ||

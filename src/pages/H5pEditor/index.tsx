@@ -36,7 +36,6 @@ export function H5pEditor() {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const [libContent, setLibContent] = useState<H5PLibraryContent>();
-  console.log("libContent = ", libContent);
   const [library, setLibrary] = useLibrary(query.get("library") || undefined);
   const h5p_id = query.get("h5p_id") || undefined;
   const contentTypeList = useContentTypeList();
