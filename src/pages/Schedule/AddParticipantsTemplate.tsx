@@ -34,15 +34,42 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "30px",
   },
   checkboxContainer: {
-    padding: "30px 0 0 50px",
+    paddingLeft: "50px",
+    marginTop: "30px",
+    maxHeight: "250px",
+    overflow: "auto",
+    flexWrap: "nowrap",
+    "&::-webkit-scrollbar": {
+      width: "6px",
+    },
+    "&::-webkit-scrollbar-track": {
+      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "3px",
+      backgroundColor: "rgb(220, 220, 220)",
+      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
   },
 }));
 
 export default function AddParticipantsTemplate() {
   const css = useStyles();
+  const [defaultFilter, setDefaultFilter] = React.useState("students");
   const data = {
-    teachers: ["dasdad", "dasdadfgsd", "Hanf hHdnsa", "fsdfhddsd"],
+    teachers: ["dasdad", "dasdadfgsd", "Hanf hHdnsa", "fsdfhddsd", "Hsdsh_dfjkas", "sdsjkfjd", "sdsjjj", "frdk"],
+    students: ["student1", "student2", "student3", "sdgasdvd", "fgrtyja0-Dds", " fsdfhsdiz", "_somfeu)1111sh"],
   };
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDefaultFilter(event.target.value);
+  };
+
+  const filterData = defaultFilter === "students" ? data.students : data.teachers;
+
   return (
     <div>
       <div className={css.title}>{reportMiss("Add participants", "schedule_add_participants")}</div>
@@ -58,14 +85,20 @@ export default function AddParticipantsTemplate() {
           </Grid>
         </Hidden>
         <Grid item xs={8} sm={5} md={5} lg={5} xl={5}>
-          <RadioGroup aria-label="gender" name="gender1" className={css.radioBox} defaultValue="student">
-            <FormControlLabel value="student" control={<Radio />} label="Student" className={css.radioItem} />
-            <FormControlLabel value="teacher" control={<Radio />} label="Teacher" className={css.radioItem} />
+          <RadioGroup
+            aria-label="gender"
+            name="gender1"
+            className={css.radioBox}
+            defaultValue={defaultFilter}
+            onChange={handleFilterChange}
+          >
+            <FormControlLabel value="students" control={<Radio />} label="Student" className={css.radioItem} />
+            <FormControlLabel value="teachers" control={<Radio />} label="Teacher" className={css.radioItem} />
           </RadioGroup>
         </Grid>
       </Grid>
       <FormGroup className={css.checkboxContainer}>
-        {data.teachers.map((item) => {
+        {filterData.map((item) => {
           return <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label={item} />;
         })}
       </FormGroup>
