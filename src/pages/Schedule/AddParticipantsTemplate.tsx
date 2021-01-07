@@ -56,19 +56,107 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+interface Part {
+  teachers: string[];
+  students: string[];
+}
+
 export default function AddParticipantsTemplate() {
   const css = useStyles();
   const [defaultFilter, setDefaultFilter] = React.useState("students");
   const data = {
-    teachers: ["dasdad", "dasdadfgsd", "Hanf hHdnsa", "fsdfhddsd", "Hsdsh_dfjkas", "sdsjkfjd", "sdsjjj", "frdk"],
-    students: ["student1", "student2", "student3", "sdgasdvd", "fgrtyja0-Dds", " fsdfhsdiz", "_somfeu)1111sh"],
+    teachers: [
+      {
+        user_id: "sdhsdh",
+        user_name: "Hff_fjjaira",
+      },
+      {
+        user_id: "sdasfff",
+        user_name: "HHFHASDsda",
+      },
+      {
+        user_id: "sdadae2",
+        user_name: "LKVifspodanj",
+      },
+      {
+        user_id: "*@DHKJHDH",
+        user_name: "SJKGXUOYCSKNDF",
+      },
+      {
+        user_id: "fsdfsdgtr4twf",
+        user_name: "FSN--NKJFSD",
+      },
+      {
+        user_id: "vsdf_FSJK",
+        user_name: "dfwesaRWR#FC",
+      },
+    ],
+    students: [
+      {
+        user_id: "sdhsdsdh",
+        user_name: "FSDXD",
+      },
+      {
+        user_id: "sdassdfasfff",
+        user_name: "sdderfetf ",
+      },
+      {
+        user_id: "sdadaedsda2",
+        user_name: "dgdsgvs fdf",
+      },
+      {
+        user_id: "*@DHKJHsdsDH",
+        user_name: "sfsdcFfrg s",
+      },
+      {
+        user_id: "fsdfsdgtrsdsc4twf",
+        user_name: "FSN--sdzCSFe",
+      },
+      {
+        user_id: "vsdf_sdXSFFSJK",
+        user_name: "vDVD#FC",
+      },
+    ],
   };
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDefaultFilter(event.target.value);
   };
 
+  interface Part {
+    teachers: string[];
+    students: string[];
+  }
+
   const filterData = defaultFilter === "students" ? data.students : data.teachers;
+  const [part, setPart] = React.useState<Part>({
+    teachers: [],
+    students: [],
+  });
+
+  const is_tea_or_stu = defaultFilter === "students" ? part.students : part.teachers;
+
+  const handleChange = (id: string) => {
+    const is_exist = is_tea_or_stu.some((item) => item === id);
+    if (!is_exist) {
+      is_tea_or_stu.push(id);
+      if (defaultFilter === "students") {
+        setPart({ ...part, students: is_tea_or_stu });
+        return;
+      }
+      setPart({ ...part, teachers: is_tea_or_stu });
+      return;
+    }
+    is_tea_or_stu.splice(
+      is_tea_or_stu.findIndex((item) => item === id),
+      1
+    );
+    if (defaultFilter === "students") {
+      setPart({ ...part, students: is_tea_or_stu });
+      return;
+    }
+    setPart({ ...part, teachers: is_tea_or_stu });
+  };
 
   return (
     <div>
@@ -99,7 +187,20 @@ export default function AddParticipantsTemplate() {
       </Grid>
       <FormGroup className={css.checkboxContainer}>
         {filterData.map((item) => {
-          return <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label={item} />;
+          return (
+            <FormControlLabel
+              key={item.user_id}
+              control={
+                <Checkbox
+                  name="checkedB"
+                  color="primary"
+                  checked={is_tea_or_stu.some((item1) => item1 === item.user_id)}
+                  onChange={() => handleChange(item.user_id)}
+                />
+              }
+              label={item.user_name}
+            />
+          );
         })}
       </FormGroup>
       <div className={css.buttons}>
