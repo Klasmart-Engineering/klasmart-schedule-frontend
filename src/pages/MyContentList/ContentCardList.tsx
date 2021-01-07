@@ -366,14 +366,16 @@ function ContentCard(props: ContentProps) {
             )}
           {!queryCondition.program_group &&
             (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-                onClick={() => onClickMoveBtn(content)}
-              >
-                <FolderOpenIcon />
-              </LButton>
+              <Permission value={PermissionType.create_folder_289}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+                  onClick={() => onClickMoveBtn(content)}
+                >
+                  <FolderOpenIcon />
+                </LButton>
+              </Permission>
             )}
           {/* content published remove */}
           {!queryCondition.program_group &&

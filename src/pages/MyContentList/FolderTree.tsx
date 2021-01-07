@@ -4,6 +4,7 @@ import { TreeItem, TreeView } from "@material-ui/lab";
 import React, { useMemo, useState } from "react";
 import { RecursiveFolderItem } from "../../api/extra";
 import { LButton, LButtonProps } from "../../components/LButton";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) =>
@@ -98,15 +99,17 @@ export function FolderTree(props: FolderTreeProps) {
       </DialogContent>
       <DialogActions>
         <div className={css.dialogActions}>
-          <Button
-            color="primary"
-            variant="outlined"
-            startIcon={<CreateNewFolderOutlined />}
-            className={css.addFolderBtn}
-            onClick={() => onAddFolder(value)}
-          >
-            {d("New Folder").t("library_label_new_folder")}
-          </Button>
+          <Permission value={PermissionType.create_folder_289}>
+            <Button
+              color="primary"
+              variant="outlined"
+              startIcon={<CreateNewFolderOutlined />}
+              className={css.addFolderBtn}
+              onClick={() => onAddFolder(value)}
+            >
+              {d("New Folder").t("library_label_new_folder")}
+            </Button>
+          </Permission>
           <Button color="primary" variant="outlined" onClick={onClose}>
             {d("Cancel").t("library_label_cancel")}
           </Button>
