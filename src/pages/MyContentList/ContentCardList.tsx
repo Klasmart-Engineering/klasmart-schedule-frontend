@@ -394,14 +394,16 @@ function ContentCard(props: ContentProps) {
               </Permission>
             )}
           {!queryCondition.program_group && content?.content_type === ContentType.folder && (
-            <LButton
-              as={IconButton}
-              replace
-              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-              onClick={() => onDeleteFolder(content.id as string)}
-            >
-              <DeleteOutlineIcon />
-            </LButton>
+            <Permission value={PermissionType.create_folder_289}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                onClick={() => onDeleteFolder(content.id as string)}
+              >
+                <DeleteOutlineIcon />
+              </LButton>
+            </Permission>
           )}
           {/* content archieved republish delete */}
           {!queryCondition.program_group &&
