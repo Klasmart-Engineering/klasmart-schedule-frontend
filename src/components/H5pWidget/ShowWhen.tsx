@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import {
   H5PItemSemantic,
   H5PLeafContent,
-  h5pName2libId,
   isH5pBooleanItemInfo,
   isH5pLibraryItemInfo,
   isH5pNumberItemInfo,
@@ -45,7 +44,7 @@ export function WidgetElement(props: H5pElementProps) {
       if (!targetItemHelper) return false;
       if (isH5pLibraryItemInfo(targetItemHelper)) {
         const value = targetItemHelper.content?.library || "";
-        const libIds = Array.isArray(equals) ? (equals as string[]).map(h5pName2libId) : [h5pName2libId(equals as string)];
+        const libIds = Array.isArray(equals) ? equals : [equals];
         return libIds.includes(value);
       }
       if (

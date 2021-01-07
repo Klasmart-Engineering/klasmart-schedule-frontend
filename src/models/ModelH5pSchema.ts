@@ -243,7 +243,8 @@ export interface H5PLibraryInfo {
 
 export type H5PSchema = Record<string, H5PItemSemantic[]>;
 
-export const h5pName2libId = (option: string) => option.replace(" ", "-");
+export const h5pName2libId = (name: string) => name.replace(" ", "-");
+export const h5plibId2Name = (id: string) => id.replace("-", " ");
 
 export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | undefined, mapHandler: MapHandler<T>): H5PItemMapperResult<T> {
   const context = { schema };
@@ -349,12 +350,31 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
     const { semantics } = itemHelper;
     value = children.length > 0 ? children : createDefaultListContent(semantics, schema);
   } else if (isH5pGroupItemInfo(itemHelper)) {
-    value = children.length === 1 ? Object.values(children[0] ?? {})[0] : children.reduce((r, child) => Object.assign(r, child), {});
+    if (children.length === 1) {
+      value = Object.values(children[0] ?? {})[0];
+    } else {
+      value = children.reduce((r, child, idx) => {
+        const childItemHelper = itemHelper.childItems[idx];
+        // h5p编辑器奇怪逻辑！！！ 如果 child 是 list 的话，空数组这项不保留，连key也不需要
+        if (isH5pListItemInfo(childItemHelper) && (child as NonNullable<H5PListContent>).length === 0) {
+          return r;
+        }
+        return Object.assign(r, child);
+      }, {});
+    }
+    // value = children.length === 1 ? Object.values(children[0] ?? {})[0] : children.reduce((r, child) => Object.assign(r, child), {});
   } else if (isH5pLibraryItemInfo(itemHelper))
     libraryBlock: {
       const { content } = itemHelper;
       if (!content) break libraryBlock;
-      const params = children.reduce((r, child) => Object.assign(r, child), {}) as Record<string, H5PItemContent>;
+      const params = children.reduce((r, child, idx) => {
+        const childItemHelper = itemHelper.childItems[idx];
+        // h5p编辑器奇怪逻辑！！！ 如果 child 是 list 的话，空数组这项不保留，连key也不需要
+        if (isH5pListItemInfo(childItemHelper) && (child as NonNullable<H5PListContent>).length === 0) {
+          return r;
+        }
+        return Object.assign(r, child);
+      }, {}) as Record<string, H5PItemContent>;
       const subContentId = sha1(JSON.stringify(params));
       const contentType = `yyyy ${content.library}`;
       const metadata: H5PLibraryMetadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };

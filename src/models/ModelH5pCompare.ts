@@ -1,4 +1,4 @@
-import isEqual from "lodash/isEqual";
+import isEqualWith from "lodash/isEqualWith";
 
 export function formatCompareContent(content: any): any {
   if (content == null) return content;
@@ -46,6 +46,17 @@ export function formatTargetContent(content: any): any {
   });
 }
 
+const omitUndefined = (current: any, target: any) => {
+  if (current == null || target == null) return undefined;
+  Object.keys(current).forEach((k) => {
+    if (current[k] === undefined) delete current[k];
+  });
+  Object.keys(target).forEach((k) => {
+    if (target[k] === undefined) delete target[k];
+  });
+  return undefined;
+};
+
 export type H5pValidateResult =
   | true
   | {
@@ -57,7 +68,9 @@ export type H5pValidateResult =
 export function validate(content: any, target: any): H5pValidateResult {
   const currentJSON = formatCompareContent(content);
   const targetJSON = formatTargetContent(target);
-  const equal = isEqual(currentJSON, targetJSON);
+  const equal = isEqualWith(currentJSON, targetJSON, omitUndefined);
+  (window as any).currentJSON = currentJSON;
+  (window as any).targetJSON = targetJSON;
   if (equal) return true;
   return {
     content: JSON.stringify(content, null, 2),
@@ -66,3 +79,6 @@ export function validate(content: any, target: any): H5pValidateResult {
     targetJSON: JSON.stringify(targetJSON, null, 2),
   };
 }
+
+(window as any).isEqualWith = isEqualWith;
+(window as any).omitUndefined = omitUndefined;

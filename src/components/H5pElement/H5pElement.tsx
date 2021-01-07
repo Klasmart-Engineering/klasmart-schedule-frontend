@@ -39,8 +39,6 @@ import {
 import { ProgressWithText } from "../../pages/ContentEdit/Details";
 import { SingleUploader } from "../SingleUploader";
 
-export const h5pName2libId = (option: string) => option.replace(" ", "-");
-
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
   onChange?(itemInfo: H5PItemInfo<S>): any;
@@ -413,7 +411,7 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
         onChange={(e) => onChange && onChange({ semantics, path, content: { library: e.target.value } })}
       >
         {semantics.options?.map((name) => (
-          <MenuItem key={name} value={h5pName2libId(name)}>
+          <MenuItem key={name} value={name}>
             {name}
           </MenuItem>
         ))}
