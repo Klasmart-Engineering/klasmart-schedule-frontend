@@ -40,18 +40,12 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
     flexWrap: "nowrap",
     "&::-webkit-scrollbar": {
-      width: "6px",
-    },
-    "&::-webkit-scrollbar-track": {
-      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+      backgroundColor: "#fff",
+      width: "5px",
     },
     "&::-webkit-scrollbar-thumb": {
-      borderRadius: "3px",
-      backgroundColor: "rgb(220, 220, 220)",
-      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
-    },
-    "&::-webkit-scrollbar-thumb:window-inactive": {
-      backgroundColor: "rgba(220,220,220,0.4)",
+      background: "#d8d8d8",
+      borderRadius: "4px",
     },
   },
 }));
