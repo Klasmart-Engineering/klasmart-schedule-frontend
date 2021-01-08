@@ -19,14 +19,12 @@ import {
   H5pElementProps,
   isH5pElementAudio,
   isH5pElementBoolean,
-  isH5pElementCommonLibrary,
   isH5pElementFile,
   isH5pElementGroup,
   isH5pElementImage,
   isH5pElementLibrary,
   isH5pElementList,
   isH5pElementNumber,
-  isH5pElementRootLibrary,
   isH5pElementSelect,
   isH5pElementText,
   isH5pElementVideo,
@@ -112,6 +110,14 @@ const useStyles = makeStyles(({ palette }) =>
       flexDirection: "column",
       alignItems: "stretch",
     },
+    mediaPreview: {
+      width: 260,
+      height: 132,
+    },
+    uploadButton: {
+      height: 56,
+      marginRight: "auto",
+    },
   })
 );
 
@@ -190,6 +196,7 @@ export function H5pDetails(props: H5pDetailsProps) {
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
   const [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] = useH5pFormReducer(value, schema);
+  console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
     content: form,
@@ -214,16 +221,27 @@ export function H5pDetails(props: H5pDetailsProps) {
         isH5pElementText(elementProps) ||
         isH5pElementNumber(elementProps) ||
         isH5pElementBoolean(elementProps) ||
-        isH5pElementSelect(elementProps) ||
+        isH5pElementSelect(elementProps)
+      ) {
+        const extendedProps: typeof elementProps = { ...elementProps, onChange: pipe(dispatchChange, onChange), className: css.h5pItem };
+        elementProps = extendedProps;
+      } else if (
         isH5pElementImage(elementProps) ||
         isH5pElementVideo(elementProps) ||
         isH5pElementAudio(elementProps) ||
         isH5pElementFile(elementProps)
       ) {
-        const extendedProps: typeof elementProps = { ...elementProps, onChange: pipe(dispatchChange, onChange), className: css.h5pItem };
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          onChange: pipe(dispatchChange, onChange),
+          classes: {
+            root: css.h5pItem,
+            uploadButton: css.uploadButton,
+            mediaPreview: css.mediaPreview,
+          },
+        };
         elementProps = extendedProps;
-      }
-      if (isH5pElementList(elementProps)) {
+      } else if (isH5pElementList(elementProps)) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
           classes: {
@@ -239,8 +257,7 @@ export function H5pDetails(props: H5pDetailsProps) {
           onRemoveListItem: dispatchRemoveListItem,
         };
         elementProps = extendedProps;
-      }
-      if (isH5pElementGroup(elementProps)) {
+      } else if (isH5pElementGroup(elementProps)) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
           classes: {
@@ -250,8 +267,7 @@ export function H5pDetails(props: H5pDetailsProps) {
           },
         };
         elementProps = extendedProps;
-      }
-      if (isH5pElementLibrary(elementProps)) {
+      } else if (isH5pElementLibrary(elementProps)) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
           onChange: pipe(dispatchChange, onChange),
@@ -264,19 +280,7 @@ export function H5pDetails(props: H5pDetailsProps) {
           },
         };
         elementProps = extendedProps;
-      }
-      if (isH5pElementCommonLibrary(elementProps)) {
-        const extendedProps: typeof elementProps = {
-          ...elementProps,
-          classes: {
-            root: css.section,
-            summary: css.sectionSummary,
-            details: css.sectionDetails,
-          },
-        };
-        elementProps = extendedProps;
-      }
-      if (isH5pElementRootLibrary(elementProps)) {
+      } else {
         const extendedProps: typeof elementProps = {
           ...elementProps,
           classes: {

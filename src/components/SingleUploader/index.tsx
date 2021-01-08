@@ -16,6 +16,21 @@ interface UploaderControl {
   isUploading?: boolean;
 }
 
+export interface ImageDimesion {
+  width: number;
+  height: number;
+}
+export function getImageDimension(file: FileLike): Promise<ImageDimesion> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const { width, height } = img;
+      resolve({ width, height });
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
 interface BaseUploaderProps {
   value?: string;
   render: (control: UploaderControl) => ReactNode;
@@ -41,19 +56,23 @@ const parseExtension = (filename: string) => {
   return filename.split(".").pop() || "";
 };
 
+interface FileLikeWithId extends FileLike {
+  id?: string;
+}
+
 type FetchUploadUrlResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
-interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
+export interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   partition: NonNullable<Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0]>["partition"];
   value?: string;
   transformFile?: (file: FileLike) => Promise<FileLike>;
   onChange?: (value?: string) => any;
-  onChangeOther?: (filename?: string) => any;
+  onChangeFile?: (file?: FileLikeWithId) => any;
 }
 export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((props, ref) => {
-  const { value, onChange, render, partition, transformFile, onChangeOther, ...uploadyProps } = props;
+  const { value, onChange, render, partition, transformFile, onChangeFile, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
-  const [rname, setRname] = useState<string>();
+  const [file, setFile] = useState<FileLike>();
   const listeners = useMemo(
     () => ({
       async [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>> {
@@ -66,7 +85,7 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
           >;
           const { path, resource_id } = payload;
           setRid(resource_id);
-          setRname(file.name);
+          setFile(file);
           return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
         } catch (err) {
           return false;
@@ -74,10 +93,10 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
       },
       [UPLOADER_EVENTS.ITEM_FINISH]() {
         if (onChange) onChange(rid);
-        if (onChangeOther) onChangeOther(rname);
+        if (onChangeFile) onChangeFile(Object.assign(file, { id: rid }));
       },
     }),
-    [transformFile, dispatch, partition, onChange, rid, onChangeOther, rname]
+    [transformFile, dispatch, partition, onChange, rid, onChangeFile, file]
   );
   return (
     <div ref={ref}>

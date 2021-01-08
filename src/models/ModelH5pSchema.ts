@@ -152,6 +152,9 @@ export interface H5PSelectSemantic extends H5PBaseSemantic {
 export interface H5PMediaSemantic extends H5PBaseSemantic {
   type: H5PItemType.image | H5PItemType.video | H5PItemType.audio | H5PItemType.file;
   default?: undefined;
+  width?: number;
+  height?: number;
+  disableCopyright?: boolean;
 }
 export type H5PImageSemantic = H5PMediaSemantic;
 export type H5PVideoSemantic = H5PMediaSemantic;
@@ -241,7 +244,7 @@ export interface H5PLibraryInfo {
   semantics: H5PLibrarySemantic;
 }
 
-export type H5PSchema = Record<string, H5PItemSemantic[]>;
+export type H5PSchema = Record<string, H5PItemSemantic[] | undefined>;
 
 export const h5pName2libId = (name: string) => name.replace(" ", "-");
 export const h5plibId2Name = (id: string) => id.replace("-", " ");
@@ -257,7 +260,9 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
     libraryBlock: {
       const { content, path } = itemInfo;
       if (!content || !content.library) break libraryBlock;
-      const librarySemantics = schema[h5pName2libId(content.library)];
+      const libraryId = h5pName2libId(content.library);
+      const librarySemantics = schema[libraryId];
+      if (!librarySemantics) throw new Error(`My Error: ${libraryId} does not exit!`);
       subItemInfoList = librarySemantics.map(
         (itemSemantics) =>
           ({
@@ -282,14 +287,18 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
     }
   else if (isH5pGroupItemInfo(itemInfo)) {
     const { content, semantics, path } = itemInfo;
-    subItemInfoList = semantics.fields.map(
-      (itemSemantics) =>
-        ({
-          path: path ? `${path}.${itemSemantics.name}` : itemSemantics.name,
-          content: content ? content[itemSemantics.name] : undefined,
-          semantics: itemSemantics,
-        } as H5PItemInfo)
-    );
+    const fieldsAmount = semantics.fields.length;
+    subItemInfoList = semantics.fields.map((itemSemantics) => {
+      // h5p 特殊规则2
+      if (fieldsAmount <= 1) {
+        return { path, content, semantics: itemSemantics } as H5PItemInfo;
+      }
+      return {
+        path: path ? `${path}.${itemSemantics.name}` : itemSemantics.name,
+        content: content ? content[itemSemantics.name] : undefined,
+        semantics: itemSemantics,
+      } as H5PItemInfo;
+    });
   }
   subItemInfoList.forEach((subItemInfo) => {
     const { itemHelper: subItemHelper, result } = h5pItemMapper(subItemInfo, schema, mapHandler);
@@ -304,38 +313,6 @@ const sha1 = (str: string) => {
   const sha = new jsSHA("SHA-1", "TEXT", { encoding: "UTF8" });
   sha.update(str);
   return sha.getHash("HEX");
-};
-
-export const mapH5PContentOrigin: MapHandler<H5PItemContent> = (props) => {
-  const {
-    itemHelper,
-    children,
-    context: { schema },
-  } = props;
-  let value: H5PItemContent;
-  if (!schema) return itemHelper.content;
-  if (isH5pListItemInfo(itemHelper)) {
-    const { semantics } = itemHelper;
-    value = children.length > 0 ? children : createDefaultListContent(semantics, schema);
-  } else if (isH5pGroupItemInfo(itemHelper)) {
-    value = children.reduce((r, child) => Object.assign(r, child), {});
-  } else if (isH5pLibraryItemInfo(itemHelper))
-    libraryBlock: {
-      const { content } = itemHelper;
-      if (!content) break libraryBlock;
-      const params = children.reduce((r, child) => Object.assign(r, child), {}) as Record<string, H5PItemContent>;
-      const subContentId = sha1(JSON.stringify(params));
-      const contentType = `yyyy ${content.library}`;
-      const metadata: H5PLibraryMetadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
-      value = { params, library: content.library, subContentId, metadata };
-    }
-  else {
-    const { content, semantics } = itemHelper;
-    value = content || semantics.default;
-  }
-  return itemHelper.semantics.name === H5P_ROOT_NAME || itemHelper.parentItem?.semantics.type === H5PItemType.list
-    ? value
-    : { [itemHelper.semantics.name]: value };
 };
 
 export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
@@ -354,31 +331,27 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
       value = Object.values(children[0] ?? {})[0];
     } else {
       value = children.reduce((r, child, idx) => {
-        const childItemHelper = itemHelper.childItems[idx];
-        // h5p编辑器奇怪逻辑！！！ 如果 child 是 list 的话，空数组这项不保留，连key也不需要
-        if (isH5pListItemInfo(childItemHelper) && (child as NonNullable<H5PListContent>).length === 0) {
-          return r;
-        }
+        // h5p 特殊规则2，group 只有一个 key, 则只保留 value 的部分
+        if (child === undefined) return r;
         return Object.assign(r, child);
       }, {});
     }
-    // value = children.length === 1 ? Object.values(children[0] ?? {})[0] : children.reduce((r, child) => Object.assign(r, child), {});
   } else if (isH5pLibraryItemInfo(itemHelper))
     libraryBlock: {
-      const { content } = itemHelper;
-      if (!content) break libraryBlock;
-      const params = children.reduce((r, child, idx) => {
-        const childItemHelper = itemHelper.childItems[idx];
-        // h5p编辑器奇怪逻辑！！！ 如果 child 是 list 的话，空数组这项不保留，连key也不需要
-        if (isH5pListItemInfo(childItemHelper) && (child as NonNullable<H5PListContent>).length === 0) {
-          return r;
+      const { content, semantics } = itemHelper;
+      if (!content) {
+        if (semantics.options && semantics.options.length === 1) {
+          const [library] = semantics.options;
+          value = createDefaultLibraryContent(library, schema);
         }
+        break libraryBlock;
+      }
+      const params = children.reduce((r, child, idx) => {
+        // h5p 特殊规则2
+        if (child === undefined) return r;
         return Object.assign(r, child);
       }, {}) as Record<string, H5PItemContent>;
-      const subContentId = sha1(JSON.stringify(params));
-      const contentType = `yyyy ${content.library}`;
-      const metadata: H5PLibraryMetadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
-      value = { params, library: content.library, subContentId, metadata };
+      value = createLibraryContentByParams(content.library, params);
     }
   else if (isH5pTextItemInfo(itemHelper) && itemHelper.semantics.widget === H5PWidgetTitle.html) {
     const { content, semantics } = itemHelper;
@@ -390,10 +363,19 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
     const { content, semantics } = itemHelper;
     value = content || semantics.default;
   }
-  return itemHelper.semantics.name === H5P_ROOT_NAME || itemHelper.parentItem?.semantics.type === H5PItemType.list
+  return value === undefined
+    ? undefined
+    : itemHelper.semantics.name === H5P_ROOT_NAME || itemHelper.parentItem?.semantics.type === H5PItemType.list
     ? value
     : { [itemHelper.semantics.name]: value };
 };
+
+function createLibraryContentByParams(library: string, params: NonNullable<H5PLibraryContent>["params"]) {
+  const subContentId = sha1(JSON.stringify(params));
+  const contentType = library;
+  const metadata: H5PLibraryMetadata = { contentType, license: "U", title: "", authors: [], changes: [], extraTitle: "" };
+  return { params, library, subContentId, metadata };
+}
 
 export function createDefaultLibraryContent(library: string, schema: H5PSchema): H5PLibraryContent {
   const semantics: H5PLibrarySemantic = { type: H5PItemType.library, name: H5P_ROOT_NAME };
@@ -406,11 +388,14 @@ export function createDefaultListContent(semantics: H5PListSemantic, schema: H5P
   const amount = one ? 1 : defaultNum ?? min ?? 1;
   const { result } = h5pItemMapper({ path: "", semantics: field } as H5PItemInfo, schema, mapH5PContent);
   const defaultContent = result?.[field.name as keyof typeof result];
-  return Array(amount)
-    .fill(1)
-    .map(() => cloneDeep(defaultContent));
+  return amount === 0
+    ? undefined
+    : Array(amount)
+        .fill(1)
+        .map(() => cloneDeep(defaultContent));
 }
 
+// 这里的路径只能是 semantics 的相对路径，而不是 content 的相对路径
 export function resolveItemByPath(itemHelper: H5PItemHelper, path: string): H5PItemHelper | undefined {
   const resolveOnePath = (itemHelper: H5PItemHelper, onePath: string): H5PItemHelper | undefined => {
     if (onePath === "..") return itemHelper.parentItem;

@@ -77,7 +77,7 @@ const formReducer = (state: H5PLibraryContent, action: H5pFormAction): H5PLibrar
     case "removeListItem": {
       const { content, path, index } = action.payload;
       const listContent = content?.filter((_, idx) => idx !== index);
-      setByPath(state, path, listContent);
+      setByPath(state, path, listContent?.length ? listContent : undefined);
       return state;
     }
     default:

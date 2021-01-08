@@ -328,6 +328,7 @@ export default function Details(props: DetailsProps) {
                       >
                         {d("Thumbnail").t("library_label_thumbnail")}
                       </Button>
+                      {console.log("isUploading, value =", isUploading, value)}
                       {isUploading && <ProgressWithText value={item?.completed} />}
                       {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
                     </Box>
@@ -629,7 +630,7 @@ export default function Details(props: DetailsProps) {
             render={({ ref, ...props }) => (
               <SingleUploader
                 ref={ref}
-                onChangeOther={(filename?: string) => handleChangeTeacherManualName(filename)}
+                onChangeFile={(file) => handleChangeTeacherManualName(file?.name)}
                 partition="teacher_manual"
                 accept=".pdf"
                 {...props}

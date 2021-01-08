@@ -37,7 +37,8 @@ import {
   MapHandlerProps,
 } from "../../models/ModelH5pSchema";
 import { ProgressWithText } from "../../pages/ContentEdit/Details";
-import { SingleUploader } from "../SingleUploader";
+import { CropImage } from "../CropImage";
+import { getImageDimension, SingleUploader, SingleUploaderProps } from "../SingleUploader";
 
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
@@ -81,16 +82,16 @@ export function H5pElement(props: H5pElementProps) {
     return <H5pElementSelect {...props} />;
   }
   if (isH5pElementImage(props)) {
-    return <H5pElementMedia {...props} />;
+    return <H5pElementImage {...props} />;
   }
   if (isH5pElementVideo(props)) {
-    return <H5pElementMedia {...props} />;
+    return <H5pElementVideo {...props} />;
   }
   if (isH5pElementAudio(props)) {
-    return <H5pElementMedia {...props} />;
+    return <H5pElementAudio {...props} />;
   }
   if (isH5pElementFile(props)) {
-    return <H5pElementMedia {...props} />;
+    return <H5pElementFile {...props} />;
   }
   if (isH5pElementList(props)) {
     return <H5pElementList {...props} />;
@@ -166,13 +167,14 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
 export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic>;
 export function H5pElementSelect(props: H5pElementSelectProps) {
   const {
-    itemHelper: { path, semantics },
+    itemHelper: { path, semantics, content },
     onChange,
     className,
   } = props;
   return (
     <TextField
       select
+      value={content ?? ""}
       required={!semantics.optional}
       label={semantics.label || semantics.name}
       className={className}
@@ -196,16 +198,21 @@ export interface H5pElementMediaProps extends H5PBaseElementProps<H5PMediaSemant
 }
 export function H5pElementMedia(props: H5pElementMediaProps) {
   const {
-    itemHelper: { path, semantics },
+    itemHelper: { path, semantics, content },
     onChange,
     className,
     classes,
   } = props;
+  const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
+    if (!file || !file.id || !onChange) return;
+    const { id, type: mime } = file;
+    onChange({ semantics, path, content: { ...content, path: id, mime } });
+  };
   return (
     <SingleUploader
       partition="assets"
       accept="image/*,audio/*,video/*"
-      onChange={(id) => onChange && onChange({ semantics, path, content: { path: id as string, mime: "image/jpeg" } })}
+      onChangeFile={handleChangeFile}
       render={({ uploady, item, btnRef, value, isUploading }) => (
         <Box className={clsx(className, classes?.root)} display="flex">
           <Button
@@ -227,11 +234,57 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
   );
 }
 
+export function H5pElementImage(props: H5pElementMediaProps) {
+  const {
+    itemHelper: { path, semantics, content },
+    onChange,
+    className,
+    classes,
+  } = props;
+  const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
+    if (!file || !file.id || !onChange) return;
+    const { id, type: mime } = file;
+    getImageDimension(file).then(({ width, height }) => {
+      onChange({ semantics, path, content: { ...content, path: id, mime, width, height } });
+    });
+  };
+  return (
+    <CropImage
+      render={({ crop }) => (
+        <SingleUploader
+          partition="assets"
+          accept="image/*"
+          value={content?.path}
+          transformFile={crop}
+          onChangeFile={handleChangeFile}
+          render={({ uploady, item, btnRef, value, isUploading }) => (
+            <Box className={clsx(className, classes?.root)} display="flex">
+              <Button
+                className={classes?.uploadButton}
+                ref={btnRef}
+                size="medium"
+                variant="contained"
+                component="span"
+                color="primary"
+                endIcon={<CloudUploadOutlined />}
+              >
+                {d("Upload from Device").t("library_label_upload_from_device")}
+              </Button>
+              {console.log("isUploading, value = ", isUploading, value)}
+              {isUploading && <ProgressWithText value={item?.completed} />}
+              {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
+            </Box>
+          )}
+        />
+      )}
+    />
+  );
+}
+
 export type H5pElementImageProps = H5pElementMediaProps;
 export type H5pElementVideoProps = H5pElementMediaProps;
 export type H5pElementAudioProps = H5pElementMediaProps;
 export type H5pElementFileProps = H5pElementMediaProps;
-export const H5pElementImage = H5pElementMedia;
 export const H5pElementVideo = H5pElementMedia;
 export const H5pElementAudio = H5pElementMedia;
 export const H5pElementFile = H5pElementMedia;
@@ -394,6 +447,16 @@ export function H5pElementLibrary(props: H5pElementLibraryProps) {
     onChange,
     children,
   } = props;
+  if (semantics.options && semantics.options.length <= 1) {
+    return (
+      <div className={clsx(className, classes?.root)}>
+        <div className={classes?.paragraph}>
+          <div className={classes?.description}>{semantics.description}</div>
+        </div>
+        {children}
+      </div>
+    );
+  }
   return (
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
