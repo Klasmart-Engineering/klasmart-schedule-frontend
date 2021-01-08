@@ -33,17 +33,19 @@ const useStyles = makeStyles(() => ({
 interface H5pListProps {
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
+  setContentType: (value: string) => any;
 }
 
 export default function H5pList(props: H5pListProps) {
-  const { contentTypeList, onChange } = props;
+  const { contentTypeList, onChange, setContentType } = props;
   const css = useStyles();
   const history = useHistory();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
 
   const handleClick = (item: any) => {
-    console.log(`${item.id}-${item.version.major}.${item.version.minor}`);
+    // console.log(item);
+    setContentType(item.title);
     onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
   };
 

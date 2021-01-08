@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme) => ({
   header_container: {
     borderBottom: "1px solid #eee",
     paddingBottom: "20px",
-    paddingLeft: "20px",
-    paddingRight: "10px",
+    // paddingLeft: "20px",
+    // paddingRight: "10px",
   },
   selectButton: {
     cursor: "pointer",
@@ -30,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("lg")]: {
       width: "40%",
     },
+    paddingLeft: "20px",
+    paddingRight: "10px",
   },
   firstChild: {
     paddingLeft: "20px !important",
@@ -43,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     padding: "5px 20px 5px 20px",
     // paddingLeft: '20px',
-    marginTop: "20px",
+    marginTop: "10px",
     border: "2px solid #eee",
     boxShadow: "none",
     borderRadius: "20px",
@@ -58,6 +60,30 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     right: "10px",
     top: "50%",
+    transform: "translateY(-50%)",
+  },
+  navBar: {
+    heigth: "44px",
+    lineHeight: "44px",
+    color: "#474f5a",
+    fontFamily: "Open Sans,sans-serif",
+    fontWeight: 600,
+    paddingLeft: "20px",
+    position: "relative",
+  },
+  back_searchBox: {
+    backgroundColor: "#697585",
+    paddingLeft: "20px",
+    paddingRight: "20px",
+  },
+  all_content_types: {
+    paddingLeft: "20px",
+    paddingRight: "10px",
+  },
+  downIcon: {
+    position: "absolute",
+    top: "50%",
+    right: "30px",
     transform: "translateY(-50%)",
   },
 }));
@@ -81,7 +107,7 @@ export default function H5pHeader(props: H5pHeaderProps) {
 
   return (
     <div className={css.header_container}>
-      <Grid container style={{ width: "98%" }}>
+      <Grid container style={{ width: "100%" }} className={css.back_searchBox}>
         <Paper className={css.searchBox}>
           <InputBase
             placeholder={reportMiss("Search for Content Types", "h5p_content_types")}
@@ -94,7 +120,7 @@ export default function H5pHeader(props: H5pHeaderProps) {
           </IconButton>
         </Paper>
       </Grid>
-      <Grid container alignItems="center">
+      <Grid container alignItems="center" className={css.all_content_types}>
         <Grid item>
           <Typography variant="h6">{reportMiss("All Content Types", "h5p_all_content_types")}</Typography>
         </Grid>
