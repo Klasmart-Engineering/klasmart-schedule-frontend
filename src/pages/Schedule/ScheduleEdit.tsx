@@ -504,7 +504,7 @@ function EditBox(props: CalendarStateProps) {
     const addData: any = {};
     addData["due_at"] = 0;
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (checkedStatus.dueDateCheck) {
+    if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
 
