@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
 import { H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
 import { H5pCompare } from "./H5pCompare";
 import { H5pDetails } from "./H5pDetails";
-// import { RichTextInput } from "../../components/RichTextInput";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
 import H5pInfo from "./H5pInfo";
 import { H5pLibraryInput } from "./H5pLibraryInput";
@@ -38,36 +37,29 @@ export function H5pEditor() {
   const query = new URLSearchParams(search);
   const [libContent, setLibContent] = useState<H5PLibraryContent>();
   const [library, setLibrary] = useLibrary(query.get("library") || undefined);
-  const h5p_id = query.get("h5p_id") || undefined;
   const contentTypeList = useContentTypeList();
   const schema = useSchema(library);
   const [contentType, setContentType] = React.useState("");
-  const [showOther, setShowOther] = React.useState(true);
+  const { show } = useParams();
 
-  if (!library)
-    return !contentTypeList ? null : h5p_id ? (
-      <>
-        <H5pHeaderNavbar contentType={contentType} setShowOther={setShowOther} showOther={showOther} />
-        {showOther && <H5pInfo contentTypeList={contentTypeList} />}
-      </>
-    ) : (
-        <>
-          <H5pHeaderNavbar contentType={contentType} setShowOther={setShowOther} showOther={showOther} />
-          {showOther && <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} setContentType={setContentType} />}
-        </>
-      );
-  return !schema ? null : (
-    <Fragment>
-      <H5pHeaderNavbar contentType={contentType} library={library} setShowOther={setShowOther} showOther={showOther} />
-      {showOther && (
-        <>
-          <H5pCompare value={libContent} />
-          <H5pDetails value={{ library }} schema={schema} onChange={setLibContent} />
-        </>
+  return (
+    <div>
+      <H5pHeaderNavbar contentType={contentType} />
+      {show === "list" && contentTypeList && (
+        <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} setContentType={setContentType} />
       )}
-    </Fragment>
+      {show === "details" &&
+        (!schema ? null : (
+          <Fragment>
+            <H5pCompare value={libContent} />
+            {show === "details" && library && schema && <H5pDetails value={{ library }} schema={schema} onChange={setLibContent} />}
+          </Fragment>
+        ))}
+      {show === "info" && contentTypeList && <H5pInfo contentTypeList={contentTypeList} />}
+    </div>
   );
 }
 
 H5pEditor.routeBasePath = "/h5pEditor";
-H5pEditor.routeRedirectDefault = `/h5pEditor`;
+H5pEditor.routeRedirectDefault = `/h5pEditor/show/list`;
+H5pEditor.routeMatchPath = "/h5pEditor/show/:show";

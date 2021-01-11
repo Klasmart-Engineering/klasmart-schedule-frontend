@@ -47,11 +47,12 @@ export default function H5pList(props: H5pListProps) {
     // console.log(item);
     setContentType(item.title);
     onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
+    history.push("/h5peditor/show/details");
   };
 
   const getDetails = (e: React.KeyboardEvent | React.MouseEvent, id: string) => {
     e.stopPropagation();
-    history.push(`/h5pEditor?h5p_id=${id}`);
+    history.push(`/h5pEditor/show/info?h5p_id=${id}`);
   };
 
   return (
@@ -60,24 +61,25 @@ export default function H5pList(props: H5pListProps) {
         {/* <ListItem selected button className={css.listItem}>
           <img src={item.img} alt=""/>
         </ListItem> */}
-        {contentTypeList.map((item) => {
-          return (
-            <ListItem key={item.id} button className={css.listItem} onClick={() => handleClick(item)}>
-              <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
-                <img src={item.icon} alt="aaa" />
-              </Box>
-              <Box style={{ width: sm ? "40%" : "80%" }}>
-                <h3>{item.title}</h3>
-                <p>{item.summary}</p>
-              </Box>
-              <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
-                <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item.id)}>
-                  {reportMiss("Detail", "h5p_detail")}
-                </Button>
-              </Box>
-            </ListItem>
-          );
-        })}
+        {contentTypeList &&
+          contentTypeList.map((item) => {
+            return (
+              <ListItem key={item.id} button className={css.listItem} onClick={() => handleClick(item)}>
+                <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
+                  <img src={item.icon} alt="aaa" />
+                </Box>
+                <Box style={{ width: sm ? "40%" : "80%" }}>
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                </Box>
+                <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
+                  <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item.id)}>
+                    {reportMiss("Detail", "h5p_detail")}
+                  </Button>
+                </Box>
+              </ListItem>
+            );
+          })}
       </List>
     </div>
   );

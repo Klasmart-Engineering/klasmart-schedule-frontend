@@ -83,8 +83,12 @@ function App() {
                   <Route path={ReportCategories.routeBasePath}>
                     <ReportCategories />
                   </Route>
-                  <Route path={H5pEditor.routeBasePath}>
+                  <Route path={H5pEditor.routeMatchPath}>
                     <H5pEditor />
+                  </Route>
+                  <Route path={H5pEditor.routeBasePath}>
+                    {/* <H5pEditor /> */}
+                    <Redirect to={H5pEditor.routeRedirectDefault} />
                   </Route>
                   <Route path={H5pDemo.routeBasePath}>
                     <H5pDemo />

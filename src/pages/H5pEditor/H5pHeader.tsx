@@ -125,7 +125,7 @@ export default function H5pHeader(props: H5pHeaderProps) {
           <Typography variant="h6">{reportMiss("All Content Types", "h5p_all_content_types")}</Typography>
         </Grid>
         <Grid item>
-          ({contentTypeList.length} {reportMiss("results", "h5p_results")})
+          ({contentTypeList && contentTypeList.length} {reportMiss("results", "h5p_results")})
         </Grid>
       </Grid>
       <Grid container spacing={5} alignItems="center" className={css.box_selected}>

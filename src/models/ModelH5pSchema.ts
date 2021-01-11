@@ -31,12 +31,12 @@ export type H5PBooleanContent = boolean | undefined;
 export type H5PSelectContent = string | undefined;
 export type H5PMediaContent =
   | {
-      path: string;
-      mime: string;
-      copyright?: IH5PCopyright;
-      width?: number;
-      height?: number;
-    }
+    path: string;
+    mime: string;
+    copyright?: IH5PCopyright;
+    width?: number;
+    height?: number;
+  }
   | undefined;
 
 export type H5PVideoContent = H5PMediaContent;
@@ -46,8 +46,8 @@ export type H5PFileContent = H5PMediaContent;
 
 export type H5PGroupContent =
   | {
-      [key in string]: H5PItemContent;
-    }
+    [key in string]: H5PItemContent;
+  }
   | undefined;
 
 interface H5PLibraryMetadata {
@@ -62,11 +62,11 @@ interface H5PLibraryMetadata {
 }
 export type H5PLibraryContent =
   | {
-      params?: Record<string, H5PItemContent>;
-      library: string;
-      subContentId?: string;
-      metadata?: H5PLibraryMetadata;
-    }
+    params?: Record<string, H5PItemContent>;
+    library: string;
+    subContentId?: string;
+    metadata?: H5PLibraryMetadata;
+  }
   | undefined;
 
 export type H5PListContent = H5PItemContent[] | undefined;
@@ -218,9 +218,9 @@ export interface MapHandler<T, C = T, H extends H5PItemHelper = H5PItemHelper> {
 
 export type H5PItemHelper<S extends H5PItemSemantic = H5PItemSemantic> = S extends any
   ? H5PItemInfo<S> & {
-      parentItem: H5PItemHelper | undefined;
-      childItems: H5PItemHelper[];
-    }
+    parentItem: H5PItemHelper | undefined;
+    childItems: H5PItemHelper[];
+  }
   : never;
 
 interface H5PItemMapperResult<T> {
@@ -230,13 +230,13 @@ interface H5PItemMapperResult<T> {
 
 export type H5PItemInfo<S extends H5PItemSemantic = H5PItemSemantic> = S extends any
   ? {
-      path: string;
-      content?: H5PContentBySemantics<S>;
-      semantics: S;
-    }
+    path: string;
+    content?: H5PContentBySemantics<S>;
+    semantics: S;
+  }
   : never;
 
-export const rootParent = function () {};
+export const rootParent = function () { };
 
 export interface H5PLibraryInfo {
   path: string;
@@ -265,11 +265,11 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
       if (!librarySemantics) throw new Error(`My Error: ${libraryId} does not exit!`);
       subItemInfoList = librarySemantics.map(
         (itemSemantics) =>
-          ({
-            path: path ? `${path}.params.${itemSemantics.name}` : `params.${itemSemantics.name}`,
-            content: content.params?.[itemSemantics.name],
-            semantics: itemSemantics,
-          } as H5PItemInfo)
+        ({
+          path: path ? `${path}.params.${itemSemantics.name}` : `params.${itemSemantics.name}`,
+          content: content.params?.[itemSemantics.name],
+          semantics: itemSemantics,
+        } as H5PItemInfo)
       );
     }
   else if (isH5pListItemInfo(itemInfo))
@@ -278,11 +278,11 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
       if (content.length === 0) break listBlock;
       subItemInfoList = content.map(
         (subContent, idx) =>
-          ({
-            path: `${path}[${idx}]`,
-            content: subContent,
-            semantics: semantics.field,
-          } as H5PItemInfo)
+        ({
+          path: `${path}[${idx}]`,
+          content: subContent,
+          semantics: semantics.field,
+        } as H5PItemInfo)
       );
     }
   else if (isH5pGroupItemInfo(itemInfo)) {
@@ -300,12 +300,13 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
       } as H5PItemInfo;
     });
   }
-  subItemInfoList.forEach((subItemInfo) => {
-    const { itemHelper: subItemHelper, result } = h5pItemMapper(subItemInfo, schema, mapHandler);
-    subItemHelper.parentItem = itemHelper;
-    childItems.push(subItemHelper);
-    children.push(result);
-  });
+  subItemInfoList &&
+    subItemInfoList.forEach((subItemInfo) => {
+      const { itemHelper: subItemHelper, result } = h5pItemMapper(subItemInfo, schema, mapHandler);
+      subItemHelper.parentItem = itemHelper;
+      childItems.push(subItemHelper);
+      children.push(result);
+    });
   return { itemHelper, result: mapHandler({ itemHelper, children, context }) };
 }
 
@@ -366,8 +367,8 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
   return value === undefined
     ? undefined
     : itemHelper.semantics.name === H5P_ROOT_NAME || itemHelper.parentItem?.semantics.type === H5PItemType.list
-    ? value
-    : { [itemHelper.semantics.name]: value };
+      ? value
+      : { [itemHelper.semantics.name]: value };
 };
 
 function createLibraryContentByParams(library: string, params: NonNullable<H5PLibraryContent>["params"]) {
@@ -391,8 +392,8 @@ export function createDefaultListContent(semantics: H5PListSemantic, schema: H5P
   return amount === 0
     ? undefined
     : Array(amount)
-        .fill(1)
-        .map(() => cloneDeep(defaultContent));
+      .fill(1)
+      .map(() => cloneDeep(defaultContent));
 }
 
 // 这里的路径只能是 semantics 的相对路径，而不是 content 的相对路径
