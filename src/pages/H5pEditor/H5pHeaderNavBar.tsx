@@ -32,7 +32,7 @@ interface H5pHeaderNavbarProps {
 
 export default function H5pHeaderNavbar(props: H5pHeaderNavbarProps) {
   const { contentType } = props;
-  const { show } = useParams();
+  const { show } = useParams<{ show: string }>();
   const history = useHistory();
   const css = useStyles();
 
