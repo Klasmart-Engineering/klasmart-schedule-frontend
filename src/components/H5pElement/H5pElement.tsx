@@ -4,21 +4,27 @@ import {
   AccordionSummary,
   Box,
   Button,
+  ButtonProps,
   Checkbox,
   createStyles,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   InputLabel,
   makeStyles,
   MenuItem,
+  styled,
   TextField,
 } from "@material-ui/core";
-import { Cancel, CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
+import { Cancel, Close, CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { Fragment } from "react";
+import React, { FocusEvent, FormEvent, Fragment, ReactNode, useMemo, useReducer } from "react";
 import { apiResourcePathById } from "../../api/extra";
 import { H5pFormRemoveListItemPayload } from "../../hooks/useH5pFormReducer";
 import { d } from "../../locale/LocaleManager";
 import {
+  createH5pLicenseVersionOptions,
   H5PBooleanSemantic,
   H5PGroupSemantic,
   H5PImportance,
@@ -27,11 +33,13 @@ import {
   H5PItemSemantic,
   H5PItemType,
   H5PLibrarySemantic,
+  H5PLicense,
   H5PListSemantic,
   H5PMediaSemantic,
   H5PNumberSemantic,
   H5PSelectSemantic,
   H5PTextSemantic,
+  H5P_LICENSE_OPTIONS,
   H5P_ROOT_NAME,
   isH5pListItemInfo,
   MapHandlerProps,
@@ -189,11 +197,70 @@ export function H5pElementSelect(props: H5pElementSelectProps) {
   );
 }
 
+function CopyrightForm(props: H5pElementMediaProps) {
+  const { classes, itemHelper, onChange } = props;
+  const { semantics, path, content } = itemHelper;
+  const copyright = content?.copyright;
+  const license = copyright?.license;
+  const inputData = useMemo(
+    () =>
+      [
+        { label: "Title", name: "title", type: "text" },
+        { label: "Author", name: "author", type: "text" },
+        { label: "Year(s)", name: "year", type: "text" },
+        { label: "Source", name: "source", type: "text" },
+        { label: "License", name: "license", type: "select", required: true, options: H5P_LICENSE_OPTIONS },
+        { label: "License Version", name: "version", type: "select", required: false, options: createH5pLicenseVersionOptions(license) },
+      ] as const,
+    [license]
+  );
+  console.log("copyright, content = ", copyright, content);
+  if (!copyright || !content?.path) return null;
+  const textFieldList = inputData.map((item) => {
+    const handleChange = (e: FormEvent<HTMLInputElement> & FocusEvent<HTMLInputElement>) => {
+      if (!onChange) return;
+      onChange({ semantics, path, content: { ...content, copyright: { ...copyright, [item.name]: e.target.value } } });
+    };
+    switch (item.type) {
+      case "text": {
+        const { label, name } = item;
+        return <TextField key={name} className={classes?.input} value={copyright[name]} label={label} onBlur={handleChange} />;
+      }
+      case "select": {
+        const { label, name, options, required } = item;
+        return (
+          <TextField
+            key={name}
+            disabled={options.length === 0}
+            select
+            value={copyright[name] ?? ""}
+            required={required}
+            label={label}
+            className={classes?.input}
+            onChange={handleChange}
+          >
+            {(options as { label: string; value: string }[]).map(({ label, value }) => (
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
+            ))}
+          </TextField>
+        );
+      }
+      default:
+        return null;
+    }
+  });
+  return <Fragment>{textFieldList}</Fragment>;
+}
+
 export interface H5pElementMediaProps extends H5PBaseElementProps<H5PMediaSemantic> {
   classes?: {
     root?: string;
     uploadButton?: string;
+    copyrightButton?: string;
     mediaPreview?: string;
+    input?: string;
   };
 }
 export function H5pElementMedia(props: H5pElementMediaProps) {
@@ -235,17 +302,13 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
 }
 
 export function H5pElementImage(props: H5pElementMediaProps) {
-  const {
-    itemHelper: { path, semantics, content },
-    onChange,
-    className,
-    classes,
-  } = props;
+  const { itemHelper, onChange, className, classes } = props;
+  const { path, semantics, content } = itemHelper;
   const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
     if (!file || !file.id || !onChange) return;
     const { id, type: mime } = file;
     getImageDimension(file).then(({ width, height }) => {
-      onChange({ semantics, path, content: { ...content, path: id, mime, width, height } });
+      onChange({ semantics, path, content: { ...content, path: id, mime, width, height, copyright: { license: H5PLicense.U } } });
     });
   };
   return (
@@ -259,18 +322,30 @@ export function H5pElementImage(props: H5pElementMediaProps) {
           onChangeFile={handleChangeFile}
           render={({ uploady, item, btnRef, value, isUploading }) => (
             <Box className={clsx(className, classes?.root)} display="flex">
-              <Button
-                className={classes?.uploadButton}
-                ref={btnRef}
-                size="medium"
-                variant="contained"
-                component="span"
-                color="primary"
-                endIcon={<CloudUploadOutlined />}
-              >
-                {d("Upload from Device").t("library_label_upload_from_device")}
-              </Button>
-              {console.log("isUploading, value = ", isUploading, value)}
+              <Box display="flex" flexDirection="column" marginRight="auto">
+                <Button
+                  className={classes?.uploadButton}
+                  ref={btnRef}
+                  size="medium"
+                  variant="contained"
+                  component="span"
+                  color="primary"
+                  endIcon={<CloudUploadOutlined />}
+                >
+                  {d("Upload from Device").t("library_label_upload_from_device")}
+                </Button>
+                {content?.copyright && (
+                  <DialogButton
+                    variant="contained"
+                    color="primary"
+                    size="medium"
+                    label="Edit copyright"
+                    className={classes?.copyrightButton}
+                  >
+                    <CopyrightForm {...props} />
+                  </DialogButton>
+                )}
+              </Box>
               {isUploading && <ProgressWithText value={item?.completed} />}
               {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
             </Box>
@@ -538,4 +613,32 @@ export function isH5pElementCommonLibrary(props: H5pElementProps): props is H5pE
 
 export function isH5pElementRootLibrary(props: H5pElementProps): props is H5pElementRootLibraryProps {
   return props.itemHelper.semantics.type === H5PItemType.library && props.itemHelper.semantics.name === H5P_ROOT_NAME;
+}
+
+interface DialogButtonProps extends ButtonProps {
+  label: ReactNode;
+}
+function DialogButton(props: DialogButtonProps) {
+  const { label, children, ...buttonProps } = props;
+  const [isOpen, toggle] = useReducer((isOpen) => !isOpen, false);
+  const StyledDialogTitle = styled(DialogTitle)({
+    textAlign: "right",
+    paddingBottom: 0,
+  });
+  const StyledDialogContent = styled(DialogContent)({
+    padding: "0 40px 40px",
+  });
+  return (
+    <Fragment>
+      <Button {...buttonProps} onClick={toggle}>
+        {label}
+      </Button>
+      <Dialog open={isOpen}>
+        <StyledDialogTitle>
+          <Close onClick={toggle} />
+        </StyledDialogTitle>
+        <StyledDialogContent>{children}</StyledDialogContent>
+      </Dialog>
+    </Fragment>
+  );
 }

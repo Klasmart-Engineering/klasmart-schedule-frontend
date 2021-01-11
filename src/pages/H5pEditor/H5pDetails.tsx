@@ -116,7 +116,9 @@ const useStyles = makeStyles(({ palette }) =>
     },
     uploadButton: {
       height: 56,
-      marginRight: "auto",
+    },
+    copyrightButton: {
+      marginTop: 16,
     },
   })
 );
@@ -236,7 +238,9 @@ export function H5pDetails(props: H5pDetailsProps) {
           onChange: pipe(dispatchChange, onChange),
           classes: {
             root: css.h5pItem,
+            input: css.h5pItem,
             uploadButton: css.uploadButton,
+            copyrightButton: css.copyrightButton,
             mediaPreview: css.mediaPreview,
           },
         };

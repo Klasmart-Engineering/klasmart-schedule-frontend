@@ -19,8 +19,26 @@ export enum H5PItemType {
   file = "file",
 }
 
+export enum H5PLicense {
+  U = "U",
+  CC_BY = "CC BY",
+  CC_BYSA = "CC BY-SA",
+  CC_BYND = "CC BY-ND",
+  CC_BYNC = "CC BY-NC",
+  CC_BYNCSA = "CC BY-NC-SA",
+  CC_BYNCND = "CC BY-NC-ND",
+  GNU_GPL = "GNU GPL",
+  PD = "PD",
+  C = "C",
+}
+
 interface IH5PCopyright {
   license: string;
+  title?: string;
+  author?: string;
+  year?: string;
+  source?: string;
+  version?: string;
 }
 
 export type H5PLeafContent = H5PTextContent | H5PNumberContent | H5PBooleanContent | H5PSelectContent | H5PMediaContent;
@@ -411,6 +429,56 @@ export function resolveItemByPath(itemHelper: H5PItemHelper, path: string): H5PI
   }
   return resultItemHelper;
 }
+
+export const H5P_LICENSE_OPTIONS = [
+  // todo: translation
+  { label: "Undisclosed", value: H5PLicense.U },
+  { label: "Attribution", value: H5PLicense.CC_BY },
+  { label: "Attribution-ShareAlike", value: H5PLicense.CC_BYSA },
+  { label: "Attribution-NoDerivs", value: H5PLicense.CC_BYND },
+  { label: "Attribution-NonCommercial", value: H5PLicense.CC_BYNC },
+  { label: "Attribution-NonCommercial-ShareAlike", value: H5PLicense.CC_BYNCSA },
+  { label: "Attribution-NonCommercial-NoDerivs", value: H5PLicense.CC_BYNCND },
+  { label: "General Public License", value: H5PLicense.GNU_GPL },
+  { label: "Public Domain", value: H5PLicense.PD },
+  { label: "Copyright", value: H5PLicense.C },
+];
+
+export const createH5pLicenseVersionOptions = (license?: string) => {
+  let options: { label: string; value: string }[] = [];
+  switch (license) {
+    case H5PLicense.CC_BY:
+    case H5PLicense.CC_BYSA:
+    case H5PLicense.CC_BYND:
+    case H5PLicense.CC_BYNC:
+    case H5PLicense.CC_BYNCSA:
+    case H5PLicense.CC_BYNCND:
+      // todo: translation
+      options = [
+        { label: "4.0 International", value: "4.0" },
+        { label: "3.0 Unported", value: "3.0" },
+        { label: "2.5 Generic", value: "2.5" },
+        { label: "2.0 Generic", value: "2.0" },
+        { label: "1.0 Generic", value: "1.0 " },
+      ];
+      break;
+    case H5PLicense.GNU_GPL:
+      options = [
+        { label: "Version 3", value: "v3" },
+        { label: "Version 2", value: "v2" },
+        { label: "Version 1", value: "v1" },
+      ];
+      break;
+    case H5PLicense.PD:
+      options = [
+        { label: "-", value: "-" },
+        { label: "CC0-1.0-universal", value: "CC0 1.0" },
+        { label: "Public Domain Mark", value: "CC PDM" },
+      ];
+      break;
+  }
+  return options;
+};
 
 export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PItemInfo<H5PTextSemantic> {
   return itemInfo.semantics.type === H5PItemType.text;
