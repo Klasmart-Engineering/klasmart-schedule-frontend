@@ -128,6 +128,11 @@ type LangRecord<T = string> =
       values: { email: string | number };
     }
   | {
+      id: "library_error_content_locked_by_me";
+      description: "This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.";
+      values: undefined;
+    }
+  | {
       id: "library_error_delete_lesson_plan_in_schedule";
       description: "Unable to delete lesson plan which is scheduled";
       values: undefined;
@@ -462,6 +467,31 @@ type LangRecord<T = string> =
   | { id: "schedule_button_start_class"; description: "Start Class"; values: undefined }
   | { id: "schedule_button_go_study"; description: "Go Study"; values: undefined }
   | { id: "schedule_msg_earlier_today"; description: "Due date cannot be earlier than today."; values: undefined }
+  | { id: "schedule_detail_class_roster"; description: "Class Roster"; values: undefined }
+  | { id: "schedule_detail_select_all"; description: "Select All"; values: undefined }
+  | { id: "schedule_detail_unselect_all"; description: "Unselect All"; values: undefined }
+  | { id: "schedule_time_conflict_msg"; description: "Time conflicts occured, please specify"; values: undefined }
+  | { id: "schedule_time_conflict_option_1"; description: "Not schedule"; values: undefined }
+  | { id: "schedule_time_conflict_option_2"; description: "Schedule anyway"; values: undefined }
+  | { id: "schedule_time_conflict_student"; description: "Student"; values: undefined }
+  | { id: "schedule_participants_button_add"; description: "Add"; values: undefined }
+  | { id: "schedule_time_conflict_checking"; description: "Participants"; values: undefined }
+  | { id: "schedule_msg_no_ok"; description: "Please confirm this fileld by clicking OK"; values: undefined }
+  | {
+      id: "schedule_msg_no_user";
+      description: "For “Add Class”(Class Roster) and “Add Participants”, at least a student and a teacher will need to be added into either of the field.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_roster_update";
+      description: "The class roster has just been updated, please refresh and try again";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_participants_update";
+      description: "The participants' list has just been updated, please refresh and try again";
+      values: undefined;
+    }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
