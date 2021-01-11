@@ -84,6 +84,7 @@ export default function H5pList(props: H5pListProps) {
 
   const handleConfirm = () => {
     setOpen(false);
+    setContentType(tempItem.title);
     onChange(`${tempItem.id}-${tempItem.version.major}.${tempItem.version.minor}`);
     history.push("/h5peditor/show/details");
   };
