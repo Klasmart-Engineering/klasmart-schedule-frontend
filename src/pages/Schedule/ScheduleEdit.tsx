@@ -2,10 +2,11 @@ import DateFnsUtils from "@date-io/date-fns";
 import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Tooltip from "@material-ui/core/Tooltip";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
+import { Close, DeleteOutlineOutlined, FileCopyOutlined, AddCircleOutlineOutlined } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -33,7 +34,15 @@ import {
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
-import { EntityLessonPlanShortInfo, FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
+import {
+  ClassOptionsItem,
+  EntityLessonPlanShortInfo,
+  FilterQueryTypeProps,
+  modeViewType,
+  ParticipantsShortInfo,
+  repeatOptionsType,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
@@ -86,11 +95,10 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
   participantBox: {
     width: "100%",
-    maxHeight: "200px",
+    maxHeight: "260px",
     border: "1px solid rgba(0, 0, 0, 0.23)",
     marginTop: "20px",
     borderRadius: "5px",
-    padding: "0px 0px 20px 0px",
     overflow: "auto",
   },
   participantContent: {
@@ -100,6 +108,28 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginLeft: "10px",
     borderRadius: "18px",
     float: "left",
+  },
+  scrollRoster: {
+    display: "flex",
+    height: "160px",
+    [theme.breakpoints.down("lg")]: {
+      height: "200px",
+    },
+    overflowY: "auto",
+    "&::-webkit-scrollbar": {
+      width: "3px",
+    },
+    "&::-webkit-scrollbar-track": {
+      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "3px",
+      backgroundColor: "rgb(220, 220, 220)",
+      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
   },
 }));
 
@@ -172,6 +202,7 @@ function EditBox(props: CalendarStateProps) {
     getParticipantOptions,
     setSpecificStatus,
     specificStatus,
+    participantsIds,
   } = props;
   const { scheduleDetial, contentsAuthList, classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -892,13 +923,17 @@ function EditBox(props: CalendarStateProps) {
       </MenuItem>
     ));
 
-  const menuItemListClassKr = () => {
+  const menuItemListClassKrParticipants = (type: string) => {
     const participant: any = participantMockOptions.participantList;
-    const participantSet = participant.class.teachers.concat(participant.class.students);
+    const participantSet = type === "teacher" ? participant.class.teachers : participant.class.students;
     return participantSet.map((item: any, key: number) => (
-      <span key={key} className={css.participantContent}>
-        {item.user_name}
-      </span>
+      <Tooltip title={item.user_name} placement="right-start">
+        <FormControlLabel
+          style={{ width: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          control={<Checkbox name="checkedB" color="primary" />}
+          label={item.user_name}
+        />
+      </Tooltip>
     ));
   };
 
@@ -1057,7 +1092,84 @@ function EditBox(props: CalendarStateProps) {
             )}
           />
         )}
-        {menuItemListClassKr().length > 0 && <Box className={css.participantBox}>{menuItemListClassKr()}</Box>}
+        {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) && (
+          <Box className={css.participantBox}>
+            <div style={{ textAlign: "end" }}>
+              <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Select All" />
+              <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Unselect All" />
+            </div>
+            <div className={css.scrollRoster}>
+              <div style={{ textAlign: "center", width: "202px" }}>
+                <span style={{ display: "block", fontWeight: "bold" }}>Students</span>
+                {menuItemListClassKrParticipants("students")}
+              </div>
+              <div style={{ width: "1px", height: "160px", backgroundColor: "#bfbfbf", position: "absolute", left: "50%" }}></div>
+              <div style={{ textAlign: "center", width: "202px" }}>
+                <span style={{ display: "block", fontWeight: "bold" }}>Teachers</span>
+                {menuItemListClassKrParticipants("teachers")}
+              </div>
+            </div>
+            <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
+              OK
+            </Button>
+          </Box>
+        )}
+        {(participantsIds?.student || participantsIds?.teacher) && (
+          <Box className={css.participantBox}>
+            <div className={css.scrollRoster} style={{ marginTop: "20px" }}>
+              <div style={{ textAlign: "center", width: "202px" }}>
+                <span style={{ display: "block", fontWeight: "bold" }}>Students</span>
+                {participantsIds?.student.map((item: ClassOptionsItem) => {
+                  return (
+                    <Tooltip title={item.name as string} placement="right-start">
+                      <FormControlLabel
+                        style={{ width: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        control={<Checkbox name="checkedB" color="primary" />}
+                        label={item.name}
+                      />
+                    </Tooltip>
+                  );
+                })}
+              </div>
+              <div style={{ width: "1px", height: "160px", backgroundColor: "#bfbfbf", position: "absolute", left: "50%" }}></div>
+              <div style={{ textAlign: "center", width: "202px" }}>
+                <span style={{ display: "block", fontWeight: "bold" }}>Teachers</span>
+                {participantsIds?.student.map((item: ClassOptionsItem) => {
+                  return (
+                    <Tooltip title={item.name as string} placement="right-start">
+                      <FormControlLabel
+                        style={{ width: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        control={<Checkbox name="checkedB" color="primary" />}
+                        label={item.name}
+                      />
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            </div>
+            <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
+              OK
+            </Button>
+            <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
+              Add
+            </Button>
+          </Box>
+        )}
+        {!participantsIds?.student && !participantsIds?.teacher && (
+          <Box className={css.fieldBox}>
+            <TextField
+              error={validator.title}
+              className={css.fieldset}
+              multiline
+              label={d("Add Participants").t("schedule_detail_participants")}
+              value={scheduleList.title}
+              onChange={(e) => handleTopicListChange(e, "title")}
+              required
+              disabled
+            ></TextField>
+            <AddCircleOutlineOutlined className={css.iconField} style={{ top: "46%" }} />
+          </Box>
+        )}
         {scheduleList.class_type !== "Homework" && (
           <Box>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -1293,6 +1405,9 @@ interface CalendarStateProps {
   getParticipantOptions: (class_id: string) => void;
   specificStatus?: boolean;
   setSpecificStatus?: (value: boolean) => void;
+  participantsIds?: ParticipantsShortInfo;
+  classRosterIds?: ParticipantsShortInfo;
+  handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -1315,6 +1430,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     getParticipantOptions,
     setSpecificStatus,
     specificStatus,
+    participantsIds,
+    classRosterIds,
   } = props;
   const template = (
     <>
@@ -1357,6 +1474,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getParticipantOptions={getParticipantOptions}
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
+          participantsIds={participantsIds}
+          classRosterIds={classRosterIds}
         />
       </Box>
     </>

@@ -25,7 +25,7 @@ import {
   scheduleUpdateStatus,
   getClassesBySchool,
 } from "../../reducers/schedule";
-import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -66,8 +66,30 @@ function ScheduleContent() {
   const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
 
+  const mockData = {
+    student: [
+      { id: "123", name: "schedule1" },
+      { id: "123", name: "schedule1" },
+      { id: "123", name: "schedule1" },
+      { id: "123", name: "schedule1" },
+    ],
+    teacher: [
+      { id: "123", name: "schedule1" },
+      { id: "123", name: "schedule1" },
+      { id: "123", name: "schedule1" },
+      { id: "123", name: "schedule1" },
+    ],
+  };
+
+  const [participantsIds, setParticipantsIds] = React.useState<ParticipantsShortInfo>(mockData);
+  const [classRosterIds, setClassRosterIds] = React.useState<ParticipantsShortInfo>(mockData);
+
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
+  };
+
+  const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
+    type === "classRoster" ? setParticipantsIds(data) : setClassRosterIds(data);
   };
 
   const initModalDate: AlertDialogProps = {
@@ -230,6 +252,9 @@ function ScheduleContent() {
               getParticipantOptions={getParticipantOptions}
               setSpecificStatus={setSpecificStatus}
               specificStatus={specificStatus}
+              participantsIds={participantsIds}
+              classRosterIds={classRosterIds}
+              handleChangeParticipants={handleChangeParticipants}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
