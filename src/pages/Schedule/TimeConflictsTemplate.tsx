@@ -1,7 +1,7 @@
 import { Button, FormControlLabel, Grid, IconButton, makeStyles, Radio, RadioGroup, useMediaQuery, useTheme } from "@material-ui/core";
 import { PersonOutline } from "@material-ui/icons";
 import React from "react";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -239,10 +239,10 @@ export default function TimeConflictsTemplate() {
   );
   return (
     <div>
-      <div className={css.title}>{reportMiss("Time conflicts occured, please specify", "schedule_conflicts_specify")}</div>
+      <div className={css.title}>{d("Time conflicts occured, please specify").t("schedule_time_conflict_msg")}</div>
       <div className={css.content}>
         <div className={css.classRoster}>
-          <p>{reportMiss("Class Roster", "schedule_class_roster")}</p>
+          <p>{d("Class Roster").t("schedule_detail_class_roster")}</p>
           <div className={css.scrollPart}>
             {conflicts.class_roster_student_ids.map((item) => {
               return (
@@ -261,7 +261,7 @@ export default function TimeConflictsTemplate() {
           </div>
         </div>
         <div className={css.classRoster}>
-          <p>{reportMiss("Participants", "schedule_participants")}</p>
+          <p>{d("Participants").t("schedule_time_conflict_checking")}</p>
           <div className={css.scrollPart}>
             {conflicts.participants_student_ids.map((item) => {
               return (
