@@ -1,8 +1,23 @@
-import { Box, Button, List, ListItem, makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  List,
+  ListItem,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
+import { Check } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
+import { H5PSchema } from "../../models/ModelH5pSchema";
 
 const useStyles = makeStyles(() => ({
   listItem: {
@@ -34,17 +49,25 @@ interface H5pListProps {
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
   setContentType: (value: string) => any;
+  schema: H5PSchema;
 }
 
 export default function H5pList(props: H5pListProps) {
-  const { contentTypeList, onChange, setContentType } = props;
+  const { contentTypeList, onChange, setContentType, schema } = props;
   const css = useStyles();
   const history = useHistory();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [tempItem, setTempItem] = React.useState<any>({});
 
   const handleClick = (item: any) => {
     // console.log(item);
+    if (schema) {
+      setTempItem(item);
+      setOpen(true);
+      return;
+    }
     setContentType(item.title);
     onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
     history.push("/h5peditor/show/details");
@@ -55,12 +78,19 @@ export default function H5pList(props: H5pListProps) {
     history.push(`/h5pEditor/show/info?h5p_id=${id}`);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleConfirm = () => {
+    setOpen(false);
+    onChange(`${tempItem.id}-${tempItem.version.major}.${tempItem.version.minor}`);
+    history.push("/h5peditor/show/details");
+  };
+
   return (
     <div>
       <List component="nav" aria-label="secondary mailbox folders">
-        {/* <ListItem selected button className={css.listItem}>
-          <img src={item.img} alt=""/>
-        </ListItem> */}
         {contentTypeList &&
           contentTypeList.map((item) => {
             return (
@@ -81,6 +111,22 @@ export default function H5pList(props: H5pListProps) {
             );
           })}
       </List>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">{"Change content type?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            cancelLabel
+          </Button>
+          <Button onClick={handleConfirm} variant="contained" color="primary" startIcon={<Check />}>
+            confirmLabel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

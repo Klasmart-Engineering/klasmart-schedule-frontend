@@ -14,7 +14,7 @@ const useSchema = (library?: string) => {
   useEffect(() => {
     if (!library) return;
     apiCreateContentTypeSchema<H5PSchema>(library).then(setSchema);
-  }, [setSchema, library]);
+  }, [library, setSchema]);
   return schema;
 };
 
@@ -46,7 +46,7 @@ export function H5pEditor() {
     <div>
       <H5pHeaderNavbar contentType={contentType} />
       {show === "list" && contentTypeList && (
-        <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} setContentType={setContentType} />
+        <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} setContentType={setContentType} schema={schema as any} />
       )}
       {show === "details" &&
         (!schema ? null : (
