@@ -154,6 +154,7 @@ export interface H5PNumberSemantic extends H5PBaseSemantic {
   max?: number;
   steps?: number;
   decimals?: number;
+  unit?: string;
 }
 
 export interface H5PBooleanSemantic extends H5PBaseSemantic {

@@ -1,20 +1,23 @@
-import { Box, Button, InputLabel, makeStyles, Typography } from "@material-ui/core";
+import { Box, Button, IconButton, InputLabel, makeStyles, Tooltip, Typography } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
 import { H5pElementListProps } from "../H5pElement";
 const useStyles = makeStyles(() => ({
   label: {
-    margin: "10px 0",
+    marginTop: 32,
   },
   addButton: {
     marginTop: 10,
+  },
+  closeButton: {
+    marginTop: 35,
+    marginLeft: 10,
   },
 }));
 
 export function WidgetElement(props: H5pElementListProps) {
   const css = useStyles();
-  const { itemHelper, children, onAddListItem } = props;
-  console.log(children);
-
+  const { itemHelper, children, onAddListItem, onRemoveListItem } = props;
   const { semantics } = itemHelper;
   return (
     <Box>
@@ -22,12 +25,24 @@ export function WidgetElement(props: H5pElementListProps) {
         {semantics.label || semantics.name}
       </InputLabel>
       <Typography variant="caption">{semantics.description}</Typography>
-      {children.map((childrenNode, idx) => {
+      {children.map((childrenNode: JSX.Element, idx) => {
         return (
-          //  <Grid container spacing={1}>
-          //   <Grid item>{childrenNode}</Grid>
-          // </Grid>
-          <Box display="flex">{childrenNode}</Box>
+          <Box display="flex" key={idx}>
+            {childrenNode}
+            <Box width={48}>
+              {children.length > (semantics.min ?? 0) && (
+                <Tooltip title="Remove Item">
+                  <IconButton
+                    aria-label="close"
+                    className={css.closeButton}
+                    onClick={() => onRemoveListItem({ ...itemHelper, index: idx })}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          </Box>
         );
       })}
       <Button

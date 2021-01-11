@@ -1,9 +1,9 @@
-import { Button, IconButton, InputLabel, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
+import { Button, IconButton, InputLabel, makeStyles, Tab, Tabs, Tooltip, Typography } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import React, { Children, Fragment, useMemo, useState } from "react";
 import { H5pElementListProps } from "../H5pElement";
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({ palette }) => ({
   root: {
     display: "flex",
     width: "100%",
@@ -23,12 +23,13 @@ const useStyles = makeStyles(() => ({
     minWidth: 200,
   },
   label: {
-    marginTop: 20,
+    marginTop: 32,
   },
   addButton: {
     marginTop: 10,
     width: 200,
   },
+
   // newTabs:{
   //   display:"flex",
   //   flexDirection:"column",
@@ -38,6 +39,22 @@ const useStyles = makeStyles(() => ({
     top: 0,
     right: 0,
     cursor: "pointer",
+  },
+  tabLabel: {
+    position: "relative",
+    paddingRight: 30,
+    height: 30,
+    boxSizing: "border-box",
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+  },
+  tabIndicator: {
+    width: 4,
+    backgroundColor: palette.primary.main,
+  },
+  tabLabelSelected: {
+    color: palette.primary.main,
   },
 }));
 
@@ -80,19 +97,29 @@ export function WidgetElement(props: H5pElementListProps) {
         {semantics.label || semantics.name}
       </InputLabel>
       <div className={css.root}>
-        <Tabs orientation="vertical" variant="scrollable" value={tabValue} onChange={handleChangeTab} className={css.tabs}>
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={tabValue}
+          onChange={handleChangeTab}
+          className={css.tabs}
+          TabIndicatorProps={{ className: css.tabIndicator }}
+        >
           {children.map((item, idx) => {
             return (
               <Tab
                 value={idx}
                 key={idx}
+                classes={{ selected: css.tabLabelSelected }}
                 label={
-                  <Fragment>
-                    <IconButton aria-label="close" className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)}>
-                      <CloseIcon />
-                    </IconButton>
-                    <Typography> {`${idx + 1}.${semantics.entity}`}</Typography>
-                  </Fragment>
+                  <div className={css.tabLabel}>
+                    <Tooltip title="Remove Item">
+                      <IconButton aria-label="close" size="small" className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)}>
+                        <CloseIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Typography variant="h6"> {`${idx + 1}.${semantics.entity}`}</Typography>
+                  </div>
                 }
               />
             );
