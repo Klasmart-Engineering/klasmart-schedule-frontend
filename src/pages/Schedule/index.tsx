@@ -7,6 +7,7 @@ import { apiLivePath } from "../../api/extra";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import ModalBox from "../../components/ModalBox";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
@@ -14,23 +15,23 @@ import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
   getClassesByOrg,
+  getClassesBySchool,
   getClassesByTeacher,
   getContentsAuthed,
   getMockOptions,
+  getParticipantsData,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
   getSearchScheduleList,
   scheduleUpdateStatus,
-  getClassesBySchool,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { PermissionType, usePermission } from "../../components/Permission";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -158,7 +159,7 @@ function ScheduleContent() {
     if (liveToken) window.open(apiLivePath(liveToken));
   };
 
-  const getParticipantsData = (is_org: boolean = true) => {
+  const getParticipants = (is_org: boolean = true) => {
     dispatch(getParticipantsData(is_org));
   };
 
@@ -186,6 +187,11 @@ function ScheduleContent() {
 
   const getOrgByClass = usePermission(PermissionType.create_event_520);
   const getOrgBySchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
+
+  React.useEffect(() => {
+    // getParticipants(getOrgByClass)
+    dispatch(getParticipantsData(getOrgByClass));
+  }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
@@ -260,7 +266,7 @@ function ScheduleContent() {
               classRosterIds={classRosterIds}
               handleChangeParticipants={handleChangeParticipants}
               ParticipantsData={ParticipantsData}
-              getParticipantsData={getParticipantsData}
+              getParticipantsData={getParticipants}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

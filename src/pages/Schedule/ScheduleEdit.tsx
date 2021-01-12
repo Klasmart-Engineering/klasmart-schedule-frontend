@@ -2,11 +2,11 @@ import DateFnsUtils from "@date-io/date-fns";
 import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Tooltip from "@material-ui/core/Tooltip";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { Close, DeleteOutlineOutlined, FileCopyOutlined, AddCircleOutlineOutlined } from "@material-ui/icons";
+import Tooltip from "@material-ui/core/Tooltip";
+import { AddCircleOutlineOutlined, Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -45,11 +45,11 @@ import {
   timestampType,
 } from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
+import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
-import AddParticipantsTemplate from "./AddParticipantsTemplate";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -747,6 +747,7 @@ function EditBox(props: CalendarStateProps) {
           ParticipantsData={ParticipantsData}
           handleChangeParticipants={handleChangeParticipants}
           getParticipantsData={getParticipantsData}
+          participantsIds={participantsIds as ParticipantsShortInfo}
         />
       ),
     });
@@ -1459,6 +1460,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     classRosterIds,
     handleChangeParticipants,
     getParticipantsData,
+    ParticipantsData,
   } = props;
   const template = (
     <>
@@ -1505,6 +1507,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           classRosterIds={classRosterIds}
           handleChangeParticipants={handleChangeParticipants}
           getParticipantsData={getParticipantsData}
+          ParticipantsData={ParticipantsData}
         />
       </Box>
     </>

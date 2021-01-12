@@ -109,7 +109,7 @@ export interface ParticipantsShortInfo {
   teacher: ClassOptionsItem[];
 }
 
-interface RolesData {
+export interface RolesData {
   user_id: string;
   user_name: string;
 }
