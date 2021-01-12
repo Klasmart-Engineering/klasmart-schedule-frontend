@@ -55,7 +55,7 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData } = useSelector<
+  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData, ParticipantsData } = useSelector<
     RootState,
     RootState["schedule"]
   >((state) => state.schedule);
@@ -158,6 +158,10 @@ function ScheduleContent() {
     if (liveToken) window.open(apiLivePath(liveToken));
   };
 
+  const getParticipantsData = (is_org: boolean = true) => {
+    dispatch(getParticipantsData(is_org));
+  };
+
   React.useEffect(() => {
     if (teacherName) {
       const data = {
@@ -255,6 +259,8 @@ function ScheduleContent() {
               participantsIds={participantsIds}
               classRosterIds={classRosterIds}
               handleChangeParticipants={handleChangeParticipants}
+              ParticipantsData={ParticipantsData}
+              getParticipantsData={getParticipantsData}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

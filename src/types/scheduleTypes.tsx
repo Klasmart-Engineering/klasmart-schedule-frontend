@@ -108,3 +108,17 @@ export interface ParticipantsShortInfo {
   student: ClassOptionsItem[];
   teacher: ClassOptionsItem[];
 }
+
+interface RolesData {
+  user_id: string;
+  user_name: string;
+}
+
+export interface ClassesData {
+  students: RolesData[];
+  teachers: RolesData[];
+}
+
+export interface ParticipantsData {
+  classes: ClassesData;
+}

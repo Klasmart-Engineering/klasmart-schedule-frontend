@@ -43,6 +43,7 @@ import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "..
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
+import { ParticipantsData } from "../types/scheduleTypes";
 
 const MOCK = false;
 interface scheduleViewData {
@@ -61,20 +62,6 @@ interface classOptionsProp {
   classListOrg: ClassesByOrganizationQuery;
   classListTeacher: ClassesByTeacherQuery;
   classListSchool: ClassesBySchoolQuery;
-}
-
-interface RolesData {
-  user_id: string;
-  user_name: string;
-}
-
-interface ClassesData {
-  students: RolesData[];
-  teachers: RolesData[];
-}
-
-interface ParticipantsData {
-  classes: ClassesData;
 }
 
 export interface ScheduleState {

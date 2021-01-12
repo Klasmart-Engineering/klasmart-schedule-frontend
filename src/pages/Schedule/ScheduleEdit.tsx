@@ -39,6 +39,7 @@ import {
   EntityLessonPlanShortInfo,
   FilterQueryTypeProps,
   modeViewType,
+  ParticipantsData,
   ParticipantsShortInfo,
   repeatOptionsType,
   timestampType,
@@ -48,6 +49,7 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
+import AddParticipantsTemplate from "./AddParticipantsTemplate";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -203,6 +205,9 @@ function EditBox(props: CalendarStateProps) {
     setSpecificStatus,
     specificStatus,
     participantsIds,
+    ParticipantsData,
+    handleChangeParticipants,
+    getParticipantsData,
   } = props;
   const { scheduleDetial, contentsAuthList, classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -659,8 +664,7 @@ function EditBox(props: CalendarStateProps) {
 
   const saveTheTest = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
-      console.log(scheduleDetial.start_at, currentTime);
+    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -729,6 +733,25 @@ function EditBox(props: CalendarStateProps) {
     }
   };
 
+  const addParticipants = () => {
+    changeModalDate({
+      openStatus: true,
+      enableCustomization: true,
+      customizeTemplate: (
+        <AddParticipantsTemplate
+          handleClose={() => {
+            changeModalDate({
+              openStatus: false,
+            });
+          }}
+          ParticipantsData={ParticipantsData}
+          handleChangeParticipants={handleChangeParticipants}
+          getParticipantsData={getParticipantsData}
+        />
+      ),
+    });
+  };
+
   const [checkedStatus, setStatus] = React.useState({
     allDayCheck: false,
     repeatCheck: false,
@@ -791,8 +814,7 @@ function EditBox(props: CalendarStateProps) {
 
   const handleDelete = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
-      console.log(scheduleDetial.start_at, currentTime);
+    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -1150,7 +1172,7 @@ function EditBox(props: CalendarStateProps) {
             <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
               OK
             </Button>
-            <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
+            <Button variant="contained" onClick={addParticipants} color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
               Add
             </Button>
           </Box>
@@ -1408,7 +1430,10 @@ interface CalendarStateProps {
   participantsIds?: ParticipantsShortInfo;
   classRosterIds?: ParticipantsShortInfo;
   handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
+  ParticipantsData?: ParticipantsData;
+  getParticipantsData?: (is_org: boolean) => void;
 }
+
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
 }
@@ -1432,6 +1457,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     specificStatus,
     participantsIds,
     classRosterIds,
+    handleChangeParticipants,
+    getParticipantsData,
   } = props;
   const template = (
     <>
@@ -1476,6 +1503,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           specificStatus={specificStatus}
           participantsIds={participantsIds}
           classRosterIds={classRosterIds}
+          handleChangeParticipants={handleChangeParticipants}
+          getParticipantsData={getParticipantsData}
         />
       </Box>
     </>

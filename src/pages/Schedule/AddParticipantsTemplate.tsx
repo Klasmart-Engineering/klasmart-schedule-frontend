@@ -2,6 +2,7 @@ import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Hidden, makeStyles
 import { Search } from "@material-ui/icons";
 import React from "react";
 import { d, reportMiss } from "../../locale/LocaleManager";
+import { ParticipantsData, ParticipantsShortInfo } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -55,7 +56,15 @@ interface Part {
   students: string[];
 }
 
-export default function AddParticipantsTemplate() {
+interface InfoProps {
+  handleClose: () => void;
+  ParticipantsData?: ParticipantsData;
+  handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
+  getParticipantsData?: (is_org: boolean) => void;
+}
+
+export default function AddParticipantsTemplate(props: InfoProps) {
+  const { handleClose } = props;
   const css = useStyles();
   const [defaultFilter, setDefaultFilter] = React.useState("students");
   const data = {
@@ -198,7 +207,9 @@ export default function AddParticipantsTemplate() {
         })}
       </FormGroup>
       <div className={css.buttons}>
-        <Button variant="outlined">{d("Cancel").t("assess_button_cancel")}</Button>
+        <Button variant="outlined" onClick={handleClose}>
+          {d("Cancel").t("assess_button_cancel")}
+        </Button>
         <Button variant="contained" color="primary" className={css.lastButton}>
           {d("OK").t("assess_label_ok")}
         </Button>
