@@ -508,12 +508,15 @@ function EditBox(props: CalendarStateProps) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
 
-      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework") {
+      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
       }
 
-      if (scheduleList.class_type === "Homework" && timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime) {
+      if (
+        (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") &&
+        timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime
+      ) {
         dispatch(actError(d("Due date cannot be earlier than today.").t("schedule_msg_earlier_today")));
         return;
       }
