@@ -379,7 +379,7 @@ function EditBox(props: CalendarStateProps) {
 
     if (type === "all_day_start") {
       const currentDate = new Date();
-      if (currentDate.getMonth() + 1 === M && currentDate.getDate() === D) {
+      if (dateNumFun(currentDate.getMonth() + 1) === M && currentDate.getDate() === D) {
         return (currentTime as number) + 60;
       } else {
         return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
