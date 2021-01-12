@@ -320,9 +320,11 @@ function ContentCard(props: ContentProps) {
             {content?.name}
           </Typography>
           {content.content_type === ContentType.folder && (
-            <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
-              <EditOutlinedIcon />
-            </IconButton>
+            <Permission value={PermissionType.create_folder_289}>
+              <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
+                <EditOutlinedIcon />
+              </IconButton>
+            </Permission>
           )}
           <ExpandBtn className={clsx(css.iconButtonExpandMore, css.MuiIconButtonRoot)} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
