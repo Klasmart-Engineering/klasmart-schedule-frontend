@@ -7,6 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { AddCircleOutlineOutlined, Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
+import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -102,6 +103,29 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginTop: "20px",
     borderRadius: "5px",
     overflow: "auto",
+  },
+  participantSaveBox: {
+    width: "100%",
+    maxHeight: "200px",
+    border: "1px solid rgba(0, 0, 0, 0.23)",
+    marginTop: "20px",
+    borderRadius: "5px",
+    padding: "0px 0px 20px 0px",
+    overflow: "auto",
+    "&::-webkit-scrollbar": {
+      width: "3px",
+    },
+    "&::-webkit-scrollbar-track": {
+      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "3px",
+      backgroundColor: "rgb(220, 220, 220)",
+      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
   },
   participantContent: {
     backgroundColor: "#E6E6E6",
@@ -205,6 +229,7 @@ function EditBox(props: CalendarStateProps) {
     setSpecificStatus,
     specificStatus,
     participantsIds,
+    classRosterIds,
     ParticipantsData,
     handleChangeParticipants,
     getParticipantsData,
@@ -394,6 +419,9 @@ function EditBox(props: CalendarStateProps) {
   const [scheduleList, setScheduleList] = React.useState<EntityScheduleAddView>(initData);
   const [initScheduleList, setInitScheduleList] = React.useState<EntityScheduleAddView>(initData);
 
+  const [rosterSaveStatus, setRosterSaveStatus] = React.useState(false);
+  const [participantSaveStatus, setParticipantSaveStatus] = React.useState(false);
+
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
     return timestampInt(new Date(currentTime).getTime() / 1000);
@@ -415,7 +443,7 @@ function EditBox(props: CalendarStateProps) {
 
     if (type === "all_day_start") {
       const currentDate = new Date();
-      if (currentDate.getMonth() + 1 === M && currentDate.getDate() === D) {
+      if (dateNumFun(currentDate.getMonth() + 1) === M && currentDate.getDate() === D) {
         return (currentTime as number) + 60;
       } else {
         return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
@@ -946,6 +974,18 @@ function EditBox(props: CalendarStateProps) {
       </MenuItem>
     ));
 
+  const menuItemListClassKr = (type: string) => {
+    const participantSet: any =
+      type === "roster"
+        ? classRosterIds?.teacher.concat(classRosterIds?.student)
+        : participantsIds?.teacher.concat(participantsIds?.student);
+    return participantSet.map((item: any, key: number) => (
+      <span key={key} className={css.participantContent}>
+        {item.name}
+      </span>
+    ));
+  };
+
   const menuItemListClassKrParticipants = (type: string) => {
     const participant: any = participantMockOptions.participantList;
     const participantSet = type === "teacher" ? participant.class.teachers : participant.class.students;
@@ -1115,29 +1155,49 @@ function EditBox(props: CalendarStateProps) {
             )}
           />
         )}
-        {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) && (
-          <Box className={css.participantBox}>
-            <div style={{ textAlign: "end" }}>
-              <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Select All" />
-              <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Unselect All" />
-            </div>
-            <div className={css.scrollRoster}>
-              <div style={{ textAlign: "center", width: "202px" }}>
-                <span style={{ display: "block", fontWeight: "bold" }}>Students</span>
-                {menuItemListClassKrParticipants("students")}
+        {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
+          !rosterSaveStatus && (
+            <Box className={css.participantBox}>
+              <div style={{ textAlign: "end" }}>
+                <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Select All" />
+                <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Unselect All" />
               </div>
-              <div style={{ width: "1px", height: "160px", backgroundColor: "#bfbfbf", position: "absolute", left: "50%" }}></div>
-              <div style={{ textAlign: "center", width: "202px" }}>
-                <span style={{ display: "block", fontWeight: "bold" }}>Teachers</span>
-                {menuItemListClassKrParticipants("teachers")}
+              <div className={css.scrollRoster}>
+                <div style={{ textAlign: "center", width: "202px" }}>
+                  <span style={{ display: "block", fontWeight: "bold" }}>Students</span>
+                  {menuItemListClassKrParticipants("students")}
+                </div>
+                <div style={{ width: "1px", height: "160px", backgroundColor: "#bfbfbf", position: "absolute", left: "50%" }}></div>
+                <div style={{ textAlign: "center", width: "202px" }}>
+                  <span style={{ display: "block", fontWeight: "bold" }}>Teachers</span>
+                  {menuItemListClassKrParticipants("teachers")}
+                </div>
               </div>
-            </div>
-            <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
-              OK
-            </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setRosterSaveStatus(true);
+                }}
+                color="primary"
+                style={{ float: "right", margin: "6px 8px 6px 0px" }}
+              >
+                OK
+              </Button>
+            </Box>
+          )}
+        {menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
+          <Box className={css.participantSaveBox}>
+            <CreateOutlinedIcon
+              onClick={() => {
+                setRosterSaveStatus(false);
+              }}
+              style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+            />
+            <br />
+            {menuItemListClassKr("roster")}
           </Box>
         )}
-        {(participantsIds?.student || participantsIds?.teacher) && (
+        {(participantsIds?.student || participantsIds?.teacher) && !participantSaveStatus && (
           <Box className={css.participantBox}>
             <div className={css.scrollRoster} style={{ marginTop: "20px" }}>
               <div style={{ textAlign: "center", width: "202px" }}>
@@ -1170,12 +1230,31 @@ function EditBox(props: CalendarStateProps) {
                 })}
               </div>
             </div>
-            <Button variant="contained" color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setParticipantSaveStatus(true);
+              }}
+              style={{ float: "right", margin: "6px 8px 6px 0px" }}
+            >
               OK
             </Button>
             <Button variant="contained" onClick={addParticipants} color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
               Add
             </Button>
+          </Box>
+        )}
+        {menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
+          <Box className={css.participantSaveBox}>
+            <CreateOutlinedIcon
+              onClick={() => {
+                setParticipantSaveStatus(false);
+              }}
+              style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+            />
+            <br />
+            {menuItemListClassKr("teacher")}
           </Box>
         )}
         {!participantsIds?.student && !participantsIds?.teacher && (
