@@ -42,6 +42,7 @@ const useStyles = makeStyles(() => ({
       height: "100%",
     },
     padding: "0 10px",
+    minWidth: "50px",
   },
 }));
 
@@ -113,18 +114,21 @@ export default function H5pList(props: H5pListProps) {
           })}
       </List>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"Change content type?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{reportMiss("Change content type?", "h5p_change_content_type")}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?
+            {reportMiss(
+              "By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?",
+              "h5p_dialog_content"
+            )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            cancelLabel
+            {reportMiss("cancelLabel", "h5p_cancel")}
           </Button>
           <Button onClick={handleConfirm} variant="contained" color="primary" startIcon={<Check />}>
-            confirmLabel
+            {reportMiss("confirmLabel", "h5p_confirm")}
           </Button>
         </DialogActions>
       </Dialog>

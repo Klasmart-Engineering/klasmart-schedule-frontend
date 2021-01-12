@@ -31,7 +31,7 @@ export function H5pLibraryInput(props: H5pLibraryInputProps) {
   };
 
   const searchChange = (value: string) => {
-    const result = contentTypeList.filter((item: any) => item.title.includes(value));
+    const result = contentTypeList.filter((item: any) => item.title.toLowerCase().includes(value.toLowerCase()));
     setNewList(result);
   };
 
