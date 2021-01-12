@@ -1,5 +1,9 @@
-import { Box, InputLabel, makeStyles, Typography } from "@material-ui/core";
+import { Box, Button, InputLabel, makeStyles, Typography } from "@material-ui/core";
+import ImageIcon from "@material-ui/icons/Image";
+import TextFieldsIcon from "@material-ui/icons/TextFields";
+import TrackChangesIcon from "@material-ui/icons/TrackChanges";
 import React, { Fragment } from "react";
+import { reportMiss } from "../../locale/LocaleManager";
 import { H5pElementGroupProps } from "../H5pElement";
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -24,13 +28,15 @@ const useStyles = makeStyles(({ palette }) => ({
     borderBottom: "1px solid #ccc",
     display: "flex",
     alignItems: "center",
-    justifyContent: "start",
+  },
+  buttonTcon: {
+    marginLeft: 8,
   },
 }));
 
 export function WidgetElement(props: H5pElementGroupProps) {
   const css = useStyles();
-  const { itemHelper } = props;
+  const { itemHelper, children } = props;
   const { semantics } = itemHelper;
   const discription = semantics.description?.split("<br/>");
   return (
@@ -39,9 +45,31 @@ export function WidgetElement(props: H5pElementGroupProps) {
         {semantics.label || semantics.name}
       </InputLabel>
       <Box className={css.DragQuestionBox} width={630} height={310}>
-        <Box className={css.handerBox}></Box>
+        <Box className={css.handerBox} pl={1}>
+          <Button variant="outlined">
+            <TrackChangesIcon />
+          </Button>
+          <Button className={css.buttonTcon} variant="outlined">
+            <TextFieldsIcon />
+          </Button>
+          <Button className={css.buttonTcon} variant="outlined">
+            <ImageIcon />
+          </Button>
+        </Box>
+      </Box>
+      <Box className={css.DragQuestionBox} boxShadow={3}>
+        <Box p={2}>{children[1]}</Box>
+        <Box className={css.handerBox} justifyContent="flex-end" pr={1} borderTop="1px solid #ccc">
+          <Button color="secondary" size="small">
+            {reportMiss("remove", "button_lable")}
+          </Button>
+          <Button className={css.buttonTcon} color="primary" variant="contained" size="small">
+            {reportMiss("Completed", "button_lable")}
+          </Button>
+        </Box>
       </Box>
 
+      {children[0]}
       {discription &&
         discription.map((item, idx) => {
           return (
