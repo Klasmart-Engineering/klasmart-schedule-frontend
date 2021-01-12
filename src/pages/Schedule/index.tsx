@@ -23,6 +23,7 @@ import {
   getScheduleTimeViewData,
   getSearchScheduleList,
   scheduleUpdateStatus,
+  getClassesBySchool,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -158,6 +159,7 @@ function ScheduleContent() {
   }, [modelView, timesTamp, dispatch]);
 
   const getOrgByClass = usePermission(PermissionType.create_event_520);
+  const getOrgBySchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
@@ -167,10 +169,12 @@ function ScheduleContent() {
   React.useEffect(() => {
     if (getOrgByClass) {
       dispatch(getClassesByOrg());
+    } else if (getOrgBySchool) {
+      dispatch(getClassesBySchool());
     } else {
       dispatch(getClassesByTeacher());
     }
-  }, [dispatch, getOrgByClass]);
+  }, [dispatch, getOrgByClass, getOrgBySchool]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));

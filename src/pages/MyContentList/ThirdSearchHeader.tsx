@@ -162,24 +162,61 @@ function getBulkAction(
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      let res = [
-        { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-        { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-        { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
-      ];
-      if (actionObj?.folder)
-        res = [
-          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-        ];
-      if (actionObj?.notFolder && perm.archive_published_content_273)
+      let res: BulkActionOption[] = [];
+      if (perm.create_folder_289 && perm.archive_published_content_273) {
         res = [
           { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
           { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
         ];
-      if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+      } else if (perm.create_folder_289 && !perm.archive_published_content_273) {
+        res = [
+          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+        ];
+      } else if (!perm.create_folder_289 && perm.archive_published_content_273) {
+        res = [
+          { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
+          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+        ];
+      } else {
+        res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
+      }
+      if (actionObj?.folder) {
+        if (perm.create_folder_289) {
+          res = [
+            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+            { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+          ];
+        } else {
+          res = [];
+        }
+      }
+      if (actionObj?.notFolder) {
+        if (perm.archive_published_content_273 && perm.create_folder_289) {
+          res = [
+            { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
+            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          ];
+        } else if (!perm.archive_published_content_273 && perm.create_folder_289) {
+          res = [
+            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          ];
+        } else {
+          res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
+        }
+      }
+      if (actionObj?.bothHave) {
+        if (perm.create_folder_289) {
+          res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+        } else {
+          res = [];
+        }
+      }
       return res;
     case PublishStatus.pending:
       const pendingRes = [];
@@ -252,6 +289,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     PermissionType.delete_archived_content_275,
     PermissionType.approve_pending_content_271,
     PermissionType.reject_pending_content_272,
+    PermissionType.create_folder_289,
   ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
@@ -377,6 +415,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     PermissionType.delete_archived_content_275,
     PermissionType.approve_pending_content_271,
     PermissionType.reject_pending_content_272,
+    PermissionType.create_folder_289,
   ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

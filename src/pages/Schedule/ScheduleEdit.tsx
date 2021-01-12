@@ -306,7 +306,7 @@ function EditBox(props: CalendarStateProps) {
         (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
         newData.start_at * 1000 - currentTime < 15 * 60 * 1000
       ) {
-        dispatch(getScheduleLiveToken({ schedule_id: scheduleId, live_token_type: "live", metaLoading: true }));
+        dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       }
       dispatch(getScheduleParticipant({ class_id: newData.class_id }));
     }
@@ -379,7 +379,7 @@ function EditBox(props: CalendarStateProps) {
 
     if (type === "all_day_start") {
       const currentDate = new Date();
-      if (currentDate.getMonth() + 1 === M && currentDate.getDate() === D) {
+      if (dateNumFun(currentDate.getMonth() + 1) === M && currentDate.getDate() === D) {
         return (currentTime as number) + 60;
       } else {
         return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
@@ -504,16 +504,19 @@ function EditBox(props: CalendarStateProps) {
     const addData: any = {};
     addData["due_at"] = 0;
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (checkedStatus.dueDateCheck) {
+    if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
 
-      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework") {
+      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
       }
 
-      if (scheduleList.class_type === "Homework" && dueDateTimestamp <= currentTime) {
+      if (
+        (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") &&
+        timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime
+      ) {
         dispatch(actError(d("Due date cannot be earlier than today.").t("schedule_msg_earlier_today")));
         return;
       }
@@ -613,9 +616,14 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const getClassOption = (): any => {
-    const lists = perm.create_event_520
-      ? classOptions.classListOrg.organization?.classes
-      : classOptions.classListTeacher.user?.classesTeaching;
+    let lists: any;
+    if (perm.create_event_520) {
+      lists = classOptions.classListOrg.organization?.classes;
+    } else if (perm.create_my_schools_schedule_events_522) {
+      lists = classOptions.classListSchool.school?.classes;
+    } else {
+      lists = classOptions.classListTeacher.user?.classesTeaching;
+    }
     return lists?.map((item: any) => {
       return { id: item.class_id, name: item.class_name };
     });
@@ -623,8 +631,7 @@ function EditBox(props: CalendarStateProps) {
 
   const saveTheTest = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
-      console.log(scheduleDetial.start_at, currentTime);
+    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -755,8 +762,7 @@ function EditBox(props: CalendarStateProps) {
 
   const handleDelete = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
-      console.log(scheduleDetial.start_at, currentTime);
+    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),

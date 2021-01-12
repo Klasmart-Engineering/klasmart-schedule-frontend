@@ -16,6 +16,18 @@ import {
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
+  ClassesBySchoolDocument,
+  MySchoolIDsDocument,
+  MySchoolIDsQuery,
+  MySchoolIDsQueryVariables,
+  ClassesBySchoolQuery,
+  ClassesBySchoolQueryVariables,
+  ParticipantsByOrganizationDocument,
+  ParticipantsBySchoolDocument,
+  ParticipantsByOrganizationQuery,
+  ParticipantsByOrganizationQueryVariables,
+  ParticipantsBySchoolQuery,
+  ParticipantsBySchoolQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassType,
@@ -48,6 +60,21 @@ interface scheduleViewData {
 interface classOptionsProp {
   classListOrg: ClassesByOrganizationQuery;
   classListTeacher: ClassesByTeacherQuery;
+  classListSchool: ClassesBySchoolQuery;
+}
+
+interface RolesData {
+  user_id: string;
+  user_name: string;
+}
+
+interface ClassesData {
+  students: RolesData[];
+  teachers: RolesData[];
+}
+
+interface ParticipantsData {
+  classes: ClassesData;
 }
 
 export interface ScheduleState {
@@ -67,6 +94,7 @@ export interface ScheduleState {
   liveToken: string;
   contentsAuthList: EntityContentInfoWithDetails[];
   classOptions: classOptionsProp;
+  ParticipantsData: ParticipantsData;
 }
 
 interface Rootstate {
@@ -147,6 +175,17 @@ const initialState: ScheduleState = {
         classesTeaching: [],
       },
     },
+    classListSchool: {
+      school: {
+        classes: [],
+      },
+    },
+  },
+  ParticipantsData: {
+    classes: {
+      students: [],
+      teachers: [],
+    },
   },
 };
 
@@ -225,6 +264,45 @@ export const getClassesByOrg = createAsyncThunk("getClassesByOrg", async () => {
     query: ClassesByOrganizationDocument,
     variables: {
       organization_id,
+    },
+  });
+});
+
+export const getParticipantsData = createAsyncThunk("getParticipantsData", async (is_org: boolean) => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  if (is_org) {
+    const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
+      query: ParticipantsByOrganizationDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    return data.organization;
+  } else {
+    const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+      query: MySchoolIDsDocument,
+      variables: { organization_id },
+    });
+    const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
+      query: ParticipantsBySchoolDocument,
+      variables: {
+        school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
+      },
+    });
+    return data.school;
+  }
+});
+
+export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const { data } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+    query: MySchoolIDsDocument,
+    variables: { organization_id },
+  });
+  return gqlapi.query<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>({
+    query: ClassesBySchoolDocument,
+    variables: {
+      school_id: data.me?.membership?.schoolMemberships![0]?.school_id as string,
     },
   });
 });
@@ -446,6 +524,12 @@ const { actions, reducer } = createSlice({
     },
     [getClassesByOrg.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListOrg = payload.data;
+    },
+    [getClassesBySchool.fulfilled.type]: (state, { payload }: any) => {
+      state.classOptions.classListSchool = payload.data;
+    },
+    [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
+      state.ParticipantsData = payload;
     },
   },
 });

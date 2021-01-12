@@ -320,9 +320,11 @@ function ContentCard(props: ContentProps) {
             {content?.name}
           </Typography>
           {content.content_type === ContentType.folder && (
-            <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
-              <EditOutlinedIcon />
-            </IconButton>
+            <Permission value={PermissionType.create_folder_289}>
+              <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
+                <EditOutlinedIcon />
+              </IconButton>
+            </Permission>
           )}
           <ExpandBtn className={clsx(css.iconButtonExpandMore, css.MuiIconButtonRoot)} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
@@ -366,14 +368,16 @@ function ContentCard(props: ContentProps) {
             )}
           {!queryCondition.program_group &&
             (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-                onClick={() => onClickMoveBtn(content)}
-              >
-                <FolderOpenIcon />
-              </LButton>
+              <Permission value={PermissionType.create_folder_289}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+                  onClick={() => onClickMoveBtn(content)}
+                >
+                  <FolderOpenIcon />
+                </LButton>
+              </Permission>
             )}
           {/* content published remove */}
           {!queryCondition.program_group &&
@@ -392,14 +396,16 @@ function ContentCard(props: ContentProps) {
               </Permission>
             )}
           {!queryCondition.program_group && content?.content_type === ContentType.folder && (
-            <LButton
-              as={IconButton}
-              replace
-              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-              onClick={() => onDeleteFolder(content.id as string)}
-            >
-              <DeleteOutlineIcon />
-            </LButton>
+            <Permission value={PermissionType.create_folder_289}>
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                onClick={() => onDeleteFolder(content.id as string)}
+              >
+                <DeleteOutlineIcon />
+              </LButton>
+            </Permission>
           )}
           {/* content archieved republish delete */}
           {!queryCondition.program_group &&
