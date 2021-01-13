@@ -90,7 +90,7 @@ function ScheduleContent() {
   };
 
   const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
-    type === "classRoster" ? setParticipantsIds(data) : setClassRosterIds(data);
+    type === "classRoster" ? setClassRosterIds(data) : setParticipantsIds(data);
   };
 
   const initModalDate: AlertDialogProps = {

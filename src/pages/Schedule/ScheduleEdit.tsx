@@ -51,6 +51,7 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
+import Radio from "@material-ui/core/Radio";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -138,7 +139,7 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
   scrollRoster: {
     display: "flex",
-    height: "160px",
+    maxHeight: "160px",
     [theme.breakpoints.down("lg")]: {
       height: "200px",
     },
@@ -280,8 +281,45 @@ function EditBox(props: CalendarStateProps) {
     PermissionType.create_my_schools_schedule_events_522,
     PermissionType.attend_live_class_as_a_student_187,
   ]);
+  const [rosterChecked, setRosterChecked] = React.useState("all");
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
+
+  const handleRosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === "all") {
+      const participant: any = participantMockOptions.participantList;
+      const student = participant.class.students.map((item: any, key: number) => {
+        return { id: item.user_id, name: item.user_name };
+      });
+      const teacher = participant.class.teachers.map((item: any, key: number) => {
+        return { id: item.user_id, name: item.user_name };
+      });
+      handleChangeParticipants("classRoster", { student, teacher } as ParticipantsShortInfo);
+    } else {
+      handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
+    }
+    setRosterChecked(event.target.value);
+  };
+
+  const handleRosterChangeBox = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    const rosterItem = [{ id: event.target.value, name: event.target.name }];
+    if (event.target.checked) {
+      handleChangeParticipants("classRoster", {
+        student: classRosterIds?.student.concat(rosterItem),
+        teacher: classRosterIds?.teacher,
+      } as ParticipantsShortInfo);
+    } else {
+      classRosterIds?.student.forEach((item: ClassOptionsItem, index: number) => {
+        if (JSON.stringify(item) === JSON.stringify(rosterItem[0])) {
+          classRosterIds?.student.splice(index, 1);
+        }
+      });
+      handleChangeParticipants("classRoster", {
+        student: { ...classRosterIds?.student },
+        teacher: { ...classRosterIds?.teacher },
+      } as ParticipantsShortInfo);
+    }
+  };
 
   React.useEffect(() => {
     if (scheduleId) {
@@ -1021,7 +1059,20 @@ function EditBox(props: CalendarStateProps) {
     const participantSet = type === "teacher" ? participant.class.teachers : participant.class.students;
     return participantSet.map((item: any, key: number) => (
       <Tooltip title={item.user_name} placement="right-start">
-        <FormControlLabel className={css.participantText} control={<Checkbox name="checkedB" color="primary" />} label={item.user_name} />
+        <FormControlLabel
+          className={css.participantText}
+          control={
+            <Checkbox
+              name={item.user_name}
+              color="primary"
+              value={item.user_id}
+              onChange={(e) => {
+                handleRosterChangeBox(e, type);
+              }}
+            />
+          }
+          label={item.user_name}
+        />
       </Tooltip>
     ));
   };
@@ -1185,8 +1236,24 @@ function EditBox(props: CalendarStateProps) {
           !rosterSaveStatus && (
             <Box className={css.participantBox}>
               <div style={{ textAlign: "end" }}>
-                <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Select All" />
-                <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Unselect All" />
+                <FormControlLabel
+                  control={
+                    <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
+                  }
+                  label="Select All"
+                />
+                <FormControlLabel
+                  control={
+                    <Radio
+                      name="checkedB"
+                      value="empty"
+                      color="primary"
+                      checked={rosterChecked === "empty"}
+                      onChange={handleRosterChange}
+                    />
+                  }
+                  label="Unselect All"
+                />
               </div>
               <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
                 <div style={{ textAlign: "center", width: "202px" }}>
@@ -1534,7 +1601,7 @@ interface CalendarStateProps {
   setSpecificStatus?: (value: boolean) => void;
   participantsIds?: ParticipantsShortInfo;
   classRosterIds?: ParticipantsShortInfo;
-  handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
+  handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
   ParticipantsData?: ParticipantsData;
   getParticipantsData?: (is_org: boolean) => void;
 }
@@ -1585,6 +1652,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleMockOptions={scheduleMockOptions}
           participantMockOptions={participantMockOptions}
           getParticipantOptions={getParticipantOptions}
+          handleChangeParticipants={handleChangeParticipants}
         />
       </Box>
       <Box
