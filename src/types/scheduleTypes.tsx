@@ -94,12 +94,31 @@ export interface FilterQueryTypeProps {
 }
 
 export interface ClassOptionsItem {
-  class_id?: string;
-  class_name?: string;
+  id?: string;
+  name?: string;
 }
 
 export interface EntityLessonPlanShortInfo {
   title?: string;
   id?: string;
   name?: string;
+}
+
+export interface ParticipantsShortInfo {
+  student: ClassOptionsItem[];
+  teacher: ClassOptionsItem[];
+}
+
+export interface RolesData {
+  user_id: string;
+  user_name: string;
+}
+
+export interface ClassesData {
+  students: RolesData[];
+  teachers: RolesData[];
+}
+
+export interface ParticipantsData {
+  classes: ClassesData;
 }
