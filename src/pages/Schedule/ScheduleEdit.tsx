@@ -103,6 +103,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginTop: "20px",
     borderRadius: "5px",
     overflow: "auto",
+    position: "relative",
   },
   participantSaveBox: {
     width: "100%",
@@ -156,6 +157,32 @@ const useStyles = makeStyles(({ shadows }) => ({
     "&::-webkit-scrollbar-thumb:window-inactive": {
       backgroundColor: "rgba(220,220,220,0.4)",
     },
+  },
+  participantButton: {
+    float: "right",
+    margin: "6px 8px 6px 0px",
+    backgroundColor: "#C5DFF5",
+    color: "#0E78D5",
+  },
+  splitLine: {
+    width: "1px",
+    height: "130px",
+    backgroundColor: "rgb(191, 191, 191)",
+    position: "absolute",
+    left: "50%",
+    top: "20%",
+  },
+  participantText: {
+    width: "150px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    margin: "0 auto",
+  },
+  participantTitle: {
+    display: "block",
+    fontWeight: "bold",
+    fontSize: "14px",
   },
 }));
 
@@ -991,11 +1018,7 @@ function EditBox(props: CalendarStateProps) {
     const participantSet = type === "teacher" ? participant.class.teachers : participant.class.students;
     return participantSet.map((item: any, key: number) => (
       <Tooltip title={item.user_name} placement="right-start">
-        <FormControlLabel
-          style={{ width: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-          control={<Checkbox name="checkedB" color="primary" />}
-          label={item.user_name}
-        />
+        <FormControlLabel className={css.participantText} control={<Checkbox name="checkedB" color="primary" />} label={item.user_name} />
       </Tooltip>
     ));
   };
@@ -1162,14 +1185,14 @@ function EditBox(props: CalendarStateProps) {
                 <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Select All" />
                 <FormControlLabel control={<Checkbox name="checkedB" color="primary" />} label="Unselect All" />
               </div>
-              <div className={css.scrollRoster}>
+              <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
                 <div style={{ textAlign: "center", width: "202px" }}>
-                  <span style={{ display: "block", fontWeight: "bold" }}>Students</span>
+                  <span className={css.participantTitle}>Students</span>
                   {menuItemListClassKrParticipants("students")}
                 </div>
-                <div style={{ width: "1px", height: "160px", backgroundColor: "#bfbfbf", position: "absolute", left: "50%" }}></div>
+                <div className={css.splitLine}></div>
                 <div style={{ textAlign: "center", width: "202px" }}>
-                  <span style={{ display: "block", fontWeight: "bold" }}>Teachers</span>
+                  <span className={css.participantTitle}>Teachers</span>
                   {menuItemListClassKrParticipants("teachers")}
                 </div>
               </div>
@@ -1178,8 +1201,7 @@ function EditBox(props: CalendarStateProps) {
                 onClick={() => {
                   setRosterSaveStatus(true);
                 }}
-                color="primary"
-                style={{ float: "right", margin: "6px 8px 6px 0px" }}
+                className={css.participantButton}
               >
                 OK
               </Button>
@@ -1199,14 +1221,14 @@ function EditBox(props: CalendarStateProps) {
         )}
         {(participantsIds?.student || participantsIds?.teacher) && !participantSaveStatus && (
           <Box className={css.participantBox}>
-            <div className={css.scrollRoster} style={{ marginTop: "20px" }}>
+            <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
               <div style={{ textAlign: "center", width: "202px" }}>
-                <span style={{ display: "block", fontWeight: "bold" }}>Students</span>
+                <span className={css.participantTitle}>Students</span>
                 {participantsIds?.student.map((item: ClassOptionsItem) => {
                   return (
                     <Tooltip title={item.name as string} placement="right-start">
                       <FormControlLabel
-                        style={{ width: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        className={css.participantText}
                         control={<Checkbox name="checkedB" color="primary" />}
                         label={item.name}
                       />
@@ -1214,14 +1236,14 @@ function EditBox(props: CalendarStateProps) {
                   );
                 })}
               </div>
-              <div style={{ width: "1px", height: "160px", backgroundColor: "#bfbfbf", position: "absolute", left: "50%" }}></div>
+              <div className={css.splitLine}></div>
               <div style={{ textAlign: "center", width: "202px" }}>
-                <span style={{ display: "block", fontWeight: "bold" }}>Teachers</span>
+                <span className={css.participantTitle}>Teachers</span>
                 {participantsIds?.student.map((item: ClassOptionsItem) => {
                   return (
                     <Tooltip title={item.name as string} placement="right-start">
                       <FormControlLabel
-                        style={{ width: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        className={css.participantText}
                         control={<Checkbox name="checkedB" color="primary" />}
                         label={item.name}
                       />
@@ -1236,11 +1258,11 @@ function EditBox(props: CalendarStateProps) {
               onClick={() => {
                 setParticipantSaveStatus(true);
               }}
-              style={{ float: "right", margin: "6px 8px 6px 0px" }}
+              className={css.participantButton}
             >
               OK
             </Button>
-            <Button variant="contained" onClick={addParticipants} color="primary" style={{ float: "right", margin: "6px 8px 6px 0px" }}>
+            <Button variant="contained" onClick={addParticipants} className={css.participantButton}>
               Add
             </Button>
           </Box>

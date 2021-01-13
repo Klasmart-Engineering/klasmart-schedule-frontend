@@ -65,11 +65,7 @@ export const apiGenH5pResourceByToken = (token: string) => {
 };
 
 export const apiLivePath = (token: string) => {
-  const { hostname } = window.location;
-  const lastDomainDotName = hostname !== "localhost" ? hostname.split(".").pop() : "cn";
-  // 地址修改后需要再改
-  const cl = hostname.split(".").pop() === "net" ? "/class-live/" : "";
-  return `https://live.kidsloop.${lastDomainDotName}${cl}?token=${token}`;
+  return `${process.env.REACT_APP_LIVE_LINK}?token=${token}`;
 };
 
 export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: string) => {
