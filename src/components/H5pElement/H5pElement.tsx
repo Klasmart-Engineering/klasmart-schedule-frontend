@@ -6,6 +6,7 @@ import {
   Button,
   ButtonProps,
   Checkbox,
+  CheckboxProps,
   createStyles,
   Dialog,
   DialogContent,
@@ -16,6 +17,7 @@ import {
   MenuItem,
   styled,
   TextField,
+  TextFieldProps,
 } from "@material-ui/core";
 import { Cancel, Close, CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
@@ -119,70 +121,92 @@ export function H5pElement(props: H5pElementProps) {
   return <Fragment />;
 }
 
-export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic>;
+export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic> & Omit<TextFieldProps, "onChange" | "variant">;
 export function H5pElementText(props: H5pElementTextProps) {
   const {
-    itemHelper: { path, semantics },
+    itemHelper: { path, semantics, content },
     onChange,
     className,
+    ...inputProps
   } = props;
   return (
     <TextField
+      {...inputProps}
       className={className}
       required={!semantics.optional}
+      defaultValue={content}
+      placeholder={semantics.placeholder}
       name={path}
       label={semantics.label || semantics.name}
       onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
+      key={`${path}: ${content}`}
     />
   );
 }
 
-export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic>;
+export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic> & Omit<TextFieldProps, "onChange" | "variant">;
 export function H5pElementNumber(props: H5pElementNumberProps) {
   const {
-    itemHelper: { path, semantics },
+    itemHelper: { path, semantics, content },
     onChange,
     className,
+    ...inputProps
   } = props;
   return (
     <TextField
+      {...inputProps}
       className={className}
       required={!semantics.optional}
+      defaultValue={content}
+      placeholder={semantics.placeholder}
       name={path}
       type="number"
       label={semantics.label || semantics.name}
       onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
+      key={`${path}: ${content}`}
     />
   );
 }
 
-export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic>;
+export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic> & Omit<CheckboxProps, "onChange" | "variant">;
 export function H5pElementBoolean(props: H5pElementBooleanProps) {
   const {
-    itemHelper: { path, semantics },
+    itemHelper: { path, semantics, content },
     onChange,
     className,
+    ...inputProps
   } = props;
   return (
     <FormControlLabel
       className={className}
-      control={<Checkbox name={path} onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })} />}
+      control={
+        <Checkbox
+          {...inputProps}
+          name={path}
+          defaultChecked={content}
+          onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })}
+          key={`${path}: ${content}`}
+        />
+      }
       label={semantics.label || semantics.name}
     />
   );
 }
 
-export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic>;
+export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic> & Omit<TextFieldProps, "onChange" | "variant">;
 export function H5pElementSelect(props: H5pElementSelectProps) {
   const {
     itemHelper: { path, semantics, content },
     onChange,
     className,
+    ...inputProps
   } = props;
   return (
     <TextField
+      {...inputProps}
       select
       value={content ?? ""}
+      placeholder={semantics.placeholder}
       required={!semantics.optional}
       label={semantics.label || semantics.name}
       className={className}
@@ -279,28 +303,42 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
     onChange({ semantics, path, content: { ...content, path: id, mime } });
   };
   return (
-    <SingleUploader
-      partition="assets"
-      accept="image/*,audio/*,video/*"
-      onChangeFile={handleChangeFile}
-      render={({ uploady, item, btnRef, value, isUploading }) => (
-        <Box className={clsx(className, classes?.root)} display="flex">
-          <Button
-            className={classes?.uploadButton}
-            ref={btnRef}
-            size="medium"
-            variant="contained"
-            component="span"
-            color="primary"
-            endIcon={<CloudUploadOutlined />}
-          >
-            {d("Upload from Device").t("library_label_upload_from_device")}
-          </Button>
-          {isUploading && <ProgressWithText value={item?.completed} />}
-          {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
-        </Box>
-      )}
-    />
+    <div className={clsx(className, classes?.root)}>
+      <div className={classes?.paragraph}>
+        <InputLabel className={classes?.title} required={!semantics.optional}>
+          {semantics.label || semantics.name}
+        </InputLabel>
+        <div className={classes?.description}>{semantics.description}</div>
+      </div>
+      <SingleUploader
+        partition="assets"
+        accept="image/*,audio/*,video/*"
+        value={content?.path}
+        onChangeFile={handleChangeFile}
+        render={({ uploady, item, btnRef, value, isUploading }) => (
+          <Box display="flex">
+            <Button
+              className={classes?.uploadButton}
+              ref={btnRef}
+              size="medium"
+              variant="contained"
+              component="span"
+              color="primary"
+              endIcon={<CloudUploadOutlined />}
+            >
+              {d("Upload from Device").t("library_label_upload_from_device")}
+            </Button>
+            {content?.copyright && (
+              <DialogButton variant="contained" color="primary" size="medium" label="Edit copyright" className={classes?.copyrightButton}>
+                <CopyrightForm {...props} />
+              </DialogButton>
+            )}
+            {isUploading && <ProgressWithText value={item?.completed} />}
+            {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
+          </Box>
+        )}
+      />
+    </div>
   );
 }
 
@@ -315,7 +353,7 @@ export function H5pElementImage(props: H5pElementMediaProps) {
     });
   };
   return (
-    <Fragment>
+    <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
         <InputLabel className={classes?.title} required={!semantics.optional}>
           {semantics.label || semantics.name}
@@ -328,10 +366,10 @@ export function H5pElementImage(props: H5pElementMediaProps) {
             partition="assets"
             accept="image/*"
             value={content?.path}
-            transformFile={crop}
+            // transformFile={crop}
             onChangeFile={handleChangeFile}
             render={({ uploady, item, btnRef, value, isUploading }) => (
-              <Box className={clsx(className, classes?.root)} display="flex">
+              <Box display="flex">
                 <Box display="flex" flexDirection="column" marginRight="auto">
                   <Button
                     className={classes?.uploadButton}
@@ -363,7 +401,7 @@ export function H5pElementImage(props: H5pElementMediaProps) {
           />
         )}
       />
-    </Fragment>
+    </div>
   );
 }
 

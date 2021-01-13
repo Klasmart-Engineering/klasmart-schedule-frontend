@@ -1,5 +1,5 @@
 import { Button, IconButton, InputLabel, makeStyles, Tab, Tabs, Tooltip, Typography } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
+import { Cancel } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Children, Fragment, useMemo, useState } from "react";
 import { H5pElementListProps } from "../H5pElement";
@@ -12,7 +12,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
   tabPane: {
     width: "100%",
-    padding: 10,
+    padding: "0 32px 32px",
     display: "none",
     "&.active": {
       display: "block",
@@ -37,7 +37,7 @@ const useStyles = makeStyles(({ palette }) => ({
   closeButton: {
     position: "absolute",
     top: 0,
-    right: 0,
+    right: 12,
     cursor: "pointer",
   },
   tabLabel: {
@@ -115,7 +115,7 @@ export function WidgetElement(props: H5pElementListProps) {
                   <div className={css.tabLabel}>
                     <Tooltip title="Remove Item">
                       <IconButton aria-label="close" size="small" className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)}>
-                        <CloseIcon />
+                        <Cancel />
                       </IconButton>
                     </Tooltip>
                     <Typography variant="h6"> {`${idx + 1}.${semantics.entity}`}</Typography>

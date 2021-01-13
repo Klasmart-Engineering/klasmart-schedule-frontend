@@ -262,6 +262,7 @@ export function H5pDetails(props: H5pDetailsProps) {
           },
           onAddListItem: dispatchAddListItem,
           onRemoveListItem: dispatchRemoveListItem,
+          onChange: pipe(dispatchChange, onChange),
         };
         elementProps = extendedProps;
       } else if (isH5pElementGroup(elementProps)) {
@@ -272,6 +273,7 @@ export function H5pDetails(props: H5pDetailsProps) {
             summary: css.sectionSummary,
             details: css.sectionDetails,
           },
+          onChange: pipe(dispatchChange, onChange),
         };
         elementProps = extendedProps;
       } else if (isH5pElementLibrary(elementProps)) {
@@ -295,6 +297,7 @@ export function H5pDetails(props: H5pDetailsProps) {
             summary: css.sectionSummary,
             details: css.sectionDetails,
           },
+          onChange: pipe(dispatchChange, onChange),
         };
         elementProps = extendedProps;
       }

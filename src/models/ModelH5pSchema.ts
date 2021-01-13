@@ -145,6 +145,7 @@ export interface H5PTextSemantic extends H5PBaseSemantic {
   tags?: string[];
   font?: unknown;
   important?: IH5PImportant;
+  placeholder?: string;
 }
 
 export interface H5PNumberSemantic extends H5PBaseSemantic {
@@ -155,6 +156,7 @@ export interface H5PNumberSemantic extends H5PBaseSemantic {
   steps?: number;
   decimals?: number;
   unit?: string;
+  placeholder?: string;
 }
 
 export interface H5PBooleanSemantic extends H5PBaseSemantic {
@@ -166,6 +168,7 @@ export interface H5PSelectSemantic extends H5PBaseSemantic {
   type: H5PItemType.select;
   default?: string;
   options: { value: string; label: string }[];
+  placeholder?: string;
 }
 
 export interface H5PMediaSemantic extends H5PBaseSemantic {
