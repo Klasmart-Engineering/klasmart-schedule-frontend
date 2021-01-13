@@ -132,6 +132,7 @@ type LangRecord<T = string> =
       description: "This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.";
       values: undefined;
     }
+  | { id: "library_error_content_data_invalid"; description: "Content is empty, please upload a file."; values: undefined }
   | {
       id: "library_error_delete_lesson_plan_in_schedule";
       description: "Unable to delete lesson plan which is scheduled";
