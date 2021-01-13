@@ -1,74 +1,30 @@
-import { Box, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
-import SettingsIcon from "@material-ui/icons/Settings";
-import TabUnselectedIcon from "@material-ui/icons/TabUnselected";
-import clsx from "clsx";
-import React, { useMemo, useState } from "react";
-import { H5pElementGroupProps } from "../H5pElement";
-const useStyles = makeStyles(({ palette }) => ({
-  tabs: { backgroundColor: palette.grey[300] },
-  tabPane: {
-    padding: 24,
-    display: "none",
-    "&.active": {
-      display: "block",
-    },
-    border: "1px solid #ccc",
-  },
-  labelMargin: {
-    marginLeft: 16,
-  },
-}));
+import { Box, Step, StepButton, Stepper } from "@material-ui/core";
+import React, { useState } from "react";
+import { isH5pGroupItemInfo } from "../../models/ModelH5pSchema";
+import { H5pElement, H5pElementProps, isH5pElementGroup } from "../H5pElement";
 
-export function WidgetElement(props: H5pElementGroupProps) {
-  const css = useStyles();
-  const [tabValue, setTabValue] = useState(0);
-  const { itemHelper, children } = props;
+export function WidgetElement(props: H5pElementProps) {
+  const [step, setStep] = useState(0);
+  if (!isH5pElementGroup(props)) return <H5pElement {...props} />;
+  const { itemHelper } = props;
   const { semantics } = itemHelper;
-  const handleChangeTab = useMemo(
-    () => (e: any, value: number) => {
-      setTabValue(value);
-    },
-    []
-  );
-  let idx = -1;
-  const tabPanels = children.map((childNode) => {
-    idx += 1;
-    return (
-      <div key={idx} className={clsx(css.tabPane, { active: tabValue === idx })}>
-        {childNode}
-      </div>
-    );
-  });
+  const stepContent = itemHelper.childItems
+    .map((childItemHelper) => {
+      if ("widget" in childItemHelper.semantics) return childItemHelper.node;
+      if (isH5pGroupItemInfo(childItemHelper)) return childItemHelper.childItems.map(({ node }) => node);
+      return childItemHelper.node;
+    })
+    .map((node, index) => (index === step ? node : null));
   return (
-    <Box mt={4}>
-      <Tabs
-        value={tabValue}
-        onChange={handleChangeTab}
-        className={css.tabs}
-        indicatorColor="primary"
-        textColor="primary"
-        variant="fullWidth"
-      >
-        {children.map((item, idx) => {
-          return (
-            <Tab
-              value={idx}
-              key={idx}
-              label={
-                <Box display="flex" alignItems="center">
-                  {idx === 0 && <SettingsIcon />}
-                  {idx === 1 && <TabUnselectedIcon />}
-                  <Typography variant="h6" className={css.labelMargin}>
-                    {" "}
-                    {semantics.fields[idx].name}
-                  </Typography>
-                </Box>
-              }
-            />
-          );
-        })}
-      </Tabs>
-      {tabPanels}
+    <Box mt={4} p={4} boxShadow={1}>
+      <Stepper activeStep={step} alternativeLabel nonLinear>
+        {semantics.fields.map(({ label, name }, index) => (
+          <Step key={name}>
+            <StepButton onClick={() => setStep(index)}>{label ?? name}</StepButton>
+          </Step>
+        ))}
+      </Stepper>
+      {stepContent}
     </Box>
   );
 }

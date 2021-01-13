@@ -261,6 +261,9 @@ export interface H5pElementMediaProps extends H5PBaseElementProps<H5PMediaSemant
     copyrightButton?: string;
     mediaPreview?: string;
     input?: string;
+    paragraph?: string;
+    title?: string;
+    description?: string;
   };
 }
 export function H5pElementMedia(props: H5pElementMediaProps) {
@@ -312,47 +315,55 @@ export function H5pElementImage(props: H5pElementMediaProps) {
     });
   };
   return (
-    <CropImage
-      render={({ crop }) => (
-        <SingleUploader
-          partition="assets"
-          accept="image/*"
-          value={content?.path}
-          transformFile={crop}
-          onChangeFile={handleChangeFile}
-          render={({ uploady, item, btnRef, value, isUploading }) => (
-            <Box className={clsx(className, classes?.root)} display="flex">
-              <Box display="flex" flexDirection="column" marginRight="auto">
-                <Button
-                  className={classes?.uploadButton}
-                  ref={btnRef}
-                  size="medium"
-                  variant="contained"
-                  component="span"
-                  color="primary"
-                  endIcon={<CloudUploadOutlined />}
-                >
-                  {d("Upload from Device").t("library_label_upload_from_device")}
-                </Button>
-                {content?.copyright && (
-                  <DialogButton
-                    variant="contained"
-                    color="primary"
+    <Fragment>
+      <div className={classes?.paragraph}>
+        <InputLabel className={classes?.title} required={!semantics.optional}>
+          {semantics.label || semantics.name}
+        </InputLabel>
+        <div className={classes?.description}>{semantics.description}</div>
+      </div>
+      <CropImage
+        render={({ crop }) => (
+          <SingleUploader
+            partition="assets"
+            accept="image/*"
+            value={content?.path}
+            transformFile={crop}
+            onChangeFile={handleChangeFile}
+            render={({ uploady, item, btnRef, value, isUploading }) => (
+              <Box className={clsx(className, classes?.root)} display="flex">
+                <Box display="flex" flexDirection="column" marginRight="auto">
+                  <Button
+                    className={classes?.uploadButton}
+                    ref={btnRef}
                     size="medium"
-                    label="Edit copyright"
-                    className={classes?.copyrightButton}
+                    variant="contained"
+                    component="span"
+                    color="primary"
+                    endIcon={<CloudUploadOutlined />}
                   >
-                    <CopyrightForm {...props} />
-                  </DialogButton>
-                )}
+                    {d("Upload from Device").t("library_label_upload_from_device")}
+                  </Button>
+                  {content?.copyright && (
+                    <DialogButton
+                      variant="contained"
+                      color="primary"
+                      size="medium"
+                      label="Edit copyright"
+                      className={classes?.copyrightButton}
+                    >
+                      <CopyrightForm {...props} />
+                    </DialogButton>
+                  )}
+                </Box>
+                {isUploading && <ProgressWithText value={item?.completed} />}
+                {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
               </Box>
-              {isUploading && <ProgressWithText value={item?.completed} />}
-              {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
-            </Box>
-          )}
-        />
-      )}
-    />
+            )}
+          />
+        )}
+      />
+    </Fragment>
   );
 }
 

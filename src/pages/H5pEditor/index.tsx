@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
 import { H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
@@ -36,18 +36,11 @@ export function H5pEditor() {
   const { show } = useParams<{ show: string }>();
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const history = useHistory();
   const [libContent, setLibContent] = useState<H5PLibraryContent>();
   const [library, setLibrary] = useLibrary(query.get("library") || undefined);
   const contentTypeList = useContentTypeList();
   const schema = useSchema(library);
   const [contentType, setContentType] = React.useState("");
-
-  useEffect(() => {
-    if (!schema) {
-      history.push(H5pEditor.routeRedirectDefault);
-    }
-  }, [history, schema]);
 
   return (
     <div>
@@ -67,6 +60,5 @@ export function H5pEditor() {
   );
 }
 
-H5pEditor.routeBasePath = "/h5pEditor";
+H5pEditor.routeBasePath = "/h5pEditor/show/:show";
 H5pEditor.routeRedirectDefault = `/h5pEditor/show/list`;
-H5pEditor.routeMatchPath = "/h5pEditor/show/:show";

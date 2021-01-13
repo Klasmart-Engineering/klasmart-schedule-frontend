@@ -60,11 +60,13 @@
             "fields": [
               {
                 "name": "width",
-                "type": "number"
+                "type": "number",
+                "default": 620
               },
               {
                 "name": "height",
-                "type": "number"
+                "type": "number",
+                "default": 310
               }
             ]
           }

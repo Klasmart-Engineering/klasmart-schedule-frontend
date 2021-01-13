@@ -242,6 +242,9 @@ export function H5pDetails(props: H5pDetailsProps) {
             uploadButton: css.uploadButton,
             copyrightButton: css.copyrightButton,
             mediaPreview: css.mediaPreview,
+            paragraph: css.inlineSectionParagraph,
+            title: css.title,
+            description: css.description,
           },
         };
         elementProps = extendedProps;
@@ -295,8 +298,8 @@ export function H5pDetails(props: H5pDetailsProps) {
         };
         elementProps = extendedProps;
       }
-      if (Widget) return <Widget {...elementProps} key={path} />;
-      return <H5pElement {...elementProps} key={path} />;
+      itemHelper.node = Widget ? <Widget {...elementProps} key={path} /> : <H5pElement {...elementProps} key={path} />;
+      return itemHelper.node;
     })
   );
   return (

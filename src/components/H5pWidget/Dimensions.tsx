@@ -1,38 +1,44 @@
-import { Box, InputLabel, makeStyles, Typography } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
-import React, { Fragment } from "react";
-import { H5pElementGroupProps } from "../H5pElement";
+import { Box, InputLabel, makeStyles } from "@material-ui/core";
+import clsx from "clsx";
+import React, { cloneElement } from "react";
+import { H5pElement, H5pElementProps, isH5pElementGroup } from "../H5pElement";
 
 const useStyles = makeStyles(() => ({
-  label: {
+  paragraph: {
     marginTop: 32,
+    padding: 8,
   },
-  flex: {
-    display: "flex",
-    alignItems: "center",
-    width: 240,
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    lineHeight: 2,
   },
-  closeIcon: {
-    marginTop: 32,
+  description: {
+    fontSize: 12,
+  },
+  partialItem: {
+    width: "45%",
   },
 }));
 
-export function WidgetElement(props: H5pElementGroupProps) {
+export function WidgetElement(props: H5pElementProps) {
   const css = useStyles();
-  const { itemHelper, children } = props;
+  if (!isH5pElementGroup(props)) return <H5pElement {...props} />;
+  const { itemHelper } = props;
   const { semantics } = itemHelper;
+  const inputWidthElement = itemHelper.childItems[0].node as JSX.Element;
+  const inputHeightElement = itemHelper.childItems[1].node as JSX.Element;
   return (
-    <Fragment>
-      <InputLabel required={!semantics.optional} className={css.label}>
+    <div className={css.paragraph}>
+      <InputLabel className={css.title} required={!semantics.optional}>
         {semantics.label || semantics.name}
       </InputLabel>
-      <Typography variant="caption">{semantics.description}</Typography>
-      <Box className={css.flex}>
-        {children[0]}
-        <CloseIcon className={css.closeIcon} />
-        {children[1]}
+      <div className={css.description}>{semantics.description}</div>
+      <Box display="flex" justifyContent="space-between">
+        {cloneElement(inputWidthElement, { className: clsx(inputWidthElement.props.className, css.partialItem) })}
+        {cloneElement(inputHeightElement, { className: clsx(inputHeightElement.props.className, css.partialItem) })}
       </Box>
-    </Fragment>
+    </div>
   );
 }
 
