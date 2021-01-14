@@ -355,7 +355,9 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
   const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
     if (!file || !file.id || !onChange) return;
     const { id, type: mime } = file;
-    onChange({ semantics, path, content: [{ ...singleMediaContent, path: id, mime, copyright: { license: H5PLicense.U } }] });
+    semantics.disableCopyright
+      ? onChange({ semantics, path, content: [{ ...singleMediaContent, path: id, mime }] })
+      : onChange({ semantics, path, content: [{ ...singleMediaContent, path: id, mime, copyright: { license: H5PLicense.U } }] });
   };
   const handleChangeCopyright: CopyrightFormProps["onChange"] = (copyright) => {
     if (!onChange || !content) return;
@@ -389,7 +391,7 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
               >
                 {d("Upload from Device").t("library_label_upload_from_device")}
               </Button>
-              {singleMediaContent?.copyright && (
+              {!semantics.disableCopyright && singleMediaContent?.copyright && (
                 <DialogButton variant="contained" color="primary" size="medium" label="Edit copyright" className={classes?.copyrightButton}>
                   <CopyrightForm classes={classes} value={content?.[0]?.copyright} onChange={handleChangeCopyright} />
                 </DialogButton>
@@ -422,7 +424,9 @@ export function H5pElementImage(props: H5pElementImageProps) {
     if (!file || !file.id || !onChange) return;
     const { id, type: mime } = file;
     getImageDimension(file).then(({ width, height }) => {
-      onChange({ semantics, path, content: { ...content, path: id, mime, width, height, copyright: { license: H5PLicense.U } } });
+      semantics.disableCopyright
+        ? onChange({ semantics, path, content: { ...content, path: id, mime, width, height } })
+        : onChange({ semantics, path, content: { ...content, path: id, mime, width, height, copyright: { license: H5PLicense.U } } });
     });
   };
   const handleChangeCopyright: CopyrightFormProps["onChange"] = (copyright) => {
@@ -459,7 +463,7 @@ export function H5pElementImage(props: H5pElementImageProps) {
                   >
                     {d("Upload from Device").t("library_label_upload_from_device")}
                   </Button>
-                  {content?.copyright && (
+                  {!semantics.disableCopyright && content?.copyright && (
                     <DialogButton
                       variant="contained"
                       color="primary"
