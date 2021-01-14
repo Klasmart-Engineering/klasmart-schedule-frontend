@@ -14,7 +14,6 @@ import {
 } from "@material-ui/core";
 import { Check } from "@material-ui/icons";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
 import { H5PSchema } from "../../models/ModelH5pSchema";
@@ -44,6 +43,10 @@ const useStyles = makeStyles(() => ({
     padding: "0 10px",
     minWidth: "50px",
   },
+  listContainer: {
+    // maxHeight: '660px',
+    // overflow: "auto"
+  },
 }));
 
 interface H5pListProps {
@@ -51,19 +54,21 @@ interface H5pListProps {
   onChange: (value: string) => any;
   setContentType: (value: string) => any;
   schema: H5PSchema;
+  expand: boolean;
+  setExpand: (value: boolean) => any;
+  setShow: (value: string) => any;
+  setH5pId: (value: string) => void;
 }
 
 export default function H5pList(props: H5pListProps) {
-  const { contentTypeList, onChange, setContentType, schema } = props;
+  const { contentTypeList, onChange, setContentType, schema, expand, setExpand, setShow, setH5pId } = props;
   const css = useStyles();
-  const history = useHistory();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const [open, setOpen] = React.useState<boolean>(false);
   const [tempItem, setTempItem] = React.useState<any>({});
 
   const handleClick = (item: any) => {
-    // console.log(item);
     if (schema) {
       setTempItem(item);
       setOpen(true);
@@ -71,12 +76,13 @@ export default function H5pList(props: H5pListProps) {
     }
     setContentType(item.title);
     onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
-    history.push("/h5peditor/show/details");
+    setExpand(!expand);
   };
 
   const getDetails = (e: React.KeyboardEvent | React.MouseEvent, id: string) => {
     e.stopPropagation();
-    history.push(`/h5pEditor/show/info?h5p_id=${id}`);
+    setShow("info");
+    setH5pId(id);
   };
 
   const handleClose = () => {
@@ -87,11 +93,11 @@ export default function H5pList(props: H5pListProps) {
     setOpen(false);
     setContentType(tempItem.title);
     onChange(`${tempItem.id}-${tempItem.version.major}.${tempItem.version.minor}`);
-    history.push("/h5peditor/show/details");
+    setExpand(!expand);
   };
 
   return (
-    <div>
+    <div className={css.listContainer}>
       <List component="nav" aria-label="secondary mailbox folders">
         {contentTypeList &&
           contentTypeList.map((item) => {

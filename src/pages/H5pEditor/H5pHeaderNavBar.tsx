@@ -1,7 +1,6 @@
 import { IconButton, makeStyles } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import React from "react";
-import { useHistory, useParams } from "react-router-dom";
 import imgUrl from "../../assets/icons/h5p_icon.png";
 import { reportMiss } from "../../locale/LocaleManager";
 
@@ -34,25 +33,20 @@ const useStyles = makeStyles(() => ({
 
 interface H5pHeaderNavbarProps {
   contentType: string;
+  setExpand: (value: boolean) => void;
+  expand: boolean;
 }
 
 export default function H5pHeaderNavbar(props: H5pHeaderNavbarProps) {
-  const { contentType } = props;
-  const { show } = useParams<{ show: string }>();
-  const history = useHistory();
+  const { contentType, setExpand, expand } = props;
   const css = useStyles();
 
   const handleClick = () => {
-    if (show === "list") {
-      history.push("/h5peditor/show/details");
-    }
-    if (show === "details" || show === "info") {
-      history.push("/h5peditor/show/list");
-    }
+    setExpand(!expand);
   };
 
   return (
-    <div className={css.navBar} style={{ width: show === "details" ? "50%" : "100%", margin: "0 auto" }} onClick={handleClick}>
+    <div className={css.navBar} onClick={handleClick}>
       <img src={imgUrl} alt="" />
       {contentType ? contentType : reportMiss("Select content type", "h5p_select_content_type")}
       <IconButton className={css.downIcon} type="submit" aria-label="search">

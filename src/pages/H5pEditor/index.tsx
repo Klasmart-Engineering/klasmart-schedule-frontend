@@ -1,13 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
-import { h5plibId2Name, H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
+import { H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
+import ExpandContent from "./ExpandContent";
 import { H5pCompare } from "./H5pCompare";
 import { H5pDetails } from "./H5pDetails";
-import H5pHeaderNavbar from "./H5pHeaderNavBar";
-import H5pInfo from "./H5pInfo";
-import { H5pLibraryInput } from "./H5pLibraryInput";
 
 const useSchema = (library?: string) => {
   const [schema, setSchema] = useState<H5PSchema>();
@@ -33,7 +31,6 @@ const useLibrary = (libraryOfContent?: string) => {
 };
 
 export function H5pEditor() {
-  const { show } = useParams<{ show: string }>();
   const { search } = useLocation();
   const query = new URLSearchParams(search);
   const [libContent, setLibContent] = useState<H5PLibraryContent>();
@@ -41,26 +38,27 @@ export function H5pEditor() {
   const contentTypeList = useContentTypeList();
   const schema = useSchema(library);
   const [contentType, setContentType] = React.useState("");
+  const [expand, setExpand] = React.useState<boolean>(true);
 
   return (
     <div>
-      <H5pHeaderNavbar contentType={contentType} />
-      {show === "list" && contentTypeList && (
-        <H5pLibraryInput onChange={setLibrary} contentTypeList={contentTypeList} setContentType={setContentType} schema={schema as any} />
+      <ExpandContent
+        setExpand={setExpand}
+        expand={expand}
+        contentTypeList={contentTypeList as ContentTypeList}
+        contentType={contentType}
+        onChange={setLibrary}
+        setContentType={setContentType}
+        schema={schema as H5PSchema}
+      />
+      {!schema ? null : (
+        <Fragment>
+          <H5pCompare value={libContent} />
+          {library && schema && <H5pDetails value={{ library }} schema={schema} onChange={setLibContent} />}
+        </Fragment>
       )}
-      {show === "details" &&
-        (!schema ? null : (
-          <Fragment>
-            <H5pCompare value={libContent} />
-            {show === "details" && library && schema && (
-              <H5pDetails value={{ library: h5plibId2Name(library) }} schema={schema} onChange={setLibContent} />
-            )}
-          </Fragment>
-        ))}
-      {show === "info" && contentTypeList && <H5pInfo contentTypeList={contentTypeList} />}
     </div>
   );
 }
 
-H5pEditor.routeBasePath = "/h5pEditor/show/:show";
-H5pEditor.routeRedirectDefault = `/h5pEditor/show/list`;
+H5pEditor.routeBasePath = "/h5pEditor";

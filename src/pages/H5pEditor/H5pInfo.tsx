@@ -2,7 +2,6 @@ import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Grid, IconButt
 import { ArrowBack, ArrowForward, Close, ExpandMore, Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
 import { ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
 
@@ -189,23 +188,20 @@ const useStyles = makeStyles((theme) => ({
 
 interface H5pInfoProps {
   contentTypeList: ContentTypeList;
+  h5pId: string;
+  setShow: (value: string) => any;
 }
 
 export default function H5pInfo(props: H5pInfoProps) {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const h5p_id = query.get("h5p_id") || undefined;
-  const { contentTypeList } = props;
-  const h5pInfo = contentTypeList.filter((item) => item.id === h5p_id)[0];
-  console.log(h5pInfo);
+  const { contentTypeList, h5pId, setShow } = props;
+  const h5pInfo = contentTypeList.filter((item) => item.id === h5pId)[0];
   const css = useStyles();
-  const history = useHistory();
   const [leftPosition, setLeftPosition] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const goBack = () => {
-    history.go(-1);
+    setShow("list");
   };
 
   const prevImage = () => {
@@ -271,96 +267,100 @@ export default function H5pInfo(props: H5pInfoProps) {
       <div>
         <ArrowBack fontSize="large" className={css.backArrow} onClick={goBack} />
       </div>
-      <Grid container>
-        <Grid item xs={4} sm={3} md={3} lg={3} xl={3} className={css.imgBox}>
-          <img src={h5pInfo.icon} alt="" className={css.image} />
-        </Grid>
-        <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
-          <h2>{h5pInfo.title}</h2>
-          <div>{h5pInfo.owner}</div>
-          <p>{h5pInfo.description}</p>
-          <a href={h5pInfo.example} className={css.demo} target="_blank" rel="noopener noreferrer">
-            {reportMiss("Content Demo", "h5p_content_demo")}
-          </a>
-        </Grid>
-      </Grid>
-      <div className={css.outerBox}>
-        <div className={css.navBox}>
-          <Grid container className={css.imagesContainer} style={{ marginLeft: `${leftPosition}%` }}>
-            {h5pInfo.screenshots.map((item, index) => {
-              return (
-                <Grid item key={item.url} className={css.itemImageBox} onClick={() => showDialog(index)}>
-                  <img src={item.url} alt="" />
-                </Grid>
-              );
-            })}
+      {h5pInfo && (
+        <>
+          <Grid container>
+            <Grid item xs={4} sm={3} md={3} lg={3} xl={3} className={css.imgBox}>
+              <img src={h5pInfo.icon} alt="" className={css.image} />
+            </Grid>
+            <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
+              <h2>{h5pInfo.title}</h2>
+              <div>{h5pInfo.owner}</div>
+              <p>{h5pInfo.description}</p>
+              <a href={h5pInfo.example} className={css.demo} target="_blank" rel="noopener noreferrer">
+                {reportMiss("Content Demo", "h5p_content_demo")}
+              </a>
+            </Grid>
           </Grid>
-        </div>
-        <div>
-          <ArrowBack
-            fontSize="large"
-            className={clsx(css.arrowPrev, css.arrowCommon)}
-            onClick={prevImage}
-            style={{ cursor: leftPosition === 0 ? "not-allowed" : "pointer" }}
-          />
-        </div>
-        <div>
-          <ArrowForward
-            fontSize="large"
-            className={clsx(css.arrowNext, css.arrowCommon)}
-            onClick={nextImage}
-            style={{
-              cursor:
-                leftPosition === -25 * (h5pInfo.screenshots.length - 4) || h5pInfo.screenshots.length <= 4 ? "not-allowed" : "pointer",
-            }}
-          />
-        </div>
-      </div>
-      <div className={css.license}>
-        <Accordion defaultExpanded={false}>
-          <AccordionSummary expandIcon={<ExpandMore />} classes={{ root: css.sectionSummary }}>
-            {reportMiss("License", "h5p_license")}
-          </AccordionSummary>
-          <AccordionDetails>
-            <ul>
-              {getLicenseContent().map((item) => {
-                return (
-                  <li key={item} className={css.licenseItem}>
-                    {item}
-                  </li>
-                );
-              })}
-            </ul>
-          </AccordionDetails>
-        </Accordion>
-      </div>
-      <div>
-        <Backdrop className={css.backdrop} open={open}>
-          <div className={css.dialogImageBox}>
-            <img src={h5pInfo.screenshots[currentIndex].url} alt="" className={css.dialogImage} />
-            <div className={clsx(css.closeButton, css.dialogCommonButton)} onClick={handleClose}>
-              <Close fontSize="large" />
+          <div className={css.outerBox}>
+            <div className={css.navBox}>
+              <Grid container className={css.imagesContainer} style={{ marginLeft: `${leftPosition}%` }}>
+                {h5pInfo.screenshots.map((item, index) => {
+                  return (
+                    <Grid item key={item.url} className={css.itemImageBox} onClick={() => showDialog(index)}>
+                      <img src={item.url} alt="" />
+                    </Grid>
+                  );
+                })}
+              </Grid>
             </div>
-            <div
-              className={clsx(css.leftButton, css.dialogCommonButton)}
-              onClick={dialogPrev}
-              style={{ cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
-            >
-              <ArrowBack fontSize="large" />
+            <div>
+              <ArrowBack
+                fontSize="large"
+                className={clsx(css.arrowPrev, css.arrowCommon)}
+                onClick={prevImage}
+                style={{ cursor: leftPosition === 0 ? "not-allowed" : "pointer" }}
+              />
             </div>
-            <div
-              className={clsx(css.rightButton, css.dialogCommonButton)}
-              onClick={dialogNext}
-              style={{ cursor: currentIndex === h5pInfo.screenshots.length - 1 ? "not-allowed" : "pointer" }}
-            >
-              <ArrowForward fontSize="large" />
+            <div>
+              <ArrowForward
+                fontSize="large"
+                className={clsx(css.arrowNext, css.arrowCommon)}
+                onClick={nextImage}
+                style={{
+                  cursor:
+                    leftPosition === -25 * (h5pInfo.screenshots.length - 4) || h5pInfo.screenshots.length <= 4 ? "not-allowed" : "pointer",
+                }}
+              />
             </div>
-            <p className={css.imageCount}>
-              {currentIndex + 1} / {h5pInfo.screenshots.length}
-            </p>
           </div>
-        </Backdrop>
-      </div>
+          <div className={css.license}>
+            <Accordion defaultExpanded={false}>
+              <AccordionSummary expandIcon={<ExpandMore />} classes={{ root: css.sectionSummary }}>
+                {reportMiss("License", "h5p_license")}
+              </AccordionSummary>
+              <AccordionDetails>
+                <ul>
+                  {getLicenseContent().map((item) => {
+                    return (
+                      <li key={item} className={css.licenseItem}>
+                        {item}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </AccordionDetails>
+            </Accordion>
+          </div>
+          <div>
+            <Backdrop className={css.backdrop} open={open}>
+              <div className={css.dialogImageBox}>
+                <img src={h5pInfo.screenshots[currentIndex].url} alt="" className={css.dialogImage} />
+                <div className={clsx(css.closeButton, css.dialogCommonButton)} onClick={handleClose}>
+                  <Close fontSize="large" />
+                </div>
+                <div
+                  className={clsx(css.leftButton, css.dialogCommonButton)}
+                  onClick={dialogPrev}
+                  style={{ cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
+                >
+                  <ArrowBack fontSize="large" />
+                </div>
+                <div
+                  className={clsx(css.rightButton, css.dialogCommonButton)}
+                  onClick={dialogNext}
+                  style={{ cursor: currentIndex === h5pInfo.screenshots.length - 1 ? "not-allowed" : "pointer" }}
+                >
+                  <ArrowForward fontSize="large" />
+                </div>
+                <p className={css.imageCount}>
+                  {currentIndex + 1} / {h5pInfo.screenshots.length}
+                </p>
+              </div>
+            </Backdrop>
+          </div>
+        </>
+      )}
     </div>
   );
 }
