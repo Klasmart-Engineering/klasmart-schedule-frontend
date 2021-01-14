@@ -127,104 +127,149 @@ export function H5pElement(props: H5pElementProps) {
   return <Fragment />;
 }
 
-export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic> & Omit<TextFieldProps, "onChange" | "variant">;
+export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic> &
+  Omit<TextFieldProps, "onChange" | "variant"> & {
+    classes?: {
+      paragraph?: string;
+      description?: string;
+    };
+  };
 export function H5pElementText(props: H5pElementTextProps) {
   const {
     itemHelper: { path, semantics, content },
     onChange,
     className,
+    classes,
     ...inputProps
   } = props;
   return (
-    <TextField
-      {...inputProps}
-      multiline
-      className={className}
-      required={!semantics.optional}
-      defaultValue={content}
-      placeholder={semantics.placeholder}
-      name={path}
-      label={semantics.label || semantics.name}
-      onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
-      key={`${path}: ${content}`}
-    />
+    <Fragment>
+      <div className={clsx(classes?.paragraph, className)}>
+        <div className={classes?.description}>{semantics.description}</div>
+      </div>
+      <TextField
+        {...inputProps}
+        multiline
+        required={!semantics.optional}
+        defaultValue={content}
+        placeholder={semantics.placeholder}
+        name={path}
+        label={semantics.label || semantics.name}
+        onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
+        key={`${path}: ${content}`}
+      />
+    </Fragment>
   );
 }
 
-export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic> & Omit<TextFieldProps, "onChange" | "variant">;
+export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic> &
+  Omit<TextFieldProps, "onChange" | "variant"> & {
+    classes?: {
+      paragraph?: string;
+      description?: string;
+    };
+  };
 export function H5pElementNumber(props: H5pElementNumberProps) {
   const {
     itemHelper: { path, semantics, content },
     onChange,
     className,
+    classes,
     ...inputProps
   } = props;
   return (
-    <TextField
-      {...inputProps}
-      className={className}
-      required={!semantics.optional}
-      defaultValue={content}
-      placeholder={semantics.placeholder}
-      name={path}
-      type="number"
-      label={semantics.label || semantics.name}
-      onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
-      key={`${path}: ${content}`}
-    />
+    <Fragment>
+      <div className={clsx(classes?.paragraph, className)}>
+        <div className={classes?.description}>{semantics.description}</div>
+      </div>
+      <TextField
+        {...inputProps}
+        required={!semantics.optional}
+        defaultValue={content}
+        placeholder={semantics.placeholder}
+        name={path}
+        type="number"
+        label={semantics.label || semantics.name}
+        onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
+        key={`${path}: ${content}`}
+      />
+    </Fragment>
   );
 }
 
-export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic> & Omit<CheckboxProps, "onChange" | "variant">;
+export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic> &
+  Omit<CheckboxProps, "onChange" | "variant"> & {
+    classes?: {
+      paragraph?: string;
+      description?: string;
+    };
+  };
 export function H5pElementBoolean(props: H5pElementBooleanProps) {
   const {
     itemHelper: { path, semantics, content },
     onChange,
     className,
+    classes,
     ...inputProps
   } = props;
   return (
-    <FormControlLabel
-      className={className}
-      control={
-        <Checkbox
-          {...inputProps}
-          name={path}
-          defaultChecked={content}
-          onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })}
-          key={`${path}: ${content}`}
-        />
-      }
-      label={semantics.label || semantics.name}
-    />
+    <Fragment>
+      <FormControlLabel
+        className={className}
+        control={
+          <Checkbox
+            {...inputProps}
+            name={path}
+            defaultChecked={content}
+            onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })}
+            key={`${path}: ${content}`}
+          />
+        }
+        label={semantics.label || semantics.name}
+      />
+      <div className={classes?.paragraph}>
+        <div className={classes?.description}>{semantics.description}</div>
+      </div>
+    </Fragment>
   );
 }
 
-export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic> & Omit<TextFieldProps, "onChange" | "variant">;
+export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic> &
+  Omit<TextFieldProps, "onChange" | "variant"> & {
+    classes?: {
+      paragraph?: string;
+      description?: string;
+    };
+  };
 export function H5pElementSelect(props: H5pElementSelectProps) {
   const {
     itemHelper: { path, semantics, content },
     onChange,
     className,
+    classes,
     ...inputProps
   } = props;
   return (
-    <TextField
-      {...inputProps}
-      select
-      value={content ?? ""}
-      placeholder={semantics.placeholder}
-      required={!semantics.optional}
-      label={semantics.label || semantics.name}
-      className={className}
-      onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
-    >
-      {semantics.options.map(({ value, label }) => (
-        <MenuItem key={value} value={value}>
-          {label}
-        </MenuItem>
-      ))}
-    </TextField>
+    <Fragment>
+      <div className={clsx(classes?.paragraph, className)}>
+        <div className={classes?.description}>{semantics.description}</div>
+      </div>
+      <TextField
+        {...inputProps}
+        select
+        value={content ?? ""}
+        placeholder={semantics.placeholder}
+        required={!semantics.optional}
+        label={semantics.label || semantics.name}
+        onChange={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
+      >
+        {semantics.options.map(({ value, label }) => (
+          <MenuItem key={value} value={value}>
+            {label}
+          </MenuItem>
+        ))}
+      </TextField>
+    </Fragment>
   );
 }
 

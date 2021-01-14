@@ -1,4 +1,4 @@
-import { Button, InputLabel, makeStyles, Tab, Tabs, Tooltip, Typography } from "@material-ui/core";
+import { Button, InputLabel, makeStyles, Tab, Tabs, Tooltip } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment, useMemo, useState } from "react";
@@ -26,8 +26,7 @@ const useStyles = makeStyles(({ palette }) => ({
     marginTop: 32,
   },
   addButton: {
-    marginTop: 10,
-    width: 200,
+    margin: "32px 24px 0 12px",
   },
   closeButton: {
     position: "absolute",
@@ -43,6 +42,8 @@ const useStyles = makeStyles(({ palette }) => ({
     display: "flex",
     alignItems: "center",
     width: "100%",
+    fontWeight: 700,
+    fontSize: 16,
   },
   tabIndicator: {
     width: 4,
@@ -91,6 +92,7 @@ export function WidgetElement(props: H5pElementListProps) {
       <InputLabel className={css.label} required={!semantics.optional}>
         {semantics.label || semantics.name}
       </InputLabel>
+
       <div className={css.root}>
         <Tabs
           orientation="vertical"
@@ -111,27 +113,30 @@ export function WidgetElement(props: H5pElementListProps) {
                     <Tooltip title="Remove Item">
                       <Cancel className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)} />
                     </Tooltip>
-                    <Typography variant="h6"> {`${idx + 1}.${semantics.entity}`}</Typography>
+                    <span>
+                      {" "}
+                      {idx + 1}.&nbsp;{semantics.field.label ?? semantics.field.name}
+                    </span>
                   </div>
                 }
               />
             );
           })}
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            onClick={() => {
+              onAddListItem(itemHelper);
+              setTabValue(children.length);
+            }}
+            className={css.addButton}
+          >
+            ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
+          </Button>
         </Tabs>
         {tabPanels}
       </div>
-      <Button
-        color="primary"
-        variant="contained"
-        size="large"
-        onClick={() => {
-          onAddListItem(itemHelper);
-          setTabValue(children.length);
-        }}
-        className={css.addButton}
-      >
-        ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
-      </Button>
     </Fragment>
   );
 }

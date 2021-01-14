@@ -225,7 +225,15 @@ export function H5pDetails(props: H5pDetailsProps) {
         isH5pElementBoolean(elementProps) ||
         isH5pElementSelect(elementProps)
       ) {
-        const extendedProps: typeof elementProps = { ...elementProps, onChange: pipe(dispatchChange, onChange), className: css.h5pItem };
+        const extendedProps: typeof elementProps = {
+          ...elementProps,
+          onChange: pipe(dispatchChange, onChange),
+          className: css.h5pItem,
+          classes: {
+            paragraph: css.inlineSectionParagraph,
+            description: css.description,
+          },
+        };
         elementProps = extendedProps;
       } else if (
         isH5pElementImage(elementProps) ||
