@@ -23,12 +23,14 @@ import { Cancel, Close, CloudUploadOutlined, ExpandMore } from "@material-ui/ico
 import clsx from "clsx";
 import React, { FocusEvent, FormEvent, Fragment, ReactNode, useMemo, useReducer } from "react";
 import { apiResourcePathById } from "../../api/extra";
+import { ContentType } from "../../api/type";
 import { H5pFormRemoveListItemPayload } from "../../hooks/useH5pFormReducer";
 import { d } from "../../locale/LocaleManager";
 import {
   createH5pLicenseVersionOptions,
   H5PBooleanSemantic,
   H5PGroupSemantic,
+  H5PImageSemantic,
   H5PImportance,
   H5PItemHelper,
   H5PItemInfo,
@@ -40,15 +42,18 @@ import {
   H5PMediaSemantic,
   H5PNumberSemantic,
   H5PSelectSemantic,
+  H5PSingleMediaContent,
   H5PTextSemantic,
   H5P_LICENSE_OPTIONS,
   H5P_ROOT_NAME,
+  IH5PCopyright,
   isH5pListItemInfo,
   MapHandlerProps,
 } from "../../models/ModelH5pSchema";
 import { ProgressWithText } from "../../pages/ContentEdit/Details";
 import { CropImage } from "../CropImage";
 import { getImageDimension, SingleUploader, SingleUploaderProps } from "../SingleUploader";
+import { Thumbnail } from "../Thumbnail";
 
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
@@ -72,6 +77,7 @@ export type H5pElementProps =
   | H5pElementNumberProps
   | H5pElementBooleanProps
   | H5pElementSelectProps
+  | H5pElementImageProps
   | H5pElementMediaProps
   | H5pElementListProps
   | H5pElementGroupProps
@@ -132,6 +138,7 @@ export function H5pElementText(props: H5pElementTextProps) {
   return (
     <TextField
       {...inputProps}
+      multiline
       className={className}
       required={!semantics.optional}
       defaultValue={content}
@@ -221,10 +228,13 @@ export function H5pElementSelect(props: H5pElementSelectProps) {
   );
 }
 
-function CopyrightForm(props: H5pElementMediaProps) {
-  const { classes, itemHelper, onChange } = props;
-  const { semantics, path, content } = itemHelper;
-  const copyright = content?.copyright;
+interface CopyrightFormProps {
+  classes: H5pElementImageProps["classes"];
+  value?: IH5PCopyright;
+  onChange: (value: IH5PCopyright) => any;
+}
+function CopyrightForm(props: CopyrightFormProps) {
+  const { classes, value: copyright, onChange } = props;
   const license = copyright?.license;
   const inputData = useMemo(
     () =>
@@ -238,12 +248,11 @@ function CopyrightForm(props: H5pElementMediaProps) {
       ] as const,
     [license]
   );
-  console.log("copyright, content = ", copyright, content);
-  if (!copyright || !content?.path) return null;
+  if (!copyright) return null;
   const textFieldList = inputData.map((item) => {
     const handleChange = (e: FormEvent<HTMLInputElement> & FocusEvent<HTMLInputElement>) => {
       if (!onChange) return;
-      onChange({ semantics, path, content: { ...content, copyright: { ...copyright, [item.name]: e.target.value } } });
+      onChange({ ...copyright, [item.name]: e.target.value });
     };
     switch (item.type) {
       case "text": {
@@ -297,10 +306,16 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
     className,
     classes,
   } = props;
+  const singleMediaContent = content?.[0];
   const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
     if (!file || !file.id || !onChange) return;
     const { id, type: mime } = file;
-    onChange({ semantics, path, content: { ...content, path: id, mime } });
+    onChange({ semantics, path, content: [{ ...singleMediaContent, path: id, mime, copyright: { license: H5PLicense.U } }] });
+  };
+  const handleChangeCopyright: CopyrightFormProps["onChange"] = (copyright) => {
+    if (!onChange || !content) return;
+    const mediaContent = content.map((singleContent) => ({ ...(singleContent as NonNullable<H5PSingleMediaContent>), copyright }));
+    onChange({ semantics, path, content: mediaContent });
   };
   return (
     <div className={clsx(className, classes?.root)}>
@@ -312,37 +327,50 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
       </div>
       <SingleUploader
         partition="assets"
-        accept="image/*,audio/*,video/*"
-        value={content?.path}
+        accept="audio/*,video/*"
+        value={singleMediaContent?.path}
         onChangeFile={handleChangeFile}
         render={({ uploady, item, btnRef, value, isUploading }) => (
           <Box display="flex">
-            <Button
-              className={classes?.uploadButton}
-              ref={btnRef}
-              size="medium"
-              variant="contained"
-              component="span"
-              color="primary"
-              endIcon={<CloudUploadOutlined />}
-            >
-              {d("Upload from Device").t("library_label_upload_from_device")}
-            </Button>
-            {content?.copyright && (
-              <DialogButton variant="contained" color="primary" size="medium" label="Edit copyright" className={classes?.copyrightButton}>
-                <CopyrightForm {...props} />
-              </DialogButton>
-            )}
+            <Box display="flex" flexDirection="column" marginRight="auto">
+              <Button
+                className={classes?.uploadButton}
+                ref={btnRef}
+                size="medium"
+                variant="contained"
+                component="span"
+                color="primary"
+                endIcon={<CloudUploadOutlined />}
+              >
+                {d("Upload from Device").t("library_label_upload_from_device")}
+              </Button>
+              {singleMediaContent?.copyright && (
+                <DialogButton variant="contained" color="primary" size="medium" label="Edit copyright" className={classes?.copyrightButton}>
+                  <CopyrightForm classes={classes} value={content?.[0]?.copyright} onChange={handleChangeCopyright} />
+                </DialogButton>
+              )}
+            </Box>
             {isUploading && <ProgressWithText value={item?.completed} />}
-            {!isUploading && value && <img className={classes?.mediaPreview} alt="thumbnail" src={apiResourcePathById(value)} />}
+            {!isUploading && value && <Thumbnail className={classes?.mediaPreview} type={ContentType.audio} />}
           </Box>
         )}
       />
     </div>
   );
 }
-
-export function H5pElementImage(props: H5pElementMediaProps) {
+export interface H5pElementImageProps extends H5PBaseElementProps<H5PImageSemantic> {
+  classes?: {
+    root?: string;
+    uploadButton?: string;
+    copyrightButton?: string;
+    mediaPreview?: string;
+    input?: string;
+    paragraph?: string;
+    title?: string;
+    description?: string;
+  };
+}
+export function H5pElementImage(props: H5pElementImageProps) {
   const { itemHelper, onChange, className, classes } = props;
   const { path, semantics, content } = itemHelper;
   const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
@@ -351,6 +379,10 @@ export function H5pElementImage(props: H5pElementMediaProps) {
     getImageDimension(file).then(({ width, height }) => {
       onChange({ semantics, path, content: { ...content, path: id, mime, width, height, copyright: { license: H5PLicense.U } } });
     });
+  };
+  const handleChangeCopyright: CopyrightFormProps["onChange"] = (copyright) => {
+    if (!onChange || !content) return;
+    onChange({ semantics, path, content: { ...content, copyright } });
   };
   return (
     <div className={clsx(className, classes?.root)}>
@@ -390,7 +422,7 @@ export function H5pElementImage(props: H5pElementMediaProps) {
                       label="Edit copyright"
                       className={classes?.copyrightButton}
                     >
-                      <CopyrightForm {...props} />
+                      <CopyrightForm classes={classes} value={content.copyright} onChange={handleChangeCopyright} />
                     </DialogButton>
                   )}
                 </Box>
@@ -405,7 +437,6 @@ export function H5pElementImage(props: H5pElementMediaProps) {
   );
 }
 
-export type H5pElementImageProps = H5pElementMediaProps;
 export type H5pElementVideoProps = H5pElementMediaProps;
 export type H5pElementAudioProps = H5pElementMediaProps;
 export type H5pElementFileProps = H5pElementMediaProps;

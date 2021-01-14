@@ -54,7 +54,7 @@ export function WidgetElement(props: H5pElementProps) {
         isH5pSelectItemInfo(targetItemHelper)
       ) {
         const value = targetItemHelper.content;
-        return Array.isArray(equals) ? equals.includes(value) : equals === value;
+        return Array.isArray(equals) ? (equals as typeof value[]).includes(value) : equals === value;
       }
       return false;
     });

@@ -32,7 +32,7 @@ export enum H5PLicense {
   C = "C",
 }
 
-interface IH5PCopyright {
+export interface IH5PCopyright {
   license: string;
   title?: string;
   author?: string;
@@ -41,13 +41,13 @@ interface IH5PCopyright {
   version?: string;
 }
 
-export type H5PLeafContent = H5PTextContent | H5PNumberContent | H5PBooleanContent | H5PSelectContent | H5PMediaContent;
+export type H5PLeafContent = H5PTextContent | H5PNumberContent | H5PBooleanContent | H5PSelectContent | H5PImageContent | H5PMediaContent;
 
 export type H5PTextContent = string | undefined;
 export type H5PNumberContent = number | undefined;
 export type H5PBooleanContent = boolean | undefined;
 export type H5PSelectContent = string | undefined;
-export type H5PMediaContent =
+export type H5PSingleMediaContent =
   | {
       path: string;
       mime: string;
@@ -57,9 +57,10 @@ export type H5PMediaContent =
     }
   | undefined;
 
+export type H5PImageContent = H5PSingleMediaContent;
+export type H5PMediaContent = H5PSingleMediaContent[];
 export type H5PVideoContent = H5PMediaContent;
 export type H5PAudioContent = H5PMediaContent;
-export type H5PImageContent = H5PMediaContent;
 export type H5PFileContent = H5PMediaContent;
 
 export type H5PGroupContent =
@@ -99,6 +100,8 @@ export type H5PContentBySemantics<S extends H5PItemSemantic> = S extends H5PText
   ? H5PBooleanContent
   : S extends H5PSelectSemantic
   ? H5PSelectContent
+  : S extends H5PImageSemantic
+  ? H5PImageContent
   : S extends H5PMediaSemantic
   ? H5PMediaContent
   : S extends H5PListSemantic
@@ -172,13 +175,15 @@ export interface H5PSelectSemantic extends H5PBaseSemantic {
 }
 
 export interface H5PMediaSemantic extends H5PBaseSemantic {
-  type: H5PItemType.image | H5PItemType.video | H5PItemType.audio | H5PItemType.file;
+  type: H5PItemType.video | H5PItemType.audio | H5PItemType.file;
   default?: undefined;
   width?: number;
   height?: number;
   disableCopyright?: boolean;
 }
-export type H5PImageSemantic = H5PMediaSemantic;
+export interface H5PImageSemantic extends Omit<H5PMediaSemantic, "type"> {
+  type: H5PItemType.image;
+}
 export type H5PVideoSemantic = H5PMediaSemantic;
 export type H5PAudioSemantic = H5PMediaSemantic;
 export type H5PFileSemantic = H5PMediaSemantic;

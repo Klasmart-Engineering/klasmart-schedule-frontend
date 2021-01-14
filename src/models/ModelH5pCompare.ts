@@ -25,6 +25,12 @@ export function formatCompareContent(content: any): any {
   if (Array.isArray(content)) {
     return content.map((subContent) => formatCompareContent(subContent));
   }
+  if (content.mime && content.path) {
+    return {
+      ...content,
+      path: "path",
+    };
+  }
   if (typeof content === "object") {
     return Object.keys(content)
       .sort()

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
-import { H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
+import { h5plibId2Name, H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
 import { H5pCompare } from "./H5pCompare";
 import { H5pDetails } from "./H5pDetails";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
@@ -52,7 +52,9 @@ export function H5pEditor() {
         (!schema ? null : (
           <Fragment>
             <H5pCompare value={libContent} />
-            {show === "details" && library && schema && <H5pDetails value={{ library }} schema={schema} onChange={setLibContent} />}
+            {show === "details" && library && schema && (
+              <H5pDetails value={{ library: h5plibId2Name(library) }} schema={schema} onChange={setLibContent} />
+            )}
           </Fragment>
         ))}
       {show === "info" && contentTypeList && <H5pInfo contentTypeList={contentTypeList} />}
