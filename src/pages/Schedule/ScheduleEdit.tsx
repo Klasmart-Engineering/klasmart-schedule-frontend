@@ -281,20 +281,24 @@ function EditBox(props: CalendarStateProps) {
     PermissionType.create_my_schools_schedule_events_522,
     PermissionType.attend_live_class_as_a_student_187,
   ]);
-  const [rosterChecked, setRosterChecked] = React.useState("all");
+  const [rosterChecked, setRosterChecked] = React.useState("other");
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
+  const rosterSelectAll = () => {
+    const participant: any = participantMockOptions.participantList;
+    const student = participant.class.students.map((item: any, key: number) => {
+      return { id: item.user_id, name: item.user_name };
+    });
+    const teacher = participant.class.teachers.map((item: any, key: number) => {
+      return { id: item.user_id, name: item.user_name };
+    });
+    handleChangeParticipants("classRoster", { student, teacher } as ParticipantsShortInfo);
+  };
+
   const handleRosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === "all") {
-      const participant: any = participantMockOptions.participantList;
-      const student = participant.class.students.map((item: any, key: number) => {
-        return { id: item.user_id, name: item.user_name };
-      });
-      const teacher = participant.class.teachers.map((item: any, key: number) => {
-        return { id: item.user_id, name: item.user_name };
-      });
-      handleChangeParticipants("classRoster", { student, teacher } as ParticipantsShortInfo);
+      rosterSelectAll();
     } else {
       handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
     }
@@ -305,20 +309,29 @@ function EditBox(props: CalendarStateProps) {
     const rosterItem = [{ id: event.target.value, name: event.target.name }];
     if (event.target.checked) {
       handleChangeParticipants("classRoster", {
-        student: classRosterIds?.student.concat(rosterItem),
-        teacher: classRosterIds?.teacher,
+        student: type === "students" ? classRosterIds?.student.concat(rosterItem) : classRosterIds?.student,
+        teacher: type === "students" ? classRosterIds?.teacher : classRosterIds?.teacher.concat(rosterItem),
       } as ParticipantsShortInfo);
     } else {
-      classRosterIds?.student.forEach((item: ClassOptionsItem, index: number) => {
+      const ids = type === "students" ? classRosterIds?.student : classRosterIds?.teacher;
+      ids?.forEach((item: ClassOptionsItem, index: number) => {
         if (JSON.stringify(item) === JSON.stringify(rosterItem[0])) {
-          classRosterIds?.student.splice(index, 1);
+          ids.splice(index, 1);
         }
       });
       handleChangeParticipants("classRoster", {
-        student: { ...classRosterIds?.student },
-        teacher: { ...classRosterIds?.teacher },
+        student: type === "students" ? ids : classRosterIds?.student,
+        teacher: type === "teachers" ? ids : classRosterIds?.teacher,
       } as ParticipantsShortInfo);
     }
+    setRosterChecked("other");
+  };
+
+  const rosterIsExist = (item: any) => {
+    const rosterItem = [{ id: item.user_id, name: item.user_name }];
+    return classRosterIds?.teacher
+      .concat(classRosterIds?.student)
+      .some((item) => JSON.stringify(item) === JSON.stringify(rosterItem[0])) as boolean;
   };
 
   React.useEffect(() => {
@@ -525,12 +538,12 @@ function EditBox(props: CalendarStateProps) {
    * @param name
    */
 
-  const autocompleteChange = (value: any | null, name: string) => {
+  const autocompleteChange = async (value: any | null, name: string) => {
     let ids: any[] = [];
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      getParticipantOptions(value["id"]);
+      await getParticipantOptions(value["id"]);
       setClassItem(value);
     }
 
@@ -1063,6 +1076,7 @@ function EditBox(props: CalendarStateProps) {
           className={css.participantText}
           control={
             <Checkbox
+              checked={rosterIsExist(item)}
               name={item.user_name}
               color="primary"
               value={item.user_id}
@@ -1263,7 +1277,7 @@ function EditBox(props: CalendarStateProps) {
                 <div className={css.splitLine}></div>
                 <div style={{ textAlign: "center", width: "202px" }}>
                   <span className={css.participantTitle}>Teachers</span>
-                  {menuItemListClassKrParticipants("teachers")}
+                  {menuItemListClassKrParticipants("teacher")}
                 </div>
               </div>
               <Button
