@@ -2,7 +2,7 @@ import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Hidden, makeStyles
 import { Search } from "@material-ui/icons";
 import React from "react";
 import { d, reportMiss } from "../../locale/LocaleManager";
-import { ParticipantsData, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
+import { ClassOptionsItem, ParticipantsData, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -68,12 +68,17 @@ export default function AddParticipantsTemplate(props: InfoProps) {
     setDefaultFilter(event.target.value);
   };
 
+  const [searchData, setSearchData] = React.useState(ParticipantsData);
+
   const filterData: RolesData[] = (defaultFilter === "students"
-    ? ParticipantsData?.classes.students
-    : ParticipantsData?.classes.teachers) as RolesData[];
+    ? searchData?.classes.students
+    : searchData?.classes.teachers) as RolesData[];
   const [part, setPart] = React.useState<ParticipantsShortInfo>(participantsIds);
 
-  const is_tea_or_stu = defaultFilter === "students" ? part.student : part.teacher;
+  const is_tea_or_stu =
+    defaultFilter === "students"
+      ? (JSON.parse(JSON.stringify(part.student)) as ClassOptionsItem[])
+      : (JSON.parse(JSON.stringify(part.teacher)) as ClassOptionsItem[]);
 
   const handleChange = (value: RolesData) => {
     const is_exist = is_tea_or_stu.some((item) => item.id === value.user_id);
@@ -102,16 +107,51 @@ export default function AddParticipantsTemplate(props: InfoProps) {
     handleClose();
   };
 
+  const [name, setName] = React.useState("");
+
+  const handleSearch = () => {
+    setSearchData(ParticipantsData);
+    if (name) {
+      // @ts-ignore
+      const result = ParticipantsData?.classes[defaultFilter].filter((item) => item.user_name.includes(name));
+      setSearchData({
+        classes: {
+          teachers: searchData?.classes.teachers as RolesData[],
+          students: searchData?.classes.students as RolesData[],
+          [defaultFilter]: result,
+        },
+      });
+    }
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.keyCode === 13) {
+      handleSearch();
+    }
+  };
+
   return (
     <div>
       <div className={css.title}>{reportMiss("Add participants", "schedule_add_participants")}</div>
       <Grid container alignItems="center" className={css.searchPart}>
         <Grid item xs={4} sm={5} md={5} lg={5} xl={5} className={css.searchInput}>
-          <TextField size="small" id="outlined-basic" label="Search" variant="outlined" />
+          <TextField
+            size="small"
+            id="outlined-basic"
+            label="Search"
+            variant="outlined"
+            value={name}
+            onChange={handleNameChange}
+            onKeyDown={handleKeyDown}
+          />
         </Grid>
         <Hidden smDown>
           <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
-            <Button variant="contained" color="primary" size="medium" startIcon={<Search />}>
+            <Button variant="contained" color="primary" size="medium" startIcon={<Search />} onClick={handleSearch}>
               {d("Search").t("schedule_button_search")}
             </Button>
           </Grid>
