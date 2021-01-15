@@ -57,6 +57,7 @@ import { Thumbnail } from "../Thumbnail";
 
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
+  error?: string | boolean;
   onChange?(itemInfo: H5PItemInfo<S>): any;
 }
 
@@ -128,7 +129,7 @@ export function H5pElement(props: H5pElementProps) {
 }
 
 export type H5pElementTextProps = H5PBaseElementProps<H5PTextSemantic> &
-  Omit<TextFieldProps, "onChange" | "variant"> & {
+  Omit<TextFieldProps, "onChange" | "variant" | "error"> & {
     classes?: {
       paragraph?: string;
       description?: string;
@@ -140,6 +141,7 @@ export function H5pElementText(props: H5pElementTextProps) {
     onChange,
     className,
     classes,
+    error,
     ...inputProps
   } = props;
   return (
@@ -149,6 +151,9 @@ export function H5pElementText(props: H5pElementTextProps) {
       </div>
       <TextField
         {...inputProps}
+        inputProps={{ maxLength: semantics.maxLength }}
+        error={!!error}
+        helperText={error}
         multiline
         required={!semantics.optional}
         defaultValue={content}
@@ -163,7 +168,7 @@ export function H5pElementText(props: H5pElementTextProps) {
 }
 
 export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic> &
-  Omit<TextFieldProps, "onChange" | "variant"> & {
+  Omit<TextFieldProps, "onChange" | "variant" | "error"> & {
     classes?: {
       paragraph?: string;
       description?: string;
@@ -172,6 +177,7 @@ export type H5pElementNumberProps = H5PBaseElementProps<H5PNumberSemantic> &
 export function H5pElementNumber(props: H5pElementNumberProps) {
   const {
     itemHelper: { path, semantics, content },
+    error,
     onChange,
     className,
     classes,
@@ -184,6 +190,9 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
       </div>
       <TextField
         {...inputProps}
+        inputProps={{ step: semantics.step }}
+        error={!!error}
+        helperText={error}
         required={!semantics.optional}
         defaultValue={content}
         placeholder={semantics.placeholder}
@@ -198,7 +207,7 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
 }
 
 export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic> &
-  Omit<CheckboxProps, "onChange" | "variant"> & {
+  Omit<CheckboxProps, "onChange" | "variant" | "error"> & {
     classes?: {
       paragraph?: string;
       description?: string;
@@ -207,6 +216,7 @@ export type H5pElementBooleanProps = H5PBaseElementProps<H5PBooleanSemantic> &
 export function H5pElementBoolean(props: H5pElementBooleanProps) {
   const {
     itemHelper: { path, semantics, content },
+    error,
     onChange,
     className,
     classes,
@@ -235,7 +245,7 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
 }
 
 export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic> &
-  Omit<TextFieldProps, "onChange" | "variant"> & {
+  Omit<TextFieldProps, "onChange" | "variant" | "error"> & {
     classes?: {
       paragraph?: string;
       description?: string;
@@ -244,6 +254,7 @@ export type H5pElementSelectProps = H5PBaseElementProps<H5PSelectSemantic> &
 export function H5pElementSelect(props: H5pElementSelectProps) {
   const {
     itemHelper: { path, semantics, content },
+    error,
     onChange,
     className,
     classes,
@@ -512,6 +523,7 @@ export function H5pElementList(props: H5pElementListProps) {
   const { semantics } = itemHelper;
   const css = useStyles(semantics);
   const disableCloseBtn = children.length <= (semantics.min ?? 0);
+  const disalbeAddBtn = semantics.max ? children.length >= semantics.max : false;
   return (
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
@@ -535,13 +547,15 @@ export function H5pElementList(props: H5pElementListProps) {
           <AccordionDetails className={classes?.details}>{childNode}</AccordionDetails>
         </Accordion>
       ))}
-      <Button
-        className={clsx(css.importanceBackgroundColor, css.importanceColor, classes?.button)}
-        variant="contained"
-        onClick={() => onAddListItem(itemHelper)}
-      >
-        ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
-      </Button>
+      {!disalbeAddBtn && (
+        <Button
+          className={clsx(css.importanceBackgroundColor, css.importanceColor, classes?.button)}
+          variant="contained"
+          onClick={() => onAddListItem(itemHelper)}
+        >
+          ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
+        </Button>
+      )}
     </div>
   );
 }

@@ -156,7 +156,7 @@ export interface H5PNumberSemantic extends H5PBaseSemantic {
   default?: number;
   min?: number;
   max?: number;
-  steps?: number;
+  step?: number;
   decimals?: number;
   unit?: string;
   placeholder?: string;
@@ -364,6 +364,10 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
         if (child === undefined) return r;
         return Object.assign(r, child);
       }, {});
+      // 规则不允许当个key 的group 添加 isSubContent 属性
+      if (itemHelper.semantics.isSubContent) {
+        value = Object.assign({ subContentId: sha1(JSON.stringify(value)) }, value);
+      }
     }
   } else if (isH5pLibraryItemInfo(itemHelper))
     libraryBlock: {
@@ -398,6 +402,71 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
     ? value
     : { [itemHelper.semantics.name]: value };
 };
+
+const rules = {
+  required(value: any) {
+    return value == null || value === "" ? "The field is required and must have a value." : true;
+  },
+  regexp({ pattern, modifiers }: IH5PRegexp, value: string = "") {
+    return new RegExp(pattern, modifiers).test(value) || "Field value contains an invalid format or characters that are forbidden.";
+  },
+  min(min: number, value?: number) {
+    return value != null && value > min ? true : `The ${value} is below the minimum of ${min}`;
+  },
+  max(max: number, value?: number) {
+    return value != null && value <= max ? true : `The field value exceeds the maximum of ${max}`;
+  },
+  decimals(decimals: number, value?: number) {
+    return value != null && (value.toString().split(".")[1]?.length ?? 0) <= decimals
+      ? true
+      : `Only can contain numbers with max ${decimals} decimals.`;
+  },
+  step(step: number, value?: number) {
+    return value != null && value % step === 0 ? true : `The field value can only be changed in steps of ${step}`;
+  },
+};
+
+export type H5pFormErrors = Record<string, boolean | string>;
+export const mapValidate: MapHandler<H5pFormErrors> = (props) => {
+  const { itemHelper, children } = props;
+  let result: boolean | string = true;
+  if (
+    isH5pTextItemInfo(itemHelper) ||
+    isH5pNumberItemInfo(itemHelper) ||
+    isH5pBooleanItemInfo(itemHelper) ||
+    isH5pSelectItemInfo(itemHelper) ||
+    isH5pImageItemInfo(itemHelper) ||
+    isH5pAudioItemInfo(itemHelper) ||
+    isH5pVideoItemInfo(itemHelper) ||
+    isH5pFileItemInfo(itemHelper)
+  ) {
+    if (result === true && !itemHelper.semantics.optional) {
+      debugger;
+      result = rules.required(itemHelper.content);
+    }
+  }
+  if (isH5pNumberItemInfo(itemHelper)) {
+    const { semantics, content } = itemHelper;
+    if (result === true && semantics.min) result = rules.min(semantics.min, content);
+    if (result === true && semantics.max) result = rules.max(semantics.max, content);
+    if (result === true && semantics.step) result = rules.step(semantics.step, content);
+  }
+  const currentErrors = result === true ? {} : { [itemHelper.path]: result };
+  return children.reduce((errors, childErrors) => Object.assign(errors, childErrors), currentErrors);
+};
+
+export function validateContent(itemInfo: H5PItemInfo, schema: H5PSchema) {
+  return h5pItemMapper(itemInfo, schema, mapValidate);
+}
+
+export function parseH5pErrors(message?: string): H5pFormErrors {
+  if (!message || message === "") return {};
+  try {
+    return JSON.parse(message);
+  } catch {
+    return {};
+  }
+}
 
 function createLibraryContentByParams(library: string, params: NonNullable<H5PLibraryContent>["params"]) {
   const subContentId = sha1(JSON.stringify(params));

@@ -47,7 +47,7 @@ export function H5pCompare(props: H5pCompareProps) {
       <Grid container justify="space-around">
         <Grid item xs={1}>
           <Button size="large" variant="contained" color="primary" disabled={!targetContent || !value} onClick={handleValidate}>
-            Validate
+            Compare
           </Button>
         </Grid>
         <Grid item xs={10}>

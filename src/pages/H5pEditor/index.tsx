@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
-import { H5PLibraryContent, H5PSchema } from "../../models/ModelH5pSchema";
+import { H5PSchema } from "../../models/ModelH5pSchema";
 import ExpandContent from "./ExpandContent";
 import { H5pCompare } from "./H5pCompare";
 import { H5pDetails } from "./H5pDetails";
@@ -29,11 +29,9 @@ const useLibrary = (libraryOfContent?: string) => {
   const library = libraryOfContent ?? userSpecifiedLibrary;
   return [library, setUserSpecifiedLibrary] as const;
 };
-
 export function H5pEditor() {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const [libContent, setLibContent] = useState<H5PLibraryContent>();
   const [library, setLibrary] = useLibrary(query.get("library") || undefined);
   const contentTypeList = useContentTypeList();
   const schema = useSchema(library);

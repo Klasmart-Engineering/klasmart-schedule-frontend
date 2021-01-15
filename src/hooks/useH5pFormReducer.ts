@@ -1,6 +1,6 @@
 import produce from "immer";
 import setByPath from "lodash/set";
-import { Reducer, useMemo, useReducer, useRef } from "react";
+import { Reducer, useEffect, useMemo, useReducer, useRef } from "react";
 import {
   createDefaultLibraryContent,
   createDefaultListContent,
@@ -85,7 +85,7 @@ const formReducer = (state: H5PLibraryContent, action: H5pFormAction): H5PLibrar
   }
 };
 
-export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSchema) {
+export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSchema, onChange: { (value: H5PLibraryContent): any }) {
   const rootContentInfo: H5PItemInfo = { path: "", semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library } };
   const content = defaultValue
     ? (h5pItemMapper({ ...rootContentInfo, content: defaultValue }, schema, mapH5PContent).result as H5PLibraryContent)
@@ -116,5 +116,6 @@ export function useH5pFormReducer(defaultValue: H5PLibraryContent, schema: H5PSc
       return formRef.current;
     };
   }, [form, schema]);
+  useEffect(() => onChange(form), [form, onChange]);
   return [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] as const;
 }

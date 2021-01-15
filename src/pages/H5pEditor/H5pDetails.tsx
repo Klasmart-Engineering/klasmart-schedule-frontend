@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   H5pElement,
   H5pElementProps,
@@ -33,6 +33,7 @@ import { widgetElements } from "../../components/H5pWidget";
 import { useH5pFormReducer } from "../../hooks/useH5pFormReducer";
 import { localeManager, reportMiss } from "../../locale/LocaleManager";
 import {
+  H5pFormErrors,
   H5PItemHelper,
   h5pItemMapper,
   H5PItemType,
@@ -184,20 +185,21 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
 };
 
 const pipe = <P, R>(f1: { (x: P): R }, f2: { (x: R): any }) => (x: P) => f2(f1(x));
-
+const noop = (value: H5PLibraryContent) => {};
 interface H5pDetailsProps {
-  value: H5PLibraryContent;
-  onChange: (value: H5PLibraryContent) => any;
+  defaultValue: H5PLibraryContent;
+  onChange?: (value: H5PLibraryContent) => any;
   schema: H5PSchema;
+  errors: H5pFormErrors;
 }
-export function H5pDetails(props: H5pDetailsProps) {
-  const { value, schema, onChange } = props;
+export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, ref) => {
+  const { defaultValue, schema, onChange = noop, errors } = props;
   const css = useStyles();
   const defaultTheme = useTheme();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const size = sm ? "small" : "medium";
   const theme = createMuiTheme(defaultTheme, extendedTheme(size, sm));
-  const [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] = useH5pFormReducer(value, schema);
+  const [form, { dispatchChange, dispatchAddListItem, dispatchRemoveListItem }] = useH5pFormReducer(defaultValue, schema, onChange);
   console.log("form = ", form);
   const libraryInfo: H5PLibraryInfo = {
     path: "",
@@ -228,6 +230,7 @@ export function H5pDetails(props: H5pDetailsProps) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
           onChange: pipe(dispatchChange, onChange),
+          error: errors[path],
           className: css.h5pItem,
           classes: {
             paragraph: css.inlineSectionParagraph,
@@ -315,7 +318,7 @@ export function H5pDetails(props: H5pDetailsProps) {
   );
   return (
     <ThemeProvider theme={theme}>
-      <div className={css.paper}>
+      <div className={css.paper} ref={ref}>
         {uncommon}
         <div className={css.section} key="h5p-common-group">
           <Accordion>
@@ -351,4 +354,4 @@ export function H5pDetails(props: H5pDetailsProps) {
       </div>
     </ThemeProvider>
   );
-}
+});

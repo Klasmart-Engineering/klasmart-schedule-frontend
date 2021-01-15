@@ -26,7 +26,7 @@ const useStyles = makeStyles(({ palette }) => ({
     marginTop: 32,
   },
   addButton: {
-    margin: "32px 24px 0 12px",
+    margin: "32px 0 0 0",
   },
   closeButton: {
     position: "absolute",
@@ -59,6 +59,8 @@ export function WidgetElement(props: H5pElementListProps) {
   const [tabValue, setTabValue] = useState(0);
   const { children, itemHelper, onAddListItem, onRemoveListItem } = props;
   const { semantics } = itemHelper;
+  const disableCloseBtn = children.length <= (semantics.min ?? 0);
+  const disalbeAddBtn = semantics.max ? children.length >= semantics.max : false;
   const handleChangeTab = useMemo(
     () => (e: any, value: number) => {
       setTabValue(value);
@@ -110,9 +112,11 @@ export function WidgetElement(props: H5pElementListProps) {
                 classes={{ selected: css.tabLabelSelected }}
                 label={
                   <div className={css.tabLabel}>
-                    <Tooltip title="Remove Item">
-                      <Cancel className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)} />
-                    </Tooltip>
+                    {!disableCloseBtn && (
+                      <Tooltip title="Remove Item">
+                        <Cancel className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)} />
+                      </Tooltip>
+                    )}
                     <span>
                       {" "}
                       {idx + 1}.&nbsp;{semantics.field.label ?? semantics.field.name}
@@ -122,21 +126,23 @@ export function WidgetElement(props: H5pElementListProps) {
               />
             );
           })}
-          <Button
-            color="primary"
-            variant="contained"
-            size="large"
-            onClick={() => {
-              onAddListItem(itemHelper);
-              setTabValue(children.length);
-            }}
-            className={css.addButton}
-          >
-            ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
-          </Button>
         </Tabs>
         {tabPanels}
       </div>
+      {!disalbeAddBtn && (
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          onClick={() => {
+            onAddListItem(itemHelper);
+            setTabValue(children.length);
+          }}
+          className={css.addButton}
+        >
+          ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
+        </Button>
+      )}
     </Fragment>
   );
 }
