@@ -2,6 +2,7 @@ import { Button, FormControlLabel, Grid, IconButton, makeStyles, Radio, RadioGro
 import { PersonOutline } from "@material-ui/icons";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
+import { ClassOptionsItem, ParticipantsShortInfo } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -79,8 +80,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface InnerItem {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
   selected: string;
 }
 
@@ -89,95 +90,37 @@ interface Conflicts {
   class_roster_teacher_ids: InnerItem[];
   participants_student_ids: InnerItem[];
   participants_teacher_ids: InnerItem[];
+  [key: string]: InnerItem[];
 }
 
-export default function TimeConflictsTemplate() {
+interface TimeConflictsTemplateProps {
+  participantsIds: ParticipantsShortInfo;
+  handleClose: () => void;
+  classRosterIds: ParticipantsShortInfo;
+  setParticipantsIds: (value: ParticipantsShortInfo) => void;
+  setClassRosterIds: (value: ParticipantsShortInfo) => void;
+}
+
+export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
+  const { participantsIds, classRosterIds, setParticipantsIds, setClassRosterIds } = props;
   const css = useStyles();
 
   const { breakpoints } = useTheme();
 
+  React.useEffect(() => {
+    console.log(participantsIds, 11);
+  }, [participantsIds]);
+
   const sm = useMediaQuery(breakpoints.down("sm"));
 
-  const data1 = {
-    class_roster_student: [
-      {
-        id: "wewr",
-        name: "sdsad",
-      },
-      {
-        id: "dasdsa",
-        name: "BKJADHJ",
-      },
-      {
-        id: "wesdasdasgwr",
-        name: "FSNDKLJDAL",
-      },
-      {
-        id: "dsdsdsdt5y4",
-        name: "LKJLCS_sdfo",
-      },
-    ],
-    class_roster_teacher: [
-      {
-        id: "wewrjj",
-        name: "sdsafdsfd",
-      },
-      {
-        id: "dasdser3a",
-        name: "BKJAfsdaDHJ",
-      },
-      {
-        id: "343r",
-        name: "dsdasdar4",
-      },
-      {
-        id: "dsdsdsdfsdft5y4",
-        name: "LKJLCSfsd33_sdfo",
-      },
-    ],
-    participants_student: [
-      {
-        id: "wewrjjsdsddq",
-        name: "sdsa3r3rfdsfd",
-      },
-      {
-        id: "dasdseae222r3a",
-        name: "wdasdas",
-      },
-      {
-        id: "343adr",
-        name: "wawery6y",
-      },
-      {
-        id: "dsdsdsdsdafsdft5y4",
-        name: "LKJLCdad2sdfo",
-      },
-    ],
-    participants_teacher: [
-      {
-        id: "wewrjj1",
-        name: "sdsafdsfd2",
-      },
-      {
-        id: "dasdser3a3",
-        name: "BKJAfsdaDHJ4",
-      },
-      {
-        id: "343r5",
-        name: "dsdasdar46",
-      },
-      {
-        id: "dsdsdsdfsdft5y47",
-        name: "LKJLCSfsd33_sdfo8",
-      },
-    ],
-  };
+  // const [participants, setParticipants] = React.useState<ParticipantsShortInfo>(participantsIds)
+  // const [classRoster, setClassRoster] = React.useState<ParticipantsShortInfo>(classRosterIds)
 
   const [conflicts, setConflict] = React.useState<Conflicts>({
-    class_roster_student_ids: data1.class_roster_student.map((item) => ({ ...item, selected: "" })),
-    class_roster_teacher_ids: data1.class_roster_teacher.map((item) => ({ ...item, selected: "" })),
-    participants_student_ids: data1.participants_student.map((item) => ({ ...item, selected: "" })),
-    participants_teacher_ids: data1.participants_teacher.map((item) => ({ ...item, selected: "" })),
+    class_roster_student_ids: classRosterIds.student.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_teacher_ids: classRosterIds.teacher.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_student_ids: participantsIds.student.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_teacher_ids: participantsIds.teacher.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
   });
 
   const handleChange = (
@@ -198,16 +141,31 @@ export default function TimeConflictsTemplate() {
    * 最终返回出去的数据
    */
 
-  // let arr = {
-  //   class_roster_student_ids: [],
-  //   class_roster_teacher_ids: [],
-  //   participants_student_ids: [],
-  //   participants_teacher_ids: []
-  // }
-  // for (let key in conflicts) {
-  //   // @ts-ignore
-  //   arr[key] = conflicts[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"].filter(item => item.selected === "schedule").map(item => item.id)
-  // }
+  let arr = {
+    class_roster_student_ids: [],
+    class_roster_teacher_ids: [],
+    participants_student_ids: [],
+    participants_teacher_ids: [],
+  };
+
+  const handleConfirm = () => {
+    for (let key in conflicts) {
+      // @ts-ignore
+      arr[key] = conflicts[
+        key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+      ]
+        .filter((item) => item.selected === "schedule")
+        .map((item) => ({ id: item.id, name: item.name }));
+    }
+    setParticipantsIds({
+      teacher: arr.participants_teacher_ids,
+      student: arr.participants_student_ids,
+    });
+    setClassRosterIds({
+      teacher: arr.class_roster_teacher_ids,
+      student: arr.class_roster_student_ids,
+    });
+  };
 
   const chechkPart = (
     item: any,
@@ -237,6 +195,7 @@ export default function TimeConflictsTemplate() {
       </Grid>
     </>
   );
+
   return (
     <div>
       <div className={css.title}>{d("Time conflicts occured, please specify").t("schedule_time_conflict_msg")}</div>
@@ -282,7 +241,7 @@ export default function TimeConflictsTemplate() {
       </div>
       <div className={css.buttons}>
         <Button variant="outlined">{d("Cancel").t("assess_button_cancel")}</Button>
-        <Button variant="contained" color="primary" className={css.lastButton}>
+        <Button variant="contained" color="primary" className={css.lastButton} onClick={handleConfirm}>
           {d("OK").t("assess_label_ok")}
         </Button>
       </div>
