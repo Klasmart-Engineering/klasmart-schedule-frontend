@@ -50,9 +50,9 @@ import commonOptions from "./commonOptions.json";
 const useStyles = makeStyles(({ palette }) =>
   createStyles({
     paper: {
-      padding: 20,
-      width: "50%",
-      margin: "0 auto",
+      // padding: 20,
+      // width: "50%",
+      // margin: "0 auto",
     },
     h5pItem: {
       marginTop: 32,

@@ -16,7 +16,6 @@ import { Check } from "@material-ui/icons";
 import React from "react";
 import { ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
-import { H5PSchema } from "../../models/ModelH5pSchema";
 
 const useStyles = makeStyles(() => ({
   listItem: {
@@ -50,18 +49,17 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface H5pListProps {
+  libraryId?: string;
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
-  setContentType: (value: string) => any;
-  schema: H5PSchema;
   expand: boolean;
-  setExpand: (value: boolean) => any;
+  onExpand: (value: boolean) => any;
   setShow: (value: string) => any;
   setH5pId: (value: string) => void;
 }
 
 export default function H5pList(props: H5pListProps) {
-  const { contentTypeList, onChange, setContentType, schema, expand, setExpand, setShow, setH5pId } = props;
+  const { contentTypeList, onChange, expand, onExpand, setShow, setH5pId, libraryId } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -69,14 +67,13 @@ export default function H5pList(props: H5pListProps) {
   const [tempItem, setTempItem] = React.useState<any>({});
 
   const handleClick = (item: any) => {
-    if (schema) {
+    if (libraryId) {
       setTempItem(item);
       setOpen(true);
       return;
     }
-    setContentType(item.title);
     onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
-    setExpand(!expand);
+    onExpand(!expand);
   };
 
   const getDetails = (e: React.KeyboardEvent | React.MouseEvent, id: string) => {
@@ -91,9 +88,8 @@ export default function H5pList(props: H5pListProps) {
 
   const handleConfirm = () => {
     setOpen(false);
-    setContentType(tempItem.title);
     onChange(`${tempItem.id}-${tempItem.version.major}.${tempItem.version.minor}`);
-    setExpand(!expand);
+    onExpand(!expand);
   };
 
   return (

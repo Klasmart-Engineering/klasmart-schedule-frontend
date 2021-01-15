@@ -1,24 +1,26 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { ContentTypeList } from "../../api/type";
-import { H5PSchema } from "../../models/ModelH5pSchema";
 import H5pHeader from "./H5pHeader";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
 import H5pInfo from "./H5pInfo";
 import H5pList from "./H5pList";
 
 interface ExpandContentProps {
-  contentType: string;
+  value: string | undefined;
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
-  setContentType: (value: string) => any;
-  schema: H5PSchema;
   expand: boolean;
-  setExpand: (value: boolean) => any;
+  onExpand: (value: boolean) => any;
 }
 
-export default function ExpandContent(props: ExpandContentProps) {
-  const { contentType, contentTypeList, onChange, setContentType, schema, expand, setExpand } = props;
+const libraryId2Title = (id: ExpandContentProps["value"], contentTypeList?: ContentTypeList) => {
+  const info = contentTypeList?.find((item) => item.id === id?.split("-")[0]);
+  return info?.title || id;
+};
 
+export default function ExpandContent(props: ExpandContentProps) {
+  const { value: libraryId, contentTypeList, onChange, expand, onExpand } = props;
+  const libraryTitle = useMemo(() => libraryId2Title(libraryId, contentTypeList), [libraryId, contentTypeList]);
   const [newList, setNewList] = React.useState<ContentTypeList>(contentTypeList);
   const [show, setShow] = React.useState("list");
   const [h5pId, setH5pId] = React.useState<string>("");
@@ -52,12 +54,11 @@ export default function ExpandContent(props: ExpandContentProps) {
       <>
         <H5pHeader contentTypeList={newList} sortList={sortList} searchChange={searchChange} />
         <H5pList
+          libraryId={libraryId}
           setH5pId={setH5pId}
           onChange={onChange}
           contentTypeList={newList}
-          setContentType={setContentType}
-          schema={schema}
-          setExpand={setExpand}
+          onExpand={onExpand}
           expand={expand}
           setShow={setShow}
         />
@@ -68,7 +69,7 @@ export default function ExpandContent(props: ExpandContentProps) {
 
   return (
     <div>
-      <H5pHeaderNavbar contentType={contentType} setExpand={setExpand} expand={expand} />
+      <H5pHeaderNavbar title={libraryTitle ?? ""} onExpand={onExpand} expand={expand} />
       {expand && headerTogglePart}
     </div>
   );

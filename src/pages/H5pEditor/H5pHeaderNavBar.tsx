@@ -32,23 +32,23 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface H5pHeaderNavbarProps {
-  contentType: string;
-  setExpand: (value: boolean) => void;
+  title: string;
+  onExpand: (value: boolean) => void;
   expand: boolean;
 }
 
 export default function H5pHeaderNavbar(props: H5pHeaderNavbarProps) {
-  const { contentType, setExpand, expand } = props;
+  const { title, onExpand, expand } = props;
   const css = useStyles();
 
   const handleClick = () => {
-    setExpand(!expand);
+    onExpand(!expand);
   };
 
   return (
     <div className={css.navBar} onClick={handleClick}>
       <img src={imgUrl} alt="" />
-      {contentType ? contentType : reportMiss("Select content type", "h5p_select_content_type")}
+      {title ? title : reportMiss("Select content type", "h5p_select_content_type")}
       <IconButton className={css.downIcon} type="submit" aria-label="search">
         <ExpandMore />
       </IconButton>

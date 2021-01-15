@@ -7,8 +7,6 @@ const useStyles = makeStyles(({ palette }) =>
   createStyles({
     compare: {
       paddingTop: 40,
-      paddingLeft: "25%",
-      paddingRight: "25%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
