@@ -305,6 +305,20 @@ function EditBox(props: CalendarStateProps) {
     setRosterChecked(event.target.value);
   };
 
+  const handleParticipantsChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    const participantsItem = [{ id: event.target.value, name: event.target.name }];
+    const ids = type === "students" ? participantsIds?.student : participantsIds?.teacher;
+    ids?.forEach((item: ClassOptionsItem, index: number) => {
+      if (JSON.stringify(item) === JSON.stringify(participantsItem[0])) {
+        ids.splice(index, 1);
+      }
+    });
+    handleChangeParticipants("participants", {
+      student: type === "students" ? ids : participantsIds?.student,
+      teacher: type === "teachers" ? ids : participantsIds?.teacher,
+    } as ParticipantsShortInfo);
+  };
+
   const handleRosterChangeBox = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
     const rosterItem = [{ id: event.target.value, name: event.target.name }];
     if (event.target.checked) {
@@ -635,6 +649,7 @@ function EditBox(props: CalendarStateProps) {
     setValidator({ ...isValidator });
     return verificaPath;
   };
+
   /**
    * save schedule data
    */
@@ -705,6 +720,42 @@ function EditBox(props: CalendarStateProps) {
 
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     addData["is_force"] = is_force;
+
+    // participants && class roster collision detection
+    const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.student.length);
+    const rosterIsEmpty: boolean = !(classRosterIds?.student.length || classRosterIds?.student.length);
+
+    if (participantsIsEmpty && rosterIsEmpty) {
+      dispatch(
+        actError(
+          d(
+            "For ‘Add Class’ (Class Roster) and ‘Add Participants’, at least a student and a teacher will need to be added into either of the field."
+          ).t("schedule_msg_no_user")
+        )
+      );
+      return;
+    }
+    if (!rosterSaveStatus && !participantsIsEmpty) {
+      dispatch(actError(d("Please confirm the field of ‘Class Roster’ by clicking OK").t("schedule_msg_roster_no_ok")));
+      return;
+    }
+    if (!participantSaveStatus && !rosterIsEmpty) {
+      dispatch(actError(d("Please confirm the fileld of ‘Add Participants’ by clicking OK").t("schedule_msg_participants_no_ok")));
+      return;
+    }
+    addData["participants_student_ids"] = participantsIds?.student.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+    addData["participants_teacher_ids"] = participantsIds?.teacher.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+    addData["class_roster_student_ids"] = classRosterIds?.student.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+    addData["class_roster_teacher_ids"] = classRosterIds?.teacher.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+
     let resultInfo: any;
     resultInfo = ((await dispatch(saveScheduleData({ ...scheduleList, ...addData, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof saveScheduleData>
@@ -1313,7 +1364,17 @@ function EditBox(props: CalendarStateProps) {
                     <Tooltip title={item.name as string} placement="right-start">
                       <FormControlLabel
                         className={css.participantText}
-                        control={<Checkbox name="checkedB" color="primary" />}
+                        control={
+                          <Checkbox
+                            name={item.name}
+                            value={item.id}
+                            color="primary"
+                            checked={true}
+                            onChange={(e) => {
+                              handleParticipantsChange(e, "students");
+                            }}
+                          />
+                        }
                         label={item.name}
                       />
                     </Tooltip>
@@ -1323,12 +1384,22 @@ function EditBox(props: CalendarStateProps) {
               <div className={css.splitLine}></div>
               <div style={{ textAlign: "center", width: "202px" }}>
                 <span className={css.participantTitle}>Teachers</span>
-                {participantsIds?.student.map((item: ClassOptionsItem) => {
+                {participantsIds?.teacher.map((item: ClassOptionsItem) => {
                   return (
                     <Tooltip title={item.name as string} placement="right-start">
                       <FormControlLabel
                         className={css.participantText}
-                        control={<Checkbox name="checkedB" color="primary" />}
+                        control={
+                          <Checkbox
+                            name={item.name}
+                            value={item.id}
+                            color="primary"
+                            checked={true}
+                            onChange={(e) => {
+                              handleParticipantsChange(e, "teacher");
+                            }}
+                          />
+                        }
                         label={item.name}
                       />
                     </Tooltip>

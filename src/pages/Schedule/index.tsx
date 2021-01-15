@@ -70,15 +70,15 @@ function ScheduleContent() {
   const mockData = {
     student: [
       { id: "123", name: "schedule1" },
-      { id: "123", name: "schedule1" },
-      { id: "123", name: "schedule1" },
-      { id: "123", name: "schedule1" },
+      { id: "124", name: "schedule1" },
+      { id: "125", name: "schedule1" },
+      { id: "126", name: "schedule1" },
     ],
     teacher: [
       { id: "123", name: "schedule1" },
-      { id: "123", name: "schedule1" },
-      { id: "123", name: "schedule1" },
-      { id: "123", name: "schedule1" },
+      { id: "124", name: "schedule1" },
+      { id: "125", name: "schedule1" },
+      { id: "126", name: "schedule1" },
     ],
   };
 
