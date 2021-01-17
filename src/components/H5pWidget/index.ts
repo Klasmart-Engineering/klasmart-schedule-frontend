@@ -2,6 +2,7 @@ import * as Dimensions from "./Dimensions";
 import * as DragQuestion from "./DragQuestion";
 import * as DynamicCheckboxes from "./DynamicCheckboxes";
 import * as Html from "./Html";
+import * as None from "./None";
 import * as RangeList from "./RangeList";
 import * as ShowWhen from "./ShowWhen";
 import * as VerticalTabs from "./VerticalTabs";
@@ -16,4 +17,5 @@ export const widgetElements = {
   [DragQuestion.title]: DragQuestion.WidgetElement,
   [Dimensions.title]: Dimensions.WidgetElement,
   [DynamicCheckboxes.title]: DynamicCheckboxes.WidgetElement,
+  [None.title]: None.WidgetElement,
 };

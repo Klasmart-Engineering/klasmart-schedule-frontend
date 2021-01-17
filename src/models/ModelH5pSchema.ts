@@ -46,7 +46,7 @@ export type H5PLeafContent = H5PTextContent | H5PNumberContent | H5PBooleanConte
 export type H5PTextContent = string | undefined;
 export type H5PNumberContent = number | undefined;
 export type H5PBooleanContent = boolean | undefined;
-export type H5PSelectContent = string | undefined;
+export type H5PSelectContent = string | string[] | number[] | undefined;
 export type H5PSingleMediaContent =
   | {
       path: string;
@@ -172,6 +172,7 @@ export interface H5PSelectSemantic extends H5PBaseSemantic {
   default?: string;
   options: { value: string; label: string }[];
   placeholder?: string;
+  multiple?: boolean;
 }
 
 export interface H5PMediaSemantic extends H5PBaseSemantic {
@@ -215,6 +216,7 @@ export interface H5PGroupSemantic extends H5PBaseSemantic {
 export enum H5PWidgetTitle {
   showWhen = "showWhen",
   html = "html",
+  none = "none",
 }
 
 export type H5PItemSemantic =
@@ -392,6 +394,9 @@ export const mapH5PContent: MapHandler<H5PItemContent> = (props) => {
   } else if (isH5pBooleanItemInfo(itemHelper)) {
     const { content, semantics } = itemHelper;
     value = content || semantics.default || false;
+  } else if (isH5pSelectItemInfo(itemHelper)) {
+    const { content, semantics } = itemHelper;
+    value = content || semantics.default || (semantics.multiple ? [] : undefined);
   } else {
     const { content, semantics } = itemHelper;
     value = content || semantics.default;
@@ -483,7 +488,7 @@ export function createDefaultLibraryContent(library: string, schema: H5PSchema):
 
 export function createDefaultListContent(semantics: H5PListSemantic, schema: H5PSchema, one: boolean = false): H5PListContent {
   const { field, defaultNum, min } = semantics;
-  const amount = one ? 1 : defaultNum ?? min ?? 1;
+  const amount = one ? 1 : defaultNum ?? min ?? 0;
   const { result } = h5pItemMapper({ path: "", semantics: field } as H5PItemInfo, schema, mapH5PContent);
   const defaultContent = result?.[field.name as keyof typeof result];
   return amount === 0
