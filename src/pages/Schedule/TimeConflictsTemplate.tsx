@@ -2,7 +2,7 @@ import { Button, FormControlLabel, Grid, IconButton, makeStyles, Radio, RadioGro
 import { PersonOutline } from "@material-ui/icons";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
-import { ClassOptionsItem, ParticipantsShortInfo } from "../../types/scheduleTypes";
+import { ClassOptionsItem, ConflictsData, ParticipantsShortInfo } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -94,22 +94,17 @@ interface Conflicts {
 }
 
 interface TimeConflictsTemplateProps {
-  participantsIds: ParticipantsShortInfo;
   handleClose: () => void;
-  classRosterIds: ParticipantsShortInfo;
   setParticipantsIds: (value: ParticipantsShortInfo) => void;
   setClassRosterIds: (value: ParticipantsShortInfo) => void;
+  conflictsData: ConflictsData;
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { participantsIds, classRosterIds, setParticipantsIds, setClassRosterIds } = props;
+  const { setParticipantsIds, setClassRosterIds, conflictsData } = props;
   const css = useStyles();
 
   const { breakpoints } = useTheme();
-
-  React.useEffect(() => {
-    console.log(participantsIds, 11);
-  }, [participantsIds]);
 
   const sm = useMediaQuery(breakpoints.down("sm"));
 
@@ -117,10 +112,10 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   // const [classRoster, setClassRoster] = React.useState<ParticipantsShortInfo>(classRosterIds)
 
   const [conflicts, setConflict] = React.useState<Conflicts>({
-    class_roster_student_ids: classRosterIds.student.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    class_roster_teacher_ids: classRosterIds.teacher.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    participants_student_ids: participantsIds.student.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    participants_teacher_ids: participantsIds.teacher.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_student_ids: conflictsData.class_roster_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_teacher_ids: conflictsData.class_roster_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_student_ids: conflictsData.participants_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_teacher_ids: conflictsData.participants_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
   });
 
   const handleChange = (
@@ -165,6 +160,16 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       teacher: arr.class_roster_teacher_ids,
       student: arr.class_roster_student_ids,
     });
+    console.log(
+      {
+        teacher: arr.class_roster_teacher_ids,
+        student: arr.class_roster_student_ids,
+      },
+      {
+        teacher: arr.participants_teacher_ids,
+        student: arr.participants_student_ids,
+      }
+    );
   };
 
   const chechkPart = (
