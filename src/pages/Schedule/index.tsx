@@ -67,23 +67,8 @@ function ScheduleContent() {
   const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
 
-  const mockData = {
-    student: [
-      { id: "123", name: "schedule1" },
-      { id: "124", name: "schedule1" },
-      { id: "125", name: "schedule1" },
-      { id: "126", name: "schedule1" },
-    ],
-    teacher: [
-      { id: "123", name: "schedule1" },
-      { id: "124", name: "schedule1" },
-      { id: "125", name: "schedule1" },
-      { id: "126", name: "schedule1" },
-    ],
-  };
-
-  const [participantsIds, setParticipantsIds] = React.useState<ParticipantsShortInfo>(mockData);
-  const [classRosterIds, setClassRosterIds] = React.useState<ParticipantsShortInfo>(mockData);
+  const [participantsIds, setParticipantsIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
+  const [classRosterIds, setClassRosterIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);

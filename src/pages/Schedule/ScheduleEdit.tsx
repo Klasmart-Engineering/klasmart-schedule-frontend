@@ -1192,6 +1192,10 @@ function EditBox(props: CalendarStateProps) {
     return newContentsData;
   };
 
+  const arrEmpty = (item: ClassOptionsItem[] | undefined): boolean => {
+    return JSON.stringify(participantsIds?.student) === "[]";
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -1354,7 +1358,7 @@ function EditBox(props: CalendarStateProps) {
             {menuItemListClassKr("roster")}
           </Box>
         )}
-        {(participantsIds?.student || participantsIds?.teacher) && !participantSaveStatus && (
+        {(!arrEmpty(participantsIds?.student) || !arrEmpty(participantsIds?.teacher)) && !participantSaveStatus && (
           <Box className={css.participantBox}>
             <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
               <div style={{ textAlign: "center", width: "202px" }}>
@@ -1434,7 +1438,7 @@ function EditBox(props: CalendarStateProps) {
             {menuItemListClassKr("teacher")}
           </Box>
         )}
-        {!participantsIds?.student && !participantsIds?.teacher && (
+        {arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
               error={validator.title}
@@ -1446,7 +1450,7 @@ function EditBox(props: CalendarStateProps) {
               required
               disabled
             ></TextField>
-            <AddCircleOutlineOutlined className={css.iconField} style={{ top: "46%" }} />
+            <AddCircleOutlineOutlined onClick={addParticipants} className={css.iconField} style={{ top: "46%", cursor: "pointer" }} />
           </Box>
         )}
         {scheduleList.class_type !== "Homework" && (
