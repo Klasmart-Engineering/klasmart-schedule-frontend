@@ -34,7 +34,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     position: "absolute",
     display: "flex",
     width: 48,
-    right: 0,
+    right: 8,
     top: 0,
     bottom: 0,
     alignItems: "center",

@@ -145,10 +145,10 @@ export function H5pElementText(props: H5pElementTextProps) {
     ...inputProps
   } = props;
   return (
-    <Fragment>
-      <div className={clsx(classes?.paragraph, className)}>
-        <div className={classes?.description}>{semantics.description}</div>
-      </div>
+    <div className={className}>
+      <Box mb={1} className={classes?.description}>
+        {semantics.description}
+      </Box>
       <TextField
         {...inputProps}
         inputProps={{ maxLength: semantics.maxLength }}
@@ -163,7 +163,7 @@ export function H5pElementText(props: H5pElementTextProps) {
         onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value })}
         key={`${path}: ${content}`}
       />
-    </Fragment>
+    </div>
   );
 }
 
@@ -184,10 +184,10 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
     ...inputProps
   } = props;
   return (
-    <Fragment>
-      <div className={clsx(classes?.paragraph, className)}>
-        <div className={classes?.description}>{semantics.description}</div>
-      </div>
+    <div className={className}>
+      <Box mb={1} className={classes?.description}>
+        {semantics.description}
+      </Box>
       <TextField
         {...inputProps}
         inputProps={{ step: semantics.step }}
@@ -202,7 +202,7 @@ export function H5pElementNumber(props: H5pElementNumberProps) {
         onBlur={(e) => onChange && onChange({ semantics, path, content: e.target.value ? Number(e.target.value) : undefined })}
         key={`${path}: ${content}`}
       />
-    </Fragment>
+    </div>
   );
 }
 
@@ -230,6 +230,7 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
           <Checkbox
             {...inputProps}
             name={path}
+            color="primary"
             defaultChecked={content}
             onBlur={(e) => onChange && onChange({ semantics, path, content: !!e.target.value })}
             key={`${path}: ${content}`}
@@ -237,9 +238,7 @@ export function H5pElementBoolean(props: H5pElementBooleanProps) {
         }
         label={semantics.label || semantics.name}
       />
-      <div className={classes?.paragraph}>
-        <div className={classes?.description}>{semantics.description}</div>
-      </div>
+      <div className={classes?.description}>{semantics.description}</div>
     </Fragment>
   );
 }
@@ -261,10 +260,10 @@ export function H5pElementSelect(props: H5pElementSelectProps) {
     ...inputProps
   } = props;
   return (
-    <Fragment>
-      <div className={clsx(classes?.paragraph, className)}>
-        <div className={classes?.description}>{semantics.description}</div>
-      </div>
+    <div className={className}>
+      <Box mb={1} className={classes?.description}>
+        {semantics.description}
+      </Box>
       <TextField
         {...inputProps}
         select
@@ -280,7 +279,7 @@ export function H5pElementSelect(props: H5pElementSelectProps) {
           </MenuItem>
         ))}
       </TextField>
-    </Fragment>
+    </div>
   );
 }
 
