@@ -446,7 +446,6 @@ export const mapValidate: MapHandler<H5pFormErrors> = (props) => {
     isH5pFileItemInfo(itemHelper)
   ) {
     if (result === true && !itemHelper.semantics.optional) {
-      debugger;
       result = rules.required(itemHelper.content);
     }
   }
@@ -471,6 +470,12 @@ export function parseH5pErrors(message?: string): H5pFormErrors {
   } catch {
     return {};
   }
+}
+
+export function parseLibraryContent(str: string): H5PLibraryContent {
+  const result = JSON.parse(str);
+  if (!result.library || !result.params || !result.metadata) throw new Error("My Error: parseLibraryContent failed!");
+  return result;
 }
 
 function createLibraryContentByParams(library: string, params: NonNullable<H5PLibraryContent>["params"]) {

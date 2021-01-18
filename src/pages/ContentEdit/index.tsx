@@ -27,6 +27,7 @@ import {
   searchContentLists,
   searchOutcomeList,
 } from "../../reducers/content";
+import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
@@ -104,6 +105,8 @@ function ContentEditForm() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
   );
+  const isNewH5p =
+    process.env.REACT_APP_ENABLE_NEW_H5P === "0" ? false : !id ? true : allDefaultValueAndKey["data.source"]?.value.includes(":");
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -393,7 +396,7 @@ function ContentEditForm() {
                 as={SelectH5PRadio}
                 defaultValue={
                   id
-                    ? allDefaultValueAndKey["data.input_source"]?.value
+                    ? allDefaultValueAndKey["data.input_source"]?.value ?? ""
                     : allDefaultValueAndKey["data.input_source"]?.value || MaterialType.h5p
                 }
                 key={allDefaultValueAndKey["data.input_source"]?.key}
@@ -410,12 +413,16 @@ function ContentEditForm() {
                 control={formMethods.control}
               />
               {inputSource === MaterialType.h5p ? (
-                <ContentH5p
-                  sub={id ? H5pSub.edit : H5pSub.new}
-                  allDefaultValueAndKey={allDefaultValueAndKey}
-                  formMethods={formMethods}
-                  valueSource={allDefaultValueAndKey["data.source"]?.value}
-                />
+                isNewH5p ? (
+                  <H5pComposeEditor formMethods={formMethods} valueSource={allDefaultValueAndKey["data.source"]?.value} />
+                ) : (
+                  <ContentH5p
+                    sub={id ? H5pSub.edit : H5pSub.new}
+                    allDefaultValueAndKey={allDefaultValueAndKey}
+                    formMethods={formMethods}
+                    valueSource={allDefaultValueAndKey["data.source"]?.value}
+                  />
+                )
               ) : (
                 <MediaAssetsEdit
                   allDefaultValueAndKey={allDefaultValueAndKey}

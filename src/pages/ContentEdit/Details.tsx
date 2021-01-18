@@ -328,7 +328,6 @@ export default function Details(props: DetailsProps) {
                       >
                         {d("Thumbnail").t("library_label_thumbnail")}
                       </Button>
-                      {console.log("isUploading, value =", isUploading, value)}
                       {isUploading && <ProgressWithText value={item?.completed} />}
                       {!isUploading && value && <img className={css.thumbnailImg} alt="thumbnail" src={apiResourcePathById(value)} />}
                     </Box>

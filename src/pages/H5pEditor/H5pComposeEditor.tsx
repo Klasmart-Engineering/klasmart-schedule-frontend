@@ -1,9 +1,8 @@
-import { Box, Button } from "@material-ui/core";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
+import { Controller, UseFormMethods } from "react-hook-form";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
+import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import {
   H5PItemType,
   h5plibId2Name,
@@ -13,10 +12,10 @@ import {
   H5PSchema,
   H5P_ROOT_NAME,
   parseH5pErrors,
+  parseLibraryContent,
   validateContent,
 } from "../../models/ModelH5pSchema";
 import ExpandContent from "./ExpandContent";
-import { H5pCompare } from "./H5pCompare";
 import { H5pDetails } from "./H5pDetails";
 
 const useSchema = (library?: string) => {
@@ -46,12 +45,32 @@ const useContentTypeList = () => {
   }, []);
   return contentTypeList;
 };
-export function H5pEditor() {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const [library, setLibrary] = useState(query.get("library") || undefined);
-  const { control, handleSubmit, errors, watch } = useForm<{ data: H5PLibraryContent }>();
-  const libContent = watch("data");
+
+const useLibraryAndDefaultContent = (valueSource?: string) => {
+  const [, setLibrary] = useState<string>();
+  return useMemo(() => {
+    let defaultLibContent = valueSource ? parseLibraryContent(valueSource) : undefined;
+    let library = valueSource ? defaultLibContent?.library : undefined;
+    const setLib = (v: string) => {
+      library = v;
+      defaultLibContent = { library: h5plibId2Name(library) };
+      setLibrary(v);
+    };
+    const getLibAndDefaultContent = () => ({ library, defaultLibContent });
+    return [getLibAndDefaultContent, setLib] as const;
+  }, [valueSource, setLibrary]);
+};
+
+interface H5pComposeEditorProps {
+  valueSource?: string;
+  formMethods: UseFormMethods<ContentDetailForm>;
+}
+export function H5pComposeEditor(props: H5pComposeEditorProps) {
+  const { valueSource, formMethods } = props;
+  const [getLibAndDefaultContent, setLibrary] = useLibraryAndDefaultContent(valueSource);
+  const { library, defaultLibContent } = getLibAndDefaultContent();
+
+  const { control, errors } = formMethods;
   const contentTypeList = useContentTypeList();
   const { schema, schemaPending } = useSchema(library);
   const [expand, setExpand] = React.useState<boolean>(!library);
@@ -59,10 +78,10 @@ export function H5pEditor() {
     if (!schema) return false;
     const rootLibrarySchema: H5PLibrarySemantic = { type: H5PItemType.library, name: H5P_ROOT_NAME };
     const { result } = validateContent({ content, semantics: rootLibrarySchema, path: "" }, schema);
-    return JSON.stringify(result);
+    return Object.keys(result).length === 0 ? true : JSON.stringify(result);
   };
   return (
-    <Box width="50%" p={2.5} mt={0} mx="auto">
+    <Fragment>
       <ExpandContent
         onExpand={setExpand}
         expand={expand}
@@ -70,37 +89,27 @@ export function H5pEditor() {
         value={library}
         onChange={setLibrary}
       />
-      {schemaPending ? null : (
-        <Fragment>
-          <H5pCompare value={libContent} />
-          {library && schema && (
-            <Fragment>
-              <Controller
-                name="data"
-                defaultValue={library ? { library: h5plibId2Name(library) } : undefined}
-                rules={{ validate }}
-                control={control}
-                key={library}
-                render={(props) => (
-                  <H5pDetails
-                    defaultValue={props.value}
-                    onChange={props.onChange}
-                    schema={schema}
-                    errors={parseH5pErrors((errors.data as any)?.message)}
-                  />
-                )}
-              />
-              <Box display="flex" justifyContent="center" mt={4}>
-                <Button color="primary" variant="contained" onClick={handleSubmit(() => {})}>
-                  validate
-                </Button>
-              </Box>
-            </Fragment>
+      {!schemaPending && schema && library && (
+        <Controller
+          name="data.source"
+          defaultValue={JSON.stringify(defaultLibContent)}
+          rules={{ validate }}
+          control={control}
+          key={`library:${library},valueSource:${valueSource}`}
+          render={(props) => (
+            <H5pDetails
+              defaultValue={defaultLibContent}
+              onChange={(v) => {
+                const stringValue = JSON.stringify(v);
+                if (stringValue === props.value) return;
+                props.onChange(JSON.stringify(v));
+              }}
+              schema={schema}
+              errors={parseH5pErrors((errors as any)?.data?.source?.message)}
+            />
           )}
-        </Fragment>
+        />
       )}
-    </Box>
+    </Fragment>
   );
 }
-
-H5pEditor.routeBasePath = "/h5pEditor";
