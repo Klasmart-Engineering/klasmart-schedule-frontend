@@ -4,7 +4,7 @@ import { isH5pGroupItemInfo } from "../../models/ModelH5pSchema";
 import { H5pElement, H5pElementProps, isH5pElementGroup } from "../H5pElement";
 
 export function WidgetElement(props: H5pElementProps) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   if (!isH5pElementGroup(props)) return <H5pElement {...props} />;
   const { itemHelper } = props;
   const { semantics } = itemHelper;

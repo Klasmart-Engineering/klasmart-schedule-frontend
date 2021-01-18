@@ -3,10 +3,13 @@ import ImageIcon from "@material-ui/icons/Image";
 import TextFieldsIcon from "@material-ui/icons/TextFields";
 import TrackChangesIcon from "@material-ui/icons/TrackChanges";
 import React, { cloneElement, Fragment } from "react";
+import { Rnd } from "react-rnd";
+import { apiResourcePathById } from "../../api/extra";
 import { d } from "../../locale/LocaleManager";
 import {
   H5PBooleanSemantic,
   H5PGroupSemantic,
+  H5PImageSemantic,
   H5PItemHelper,
   H5PLibrarySemantic,
   H5PListSemantic,
@@ -15,6 +18,7 @@ import {
   H5PTextSemantic,
   isH5pBooleanItemInfo,
   isH5pGroupItemInfo,
+  isH5pImageItemInfo,
   isH5pLibraryItemInfo,
   isH5pNumberItemInfo,
   isH5pSelectItemInfo,
@@ -38,7 +42,6 @@ const useStyles = makeStyles(({ palette, shadows }) => ({
   DragQuestionBox: {
     border: "1px solid #ccc",
     marginTop: 16,
-    paddingBottom: "50%",
   },
   toolBox: {
     height: 42,
@@ -48,6 +51,11 @@ const useStyles = makeStyles(({ palette, shadows }) => ({
     display: "flex",
     alignItems: "center",
   },
+  boundBox: {
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "100% 100%",
+  },
+  boundText: {},
   buttonIcon: {
     marginLeft: 16,
   },
@@ -108,13 +116,35 @@ interface DropListHelper extends H5PItemHelper<H5PListSemantic> {
   childItems: DropItemHepler[];
 }
 
+interface BackgroundSizeHelpler extends H5PItemHelper<H5PGroupSemantic> {
+  childItems: [H5PItemHelper<H5PNumberSemantic>, H5PItemHelper<H5PNumberSemantic>];
+}
+
+interface SettingGroupHelper extends H5PItemHelper<H5PGroupSemantic> {
+  childItems: [H5PItemHelper<H5PImageSemantic>, BackgroundSizeHelpler];
+}
+
 interface H5pWidgetDragQuestionProps extends H5pElementGroupProps {
-  itemHelper: { childItems: [DragListHelper, DropListHelper] } & H5pElementGroupProps["itemHelper"];
+  itemHelper: H5pElementGroupProps["itemHelper"] & {
+    childItems: [DragListHelper, DropListHelper];
+    parentItem: H5PItemHelper<H5PGroupSemantic> & {
+      childItems: [SettingGroupHelper, H5pWidgetDragQuestionProps];
+    };
+  };
 }
 
 function isWidgetDragQuestionItemHelper(props: H5pElementProps): props is H5pWidgetDragQuestionProps {
   if (!isH5pElementGroup(props)) return false;
   const [dragListItemHelper, dropListItemHelper] = props.itemHelper.childItems;
+  const questionHelper = props.itemHelper.parentItem;
+  if (!questionHelper) return false;
+  if (!isH5pGroupItemInfo(questionHelper)) return false;
+  const [settingHelper] = questionHelper.childItems;
+  if (!isH5pGroupItemInfo(settingHelper)) return false;
+  const [imageHelper, backgroundSizeHelper] = settingHelper.childItems;
+  if (!isH5pImageItemInfo(imageHelper)) return false;
+  if (!isH5pGroupItemInfo(backgroundSizeHelper)) return false;
+  if (!backgroundSizeHelper.childItems.every((item) => isH5pNumberItemInfo(item))) return false;
   const isDragListItemHelper = dragListItemHelper.childItems.every((dragItemHelper) => {
     if (!isH5pGroupItemInfo(dragItemHelper)) return false;
     const [c0, c1, c2, c3, c4, c5, c6, c7] = dragItemHelper.childItems;
@@ -147,14 +177,18 @@ function isWidgetDragQuestionItemHelper(props: H5pElementProps): props is H5pWid
   return isDragListItemHelper && isDropListItemHelper;
 }
 
-export function WidgetElement(props: H5pElementGroupProps) {
+export function WidgetElement(props: H5pElementProps) {
   const css = useStyles();
   if (!isWidgetDragQuestionItemHelper(props)) return <H5pElement {...props} />;
-  const { itemHelper } = props;
-  const { semantics, childItems } = itemHelper;
+  const { itemHelper, onChange } = props;
+  const { semantics, childItems, parentItem } = itemHelper;
   const [dragListHelper, dropListHelper] = childItems;
+  const [settingHelper] = parentItem.childItems;
+  const boundImageId = settingHelper.childItems[0].content?.path;
+  const boundWidth = settingHelper.childItems[1].childItems[0].content;
+  const boundHeight = settingHelper.childItems[1].childItems[1].content;
+  const boundStyle = { width: boundWidth, height: boundHeight, backgroundImage: `url(${apiResourcePathById(boundImageId)})` };
   const discription = semantics.description?.split("<br/>");
-  console.log("dragListHelper = ", dragListHelper);
   const dragOptions = dropListHelper.childItems
     .map((item, idx) => {
       const label = item.childItems[0].content;
@@ -205,12 +239,45 @@ export function WidgetElement(props: H5pElementGroupProps) {
       </Box>
     </div>
   ));
+  const dragListDrawers = dragListHelper.childItems.map((dragItemHelper: DragItemHepler) => {
+    const x = Number(dragItemHelper.childItems[1].content);
+    const y = Number(dragItemHelper.childItems[2].content);
+    const width = Number(dragItemHelper.childItems[3].content);
+    const height = Number(dragItemHelper.childItems[4].content);
+    const xName = dragItemHelper.childItems[1].semantics.name;
+    const yName = dragItemHelper.childItems[2].semantics.name;
+    const wName = dragItemHelper.childItems[3].semantics.name;
+    const hName = dragItemHelper.childItems[4].semantics.name;
+    return (
+      <Rnd
+        position={{ x, y }}
+        size={{ width, height }}
+        minWidth={30}
+        minHeight={30}
+        bounds="parent"
+        onDragStop={(e, data) => {
+          const { x, y } = data;
+          onChange && onChange({ ...dragItemHelper, content: { ...dragItemHelper.content, [xName]: x, [yName]: y } });
+        }}
+        onResize={(e, dir, eleRef, delta, pos) => {
+          const { x, y } = pos;
+          onChange && onChange({ ...dragItemHelper, content: { ...dragItemHelper.content, [xName]: x, [yName]: y } });
+        }}
+        onResizeStop={(e, dir, eleRef, delta, pos) => {
+          const w = width + delta.width;
+          const h = height + delta.height;
+          onChange && onChange({ ...dragItemHelper, content: { ...dragItemHelper.content, [wName]: w, [hName]: h } });
+        }}
+      ></Rnd>
+    );
+  });
+  console.log("dragListDrawers = ", dragListDrawers);
   return (
     <Fragment>
       <InputLabel required={!semantics.optional} className={css.label}>
         {semantics.label || semantics.name}
       </InputLabel>
-      <div className={css.DragQuestionBox}>
+      <div className={css.DragQuestionBox} style={{ width: boundWidth }}>
         <div className={css.toolBox}>
           <Button variant="outlined">
             <TrackChangesIcon />
@@ -222,6 +289,7 @@ export function WidgetElement(props: H5pElementGroupProps) {
             <ImageIcon />
           </Button>
         </div>
+        <div className={css.boundBox} style={boundStyle}></div>
       </div>
       {dragListElemnts}
       {dropListElemnts}
