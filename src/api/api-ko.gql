@@ -1,5 +1,5 @@
 
-query roleBasedUsersByOrgnization($organization_id: ID!) {  
+query roleBasedUsersByOrgnization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     roles {
       role_name
@@ -66,4 +66,93 @@ query qeuryMe($organization_id: ID!) {
       }
     }
   }
+}
+
+query organizations {
+  organizations {
+    organization_id
+    organization_name
+  }
+}
+
+query getSchoolTeacher($user_id:ID!){
+  user(user_id: $user_id) {
+    school_memberships{
+      school {
+        school_id
+        school_name
+        organization {
+                organization_id
+        }
+        classes{
+          teachers{
+            user_id
+            user_name
+          }
+        }
+      }
+    }
+  }
+}
+
+query teacherByOrgId($organization_id: ID!){
+  organization(organization_id: $organization_id) {
+      classes{
+        class_id
+        class_name
+        teachers{
+          user_id
+          user_name
+        }
+      }
+  }
+}
+
+query mySchoolIDs($organization_id: ID!) {
+  me {
+    membership(organization_id: $organization_id) {
+      schoolMemberships {
+        school_id
+      }
+    }
+  }
+}
+
+query classesBySchool($school_id: ID!) {
+  school(school_id: $school_id) {
+    classes {
+      class_id
+      class_name
+    }
+  }
+}
+
+query participantsBySchool($school_id: ID!) {
+   school(school_id: $school_id) {
+     classes {
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+     }
+   }
+}
+
+query participantsByOrganization($organization_id: ID!) {
+   organization(organization_id: $organization_id) {
+     classes {
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+     }
+   }
 }

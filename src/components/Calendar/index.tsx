@@ -15,9 +15,10 @@ import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { getScheduleLiveToken, getScheduleRealTimeStatusPath, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
 import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
+import YearCalendar from "./YearView";
 
 interface scheduleInfoProps {
   end: Date;
@@ -57,13 +58,12 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear, scheduleTimeViewYearData } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
-
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
@@ -89,12 +89,14 @@ function MyCalendar(props: CalendarProps) {
     },
     [changeModalDate, dispatch, history, modelView, timesTamp]
   );
+  const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   /**
    * rander data
    * @param timesTamp
    */
   const getPeriod = (timesTamp: timestampType) => {
+    if (modelYear) return new Date(timesTamp.start * 1000).getFullYear();
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
     const timesTampData = new Date(timesTamp.start * 1000);
     const [Y, M, D] = [
@@ -153,6 +155,13 @@ function MyCalendar(props: CalendarProps) {
   const switchData = (type: "preve" | "next") => {
     const timesTampData = new Date(timesTamp.start * 1000);
     const [Y, M] = [(timesTampData as Date).getFullYear(), (timesTampData as Date).getMonth()];
+
+    if (modelYear) {
+      const times = type === "preve" ? timesTamp.start - 31536000 : timesTamp.start + 31536000;
+      changeTimesTamp({ start: times, end: times });
+      return;
+    }
+
     switch (modelView) {
       case "day":
         const times = type === "preve" ? timesTamp.start - 86400 : timesTamp.start + 86400;
@@ -255,9 +264,17 @@ function MyCalendar(props: CalendarProps) {
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
     const currentTime = Math.floor(new Date().getTime());
-    if ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) {
-      await dispatch(getScheduleLiveToken({ schedule_id: event.id, metaLoading: true }));
+    if (
+      ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
+      (permissionShowLive && event.class_type === "Homework")
+    ) {
+      await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
+
+    let checkLessonPlan: any;
+    checkLessonPlan = ((await dispatch(
+      getScheduleRealTimeStatusPath({ schedule_id: event.id, metaLoading: true })
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleRealTimeStatusPath>>;
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -271,6 +288,7 @@ function MyCalendar(props: CalendarProps) {
           scheduleInfo={event}
           toLive={toLive}
           changeModalDate={changeModalDate}
+          checkLessonPlan={checkLessonPlan.payload.lesson_plan_is_auth}
         />
       ),
       openStatus: true,
@@ -311,25 +329,28 @@ function MyCalendar(props: CalendarProps) {
         />
         <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
       </Box>
-      <Calendar
-        date={new Date(timesTamp.start * 1000)}
-        onView={() => {}}
-        onNavigate={() => {}}
-        view={modelView}
-        views={views}
-        popup={true}
-        selectable={true}
-        localizer={localizer}
-        events={scheduleTimeViewData}
-        startAccessor="start"
-        endAccessor="end"
-        toolbar={false}
-        onSelectEvent={scheduleSelected}
-        onSelectSlot={(e) => {
-          creteSchedule(e);
-        }}
-        style={{ height: "100vh" }}
-      />
+      {modelYear && <YearCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />}
+      {!modelYear && (
+        <Calendar
+          date={new Date(timesTamp.start * 1000)}
+          onView={() => {}}
+          onNavigate={() => {}}
+          view={modelView}
+          views={views}
+          popup={true}
+          selectable={true}
+          localizer={localizer}
+          events={scheduleTimeViewData}
+          startAccessor="start"
+          endAccessor="end"
+          toolbar={false}
+          onSelectEvent={scheduleSelected}
+          onSelectSlot={(e) => {
+            creteSchedule(e);
+          }}
+          style={{ height: "100vh" }}
+        />
+      )}
     </Box>
   );
 }
@@ -341,10 +362,12 @@ interface CalendarProps {
   toLive: () => void;
   changeModalDate: (data: object) => void;
   setSpecificStatus: (value: boolean) => void;
+  modelYear: boolean;
+  scheduleTimeViewYearData: [];
 }
 
 export default function KidsCalendar(props: CalendarProps) {
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus } = props;
+  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear, scheduleTimeViewYearData } = props;
 
   return (
     <MyCalendar
@@ -354,6 +377,8 @@ export default function KidsCalendar(props: CalendarProps) {
       toLive={toLive}
       changeModalDate={changeModalDate}
       setSpecificStatus={setSpecificStatus}
+      modelYear={modelYear}
+      scheduleTimeViewYearData={scheduleTimeViewYearData}
     />
   );
 }

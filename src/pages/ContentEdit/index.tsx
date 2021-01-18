@@ -6,9 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
-import { ContentType, H5pSub, MaterialType, OutcomePublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import { ContentType, H5pSub, MaterialType, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -23,6 +23,7 @@ import {
   publish,
   publishWidthAssets,
   save,
+  searchAuthContentLists,
   searchContentLists,
   searchOutcomeList,
 } from "../../reducers/content";
@@ -53,9 +54,10 @@ export const useQueryCms = () => {
   const searchMedia = query.get("searchMedia") || "";
   const searchOutcome = query.get("searchOutcome") || "";
   const assumed = query.get("assumed") || "";
+  const isShare = query.get("isShare") || "org";
   const editindex: number = Number(query.get("editindex") || 0);
   const back = query.get("back") || "";
-  return { id, searchMedia, searchOutcome, search, editindex, assumed, back };
+  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back };
 };
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
@@ -87,7 +89,8 @@ function ContentEditForm() {
     lesson_types,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams();
-  const { id, searchMedia, search, editindex, searchOutcome, assumed, back } = useQueryCms();
+  const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
+  const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
@@ -161,17 +164,24 @@ function ContentEditForm() {
       history.replace({
         search: setQuery(history.location.search, { searchMedia }),
       });
-      dispatch(
-        searchContentLists({
-          metaLoading: true,
-          content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
-          publish_status: "published",
-          name: searchMedia,
-        })
-      );
+      isShare === "badanamu" && lesson === "plan"
+        ? dispatch(
+            searchAuthContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: searchMedia,
+            })
+          )
+        : dispatch(
+            searchContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: searchMedia,
+            })
+          );
       setMediaPage(1);
     },
-    [dispatch, history, lesson]
+    [dispatch, history, isShare, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
     () => (searchOutcome = "") => {
@@ -181,9 +191,7 @@ function ContentEditForm() {
       dispatch(
         searchOutcomeList({
           metaLoading: true,
-          publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
-          page_size: 10,
           assumed: assumed === "true" ? 1 : -1,
         })
       );
@@ -199,15 +207,36 @@ function ContentEditForm() {
       dispatch(
         searchOutcomeList({
           metaLoading: true,
-          publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
-          page_size: 10,
           assumed: assumed === "true" ? 1 : -1,
         })
       );
       setOutcomePage(1);
     },
     [dispatch, history, searchOutcome]
+  );
+  const handleCheckShare = useMemo(
+    () => (isShare: MediaAssetsProps["isShare"] = "org") => {
+      history.replace({
+        search: setQuery(history.location.search, { isShare }),
+      });
+      isShare === "badanamu" && lesson === "plan"
+        ? dispatch(
+            searchAuthContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: searchMedia,
+            })
+          )
+        : dispatch(
+            searchContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: searchMedia,
+            })
+          );
+    },
+    [dispatch, history, searchContentType, searchMedia, lesson]
   );
   const handleGoBack = useCallback(() => {
     back ? history.push(back) : history.goBack();
@@ -216,18 +245,25 @@ function ContentEditForm() {
   const handleChangePage = useMemo(
     () => (page: number) => {
       setMediaPage(page);
-      dispatch(
-        searchContentLists({
-          metaLoading: true,
-          content_type: lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
-          publish_status: "published",
-          page_size: 10,
-          page,
-          name: searchMedia,
-        })
-      );
+      isShare === "badanamu" && lesson === "plan"
+        ? dispatch(
+            searchAuthContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: searchMedia,
+              page,
+            })
+          )
+        : dispatch(
+            searchContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: searchMedia,
+              page,
+            })
+          );
     },
-    [dispatch, lesson, searchMedia]
+    [dispatch, searchContentType, searchMedia, lesson, isShare]
   );
   const handleChangePageOutCome = useMemo(
     () => (page: number) => {
@@ -236,9 +272,7 @@ function ContentEditForm() {
         searchOutcomeList({
           metaLoading: true,
           page,
-          publish_status: OutcomePublishStatus.published,
           search_key: searchOutcome,
-          page_size: 10,
           assumed: assumed === "true" ? 1 : -1,
         })
       );
@@ -273,7 +307,10 @@ function ContentEditForm() {
     [dispatch, program]
   );
   useEffect(() => {
-    dispatch(onLoadContentEdit({ id, type: lesson, metaLoading: true }));
+    dispatch(
+      onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu" })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
   const assetDetails = (
     <AssetDetails
@@ -334,6 +371,8 @@ function ContentEditForm() {
         onChangePage={handleChangePage}
         total={mediaListTotal}
         mediaPage={mediaPage}
+        isShare={isShare}
+        onCheckShare={handleCheckShare}
       />
     </ContentTabs>
   );
@@ -446,7 +485,7 @@ function ContentEditForm() {
               {rightsideArea}
             </LayoutPair>
           ) : (
-            <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+            permissionTip
           )
         }
       />

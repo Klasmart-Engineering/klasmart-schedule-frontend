@@ -13,7 +13,7 @@ import { EntityFolderContent } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
+import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
@@ -162,24 +162,61 @@ function getBulkAction(
   }
   switch (condition.publish_status) {
     case PublishStatus.published:
-      let res = [
-        { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-        { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-        { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
-      ];
-      if (actionObj?.folder)
-        res = [
-          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-        ];
-      if (actionObj?.notFolder && perm.archive_published_content_273)
+      let res: BulkActionOption[] = [];
+      if (perm.create_folder_289 && perm.archive_published_content_273) {
         res = [
           { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
           { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
           { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
         ];
-      if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+      } else if (perm.create_folder_289 && !perm.archive_published_content_273) {
+        res = [
+          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+        ];
+      } else if (!perm.create_folder_289 && perm.archive_published_content_273) {
+        res = [
+          { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
+          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+        ];
+      } else {
+        res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
+      }
+      if (actionObj?.folder) {
+        if (perm.create_folder_289) {
+          res = [
+            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+            { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+          ];
+        } else {
+          res = [];
+        }
+      }
+      if (actionObj?.notFolder) {
+        if (perm.archive_published_content_273 && perm.create_folder_289) {
+          res = [
+            { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
+            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          ];
+        } else if (!perm.archive_published_content_273 && perm.create_folder_289) {
+          res = [
+            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
+            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          ];
+        } else {
+          res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
+        }
+      }
+      if (actionObj?.bothHave) {
+        if (perm.create_folder_289) {
+          res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+        } else {
+          res = [];
+        }
+      }
       return res;
     case PublishStatus.pending:
       const pendingRes = [];
@@ -209,10 +246,10 @@ function getBulkAction(
 }
 
 const sortOptions = () => [
-  { label: d("Content Name(A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
-  { label: d("Content Name(Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
-  { label: d("Created On(New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
-  { label: d("Created On(Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.updated_at },
+  { label: d("Content Name (A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
+  { label: d("Content Name (Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
+  { label: d("Created On (New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
+  { label: d("Created On (Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.updated_at },
 ];
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
@@ -252,6 +289,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     PermissionType.delete_archived_content_275,
     PermissionType.approve_pending_content_271,
     PermissionType.reject_pending_content_272,
+    PermissionType.create_folder_289,
   ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
@@ -295,7 +333,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Divider />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
-            <Grid item sm={6} xs={6} md={5}>
+            <Grid item sm={unpublish ? 3 : 6} xs={unpublish ? 3 : 6} md={unpublish ? 3 : 6}>
               {bulkOptions.length > 0 && (
                 <TextField
                   style={{ width: 160 }}
@@ -311,21 +349,28 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               )}
               {(value.publish_status === PublishStatus.published ||
                 value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
-                <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
-                  {d("New Folder").t("library_label_new_folder")}
-                </Button>
+                <Permission value={PermissionType.create_folder_289}>
+                  <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
+                    {d("New Folder").t("library_label_new_folder")}
+                  </Button>
+                </Permission>
               )}
             </Grid>
-            {unpublish ? (
-              <Grid item md={4}>
+            {unpublish && (
+              <Grid item sm={6} xs={6} md={6}>
                 <SubUnpublished value={value} onChange={onChange} />
               </Grid>
-            ) : (
-              <Hidden only={["xs", "sm"]}>
-                <Grid item md={4}></Grid>
-              </Hidden>
             )}
-            <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="center"
+              item
+              sm={unpublish ? 3 : 6}
+              xs={unpublish ? 3 : 6}
+              md={unpublish ? 3 : 6}
+            >
               <TextField
                 size="small"
                 style={{ width: 200 }}
@@ -370,6 +415,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     PermissionType.delete_archived_content_275,
     PermissionType.approve_pending_content_271,
     PermissionType.reject_pending_content_272,
+    PermissionType.create_folder_289,
   ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -436,7 +482,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
-              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && (
+              {value.content_type !== SearchContentsRequestContentType.assetsandfolder && !value.program_group && (
                 <FilterListIcon onClick={handleClickFilterIcon} />
               )}
               <Menu anchorEl={anchorFilter} keepMounted open={Boolean(anchorFilter)} onClose={handleFilterClose}>

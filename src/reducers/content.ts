@@ -1,6 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
-import api from "../api";
+import api, { gqlapi } from "../api";
+import { OrganizationsDocument, OrganizationsQuery, OrganizationsQueryVariables } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
@@ -9,12 +10,15 @@ import {
   EntityCreateContentRequest,
   EntityFolderContent,
   EntityFolderItemInfo,
+  EntityOrganizationInfo,
+  EntityOrganizationProperty,
 } from "../api/api.auto";
-import { RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
+import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -37,6 +41,10 @@ interface IContentState {
   page_size: number;
   folderTree: RecursiveFolderItem[];
   parentFolderInfo: EntityFolderItemInfo;
+  orgProperty: EntityOrganizationProperty;
+  orgList: OrgInfoProps[];
+  selectedOrg: EntityOrganizationInfo[];
+  myOrgId: string;
 }
 
 interface RootState {
@@ -163,6 +171,10 @@ const initialState: IContentState = {
   page_size: 20,
   folderTree: [],
   parentFolderInfo: {},
+  orgProperty: {},
+  orgList: [],
+  selectedOrg: [], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
+  myOrgId: "",
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -289,6 +301,7 @@ interface onLoadContentEditPayload extends LoadingMetaPayload {
   searchMedia?: string;
   searchOutcome?: string;
   assumed?: string;
+  isShare?: boolean;
 }
 
 interface onLoadContentEditResult {
@@ -300,32 +313,27 @@ interface onLoadContentEditResult {
 }
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type, searchMedia, searchOutcome, assumed }, { dispatch }) => {
+  async ({ id, type, searchMedia, searchOutcome, assumed, isShare }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
-    const [mediaList, outcomeList, lesson_types, visibility_settings] = await Promise.all([
-      type === "material" || type === "plan"
-        ? api.contents.searchContents({
-            content_type:
-              type === "material" ? SearchContentsRequestContentType.assetsandfolder : SearchContentsRequestContentType.material,
-            publish_status: "published",
-            page_size: 10,
-            name: searchMedia,
-          })
-        : undefined,
-      type === "material" || type === "plan"
-        ? api.learningOutcomes.searchLearningOutcomes({
-            publish_status: OutcomePublishStatus.published,
-            search_key: searchOutcome,
-            page: 1,
-            page_size: 10,
-            assumed: assumed === "true" ? 1 : -1,
-          })
-        : undefined,
+    const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
       type === "material" || type === "plan"
         ? api.visibilitySettings.getVisibilitySetting({
             content_type: type === "material" ? SearchContentsRequestContentType.material : SearchContentsRequestContentType.plan,
           })
+        : undefined,
+      type === "material" || type === "plan"
+        ? isShare && type === "plan"
+          ? dispatch(searchAuthContentLists({ content_type: SearchContentsRequestContentType.material, name: searchMedia }))
+          : dispatch(
+              searchContentLists({
+                content_type: type === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material,
+                name: searchMedia,
+              })
+            )
+        : undefined,
+      type === "material" || type === "plan"
+        ? dispatch(searchOutcomeList({ search_key: searchOutcome, page: 1, assumed: assumed === "true" ? 1 : -1 }))
         : undefined,
       dispatch(
         getLinkedMockOptions({
@@ -335,7 +343,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
       ),
     ]);
 
-    return { contentDetail, mediaList, outcomeList, lesson_types, visibility_settings };
+    return { contentDetail, lesson_types, visibility_settings };
   }
 );
 
@@ -404,6 +412,8 @@ interface IQyertOnLoadContentListResult {
   pendingRes?: AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
   privateRes?: AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
   contentRes?: AsyncReturnType<typeof api.contents.searchContents>;
+  badaContent?: AsyncReturnType<typeof api.contentsAuthed.queryAuthContent>;
+  organization_id: string;
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
@@ -412,9 +422,11 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const {
       content: { page_size },
     } = getState();
-    const { name, publish_status, author, content_type, page, program, order_by, path } = query;
+    const { name, publish_status, author, content_type, page, program_group, order_by, path } = query;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    await dispatch(getOrgProperty());
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
         name,
@@ -422,12 +434,11 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         path,
         page_size,
       });
-      return { folderRes };
+      return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
       const pendingRes = await api.contentsPending.searchPendingContents({
         name,
@@ -435,11 +446,10 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         page_size,
       });
-      return { pendingRes };
+      return { pendingRes, organization_id };
     } else if (
       publish_status === PublishStatus.draft ||
       publish_status === PublishStatus.rejected ||
@@ -451,11 +461,13 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         page_size,
       });
-      return { privateRes };
+      return { privateRes, organization_id };
+    } else if (program_group) {
+      const badaContent = await api.contentsAuthed.queryAuthContent({ name, program_group, page, order_by, page_size });
+      return { badaContent, organization_id };
     } else {
       const contentRes = await api.contents.searchContents({
         name,
@@ -463,11 +475,10 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         author,
         content_type,
         page,
-        program,
         order_by,
         page_size,
       });
-      return { contentRes };
+      return { contentRes, organization_id };
     }
   }
 );
@@ -477,15 +488,27 @@ type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searc
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "content/searchOutcomeList",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes({
+      publish_status: OutcomePublishStatus.published,
+      page_size: 10,
+      ...query,
+    });
     return { list, total };
   }
 );
 // contentEdit搜索contentlist
-export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams, { state: RootState }>(
+export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
   "searchContentLists",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.contents.searchContents({ ...query });
+    const { list, total } = await api.contents.searchContents({ publish_status: PublishStatus.published, page_size: 10, ...query });
+    return { list, total };
+  }
+);
+// contentEdit搜索contentlist
+export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
+  "searchAuthContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contentsAuthed.queryAuthContent({ page_size: 10, ...query });
     return { list, total };
   }
 );
@@ -601,15 +624,11 @@ export const getUserSetting = createAsyncThunk<IQueryGetUserSettingResult, IQuer
 
 interface LiveContentPayload extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentLiveToken>[0];
-  class_id: Parameters<typeof api.contents.getContentLiveToken>[1];
 }
 type LiveContentResult = ReturnType<typeof api.contents.getContentLiveToken>;
-export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>(
-  "contents/live",
-  async ({ content_id, class_id }) => {
-    return api.contents.getContentLiveToken(content_id, class_id);
-  }
-);
+export const getContentLiveToken = createAsyncThunk<LiveContentResult, LiveContentPayload>("contents/live", async ({ content_id }) => {
+  return api.contents.getContentLiveToken(content_id);
+});
 
 type IQueryAddFolderParams = { content_type?: string; parent_id: string };
 type IQueryAddFolderResult = AsyncReturnType<typeof api.folders.createFolder>;
@@ -762,6 +781,46 @@ export const bulkReject = createAsyncThunk<IQueryBulkRejectResult, IQueryBulkRej
     return api.contentsReview.rejectContentReviewBulk({ ids: ids, reject_reason: reasonValue, remark: otherValue });
   }
 );
+
+type IQueryOrganizationPropertysResult = AsyncReturnType<typeof api.organizationsPropertys.getOrganizationPropertyById>;
+export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult>("content/getOrgProperty", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const orgProperty = api.organizationsPropertys.getOrganizationPropertyById(organization_id);
+  return orgProperty;
+});
+
+export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload>(
+  "content/getOrgList",
+  async (folder_ids, { dispatch }) => {
+    const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
+      query: OrganizationsDocument,
+    });
+    await dispatch(getFoldersSharedRecords(folder_ids));
+    return data.organizations;
+  }
+);
+
+type IQueryShareFoldersParams = {
+  shareFolder: EntityFolderContent | undefined;
+  org_ids: Parameters<typeof api.folders.shareFolders>[0]["org_ids"];
+} & LoadingMetaPayload;
+type IQueryShareFolderResult = AsyncReturnType<typeof api.folders.shareFolders>;
+export const shareFolders = createAsyncThunk<IQueryShareFolderResult, IQueryShareFoldersParams>(
+  "content/shareFolders",
+  async ({ shareFolder, org_ids }) => {
+    const res = await api.folders.shareFolders({ folder_ids: [shareFolder?.id as string], org_ids });
+    return res;
+  }
+);
+type IQueryGetFoldersSharedRecordsParams = Parameters<typeof api.folders.getFoldersSharedRecords>[0];
+type IQueryGetFoldersSharedRecordsResult = AsyncReturnType<typeof api.folders.getFoldersSharedRecords>;
+export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRecordsResult, IQueryGetFoldersSharedRecordsParams>(
+  "content/getFoldersSharedRecords",
+  async (folder_ids) => {
+    const res = await api.folders.getFoldersSharedRecords(folder_ids);
+    return res;
+  }
+);
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -860,6 +919,14 @@ const { actions, reducer } = createSlice({
     //   state.OutcomesListTotal = initialState.OutcomesListTotal;
     // },
     [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.mediaList = payload.list;
+      state.mediaListTotal = payload.total;
+    },
+    // [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   state.mediaList = initialState.mediaList;
+    //   state.mediaListTotal = initialState.mediaListTotal;
+    // },
+    [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.mediaList = payload.list;
       state.mediaListTotal = payload.total;
     },
@@ -1001,6 +1068,7 @@ const { actions, reducer } = createSlice({
       state.parentFolderInfo = initialState.parentFolderInfo;
     },
     [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.myOrgId = payload.organization_id;
       if (payload.folderRes) {
         state.total = payload.folderRes.total;
         state.contentsList = payload.folderRes.list;
@@ -1016,6 +1084,23 @@ const { actions, reducer } = createSlice({
       if (payload.contentRes) {
         state.total = payload.contentRes.total;
         state.contentsList = payload.contentRes.list;
+      }
+      if (payload.badaContent) {
+        state.total = payload.badaContent.total;
+        state.contentsList = payload.badaContent.list;
+      }
+    },
+    [getOrgProperty.fulfilled.type]: (state, { payload }: any) => {
+      state.orgProperty = payload;
+    },
+    [getOrgList.fulfilled.type]: (state, { payload }: any) => {
+      state.orgList = payload;
+    },
+    [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: any) => {
+      if (payload.data) {
+        state.selectedOrg = payload.data[0].orgs || [];
+      } else {
+        state.selectedOrg = [];
       }
     },
   },

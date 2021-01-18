@@ -245,11 +245,16 @@ export interface EntityAddAssessmentCommand {
   class_end_time?: number;
   class_length?: number;
   schedule_id?: string;
-  type?: "preview" | "live";
 }
 
 export interface EntityAddAssessmentResult {
   id?: string;
+}
+
+export interface EntityAddAuthedContentRequest {
+  content_id?: string;
+  from_folder_id?: string;
+  org_id?: string;
 }
 
 export interface EntityAge {
@@ -309,6 +314,89 @@ export interface EntityAssessmentSubject {
 export interface EntityAssessmentTeacher {
   id?: string;
   name?: string;
+}
+
+export interface EntityAuthedContentRecordInfo {
+  age?: string[];
+  age_name?: string[];
+  author?: string;
+  author_name?: string;
+  content_id?: string;
+  content_type?: number;
+  content_type_name?: string;
+  create_at?: number;
+  created_at?: number;
+  creator?: string;
+
+  /** AuthorName string `json:"author_name"` */
+  creator_name?: string;
+  data?: string;
+  delete_at?: number;
+  description?: string;
+  developmental?: string[];
+  developmental_name?: string[];
+  draw_activity?: boolean;
+  duration?: number;
+  extra?: string;
+  from_folder_id?: string;
+  grade?: string[];
+  grade_name?: string[];
+  id?: string;
+  is_mine?: boolean;
+  keywords?: string[];
+  latest_id?: string;
+  lesson_type?: string;
+  lesson_type_name?: string;
+  locked_by?: string;
+  name?: string;
+  org?: string;
+  org_id?: string;
+  org_name?: string;
+  outcome_entities?: EntityOutcome[];
+  outcomes?: string[];
+  program?: string;
+  program_name?: string;
+  publish_scope?: string;
+  publish_scope_name?: string;
+  publish_status?: string;
+  record_id?: string;
+  reject_reason?: string[];
+  remark?: string;
+  self_study?: boolean;
+  skills?: string[];
+  skills_name?: string[];
+  source_id?: string;
+  source_type?: string;
+  subject?: string[];
+  subject_name?: string[];
+  suggest_time?: number;
+  teacher_manual?: string;
+  teacher_manual_name?: string;
+  thumbnail?: string;
+  updated_at?: number;
+  version?: number;
+}
+
+export interface EntityAuthedContentRecordInfoResponse {
+  list?: EntityAuthedContentRecordInfo[];
+  total?: number;
+}
+
+export interface EntityAuthedOrgList {
+  orgs?: EntityOrganizationInfo[];
+  total?: number;
+}
+
+export interface EntityBatchAddAuthedContentRequest {
+  content_ids?: string[];
+  folder_id?: string;
+  org_id?: string;
+}
+
+export interface EntityBatchDeleteAuthedContentByOrgsRequest {
+  content_ids?: string[];
+  folder_i_ds?: string[];
+  org_ids?: string[];
 }
 
 export interface EntityClassType {
@@ -431,6 +519,11 @@ export interface EntityCreateFolderRequest {
   thumbnail?: string;
 }
 
+export interface EntityDeleteAuthedContentRequest {
+  content_id?: string;
+  org_id?: string;
+}
+
 export interface EntityDevelopmental {
   createAt?: number;
   createID?: string;
@@ -509,6 +602,15 @@ export interface EntityFolderItemInfo {
   update_at?: number;
 }
 
+export interface EntityFolderShareRecord {
+  folder_id?: string;
+  orgs?: EntityOrganizationInfo[];
+}
+
+export interface EntityFolderShareRecords {
+  data?: EntityFolderShareRecord[];
+}
+
 export interface EntityGrade {
   createAt?: number;
   createID?: string;
@@ -559,6 +661,16 @@ export interface EntityMoveFolderRequest {
   id?: string;
   owner_type?: number;
   partition?: string;
+}
+
+export interface EntityOrganizationInfo {
+  id?: string;
+  name?: string;
+}
+
+export interface EntityOrganizationProperty {
+  id?: string;
+  type?: "normal" | "headquarters";
 }
 
 export interface EntityOutcome {
@@ -612,9 +724,11 @@ export interface EntityProgram {
   createID?: string;
   deleteAt?: number;
   deleteID?: string;
+  group_name?: string;
   id?: string;
   name?: string;
   number?: number;
+  org_type?: string;
   updateAt?: number;
   updateID?: string;
 }
@@ -706,6 +820,7 @@ export interface EntityScheduleDetailsView {
   member_teachers?: EntityScheduleShortInfo[];
   org_id?: string;
   program?: EntityScheduleShortInfo;
+  real_time_status?: EntityScheduleRealTimeView;
   repeat?: EntityRepeatOptions;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
@@ -731,6 +846,11 @@ export interface EntityScheduleListView {
 export interface EntitySchedulePageView {
   data?: EntityScheduleSearchView[];
   total?: number;
+}
+
+export interface EntityScheduleRealTimeView {
+  id?: string;
+  lesson_plan_is_auth?: boolean;
 }
 
 export interface EntityScheduleSearchView {
@@ -776,6 +896,11 @@ export interface EntityScheduleUpdateView {
   time_zone_offset?: number;
   title: string;
   version?: number;
+}
+
+export interface EntityShareFoldersRequest {
+  folder_ids?: string[];
+  org_ids?: string[];
 }
 
 export interface EntitySkill {
@@ -1213,6 +1338,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         scope?: string;
+        program_group?: string;
         program?: string;
         path?: string;
         source_type?: string;
@@ -1238,6 +1364,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     createContent: (content: EntityCreateContentRequest, params?: RequestParams) =>
       this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents`, "POST", params, content),
+
+    /**
+     * @tags content
+     * @name copyContent
+     * @summary copyContent
+     * @request POST:/contents/copy
+     * @description copy lesson plan, lesson material
+     */
+    copyContent: (content: EntityCreateContentRequest, params?: RequestParams) =>
+      this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents/copy`,
+        "POST",
+        params,
+        content
+      ),
 
     /**
      * @tags content
@@ -1280,7 +1421,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/contents/{content_id}/live/token
      * @description get content live token
      */
-    getContentLiveToken: (content_id: string, class_id: string, params?: RequestParams) =>
+    getContentLiveToken: (content_id: string, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/live/token`,
         "GET",
@@ -1369,6 +1510,102 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params
       ),
   };
+  contentsAuth = {
+    /**
+     * @tags content
+     * @name addAuthedContent
+     * @summary addAuthedContent
+     * @request POST:/contents_auth
+     * @description add authed content to org
+     */
+    addAuthedContent: (content: EntityAddAuthedContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth`, "POST", params, content),
+
+    /**
+     * @tags content
+     * @name deleteAuthedContent
+     * @summary deleteAuthedContent
+     * @request DELETE:/contents_auth
+     * @description delete authed content to org
+     */
+    deleteAuthedContent: (content: EntityDeleteAuthedContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth`, "DELETE", params, content),
+
+    /**
+     * @tags content
+     * @name batchAddAuthedContent
+     * @summary batchAddAuthedContent
+     * @request POST:/contents_auth/batch
+     * @description batch add authed content to org
+     */
+    batchAddAuthedContent: (content: EntityBatchAddAuthedContentRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth/batch`, "POST", params, content),
+
+    /**
+     * @tags content
+     * @name batchDeleteAuthedContent
+     * @summary batchDeleteAuthedContent
+     * @request DELETE:/contents_auth/batch
+     * @description batch delete authed content to org
+     */
+    batchDeleteAuthedContent: (content: EntityBatchDeleteAuthedContentByOrgsRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth/batch`, "DELETE", params, content),
+
+    /**
+     * @tags content
+     * @name getContentAuthedOrg
+     * @summary getContentAuthedOrg
+     * @request GET:/contents_auth/content
+     * @description get content authed org list
+     */
+    getContentAuthedOrg: (query?: { content_id?: string }, params?: RequestParams) =>
+      this.request<EntityAuthedOrgList, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_auth/content${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags content
+     * @name getOrgAuthedContent
+     * @summary getOrgAuthedContent
+     * @request GET:/contents_auth/org
+     * @description get org authed content list
+     */
+    getOrgAuthedContent: (query?: { org_id?: string }, params?: RequestParams) =>
+      this.request<EntityAuthedContentRecordInfoResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_auth/org${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  contentsAuthed = {
+    /**
+     * @tags content
+     * @name queryAuthContent
+     * @summary queryAuthContent
+     * @request GET:/contents_authed
+     * @description query authed content by condition
+     */
+    queryAuthContent: (
+      query?: {
+        name?: string;
+        content_type?: string;
+        program?: string;
+        program_group?: string;
+        source_type?: string;
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page_size?: number;
+        page?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_authed${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
   contentsBulk = {
     /**
      * @tags content
@@ -1405,6 +1642,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        program_group?: string;
         path?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -1435,6 +1673,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        program_group?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1463,6 +1702,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         program?: string;
+        program_group?: string;
         source_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -1781,6 +2021,30 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     removeFolderItem: (item_id: string, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/items/${item_id}`, "DELETE", params),
+
+    /**
+     * @tags folder
+     * @name getFoldersSharedRecords
+     * @summary getFoldersSharedRecords
+     * @request GET:/folders/share
+     * @description get folders shared records
+     */
+    getFoldersSharedRecords: (query?: { folder_ids?: string }, params?: RequestParams) =>
+      this.request<EntityFolderShareRecords, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/share${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags folder
+     * @name shareFolders
+     * @summary shareFolders
+     * @request PUT:/folders/share
+     * @description share folders to org
+     */
+    shareFolders: (content: EntityShareFoldersRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders/share`, "PUT", params, content),
   };
   grades = {
     /**
@@ -1999,6 +2263,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getLessonTypeById: (id: string, params?: RequestParams) =>
       this.request<EntityLessonType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/lesson_types/${id}`, "GET", params),
+  };
+  organizationsPropertys = {
+    /**
+     * @tags organizationProperty
+     * @name getOrganizationPropertyByID
+     * @summary getOrganizationPropertyByID
+     * @request GET:/organizations_propertys/{id}
+     * @description get organization property by id
+     */
+    getOrganizationPropertyById: (id: string, params?: RequestParams) =>
+      this.request<EntityOrganizationProperty, ApiInternalServerErrorResponse>(`/organizations_propertys/${id}`, "GET", params),
   };
   pendingLearningOutcomes = {
     /**
@@ -2274,7 +2549,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add a schedule data
      */
     addSchedule: (scheduleData: EntityScheduleAddView, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
         `/schedules`,
         "POST",
         params,
@@ -2331,9 +2606,23 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/schedules/{schedule_id}/live/token
      * @description get schedule live token
      */
-    getScheduleLiveToken: (schedule_id: string, params?: RequestParams) =>
+    getScheduleLiveToken: (schedule_id: string, query: { live_token_type: "preview" | "live" }, params?: RequestParams) =>
       this.request<EntityLiveTokenView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/schedules/${schedule_id}/live/token`,
+        `/schedules/${schedule_id}/live/token${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduleRealTimeStatus
+     * @summary get schedule real-time status
+     * @request GET:/schedules/{schedule_id}/real_time
+     * @description get schedule real-time status
+     */
+    getScheduleRealTimeStatus: (schedule_id: string, params?: RequestParams) =>
+      this.request<EntityScheduleRealTimeView, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}/real_time`,
         "GET",
         params
       ),
@@ -2388,7 +2677,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduleTimeView: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month";
+        view_type: "day" | "work_week" | "week" | "month" | "year";
         time_at: number;
         time_zone_offset: number;
         school_ids?: string;
@@ -2401,6 +2690,32 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityScheduleListView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduledDates
+     * @summary getScheduledDates
+     * @request GET:/schedules_time_view/dates
+     * @description get schedules dates(format:2006-01-02)
+     */
+    getScheduledDates: (
+      query: {
+        view_type: "day" | "work_week" | "week" | "month" | "year";
+        time_at: number;
+        time_zone_offset: number;
+        school_ids?: string;
+        teacher_ids?: string;
+        class_ids?: string;
+        subject_ids?: string;
+        program_ids?: string;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<string[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view/dates${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -2593,12 +2908,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags user
-     * @name sendCode
-     * @summary send verify code
+     * @name inviteNotify
+     * @summary invite notify
      * @request POST:/users/send_code
      * @description send verify code or uri
      */
-    sendCode: (outcome: ApiSendCodeRequest, params?: RequestParams) =>
+    inviteNotify: (outcome: ApiSendCodeRequest, params?: RequestParams) =>
       this.request<any, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/users/send_code`, "POST", params, outcome),
   };
   visibilitySettings = {

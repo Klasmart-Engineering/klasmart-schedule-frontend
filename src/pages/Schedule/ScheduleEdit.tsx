@@ -5,7 +5,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
+import Tooltip from "@material-ui/core/Tooltip";
+import { AddCircleOutlineOutlined, Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
+import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -14,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
-import { Permission, PermissionType, usePermission } from "../../components/Permission";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
@@ -33,12 +35,24 @@ import {
   saveScheduleData,
 } from "../../reducers/schedule";
 import theme from "../../theme";
-import { FilterQueryTypeProps, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
+import {
+  ClassOptionsItem,
+  EntityLessonPlanShortInfo,
+  FilterQueryTypeProps,
+  modeViewType,
+  ParticipantsData,
+  ParticipantsShortInfo,
+  repeatOptionsType,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
+import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
+import Radio from "@material-ui/core/Radio";
+
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
     marginTop: 20,
@@ -85,12 +99,35 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
   participantBox: {
     width: "100%",
+    maxHeight: "260px",
+    border: "1px solid rgba(0, 0, 0, 0.23)",
+    marginTop: "20px",
+    borderRadius: "5px",
+    overflow: "auto",
+    position: "relative",
+  },
+  participantSaveBox: {
+    width: "100%",
     maxHeight: "200px",
     border: "1px solid rgba(0, 0, 0, 0.23)",
     marginTop: "20px",
     borderRadius: "5px",
     padding: "0px 0px 20px 0px",
     overflow: "auto",
+    "&::-webkit-scrollbar": {
+      width: "3px",
+    },
+    "&::-webkit-scrollbar-track": {
+      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "3px",
+      backgroundColor: "rgb(220, 220, 220)",
+      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
   },
   participantContent: {
     backgroundColor: "#E6E6E6",
@@ -99,6 +136,54 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginLeft: "10px",
     borderRadius: "18px",
     float: "left",
+  },
+  scrollRoster: {
+    display: "flex",
+    maxHeight: "160px",
+    [theme.breakpoints.down("lg")]: {
+      height: "200px",
+    },
+    overflowY: "auto",
+    "&::-webkit-scrollbar": {
+      width: "3px",
+    },
+    "&::-webkit-scrollbar-track": {
+      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "3px",
+      backgroundColor: "rgb(220, 220, 220)",
+      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
+  },
+  participantButton: {
+    float: "right",
+    margin: "6px 8px 6px 0px",
+    backgroundColor: "#C5DFF5",
+    color: "#0E78D5",
+  },
+  splitLine: {
+    width: "1px",
+    height: "130px",
+    backgroundColor: "rgb(191, 191, 191)",
+    position: "absolute",
+    left: "50%",
+    top: "20%",
+  },
+  participantText: {
+    width: "150px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    margin: "0 auto",
+  },
+  participantTitle: {
+    display: "block",
+    fontWeight: "bold",
+    fontSize: "14px",
   },
 }));
 
@@ -152,6 +237,11 @@ function EditBox(props: CalendarStateProps) {
     id: "",
     name: "",
   };
+  const lessonPlanDefaults: EntityLessonPlanShortInfo = {
+    title: "",
+    id: "",
+    name: "",
+  };
   const {
     timesTamp,
     modelView,
@@ -166,22 +256,97 @@ function EditBox(props: CalendarStateProps) {
     getParticipantOptions,
     setSpecificStatus,
     specificStatus,
+    participantsIds,
+    classRosterIds,
+    ParticipantsData,
+    handleChangeParticipants,
+    getParticipantsData,
   } = props;
-  const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { scheduleDetial, contentsAuthList, classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
-  const [lessonPlan, setLessonPlan] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [, setTeacherItem] = React.useState<any[] | undefined>([]);
-  const [contentsListSelect, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
+  const [, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
   const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+  const perm = usePermission([
+    PermissionType.create_event_520,
+    PermissionType.create_my_schedule_events_521,
+    PermissionType.create_my_schools_schedule_events_522,
+    PermissionType.attend_live_class_as_a_student_187,
+  ]);
+  const [rosterChecked, setRosterChecked] = React.useState("other");
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
+
+  const rosterSelectAll = () => {
+    const participant: any = participantMockOptions.participantList;
+    const student = participant.class.students.map((item: any, key: number) => {
+      return { id: item.user_id, name: item.user_name };
+    });
+    const teacher = participant.class.teachers.map((item: any, key: number) => {
+      return { id: item.user_id, name: item.user_name };
+    });
+    handleChangeParticipants("classRoster", { student, teacher } as ParticipantsShortInfo);
+  };
+
+  const handleRosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === "all") {
+      rosterSelectAll();
+    } else {
+      handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
+    }
+    setRosterChecked(event.target.value);
+  };
+
+  const handleParticipantsChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    const participantsItem = [{ id: event.target.value, name: event.target.name }];
+    const ids = type === "students" ? participantsIds?.student : participantsIds?.teacher;
+    ids?.forEach((item: ClassOptionsItem, index: number) => {
+      if (JSON.stringify(item) === JSON.stringify(participantsItem[0])) {
+        ids.splice(index, 1);
+      }
+    });
+    handleChangeParticipants("participants", {
+      student: type === "students" ? ids : participantsIds?.student,
+      teacher: type === "teachers" ? ids : participantsIds?.teacher,
+    } as ParticipantsShortInfo);
+  };
+
+  const handleRosterChangeBox = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    const rosterItem = [{ id: event.target.value, name: event.target.name }];
+    if (event.target.checked) {
+      handleChangeParticipants("classRoster", {
+        student: type === "students" ? classRosterIds?.student.concat(rosterItem) : classRosterIds?.student,
+        teacher: type === "students" ? classRosterIds?.teacher : classRosterIds?.teacher.concat(rosterItem),
+      } as ParticipantsShortInfo);
+    } else {
+      const ids = type === "students" ? classRosterIds?.student : classRosterIds?.teacher;
+      ids?.forEach((item: ClassOptionsItem, index: number) => {
+        if (JSON.stringify(item) === JSON.stringify(rosterItem[0])) {
+          ids.splice(index, 1);
+        }
+      });
+      handleChangeParticipants("classRoster", {
+        student: type === "students" ? ids : classRosterIds?.student,
+        teacher: type === "teachers" ? ids : classRosterIds?.teacher,
+      } as ParticipantsShortInfo);
+    }
+    setRosterChecked("other");
+  };
+
+  const rosterIsExist = (item: any) => {
+    const rosterItem = [{ id: item.user_id, name: item.user_name }];
+    return classRosterIds?.teacher
+      .concat(classRosterIds?.student)
+      .some((item) => JSON.stringify(item) === JSON.stringify(rosterItem[0])) as boolean;
+  };
 
   React.useEffect(() => {
     if (scheduleId) {
@@ -294,7 +459,7 @@ function EditBox(props: CalendarStateProps) {
         (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
         newData.start_at * 1000 - currentTime < 15 * 60 * 1000
       ) {
-        dispatch(getScheduleLiveToken({ schedule_id: scheduleId, metaLoading: true }));
+        dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       }
       dispatch(getScheduleParticipant({ class_id: newData.class_id }));
     }
@@ -346,6 +511,9 @@ function EditBox(props: CalendarStateProps) {
   const [scheduleList, setScheduleList] = React.useState<EntityScheduleAddView>(initData);
   const [initScheduleList, setInitScheduleList] = React.useState<EntityScheduleAddView>(initData);
 
+  const [rosterSaveStatus, setRosterSaveStatus] = React.useState(false);
+  const [participantSaveStatus, setParticipantSaveStatus] = React.useState(false);
+
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
     return timestampInt(new Date(currentTime).getTime() / 1000);
@@ -367,7 +535,7 @@ function EditBox(props: CalendarStateProps) {
 
     if (type === "all_day_start") {
       const currentDate = new Date();
-      if (currentDate.getMonth() + 1 === M && currentDate.getDate() === D) {
+      if (dateNumFun(currentDate.getMonth() + 1) === M && currentDate.getDate() === D) {
         return (currentTime as number) + 60;
       } else {
         return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
@@ -384,12 +552,12 @@ function EditBox(props: CalendarStateProps) {
    * @param name
    */
 
-  const autocompleteChange = (value: any | null, name: string) => {
+  const autocompleteChange = async (value: any | null, name: string) => {
     let ids: any[] = [];
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      getParticipantOptions(value["id"]);
+      await getParticipantOptions(value["id"]);
       setClassItem(value);
     }
 
@@ -475,9 +643,13 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleList.class_type === "Task") {
       isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = false;
     }
+    if (scheduleList.class_type === "Homework") {
+      isValidator.start_at = isValidator.end_at = false;
+    }
     setValidator({ ...isValidator });
     return verificaPath;
   };
+
   /**
    * save schedule data
    */
@@ -488,29 +660,43 @@ function EditBox(props: CalendarStateProps) {
     });
     const addData: any = {};
     addData["due_at"] = 0;
-    if (checkedStatus.dueDateCheck) {
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
       // @ts-ignore
       const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
 
-      if (dueDateTimestamp <= scheduleList.end_at) {
+      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
+        return;
+      }
+
+      if (
+        (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") &&
+        timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime
+      ) {
+        dispatch(actError(d("Due date cannot be earlier than today.").t("schedule_msg_earlier_today")));
         return;
       }
 
       addData["due_at"] = dueDateTimestamp;
     }
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleList.start_at < currentTime && !checkedStatus.repeatCheck) {
+    if (scheduleList.start_at < currentTime && !checkedStatus.repeatCheck && scheduleList.class_type !== "Homework") {
       dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
 
-    if (scheduleList.end_at <= scheduleList.start_at) {
+    if (scheduleList.end_at <= scheduleList.start_at && scheduleList.class_type !== "Homework") {
       dispatch(actError(d("End time cannot be earlier than start time").t("schedule_msg_end_time_earlier")));
       return;
     }
 
-    if (scheduleId && checkedStatus.repeatCheck && scheduleList.start_at < currentTime && repeat_edit_options === "only_current") {
+    if (
+      scheduleId &&
+      checkedStatus.repeatCheck &&
+      scheduleList.start_at < currentTime &&
+      repeat_edit_options === "only_current" &&
+      scheduleList.class_type !== "Homework"
+    ) {
       dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
@@ -534,6 +720,42 @@ function EditBox(props: CalendarStateProps) {
 
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
     addData["is_force"] = is_force;
+
+    // participants && class roster collision detection
+    const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.student.length);
+    const rosterIsEmpty: boolean = !(classRosterIds?.student.length || classRosterIds?.student.length);
+
+    if (participantsIsEmpty && rosterIsEmpty) {
+      dispatch(
+        actError(
+          d(
+            "For ‘Add Class’ (Class Roster) and ‘Add Participants’, at least a student and a teacher will need to be added into either of the field."
+          ).t("schedule_msg_no_user")
+        )
+      );
+      return;
+    }
+    if (!rosterSaveStatus && !participantsIsEmpty) {
+      dispatch(actError(d("Please confirm the field of ‘Class Roster’ by clicking OK").t("schedule_msg_roster_no_ok")));
+      return;
+    }
+    if (!participantSaveStatus && !rosterIsEmpty) {
+      dispatch(actError(d("Please confirm the fileld of ‘Add Participants’ by clicking OK").t("schedule_msg_participants_no_ok")));
+      return;
+    }
+    addData["participants_student_ids"] = participantsIds?.student.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+    addData["participants_teacher_ids"] = participantsIds?.teacher.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+    addData["class_roster_student_ids"] = classRosterIds?.student.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+    addData["class_roster_teacher_ids"] = classRosterIds?.teacher.map((item: ClassOptionsItem) => {
+      return item.id;
+    });
+
     let resultInfo: any;
     resultInfo = ((await dispatch(saveScheduleData({ ...scheduleList, ...addData, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof saveScheduleData>
@@ -586,16 +808,23 @@ function EditBox(props: CalendarStateProps) {
     return scheduleId ? scheduleDetial.status !== "NotStart" : false;
   };
 
-  const getClassOption = (list: any) => {
-    return list.classes.map((item: any) => {
+  const getClassOption = (): any => {
+    let lists: any;
+    if (perm.create_event_520) {
+      lists = classOptions.classListOrg.organization?.classes;
+    } else if (perm.create_my_schools_schedule_events_522) {
+      lists = classOptions.classListSchool.school?.classes;
+    } else {
+      lists = classOptions.classListTeacher.user?.classesTeaching;
+    }
+    return lists?.map((item: any) => {
       return { id: item.class_id, name: item.class_name };
     });
   };
 
   const saveTheTest = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
-      console.log(scheduleDetial.start_at, currentTime);
+    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -664,6 +893,26 @@ function EditBox(props: CalendarStateProps) {
     }
   };
 
+  const addParticipants = () => {
+    changeModalDate({
+      openStatus: true,
+      enableCustomization: true,
+      customizeTemplate: (
+        <AddParticipantsTemplate
+          handleClose={() => {
+            changeModalDate({
+              openStatus: false,
+            });
+          }}
+          ParticipantsData={ParticipantsData}
+          handleChangeParticipants={handleChangeParticipants}
+          getParticipantsData={getParticipantsData}
+          participantsIds={participantsIds as ParticipantsShortInfo}
+        />
+      ),
+    });
+  };
+
   const [checkedStatus, setStatus] = React.useState({
     allDayCheck: false,
     repeatCheck: false,
@@ -726,8 +975,7 @@ function EditBox(props: CalendarStateProps) {
 
   const handleDelete = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime < 15 * 60) {
-      console.log(scheduleDetial.start_at, currentTime);
+    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -858,18 +1106,50 @@ function EditBox(props: CalendarStateProps) {
       </MenuItem>
     ));
 
-  const menuItemListClassKr = () => {
-    const participant: any = participantMockOptions.participantList;
-    const participantSet = participant.class.teachers.concat(participant.class.students);
+  const menuItemListClassKr = (type: string) => {
+    const participantSet: any =
+      type === "roster"
+        ? classRosterIds?.teacher.concat(classRosterIds?.student)
+        : participantsIds?.teacher.concat(participantsIds?.student);
     return participantSet.map((item: any, key: number) => (
       <span key={key} className={css.participantContent}>
-        {item.user_name}
+        {item.name}
       </span>
+    ));
+  };
+
+  const menuItemListClassKrParticipants = (type: string) => {
+    const participant: any = participantMockOptions.participantList;
+    const participantSet = type === "teacher" ? participant.class.teachers : participant.class.students;
+    return participantSet.map((item: any, key: number) => (
+      <Tooltip title={item.user_name} placement="right-start">
+        <FormControlLabel
+          className={css.participantText}
+          control={
+            <Checkbox
+              checked={rosterIsExist(item)}
+              name={item.user_name}
+              color="primary"
+              value={item.user_id}
+              onChange={(e) => {
+                handleRosterChangeBox(e, type);
+              }}
+            />
+          }
+          label={item.user_name}
+        />
+      </Tooltip>
     ));
   };
 
   const handleGoLive = (scheduleDetial: EntityScheduleDetailsView) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
+
+    if (permissionShowPreview && scheduleList.class_type === "Homework") {
+      toLive();
+      return;
+    }
+
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
@@ -891,6 +1171,29 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
     toLive();
+  };
+
+  const options = (): EntityLessonPlanShortInfo[] => {
+    const newContentsData: EntityLessonPlanShortInfo[] = [];
+    contentsList.forEach((item: EntityLessonPlanShortInfo) => {
+      newContentsData.push({
+        title: "Organization Content",
+        id: item.id,
+        name: item.name,
+      });
+    });
+    contentsAuthList.forEach((item: EntityLessonPlanShortInfo) => {
+      newContentsData.push({
+        title: "Badanamu Content",
+        id: item.id,
+        name: item.name,
+      });
+    });
+    return newContentsData;
+  };
+
+  const arrEmpty = (item: ClassOptionsItem[] | undefined): boolean => {
+    return JSON.stringify(participantsIds?.student) === "[]";
   };
 
   return (
@@ -955,7 +1258,7 @@ function EditBox(props: CalendarStateProps) {
         </Box>
         <Autocomplete
           id="combo-box-demo"
-          options={getClassOption(scheduleMockOptions.classList.organization)}
+          options={getClassOption()}
           getOptionLabel={(option: any) => option.name}
           onChange={(e: any, newValue) => {
             autocompleteChange(newValue, "class_id");
@@ -977,7 +1280,8 @@ function EditBox(props: CalendarStateProps) {
           <Autocomplete
             id="combo-box-demo"
             freeSolo
-            options={contentsListSelect}
+            options={options()}
+            groupBy={(option) => option.title as string}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "lesson_plan_id");
@@ -997,59 +1301,214 @@ function EditBox(props: CalendarStateProps) {
             )}
           />
         )}
-        {menuItemListClassKr().length > 0 && <Box className={css.participantBox}>{menuItemListClassKr()}</Box>}
-        <Box>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={12}>
-                <TextField
-                  id="datetime-local"
-                  label={d("Start Time").t("schedule_detail_start_time")}
-                  type="datetime-local"
-                  className={css.fieldset}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  required
-                  error={validator.start_at}
-                  value={timestampToTime(scheduleList.start_at)}
-                  disabled={isScheduleExpired() || checkedStatus.allDayCheck}
-                  onChange={(e) => handleTopicListChange(e, "start_at")}
+        {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
+          !rosterSaveStatus && (
+            <Box className={css.participantBox}>
+              <div style={{ textAlign: "end" }}>
+                <FormControlLabel
+                  control={
+                    <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
+                  }
+                  label="Select All"
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="datetime-local"
-                  label={d("End Time").t("schedule_detail_end_time")}
-                  type="datetime-local"
-                  className={css.fieldset}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  required
-                  error={validator.end_at}
-                  value={timestampToTime(scheduleList.end_at)}
-                  disabled={isScheduleExpired() || checkedStatus.allDayCheck}
-                  onChange={(e) => handleTopicListChange(e, "end_at")}
+                <FormControlLabel
+                  control={
+                    <Radio
+                      name="checkedB"
+                      value="empty"
+                      color="primary"
+                      checked={rosterChecked === "empty"}
+                      onChange={handleRosterChange}
+                    />
+                  }
+                  label="Unselect All"
                 />
+              </div>
+              <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
+                <div style={{ textAlign: "center", width: "202px" }}>
+                  <span className={css.participantTitle}>Students</span>
+                  {menuItemListClassKrParticipants("students")}
+                </div>
+                <div className={css.splitLine}></div>
+                <div style={{ textAlign: "center", width: "202px" }}>
+                  <span className={css.participantTitle}>Teachers</span>
+                  {menuItemListClassKrParticipants("teacher")}
+                </div>
+              </div>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setRosterSaveStatus(true);
+                }}
+                className={css.participantButton}
+              >
+                OK
+              </Button>
+            </Box>
+          )}
+        {menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
+          <Box className={css.participantSaveBox}>
+            <CreateOutlinedIcon
+              onClick={() => {
+                setRosterSaveStatus(false);
+              }}
+              style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+            />
+            <br />
+            {menuItemListClassKr("roster")}
+          </Box>
+        )}
+        {(!arrEmpty(participantsIds?.student) || !arrEmpty(participantsIds?.teacher)) && !participantSaveStatus && (
+          <Box className={css.participantBox}>
+            <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
+              <div style={{ textAlign: "center", width: "202px" }}>
+                <span className={css.participantTitle}>Students</span>
+                {participantsIds?.student.map((item: ClassOptionsItem) => {
+                  return (
+                    <Tooltip title={item.name as string} placement="right-start">
+                      <FormControlLabel
+                        className={css.participantText}
+                        control={
+                          <Checkbox
+                            name={item.name}
+                            value={item.id}
+                            color="primary"
+                            checked={true}
+                            onChange={(e) => {
+                              handleParticipantsChange(e, "students");
+                            }}
+                          />
+                        }
+                        label={item.name}
+                      />
+                    </Tooltip>
+                  );
+                })}
+              </div>
+              <div className={css.splitLine}></div>
+              <div style={{ textAlign: "center", width: "202px" }}>
+                <span className={css.participantTitle}>Teachers</span>
+                {participantsIds?.teacher.map((item: ClassOptionsItem) => {
+                  return (
+                    <Tooltip title={item.name as string} placement="right-start">
+                      <FormControlLabel
+                        className={css.participantText}
+                        control={
+                          <Checkbox
+                            name={item.name}
+                            value={item.id}
+                            color="primary"
+                            checked={true}
+                            onChange={(e) => {
+                              handleParticipantsChange(e, "teacher");
+                            }}
+                          />
+                        }
+                        label={item.name}
+                      />
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            </div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setParticipantSaveStatus(true);
+              }}
+              className={css.participantButton}
+            >
+              OK
+            </Button>
+            <Button variant="contained" onClick={addParticipants} className={css.participantButton}>
+              Add
+            </Button>
+          </Box>
+        )}
+        {menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
+          <Box className={css.participantSaveBox}>
+            <CreateOutlinedIcon
+              onClick={() => {
+                setParticipantSaveStatus(false);
+              }}
+              style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+            />
+            <br />
+            {menuItemListClassKr("teacher")}
+          </Box>
+        )}
+        {arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
+          <Box className={css.fieldBox}>
+            <TextField
+              error={validator.title}
+              className={css.fieldset}
+              multiline
+              label={d("Add Participants").t("schedule_detail_participants")}
+              value={scheduleList.title}
+              onChange={(e) => handleTopicListChange(e, "title")}
+              required
+              disabled
+            ></TextField>
+            <AddCircleOutlineOutlined onClick={addParticipants} className={css.iconField} style={{ top: "46%", cursor: "pointer" }} />
+          </Box>
+        )}
+        {scheduleList.class_type !== "Homework" && (
+          <Box>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid container justify="space-between" alignItems="center">
+                <Grid item xs={12}>
+                  <TextField
+                    id="datetime-local"
+                    label={d("Start Time").t("schedule_detail_start_time")}
+                    type="datetime-local"
+                    className={css.fieldset}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    required
+                    error={validator.start_at}
+                    value={timestampToTime(scheduleList.start_at)}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck}
+                    onChange={(e) => handleTopicListChange(e, "start_at")}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    id="datetime-local"
+                    label={d("End Time").t("schedule_detail_end_time")}
+                    type="datetime-local"
+                    className={css.fieldset}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    required
+                    error={validator.end_at}
+                    value={timestampToTime(scheduleList.end_at)}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck}
+                    onChange={(e) => handleTopicListChange(e, "end_at")}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-          </MuiPickersUtilsProvider>
-        </Box>
-        <Box>
-          <FormGroup row>
-            <FormControlLabel
-              disabled={isScheduleExpired()}
-              control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
-              label={d("All day").t("schedule_detail_all_day")}
-            />
-            <FormControlLabel
-              disabled={isScheduleExpired()}
-              control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
-              label={d("Repeat").t("schedule_detail_repeat")}
-            />
-          </FormGroup>
-        </Box>
+            </MuiPickersUtilsProvider>
+          </Box>
+        )}
+        {scheduleList.class_type !== "Homework" && (
+          <Box>
+            <FormGroup row>
+              <FormControlLabel
+                disabled={isScheduleExpired()}
+                control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
+                label={d("All day").t("schedule_detail_all_day")}
+              />
+              <FormControlLabel
+                disabled={isScheduleExpired()}
+                control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
+                label={d("Repeat").t("schedule_detail_repeat")}
+              />
+            </FormGroup>
+          </Box>
+        )}
         {scheduleList.class_type !== "Task" && (
           <Autocomplete
             id="combo-box-demo"
@@ -1149,57 +1608,60 @@ function EditBox(props: CalendarStateProps) {
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
         />
-        {!isScheduleExpired() && (
-          <Permission
-            value={PermissionType.create_event_520}
-            render={(value) =>
-              value && (
-                <Box
-                  className={css.fieldset}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
-                    {d("Click to Schedule").t("schedule_button_click_to schedule")}
-                  </Button>
-                </Box>
-              )
-            }
-          />
+        {!isScheduleExpired() &&
+          (perm.create_event_520 || perm.create_my_schedule_events_521 || perm.create_my_schools_schedule_events_522) && (
+            <Box
+              className={css.fieldset}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
+                {d("Click to Schedule").t("schedule_button_click_to schedule")}
+              </Button>
+            </Box>
+          )}
+        {scheduleList.class_type !== "Task" && (
+          <Box
+            className={css.fieldset}
+            style={{
+              display: scheduleId ? "block" : "none",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                width: "45%",
+                marginRight: "10%",
+                visibility: permissionShowPreview ? "visible" : "hidden",
+              }}
+              disabled={!scheduleDetial.real_time_status?.lesson_plan_is_auth}
+              href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
+            >
+              {d("Preview").t("schedule_button_preview")}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={
+                scheduleDetial.status === "Closed" ||
+                !scheduleDetial.real_time_status?.lesson_plan_is_auth ||
+                (!perm.attend_live_class_as_a_student_187 && scheduleList.class_type === "Homework")
+              }
+              style={{
+                width: "45%",
+                visibility: perm.attend_live_class_as_a_student_187 ? "hidden" : "visible",
+              }}
+              onClick={() => handleGoLive(scheduleDetial)}
+            >
+              {scheduleList.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
+              {scheduleList.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+              {scheduleList.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+            </Button>
+          </Box>
         )}
-        <Box
-          className={css.fieldset}
-          style={{
-            display: scheduleId ? "block" : "none",
-          }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              width: "45%",
-              marginRight: "10%",
-              visibility: permissionShowPreview ? "visible" : "hidden",
-            }}
-            disabled={scheduleList.class_type === "Task"}
-            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
-          >
-            {d("Preview").t("schedule_button_preview")}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={scheduleDetial.status === "Closed"}
-            style={{
-              width: "45%",
-            }}
-            onClick={() => handleGoLive(scheduleDetial)}
-          >
-            {d("Go Live").t("schedule_button_go_live")}
-          </Button>
-        </Box>
         {checkedStatus.repeatCheck && (
           <Box className={css.repeatBox}>
             <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
@@ -1226,7 +1688,13 @@ interface CalendarStateProps {
   getParticipantOptions: (class_id: string) => void;
   specificStatus?: boolean;
   setSpecificStatus?: (value: boolean) => void;
+  participantsIds?: ParticipantsShortInfo;
+  classRosterIds?: ParticipantsShortInfo;
+  handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
+  ParticipantsData?: ParticipantsData;
+  getParticipantsData?: (is_org: boolean) => void;
 }
+
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
 }
@@ -1248,6 +1716,11 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     getParticipantOptions,
     setSpecificStatus,
     specificStatus,
+    participantsIds,
+    classRosterIds,
+    handleChangeParticipants,
+    getParticipantsData,
+    ParticipantsData,
   } = props;
   const template = (
     <>
@@ -1268,6 +1741,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleMockOptions={scheduleMockOptions}
           participantMockOptions={participantMockOptions}
           getParticipantOptions={getParticipantOptions}
+          handleChangeParticipants={handleChangeParticipants}
         />
       </Box>
       <Box
@@ -1290,6 +1764,11 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getParticipantOptions={getParticipantOptions}
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
+          participantsIds={participantsIds}
+          classRosterIds={classRosterIds}
+          handleChangeParticipants={handleChangeParticipants}
+          getParticipantsData={getParticipantsData}
+          ParticipantsData={ParticipantsData}
         />
       </Box>
     </>

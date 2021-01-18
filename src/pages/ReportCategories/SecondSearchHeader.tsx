@@ -78,7 +78,11 @@ export interface SecondSearchHeaderProps {
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const { onChange, value, teacherList } = props;
   const css = useStyles();
-  const perm = usePermission([PermissionType.view_reports_610]);
+  const perm = usePermission([
+    PermissionType.view_reports_610,
+    PermissionType.view_my_school_reports_611,
+    PermissionType.view_my_organizations_reports_612,
+  ]);
   const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);
@@ -92,7 +96,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      {perm.view_reports_610 && teacherList.length > 0 && (
+      {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && teacherList.length > 0 && (
         <>
           <Hidden smDown>
             <TextField

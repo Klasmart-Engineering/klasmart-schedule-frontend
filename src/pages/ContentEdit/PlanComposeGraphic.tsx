@@ -369,7 +369,7 @@ function SegmentBox(props: SegmentBoxProps) {
       <Box className={computedCss.segment} display="flex" flexDirection="column" alignItems="center">
         <ArcherElement id={segmentMaterialId} relations={materialRelations}>
           <div className={clsx(computedCss.card, { [css.drappableBox]: canDropMaterial, [css.arrowSourceCircle]: hasNext })}>
-            <MaterialCard onRemove={handleRemove} material={material} ref={materialDropRef} />
+            <MaterialCard onRemove={handleRemove} material={material || {}} ref={materialDropRef} />
           </div>
         </ArcherElement>
         {segmentNodes}
@@ -385,7 +385,7 @@ function SegmentBox(props: SegmentBoxProps) {
       </ArcherElement>
       <ArcherElement id={segmentMaterialId} relations={materialRelations}>
         <div className={clsx(computedCss.card, { [css.drappableBox]: canDropMaterial, [css.arrowSourceCircle]: hasNext })}>
-          <MaterialCard onRemove={handleRemove} material={material} ref={materialDropRef} />
+          <MaterialCard onRemove={handleRemove} material={material || {}} ref={materialDropRef} />
         </div>
       </ArcherElement>
       {segmentNodes}

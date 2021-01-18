@@ -14,7 +14,7 @@ import ContentPreview from "../ContentPreview";
 const useStyles = makeStyles({
   previewContainer: {
     width: "500px",
-    height: "260px",
+    maxHeight: "300px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
     padding: "20px 30px",
@@ -57,6 +57,11 @@ const useStyles = makeStyles({
     textAlign: "right",
     marginTop: "60px",
   },
+  checkPlan: {
+    color: "#E02020",
+    fontWeight: "bold",
+    paddingTop: "10px",
+  },
 });
 
 // type scheduleInfoProps = {
@@ -88,17 +93,19 @@ interface InfoProps {
   scheduleInfo: scheduleInfoProps;
   toLive: () => void;
   changeModalDate: (data: object) => void;
+  checkLessonPlan: boolean;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive } = props;
+  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive, checkLessonPlan } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+  const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   const timestampToTime = (timestamp: Date | null): string => {
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -120,6 +127,12 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleGoLive = (scheduleInfo: scheduleInfoProps) => {
     const currentTime = Math.floor(new Date().getTime());
+    if (permissionShowLive && scheduleInfo.class_type === "Homework") {
+      handleClose();
+      dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
+      window.open(apiLivePath(liveToken));
+      return;
+    }
     if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {
       changeModalDate({
         title: "",
@@ -143,6 +156,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                     scheduleInfo={scheduleInfo}
                     toLive={toLive}
                     changeModalDate={changeModalDate}
+                    checkLessonPlan={checkLessonPlan}
                   />
                 ),
                 openStatus: true,
@@ -167,6 +181,11 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   return (
     <div className={classes.previewContainer}>
+      {!checkLessonPlan && scheduleInfo.class_type !== "Task" && (
+        <p className={classes.checkPlan}>
+          {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
+        </p>
+      )}
       <div>
         <p className={classes.title}>{scheduleInfo.title}</p>
         <p className={classes.date}>
@@ -200,27 +219,36 @@ export default function CustomizeTempalte(props: InfoProps) {
           />
         )}
       </div>
-      <div className={classes.buttonPart}>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={scheduleInfo.class_type === "Task"}
-          style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
-          href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
-        >
-          {d("Preview").t("schedule_button_preview")}
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
-          autoFocus
-          className={classes.lastButton}
-          disabled={scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started"}
-          onClick={() => handleGoLive(scheduleInfo)}
-        >
-          {d("Go Live").t("schedule_button_go_live")}
-        </Button>
-      </div>
+      {scheduleInfo.class_type !== "Task" && (
+        <div className={classes.buttonPart}>
+          <Button
+            color="primary"
+            variant="contained"
+            disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
+            style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
+            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
+          >
+            {d("Preview").t("schedule_button_preview")}
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            autoFocus
+            className={classes.lastButton}
+            style={{ visibility: permissionShowLive && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible" }}
+            disabled={
+              (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
+              (!permissionShowLive && scheduleInfo.class_type === "Homework") ||
+              !checkLessonPlan
+            }
+            onClick={() => handleGoLive(scheduleInfo)}
+          >
+            {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
+            {scheduleInfo.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+            {scheduleInfo.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

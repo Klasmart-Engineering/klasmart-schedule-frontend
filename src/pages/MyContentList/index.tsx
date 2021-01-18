@@ -7,10 +7,11 @@ import { EntityFolderContent } from "../../api/api.auto";
 import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
+import { excludeMyOrg, orgs2id } from "../../models/ModelOrgProperty";
 import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder,
@@ -23,12 +24,14 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
+  getOrgList,
   onLoadContentList,
   publishContent,
   rejectContent,
   renameFolder,
   searchOrgFolderItems,
   setUserSetting,
+  shareFolders,
 } from "../../reducers/content";
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
@@ -36,6 +39,7 @@ import ContentPreview from "../ContentPreview";
 import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
+import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -59,10 +63,9 @@ const useQuery = (): QueryCondition => {
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
-    const program = query.get("program");
+    const program_group = query.get("program_group");
     const path = query.get("path") || "";
-    // const parent_id = (path || "").split("/").pop() || "";
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program, path });
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path });
   }, [search]);
 };
 
@@ -108,16 +111,26 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree, parentFolderInfo } = useSelector<RootState, RootState["content"]>(
-    (state) => state.content
-  );
+  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
+    RootState,
+    RootState["content"]
+  >((state) => state.content);
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
-  // const historyArr: QueryCondition[] = [];
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
     EntityFolderContent[]
   >();
+  const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
+  const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
+  const {
+    organizationListActive,
+    closeOrganizationList,
+    openOrganizationList,
+    organizationListShowIndex,
+    shareFolder,
+    setShareFolder,
+  } = useOrganizationList<OrgInfoProps[]>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -253,7 +266,15 @@ export default function MyContentList() {
     dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one")));
     return false;
   };
-
+  const handleClickShareBtn: ContentCardListProps["onClickShareBtn"] = async (content) => {
+    setShareFolder(content);
+    await dispatch(getOrgList({ folder_ids: content.id, metaLoading: true }));
+    openOrganizationList();
+  };
+  const handleShareFolder: OrganizationListProps["onShareFolder"] = async (org_ids) => {
+    await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
+    closeOrganizationList();
+  };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -274,9 +295,9 @@ export default function MyContentList() {
 
   return (
     <div>
-      {condition.program && <ProgramSearchHeader value={condition} onChange={handleChange} />}
-      {condition.program && <ProgramSearchHeaderMb value={condition} onChange={handleChange} />}
-      {!condition.program && (
+      {condition.program_group && <ProgramSearchHeader value={condition} onChange={handleChange} />}
+      {condition.program_group && <ProgramSearchHeaderMb value={condition} onChange={handleChange} />}
+      {!condition.program_group && (
         <FirstSearchHeader
           value={condition}
           onChange={handleChange}
@@ -284,7 +305,7 @@ export default function MyContentList() {
           onCreateContent={handleCreateContent}
         />
       )}
-      {!condition.program && (
+      {!condition.program_group && (
         <FirstSearchHeaderMb
           value={condition}
           onChange={handleChange}
@@ -341,6 +362,7 @@ export default function MyContentList() {
                 total={total}
                 amountPerPage={page_size}
                 queryCondition={condition}
+                orgProperty={orgProperty}
                 onChangePage={handleChangePage}
                 onChangePageSize={handleChangePageSize}
                 onClickContent={handleClickConent}
@@ -353,6 +375,7 @@ export default function MyContentList() {
                 parentFolderInfo={parentFolderInfo}
                 onApprove={handleApprove}
                 onReject={handleReject}
+                onClickShareBtn={handleClickShareBtn}
               />
             ) : JSON.stringify(parentFolderInfo) !== "{}" &&
               (condition.publish_status === PublishStatus.published ||
@@ -361,10 +384,10 @@ export default function MyContentList() {
                 <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} />
               </LayoutBox>
             ) : (
-              <TipImages type={TipImagesType.empty} text="library_label_empty" />
+              emptyTip
             )
           ) : (
-            <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />
+            permissionTip
           )
         }
       />
@@ -376,6 +399,14 @@ export default function MyContentList() {
         onMove={handleMove}
         onAddFolder={handleAddFolder}
         key={folderTreeShowIndex}
+      />
+      <OrganizationList
+        orgList={filterOrgList}
+        selectedOrg={selctedOrgIds}
+        onClose={closeOrganizationList}
+        open={organizationListActive}
+        onShareFolder={handleShareFolder}
+        key={organizationListShowIndex}
       />
     </div>
   );

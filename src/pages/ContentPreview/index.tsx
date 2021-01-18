@@ -20,7 +20,7 @@ import {
   rejectContent,
 } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleInfo } from "../../reducers/schedule";
+import { getScheduleInfo, getScheduleLiveToken } from "../../reducers/schedule";
 import LayoutPair from "../ContentEdit/Layout";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
@@ -43,7 +43,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author, class_id } = useQuery();
   const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { scheduleDetial, liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
   const content_type = contentPreview.content_type;
   const history = useHistory();
@@ -100,7 +100,8 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     //   getContentLiveToken({ content_id: contentPreview.id as string, metaLoading: true })
     // )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getContentLiveToken>>;
     // if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
-    window.open(apiLivePath(token));
+    if (sid) window.open(apiLivePath(liveToken));
+    if (!sid) window.open(apiLivePath(token));
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
@@ -140,7 +141,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       return [contentPreview];
     }
   };
-
   const rightside = (
     <Fragment>
       {contentPreview.id && (
@@ -155,7 +155,8 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
   useEffect(() => {
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
-    dispatch(getContentLiveToken({ content_id: id, class_id: class_id, metaLoading: true }));
+    if (sid) dispatch(getScheduleLiveToken({ schedule_id: sid, live_token_type: "preview", metaLoading: true }));
+    if (!sid) dispatch(getContentLiveToken({ content_id: id, metaLoading: true }));
     if (sid) dispatch(getScheduleInfo(sid));
   }, [class_id, dispatch, id, sid]);
   return (

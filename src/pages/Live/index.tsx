@@ -22,11 +22,11 @@ export default function Live() {
     async function asynsGetliveToken() {
       let tokenInfo: any;
       if (schedule_id)
-        tokenInfo = ((await dispatch(getScheduleLiveToken({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof getScheduleLiveToken>
-        >;
+        tokenInfo = ((await dispatch(
+          getScheduleLiveToken({ schedule_id, live_token_type: "preview", metaLoading: true })
+        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleLiveToken>>;
       if (content_id)
-        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, class_id, metaLoading: true }))) as unknown) as PayloadAction<
+        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, metaLoading: true }))) as unknown) as PayloadAction<
           AsyncTrunkReturned<typeof getContentLiveToken>
         >;
       if (tokenInfo) window.location.href = apiLivePath(tokenInfo?.payload.token);

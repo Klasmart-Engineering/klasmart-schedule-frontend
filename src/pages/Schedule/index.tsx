@@ -7,13 +7,19 @@ import { apiLivePath } from "../../api/extra";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import ModalBox from "../../components/ModalBox";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
+  getClassesByOrg,
+  getClassesBySchool,
+  getClassesByTeacher,
+  getContentsAuthed,
   getMockOptions,
+  getParticipantsData,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
@@ -21,12 +27,11 @@ import {
   getSearchScheduleList,
   scheduleUpdateStatus,
 } from "../../reducers/schedule";
-import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { PermissionType, usePermission } from "../../components/Permission";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -51,17 +56,26 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken } = useSelector<RootState, RootState["schedule"]>(
-    (state) => state.schedule
-  );
+  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData, ParticipantsData } = useSelector<
+    RootState,
+    RootState["schedule"]
+  >((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [, setChangeProgram] = React.useState<string>("");
+  const [modelYear, setModelYear] = React.useState<boolean>(false);
+
+  const [participantsIds, setParticipantsIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
+  const [classRosterIds, setClassRosterIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
+  };
+
+  const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
+    type === "classRoster" ? setClassRosterIds(data) : setParticipantsIds(data);
   };
 
   const initModalDate: AlertDialogProps = {
@@ -93,7 +107,12 @@ function ScheduleContent() {
    */
   const [modelView, setModelView] = React.useState<modeViewType>("month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setModelView(event.target.value as modeViewType);
+    if (event.target.value === "year") {
+      setModelYear(true);
+    } else {
+      setModelYear(false);
+      setModelView(event.target.value as modeViewType);
+    }
   };
 
   /**
@@ -125,6 +144,10 @@ function ScheduleContent() {
     if (liveToken) window.open(apiLivePath(liveToken));
   };
 
+  const getParticipants = (is_org: boolean = true) => {
+    dispatch(getParticipantsData(is_org));
+  };
+
   React.useEffect(() => {
     if (teacherName) {
       const data = {
@@ -147,15 +170,32 @@ function ScheduleContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, dispatch]);
 
-  const getTeacherByClass = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+  const getOrgByClass = usePermission(PermissionType.create_event_520);
+  const getOrgBySchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
+
+  React.useEffect(() => {
+    // getParticipants(getOrgByClass)
+    dispatch(getParticipantsData(getOrgByClass));
+  }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     dispatch(getMockOptions());
-    dispatch(getScheduleMockOptions({ is_teacher: getTeacherByClass }));
-  }, [dispatch, getTeacherByClass]);
+    dispatch(getScheduleMockOptions({}));
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    if (getOrgByClass) {
+      dispatch(getClassesByOrg());
+    } else if (getOrgBySchool) {
+      dispatch(getClassesBySchool());
+    } else {
+      dispatch(getClassesByTeacher());
+    }
+  }, [dispatch, getOrgByClass, getOrgBySchool]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2" }));
+    dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
     }
@@ -186,6 +226,7 @@ function ScheduleContent() {
               changeTimesTamp={changeTimesTamp}
               timesTamp={timesTamp}
               scheduleId={scheduleId}
+              modelYear={modelYear}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={4} lg={3}>
@@ -206,6 +247,11 @@ function ScheduleContent() {
               getParticipantOptions={getParticipantOptions}
               setSpecificStatus={setSpecificStatus}
               specificStatus={specificStatus}
+              participantsIds={participantsIds}
+              classRosterIds={classRosterIds}
+              handleChangeParticipants={handleChangeParticipants}
+              ParticipantsData={ParticipantsData}
+              getParticipantsData={getParticipants}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
@@ -217,6 +263,8 @@ function ScheduleContent() {
                 toLive={toLive}
                 changeModalDate={changeModalDate}
                 setSpecificStatus={setSpecificStatus}
+                modelYear={modelYear}
+                scheduleTimeViewYearData={scheduleTimeViewYearData}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}

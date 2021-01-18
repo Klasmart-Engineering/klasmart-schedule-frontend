@@ -52,10 +52,10 @@ type LangRecord<T = string> =
   | { id: "library_msg_bulk_remove_content"; description: "Are you sure you want to remove these contents?"; values: undefined }
   | { id: "library_msg_remove_select_one"; description: "At least one content should be selected."; values: undefined }
   | { id: "library_label_sort_by"; description: "Sort By"; values: undefined }
-  | { id: "library_label_content_name_atoz"; description: "Content Name(A-Z)"; values: undefined }
-  | { id: "library_label_content_name_ztoa"; description: "Content Name(Z-A)"; values: undefined }
-  | { id: "library_label_created_on_newtoold"; description: "Created On(New-Old)"; values: undefined }
-  | { id: "library_label_created_on_oldtonew"; description: "Created On(Old-New)"; values: undefined }
+  | { id: "library_label_content_name_atoz"; description: "Content Name (A-Z)"; values: undefined }
+  | { id: "library_label_content_name_ztoa"; description: "Content Name (Z-A)"; values: undefined }
+  | { id: "library_label_created_on_newtoold"; description: "Created On (New-Old)"; values: undefined }
+  | { id: "library_label_created_on_oldtonew"; description: "Created On (Old-New)"; values: undefined }
   | { id: "library_label_material"; description: "Material"; values: undefined }
   | { id: "library_label_plan"; description: "Plan"; values: undefined }
   | { id: "library_label_delete"; description: "Delete"; values: undefined }
@@ -128,6 +128,12 @@ type LangRecord<T = string> =
       values: { email: string | number };
     }
   | {
+      id: "library_error_content_locked_by_me";
+      description: "This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.";
+      values: undefined;
+    }
+  | { id: "library_error_content_data_invalid"; description: "Content is empty, please upload a file."; values: undefined }
+  | {
       id: "library_error_delete_lesson_plan_in_schedule";
       description: "Unable to delete lesson plan which is scheduled";
       values: undefined;
@@ -153,6 +159,15 @@ type LangRecord<T = string> =
   | { id: "library_msg_delete_folder"; description: "Are you sure you want to delete these folders?"; values: undefined }
   | { id: "library_error_delete_folder"; description: "Folder cannot be deleted unless it is empty"; values: undefined }
   | { id: "library_label_export_as_csv"; description: "Export as CSV"; values: undefined }
+  | { id: "library_label_distribute"; description: "Distribute"; values: undefined }
+  | { id: "library_label_preset"; description: "Preset"; values: undefined }
+  | {
+      id: "library_msg_preset";
+      description: "Choosing this option will make the selected content available to current and future organizations.";
+      values: undefined;
+    }
+  | { id: "library_label_select_organizations"; description: "Select Organizations"; values: undefined }
+  | { id: "library_label_all_organizations"; description: "All"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -444,6 +459,50 @@ type LangRecord<T = string> =
     }
   | { id: "schedule_msg_start_minutes"; description: "You can only start a class 15 minutes before the start time."; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: "Click to Schedule"; values: undefined }
+  | { id: "schedule_msg_time_expired"; description: "Time expired"; values: undefined }
+  | {
+      id: "schedule_msg_recall_lesson_plan";
+      description: "Oops! The lesson plan included for this lesson has already been deleted!";
+      values: undefined;
+    }
+  | { id: "schedule_button_start_class"; description: "Start Class"; values: undefined }
+  | { id: "schedule_button_go_study"; description: "Go Study"; values: undefined }
+  | { id: "schedule_msg_earlier_today"; description: "Due date cannot be earlier than today."; values: undefined }
+  | { id: "schedule_detail_class_roster"; description: "Class Roster"; values: undefined }
+  | { id: "schedule_detail_select_all"; description: "Select All"; values: undefined }
+  | { id: "schedule_detail_unselect_all"; description: "Unselect All"; values: undefined }
+  | { id: "schedule_time_conflict_msg"; description: "Time conflicts occured, please specify"; values: undefined }
+  | { id: "schedule_time_conflict_option_1"; description: "Not schedule"; values: undefined }
+  | { id: "schedule_time_conflict_option_2"; description: "Schedule anyway"; values: undefined }
+  | { id: "schedule_time_conflict_student"; description: "Student"; values: undefined }
+  | { id: "schedule_participants_button_add"; description: "Add"; values: undefined }
+  | { id: "schedule_time_conflict_checking"; description: "Participants"; values: undefined }
+  | { id: "schedule_msg_roster_no_ok"; description: "Please confirm the field of ‘Class Roster’ by clicking OK"; values: undefined }
+  | {
+      id: "schedule_msg_no_user";
+      description: "For ‘Add Class’ (Class Roster) and ‘Add Participants’, at least a student and a teacher will need to be added into either of the field.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_roster_update";
+      description: "The class roster has just been updated, please refresh and try again";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_participants_update";
+      description: "The participants' list has just been updated, please refresh and try again";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_roster_participants_edit";
+      description: "Please kindly be notified that the users included in this event had been updated.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_participants_no_ok";
+      description: "Please confirm the fileld of ‘Add Participants’ by clicking OK";
+      values: undefined;
+    }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

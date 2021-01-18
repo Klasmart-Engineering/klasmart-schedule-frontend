@@ -57,3 +57,7 @@ export function TipImages(props: TipImagesProps) {
     </Fragment>
   );
 }
+export const permissionTip = <TipImages type={TipImagesType.noPermission} text="library_error_no_permissions" />;
+export const emptyTip = <TipImages type={TipImagesType.empty} text="library_label_empty" />;
+export const comingsoonTip = <TipImages type={TipImagesType.commingSoon} text="library_msg_coming_soon" />;
+export const resultsTip = <TipImages type={TipImagesType.noResults} text="library_msg_no_results_found" />;

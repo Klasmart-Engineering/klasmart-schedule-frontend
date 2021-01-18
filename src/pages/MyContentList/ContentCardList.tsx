@@ -25,11 +25,12 @@ import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
+import ShareIcon from "@material-ui/icons/Share";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityFolderContent, EntityFolderItemInfo } from "../../api/api.auto";
+import { EntityFolderContent, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
 import { Author, ContentType, PublishStatus } from "../../api/type";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
@@ -173,15 +174,19 @@ const useStyles = makeStyles((theme) =>
     },
     iconColor: {
       color: "#D32F2F",
-      padding: "0 0 0 10px",
+      padding: "5px",
     },
     rePublishColor: {
       color: "#0E78D5",
-      padding: "0 0 0 10px",
+      padding: "5px",
     },
     folderColor: {
       color: "#0e78d5",
-      padding: "0 0 0 10px",
+      padding: "5px",
+    },
+    shareColor: {
+      color: "#000",
+      padding: "5px",
     },
     MuiIconButtonRoot: {
       "&:hover": {
@@ -241,11 +246,16 @@ interface ContentProps extends ContentActionProps {
   content: EntityFolderContent;
   queryCondition: QueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
+  orgProperty: EntityOrganizationProperty;
   onClickContent: ContentCardListProps["onClickContent"];
 }
 enum DeleteText {
   delete = "delete",
   remove = "remove",
+}
+enum OrgType {
+  normal = "normal",
+  headquarters = "headquarters",
 }
 function ContentCard(props: ContentProps) {
   const css = useStyles();
@@ -254,6 +264,7 @@ function ContentCard(props: ContentProps) {
     content,
     queryCondition,
     selectedContentGroupContext,
+    orgProperty,
     onDelete,
     onPublish,
     onClickContent,
@@ -262,6 +273,7 @@ function ContentCard(props: ContentProps) {
     onDeleteFolder,
     onApprove,
     onReject,
+    onClickShareBtn,
   } = props;
   let file_type: number = 0;
   if (content?.content_type === ContentType.assets) {
@@ -308,9 +320,11 @@ function ContentCard(props: ContentProps) {
             {content?.name}
           </Typography>
           {content.content_type === ContentType.folder && (
-            <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
-              <EditOutlinedIcon />
-            </IconButton>
+            <Permission value={PermissionType.create_folder_289}>
+              <IconButton className={clsx(css.editBtn, css.MuiIconButtonRoot)} onClick={(e) => onRenameFolder(content)}>
+                <EditOutlinedIcon />
+              </IconButton>
+            </Permission>
           )}
           <ExpandBtn className={clsx(css.iconButtonExpandMore, css.MuiIconButtonRoot)} {...expand.expandMore}>
             <ExpandMore fontSize="small"></ExpandMore>
@@ -336,18 +350,37 @@ function ContentCard(props: ContentProps) {
           {content?.author_name}
         </Typography>
         <div>
-          {!queryCondition.program && (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
-            <LButton
-              as={IconButton}
-              replace
-              className={clsx(css.folderColor, css.MuiIconButtonRoot)}
-              onClick={() => onClickMoveBtn(content)}
-            >
-              <FolderOpenIcon />
-            </LButton>
-          )}
+          {!queryCondition.program_group &&
+            content?.publish_status === PublishStatus.published &&
+            content?.content_type === ContentType.folder &&
+            orgProperty.type === OrgType.headquarters &&
+            (!queryCondition.path || (queryCondition.path && queryCondition.path === "/")) && (
+              <Permission value={PermissionType.publish_featured_content_for_all_hub_79000}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.shareColor, css.MuiIconButtonRoot)}
+                  onClick={() => onClickShareBtn(content)}
+                >
+                  <ShareIcon />
+                </LButton>
+              </Permission>
+            )}
+          {!queryCondition.program_group &&
+            (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
+              <Permission value={PermissionType.create_folder_289}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.folderColor, css.MuiIconButtonRoot)}
+                  onClick={() => onClickMoveBtn(content)}
+                >
+                  <FolderOpenIcon />
+                </LButton>
+              </Permission>
+            )}
           {/* content published remove */}
-          {!queryCondition.program &&
+          {!queryCondition.program_group &&
             queryCondition.publish_status === PublishStatus.published &&
             content?.content_type !== ContentType.folder &&
             content?.content_type_name !== ASSETS_NAME && (
@@ -362,43 +395,49 @@ function ContentCard(props: ContentProps) {
                 </LButton>
               </Permission>
             )}
-          {!queryCondition.program && content?.content_type === ContentType.folder && (
-            <LButton
-              as={IconButton}
-              replace
-              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-              onClick={() => onDeleteFolder(content.id as string)}
-            >
-              <DeleteOutlineIcon />
-            </LButton>
-          )}
-          {/* content archieved republish delete */}
-          {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
-            <Permission value={PermissionType.republish_archived_content_274}>
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.rePublishColor, css.MuiIconButtonRoot)}
-                onClick={() => onPublish(content.id as string)}
-              >
-                <PublishOutlinedIcon />
-              </LButton>
-            </Permission>
-          )}
-          {!queryCondition.program && content?.publish_status === PublishStatus.archive && content?.content_type_name !== ASSETS_NAME && (
-            <Permission value={PermissionType.delete_archived_content_275}>
+          {!queryCondition.program_group && content?.content_type === ContentType.folder && (
+            <Permission value={PermissionType.create_folder_289}>
               <LButton
                 as={IconButton}
                 replace
                 className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-                onClick={() => onDelete(content.id as string, type)}
+                onClick={() => onDeleteFolder(content.id as string)}
               >
                 <DeleteOutlineIcon />
               </LButton>
             </Permission>
           )}
+          {/* content archieved republish delete */}
+          {!queryCondition.program_group &&
+            content?.publish_status === PublishStatus.archive &&
+            content?.content_type_name !== ASSETS_NAME && (
+              <Permission value={PermissionType.republish_archived_content_274}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.rePublishColor, css.MuiIconButtonRoot)}
+                  onClick={() => onPublish(content.id as string)}
+                >
+                  <PublishOutlinedIcon />
+                </LButton>
+              </Permission>
+            )}
+          {!queryCondition.program_group &&
+            content?.publish_status === PublishStatus.archive &&
+            content?.content_type_name !== ASSETS_NAME && (
+              <Permission value={PermissionType.delete_archived_content_275}>
+                <LButton
+                  as={IconButton}
+                  replace
+                  className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                  onClick={() => onDelete(content.id as string, type)}
+                >
+                  <DeleteOutlineIcon />
+                </LButton>
+              </Permission>
+            )}
           {/* content unpublished delete */}
-          {!queryCondition.program && isUnpublish(queryCondition) && content?.content_type_name !== ASSETS_NAME && (
+          {!queryCondition.program_group && isUnpublish(queryCondition) && content?.content_type_name !== ASSETS_NAME && (
             <LButton
               as={IconButton}
               replace
@@ -409,7 +448,7 @@ function ContentCard(props: ContentProps) {
             </LButton>
           )}
           {/* assets delete */}
-          {!queryCondition.program && content?.content_type_name === ASSETS_NAME && (
+          {!queryCondition.program_group && content?.content_type_name === ASSETS_NAME && (
             <Permission value={PermissionType.delete_asset_340}>
               <LButton
                 as={IconButton}
@@ -421,7 +460,7 @@ function ContentCard(props: ContentProps) {
               </LButton>
             </Permission>
           )}
-          {!queryCondition.program && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
+          {!queryCondition.program_group && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
             <Permission value={PermissionType.reject_pending_content_272}>
               <LButton
                 as={IconButton}
@@ -433,7 +472,7 @@ function ContentCard(props: ContentProps) {
               </LButton>
             </Permission>
           )}
-          {!queryCondition.program && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
+          {!queryCondition.program_group && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
             <Permission value={PermissionType.approve_pending_content_271}>
               <LButton
                 as={IconButton}
@@ -459,6 +498,7 @@ interface ContentActionProps {
   onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onApprove: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onReject: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onClickShareBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
@@ -476,6 +516,7 @@ export interface ContentCardListProps extends ContentActionProps {
   onChangePageSize: (page_size: number) => void;
   onGoBack: () => any;
   parentFolderInfo: EntityFolderItemInfo;
+  orgProperty: EntityOrganizationProperty;
 }
 export function ContentCardList(props: ContentCardListProps) {
   const css = useStyles();
@@ -497,6 +538,8 @@ export function ContentCardList(props: ContentCardListProps) {
     parentFolderInfo,
     onApprove,
     onReject,
+    onClickShareBtn,
+    orgProperty,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -528,6 +571,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           onPublish,
                           onDelete,
                           queryCondition,
+                          orgProperty,
                           selectedContentGroupContext,
                           onClickContent,
                           onClickMoveBtn,
@@ -535,6 +579,7 @@ export function ContentCardList(props: ContentCardListProps) {
                           onDeleteFolder,
                           onApprove,
                           onReject,
+                          onClickShareBtn,
                         }}
                       />
                     </Grid>

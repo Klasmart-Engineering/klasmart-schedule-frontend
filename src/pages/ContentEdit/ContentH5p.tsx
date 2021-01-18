@@ -21,7 +21,7 @@ export interface ContentH5pProps {
 
 const useStyles = makeStyles({
   iframe: {
-    border: "none",
+    border: "1px dashed red",
     width: "100%",
     height: "calc(100% - 80px)",
   },
@@ -43,10 +43,9 @@ export default function ContentH5p(props: ContentH5pProps) {
   const { valueSource, children, sub, allDefaultValueAndKey, formMethods } = props;
   const css = useStyles();
   const src = useH5pSrc(sub, valueSource);
-  // console.log("h5p origin contentId = ", valueSource);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      // console.log("h5p iframe message event = ", event);
+      console.log("h5p iframe message event.data = ", event.data);
       const { contentId } = event.data;
       const source_type = event.data.source_type ?? "";
       if (!contentId) return;

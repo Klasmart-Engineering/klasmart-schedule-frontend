@@ -763,6 +763,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content program",
             "name": "program",
             "in": "query"
@@ -834,6 +840,47 @@
         "tags": ["content"],
         "summary": "createContent",
         "operationId": "createContent",
+        "parameters": [
+          {
+            "description": "create request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CreateContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CreateContentResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents/copy": {
+      "post": {
+        "description": "copy lesson plan, lesson material",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "copyContent",
+        "operationId": "copyContent",
         "parameters": [
           {
             "description": "create request",
@@ -1002,13 +1049,6 @@
             "type": "string",
             "description": "content id",
             "name": "content_id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "class id",
-            "name": "class_id",
             "in": "path",
             "required": true
           }
@@ -1326,6 +1366,323 @@
         }
       }
     },
+    "/contents_auth": {
+      "post": {
+        "description": "add authed content to org",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "addAuthedContent",
+        "operationId": "addAuthedContent",
+        "parameters": [
+          {
+            "description": "add authed content request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.AddAuthedContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete authed content to org",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "deleteAuthedContent",
+        "operationId": "deleteAuthedContent",
+        "parameters": [
+          {
+            "description": "batch delete authed content request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.DeleteAuthedContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_auth/batch": {
+      "post": {
+        "description": "batch add authed content to org",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "batchAddAuthedContent",
+        "operationId": "batchAddAuthedContent",
+        "parameters": [
+          {
+            "description": "batch add authed content request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.BatchAddAuthedContentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "batch delete authed content to org",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "batchDeleteAuthedContent",
+        "operationId": "batchDeleteAuthedContent",
+        "parameters": [
+          {
+            "description": "batch delete authed content request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.BatchDeleteAuthedContentByOrgsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_auth/content": {
+      "get": {
+        "description": "get content authed org list",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getContentAuthedOrg",
+        "operationId": "getContentAuthedOrg",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "content id",
+            "name": "content_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AuthedOrgList"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_auth/org": {
+      "get": {
+        "description": "get org authed content list",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getOrgAuthedContent",
+        "operationId": "getOrgAuthedContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "org id",
+            "name": "org_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AuthedContentRecordInfoResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/contents_authed": {
+      "get": {
+        "description": "query authed content by condition",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryAuthContent",
+        "operationId": "queryAuthContent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content type",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content program",
+            "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content source type",
+            "name": "source_type",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/contents_bulk": {
       "delete": {
         "description": "delete contents bulk",
@@ -1449,6 +1806,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content path",
             "name": "path",
             "in": "query"
@@ -1555,6 +1918,12 @@
           },
           {
             "type": "string",
+            "description": "search program group",
+            "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content source type",
             "name": "source_type",
             "in": "query"
@@ -1639,6 +2008,12 @@
             "type": "string",
             "description": "search content program",
             "name": "program",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search program group",
+            "name": "program_group",
             "in": "query"
           },
           {
@@ -2677,6 +3052,83 @@
         }
       }
     },
+    "/folders/share": {
+      "get": {
+        "description": "get folders shared records",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "getFoldersSharedRecords",
+        "operationId": "getFoldersSharedRecords",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "folder id list, split by ','",
+            "name": "folder_ids",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.FolderShareRecords"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "share folders to org",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["folder"],
+        "summary": "shareFolders",
+        "operationId": "shareFolders",
+        "parameters": [
+          {
+            "description": "create request",
+            "name": "content",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ShareFoldersRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/grades": {
       "get": {
         "description": "get grade",
@@ -3422,6 +3874,39 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/organizations_propertys/{id}": {
+      "get": {
+        "description": "get organization property by id",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["organizationProperty"],
+        "summary": "getOrganizationPropertyByID",
+        "operationId": "getOrganizationPropertyByID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "organization id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.OrganizationProperty"
             }
           },
           "500": {
@@ -4398,6 +4883,12 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
           "409": {
             "description": "Conflict",
             "schema": {
@@ -4582,6 +5073,14 @@
             "name": "schedule_id",
             "in": "path",
             "required": true
+          },
+          {
+            "enum": ["preview", "live"],
+            "type": "string",
+            "description": "live token type",
+            "name": "live_token_type",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
@@ -4595,6 +5094,45 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/real_time": {
+      "get": {
+        "description": "get schedule real-time status",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "get schedule real-time status",
+        "operationId": "getScheduleRealTimeStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleRealTimeView"
             }
           },
           "404": {
@@ -4757,7 +5295,7 @@
         "operationId": "getScheduleTimeView",
         "parameters": [
           {
-            "enum": ["day", "work_week", "week", "month"],
+            "enum": ["day", "work_week", "week", "month", "year"],
             "type": "string",
             "description": "search schedules by view_type",
             "name": "view_type",
@@ -4826,6 +5364,93 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_time_view/dates": {
+      "get": {
+        "description": "get schedules dates(format:2006-01-02)",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduledDates",
+        "operationId": "getScheduledDates",
+        "parameters": [
+          {
+            "enum": ["day", "work_week", "week", "month", "year"],
+            "type": "string",
+            "description": "search schedules by view_type",
+            "name": "view_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "search schedules by time_at",
+            "name": "time_at",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "time zone offset",
+            "name": "time_zone_offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "school ids,separated by comma",
+            "name": "school_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher id,separated by comma",
+            "name": "teacher_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class id,separated by comma",
+            "name": "class_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "subject id,separated by comma",
+            "name": "subject_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "program id,separated by comma",
+            "name": "program_ids",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
@@ -5498,8 +6123,8 @@
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["user"],
-        "summary": "send verify code",
-        "operationId": "sendCode",
+        "summary": "invite notify",
+        "operationId": "inviteNotify",
         "parameters": [
           {
             "description": "send verify code",
@@ -6246,10 +6871,6 @@
         },
         "schedule_id": {
           "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["preview", "live"]
         }
       }
     },
@@ -6257,6 +6878,20 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AddAuthedContentRequest": {
+      "type": "object",
+      "properties": {
+        "content_id": {
+          "type": "string"
+        },
+        "from_folder_id": {
+          "type": "string"
+        },
+        "org_id": {
           "type": "string"
         }
       }
@@ -6422,6 +7057,290 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.AuthedContentRecordInfo": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "age_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "author": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "content_id": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "content_type_name": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "creator": {
+          "type": "string"
+        },
+        "creator_name": {
+          "description": "AuthorName string `json:\"author_name\"`",
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        },
+        "delete_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "developmental_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "draw_activity": {
+          "type": "boolean"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "extra": {
+          "type": "string"
+        },
+        "from_folder_id": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grade_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_mine": {
+          "type": "boolean"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "lesson_type": {
+          "type": "string"
+        },
+        "lesson_type_name": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "org": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "org_name": {
+          "type": "string"
+        },
+        "outcome_entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.Outcome"
+          }
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "program": {
+          "type": "string"
+        },
+        "program_name": {
+          "type": "string"
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_scope_name": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "record_id": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remark": {
+          "type": "string"
+        },
+        "self_study": {
+          "type": "boolean"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suggest_time": {
+          "type": "integer"
+        },
+        "teacher_manual": {
+          "type": "string"
+        },
+        "teacher_manual_name": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.AuthedContentRecordInfoResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AuthedContentRecordInfo"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.AuthedOrgList": {
+      "type": "object",
+      "properties": {
+        "orgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.OrganizationInfo"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.BatchAddAuthedContentRequest": {
+      "type": "object",
+      "properties": {
+        "content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "folder_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.BatchDeleteAuthedContentByOrgsRequest": {
+      "type": "object",
+      "properties": {
+        "content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "folder_i_ds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "org_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -6808,6 +7727,17 @@
         }
       }
     },
+    "entity.DeleteAuthedContentRequest": {
+      "type": "object",
+      "properties": {
+        "content_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        }
+      }
+    },
     "entity.Developmental": {
       "type": "object",
       "properties": {
@@ -7025,6 +7955,31 @@
         }
       }
     },
+    "entity.FolderShareRecord": {
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "type": "string"
+        },
+        "orgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.OrganizationInfo"
+          }
+        }
+      }
+    },
+    "entity.FolderShareRecords": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FolderShareRecord"
+          }
+        }
+      }
+    },
     "entity.Grade": {
       "type": "object",
       "properties": {
@@ -7157,6 +8112,29 @@
         },
         "partition": {
           "type": "string"
+        }
+      }
+    },
+    "entity.OrganizationInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.OrganizationProperty": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["normal", "headquarters"]
         }
       }
     },
@@ -7307,6 +8285,9 @@
         "deleteID": {
           "type": "string"
         },
+        "group_name": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
@@ -7315,6 +8296,9 @@
         },
         "number": {
           "type": "integer"
+        },
+        "org_type": {
+          "type": "string"
         },
         "updateAt": {
           "type": "integer"
@@ -7586,6 +8570,10 @@
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
+        "real_time_status": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleRealTimeView"
+        },
         "repeat": {
           "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
@@ -7663,6 +8651,17 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleRealTimeView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "lesson_plan_is_auth": {
+          "type": "boolean"
         }
       }
     },
@@ -7799,6 +8798,23 @@
         },
         "version": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ShareFoldersRequest": {
+      "type": "object",
+      "properties": {
+        "folder_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "org_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

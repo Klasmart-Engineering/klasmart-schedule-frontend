@@ -7,7 +7,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
-import { TipImages, TipImagesType } from "../../components/TipImages";
+import { comingsoonTip, resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -150,11 +150,13 @@ export interface MediaAssetsProps {
   onSearch: (searchText: MediaAssetsProps["value"]) => any;
   onChangePage: (page: number) => any;
   mediaPage: number;
+  isShare?: string;
+  onCheckShare: (isShare: MediaAssetsProps["isShare"]) => any;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
-  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage } = props;
+  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, onCheckShare, isShare } = props;
   const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -207,12 +209,19 @@ export default function MediaAssets(props: MediaAssetsProps) {
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
-        <TipImages text="library_msg_coming_soon" type={TipImagesType.commingSoon} />
+        comingsoonTip
       ) : (
-        <>
-          <SearchcmsList searchName="searchMedia" onSearch={onSearch} value={value} />
-          {list.length > 0 ? table : <TipImages text="library_msg_no_results_found" type={TipImagesType.noResults} />}
-        </>
+        <Box width="100%">
+          <SearchcmsList
+            searchType="searchMedia"
+            onSearch={onSearch}
+            value={value}
+            lesson={lesson}
+            onCheckShare={onCheckShare}
+            isShare={isShare}
+          />
+          {list.length > 0 ? table : resultsTip}
+        </Box>
       )}
     </Box>
   );
