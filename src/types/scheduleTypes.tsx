@@ -127,12 +127,9 @@ interface ConflictsInnerItem {
   id: string;
   name: string;
 }
-export interface ConflictItem {
+export interface ConflictsData {
   class_roster_teachers: ConflictsInnerItem[];
   class_roster_students: ConflictsInnerItem[];
   participants_teachers: ConflictsInnerItem[];
   participants_students: ConflictsInnerItem[];
-}
-export interface ConflictsData {
-  conflictsData: ConflictItem;
 }
