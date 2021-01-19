@@ -61,6 +61,8 @@ export function WidgetElement(props: H5pElementListProps) {
   const { semantics } = itemHelper;
   const disableCloseBtn = children.length <= (semantics.min ?? 0);
   const disalbeAddBtn = semantics.max ? children.length >= semantics.max : false;
+  const { entity } = semantics;
+  const lable = entity && entity?.slice(0, 1).toUpperCase() + entity?.slice(1);
   const handleChangeTab = useMemo(
     () => (e: any, value: number) => {
       setTabValue(value);
@@ -94,7 +96,6 @@ export function WidgetElement(props: H5pElementListProps) {
       <InputLabel className={css.label} required={!semantics.optional}>
         {semantics.label || semantics.name}
       </InputLabel>
-
       <div className={css.root}>
         <Tabs
           orientation="vertical"
@@ -119,7 +120,7 @@ export function WidgetElement(props: H5pElementListProps) {
                     )}
                     <span>
                       {" "}
-                      {idx + 1}.&nbsp;{semantics.field.label ?? semantics.field.name}
+                      {idx + 1}.&nbsp;{lable ?? semantics.field.name}
                     </span>
                   </div>
                 }
@@ -140,7 +141,7 @@ export function WidgetElement(props: H5pElementListProps) {
           }}
           className={css.addButton}
         >
-          ADD {semantics.entity?.toUpperCase() ?? "ITEM"}
+          ADD {entity?.toUpperCase() ?? "ITEM"}
         </Button>
       )}
     </Fragment>

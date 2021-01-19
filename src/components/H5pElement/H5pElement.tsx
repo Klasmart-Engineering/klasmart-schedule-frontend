@@ -312,7 +312,7 @@ function CopyrightForm(props: CopyrightFormProps) {
     switch (item.type) {
       case "text": {
         const { label, name } = item;
-        return <TextField key={name} className={classes?.input} value={copyright[name]} label={label} onBlur={handleChange} />;
+        return <TextField key={name} className={classes?.input} defaultValue={copyright[name]} label={label} onBlur={handleChange} />;
       }
       case "select": {
         const { label, name, options, required } = item;
