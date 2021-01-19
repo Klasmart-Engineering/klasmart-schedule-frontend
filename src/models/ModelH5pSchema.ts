@@ -472,7 +472,7 @@ export function parseH5pErrors(message?: string): H5pFormErrors {
   }
 }
 
-export function parseLibraryContent(str: string): H5PLibraryContent {
+export function parseLibraryContent(str: string): NonNullable<H5PLibraryContent> {
   const result = JSON.parse(str);
   if (!result.library || !result.params || !result.metadata) throw new Error("My Error: parseLibraryContent failed!");
   return result;
@@ -567,6 +567,14 @@ export const createH5pLicenseVersionOptions = (license?: string) => {
       break;
   }
   return options;
+};
+
+export const isDataSourceNewH5p = (dataSource?: string, id?: string | null): boolean => {
+  if (process.env.REACT_APP_ENABLE_NEW_H5P === "0") return false;
+  if (!id) return true;
+  if (!dataSource) return false;
+  if (typeof dataSource !== "string") return false;
+  return dataSource.includes(":");
 };
 
 export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PItemInfo<H5PTextSemantic> {

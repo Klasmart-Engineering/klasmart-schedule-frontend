@@ -11,6 +11,7 @@ import { PermissionOr, PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
+import { isDataSourceNewH5p } from "../../models/ModelH5pSchema";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
@@ -105,8 +106,7 @@ function ContentEditForm() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
   );
-  const isNewH5p =
-    process.env.REACT_APP_ENABLE_NEW_H5P === "0" ? false : !id ? true : allDefaultValueAndKey["data.source"]?.value.includes(":");
+  const isNewH5p = isDataSourceNewH5p(allDefaultValueAndKey["data.source"]?.value, id);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;

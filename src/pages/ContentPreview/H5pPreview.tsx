@@ -14,7 +14,9 @@ import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
 import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
 import AssetVideo from "../../components/UIAssetPreview/AssetPreview/AssetVideo";
 import { d } from "../../locale/LocaleManager";
+import { isDataSourceNewH5p } from "../../models/ModelH5pSchema";
 import ContentH5p from "../ContentEdit/ContentH5p";
+import { H5pPlayer } from "../ContentEdit/H5pPlayer";
 import { fileFormat } from "../ContentEdit/MediaAssetsEdit";
 import { PreviewBaseProps } from "./type";
 
@@ -265,32 +267,27 @@ export function H5pPreview(props: H5pPreview) {
     setCurrIndex(index);
     h5pItem = h5pArray[currIndex];
   };
-  const path = h5pItem ? (JSON.parse(h5pItem.data) ? apiResourcePathById(JSON.parse(h5pItem.data).source) : "") : "";
+  const parsedData: any = JSON.parse(h5pItem.data);
+  const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
+  const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
+  const isNewH5p = isDataSourceNewH5p(parsedData.source, h5pItem.id);
+
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
         <Box className={css.h5pCon}>
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.image.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetImg src={path} />
-          )}
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.video.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetVideo src={path} />
-          )}
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.audio.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetAudio src={path} />
-          )}
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.document.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetFile src={path} />
-          )}
+          {h5pItem && parsedData && fileFormat.image.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetImg src={path} />}
+          {h5pItem && parsedData && fileFormat.video.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetVideo src={path} />}
+          {h5pItem && parsedData && fileFormat.audio.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetAudio src={path} />}
+          {h5pItem && parsedData && fileFormat.document.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetFile src={path} />}
           {!h5pItem && <EmptyContent />}
-          {h5pItem &&
-            JSON.parse(h5pItem.data) &&
-            !getSuffix(JSON.parse(h5pItem.data).source) &&
-            (JSON.stringify(JSON.parse(h5pItem.data)) === JSON.stringify({}) ? (
-              <EmptyContent />
-            ) : (
-              <ContentH5p sub={H5pSub.view} valueSource={JSON.parse(h5pItem.data).source} />
-            ))}
+          {isHideH5p ? (
+            <EmptyContent />
+          ) : isNewH5p ? (
+            <H5pPlayer valueSource={parsedData.source} id={h5pItem.id} />
+          ) : (
+            <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
+          )}
         </Box>
         <Box className={css.btnCon}>
           {h5pArray.length > 1 && (
