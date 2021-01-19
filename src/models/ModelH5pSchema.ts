@@ -276,6 +276,34 @@ export interface H5PLibraryInfo {
 
 export type H5PSchema = Record<string, H5PItemSemantic[] | undefined>;
 
+export interface H5PStatement {
+  context: {
+    contextActivities: {
+      category: { id: string }[];
+      parent?: { id: string }[];
+    };
+  };
+  object: {
+    definition: {
+      extensions: {
+        "http://h5p.org/x-api/h5p-local-content-id": string;
+        "http://h5p.org/x-api/h5p-subContentId"?: string;
+      };
+    };
+  };
+  verb: {
+    id: string;
+  };
+  result?: {
+    score: {
+      max: number;
+      min: number;
+      raw: number;
+      scaled: number;
+    };
+  };
+}
+
 export const h5pName2libId = (name: string) => name.replace(" ", "-");
 export const h5plibId2Name = (id: string) => id.replace("-", " ");
 
@@ -340,7 +368,7 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
   return { itemHelper, result: mapHandler({ itemHelper, children, context }) };
 }
 
-const sha1 = (str: string) => {
+export const sha1 = (str: string) => {
   const sha = new jsSHA("SHA-1", "TEXT", { encoding: "UTF8" });
   sha.update(str);
   return sha.getHash("HEX");
@@ -567,6 +595,30 @@ export const createH5pLicenseVersionOptions = (license?: string) => {
       break;
   }
   return options;
+};
+
+export const extractH5pStatement = (statement: H5PStatement) => {
+  let sub_library_name;
+  let sub_library_version;
+  let local_library_name;
+  let local_library_version;
+  const libId = statement.context.contextActivities.category[0].id.split("/").slice(-1)[0];
+  if (statement.context.contextActivities.parent) {
+    [sub_library_name, sub_library_version] = libId.split("-");
+  } else {
+    [local_library_name, local_library_version] = libId.split("-");
+  }
+  return {
+    verb_id: statement.verb.id,
+    local_library_name,
+    local_library_version,
+    sub_library_name,
+    sub_library_version,
+    local_content_id: statement.object.definition.extensions["http://h5p.org/x-api/h5p-local-content-id"],
+    sub_content_id: statement.object.definition.extensions["http://h5p.org/x-api/h5p-subContentId"],
+    total_amount: statement.result?.score.max,
+    correct_amount: statement.result?.score.raw,
+  };
 };
 
 export const isDataSourceNewH5p = (dataSource?: string, id?: string | null): boolean => {

@@ -3,7 +3,7 @@ import { iframeResizer } from "iframe-resizer";
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { useQeuryMeQuery } from "../../api/api-ko.auto";
 import { apiCreateContentTypeLibrary, apiOrganizationOfPage } from "../../api/extra";
-import { h5pName2libId, parseLibraryContent } from "../../models/ModelH5pSchema";
+import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
 
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
   removeListeners: () => void;
@@ -28,8 +28,6 @@ const displayOptions = {
   frame: false,
   icon: false,
 };
-
-const STATIC_ID = "kidsloop";
 
 const metadata = {
   license: "U",
@@ -115,13 +113,15 @@ interface H5pPlayerProps {
   valueSource: string;
 }
 export function H5pPlayer(props: H5pPlayerProps) {
-  const { valueSource } = props;
+  const { valueSource, id, scheduleId } = props;
+  const xApiRef = useRef<{ (s: H5PStatement): void }>();
+  const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
   const userId = useUserId();
-  console.log("userId = ", userId);
-  const { library: libraryId, params: libraryParams } = parseLibraryContent(valueSource);
+  const { library: libraryName, params: libraryParams, subContentId: libraryContentId } = parseLibraryContent(valueSource);
+  console.log("libraryContentId = ", libraryContentId);
   const css = useStyle();
-  const { library, core } = apiCreateContentTypeLibrary(h5pName2libId(libraryId));
-  const inject = useMemo<InjectHandler>(
+  const { library, core } = apiCreateContentTypeLibrary(h5pName2libId(libraryName));
+  const injectBeforeLoad = useMemo<InjectHandler>(
     () => async (root) => {
       (root as any).H5PIntegration = {
         core,
@@ -132,23 +132,48 @@ export function H5pPlayer(props: H5pPlayerProps) {
         hubIsEnabled: true,
         fullscreenDisabled: 0,
         contents: {
-          [`cid-${STATIC_ID}`]: {
+          [`cid-${libraryContentId}`]: {
             ...library,
             displayOptions,
             metadata,
             fullScreen: "0",
             jsonContent: JSON.stringify(libraryParams),
-            library: libraryId.replace("-", " "),
+            library: libraryName,
             contentUrl: "/",
           },
         },
       };
+      if (libraryContentId) {
+        root.document.getElementById("h5-content")?.setAttribute("data-content-id", libraryContentId);
+      }
     },
-    [libraryParams, library, core, libraryId]
+    [core, libraryContentId, library, libraryParams, libraryName]
   );
+  const injectAfterLoad: InjectHandler = useMemo(() => {
+    return async (root) => {
+      (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
+        xApiRef.current && xApiRef.current(event.data.statement);
+      });
+    };
+  }, [xApiRef]);
+  xApiRef.current = (statement: H5PStatement) => {
+    // if (!scheduleId) return;
+    const baseInfo = {
+      schedule_id: scheduleId,
+      material_id: id,
+      play_id: playId,
+      user_id: userId,
+      time: Date.now(),
+    };
+    const info = { ...baseInfo, ...extractH5pStatement(statement) };
+    const [local_library_name, local_library_version] = libraryName.split(" ");
+    const resultInfo = info.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
+    console.log("resultInfo = ", resultInfo);
+  };
   library.scripts.push(require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow"));
-  const { register, onLoad } = useInlineIframe({ ...library, inject });
-  return <iframe className={css.iframe} ref={register} src="/h5p" frameBorder="0" title="h5p" onLoad={onLoad} />;
+  const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });
+
+  return <iframe className={css.iframe} ref={register} src="/h5p" frameBorder="0" title="h5p" onLoad={onLoad} key={valueSource} />;
 }
 
 function useUserId() {
@@ -160,10 +185,11 @@ function useUserId() {
 interface UseInlineIframeProps {
   styles: string[];
   scripts: string[];
-  inject: InjectHandler;
+  injectBeforeLoad: InjectHandler;
+  injectAfterLoad: InjectHandler;
 }
 function useInlineIframe(props: UseInlineIframeProps) {
-  const { styles, scripts, inject } = props;
+  const { styles, scripts, injectBeforeLoad, injectAfterLoad } = props;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const resizerRef = useRef<FixedIFrameResizerObject | null>(null);
   const register = useCallback((iframe) => {
@@ -177,8 +203,8 @@ function useInlineIframe(props: UseInlineIframeProps) {
   }, []);
   const onLoad = useCallback(() => {
     if (!iframeRef.current) return;
-    new InlineIframeManager({ iframe: iframeRef.current, styles, scripts, inject });
-  }, [styles, scripts, inject]);
+    new InlineIframeManager({ iframe: iframeRef.current, styles, scripts, injectBeforeLoad, injectAfterLoad });
+  }, [styles, scripts, injectBeforeLoad, injectAfterLoad]);
   return { register, onLoad };
 }
 
@@ -187,26 +213,30 @@ interface InjectHandler {
 }
 interface InlineIframeManagerProps {
   iframe: HTMLIFrameElement;
-  inject?: InjectHandler;
+  injectBeforeLoad?: InjectHandler;
+  injectAfterLoad: InjectHandler;
   scripts?: string[];
   styles?: string[];
 }
 class InlineIframeManager {
   iframe: HTMLIFrameElement;
+  injectAfterLoad: InjectHandler;
 
   constructor(props: InlineIframeManagerProps) {
-    const { iframe, inject, scripts = [], styles = [] } = props;
+    const { iframe, injectBeforeLoad, injectAfterLoad, scripts = [], styles = [] } = props;
+    this.injectAfterLoad = injectAfterLoad;
     this.iframe = iframe;
     const documentElement = iframe.contentDocument?.documentElement;
     if (!documentElement) throw new Error("My Error: iframe.contentDocument?.documentElement not exist");
     this.addStyles(styles);
-    this.injectScript(inject)?.then(() => {
+    this.injectScript(injectBeforeLoad)?.then(() => {
       this.addScripts(scripts).then(this.ready.bind(this));
     });
   }
 
   ready() {
     this.iframe.contentWindow?.dispatchEvent(new Event("ready"));
+    setTimeout(() => this.injectAfterLoad(this.iframe.contentWindow as Window));
   }
 
   setHtmlElementClass(classNames: string[]) {
