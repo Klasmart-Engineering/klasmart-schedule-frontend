@@ -6,7 +6,7 @@ import clsx from "clsx";
 import React, { useState } from "react";
 import { EntityContentInfoWithDetails, EntityScheduleDetailsView } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
-import { ContentType, H5pSub } from "../../api/type";
+import { ContentFileType, ContentType, H5pSub } from "../../api/type";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
 import { Thumbnail } from "../../components/Thumbnail";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
@@ -226,6 +226,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
 }));
 
+// data.file_type === ContentType.image || data... === ContentType.
+
 function EmptyContent() {
   const css = useStyles();
   return (
@@ -259,10 +261,18 @@ export function H5pPreview(props: H5pPreview) {
       h5pItem = h5pArray[currIndex];
     }
   };
-  const getSuffix = (source: string | undefined) => {
-    if (source?.split(".").length === 1) return false;
-    if (source?.indexOf("{") !== -1) return false;
-    return source?.split(".").pop()?.toLowerCase();
+  const getSuffix = (data: any) => {
+    const source = data.source;
+    if (
+      data.file_type === ContentFileType.image ||
+      data.file_type === ContentFileType.video ||
+      data.file_type === ContentFileType.audio ||
+      data.file_type === ContentFileType.doc
+    ) {
+      return source?.split(".").pop()?.toLowerCase();
+    } else {
+      return false;
+    }
   };
   const handleClickItem = (index: number): void => {
     setCurrIndex(index);
@@ -273,13 +283,13 @@ export function H5pPreview(props: H5pPreview) {
   const isNewH5p = isDataSourceNewH5p(h5pItem.data, h5pItem.id);
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
-    if (fileFormat.image.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
+    if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
       return <AssetImg src={path} />;
-    } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
+    } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
       return <AssetVideo src={path} />;
-    } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
+    } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
       return <AssetAudio src={path} />;
-    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetFile src={path} />) {
+    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0 && <AssetFile src={path} />) {
       return <AssetFile src={path} />;
     }
   };
@@ -291,7 +301,7 @@ export function H5pPreview(props: H5pPreview) {
         <Box className={css.h5pCon}>
           {isEmpty ? (
             <EmptyContent />
-          ) : !getSuffix(parsedData.source) ? (
+          ) : !getSuffix(parsedData) ? (
             isNewH5p ? (
               <H5pPlayer valueSource={parsedData.source} id={h5pItem.id} />
             ) : (
