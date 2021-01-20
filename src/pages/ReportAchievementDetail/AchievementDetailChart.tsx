@@ -8,7 +8,7 @@ import { BarStack } from "@visx/shape/lib/types";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { useMemo } from "react";
-import { EntityStudentReportCategory } from "../../api/api.auto";
+import { EntityStudentAchievementReportCategoryItem } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { useChartScale } from "../../hooks/useChartScale";
 import { ReportFilter, StatusColor } from "../ReportAchievementList/types";
@@ -101,11 +101,11 @@ const ratioKey2DetailKey = (ratioKey: RatioKey): DetailKey => {
   return DETAIL_KEYS[(filter as unknown) as keyof typeof DETAIL_KEYS];
 };
 
-type RatioExtendedCategory = EntityStudentReportCategory &
+type RatioExtendedCategory = EntityStudentAchievementReportCategoryItem &
   {
     [key in RatioKey | "sum"]: number;
   };
-const mapRatio = (data: EntityStudentReportCategory[]): RatioExtendedCategory[] => {
+const mapRatio = (data: EntityStudentAchievementReportCategoryItem[]): RatioExtendedCategory[] => {
   return data.map((item) => {
     const achieved_items = item.achieved_items || [];
     const not_achieved_items = item.not_achieved_items || [];
@@ -133,7 +133,7 @@ const computed = (props: AchievementDetailStaticChartProps) => {
   const yAxiosScale = scaleLinear({ domain: [100, 0], range: [0, pixels.barStacksHeight + pixels.xMarginTop] });
   const ratioKeys = Object.values(RATIO_KEYS);
   const colorScale = scaleOrdinal({ domain: ratioKeys, range: Object.values(StatusColor) });
-  const getX = (data: EntityStudentReportCategory) => data.name as string;
+  const getX = (data: EntityStudentAchievementReportCategoryItem) => data.name as string;
   const xAxiosLabelWidth = data.length ? (pixels.barStacksWidth / data.length) * AXIOS_TICK_RABEL_MAX_WIDTH_RATIO : pixels.barStacksWidth;
   const viewPort = [0, 0, pixels.barStacksWidth, pixels.barStacksHeight + pixels.xMarginTop + pixels.xMarginBottom];
   return { data, xScale, yScale, yAxiosScale, colorScale, getX, ratioKeys, xAxiosLabelWidth, viewPort };
@@ -226,7 +226,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
 }
 
 export interface AchievementDetailChartProps {
-  data: EntityStudentReportCategory[];
+  data: EntityStudentAchievementReportCategoryItem[];
 }
 export function AchievementDetailChart(props: AchievementDetailChartProps) {
   const css = useStyle();

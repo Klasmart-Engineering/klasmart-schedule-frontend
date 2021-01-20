@@ -4,6 +4,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
+import Radio from "@material-ui/core/Radio";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import { AddCircleOutlineOutlined, Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
@@ -51,7 +52,6 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
-import Radio from "@material-ui/core/Radio";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -438,7 +438,7 @@ function EditBox(props: CalendarStateProps) {
         repeat: {},
         start_at: scheduleDetial.start_at || 0,
         subject_id: scheduleDetial.subject?.id || "",
-        teacher_ids: formatTeahcerId(scheduleDetial.teachers),
+        participants_student_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title || "",
       };
       setStatus({
@@ -503,7 +503,7 @@ function EditBox(props: CalendarStateProps) {
     repeat: {},
     start_at: currentTime,
     subject_id: "",
-    teacher_ids: [],
+    participants_student_ids: [],
     time_zone_offset: 0,
     title: "",
     version: 0,

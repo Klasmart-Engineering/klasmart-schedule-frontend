@@ -18,8 +18,8 @@ import {
 } from "../api/api-ko.auto";
 import {
   EntityScheduleShortInfo,
-  EntityStudentReportCategory,
-  EntityStudentReportItem,
+  EntityStudentAchievementReportCategoryItem,
+  EntityStudentAchievementReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
@@ -31,8 +31,8 @@ import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 const MOCK = false;
 interface IreportState {
-  reportList?: EntityStudentReportItem[];
-  achievementDetail?: EntityStudentReportCategory[];
+  reportList?: EntityStudentAchievementReportItem[];
+  achievementDetail?: EntityStudentAchievementReportCategoryItem[];
   // lessonPlanList: EntityScheduleShortInfo[];
   student_name: string | undefined;
   reportMockOptions: GetReportMockOptionsResponse;
@@ -69,25 +69,25 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   ? U
   : any;
 
-type OnloadReportPayload = Parameters<typeof api.reports.listStudentsReport>[0] & LoadingMetaPayload;
-type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsReport>;
+type OnloadReportPayload = Parameters<typeof api.reports.listStudentsAchievementReport>[0] & LoadingMetaPayload;
+type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsAchievementReport>;
 export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
-  "listStudentsReport",
+  "listStudentsAchievementReport",
   async ({ metaLoading, teacher_id, class_id, lesson_plan_id, status, sort_by }) => {
-    return await api.reports.listStudentsReport({ teacher_id, class_id, lesson_plan_id, status, sort_by });
+    return await api.reports.listStudentsAchievementReport({ teacher_id, class_id, lesson_plan_id, status, sort_by });
   }
 );
 interface GetAchievementDetailPayload extends LoadingMetaPayload {
   id: string;
-  query: Parameters<typeof api.reports.getStudentReport>[1];
+  query: Parameters<typeof api.reports.getStudentAchievementReport>[1];
 }
 
-export const getAchievementDetail = createAsyncThunk<AsyncReturnType<typeof api.reports.getStudentReport>, GetAchievementDetailPayload>(
-  "StudentsDetailReport",
-  async ({ metaLoading, id, query }) => {
-    return await api.reports.getStudentReport(id, query);
-  }
-);
+export const getAchievementDetail = createAsyncThunk<
+  AsyncReturnType<typeof api.reports.getStudentAchievementReport>,
+  GetAchievementDetailPayload
+>("StudentsDetailReport", async ({ metaLoading, id, query }) => {
+  return await api.reports.getStudentAchievementReport(id, query);
+});
 
 export const getLessonPlan = createAsyncThunk<
   AsyncReturnType<typeof api.schedulesLessonPlans.getLessonPlans>,
@@ -135,7 +135,7 @@ export interface GetReportMockOptionsResponse {
   teacher_id: string;
   class_id: string;
   lesson_plan_id: string;
-  reportList?: EntityStudentReportItem[];
+  reportList?: EntityStudentAchievementReportItem[];
 }
 interface GetReportMockOptionsPayLoad {
   teacher_id?: string;
@@ -150,7 +150,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
   "reportOnload",
   async ({ teacher_id, class_id, lesson_plan_id, view_my_report, status, sort_by }) => {
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    let reportList: EntityStudentReportItem[] = [];
+    let reportList: EntityStudentAchievementReportItem[] = [];
     let lessonPlanList: EntityScheduleShortInfo[] = [];
     let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
     let finalTearchId: string = "";
@@ -237,7 +237,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
     }
     const finalPlanId = lesson_plan_id ? lesson_plan_id : lessonPlanList[0]?.id || "";
     if (finalPlanId) {
-      const items = await api.reports.listStudentsReport({
+      const items = await api.reports.listStudentsAchievementReport({
         teacher_id: finalTearchId,
         class_id: finalClassId,
         lesson_plan_id: finalPlanId as string,
