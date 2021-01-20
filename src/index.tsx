@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData } from "./api";
-import { apiAddOrganizationToPageUrl } from "./api/extra";
+import { apiAddOrganizationToPageUrl, subscribeLocaleInCookie } from "./api/extra";
 import { subscribeIframeMessage } from "./api/iframeMessage";
 import App from "./App";
 import "./index.css";
@@ -29,7 +29,7 @@ apiEmitter.on<ApiInfoEventData>(ApiEvent.Info, (e) => {
   if (message) store.dispatch(actInfo(message));
 });
 
-subscribeIframeMessage("changeLocale", (locale) => localeManager.toggle(locale.slice(0, 2) as LangName));
+subscribeLocaleInCookie((locale) => localeManager.toggle(locale.slice(0, 2) as LangName));
 subscribeIframeMessage("changeOrganization", apiAddOrganizationToPageUrl);
 
 // if (process.env.NODE_ENV === 'development') {

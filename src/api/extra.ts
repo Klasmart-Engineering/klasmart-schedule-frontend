@@ -150,6 +150,16 @@ export const apiLocaleInCookie = () => {
   return Cookies.get(LOCALE_KEY)?.slice(0, 2);
 };
 
+export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
+  let cache = apiLocaleInCookie();
+  setInterval(() => {
+    const current = apiLocaleInCookie();
+    if (cache === current) return;
+    cache = current;
+    if (current) handler(current);
+  }, 1000);
+};
+
 export const apiCreateContentTypeLibrary = (id: string) => {
   return requireContentType("asset", id);
 };
