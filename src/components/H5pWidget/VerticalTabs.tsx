@@ -2,6 +2,7 @@ import { Button, InputLabel, makeStyles, Tab, Tabs, Tooltip } from "@material-ui
 import { Cancel } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment, useMemo, useState } from "react";
+import { isH5pParentError } from "../../models/ModelH5pSchema";
 import { H5pElementListProps } from "../H5pElement";
 const useStyles = makeStyles(({ palette }) => ({
   root: {
@@ -42,6 +43,8 @@ const useStyles = makeStyles(({ palette }) => ({
     display: "flex",
     alignItems: "center",
     width: "100%",
+  },
+  tabInputLabel: {
     fontWeight: 700,
     fontSize: 16,
   },
@@ -57,8 +60,8 @@ const useStyles = makeStyles(({ palette }) => ({
 export function WidgetElement(props: H5pElementListProps) {
   const css = useStyles();
   const [tabValue, setTabValue] = useState(0);
-  const { children, itemHelper, onAddListItem, onRemoveListItem } = props;
-  const { semantics } = itemHelper;
+  const { children, itemHelper, onAddListItem, onRemoveListItem, formErrors } = props;
+  const { semantics, path } = itemHelper;
   const disableCloseBtn = children.length <= (semantics.min ?? 0);
   const disalbeAddBtn = semantics.max ? children.length >= semantics.max : false;
   const { entity } = semantics;
@@ -106,6 +109,7 @@ export function WidgetElement(props: H5pElementListProps) {
           TabIndicatorProps={{ className: css.tabIndicator }}
         >
           {children.map((item, idx) => {
+            const error = isH5pParentError(`${path}[${idx}]`, formErrors);
             return (
               <Tab
                 value={idx}
@@ -118,8 +122,7 @@ export function WidgetElement(props: H5pElementListProps) {
                         <Cancel className={css.closeButton} onClick={(e) => handleRemoveTab(e, idx)} />
                       </Tooltip>
                     )}
-                    <span>
-                      {" "}
+                    <span className={css.tabInputLabel} style={{ color: !!error ? "#D32F2F" : undefined }}>
                       {idx + 1}.&nbsp;{lable ?? semantics.field.name}
                     </span>
                   </div>

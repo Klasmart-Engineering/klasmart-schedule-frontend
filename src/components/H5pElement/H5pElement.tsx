@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
+  FormHelperText,
   InputLabel,
   makeStyles,
   MenuItem,
@@ -29,6 +30,7 @@ import { d } from "../../locale/LocaleManager";
 import {
   createH5pLicenseVersionOptions,
   H5PBooleanSemantic,
+  H5pFormErrors,
   H5PGroupSemantic,
   H5PImageSemantic,
   H5PImportance,
@@ -58,6 +60,7 @@ import { Thumbnail } from "../Thumbnail";
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
   error?: string | boolean;
+  formErrors?: H5pFormErrors;
   onChange?(itemInfo: H5PItemInfo<S>): any;
 }
 
@@ -357,6 +360,7 @@ export interface H5pElementMediaProps extends H5PBaseElementProps<H5PMediaSemant
 export function H5pElementMedia(props: H5pElementMediaProps) {
   const {
     itemHelper: { path, semantics, content },
+    error,
     onChange,
     className,
     classes,
@@ -377,10 +381,11 @@ export function H5pElementMedia(props: H5pElementMediaProps) {
   return (
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
-        <InputLabel className={classes?.title} required={!semantics.optional}>
+        <InputLabel className={classes?.title} required={!semantics.optional} error={!!error}>
           {semantics.label || semantics.name}
         </InputLabel>
         <div className={classes?.description}>{semantics.description}</div>
+        <FormHelperText error={!!error}>{error}</FormHelperText>
       </div>
       <SingleUploader
         partition="assets"
@@ -428,7 +433,7 @@ export interface H5pElementImageProps extends H5PBaseElementProps<H5PImageSemant
   };
 }
 export function H5pElementImage(props: H5pElementImageProps) {
-  const { itemHelper, onChange, className, classes } = props;
+  const { itemHelper, onChange, className, classes, error } = props;
   const { path, semantics, content } = itemHelper;
   const handleChangeFile: SingleUploaderProps["onChangeFile"] = (file) => {
     if (!file || !file.id || !onChange) return;
@@ -446,10 +451,11 @@ export function H5pElementImage(props: H5pElementImageProps) {
   return (
     <div className={clsx(className, classes?.root)}>
       <div className={classes?.paragraph}>
-        <InputLabel className={classes?.title} required={!semantics.optional}>
+        <InputLabel className={classes?.title} required={!semantics.optional} error={!!error}>
           {semantics.label || semantics.name}
         </InputLabel>
         <div className={classes?.description}>{semantics.description}</div>
+        <FormHelperText error={!!error}>{error}</FormHelperText>
       </div>
       <CropImage
         render={({ crop }) => (
@@ -571,6 +577,7 @@ export function H5pElementGroup(props: H5pElementGroupProps) {
   const {
     itemHelper: { semantics, parentItem },
     className,
+    error,
     classes,
     children,
   } = props;
@@ -580,7 +587,7 @@ export function H5pElementGroup(props: H5pElementGroupProps) {
   }
   return (
     <div className={clsx(className, classes?.root)}>
-      <Accordion defaultExpanded={semantics.expanded ?? !semantics.optional}>
+      <Accordion defaultExpanded={!!error || (semantics.expanded ?? !semantics.optional)} key={String(error)}>
         <AccordionSummary
           expandIcon={<ExpandMore className={clsx(css.importanceColor, classes?.expandIcon)} />}
           classes={{ root: clsx(css.importanceBackgroundColor, css.importanceColor, classes?.summary) }}

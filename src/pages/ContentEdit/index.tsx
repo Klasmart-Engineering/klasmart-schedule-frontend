@@ -80,6 +80,8 @@ function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
   const { handleSubmit, control, setValue, watch, errors } = formMethods;
+  console.log("errors =", errors);
+
   const {
     contentDetail,
     mediaList,

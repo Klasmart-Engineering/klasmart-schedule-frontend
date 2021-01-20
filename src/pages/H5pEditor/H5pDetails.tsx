@@ -42,6 +42,7 @@ import {
   H5PSchema,
   H5P_ROOT_NAME,
   isH5pLibraryItemInfo,
+  isH5pParentError,
   MapHandler,
 } from "../../models/ModelH5pSchema";
 import commonOptions from "./commonOptions.json";
@@ -247,6 +248,7 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
         const extendedProps: typeof elementProps = {
           ...elementProps,
           onChange: pipe(dispatchChange, onChange),
+          error: errors[path],
           classes: {
             root: css.h5pItem,
             input: css.h5pItem,
@@ -262,6 +264,7 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
       } else if (isH5pElementList(elementProps)) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
+          formErrors: errors,
           classes: {
             root: css.inlineSection,
             paragraph: css.inlineSectionParagraph,
@@ -279,6 +282,7 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
       } else if (isH5pElementGroup(elementProps)) {
         const extendedProps: typeof elementProps = {
           ...elementProps,
+          error: isH5pParentError(path, errors),
           classes: {
             root: css.section,
             summary: css.sectionSummary,

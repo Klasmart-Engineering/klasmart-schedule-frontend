@@ -313,7 +313,8 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
   const context = { schema };
   const children: T[] = [];
   const childItems: H5PItemHelper[] = [];
-  const itemHelper: H5PItemHelper = { ...itemInfo, parentItem: undefined, childItems };
+  const parentItem: H5PItemHelper = (itemInfo as any).parentItem;
+  const itemHelper: H5PItemHelper = { ...itemInfo, parentItem, childItems };
   let subItemInfoList: H5PItemInfo[] = [];
   if (!schema) return { itemHelper, result: mapHandler({ itemHelper, children, context }) };
   if (isH5pLibraryItemInfo(itemInfo))
@@ -362,7 +363,8 @@ export function h5pItemMapper<T>(itemInfo: H5PItemInfo, schema: H5PSchema | unde
   }
   subItemInfoList &&
     subItemInfoList.forEach((subItemInfo) => {
-      const { itemHelper: subItemHelper, result } = h5pItemMapper(subItemInfo, schema, mapHandler);
+      const subItemInfoWithParent = { ...subItemInfo, parentItem: itemHelper };
+      const { itemHelper: subItemHelper, result } = h5pItemMapper(subItemInfoWithParent, schema, mapHandler);
       subItemHelper.parentItem = itemHelper;
       childItems.push(subItemHelper);
       children.push(result);
@@ -503,6 +505,11 @@ export function parseH5pErrors(message?: string): H5pFormErrors {
   }
 }
 
+export const isH5pParentError = (parentPath: string, errors?: H5pFormErrors) => {
+  if (!errors) return false;
+  return Object.keys(errors).some((path) => path.slice(0, parentPath.length) === parentPath);
+};
+
 export function parseLibraryContent(str: string): NonNullable<H5PLibraryContent> {
   const result = JSON.parse(str);
   if (!result.library || !result.params || !result.metadata) throw new Error("My Error: parseLibraryContent failed!");
@@ -629,8 +636,8 @@ export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], i
   if (!id) return true;
   if (!data) return false;
   try {
-    const fileType = JSON.parse(data)?.fileType;
-    if (fileType) return false;
+    const fileType = JSON.parse(data)?.file_type;
+    if (!fileType) return false;
     return fileType === ContentFileType.h5pExtend;
   } catch (e) {
     return false;
