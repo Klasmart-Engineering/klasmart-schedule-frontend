@@ -629,8 +629,8 @@ export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], i
   if (!id) return true;
   if (!data) return false;
   try {
-    const fileType = JSON.parse(data)?.fileType;
-    if (fileType) return false;
+    const fileType = JSON.parse(data)?.file_type;
+    if (!fileType) return false;
     return fileType === ContentFileType.h5pExtend;
   } catch (e) {
     return false;
