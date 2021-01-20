@@ -197,9 +197,11 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).id;
+      // @ts-ignore
+      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).data?.id;
     } else {
-      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).id;
+      // @ts-ignore
+      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).data?.id;
     }
     // @ts-ignore
     return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
