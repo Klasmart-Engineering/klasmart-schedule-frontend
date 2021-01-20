@@ -2,6 +2,8 @@
 
 import jsSHA from "jssha";
 import cloneDeep from "lodash/cloneDeep";
+import { EntityContentInfoWithDetails } from "../api/api.auto";
+import { ContentFileType } from "../api/type";
 
 export const H5P_ROOT_NAME = "ROOT";
 
@@ -484,7 +486,8 @@ export const mapValidate: MapHandler<H5pFormErrors> = (props) => {
     if (result === true && semantics.step) result = rules.step(semantics.step, content);
   }
   const currentErrors = result === true ? {} : { [itemHelper.path]: result };
-  return children.reduce((errors, childErrors) => Object.assign(errors, childErrors), currentErrors);
+  const v = children.reduce((errors, childErrors) => Object.assign(errors, childErrors), currentErrors);
+  return v;
 };
 
 export function validateContent(itemInfo: H5PItemInfo, schema: H5PSchema) {
@@ -621,12 +624,17 @@ export const extractH5pStatement = (statement: H5PStatement) => {
   };
 };
 
-export const isDataSourceNewH5p = (dataSource?: string, id?: string | null): boolean => {
+export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], id?: string | null): boolean => {
   if (process.env.REACT_APP_ENABLE_NEW_H5P === "0") return false;
   if (!id) return true;
-  if (!dataSource) return false;
-  if (typeof dataSource !== "string") return false;
-  return dataSource.includes(":");
+  if (!data) return false;
+  try {
+    const fileType = JSON.parse(data)?.fileType;
+    if (fileType) return false;
+    return fileType === ContentFileType.h5pExtend;
+  } catch (e) {
+    return false;
+  }
 };
 
 export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PItemInfo<H5PTextSemantic> {

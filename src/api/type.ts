@@ -17,6 +17,16 @@ export enum ContentType {
   material = 1,
   folder = 10,
 }
+
+export enum ContentFileType {
+  image = 1,
+  video = 2,
+  audio = 3,
+  doc = 4,
+  h5p = 5,
+  h5pExtend = 6,
+}
+
 export enum MaterialType {
   h5p = 1,
   fromFile = 2,

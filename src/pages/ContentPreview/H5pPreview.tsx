@@ -270,7 +270,7 @@ export function H5pPreview(props: H5pPreview) {
   };
   const parsedData: any = JSON.parse(h5pItem.data);
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
-  const isNewH5p = isDataSourceNewH5p(parsedData.source, h5pItem.id);
+  const isNewH5p = isDataSourceNewH5p(h5pItem.data, h5pItem.id);
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
     if (fileFormat.image.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
@@ -283,6 +283,8 @@ export function H5pPreview(props: H5pPreview) {
       return <AssetFile src={path} />;
     }
   };
+  // const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
+
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>

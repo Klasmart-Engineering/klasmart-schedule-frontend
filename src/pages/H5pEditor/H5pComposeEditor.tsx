@@ -1,12 +1,11 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
-import { ContentTypeList } from "../../api/type";
+import { ContentFileType, ContentTypeList } from "../../api/type";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import {
   H5PItemType,
   h5plibId2Name,
-  H5PLibraryContent,
   H5PLibrarySemantic,
   h5pName2libId,
   H5PSchema,
@@ -69,13 +68,13 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
   const { valueSource, formMethods } = props;
   const [getLibAndDefaultContent, setLibrary] = useLibraryAndDefaultContent(valueSource);
   const { library, defaultLibContent } = getLibAndDefaultContent();
-
   const { control, errors } = formMethods;
   const contentTypeList = useContentTypeList();
   const { schema, schemaPending } = useSchema(library);
   const [expand, setExpand] = React.useState<boolean>(!library);
-  const validate = (content: H5PLibraryContent) => {
+  const validate = (value: string) => {
     if (!schema) return false;
+    const content = parseLibraryContent(value);
     const rootLibrarySchema: H5PLibrarySemantic = { type: H5PItemType.library, name: H5P_ROOT_NAME };
     const { result } = validateContent({ content, semantics: rootLibrarySchema, path: "" }, schema);
     return Object.keys(result).length === 0 ? true : JSON.stringify(result);
@@ -90,25 +89,28 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
         onChange={setLibrary}
       />
       {!schemaPending && schema && library && (
-        <Controller
-          name="data.source"
-          defaultValue={JSON.stringify(defaultLibContent)}
-          rules={{ validate }}
-          control={control}
-          key={`library:${library},valueSource:${valueSource}`}
-          render={(props) => (
-            <H5pDetails
-              defaultValue={defaultLibContent}
-              onChange={(v) => {
-                const stringValue = JSON.stringify(v);
-                if (stringValue === props.value) return;
-                props.onChange(JSON.stringify(v));
-              }}
-              schema={schema}
-              errors={parseH5pErrors((errors as any)?.data?.source?.message)}
-            />
-          )}
-        />
+        <Fragment>
+          <Controller name="data.file_type" defaultValue={ContentFileType.h5pExtend} control={control} as="input" hidden />
+          <Controller
+            name="data.source"
+            defaultValue={JSON.stringify(defaultLibContent)}
+            rules={{ validate }}
+            control={control}
+            key={`library:${library},valueSource:${valueSource}`}
+            render={(props) => (
+              <H5pDetails
+                defaultValue={defaultLibContent}
+                onChange={(v) => {
+                  const stringValue = JSON.stringify(v);
+                  if (stringValue === props.value) return;
+                  props.onChange(JSON.stringify(v));
+                }}
+                schema={schema}
+                errors={parseH5pErrors((errors as any)?.data?.source?.message)}
+              />
+            )}
+          />
+        </Fragment>
       )}
     </Fragment>
   );

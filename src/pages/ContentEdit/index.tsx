@@ -106,7 +106,7 @@ function ContentEditForm() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
   );
-  const isNewH5p = isDataSourceNewH5p(allDefaultValueAndKey["data.source"]?.value, id);
+  const isNewH5p = isDataSourceNewH5p(contentDetail.data, id);
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
