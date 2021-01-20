@@ -269,7 +269,7 @@ export function H5pPreview(props: H5pPreview) {
   };
   const parsedData: any = JSON.parse(h5pItem.data);
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
-  const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
+  // const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
   const isNewH5p = isDataSourceNewH5p(parsedData.source, h5pItem.id);
 
   return (
@@ -281,13 +281,16 @@ export function H5pPreview(props: H5pPreview) {
           {h5pItem && parsedData && fileFormat.audio.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetAudio src={path} />}
           {h5pItem && parsedData && fileFormat.document.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetFile src={path} />}
           {!h5pItem && <EmptyContent />}
-          {isHideH5p ? (
-            <EmptyContent />
-          ) : isNewH5p ? (
-            <H5pPlayer valueSource={parsedData.source} id={h5pItem.id} />
-          ) : (
-            <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
-          )}
+          {h5pItem &&
+            parsedData &&
+            !getSuffix(parsedData.source) &&
+            (h5pItem.data === "{}" ? (
+              <EmptyContent />
+            ) : isNewH5p ? (
+              <H5pPlayer valueSource={parsedData.source} id={h5pItem.id} />
+            ) : (
+              <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
+            ))}
         </Box>
         <Box className={css.btnCon}>
           {h5pArray.length > 1 && (
