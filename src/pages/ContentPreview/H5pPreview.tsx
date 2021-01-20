@@ -261,6 +261,7 @@ export function H5pPreview(props: H5pPreview) {
   };
   const getSuffix = (source: string | undefined) => {
     if (source?.split(".").length === 1) return false;
+    if (source?.indexOf("{") !== -1) return false;
     return source?.split(".").pop()?.toLowerCase();
   };
   const handleClickItem = (index: number): void => {
@@ -269,28 +270,34 @@ export function H5pPreview(props: H5pPreview) {
   };
   const parsedData: any = JSON.parse(h5pItem.data);
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
-  // const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
   const isNewH5p = isDataSourceNewH5p(parsedData.source, h5pItem.id);
-
+  const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
+  const showAssets = () => {
+    if (fileFormat.image.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
+      return <AssetImg src={path} />;
+    } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
+      return <AssetVideo src={path} />;
+    } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData.source)}`) >= 0) {
+      return <AssetAudio src={path} />;
+    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetFile src={path} />) {
+      return <AssetFile src={path} />;
+    }
+  };
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
         <Box className={css.h5pCon}>
-          {h5pItem && parsedData && fileFormat.image.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetImg src={path} />}
-          {h5pItem && parsedData && fileFormat.video.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetVideo src={path} />}
-          {h5pItem && parsedData && fileFormat.audio.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetAudio src={path} />}
-          {h5pItem && parsedData && fileFormat.document.indexOf(`.${getSuffix(parsedData.source)}`) >= 0 && <AssetFile src={path} />}
-          {!h5pItem && <EmptyContent />}
-          {h5pItem &&
-            parsedData &&
-            !getSuffix(parsedData.source) &&
-            (h5pItem.data === "{}" ? (
-              <EmptyContent />
-            ) : isNewH5p ? (
+          {isEmpty ? (
+            <EmptyContent />
+          ) : !getSuffix(parsedData.source) ? (
+            isNewH5p ? (
               <H5pPlayer valueSource={parsedData.source} id={h5pItem.id} />
             ) : (
               <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
-            ))}
+            )
+          ) : (
+            showAssets()
+          )}
         </Box>
         <Box className={css.btnCon}>
           {h5pArray.length > 1 && (
