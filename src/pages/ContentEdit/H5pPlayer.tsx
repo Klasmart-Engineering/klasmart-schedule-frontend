@@ -163,10 +163,9 @@ export function H5pPlayer(props: H5pPlayerProps) {
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [xApiRef, valueSource]);
   xApiRef.current = (statement?: H5PStatement, isInitial?: boolean) => {
-    // if (!scheduleId) return;
-    console.log(scheduleId);
+    if (!scheduleId) return;
     const baseInfo = {
-      schedule_id: "6008ed07dea5dc8c5f884262",
+      schedule_id: scheduleId,
       material_id: id,
       play_id: playId,
       user_id: userId,
@@ -181,13 +180,13 @@ export function H5pPlayer(props: H5pPlayerProps) {
         local_library_version,
         local_content_id: libraryContentId,
       };
-      console.log("initial resultInfo = ", resultInfo);
+      // console.log("initial resultInfo = ", resultInfo);
       dispatch(h5pEvent(resultInfo));
     } else {
       if (!statement) return;
       const info = { ...baseInfo, ...extractH5pStatement(statement) };
       const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
-      console.log("resultInfo = ", resultInfo);
+      // console.log("resultInfo = ", resultInfo);
       dispatch(h5pEvent(resultInfo));
     }
   };
