@@ -480,6 +480,9 @@ export const mapValidate: MapHandler<H5pFormErrors> = (props) => {
     if (result === true && !itemHelper.semantics.optional) {
       result = rules.required(itemHelper.content);
     }
+    if (isH5pTextItemInfo(itemHelper) && result === true && itemHelper.semantics.regexp) {
+      result = rules.regexp(itemHelper.semantics.regexp, itemHelper.content);
+    }
   }
   if (isH5pNumberItemInfo(itemHelper)) {
     const { semantics, content } = itemHelper;

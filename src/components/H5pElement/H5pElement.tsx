@@ -22,7 +22,7 @@ import {
 } from "@material-ui/core";
 import { Cancel, Close, CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { FocusEvent, FormEvent, Fragment, ReactNode, useMemo, useReducer } from "react";
+import React, { FocusEvent, FormEvent, Fragment, ReactNode, useMemo, useReducer, useState } from "react";
 import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { H5pFormRemoveListItemPayload } from "../../hooks/useH5pFormReducer";
@@ -293,29 +293,51 @@ interface CopyrightFormProps {
 }
 function CopyrightForm(props: CopyrightFormProps) {
   const { classes, value: copyright, onChange } = props;
+  const [error, SetError] = useState<boolean | string>(false);
   const license = copyright?.license;
   const inputData = useMemo(
     () =>
       [
-        { label: "Title", name: "title", type: "text" },
-        { label: "Author", name: "author", type: "text" },
-        { label: "Year(s)", name: "year", type: "text" },
-        { label: "Source", name: "source", type: "text" },
+        { label: "Title", name: "title", type: "text", placeholder: "La Gioconda" },
+        { label: "Author", name: "author", type: "text", placeholder: "Leonardo da Vinci" },
+        { label: "Year(s)", name: "year", type: "text", placeholder: "1503 - 1517" },
+        { label: "Source", name: "source", type: "text", placeholder: "http://en.wikipedia.org/wiki/Mona_Lisa" },
         { label: "License", name: "license", type: "select", required: true, options: H5P_LICENSE_OPTIONS },
         { label: "License Version", name: "version", type: "select", required: false, options: createH5pLicenseVersionOptions(license) },
       ] as const,
     [license]
   );
   if (!copyright) return null;
+
   const textFieldList = inputData.map((item) => {
     const handleChange = (e: FormEvent<HTMLInputElement> & FocusEvent<HTMLInputElement>) => {
       if (!onChange) return;
+      if (item.name === "source" && e.target.value) {
+        const error =
+          new RegExp(/(http|https):\/\/([\w.]+\/?)\S*/).test(e.target.value) ||
+          "Field value contains an invalid format or characters that are forbidden.";
+        SetError(error);
+        if (typeof error === "string") return;
+      }
       onChange({ ...copyright, [item.name]: e.target.value });
     };
     switch (item.type) {
       case "text": {
-        const { label, name } = item;
-        return <TextField key={name} className={classes?.input} defaultValue={copyright[name]} label={label} onBlur={handleChange} />;
+        const { label, name, placeholder } = item;
+        const isValidate = name === "source";
+        return (
+          <TextField
+            key={name}
+            className={classes?.input}
+            defaultValue={copyright[name]}
+            label={label}
+            placeholder={placeholder}
+            multiline
+            onBlur={handleChange}
+            error={isValidate && typeof error === "string"}
+            helperText={isValidate && (error === true ? "" : error)}
+          />
+        );
       }
       case "select": {
         const { label, name, options, required } = item;
