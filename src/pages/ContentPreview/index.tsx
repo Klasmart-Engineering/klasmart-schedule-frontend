@@ -13,14 +13,12 @@ import {
   approveContent,
   AsyncTrunkReturned,
   deleteContent,
-  getContentDetailById,
-  getContentLiveToken,
   lockContent,
+  onLoadContentPreview,
   publishContent,
   rejectContent,
 } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleInfo, getScheduleLiveToken } from "../../reducers/schedule";
 import LayoutPair from "../ContentEdit/Layout";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
@@ -42,7 +40,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author, class_id } = useQuery();
-  const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentPreview, token, user_id } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial, liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
   const content_type = contentPreview.content_type;
@@ -95,11 +93,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
-    // let tokenInfo: any;
-    // tokenInfo = ((await dispatch(
-    //   getContentLiveToken({ content_id: contentPreview.id as string, metaLoading: true })
-    // )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getContentLiveToken>>;
-    // if (tokenInfo) window.open(apiLivePath(tokenInfo.payload.token));
     if (sid) window.open(apiLivePath(liveToken));
     if (!sid) window.open(apiLivePath(token));
   };
@@ -132,7 +125,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       )}
     </Box>
   );
-  const planRes = (): any[] => {
+  const planRes = (): (EntityContentInfoWithDetails | undefined)[] => {
     if (contentPreview.content_type === ContentType.plan) {
       const segment: Segment = JSON.parse(contentPreview.data || "{}");
       const h5pArray = ModelLessonPlan.toArray(segment);
@@ -150,16 +143,13 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
           h5pArray={planRes()}
           onGoLive={handleGoLive}
           schdeuleId={sid}
+          userId={user_id}
         ></H5pPreview>
       )}
     </Fragment>
   );
   useEffect(() => {
-    // dispatch(onLoadContentPreview({metaLoading: true, content_id: id, schedule_id: sid}))
-    dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
-    if (sid) dispatch(getScheduleLiveToken({ schedule_id: sid, live_token_type: "preview", metaLoading: true }));
-    if (!sid) dispatch(getContentLiveToken({ content_id: id, metaLoading: true }));
-    if (sid) dispatch(getScheduleInfo(sid));
+    dispatch(onLoadContentPreview({ metaLoading: true, content_id: id, schedule_id: sid }));
   }, [class_id, dispatch, id, sid]);
   return (
     <Fragment>

@@ -2,8 +2,7 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import { iframeResizer } from "iframe-resizer";
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { useQeuryMeQuery } from "../../api/api-ko.auto";
-import { apiCreateContentTypeLibrary, apiOrganizationOfPage, apiResourcePathById } from "../../api/extra";
+import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
 import { h5pEvent } from "../../reducers/content";
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
@@ -112,15 +111,16 @@ const l10n = {
 
 interface H5pPlayerProps {
   id?: string;
+  userId: string;
   scheduleId?: string;
   valueSource: string;
 }
 export function H5pPlayer(props: H5pPlayerProps) {
   const dispatch = useDispatch();
-  const { valueSource, id, scheduleId } = props;
+  const { valueSource, id, scheduleId, userId } = props;
   const xApiRef = useRef<{ (s: H5PStatement): void }>();
   const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
-  const userId = useUserId();
+  // const userId = useUserId();
   const { library: libraryName, params: libraryParams, subContentId: libraryContentId } = parseLibraryContent(valueSource);
   const css = useStyle();
   const { library, core } = apiCreateContentTypeLibrary(h5pName2libId(libraryName));
@@ -180,13 +180,6 @@ export function H5pPlayer(props: H5pPlayerProps) {
 
   return <iframe className={css.iframe} ref={register} src="/h5p" frameBorder="0" title="h5p" onLoad={onLoad} key={valueSource} />;
 }
-
-function useUserId() {
-  const organization_id = apiOrganizationOfPage() || "";
-  const { data } = useQeuryMeQuery({ variables: { organization_id }, fetchPolicy: "cache-first" });
-  return data?.me?.user_id;
-}
-
 interface UseInlineIframeProps {
   styles: string[];
   scripts: string[];
