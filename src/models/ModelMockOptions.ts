@@ -1,7 +1,7 @@
 import { UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../api/api.auto";
 import { MockOptions, MockOptionsItem } from "../api/extra";
-import { MaterialType } from "../api/type";
+import { ContentInputSourceType } from "../api/type";
 import { Regulation } from "../pages/ContentEdit/type";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
 
@@ -27,7 +27,7 @@ type PartialDefaultValueAndKeyResult = {
 export interface CreateAllDefaultValueAndKeyResult extends PartialDefaultValueAndKeyResult {
   "data.input_source"?: {
     key: string;
-    value: MaterialType;
+    value: ContentInputSourceType;
   };
   "data.source"?: {
     key: string;

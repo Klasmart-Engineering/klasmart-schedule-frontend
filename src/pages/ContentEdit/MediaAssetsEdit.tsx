@@ -6,6 +6,7 @@ import React, { useCallback, useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
@@ -77,7 +78,7 @@ const useUploadBoxStyles = makeStyles({
   }),
 });
 
-export const fileFormat: any = {
+export const fileFormat = {
   video: [".avi", ".mov", ".mp4"],
   image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
   document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
@@ -120,7 +121,7 @@ function AssetEdit(props: AssetEditProps) {
     () => (item: DragItem) => {
       const source = JSON.parse(item.data.data).source;
       setValue("data.source", source, { shouldDirty: true });
-      setValue("data.input_source", 3, { shouldDirty: true });
+      setValue("data.input_source", ContentInputSourceType.fromAssets, { shouldDirty: true });
     },
     [setValue]
   );
@@ -133,7 +134,7 @@ function AssetEdit(props: AssetEditProps) {
     drop: setFile,
   });
   const handleChangeFileType = useCallback(() => {
-    setValue("data.input_source", 2, { shouldDirty: true });
+    setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
   }, [setValue]);
 
   const previewHeader = (

@@ -27,7 +27,7 @@ export enum ContentFileType {
   h5pExtend = 6,
 }
 
-export enum MaterialType {
+export enum ContentInputSourceType {
   h5p = 1,
   fromFile = 2,
   fromAssets = 3,

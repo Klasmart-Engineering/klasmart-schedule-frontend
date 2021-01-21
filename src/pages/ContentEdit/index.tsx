@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { ApiOutcomeView } from "../../api/api.auto";
-import { ContentType, H5pSub, MaterialType, SearchContentsRequestContentType } from "../../api/type";
+import { ContentInputSourceType, ContentType, H5pSub, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
@@ -103,7 +103,7 @@ function ContentEditForm() {
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
   const { program, developmental } = watch(["program", "developmental"]);
-  const inputSource = watch("data.input_source");
+  const inputSource: ContentInputSourceType = watch("data.input_source");
   const allDefaultValueAndKey = ModelMockOptions.createAllDefaultValueAndKey(
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
@@ -399,7 +399,7 @@ function ContentEditForm() {
                 defaultValue={
                   id
                     ? allDefaultValueAndKey["data.input_source"]?.value ?? ""
-                    : allDefaultValueAndKey["data.input_source"]?.value || MaterialType.h5p
+                    : allDefaultValueAndKey["data.input_source"]?.value || ContentInputSourceType.h5p
                 }
                 key={allDefaultValueAndKey["data.input_source"]?.key}
                 control={control}
@@ -414,7 +414,7 @@ function ContentEditForm() {
                 key={allDefaultValueAndKey.source_type?.key}
                 control={formMethods.control}
               />
-              {inputSource === MaterialType.h5p ? (
+              {inputSource === ContentInputSourceType.h5p ? (
                 isNewH5p ? (
                   <H5pComposeEditor formMethods={formMethods} valueSource={allDefaultValueAndKey["data.source"]?.value} />
                 ) : (
