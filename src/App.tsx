@@ -23,6 +23,7 @@ import Preview from "./pages/Preview";
 import { ReportAchievementDetail } from "./pages/ReportAchievementDetail";
 import { ReportAchievementList } from "./pages/ReportAchievementList";
 import { ReportCategories } from "./pages/ReportCategories";
+import { ReportStudentPerformance } from "./pages/ReportStudentPerformance";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
 import theme from "./theme";
@@ -82,6 +83,9 @@ function App() {
                   </Route>
                   <Route path={ReportCategories.routeBasePath}>
                     <ReportCategories />
+                  </Route>
+                  <Route path={ReportStudentPerformance.routeBasePath}>
+                    <ReportStudentPerformance />
                   </Route>
                   <Route path={H5pEditor.routeBasePath}>
                     <H5pEditor />
