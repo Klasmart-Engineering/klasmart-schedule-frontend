@@ -807,7 +807,7 @@ H5P.fullScreen = function ($element, instance, exitCallback, body, forceSemiFull
 
     if (!hasProtocol(prefix)) {
       // Use absolute urls
-      prefix = window.location.protocol + "//" + window.location.host + prefix;
+      prefix = window.location.protocol + "//" + window.location.host + (prefix[0] === '/' ? prefix : `/${prefix}`);
     }
 
     return prefix + '/' + path;
@@ -2645,7 +2645,6 @@ H5P.createTitle = function (rawTitle, maxLength) {
       console.error('Unable to parse JSON from clipboard.', err);
       return;
     }
-    debugger;
     // Update file URLs and reset content Ids
     recursiveUpdate(clipboardData.specific, function (path) {
       var isTmpFile = (path.substr(-4, 4) === '#tmp');

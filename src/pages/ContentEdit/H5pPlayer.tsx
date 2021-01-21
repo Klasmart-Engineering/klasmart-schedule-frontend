@@ -3,12 +3,14 @@ import { iframeResizer } from "iframe-resizer";
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useQeuryMeQuery } from "../../api/api-ko.auto";
-import { apiCreateContentTypeLibrary, apiOrganizationOfPage } from "../../api/extra";
+import { apiCreateContentTypeLibrary, apiOrganizationOfPage, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
 import { h5pEvent } from "../../reducers/content";
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
   removeListeners: () => void;
 }
+
+const SPECIAL_SYMBOL = "***";
 
 /* eslint-disable import/no-webpack-loader-syntax */
 const useStyle = makeStyles(() =>
@@ -120,7 +122,6 @@ export function H5pPlayer(props: H5pPlayerProps) {
   const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
   const userId = useUserId();
   const { library: libraryName, params: libraryParams, subContentId: libraryContentId } = parseLibraryContent(valueSource);
-  console.log("libraryContentId = ", libraryContentId);
   const css = useStyle();
   const { library, core } = apiCreateContentTypeLibrary(h5pName2libId(libraryName));
   const injectBeforeLoad = useMemo<InjectHandler>(
@@ -141,7 +142,7 @@ export function H5pPlayer(props: H5pPlayerProps) {
             fullScreen: "0",
             jsonContent: JSON.stringify(libraryParams),
             library: libraryName,
-            contentUrl: "/",
+            contentUrl: apiResourcePathById(SPECIAL_SYMBOL)?.replace(SPECIAL_SYMBOL, ""),
           },
         },
       };
