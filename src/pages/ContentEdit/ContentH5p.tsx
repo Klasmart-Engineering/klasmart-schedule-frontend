@@ -50,7 +50,6 @@ export default function ContentH5p(props: ContentH5pProps) {
       const source_type = event.data.source_type ?? "";
       if (!contentId) return;
       if (formMethods) {
-        // debugger;
         formMethods.setValue("data.source", contentId, { shouldDirty: true });
         formMethods.setValue("source_type", source_type, { shouldDirty: true });
       }

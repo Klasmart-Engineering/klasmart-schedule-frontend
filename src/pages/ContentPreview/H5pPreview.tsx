@@ -282,7 +282,6 @@ export function H5pPreview(props: H5pPreview) {
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
 
   const isNewH5p = isDataSourceNewH5p(h5pItem.data, h5pItem.id);
-  debugger;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
     if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
