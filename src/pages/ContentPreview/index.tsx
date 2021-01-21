@@ -149,11 +149,13 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
           classType={scheduleDetial.class_type}
           h5pArray={planRes()}
           onGoLive={handleGoLive}
+          schdeuleId={sid}
         ></H5pPreview>
       )}
     </Fragment>
   );
   useEffect(() => {
+    // dispatch(onLoadContentPreview({metaLoading: true, content_id: id, schedule_id: sid}))
     dispatch(getContentDetailById({ metaLoading: true, content_id: id }));
     if (sid) dispatch(getScheduleLiveToken({ schedule_id: sid, live_token_type: "preview", metaLoading: true }));
     if (!sid) dispatch(getContentLiveToken({ content_id: id, metaLoading: true }));

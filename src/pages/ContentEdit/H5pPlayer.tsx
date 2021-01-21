@@ -1,9 +1,11 @@
 import { createStyles, makeStyles } from "@material-ui/core";
 import { iframeResizer } from "iframe-resizer";
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { useQeuryMeQuery } from "../../api/api-ko.auto";
 import { apiCreateContentTypeLibrary, apiOrganizationOfPage } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
+import { h5pEvent } from "../../reducers/content";
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
   removeListeners: () => void;
 }
@@ -112,6 +114,7 @@ interface H5pPlayerProps {
   valueSource: string;
 }
 export function H5pPlayer(props: H5pPlayerProps) {
+  const dispatch = useDispatch();
   const { valueSource, id, scheduleId } = props;
   const xApiRef = useRef<{ (s: H5PStatement): void }>();
   const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
@@ -157,8 +160,9 @@ export function H5pPlayer(props: H5pPlayerProps) {
   }, [xApiRef]);
   xApiRef.current = (statement: H5PStatement) => {
     // if (!scheduleId) return;
+    console.log(scheduleId);
     const baseInfo = {
-      schedule_id: scheduleId,
+      schedule_id: "6008ed07dea5dc8c5f884262",
       material_id: id,
       play_id: playId,
       user_id: userId,
@@ -166,8 +170,9 @@ export function H5pPlayer(props: H5pPlayerProps) {
     };
     const info = { ...baseInfo, ...extractH5pStatement(statement) };
     const [local_library_name, local_library_version] = libraryName.split(" ");
-    const resultInfo = info.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
+    const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
     console.log("resultInfo = ", resultInfo);
+    dispatch(h5pEvent(resultInfo));
   };
   library.scripts.push(`../${require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")}`);
   const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });

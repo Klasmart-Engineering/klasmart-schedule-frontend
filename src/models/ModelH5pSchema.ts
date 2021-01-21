@@ -622,12 +622,21 @@ export const extractH5pStatement = (statement: H5PStatement) => {
     verb_id: statement.verb.id,
     local_library_name,
     local_library_version,
-    sub_library_name,
-    sub_library_version,
+    // sub_library_name,
+    // sub_library_version,
     local_content_id: statement.object.definition.extensions["http://h5p.org/x-api/h5p-local-content-id"],
-    sub_content_id: statement.object.definition.extensions["http://h5p.org/x-api/h5p-subContentId"],
-    total_amount: statement.result?.score.max,
-    correct_amount: statement.result?.score.raw,
+    // sub_content_id: statement.object.definition.extensions["http://h5p.org/x-api/h5p-subContentId"],
+    // total_amount: statement.result?.score.max,
+    // correct_amount: statement.result?.score.raw,
+    extends: {
+      additionanProp1: {
+        sub_library_name,
+        sub_library_version,
+        sub_content_id: statement.object.definition.extensions["http://h5p.org/x-api/h5p-subContentId"],
+        total_amount: statement.result?.score.max,
+        correct_amount: statement.result?.score.raw,
+      },
+    },
   };
 };
 

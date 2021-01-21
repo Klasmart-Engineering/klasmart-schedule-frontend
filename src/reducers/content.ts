@@ -521,6 +521,22 @@ export const getContentDetailById = createAsyncThunk<IQueryGetContentDetailByIdR
   ({ content_id }) => api.contents.getContentById(content_id)
 );
 
+// interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
+//   content_id: Parameters<typeof api.contents.getContentById>[0];
+//   scheduleId: string;
+// };
+// export const onLoadContentPreview = createAsyncThunk<IQueryGetContentDetailByIdResult, IQueryOnLoadContentPreviewParams>("content/onLoadContentPreview",
+//   async ({ content_id, scheduleId }) => {
+//     if (scheduleId) {
+//       await getScheduleLiveToken({ schedule_id: scheduleId, live_token_type: "preview", metaLoading: true });
+//       await getScheduleInfo(scheduleId);
+//     } else {
+//       await getContentLiveToken({ content_id: content_id, metaLoading: true });
+//     }
+//     return await api.contents.getContentById(content_id);
+//   }
+// )
+
 type IQueryDeleteContentParams = {
   id: Parameters<typeof api.contents.updateContent>[0];
   type: string;
@@ -821,6 +837,12 @@ export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRe
     return res;
   }
 );
+type IQueryH5pEventParams = Parameters<typeof api.h5P.createH5PEvent>[0];
+type IQueryH5pEventResult = AsyncReturnType<typeof api.h5P.createH5PEvent>;
+export const h5pEvent = createAsyncThunk<IQueryH5pEventResult, IQueryH5pEventParams>("content/h5pEvent", async (h5pSegment) => {
+  return await api.h5P.createH5PEvent(h5pSegment);
+});
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
