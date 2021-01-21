@@ -250,17 +250,17 @@ export function H5pPreview(props: H5pPreview) {
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
   const { h5pArray, onGoLive, classType, content_type, schdeuleId, userId } = props;
-  let h5pItem = h5pArray[currIndex] || {};
+  let h5pItem = h5pArray[currIndex];
   const handlePrev = () => {
     if (currIndex > 0) {
       setCurrIndex(currIndex - 1);
-      h5pItem = h5pArray[currIndex] || {};
+      h5pItem = h5pArray[currIndex];
     }
   };
   const handleNext = () => {
     if (currIndex < h5pArray.length - 1) {
       setCurrIndex(currIndex + 1);
-      h5pItem = h5pArray[currIndex] || {};
+      h5pItem = h5pArray[currIndex];
     }
   };
   const getSuffix = (data: any) => {
@@ -278,12 +278,12 @@ export function H5pPreview(props: H5pPreview) {
   };
   const handleClickItem = (index: number): void => {
     setCurrIndex(index);
-    h5pItem = h5pArray[currIndex] || {};
+    h5pItem = h5pArray[currIndex];
   };
-  const parsedData: any = JSON.parse(h5pItem.data || "{}");
+  const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
 
-  const isNewH5p = isDataSourceNewH5p(h5pItem.data, h5pItem.id);
+  const isNewH5p = h5pItem ? isDataSourceNewH5p(h5pItem.data, h5pItem.id) : false;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
     if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
