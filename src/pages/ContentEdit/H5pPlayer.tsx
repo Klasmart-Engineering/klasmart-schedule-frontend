@@ -4,7 +4,6 @@ import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { useQeuryMeQuery } from "../../api/api-ko.auto";
 import { apiCreateContentTypeLibrary, apiOrganizationOfPage } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
-
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
   removeListeners: () => void;
 }
@@ -170,7 +169,7 @@ export function H5pPlayer(props: H5pPlayerProps) {
     const resultInfo = info.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
     console.log("resultInfo = ", resultInfo);
   };
-  library.scripts.push(require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow"));
+  library.scripts.push(`../${require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")}`);
   const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });
 
   return <iframe className={css.iframe} ref={register} src="/h5p" frameBorder="0" title="h5p" onLoad={onLoad} key={valueSource} />;
