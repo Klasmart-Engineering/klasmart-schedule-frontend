@@ -10,6 +10,7 @@ interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
 }
 
 const SPECIAL_SYMBOL = "***";
+const INITIAL_EVENT_VERB_ID = "http://verb.kidsloop.cn/verbs/initgame";
 
 /* eslint-disable import/no-webpack-loader-syntax */
 const useStyle = makeStyles(() =>
@@ -118,7 +119,7 @@ interface H5pPlayerProps {
 export function H5pPlayer(props: H5pPlayerProps) {
   const dispatch = useDispatch();
   const { valueSource, id, scheduleId, userId } = props;
-  const xApiRef = useRef<{ (s: H5PStatement): void }>();
+  const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
   const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
   // const userId = useUserId();
   const { library: libraryName, params: libraryParams, subContentId: libraryContentId } = parseLibraryContent(valueSource);
@@ -154,12 +155,14 @@ export function H5pPlayer(props: H5pPlayerProps) {
   );
   const injectAfterLoad: InjectHandler = useMemo(() => {
     return async (root) => {
+      xApiRef.current && xApiRef.current(undefined, true);
       (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
         xApiRef.current && xApiRef.current(event.data.statement);
       });
     };
-  }, [xApiRef]);
-  xApiRef.current = (statement: H5PStatement) => {
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [xApiRef, valueSource]);
+  xApiRef.current = (statement?: H5PStatement, isInitial?: boolean) => {
     // if (!scheduleId) return;
     console.log(scheduleId);
     const baseInfo = {
@@ -169,11 +172,24 @@ export function H5pPlayer(props: H5pPlayerProps) {
       user_id: userId,
       time: Date.now(),
     };
-    const info = { ...baseInfo, ...extractH5pStatement(statement) };
     const [local_library_name, local_library_version] = libraryName.split(" ");
-    const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
-    console.log("resultInfo = ", resultInfo);
-    dispatch(h5pEvent(resultInfo));
+    if (isInitial) {
+      const resultInfo = {
+        ...baseInfo,
+        verb_id: INITIAL_EVENT_VERB_ID,
+        local_library_name,
+        local_library_version,
+        local_content_id: libraryContentId,
+      };
+      console.log("initial resultInfo = ", resultInfo);
+      dispatch(h5pEvent(resultInfo));
+    } else {
+      if (!statement) return;
+      const info = { ...baseInfo, ...extractH5pStatement(statement) };
+      const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
+      console.log("resultInfo = ", resultInfo);
+      dispatch(h5pEvent(resultInfo));
+    }
   };
   library.scripts.push(`../${require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")}`);
   const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });
