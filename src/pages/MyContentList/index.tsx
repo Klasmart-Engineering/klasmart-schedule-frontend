@@ -160,29 +160,22 @@ export default function MyContentList() {
         search: toQueryString(clearNull({ id: id, content_type: content_type, author: condition.author })),
       });
     } else if (content_type === ContentType.folder) {
-      if (dir_path === ROOT_PATH) {
-        history.push({
-          search: toQueryString({
-            ...condition,
-            page: 1,
-            path: `${dir_path}${id}`,
-            order_by: OrderBy._updated_at,
-            author: "",
-            name: "",
-          }),
-        });
-      } else {
-        history.push({
-          search: toQueryString({
-            ...condition,
-            page: 1,
-            path: `${dir_path}${ROOT_PATH}${id}`,
-            order_by: OrderBy._updated_at,
-            author: "",
-            name: "",
-          }),
-        });
-      }
+      const path = dir_path === ROOT_PATH ? "" : ROOT_PATH;
+      const contentType =
+        condition.content_type !== SearchContentsRequestContentType.assetsandfolder
+          ? SearchContentsRequestContentType.materialandplan
+          : condition.content_type;
+      history.push({
+        search: toQueryString({
+          ...condition,
+          page: 1,
+          path: `${dir_path}${path}${id}`,
+          order_by: OrderBy._updated_at,
+          content_type: contentType,
+          author: "",
+          name: "",
+        }),
+      });
     } else {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
     }

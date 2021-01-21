@@ -306,7 +306,7 @@ export function H5pPreview(props: H5pPreview) {
             <EmptyContent />
           ) : !getSuffix(parsedData) ? (
             isNewH5p ? (
-              <H5pPlayer valueSource={parsedData.source} id={h5pItem ? h5pItem.id : ""} scheduleId={schdeuleId} userId={userId} />
+              <H5pPlayer valueSource={parsedData.source} id={h5pItem?.id} scheduleId={schdeuleId} userId={userId} />
             ) : (
               <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
             )
