@@ -3,6 +3,7 @@ import { ArrowBack, ArrowForward, Close, ExpandMore, Search } from "@material-ui
 import clsx from "clsx";
 import React from "react";
 import { ContentTypeList } from "../../api/type";
+import H5pFile from "../../assets/icons/h5p_file.svg";
 import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
@@ -196,7 +197,7 @@ interface H5pInfoProps {
 
 export default function H5pInfo(props: H5pInfoProps) {
   const mockData = {
-    icon: "https://h5p.org/sites/default/files/icon_4.svg",
+    icon: H5pFile,
     title: "this is image",
     owner: "Fake Owner",
     example: "",

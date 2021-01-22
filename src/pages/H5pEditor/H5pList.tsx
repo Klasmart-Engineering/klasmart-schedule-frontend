@@ -15,6 +15,10 @@ import {
 import { Check } from "@material-ui/icons";
 import React from "react";
 import { ContentFileType, ContentTypeList } from "../../api/type";
+import H5pAudio from "../../assets/icons/h5p_audio.svg";
+import H5pFile from "../../assets/icons/h5p_file.svg";
+import H5pPicture from "../../assets/icons/h5p_picture.svg";
+import H5pVideo from "../../assets/icons/h5p_video.svg";
 import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(() => ({
@@ -119,25 +123,25 @@ export default function H5pList(props: H5pListProps) {
     {
       title: "Image",
       id: ContentFileType.image,
-      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      icon: H5pPicture,
       summary: "this is image uploader",
     },
     {
       title: "Audio",
       id: ContentFileType.audio,
-      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      icon: H5pAudio,
       summary: "this is audio uploader",
     },
     {
       title: "Video",
       id: ContentFileType.video,
-      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      icon: H5pVideo,
       summary: "this is video uploader",
     },
     {
       title: "Document",
       id: ContentFileType.doc,
-      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      icon: H5pFile,
       summary: "this is document uploader",
     },
   ];
