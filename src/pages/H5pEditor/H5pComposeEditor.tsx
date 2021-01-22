@@ -119,7 +119,7 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
       <Controller name="data.input_source" defaultValue={dataInputSource ?? ""} control={control} as="input" hidden />
       {formDataInputSource === ContentInputSourceType.h5p && !schemaPending && schema && library && (
         <Controller
-          name="data.source"
+          name="data.content"
           defaultValue={JSON.stringify(defaultLibContent)}
           rules={{ validate }}
           control={control}

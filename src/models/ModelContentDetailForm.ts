@@ -11,7 +11,7 @@ export interface ContentDetailPlanType extends Omit<EntityCreateContentRequest, 
 }
 let time: number | undefined = 0;
 export interface ContentDetailMaterialType extends Omit<EntityCreateContentRequest, "data">, MyExtendedDetailForm {
-  data?: { source: string; input_source: ContentInputSourceType; file_type: ContentFileType };
+  data?: { source?: string; input_source: ContentInputSourceType; file_type: ContentFileType; content?: string };
   created_at?: string;
 }
 
