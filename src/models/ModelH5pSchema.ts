@@ -3,7 +3,8 @@
 import jsSHA from "jssha";
 import cloneDeep from "lodash/cloneDeep";
 import { EntityContentInfoWithDetails } from "../api/api.auto";
-import { ContentFileType } from "../api/type";
+import { apiIsEnableNewH5p } from "../api/extra";
+import { ContentFileType, ContentType } from "../api/type";
 
 export const H5P_ROOT_NAME = "ROOT";
 
@@ -644,7 +645,7 @@ export const extractH5pStatement = (statement: H5PStatement) => {
 };
 
 export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], id?: string | null): boolean => {
-  if (process.env.REACT_APP_ENABLE_NEW_H5P === "0") return false;
+  if (!apiIsEnableNewH5p()) return false;
   if (!id) return true;
   if (!data) return false;
   try {
@@ -652,6 +653,18 @@ export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], i
     if (!fileType) return false;
     return fileType === ContentFileType.h5pExtend;
   } catch (e) {
+    return false;
+  }
+};
+
+export const isDataSourceOldH5p = (contentDetial: EntityContentInfoWithDetails) => {
+  if (contentDetial.content_type !== ContentType.material) return false;
+  if (!contentDetial.data) return false;
+  try {
+    const fileType = JSON.parse(contentDetial.data)?.file_type;
+    if (!fileType) return false;
+    return fileType === ContentFileType.h5p;
+  } catch (err) {
     return false;
   }
 };
