@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { Check } from "@material-ui/icons";
 import React from "react";
-import { ContentTypeList } from "../../api/type";
+import { ContentFileType, ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(() => ({
@@ -50,8 +50,10 @@ const useStyles = makeStyles(() => ({
 
 interface H5pListProps {
   libraryId?: string;
+  assetLibraryId?: ContentFileType;
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
+  onChangeAssetLibraryId?: (value: ContentFileType) => any;
   expand: boolean;
   onExpand: (value: boolean) => any;
   setShow: (value: string) => any;
@@ -59,20 +61,30 @@ interface H5pListProps {
 }
 
 export default function H5pList(props: H5pListProps) {
-  const { contentTypeList, onChange, expand, onExpand, setShow, setH5pId, libraryId } = props;
+  const { contentTypeList, onChange, expand, onExpand, setShow, setH5pId, libraryId, assetLibraryId, onChangeAssetLibraryId } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const [open, setOpen] = React.useState<boolean>(false);
-  const [tempItem, setTempItem] = React.useState<any>({});
+  const [tempItem, setTempItem] = React.useState<string | ContentFileType>();
 
-  const handleClick = (item: any) => {
-    if (libraryId) {
-      setTempItem(item);
+  const handleClick = (item: ContentTypeList[0]) => {
+    if (libraryId || assetLibraryId) {
+      setTempItem(`${item.id}-${item.version.major}.${item.version.minor}`);
       setOpen(true);
       return;
     }
     onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
+    onExpand(!expand);
+  };
+
+  const handleClickAsset = (item: AssetDataItem) => {
+    if (libraryId || assetLibraryId) {
+      setTempItem(item.id);
+      setOpen(true);
+      return;
+    }
+    onChangeAssetLibraryId && onChangeAssetLibraryId(item.id);
     onExpand(!expand);
   };
 
@@ -88,28 +100,43 @@ export default function H5pList(props: H5pListProps) {
 
   const handleConfirm = () => {
     setOpen(false);
-    onChange(`${tempItem.id}-${tempItem.version.major}.${tempItem.version.minor}`);
+    if (!tempItem) return;
+    if (typeof tempItem === "string") {
+      onChange(tempItem);
+    } else {
+      onChangeAssetLibraryId && onChangeAssetLibraryId(tempItem);
+    }
     onExpand(!expand);
   };
 
-  const mockData = [
+  interface AssetDataItem {
+    title: string;
+    id: ContentFileType;
+    icon: string;
+    summary: string;
+  }
+  const assetsData: AssetDataItem[] = [
     {
       title: "Image",
+      id: ContentFileType.image,
       icon: "https://h5p.org/sites/default/files/icon_7.svg",
       summary: "this is image uploader",
     },
     {
       title: "Audio",
+      id: ContentFileType.audio,
       icon: "https://h5p.org/sites/default/files/icon_7.svg",
       summary: "this is audio uploader",
     },
     {
       title: "Video",
+      id: ContentFileType.video,
       icon: "https://h5p.org/sites/default/files/icon_7.svg",
       summary: "this is video uploader",
     },
     {
       title: "Document",
+      id: ContentFileType.doc,
       icon: "https://h5p.org/sites/default/files/icon_7.svg",
       summary: "this is document uploader",
     },
@@ -124,9 +151,9 @@ export default function H5pList(props: H5pListProps) {
   return (
     <div className={css.listContainer}>
       <List component="nav" aria-label="secondary mailbox folders">
-        {mockData.map((item) => {
+        {assetsData.map((item) => {
           return (
-            <ListItem key={item.title} button className={css.listItem}>
+            <ListItem key={item.title} button className={css.listItem} onClick={() => handleClickAsset(item)}>
               <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
                 <img src={item.icon} alt="aaa" />
               </Box>

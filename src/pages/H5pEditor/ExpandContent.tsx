@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ContentTypeList } from "../../api/type";
+import { ContentFileType, ContentTypeList } from "../../api/type";
 import H5pHeader from "./H5pHeader";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
 import H5pInfo from "./H5pInfo";
@@ -7,8 +7,10 @@ import H5pList from "./H5pList";
 
 interface ExpandContentProps {
   value: string | undefined;
+  assetLibraryId?: ContentFileType;
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
+  onChangeAssetLibraryId?: (value: ContentFileType) => any;
   expand: boolean;
   onExpand: (value: boolean) => any;
 }
@@ -19,7 +21,7 @@ const libraryId2Title = (id: ExpandContentProps["value"], contentTypeList?: Cont
 };
 
 export default function ExpandContent(props: ExpandContentProps) {
-  const { value: libraryId, contentTypeList, onChange, expand, onExpand } = props;
+  const { value: libraryId, contentTypeList, onChange, expand, onExpand, assetLibraryId, onChangeAssetLibraryId } = props;
   const libraryTitle = useMemo(() => libraryId2Title(libraryId, contentTypeList), [libraryId, contentTypeList]);
   const [newList, setNewList] = React.useState<ContentTypeList>(contentTypeList);
   const [show, setShow] = React.useState("list");
@@ -55,8 +57,10 @@ export default function ExpandContent(props: ExpandContentProps) {
         <H5pHeader contentTypeList={newList} sortList={sortList} searchChange={searchChange} />
         <H5pList
           libraryId={libraryId}
+          assetLibraryId={assetLibraryId}
           setH5pId={setH5pId}
           onChange={onChange}
+          onChangeAssetLibraryId={onChangeAssetLibraryId}
           contentTypeList={newList}
           onExpand={onExpand}
           expand={expand}

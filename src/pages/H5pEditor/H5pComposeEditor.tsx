@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { cloneElement, Fragment, useEffect, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType, ContentTypeList } from "../../api/type";
@@ -45,47 +45,65 @@ const useContentTypeList = () => {
   return contentTypeList;
 };
 
-const useLibraryAndDefaultContent = (valueSource?: string, inputSource?: ContentInputSourceType) => {
-  const [, setLibrary] = useState<string>();
+interface UseLibraryAndDefaultContentProps {
+  valueSource?: string;
+  dataFileType?: ContentFileType;
+  formMethods: UseFormMethods<ContentDetailForm>;
+}
+const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) => {
+  const { valueSource, dataFileType, formMethods } = props;
+  const { setValue } = formMethods;
+  const [, refresh] = useState<string | ContentFileType>();
   return useMemo(() => {
-    let defaultLibContent = inputSource === ContentInputSourceType.h5p && valueSource ? parseLibraryContent(valueSource) : undefined;
-    let library = inputSource === ContentInputSourceType.h5p && valueSource ? defaultLibContent?.library : undefined;
+    let isAssetLibrary: boolean | undefined = undefined;
+    let defaultLibContent = isAssetLibrary === false && valueSource ? parseLibraryContent(valueSource) : undefined;
+    let library = isAssetLibrary === false && valueSource ? defaultLibContent?.library : undefined;
+    let assetLibraryId = isAssetLibrary === true ? dataFileType : undefined;
     const setLib = (v: string) => {
+      isAssetLibrary = false;
       library = v;
       defaultLibContent = { library: h5plibId2Name(library) };
-      setLibrary(v);
+      assetLibraryId = undefined;
+      setValue("data.input_source", ContentInputSourceType.h5p);
+      refresh(v);
     };
-    const getLibAndDefaultContent = () => ({ library, defaultLibContent });
-    return [getLibAndDefaultContent, setLib] as const;
-  }, [valueSource, setLibrary, inputSource]);
+    const setAssetLib = (v: ContentFileType) => {
+      isAssetLibrary = true;
+      assetLibraryId = v;
+      library = undefined;
+      defaultLibContent = undefined;
+      setValue("data.input_source", ContentInputSourceType.fromFile);
+      refresh(v);
+    };
+    const getLibAndDefaultContent = () => ({ library, defaultLibContent, assetLibraryId });
+    return [getLibAndDefaultContent, setLib, setAssetLib] as const;
+  }, [valueSource, dataFileType, setValue]);
 };
 
 interface H5pComposeEditorProps {
   valueSource?: string;
+  dataFileType?: ContentFileType;
   dataInputSource?: ContentInputSourceType;
   formMethods: UseFormMethods<ContentDetailForm>;
   assetEditor: JSX.Element;
 }
 export function H5pComposeEditor(props: H5pComposeEditorProps) {
-  const { valueSource, formMethods, dataInputSource, assetEditor } = props;
-  const { control, errors, watch, setValue } = formMethods;
+  const { valueSource, formMethods, dataInputSource, assetEditor, dataFileType } = props;
+  const { control, errors, watch } = formMethods;
   // todo: delete next line
   const formDataInputSource: ContentInputSourceType = watch("data.input_source");
-  const [getLibAndDefaultContent, setLibrary] = useLibraryAndDefaultContent(valueSource, formDataInputSource);
-  const { library, defaultLibContent } = getLibAndDefaultContent();
+  const [getLibAndDefaultContent, setLibrary, setAssetLib] = useLibraryAndDefaultContent({ valueSource, dataFileType, formMethods });
+  const { library, assetLibraryId, defaultLibContent } = getLibAndDefaultContent();
+  console.log("library, assetLibraryId, defaultLibContent = ", library, assetLibraryId, defaultLibContent);
   const contentTypeList = useContentTypeList();
   const { schema, schemaPending } = useSchema(library);
-  const [expand, setExpand] = React.useState<boolean>(dataInputSource === ContentInputSourceType.h5p && !library);
+  const [expand, setExpand] = React.useState<boolean>(!dataInputSource || (dataInputSource === ContentInputSourceType.h5p && !library));
   const validate = (value: string) => {
     if (!schema) return false;
     const content = parseLibraryContent(value);
     const rootLibrarySchema: H5PLibrarySemantic = { type: H5PItemType.library, name: H5P_ROOT_NAME };
     const { result } = validateContent({ content, semantics: rootLibrarySchema, path: "" }, schema);
     return Object.keys(result).length === 0 ? true : JSON.stringify(result);
-  };
-  const handleChangeLibrary = (libraryId: string) => {
-    setValue("data.input_source", ContentInputSourceType.h5p);
-    setLibrary(libraryId);
   };
   return (
     <Fragment>
@@ -94,39 +112,34 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
         expand={expand}
         contentTypeList={contentTypeList as ContentTypeList}
         value={library}
-        onChange={handleChangeLibrary}
+        assetLibraryId={assetLibraryId}
+        onChange={setLibrary}
+        onChangeAssetLibraryId={setAssetLib}
       />
-      <Controller name="data.input_source" defaultValue={dataInputSource} control={control} as="input" hidden />
-      {formDataInputSource === ContentInputSourceType.h5p
-        ? !schemaPending &&
-          schema &&
-          library && (
-            <Fragment>
-              {formDataInputSource === ContentInputSourceType.h5p && (
-                <Controller name="data.file_type" defaultValue={ContentFileType.h5pExtend} control={control} as="input" hidden />
-              )}
-              <Controller
-                name="data.source"
-                defaultValue={JSON.stringify(defaultLibContent)}
-                rules={{ validate }}
-                control={control}
-                key={`library:${library},valueSource:${valueSource}`}
-                render={(props) => (
-                  <H5pDetails
-                    defaultValue={defaultLibContent}
-                    onChange={(v) => {
-                      const stringValue = JSON.stringify(v);
-                      if (stringValue === props.value) return;
-                      props.onChange(JSON.stringify(v));
-                    }}
-                    schema={schema}
-                    errors={parseH5pErrors((errors as any)?.data?.source?.message)}
-                  />
-                )}
-              />
-            </Fragment>
-          )
-        : assetEditor}
+      <Controller name="data.input_source" defaultValue={dataInputSource ?? ""} control={control} as="input" hidden />
+      {formDataInputSource === ContentInputSourceType.h5p && !schemaPending && schema && library && (
+        <Controller
+          name="data.source"
+          defaultValue={JSON.stringify(defaultLibContent)}
+          rules={{ validate }}
+          control={control}
+          key={`library:${library},valueSource:${valueSource}`}
+          render={(props) => (
+            <H5pDetails
+              defaultValue={defaultLibContent}
+              onChange={(v) => {
+                const stringValue = JSON.stringify(v);
+                if (stringValue === props.value) return;
+                props.onChange(JSON.stringify(v));
+              }}
+              schema={schema}
+              errors={parseH5pErrors((errors as any)?.data?.source?.message)}
+            />
+          )}
+        />
+      )}
+      {(formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) &&
+        cloneElement(assetEditor, { assetLibraryId })}
     </Fragment>
   );
 }

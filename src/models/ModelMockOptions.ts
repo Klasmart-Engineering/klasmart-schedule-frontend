@@ -1,7 +1,7 @@
 import { UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../api/api.auto";
 import { MockOptions, MockOptionsItem } from "../api/extra";
-import { ContentInputSourceType } from "../api/type";
+import { ContentFileType, ContentInputSourceType } from "../api/type";
 import { Regulation } from "../pages/ContentEdit/type";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
 
@@ -32,6 +32,10 @@ export interface CreateAllDefaultValueAndKeyResult extends PartialDefaultValueAn
   "data.source"?: {
     key: string;
     value: string;
+  };
+  "data.file_type"?: {
+    key: string;
+    value: ContentFileType;
   };
 }
 
@@ -150,7 +154,7 @@ export class ModelMockOptions {
           };
       }
     });
-    const { input_source } = JSON.parse(contentDetail.data || "{}");
+    const { input_source, file_type } = JSON.parse(contentDetail.data || "{}");
     const source = JSON.parse(contentDetail.data || "{}").source ?? "";
     result["data.input_source"] = {
       key: ModelMockOptions.createSelectKey([], input_source, "data.input_source"),
@@ -159,6 +163,10 @@ export class ModelMockOptions {
     result["data.source"] = {
       key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.source"),
       value: source,
+    };
+    result["data.file_type"] = {
+      key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.file_type"),
+      value: file_type,
     };
     return result;
   }

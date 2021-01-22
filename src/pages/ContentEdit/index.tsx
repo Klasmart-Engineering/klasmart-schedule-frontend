@@ -410,7 +410,7 @@ function ContentEditForm() {
                 <H5pComposeEditor
                   formMethods={formMethods}
                   valueSource={allDefaultValueAndKey["data.source"]?.value}
-                  dataInputSource={dataInputSourceDefaultValue}
+                  dataFileType={allDefaultValueAndKey["data.file_type"]?.value}
                   assetEditor={
                     <MediaAssetsEdit
                       allDefaultValueAndKey={allDefaultValueAndKey}
