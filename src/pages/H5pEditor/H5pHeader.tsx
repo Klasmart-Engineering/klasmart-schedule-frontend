@@ -25,10 +25,10 @@ const useStyles = makeStyles((theme) => ({
       padding: "10px 0",
     },
     [theme.breakpoints.up("md")]: {
-      width: "50%",
+      width: "65%",
     },
-    [theme.breakpoints.up("lg")]: {
-      width: "40%",
+    [theme.breakpoints.down("md")]: {
+      width: "90%",
     },
     paddingLeft: "20px",
     paddingRight: "10px",

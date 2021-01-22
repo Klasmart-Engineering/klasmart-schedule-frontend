@@ -109,7 +109,9 @@ const useStyles = makeStyles((theme) => ({
       height: "20px",
     },
   },
-  license: {},
+  license: {
+    marginTop: "20px",
+  },
   sectionSummary: () => ({
     fontSize: 16,
     fontWeight: "bold",
@@ -193,8 +195,24 @@ interface H5pInfoProps {
 }
 
 export default function H5pInfo(props: H5pInfoProps) {
+  const mockData = {
+    icon: "https://h5p.org/sites/default/files/icon_4.svg",
+    title: "this is image",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [
+      {
+        url: "https://h5p.org/sites/default/files/styles/h5p-con…reenshot/public/memmory-game-02.png?itok=wrU2ytID",
+        alt: "Student's view",
+      },
+    ],
+    license: {
+      attributes: {},
+    },
+    description: "this is an amazing file",
+  };
   const { contentTypeList, h5pId, setShow } = props;
-  const h5pInfo = contentTypeList.filter((item) => item.id === h5pId)[0];
+  const h5pInfo = h5pId ? contentTypeList.filter((item) => item.id === h5pId)[0] : mockData;
   const css = useStyles();
   const [leftPosition, setLeftPosition] = React.useState(0);
   const [open, setOpen] = React.useState(false);
@@ -277,43 +295,49 @@ export default function H5pInfo(props: H5pInfoProps) {
               <h2>{h5pInfo.title}</h2>
               <div>{h5pInfo.owner}</div>
               <p>{h5pInfo.description}</p>
-              <a href={h5pInfo.example} className={css.demo} target="_blank" rel="noopener noreferrer">
-                {reportMiss("Content Demo", "h5p_content_demo")}
-              </a>
+              {h5pId && (
+                <a href={h5pInfo.example} className={css.demo} target="_blank" rel="noopener noreferrer">
+                  {reportMiss("Content Demo", "h5p_content_demo")}
+                </a>
+              )}
             </Grid>
           </Grid>
-          <div className={css.outerBox}>
-            <div className={css.navBox}>
-              <Grid container className={css.imagesContainer} style={{ marginLeft: `${leftPosition}%` }}>
-                {h5pInfo.screenshots.map((item, index) => {
-                  return (
-                    <Grid item key={item.url} className={css.itemImageBox} onClick={() => showDialog(index)}>
-                      <img src={item.url} alt="" />
-                    </Grid>
-                  );
-                })}
-              </Grid>
+          {h5pId && (
+            <div className={css.outerBox}>
+              <div className={css.navBox}>
+                <Grid container className={css.imagesContainer} style={{ marginLeft: `${leftPosition}%` }}>
+                  {h5pInfo.screenshots.map((item, index) => {
+                    return (
+                      <Grid item key={item.url} className={css.itemImageBox} onClick={() => showDialog(index)}>
+                        <img src={item.url} alt="" />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </div>
+              <div>
+                <ArrowBack
+                  fontSize="large"
+                  className={clsx(css.arrowPrev, css.arrowCommon)}
+                  onClick={prevImage}
+                  style={{ cursor: leftPosition === 0 ? "not-allowed" : "pointer" }}
+                />
+              </div>
+              <div>
+                <ArrowForward
+                  fontSize="large"
+                  className={clsx(css.arrowNext, css.arrowCommon)}
+                  onClick={nextImage}
+                  style={{
+                    cursor:
+                      leftPosition === -25 * (h5pInfo.screenshots.length - 4) || h5pInfo.screenshots.length <= 4
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                />
+              </div>
             </div>
-            <div>
-              <ArrowBack
-                fontSize="large"
-                className={clsx(css.arrowPrev, css.arrowCommon)}
-                onClick={prevImage}
-                style={{ cursor: leftPosition === 0 ? "not-allowed" : "pointer" }}
-              />
-            </div>
-            <div>
-              <ArrowForward
-                fontSize="large"
-                className={clsx(css.arrowNext, css.arrowCommon)}
-                onClick={nextImage}
-                style={{
-                  cursor:
-                    leftPosition === -25 * (h5pInfo.screenshots.length - 4) || h5pInfo.screenshots.length <= 4 ? "not-allowed" : "pointer",
-                }}
-              />
-            </div>
-          </div>
+          )}
           <div className={css.license}>
             <Accordion defaultExpanded={false}>
               <AccordionSummary expandIcon={<ExpandMore />} classes={{ root: css.sectionSummary }}>

@@ -92,9 +92,56 @@ export default function H5pList(props: H5pListProps) {
     onExpand(!expand);
   };
 
+  const mockData = [
+    {
+      title: "Image",
+      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      summary: "this is image uploader",
+    },
+    {
+      title: "Audio",
+      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      summary: "this is audio uploader",
+    },
+    {
+      title: "Video",
+      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      summary: "this is video uploader",
+    },
+    {
+      title: "Document",
+      icon: "https://h5p.org/sites/default/files/icon_7.svg",
+      summary: "this is document uploader",
+    },
+  ];
+
+  const getMockDetails = (e: React.KeyboardEvent | React.MouseEvent) => {
+    e.stopPropagation();
+    setShow("info");
+    setH5pId("");
+  };
+
   return (
     <div className={css.listContainer}>
       <List component="nav" aria-label="secondary mailbox folders">
+        {mockData.map((item) => {
+          return (
+            <ListItem key={item.title} button className={css.listItem}>
+              <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
+                <img src={item.icon} alt="aaa" />
+              </Box>
+              <Box style={{ width: sm ? "40%" : "80%" }}>
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+              </Box>
+              <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
+                <Button variant="contained" color="primary" onClick={getMockDetails}>
+                  {reportMiss("Detail", "h5p_detail")}
+                </Button>
+              </Box>
+            </ListItem>
+          );
+        })}
         {contentTypeList &&
           contentTypeList.map((item) => {
             return (
