@@ -132,9 +132,10 @@ export interface FilterAchievementReportProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
   reportMockOptions: GetReportMockOptionsResponse;
+  isShowStudentList?: Boolean;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, reportMockOptions } = props;
+  const { onChange, value, reportMockOptions, isShowStudentList } = props;
   const css = useStyles();
   const perm = usePermission([
     PermissionType.view_reports_610,
@@ -238,8 +239,20 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               >
                 {getOptions(reportMockOptions.lessonPlanList)}
               </TextField>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => onChange(e.target.value, "student_id")}
+                label={d("Student").t("schedule_time_conflict_student")}
+                value={value.lesson_plan_id}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                disabled={planIsDisabled}
+              >
+                {getOptions(reportMockOptions.lessonPlanList)}
+              </TextField>
             </Box>
-            <Box className={css.boxRight}>
+            {!isShowStudentList && <Box className={css.boxRight}>
               <TextField
                 size="small"
                 className={css.selectButton}
@@ -262,7 +275,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               >
                 {getOptions(sortOptions())}
               </TextField>
-            </Box>
+            </Box>}
           </Box>
         </Hidden>
       )}

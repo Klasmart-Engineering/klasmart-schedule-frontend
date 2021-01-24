@@ -7,7 +7,7 @@ import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
 export enum Category {
   archived = "archived",
   learningOutcomes = "learningOutcomes",
+  studentPerformance = "studentPerformance"
 }
 export interface FirstSearchHeaderProps {
   value: Category;
@@ -111,6 +112,13 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                         {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
                       </Button>
                     )}
+                    <Button
+                      onClick={createHandleClick(Category.studentPerformance)}
+                      className={clsx(css.nav, { [css.actives]: value === Category.studentPerformance })}
+                      startIcon={value === Category.studentPerformance ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
+                    >
+                      {reportMiss("Student Performance","report_label_student_performance")}
+                    </Button>
                   </Grid>
                 </Grid>
               </Hidden>
@@ -158,6 +166,11 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                           className={classes.capitalize}
                         />
                       )}
+                      <Tab
+                        value={Category.studentPerformance}
+                        label={reportMiss("Student Performance", "report_label_student_performance")}
+                        className={classes.capitalize}
+                      />
                     </Tabs>
                   </AppBar>
                 </Grid>

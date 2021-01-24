@@ -9,6 +9,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportCategories } from "../ReportCategories";
+import { ReportStudentPerformance } from "../ReportStudentPerformance";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
@@ -31,6 +32,7 @@ export const useReportQuery = () => {
     const lesson_plan_id = query.get("lesson_plan_id") || "";
     const status = query.get("status") || "all";
     const sort_by = query.get("sort_by") || "desc";
+    // const student_id = query.get("student_id") || "";
     return clearNull({ teacher_id, class_id, lesson_plan_id, status, sort_by });
   }, [search]);
 };
@@ -52,6 +54,7 @@ export function ReportAchievementList() {
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
+    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
   };
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
