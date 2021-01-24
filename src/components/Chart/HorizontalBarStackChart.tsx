@@ -10,15 +10,8 @@ import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { ReactNode, useMemo } from "react";
 
 const useStyle = makeStyles({
-  chart: {
-    marginTop: 24,
-    marginBottom: 200,
-    position: "relative",
-  },
-  svgContainer: {
-    position: "absolute",
-  },
   svg: {
+    position: "relative",
     backgroundColor: "rgba(0,0,0, .02)",
     fontFamily: "Helvetica",
   },
@@ -31,8 +24,8 @@ const useStyle = makeStyles({
 });
 
 const getPixels = (px: number) => ({
-  barStackWidth: 1200 * px,
-  barStackHeight: 55 * px,
+  barStackWidth: 400 * px,
+  barStackHeight: 40 * px,
   barStackMargin: 48 * px,
   yMarginLeft: 180 * px,
   yMarginRight: 180 * px,
@@ -89,45 +82,45 @@ const getInlineStyles = (px: number) => {
   };
 };
 
-type ChartDataItem = Pick<HorizontalBarDataItem, "id" | "name" | "title" | "description"> & Record<string, number>;
+type ChartDataItem = Pick<HorizontalBarStackDataItem, "id" | "name" | "title" | "description"> & Record<string, number>;
 type TBarStack = BarStack<ChartDataItem, string>;
 type TBar = TBarStack["bars"][0];
 type TooltipData = { bar: TBar; barStack: TBarStack };
 
-const dataItemById = (id: string, data: HorizontalBarDataItem[]) => {
-  return data.find((item) => item.id === id) as HorizontalBarDataItem;
+const dataItemById = (id: string, data: HorizontalBarStackDataItem[]) => {
+  return data.find((item) => item.id === id) as HorizontalBarStackDataItem;
 };
 
-const calcDataSum = (data: HorizontalBarDataItem[]) => {
+const calcDataSum = (data: HorizontalBarStackDataItem[]) => {
   return data.map(({ value: categoryValues }) => {
     return categoryValues.reduce((r, item) => r + item.value, 0);
   });
 };
 
-const calcChartData = (data: HorizontalBarDataItem[]): ChartDataItem[] => {
+const calcChartData = (data: HorizontalBarStackDataItem[]): ChartDataItem[] => {
   return data.map(({ value: categoryValues, ...restItem }) => {
     return categoryValues.reduce((r, c) => Object.assign(r, { [c.name]: c.value }), restItem as ChartDataItem);
   });
 };
 
-const calcCategoryNames = (data: HorizontalBarDataItem[]) => {
+const calcCategoryNames = (data: HorizontalBarStackDataItem[]) => {
   if (!data[0]) return [];
   const { value: categoryValues } = data[0];
   return categoryValues.map((c) => c.name);
 };
 
-const calcColorRange = (data: HorizontalBarDataItem[]) => {
+const calcColorRange = (data: HorizontalBarStackDataItem[]) => {
   if (!data[0]) return [];
   const { value: categoryValues } = data[0];
   return categoryValues.map((c) => c.color);
 };
 
-export const horizontalBarChartSize = (props: Pick<HorizontalBarChartProps, "data">) => {
-  const { viewPort } = computed(parseProps({ ...props, color: "red" } as HorizontalBarChartProps));
+export const horizontalBarStackChartSize = (props: Pick<HorizontalBarStackChartProps, "data">) => {
+  const { viewPort } = computed(parseProps({ ...props, color: "red" } as HorizontalBarStackChartProps));
   return [viewPort[2] - viewPort[0], viewPort[3] - viewPort[1]] as const;
 };
 
-function computed(props: HorizontalMultiBarChartProps) {
+function computed(props: Pick<HorizontalMultiBarChartProps, "px" | "data">) {
   const { px = 1, data } = props;
   const pixels = getPixels(px);
   const xMax = Math.max(...calcDataSum(data));
@@ -135,7 +128,7 @@ function computed(props: HorizontalMultiBarChartProps) {
   const xScale = scaleLinear({ domain: [0, xMax], range: [0, pixels.barStackWidth] });
   const xAxiosScale = scaleLinear({ domain: [0, xMax], range: [0, pixels.barStackWidth + pixels.yMarginRight] });
   const paddingRatio = pixels.barStackMargin / (pixels.barStackMargin + pixels.barStackHeight);
-  const yScale = scaleBand({ domain: data.map((item) => item.id as string), range: [0, barStacksHeight], padding: paddingRatio });
+  const yScale = scaleBand({ domain: data.map((item) => item.id), range: [0, barStacksHeight], padding: paddingRatio });
   const getY = (item: ChartDataItem) => item.id;
   const viewPort = [0, 0, pixels.barStackWidth + pixels.yMarginLeft + pixels.yMarginRight, barStacksHeight];
   const chartData = calcChartData(data);
@@ -155,62 +148,64 @@ const showBarTooltip = (tooltipData: TooltipData, showTooltip: UseTooltipParams<
   });
 };
 
-function parseProps(props: HorizontalBarChartProps): HorizontalMultiBarChartProps {
-  let data: HorizontalBarDataItem[];
-  const { px, onSelect } = props;
-  if (isHorizontalSingleBarChartProps(props)) {
+function parseProps(props: HorizontalBarStackChartProps): HorizontalMultiBarChartProps {
+  let data: HorizontalBarStackDataItem[];
+  const { px, onSelect, valueAxiosLabel } = props;
+  if (isHorizontalSingleBarStackChartProps(props)) {
     data = props.data.map((item) => ({ ...item, value: [{ name: "KEY", value: item.value, color: props.color }] }));
   } else {
     data = props.data;
   }
-  return { px, onSelect, data };
+  return { px, onSelect, data, valueAxiosLabel };
 }
 
-export interface HorizontalBarDataItemCategoryValue {
+export interface HorizontalBarStackDataItemCategoryValue {
   name: string;
   description?: string;
   value: number;
   color: string;
 }
 
-export interface HorizontalBarDataItem {
+export interface HorizontalBarStackDataItem {
   id: string;
   name: string;
   title?: string;
   description: string;
-  value: HorizontalBarDataItemCategoryValue[];
+  value: HorizontalBarStackDataItemCategoryValue[];
 }
 
-export interface HorizontalSingleBarDataItem extends Omit<HorizontalBarDataItem, "value"> {
+export interface HorizontalSingleBarStackDataItem extends Omit<HorizontalBarStackDataItem, "value"> {
   value: number;
 }
 
-export interface HorizontalSingleBarChartProps {
-  data: HorizontalSingleBarDataItem[];
+export interface HorizontalSingleBarStackChartProps {
+  data: HorizontalSingleBarStackDataItem[];
   onSelect?: (id: string) => any;
   color: string;
   px?: number;
+  valueAxiosLabel: string;
 }
 
 export interface HorizontalMultiBarChartProps {
-  data: HorizontalBarDataItem[];
+  data: HorizontalBarStackDataItem[];
   onSelect?: (id: string) => any;
   px?: number;
+  valueAxiosLabel: string;
 }
 
-export type HorizontalBarChartProps = HorizontalSingleBarChartProps | HorizontalMultiBarChartProps;
-export function HorizontalBarChart(props: HorizontalBarChartProps) {
-  const { onSelect, px = 1, data } = useMemo(() => parseProps(props), [props]);
+export type HorizontalBarStackChartProps = HorizontalSingleBarStackChartProps | HorizontalMultiBarChartProps;
+export function HorizontalBarStackChart(props: HorizontalBarStackChartProps) {
+  const { onSelect, px = 1, data, valueAxiosLabel } = useMemo(() => parseProps(props), [props]);
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
   const { chartData, categoryNames, xScale, xAxiosScale, yScale, getY, colorScale, barStacksHeight, viewPort } = useMemo(
-    () => computed({ onSelect, px, data }),
-    [data, onSelect, px]
+    () => computed({ px, data }),
+    [data, px]
   );
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TooltipData>();
 
-  const rectList = (barStacks: TBarStack[], px: number) =>
+  const rectList = (barStacks: TBarStack[]) =>
     barStacks.map((barStack) =>
       barStack.bars.map((bar) => (
         <rect
@@ -225,7 +220,7 @@ export function HorizontalBarChart(props: HorizontalBarChartProps) {
         />
       ))
     );
-  const descriptionList = (barStacks: TBarStack[], px: number) => {
+  const descriptionList = (barStacks: TBarStack[]) => {
     const pixels = getPixels(px);
     return barStacks.slice(-1)[0].bars.map((bar) => (
       <text key={`desc-${bar.index}`} x={bar.x + bar.width + pixels.descMarginLeft} y={bar.y + 0.5 * bar.height} style={inlineStyles.desc}>
@@ -254,8 +249,8 @@ export function HorizontalBarChart(props: HorizontalBarChartProps) {
   };
   const tooltipContent = tooltipOpen && tooltipData ? data[tooltipData.bar.index].value[tooltipData.barStack.index].description : undefined;
   return (
-    <>
-      <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
+    <div className={css.svg}>
+      <svg width={viewPort[2]} height={viewPort[3]}>
         <Group left={pixels.yMarginLeft}>
           <BarStackHorizontal
             data={chartData}
@@ -266,7 +261,7 @@ export function HorizontalBarChart(props: HorizontalBarChartProps) {
             color={colorScale}
             y={getY}
           >
-            {(barStacks) => [rectList(barStacks, px), descriptionList(barStacks, px)]}
+            {(barStacks) => [rectList(barStacks), descriptionList(barStacks)]}
           </BarStackHorizontal>
           <AxisLeft
             hideTicks
@@ -281,7 +276,7 @@ export function HorizontalBarChart(props: HorizontalBarChartProps) {
             top={0}
             scale={xAxiosScale}
             axisLineClassName={css.axiosLine}
-            label="in % of all Learning Outcomes"
+            label={valueAxiosLabel}
             labelOffset={0}
             labelProps={inlineStyles.xAxiosLabel}
           />
@@ -292,11 +287,11 @@ export function HorizontalBarChart(props: HorizontalBarChartProps) {
           <div style={inlineStyles.tooltipContent}>{tooltipContent}</div>
         </Tooltip>
       )}
-    </>
+    </div>
   );
 }
 
-function isHorizontalSingleBarChartProps(props: HorizontalBarChartProps): props is HorizontalSingleBarChartProps {
+function isHorizontalSingleBarStackChartProps(props: HorizontalBarStackChartProps): props is HorizontalSingleBarStackChartProps {
   if (props.data[0] == null) return true;
   return typeof props.data[0].value === "number";
 }

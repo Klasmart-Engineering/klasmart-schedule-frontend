@@ -4,7 +4,17 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
-import { HorizontalBarChart, horizontalBarChartSize, HorizontalSingleBarDataItem } from "../../components/Chart/HorizontalBarChart";
+import {
+  HorizontalBarStackChart,
+  horizontalBarStackChartSize,
+  HorizontalSingleBarStackDataItem
+} from "../../components/Chart/HorizontalBarStackChart";
+import { VerticalBarGroupChart, verticalBarGroupChartSize, VerticalBarGroupDataItem } from "../../components/Chart/VerticalBarGroupChart";
+import {
+  VerticalBarStackChart,
+  verticalBarStackChartSize,
+  VerticalSingleBarStackDataItem
+} from "../../components/Chart/VerticalBarStackChart";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
@@ -14,7 +24,7 @@ import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProp
 import { QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
 
-const mockData1: HorizontalSingleBarDataItem[] = [
+const mockData1: HorizontalSingleBarStackDataItem[] = [
   {
     id: "id 0",
     name: "name 0",
@@ -36,7 +46,7 @@ const mockData1: HorizontalSingleBarDataItem[] = [
   },
 ];
 
-const mockData2: HorizontalSingleBarDataItem[] = [
+const mockData2: HorizontalSingleBarStackDataItem[] = [
   {
     id: "id 0",
     name: "name 0",
@@ -64,6 +74,74 @@ const mockData2: HorizontalSingleBarDataItem[] = [
   },
 ];
 
+const mockData3: VerticalSingleBarStackDataItem[] = [
+  {
+    id: "id 0",
+    name: "name 0",
+    description: "description 0",
+    value: 70,
+  },
+  {
+    id: "id 1",
+    name: "name 1",
+    title: "title 1",
+    description: "description 1",
+    value: 40,
+  },
+  {
+    id: "id 2",
+    name: "name 2",
+    description: "description 2",
+    value: 90,
+  },
+  {
+    id: "id 3",
+    name: "name 3",
+    description: "description 3",
+    value: 120,
+  },
+];
+
+const mockData4: VerticalBarGroupDataItem[] = [
+  {
+    id: "id 0",
+    name: "name 0",
+    description: "description 0",
+    value: [
+      { name: "category A", title: "200 min", description: "name 0 category A description", value: 200, color: "#8693F0" },
+      { name: "category B", title: "70 min", description: "name 0 category B description", value: 70, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 1",
+    name: "name 1",
+    title: "title 1",
+    description: "description 1",
+    value: [
+      { name: "category A", title: "100 min", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", title: "40 min", description: "name 1 category B description", value: 40, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 2",
+    name: "name 2",
+    description: "description 2",
+    value: [
+      { name: "category A", title: "150 min", description: "name 2 category A description", value: 150, color: "#8693F0" },
+      { name: "category B", title: "90 min", description: "name 2 category B description", value: 90, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 3",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+];
+
 export function ReportStudentPerformance() {
   const condition = useReportQuery();
   const history = useHistory();
@@ -71,10 +149,14 @@ export function ReportStudentPerformance() {
   const theme = useTheme();
   const upLg = useMediaQuery(theme.breakpoints.up("lg"));
   console.log("upLg = ", upLg);
-  const [w1, h1] = horizontalBarChartSize({ data: mockData1 });
-  const [w2, h2] = horizontalBarChartSize({ data: mockData1 });
-  const chartWidth = upLg ? w1 + w2 + 250 : Math.max(w1, w2);
-  const chartHeight = Math.max(h1, h2);
+  const [w1, h1] = horizontalBarStackChartSize({ data: mockData1 });
+  const [w2, h2] = horizontalBarStackChartSize({ data: mockData2 });
+  const [w3, h3] = verticalBarStackChartSize({ data: mockData3 });
+  const [w4, h4] = verticalBarGroupChartSize({ data: mockData4 });
+  const horizontalChartWidth = upLg ? w1 + w2 + 120 : Math.max(w1, w2);
+  const horizontalChartHeight = Math.max(h1, h2);
+  const verticalChartWidth = upLg ? w3 + w4 + 120 : Math.max(w3, w4);
+  const verticalChartHeight = Math.max(h3, h4);
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   // const reportList = totalData.reportList ?? [];
   const reportMockOptions = totalData.reportMockOptions;
@@ -153,11 +235,22 @@ export function ReportStudentPerformance() {
         isShowStudentList={true}
       ></FilterAchievementReport>
       <ChartLayout
-        {...{ chartWidth, chartHeight }}
+        chartWidth={horizontalChartWidth}
+        chartHeight={horizontalChartHeight}
         render={(px) => (
-          <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={chartWidth * px}>
-            <HorizontalBarChart data={mockData1} color="#8693F0" px={px} />
-            <HorizontalBarChart data={mockData2} color="#FF9492" px={px} />
+          <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
+            <HorizontalBarStackChart data={mockData1} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+            <HorizontalBarStackChart data={mockData2} color="#FF9492" px={px} valueAxiosLabel="in mins" />
+          </Box>
+        )}
+      />
+      <ChartLayout
+        chartWidth={verticalChartWidth}
+        chartHeight={verticalChartHeight}
+        render={(px) => (
+          <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={verticalChartWidth * px}>
+            <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+            <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" />
           </Box>
         )}
       />
