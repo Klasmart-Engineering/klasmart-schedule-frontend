@@ -581,10 +581,17 @@ function EditBox(props: CalendarStateProps) {
         type: "changeData",
         data: initialState,
       });
-      changeTimesTamp({
-        start: scheduleList.start_at,
-        end: scheduleList.end_at,
-      });
+      const timesTampCallback: timestampType =
+        scheduleList.class_type === "Homework"
+          ? {
+              start: scheduleList.due_at as number,
+              end: scheduleList.due_at as number,
+            }
+          : {
+              start: scheduleList.start_at as number,
+              end: scheduleList.end_at as number,
+            };
+      changeTimesTamp(timesTampCallback);
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
