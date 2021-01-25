@@ -5,6 +5,7 @@ import H5pHeader from "./H5pHeader";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
 import H5pInfo from "./H5pInfo";
 import H5pList from "./H5pList";
+import { MockData } from "./types/index";
 
 interface ExpandContentProps {
   value: string | undefined;
@@ -22,12 +23,26 @@ const libraryId2Title = (id: ExpandContentProps["value"], contentTypeList?: Cont
 };
 
 export default function ExpandContent(props: ExpandContentProps) {
-  const [assesIcon, setAssetsIcon] = React.useState(H5pFile);
   const { value: libraryId, contentTypeList, onChange, expand, onExpand, assetLibraryId, onChangeAssetLibraryId } = props;
   const libraryTitle = useMemo(() => libraryId2Title(libraryId, contentTypeList), [libraryId, contentTypeList]);
   const [newList, setNewList] = React.useState<ContentTypeList>(contentTypeList);
   const [show, setShow] = React.useState("list");
   const [h5pId, setH5pId] = React.useState<string>("");
+  const data: MockData = {
+    icon: H5pFile,
+    title: "this is image",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [],
+    license: {
+      attributes: {},
+    },
+    description: "this is an amazing file",
+    id: ContentFileType.image,
+    summary: "this is an amazing file",
+  };
+
+  const [mockData, setMockData] = React.useState(data);
 
   React.useEffect(() => {
     setNewList(contentTypeList);
@@ -67,11 +82,11 @@ export default function ExpandContent(props: ExpandContentProps) {
           onExpand={onExpand}
           expand={expand}
           setShow={setShow}
-          setAssetsIcon={setAssetsIcon}
+          setMockData={setMockData}
         />
       </>
     ) : (
-      <H5pInfo assesIcon={assesIcon} setShow={setShow} contentTypeList={contentTypeList} h5pId={h5pId} />
+      <H5pInfo mockData={mockData} setShow={setShow} contentTypeList={contentTypeList} h5pId={h5pId} />
     );
 
   return (

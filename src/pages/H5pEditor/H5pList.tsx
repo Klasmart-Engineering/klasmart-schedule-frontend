@@ -20,6 +20,7 @@ import H5pFile from "../../assets/icons/h5p_file.svg";
 import H5pPicture from "../../assets/icons/h5p_picture.svg";
 import H5pVideo from "../../assets/icons/h5p_video.svg";
 import { reportMiss } from "../../locale/LocaleManager";
+import { MockData } from "./types/index";
 
 const useStyles = makeStyles(() => ({
   listItem: {
@@ -62,7 +63,7 @@ interface H5pListProps {
   onExpand: (value: boolean) => any;
   setShow: (value: string) => any;
   setH5pId: (value: string) => void;
-  setAssetsIcon: (value: string) => void;
+  setMockData: (value: MockData) => void;
 }
 
 export default function H5pList(props: H5pListProps) {
@@ -76,7 +77,7 @@ export default function H5pList(props: H5pListProps) {
     libraryId,
     assetLibraryId,
     onChangeAssetLibraryId,
-    setAssetsIcon,
+    setMockData,
   } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
@@ -94,8 +95,7 @@ export default function H5pList(props: H5pListProps) {
     onExpand(!expand);
   };
 
-  const handleClickAsset = (item: AssetDataItem) => {
-    setAssetsIcon(item.icon);
+  const handleClickAsset = (item: MockData) => {
     if (libraryId || assetLibraryId) {
       setTempItem(item.id);
       setOpen(true);
@@ -126,41 +126,56 @@ export default function H5pList(props: H5pListProps) {
     onExpand(!expand);
   };
 
-  interface AssetDataItem {
-    title: string;
-    id: ContentFileType;
-    icon: string;
-    summary: string;
-  }
-  const assetsData: AssetDataItem[] = [
+  const assetsData: MockData[] = [
     {
       title: "Image",
       id: ContentFileType.image,
       icon: H5pPicture,
       summary: "this is image uploader",
+      license: {},
+      description: "this is image uploader",
+      owner: "Fake Owner",
+      example: "",
+      screenshots: [],
     },
     {
       title: "Audio",
       id: ContentFileType.audio,
       icon: H5pAudio,
       summary: "this is audio uploader",
+      license: {},
+      description: "this is audio uploader",
+      owner: "Fake Owner",
+      example: "",
+      screenshots: [],
     },
     {
       title: "Video",
       id: ContentFileType.video,
       icon: H5pVideo,
       summary: "this is video uploader",
+      license: {},
+      description: "this is video uploader",
+      owner: "Fake Owner",
+      example: "",
+      screenshots: [],
     },
     {
       title: "Document",
       id: ContentFileType.doc,
       icon: H5pFile,
       summary: "this is document uploader",
+      license: {},
+      description: "this is document uploader",
+      owner: "Fake Owner",
+      example: "",
+      screenshots: [],
     },
   ];
 
-  const getMockDetails = (e: React.KeyboardEvent | React.MouseEvent) => {
+  const getMockDetails = (e: React.KeyboardEvent | React.MouseEvent, item: MockData) => {
     e.stopPropagation();
+    setMockData(item);
     setShow("info");
     setH5pId("");
   };
@@ -179,7 +194,7 @@ export default function H5pList(props: H5pListProps) {
                 <p>{item.summary}</p>
               </Box>
               <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
-                <Button variant="contained" color="primary" onClick={getMockDetails}>
+                <Button variant="contained" color="primary" onClick={(e) => getMockDetails(e, item)}>
                   {reportMiss("Detail", "h5p_detail")}
                 </Button>
               </Box>
