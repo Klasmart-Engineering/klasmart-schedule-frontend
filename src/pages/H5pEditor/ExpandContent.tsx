@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { ContentFileType, ContentTypeList } from "../../api/type";
+import H5pFile from "../../assets/icons/h5p_file.svg";
 import H5pHeader from "./H5pHeader";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
 import H5pInfo from "./H5pInfo";
@@ -21,6 +22,7 @@ const libraryId2Title = (id: ExpandContentProps["value"], contentTypeList?: Cont
 };
 
 export default function ExpandContent(props: ExpandContentProps) {
+  const [assesIcon, setAssetsIcon] = React.useState(H5pFile);
   const { value: libraryId, contentTypeList, onChange, expand, onExpand, assetLibraryId, onChangeAssetLibraryId } = props;
   const libraryTitle = useMemo(() => libraryId2Title(libraryId, contentTypeList), [libraryId, contentTypeList]);
   const [newList, setNewList] = React.useState<ContentTypeList>(contentTypeList);
@@ -65,10 +67,11 @@ export default function ExpandContent(props: ExpandContentProps) {
           onExpand={onExpand}
           expand={expand}
           setShow={setShow}
+          setAssetsIcon={setAssetsIcon}
         />
       </>
     ) : (
-      <H5pInfo setShow={setShow} contentTypeList={contentTypeList} h5pId={h5pId} />
+      <H5pInfo assesIcon={assesIcon} setShow={setShow} contentTypeList={contentTypeList} h5pId={h5pId} />
     );
 
   return (

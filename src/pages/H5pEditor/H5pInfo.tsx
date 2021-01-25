@@ -3,7 +3,6 @@ import { ArrowBack, ArrowForward, Close, ExpandMore, Search } from "@material-ui
 import clsx from "clsx";
 import React from "react";
 import { ContentTypeList } from "../../api/type";
-import H5pFile from "../../assets/icons/h5p_file.svg";
 import { reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) => ({
@@ -193,11 +192,13 @@ interface H5pInfoProps {
   contentTypeList: ContentTypeList;
   h5pId: string;
   setShow: (value: string) => any;
+  assesIcon: string;
 }
 
 export default function H5pInfo(props: H5pInfoProps) {
+  const { contentTypeList, h5pId, setShow, assesIcon } = props;
   const mockData = {
-    icon: H5pFile,
+    icon: assesIcon,
     title: "this is image",
     owner: "Fake Owner",
     example: "",
@@ -212,7 +213,6 @@ export default function H5pInfo(props: H5pInfoProps) {
     },
     description: "this is an amazing file",
   };
-  const { contentTypeList, h5pId, setShow } = props;
   const h5pInfo = h5pId ? contentTypeList.filter((item) => item.id === h5pId)[0] : mockData;
   const css = useStyles();
   const [leftPosition, setLeftPosition] = React.useState(0);

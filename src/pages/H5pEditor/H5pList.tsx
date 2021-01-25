@@ -62,10 +62,22 @@ interface H5pListProps {
   onExpand: (value: boolean) => any;
   setShow: (value: string) => any;
   setH5pId: (value: string) => void;
+  setAssetsIcon: (value: string) => void;
 }
 
 export default function H5pList(props: H5pListProps) {
-  const { contentTypeList, onChange, expand, onExpand, setShow, setH5pId, libraryId, assetLibraryId, onChangeAssetLibraryId } = props;
+  const {
+    contentTypeList,
+    onChange,
+    expand,
+    onExpand,
+    setShow,
+    setH5pId,
+    libraryId,
+    assetLibraryId,
+    onChangeAssetLibraryId,
+    setAssetsIcon,
+  } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -83,6 +95,7 @@ export default function H5pList(props: H5pListProps) {
   };
 
   const handleClickAsset = (item: AssetDataItem) => {
+    setAssetsIcon(item.icon);
     if (libraryId || assetLibraryId) {
       setTempItem(item.id);
       setOpen(true);
