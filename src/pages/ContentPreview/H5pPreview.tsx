@@ -14,7 +14,7 @@ import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
 import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
 import AssetVideo from "../../components/UIAssetPreview/AssetPreview/AssetVideo";
 import { d } from "../../locale/LocaleManager";
-import { isDataSourceNewH5p } from "../../models/ModelH5pSchema";
+import { formLiteFileType } from "../../models/ModelH5pSchema";
 import ContentH5p from "../ContentEdit/ContentH5p";
 import { H5pPlayer } from "../ContentEdit/H5pPlayer";
 import { fileFormat } from "../ContentEdit/MediaAssetsEdit";
@@ -283,7 +283,9 @@ export function H5pPreview(props: H5pPreview) {
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
 
-  const isNewH5p = h5pItem ? isDataSourceNewH5p(h5pItem.data, h5pItem.id) : false;
+  // const isNewH5p = h5pItem ? isDataSourceNewH5p(h5pItem.data, h5pItem.id) : false;
+
+  const isNewH5p = h5pItem ? formLiteFileType(h5pItem.id, parsedData.file_type, parsedData.input_source)?.isNewH5p : false;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
     if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {

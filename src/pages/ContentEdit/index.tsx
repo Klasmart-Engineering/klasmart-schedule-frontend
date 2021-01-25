@@ -12,7 +12,7 @@ import { PermissionOr, PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
-import { isDataSourceOldH5p } from "../../models/ModelH5pSchema";
+import { formLiteFileType } from "../../models/ModelH5pSchema";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
@@ -111,7 +111,7 @@ function ContentEditForm() {
   );
   // 兼容现在的国际版专用变量
   const isEnableNewH5p = apiIsEnableNewH5p();
-  const isOldH5p = isDataSourceOldH5p(contentDetail);
+  const isOldH5p = formLiteFileType(id, allDefaultValueAndKey["data.file_type"]?.value, inputSource)?.isOldH5p;
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -397,12 +397,15 @@ function ContentEditForm() {
           render={(value) =>
             isEnableNewH5p ? (
               isOldH5p ? (
-                <ContentH5p
-                  sub={id ? H5pSub.edit : H5pSub.new}
-                  allDefaultValueAndKey={allDefaultValueAndKey}
-                  formMethods={formMethods}
-                  valueSource={allDefaultValueAndKey["data.source"]?.value}
-                />
+                <Fragment>
+                  <Controller name="data.input_source" defaultValue={ContentInputSourceType.h5p} as="input" control={control} hidden />
+                  <ContentH5p
+                    sub={id ? H5pSub.edit : H5pSub.new}
+                    allDefaultValueAndKey={allDefaultValueAndKey}
+                    formMethods={formMethods}
+                    valueSource={allDefaultValueAndKey["data.source"]?.value}
+                  />
+                </Fragment>
               ) : (
                 <H5pComposeEditor
                   key={`H5pComposeEditor:${contentDetail.data}`}

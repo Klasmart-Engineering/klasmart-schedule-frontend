@@ -41,7 +41,14 @@ const useSchema = (library?: string) => {
 const useContentTypeList = () => {
   const [contentTypeList, setContentTypeList] = useState<ContentTypeList>();
   useEffect(() => {
-    apiGetContentTypeList().then(setContentTypeList);
+    let recycle = false;
+    apiGetContentTypeList().then((v) => {
+      if (recycle) return;
+      setContentTypeList(v);
+    });
+    return () => {
+      recycle = true;
+    };
   }, []);
   return contentTypeList;
 };

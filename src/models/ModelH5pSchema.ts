@@ -2,9 +2,7 @@
 
 import jsSHA from "jssha";
 import cloneDeep from "lodash/cloneDeep";
-import { EntityContentInfoWithDetails } from "../api/api.auto";
-import { apiIsEnableNewH5p } from "../api/extra";
-import { ContentFileType, ContentType } from "../api/type";
+import { ContentFileType, ContentInputSourceType } from "../api/type";
 
 export const H5P_ROOT_NAME = "ROOT";
 
@@ -644,29 +642,122 @@ export const extractH5pStatement = (statement: H5PStatement) => {
   };
 };
 
-export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], id?: string | null): boolean => {
-  if (!apiIsEnableNewH5p()) return false;
-  if (!id) return true;
-  if (!data) return false;
-  try {
-    const fileType = JSON.parse(data)?.file_type;
-    if (!fileType) return false;
-    return fileType === ContentFileType.h5pExtend;
-  } catch (e) {
-    return false;
-  }
-};
+// export const isDataSourceNewH5p = (data: EntityContentInfoWithDetails["data"], id?: string | null): boolean => {
+//   if (!apiIsEnableNewH5p()) return false;
+//   if (!id) return true;
+//   if (!data) return false;
+//   try {
+//     const fileType = JSON.parse(data)?.file_type;
+//     if (!fileType) return false;
+//     return fileType === ContentFileType.h5pExtend;
+//   } catch (e) {
+//     return false;
+//   }
+// };
 
-export const isDataSourceOldH5p = (contentDetial: EntityContentInfoWithDetails) => {
-  if (contentDetial.content_type !== ContentType.material) return false;
-  if (!contentDetial.data) return false;
-  try {
-    const fileType = JSON.parse(contentDetial.data)?.file_type;
-    if (!fileType) return false;
-    return fileType === ContentFileType.h5p;
-  } catch (err) {
-    return false;
+// export const isDataSourceOldH5p = (contentDetial: EntityContentInfoWithDetails) => {
+//   if (contentDetial.content_type !== ContentType.material) return false;
+//   if (!contentDetial.data) return false;
+//   try {
+//     const fileType = JSON.parse(contentDetial.data)?.file_type;
+//     if (!fileType) return false;
+//     return fileType === ContentFileType.h5p;
+//   } catch (err) {
+//     return false;
+//   }
+// };
+
+interface LiteFileType {
+  isNewH5p: boolean;
+  isOldH5p: boolean;
+  isAsset: boolean;
+}
+export const formLiteFileType = (
+  id?: string | null,
+  contentDetailDataFileType?: ContentFileType,
+  formDataInputSource?: ContentInputSourceType
+): LiteFileType | undefined => {
+  let isNewH5p = false;
+  let isOldH5p = false;
+  let isAsset = false;
+  console.log("id, contentDetailDataFileType, formDataInputSource", id, contentDetailDataFileType, formDataInputSource);
+
+  if (process.env.REACT_APP_ENABLE_NEW_H5P === "1") {
+    if (id) {
+      if (contentDetailDataFileType === ContentFileType.h5p) {
+        if (formDataInputSource === ContentInputSourceType.h5p) {
+          isOldH5p = true;
+        } else {
+          return;
+        }
+      } else if (contentDetailDataFileType === ContentFileType.h5pExtend) {
+        if (formDataInputSource === ContentInputSourceType.h5p) {
+          isNewH5p = true;
+        } else if (formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) {
+          isAsset = true;
+        } else {
+          return;
+        }
+      } else if (
+        contentDetailDataFileType === ContentFileType.image ||
+        contentDetailDataFileType === ContentFileType.audio ||
+        contentDetailDataFileType === ContentFileType.video ||
+        contentDetailDataFileType === ContentFileType.doc
+      ) {
+        if (formDataInputSource === ContentInputSourceType.h5p) {
+          isNewH5p = true;
+        } else if (formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) {
+          isAsset = true;
+        } else {
+          return;
+        }
+      } else {
+        return;
+      }
+    } else {
+      if (formDataInputSource === ContentInputSourceType.h5p) {
+        isNewH5p = true;
+      } else if (formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) {
+        isAsset = true;
+      } else {
+        return;
+      }
+    }
+  } else if (process.env.REACT_APP_ENABLE_NEW_H5P === "0") {
+    if (id) {
+      if (contentDetailDataFileType === ContentFileType.h5p) {
+        if (formDataInputSource === ContentInputSourceType.h5p) {
+          isOldH5p = true;
+        } else {
+          return;
+        }
+      } else if (
+        contentDetailDataFileType === ContentFileType.image ||
+        contentDetailDataFileType === ContentFileType.audio ||
+        contentDetailDataFileType === ContentFileType.video ||
+        contentDetailDataFileType === ContentFileType.doc
+      ) {
+        if (formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) {
+          isAsset = true;
+        } else {
+          return;
+        }
+      } else {
+        return;
+      }
+    } else {
+      if (formDataInputSource === ContentInputSourceType.h5p) {
+        isOldH5p = true;
+      } else if (formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) {
+        isAsset = true;
+      } else {
+        return;
+      }
+    }
+  } else {
+    throw new Error("My Error: unkonw REACT_APP_ENABLE_NEW_H5P value");
   }
+  return { isNewH5p, isOldH5p, isAsset };
 };
 
 export function isH5pTextItemInfo(itemInfo: H5PItemInfo): itemInfo is H5PItemInfo<H5PTextSemantic> {
