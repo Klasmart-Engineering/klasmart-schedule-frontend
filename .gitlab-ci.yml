@@ -6,13 +6,13 @@ include:
 variables:
   deployDir: "build/"
   devGlobalBuildCommand: "npm run build"
-  devCnBuildCommand: "npx env-cmd -f .env.cn.sol.alpha npm run build"
+  devCnBuildCommand: "npx env-cmd -f .env.cn.alpha npm run build"
   testGlobalBuildCommand: "npx env-cmd -f .env.ko.test npm run build"
   testCnBuildCommand: "npx env-cmd -f .env.cn.test npm run build"
   releaseGlobalBuildCommand: "npx env-cmd -f .env.ko.production npm run build"
   releaseCnBuildCommand: "npx env-cmd -f .env.cn.production npm run build"
   devGlobalDeployBucketName: 'dev-cms'
-  devCnDeployBucketName: 'cdk-kl2-test-kl2-sol-s3frontend'
+  devCnDeployBucketName: 'cdk-kl2-dev-devcms-s3frontend'
   testGlobalDeployBucketName: 'krklcutest.frontend'
   testCnDeployBucketName: 'cdk-kl2-test-kl2-s3frontend'
   releaseGlobalDeployBucketName: 'cdk-kl2-release-global-s3frontend'
