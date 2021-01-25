@@ -6,7 +6,7 @@ import React, { useCallback, useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { ContentInputSourceType } from "../../api/type";
+import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
@@ -109,12 +109,13 @@ interface AssetEditProps {
   contentDetail: EntityContentInfoWithDetails;
   onclosePreview?: () => any;
   permission?: boolean;
+  assetLibraryId?: ContentFileType;
 }
 
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, formMethods, contentDetail, onclosePreview, permission, allDefaultValueAndKey } = props;
+  const { isAsset, formMethods, contentDetail, onclosePreview, permission, allDefaultValueAndKey, assetLibraryId } = props;
   const { setValue } = formMethods;
   const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
   const setFile = useMemo(
@@ -126,11 +127,11 @@ function AssetEdit(props: AssetEditProps) {
     [setValue]
   );
   const [{ canDrop: canDropfile }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: "LIBRARY_ITEM",
+    accept: `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}`,
     collect: mapDropContainerProps,
   });
   const [, fileRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: "LIBRARY_ITEM",
+    accept: `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}`,
     drop: setFile,
   });
   const handleChangeFileType = useCallback(() => {
@@ -153,6 +154,20 @@ function AssetEdit(props: AssetEditProps) {
       )}
     </Box>
   );
+  const accept = (): string => {
+    if (assetLibraryId === ContentFileType.image) {
+      return fileFormat.image.join();
+    }
+    if (assetLibraryId === ContentFileType.audio) {
+      return fileFormat.audio.join();
+    }
+    if (assetLibraryId === ContentFileType.doc) {
+      return fileFormat.document.join();
+    }
+    if (assetLibraryId === ContentFileType.video) {
+      return fileFormat.video.join();
+    } else return `image/*,audio/*,video/*,${fileFormat.document.join()}`;
+  };
   return (
     <Box className={uploadCss.uploadBox} boxShadow={3}>
       {previewHeader}
@@ -169,7 +184,7 @@ function AssetEdit(props: AssetEditProps) {
                 ref={ref}
                 partition="assets"
                 onChangeFile={handleChangeFileType}
-                accept={"image/*,audio/*,video/*"}
+                accept={accept()}
                 {...props}
                 render={({ item, btnRef, value, isUploading }) => (
                   <>

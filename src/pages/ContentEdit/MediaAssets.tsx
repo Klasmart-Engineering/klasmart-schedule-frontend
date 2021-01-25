@@ -165,20 +165,24 @@ export default function MediaAssets(props: MediaAssetsProps) {
     [onChangePage]
   );
 
-  const rows = list?.map((item, idx) => (
-    <TableRow key={idx}>
-      <TableCell className={css.cellThumnbnail}>
-        <DraggableImage type="LIBRARY_ITEM" item={item} lesson={lesson} />
-      </TableCell>
-      <TableCell>{item.name}</TableCell>
-      <TableCell>{item.author_name}</TableCell>
-      {/* <TableCell className={css.cellAction}>
+  const rows = list?.map((item, idx) => {
+    const fileType = item.data && JSON.parse(item.data)?.file_type;
+
+    return (
+      <TableRow key={idx}>
+        <TableCell className={css.cellThumnbnail}>
+          <DraggableImage type={`LIBRARY_ITEM_FILE_TYPE_${fileType}`} item={item} lesson={lesson} />
+        </TableCell>
+        <TableCell>{item.name}</TableCell>
+        <TableCell>{item.author_name}</TableCell>
+        {/* <TableCell className={css.cellAction}>
         <Button color="primary" variant="contained">
           Select
         </Button>
       </TableCell> */}
-    </TableRow>
-  ));
+      </TableRow>
+    );
+  });
   const table = (
     <>
       <TableContainer className={css.tableContainer}>

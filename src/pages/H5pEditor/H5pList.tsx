@@ -10,13 +10,13 @@ import {
   ListItem,
   makeStyles,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
 import { Check } from "@material-ui/icons";
 import React from "react";
 import { ContentFileType, ContentTypeList } from "../../api/type";
 import H5pAudio from "../../assets/icons/h5p_audio.svg";
-// import H5pFile from "../../assets/icons/h5p_file.svg";
+import H5pFile from "../../assets/icons/h5p_file.svg";
 import H5pPicture from "../../assets/icons/h5p_picture.svg";
 import H5pVideo from "../../assets/icons/h5p_video.svg";
 import { reportMiss } from "../../locale/LocaleManager";
@@ -159,19 +159,18 @@ export default function H5pList(props: H5pListProps) {
       owner: "Fake Owner",
       example: "",
       screenshots: [],
-    }
-    // {
-    //   title: "Document",
-    //   id: ContentFileType.doc,
-    //   icon: H5pFile,
-    //   summary: "this is document uploader",
-    //   license: {},
-    //   description: "this is document uploader",
-    //   owner: "Fake Owner",
-    //   example: "",
-    //   screenshots: [],
-    // },
-   
+    },
+    {
+      title: "Document",
+      id: ContentFileType.doc,
+      icon: H5pFile,
+      summary: "this is document uploader",
+      license: {},
+      description: "this is document uploader",
+      owner: "Fake Owner",
+      example: "",
+      screenshots: [],
+    },
   ];
 
   const getMockDetails = (e: React.KeyboardEvent | React.MouseEvent, item: MockData) => {
