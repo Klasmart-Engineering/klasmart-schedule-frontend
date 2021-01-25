@@ -447,18 +447,18 @@ const rules = {
     return new RegExp(pattern, modifiers).test(value) || "Field value contains an invalid format or characters that are forbidden.";
   },
   min(min: number, value?: number) {
-    return value != null && value > min ? true : `The ${value} is below the minimum of ${min}`;
+    return value == null || value > min ? true : `The ${value} is below the minimum of ${min}`;
   },
   max(max: number, value?: number) {
-    return value != null && value <= max ? true : `The field value exceeds the maximum of ${max}`;
+    return value == null || value <= max ? true : `The field value exceeds the maximum of ${max}`;
   },
   decimals(decimals: number, value?: number) {
-    return value != null && (value.toString().split(".")[1]?.length ?? 0) <= decimals
+    return value == null || (value.toString().split(".")[1]?.length ?? 0) <= decimals
       ? true
       : `Only can contain numbers with max ${decimals} decimals.`;
   },
   step(step: number, value?: number) {
-    return value != null && value % step === 0 ? true : `The field value can only be changed in steps of ${step}`;
+    return value == null || value % step === 0 ? true : `The field value can only be changed in steps of ${step}`;
   },
 };
 
@@ -680,8 +680,6 @@ export const formLiteFileType = (
   let isNewH5p = false;
   let isOldH5p = false;
   let isAsset = false;
-  console.log("id, contentDetailDataFileType, formDataInputSource", id, contentDetailDataFileType, formDataInputSource);
-
   if (process.env.REACT_APP_ENABLE_NEW_H5P === "1") {
     if (id) {
       if (contentDetailDataFileType === ContentFileType.h5p) {
