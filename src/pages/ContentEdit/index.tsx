@@ -112,9 +112,6 @@ function ContentEditForm() {
   // 兼容现在的国际版专用变量
   const isEnableNewH5p = apiIsEnableNewH5p();
   const isOldH5p = isDataSourceOldH5p(contentDetail);
-  const dataInputSourceDefaultValue = id
-    ? allDefaultValueAndKey["data.input_source"]?.value
-    : allDefaultValueAndKey["data.input_source"]?.value || ContentInputSourceType.h5p;
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -408,9 +405,9 @@ function ContentEditForm() {
                 />
               ) : (
                 <H5pComposeEditor
+                  key={`H5pComposeEditor:${contentDetail.data}`}
                   formMethods={formMethods}
-                  valueSource={allDefaultValueAndKey["data.source"]?.value}
-                  dataFileType={allDefaultValueAndKey["data.file_type"]?.value}
+                  allDefaultValueAndKey={allDefaultValueAndKey}
                   assetEditor={
                     <MediaAssetsEdit
                       allDefaultValueAndKey={allDefaultValueAndKey}
@@ -429,7 +426,7 @@ function ContentEditForm() {
                 <Controller
                   name="data.input_source"
                   as={SelectH5PRadio}
-                  defaultValue={dataInputSourceDefaultValue}
+                  defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
                   key={allDefaultValueAndKey["data.input_source"]?.key}
                   control={control}
                   formMethods={formMethods}

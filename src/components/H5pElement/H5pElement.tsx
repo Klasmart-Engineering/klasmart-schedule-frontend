@@ -57,6 +57,7 @@ import { CropImage } from "../CropImage";
 import { getImageDimension, SingleUploader, SingleUploaderProps } from "../SingleUploader";
 import { Thumbnail } from "../Thumbnail";
 
+const MULTILINE_TEXT_FIELD_MIN_HEIGHT = 19;
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
   error?: string | boolean;
@@ -154,7 +155,7 @@ export function H5pElementText(props: H5pElementTextProps) {
       </Box>
       <TextField
         {...inputProps}
-        inputProps={{ maxLength: semantics.maxLength }}
+        inputProps={{ maxLength: semantics.maxLength, style: { minHeight: MULTILINE_TEXT_FIELD_MIN_HEIGHT } }}
         error={!!error}
         helperText={error}
         multiline

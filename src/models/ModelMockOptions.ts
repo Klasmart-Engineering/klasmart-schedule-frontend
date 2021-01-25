@@ -37,6 +37,10 @@ export interface CreateAllDefaultValueAndKeyResult extends PartialDefaultValueAn
     key: string;
     value: ContentFileType;
   };
+  "data.content"?: {
+    key: string;
+    value: string;
+  };
 }
 
 interface GetReportFirstValueResult {
@@ -156,9 +160,10 @@ export class ModelMockOptions {
     });
     const { input_source, file_type } = JSON.parse(contentDetail.data || "{}");
     const source = JSON.parse(contentDetail.data || "{}").source ?? "";
+    const content = JSON.parse(contentDetail.data || "{}").content ?? "";
     result["data.input_source"] = {
       key: ModelMockOptions.createSelectKey([], input_source, "data.input_source"),
-      value: input_source,
+      value: input_source ?? "",
     };
     result["data.source"] = {
       key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.source"),
@@ -166,7 +171,11 @@ export class ModelMockOptions {
     };
     result["data.file_type"] = {
       key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.file_type"),
-      value: file_type,
+      value: file_type ?? "",
+    };
+    result["data.content"] = {
+      key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.content"),
+      value: content,
     };
     return result;
   }
