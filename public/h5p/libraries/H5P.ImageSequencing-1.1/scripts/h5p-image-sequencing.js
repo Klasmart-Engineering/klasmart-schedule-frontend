@@ -295,46 +295,56 @@ H5P.ImageSequencing = (function (EventDispatcher, $, UI) {
      * Activate the sortable functionality on the cards list.
      */
     that.activateSortableFunctionality = function () {
-      console.log("点击了")
-      that.$list.sortable({
-        placeholder: 'sequencing-dropzone',
-        tolerance: 'pointer',
-        helper: 'clone',
-        containment: that.$wrapper,
+      //设置配置
+      var ops = {
+          animation: 1000,
+          //拖动结束
+          onEnd: function (evt) {
+            that.counter.increment();
+            that.timer.play();
+          },};
+      //初始化
+      var sortable1 = Sortable.create($("ul")[0], ops);
 
-        start: function (event, ui) {
-          console.log("start")
-          $(ui.helper).addClass('ui-sortable-helper');
-          that.timer.play();
-          that.triggerXAPI('interacted');
-        },
+    //   that.$list.sortable({
+    //     placeholder: 'sequencing-dropzone',
+    //     tolerance: 'pointer',
+    //     helper: 'clone',
+    //     containment: that.$wrapper,
 
-        stop: function (event, ui) {
-          console.log("stop")
-          $(ui.helper).removeClass('ui-sortable-helper');
-        },
+    //     start: function (event, ui) {
+    //       // console.log("start")
+    //       // $(ui.helper).addClass('ui-sortable-helper');
+    //       // that.timer.play();
+    //       // that.triggerXAPI('interacted');
+    //     },
 
-        update: function () {
-          console.log("update")
-          const order = that.$list.sortable('toArray');
-          that.sequencingCards = that.sequencingCards.map(function (card, index) {
-            return (that.sequencingCards.filter(function (cardItem) {
-              return cardItem.uniqueId === parseInt(order[index].split('_')[1]);
-            }))[0];
-          });
-        },
-      });
+    //     stop: function (event, ui) {
+    //       // console.log("stop")
+    //       // $(ui.helper).removeClass('ui-sortable-helper');
+    //     },
 
-      // for preventing clicks on each sortable element
-      that.$list.disableSelection();
+    //     update: function () {
+    //       // console.log("update")
+    //       // const order = that.$list.sortable('toArray');
+    //       // that.sequencingCards = that.sequencingCards.map(function (card, index) {
+    //       //   return (that.sequencingCards.filter(function (cardItem) {
+    //       //     return cardItem.uniqueId === parseInt(order[index].split('_')[1]);
+    //       //   }))[0];
+    //       // });
+    //     },
+    //   });
 
-      // capturing the drop event on sortable
-      that.$list.find('li').droppable({
-        drop: function () {
-          that.counter.increment();
-          that.isAttempted = true;
-        }
-      });
+    //   // for preventing clicks on each sortable element
+      // that.$list.disableSelection();
+
+    //   // capturing the drop event on sortable
+    //   that.$list.find('li').droppable({
+    //     drop: function () {
+    //       that.counter.increment();
+    //       that.isAttempted = true;
+    //     }
+    //   });
     };
 
 
@@ -345,7 +355,7 @@ H5P.ImageSequencing = (function (EventDispatcher, $, UI) {
       that.isSubmitted = true;
       that.isGamePaused = true;
       that.timer.stop();
-      that.$list.sortable('disable');
+      // that.$list.sortable('disable');
       that.stopAudio();
 
       that.sequencingCards.forEach(function (card, index) {
