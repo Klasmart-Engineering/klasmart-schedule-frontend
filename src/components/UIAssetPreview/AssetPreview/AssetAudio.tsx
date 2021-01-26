@@ -77,11 +77,15 @@ export default function AssetAudio(props: Audio) {
     // const audio = document.getElementById("audio") as HTMLAudioElement;
     const audio = audioRef.current;
     if (!audio) return;
-    audio.load();
     const timer = setInterval(() => {
       isplay ? setValue((audio.currentTime / audio.duration) * 100) : clearInterval(timer);
     }, 500);
   });
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !props.src) return;
+    audio.load();
+  }, [props.src]);
   return (
     <Box className={classes.wrap}>
       {!loaded && <AssetLoading />}

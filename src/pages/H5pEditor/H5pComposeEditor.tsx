@@ -80,7 +80,7 @@ const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) =>
       library = v;
       defaultLibContent = { library: h5plibId2Name(library) };
       assetLibraryId = undefined;
-      setValue("data.input_source", ContentInputSourceType.h5p);
+      setValue("data.input_source", ContentInputSourceType.h5p, { shouldDirty: true });
       refresh(v);
     };
     const setAssetLib = (v: ContentFileType) => {
@@ -88,7 +88,9 @@ const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) =>
       assetLibraryId = v;
       library = undefined;
       defaultLibContent = undefined;
-      setValue("data.input_source", ContentInputSourceType.fromFile);
+      setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
+      setValue("data.source", "", { shouldDirty: true });
+
       refresh(v);
     };
     const getLibAndDefaultContent = () => ({ library, defaultLibContent, assetLibraryId });

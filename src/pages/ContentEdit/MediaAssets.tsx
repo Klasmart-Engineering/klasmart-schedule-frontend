@@ -171,7 +171,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     return (
       <TableRow key={idx}>
         <TableCell className={css.cellThumnbnail}>
-          <DraggableImage type={`LIBRARY_ITEM_FILE_TYPE_${fileType}`} item={item} lesson={lesson} />
+          <DraggableImage type={lesson === "plan" ? "LIBRARY_ITEM" : `LIBRARY_ITEM_FILE_TYPE_${fileType}`} item={item} lesson={lesson} />
         </TableCell>
         <TableCell>{item.name}</TableCell>
         <TableCell>{item.author_name}</TableCell>
