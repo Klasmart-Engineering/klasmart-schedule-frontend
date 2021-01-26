@@ -77,7 +77,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cp -r build h5pextend && mv h5pextend build/h5pextend",
     "test": "react-scripts test",
     "syncapi": "node ./scripts/syncapi.js",
     "syncLang": "node ./scripts/syncLang",
