@@ -276,14 +276,14 @@ function EditBox(props: CalendarStateProps) {
         class_type: scheduleDetial.class_type,
         description: scheduleDetial.description,
         due_at: scheduleDetial.due_at,
-        end_at: scheduleDetial.end_at || 0,
+        end_at: scheduleDetial.end_at || (scheduleDetial.due_at as number),
         is_all_day: scheduleDetial.is_all_day,
         is_force: true,
         is_repeat: true,
         lesson_plan_id: scheduleDetial.lesson_plan?.id || "",
         program_id: scheduleDetial.program?.id || "",
         repeat: {},
-        start_at: scheduleDetial.start_at || 0,
+        start_at: scheduleDetial.start_at || (scheduleDetial.due_at as number),
         subject_id: scheduleDetial.subject?.id || "",
         teacher_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title || "",
@@ -507,10 +507,9 @@ function EditBox(props: CalendarStateProps) {
     const addData: any = {};
     addData["due_at"] = 0;
     const currentTime = Math.floor(new Date().getTime() / 1000);
+    // @ts-ignore
+    const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
     if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
-      // @ts-ignore
-      const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
-
       if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
@@ -587,8 +586,8 @@ function EditBox(props: CalendarStateProps) {
       const timesTampCallback: timestampType =
         scheduleList.class_type === "Homework"
           ? {
-              start: scheduleList.due_at as number,
-              end: scheduleList.due_at as number,
+              start: dueDateTimestamp,
+              end: dueDateTimestamp,
             }
           : {
               start: scheduleList.start_at as number,
