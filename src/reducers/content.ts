@@ -30,7 +30,6 @@ import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
-import { getScheduleInfo, getScheduleLiveToken } from "./schedule";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
@@ -510,10 +509,11 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
   "content/onLoadContentPreview",
   async ({ content_id, schedule_id }) => {
     if (schedule_id) {
-      await getScheduleLiveToken({ schedule_id, live_token_type: "preview", metaLoading: true });
-      await getScheduleInfo(schedule_id);
+      await api.schedules.getScheduleLiveToken(schedule_id, { live_token_type: "preview" }).catch((err) => Promise.reject(err.label));
+      await api.schedules.getScheduleById(schedule_id);
     } else {
-      await getContentLiveToken({ content_id, metaLoading: true });
+      console.log("进来");
+      await api.contents.getContentLiveToken(content_id);
     }
     const contentDetail = await api.contents.getContentById(content_id);
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
