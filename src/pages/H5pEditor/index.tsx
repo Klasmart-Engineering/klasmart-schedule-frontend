@@ -6,7 +6,6 @@ import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/ext
 import { ContentTypeList } from "../../api/type";
 import {
   H5PItemType,
-  h5plibId2Name,
   H5PLibraryContent,
   H5PLibrarySemantic,
   h5pName2libId,
@@ -77,7 +76,7 @@ export function H5pEditor() {
             <Fragment>
               <Controller
                 name="data"
-                defaultValue={library ? { library: h5plibId2Name(library) } : undefined}
+                defaultValue={library ? { library } : undefined}
                 rules={{ validate }}
                 control={control}
                 key={library}

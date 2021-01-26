@@ -19,6 +19,7 @@ import H5pAudio from "../../assets/icons/h5p_audio.svg";
 import H5pPicture from "../../assets/icons/h5p_picture.svg";
 import H5pVideo from "../../assets/icons/h5p_video.svg";
 import { reportMiss } from "../../locale/LocaleManager";
+import { h5plibId2Name } from "../../models/ModelH5pSchema";
 import { MockData } from "./types/index";
 
 const useStyles = makeStyles(() => ({
@@ -51,6 +52,52 @@ const useStyles = makeStyles(() => ({
     // overflow: "auto"
   },
 }));
+export const assetsData: MockData[] = [
+  {
+    title: "Image",
+    id: ContentFileType.image,
+    icon: H5pPicture,
+    summary: "this is image uploader",
+    license: {},
+    description: "this is image uploader",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [],
+  },
+  {
+    title: "Audio",
+    id: ContentFileType.audio,
+    icon: H5pAudio,
+    summary: "this is audio uploader",
+    license: {},
+    description: "this is audio uploader",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [],
+  },
+  {
+    title: "Video",
+    id: ContentFileType.video,
+    icon: H5pVideo,
+    summary: "this is video uploader",
+    license: {},
+    description: "this is video uploader",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [],
+  },
+  // {
+  //   title: "Document",
+  //   id: ContentFileType.doc,
+  //   icon: H5pFile,
+  //   summary: "this is document uploader",
+  //   license: {},
+  //   description: "this is document uploader",
+  //   owner: "Fake Owner",
+  //   example: "",
+  //   screenshots: [],
+  // },
+];
 
 interface H5pListProps {
   libraryId?: string;
@@ -86,11 +133,11 @@ export default function H5pList(props: H5pListProps) {
 
   const handleClick = (item: ContentTypeList[0]) => {
     if (libraryId || assetLibraryId) {
-      setTempItem(`${item.id}-${item.version.major}.${item.version.minor}`);
+      setTempItem(h5plibId2Name(`${item.id}-${item.version.major}.${item.version.minor}`));
       setOpen(true);
       return;
     }
-    onChange(`${item.id}-${item.version.major}.${item.version.minor}`);
+    onChange(h5plibId2Name(`${item.id}-${item.version.major}.${item.version.minor}`));
     onExpand(!expand);
   };
 
@@ -124,53 +171,6 @@ export default function H5pList(props: H5pListProps) {
     }
     onExpand(!expand);
   };
-
-  const assetsData: MockData[] = [
-    {
-      title: "Image",
-      id: ContentFileType.image,
-      icon: H5pPicture,
-      summary: "this is image uploader",
-      license: {},
-      description: "this is image uploader",
-      owner: "Fake Owner",
-      example: "",
-      screenshots: [],
-    },
-    {
-      title: "Audio",
-      id: ContentFileType.audio,
-      icon: H5pAudio,
-      summary: "this is audio uploader",
-      license: {},
-      description: "this is audio uploader",
-      owner: "Fake Owner",
-      example: "",
-      screenshots: [],
-    },
-    {
-      title: "Video",
-      id: ContentFileType.video,
-      icon: H5pVideo,
-      summary: "this is video uploader",
-      license: {},
-      description: "this is video uploader",
-      owner: "Fake Owner",
-      example: "",
-      screenshots: [],
-    },
-    // {
-    //   title: "Document",
-    //   id: ContentFileType.doc,
-    //   icon: H5pFile,
-    //   summary: "this is document uploader",
-    //   license: {},
-    //   description: "this is document uploader",
-    //   owner: "Fake Owner",
-    //   example: "",
-    //   screenshots: [],
-    // },
-  ];
 
   const getMockDetails = (e: React.KeyboardEvent | React.MouseEvent, item: MockData) => {
     e.stopPropagation();

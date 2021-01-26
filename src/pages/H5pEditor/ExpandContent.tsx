@@ -4,7 +4,7 @@ import H5pFile from "../../assets/icons/h5p_file.svg";
 import H5pHeader from "./H5pHeader";
 import H5pHeaderNavbar from "./H5pHeaderNavBar";
 import H5pInfo from "./H5pInfo";
-import H5pList from "./H5pList";
+import H5pList, { assetsData } from "./H5pList";
 import { MockData } from "./types/index";
 
 interface ExpandContentProps {
@@ -17,14 +17,28 @@ interface ExpandContentProps {
   onExpand: (value: boolean) => any;
 }
 
-const libraryId2Title = (id: ExpandContentProps["value"], contentTypeList?: ContentTypeList) => {
-  const info = contentTypeList?.find((item) => item.id === id?.split("-")[0]);
-  return info?.title || id;
+const libraryId2Title = (
+  id: ExpandContentProps["value"],
+  assetLibraryId: ExpandContentProps["assetLibraryId"],
+  contentTypeList?: ContentTypeList
+) => {
+  if (assetLibraryId) {
+    const assessInfo = assetsData.find((item) => item.id === assetLibraryId);
+    return assessInfo?.title || "";
+  } else if (id) {
+    const info = contentTypeList?.find((item) => item.id === id?.split(" ")[0]);
+    return info?.title || "";
+  } else return "";
 };
 
 export default function ExpandContent(props: ExpandContentProps) {
   const { value: libraryId, contentTypeList, onChange, expand, onExpand, assetLibraryId, onChangeAssetLibraryId } = props;
-  const libraryTitle = useMemo(() => libraryId2Title(libraryId, contentTypeList), [libraryId, contentTypeList]);
+
+  const libraryTitle = useMemo(() => libraryId2Title(libraryId, assetLibraryId, contentTypeList), [
+    libraryId,
+    assetLibraryId,
+    contentTypeList,
+  ]);
   const [newList, setNewList] = React.useState<ContentTypeList>(contentTypeList);
   const [show, setShow] = React.useState("list");
   const [h5pId, setH5pId] = React.useState<string>("");

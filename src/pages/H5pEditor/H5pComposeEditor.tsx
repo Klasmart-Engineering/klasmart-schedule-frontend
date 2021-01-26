@@ -5,7 +5,6 @@ import { ContentFileType, ContentInputSourceType, ContentTypeList } from "../../
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import {
   H5PItemType,
-  h5plibId2Name,
   H5PLibrarySemantic,
   h5pName2libId,
   H5PSchema,
@@ -78,7 +77,7 @@ const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) =>
     const setLib = (v: string) => {
       isAssetLibrary = false;
       library = v;
-      defaultLibContent = { library: h5plibId2Name(library) };
+      defaultLibContent = { library };
       assetLibraryId = undefined;
       setValue("data.input_source", ContentInputSourceType.h5p, { shouldDirty: true });
       refresh(v);
