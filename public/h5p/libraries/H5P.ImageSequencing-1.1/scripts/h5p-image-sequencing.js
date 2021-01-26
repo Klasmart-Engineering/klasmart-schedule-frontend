@@ -295,6 +295,7 @@ H5P.ImageSequencing = (function (EventDispatcher, $, UI) {
      * Activate the sortable functionality on the cards list.
      */
     that.activateSortableFunctionality = function () {
+      console.log("点击了")
       that.$list.sortable({
         placeholder: 'sequencing-dropzone',
         tolerance: 'pointer',
@@ -302,16 +303,19 @@ H5P.ImageSequencing = (function (EventDispatcher, $, UI) {
         containment: that.$wrapper,
 
         start: function (event, ui) {
+          console.log("start")
           $(ui.helper).addClass('ui-sortable-helper');
           that.timer.play();
           that.triggerXAPI('interacted');
         },
 
         stop: function (event, ui) {
+          console.log("stop")
           $(ui.helper).removeClass('ui-sortable-helper');
         },
 
         update: function () {
+          console.log("update")
           const order = that.$list.sortable('toArray');
           that.sequencingCards = that.sequencingCards.map(function (card, index) {
             return (that.sequencingCards.filter(function (cardItem) {
