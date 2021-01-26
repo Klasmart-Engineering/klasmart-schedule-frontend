@@ -54,10 +54,11 @@ interface CropImageRenderProps {
 }
 
 interface CropImageProps {
+  aspectRatio?: number;
   render: (props: CropImageRenderProps) => ReactNode;
 }
 export function CropImage(props: CropImageProps) {
-  const { render } = props;
+  const { render, aspectRatio } = props;
   const css = useStyles();
   const [cropper, setCropper] = useState<Cropper>();
   const [[file, src, resolve, reject], setCropState] = useState<[FileLike?, string?, CropResolve?, Function?]>([]);
@@ -89,7 +90,7 @@ export function CropImage(props: CropImageProps) {
         <DialogContent classes={{ root: css.dialogContent }}>
           <Cropper
             className={css.cropper}
-            aspectRatio={16 / 9}
+            aspectRatio={aspectRatio}
             src={src}
             viewMode={2}
             dragMode="none"

@@ -308,6 +308,7 @@ export default function Details(props: DetailsProps) {
           control={control}
           render={(props) => (
             <CropImage
+              aspectRatio={16 / 9}
               render={({ crop }) => (
                 <SingleUploader
                   partition="thumbnail"

@@ -114,7 +114,8 @@ const useStyles = makeStyles(({ palette }) =>
     },
     mediaPreview: {
       width: 260,
-      height: 132,
+      height: 260,
+      objectFit: "contain",
     },
     uploadButton: {
       height: 56,
