@@ -429,14 +429,14 @@ function EditBox(props: CalendarStateProps) {
         class_type: scheduleDetial.class_type,
         description: scheduleDetial.description,
         due_at: scheduleDetial.due_at,
-        end_at: scheduleDetial.end_at || 0,
+        end_at: scheduleDetial.end_at || (scheduleDetial.due_at as number),
         is_all_day: scheduleDetial.is_all_day,
         is_force: true,
         is_repeat: true,
         lesson_plan_id: scheduleDetial.lesson_plan?.id || "",
         program_id: scheduleDetial.program?.id || "",
         repeat: {},
-        start_at: scheduleDetial.start_at || 0,
+        start_at: scheduleDetial.start_at || (scheduleDetial.due_at as number),
         subject_id: scheduleDetial.subject?.id || "",
         participants_student_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title || "",
@@ -453,6 +453,9 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
+      if ((scheduleDetial.due_at as number) > 0) {
+        setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
+      }
       // getParticipantOptions("");
       const currentTime = Math.floor(new Date().getTime());
       if (
@@ -661,10 +664,9 @@ function EditBox(props: CalendarStateProps) {
     const addData: any = {};
     addData["due_at"] = 0;
     const currentTime = Math.floor(new Date().getTime() / 1000);
+    // @ts-ignore
+    const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
     if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
-      // @ts-ignore
-      const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
-
       if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
@@ -774,10 +776,17 @@ function EditBox(props: CalendarStateProps) {
         type: "changeData",
         data: initialState,
       });
-      changeTimesTamp({
-        start: scheduleList.start_at,
-        end: scheduleList.end_at,
-      });
+      const timesTampCallback: timestampType =
+        scheduleList.class_type === "Homework"
+          ? {
+              start: dueDateTimestamp,
+              end: dueDateTimestamp,
+            }
+          : {
+              start: scheduleList.start_at as number,
+              end: scheduleList.end_at as number,
+            };
+      changeTimesTamp(timesTampCallback);
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
@@ -824,7 +833,14 @@ function EditBox(props: CalendarStateProps) {
 
   const saveTheTest = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
+    if (
+      scheduleId &&
+      scheduleDetial &&
+      scheduleList.start_at &&
+      scheduleList.start_at - currentTime < 15 * 60 &&
+      scheduleList.class_type !== "Task" &&
+      scheduleList.class_type !== "Homework"
+    ) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
