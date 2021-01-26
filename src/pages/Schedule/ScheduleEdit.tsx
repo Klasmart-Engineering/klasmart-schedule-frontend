@@ -300,7 +300,9 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
-      setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
+      if ((scheduleDetial.due_at as number) > 0) {
+        setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
+      }
       // getParticipantOptions("");
       const currentTime = Math.floor(new Date().getTime());
       if (
