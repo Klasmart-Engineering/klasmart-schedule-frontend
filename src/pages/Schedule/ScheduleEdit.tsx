@@ -300,6 +300,7 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
+      setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
       // getParticipantOptions("");
       const currentTime = Math.floor(new Date().getTime());
       if (
@@ -638,7 +639,14 @@ function EditBox(props: CalendarStateProps) {
 
   const saveTheTest = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
+    if (
+      scheduleId &&
+      scheduleDetial &&
+      scheduleList.start_at &&
+      scheduleList.start_at - currentTime < 15 * 60 &&
+      scheduleList.class_type !== "Task" &&
+      scheduleList.class_type !== "Homework"
+    ) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
