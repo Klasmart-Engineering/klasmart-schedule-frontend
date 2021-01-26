@@ -90,7 +90,7 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName, specificStatus, setSpecificStatus } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, specificStatus, setSpecificStatus, attachmentId } = props;
   const css = useStyles();
   const { schedule_id } = useQuery();
   const handleOnChange = (value: string | undefined): void => {
@@ -124,7 +124,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     return attachmentName;
   };
 
-  const [downloadUrl, setDownloadUrl] = React.useState<string | undefined>("");
+  const [downloadUrl, setDownloadUrl] = React.useState<string | undefined>(attachmentId);
   const [openStatus, setOpenStatus] = React.useState(false);
 
   const modalDate: any = {
