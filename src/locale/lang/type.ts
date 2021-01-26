@@ -132,6 +132,7 @@ type LangRecord<T = string> =
       description: "This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.";
       values: undefined;
     }
+  | { id: "library_error_content_data_invalid"; description: "Content is empty, please upload a file."; values: undefined }
   | {
       id: "library_error_delete_lesson_plan_in_schedule";
       description: "Unable to delete lesson plan which is scheduled";
@@ -476,10 +477,10 @@ type LangRecord<T = string> =
   | { id: "schedule_time_conflict_student"; description: "Student"; values: undefined }
   | { id: "schedule_participants_button_add"; description: "Add"; values: undefined }
   | { id: "schedule_time_conflict_checking"; description: "Participants"; values: undefined }
-  | { id: "schedule_msg_no_ok"; description: "Please confirm this fileld by clicking OK"; values: undefined }
+  | { id: "schedule_msg_roster_no_ok"; description: "Please confirm the field of ‘Class Roster’ by clicking OK"; values: undefined }
   | {
       id: "schedule_msg_no_user";
-      description: "For “Add Class”(Class Roster) and “Add Participants”, at least a student and a teacher will need to be added into either of the field.";
+      description: "For ‘Add Class’ (Class Roster) and ‘Add Participants’, at least a student and a teacher will need to be added into either of the field.";
       values: undefined;
     }
   | {
@@ -490,6 +491,16 @@ type LangRecord<T = string> =
   | {
       id: "schedule_msg_participants_update";
       description: "The participants' list has just been updated, please refresh and try again";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_roster_participants_edit";
+      description: "Please kindly be notified that the users included in this event had been updated.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_participants_no_ok";
+      description: "Please confirm the fileld of ‘Add Participants’ by clicking OK";
       values: undefined;
     }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
