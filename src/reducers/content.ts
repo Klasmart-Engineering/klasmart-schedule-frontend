@@ -504,16 +504,21 @@ interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
 interface IQyeryOnLoadCotnentPreviewResult {
   contentDetail: AsyncReturnType<typeof api.contents.getContentById>;
   user_id?: string;
+  token: string;
 }
 export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewResult, IQueryOnLoadContentPreviewParams>(
   "content/onLoadContentPreview",
   async ({ content_id, schedule_id }) => {
+    let token: string;
     if (schedule_id) {
-      await api.schedules.getScheduleLiveToken(schedule_id, { live_token_type: "preview" }).catch((err) => Promise.reject(err.label));
+      const data = await api.schedules
+        .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
+        .catch((err) => Promise.reject(err.label));
       await api.schedules.getScheduleById(schedule_id);
+      token = data.token as string;
     } else {
-      console.log("进来");
-      await api.contents.getContentLiveToken(content_id);
+      const data = await api.contents.getContentLiveToken(content_id);
+      token = data.token as string;
     }
     const contentDetail = await api.contents.getContentById(content_id);
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
@@ -525,7 +530,7 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       fetchPolicy: "cache-first",
     });
     const user_id = data?.me?.user_id;
-    return { contentDetail, user_id };
+    return { contentDetail, user_id, token };
   }
 );
 
@@ -976,11 +981,13 @@ const { actions, reducer } = createSlice({
       // alert("success");
       state.contentPreview = initialState.contentPreview;
       state.user_id = initialState.user_id;
+      state.token = initialState.token;
     },
     [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.contentPreview = payload.contentDetail;
       state.user_id = payload.user_id;
+      state.token = payload.token;
     },
     [onLoadContentPreview.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

@@ -41,7 +41,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author, class_id } = useQuery();
   const { contentPreview, token, user_id } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const { scheduleDetial, liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
   const content_type = contentPreview.content_type;
   const history = useHistory();
@@ -93,8 +93,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
-    if (sid) window.open(apiLivePath(liveToken));
-    if (!sid) window.open(apiLivePath(token));
+    window.open(apiLivePath(token));
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
