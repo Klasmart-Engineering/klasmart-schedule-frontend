@@ -104,7 +104,9 @@ interface H5pComposeEditorProps {
 export function H5pComposeEditor(props: H5pComposeEditorProps) {
   const { formMethods, assetEditor, allDefaultValueAndKey } = props;
   const { control, errors, watch } = formMethods;
-  const valueSource = allDefaultValueAndKey["data.content"]?.value;
+  const valueSource = allDefaultValueAndKey["data.content"]?.value
+    ? allDefaultValueAndKey["data.content"]?.value
+    : allDefaultValueAndKey["data.source"]?.value;
   const dataInputSource = allDefaultValueAndKey["data.input_source"]?.value;
   const dataFileType = allDefaultValueAndKey["data.file_type"]?.value;
   // todo: delete next line

@@ -486,7 +486,7 @@ export function H5pElementImage(props: H5pElementImageProps) {
             partition="assets"
             accept="image/*"
             value={content?.path}
-            // transformFile={crop}
+            transformFile={crop}
             onChangeFile={handleChangeFile}
             render={({ uploady, item, btnRef, value, isUploading }) => (
               <Box display="flex">
