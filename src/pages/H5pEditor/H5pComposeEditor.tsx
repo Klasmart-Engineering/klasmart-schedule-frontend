@@ -55,11 +55,9 @@ const useContentTypeList = () => {
 interface UseLibraryAndDefaultContentProps {
   valueSource?: string;
   dataFileType?: ContentFileType;
-  formMethods: UseFormMethods<ContentDetailForm>;
 }
 const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) => {
-  const { valueSource, dataFileType, formMethods } = props;
-  const { setValue } = formMethods;
+  const { valueSource, dataFileType } = props;
   const [, refresh] = useState<string | ContentFileType>();
   return useMemo(() => {
     let isAssetLibrary: boolean | undefined =
@@ -79,7 +77,7 @@ const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) =>
       library = v;
       defaultLibContent = { library };
       assetLibraryId = undefined;
-      setValue("data.input_source", ContentInputSourceType.h5p, { shouldDirty: true });
+      // setValue("data.input_source", ContentInputSourceType.h5p, { shouldDirty: true });
       refresh(v);
     };
     const setAssetLib = (v: ContentFileType) => {
@@ -87,32 +85,37 @@ const useLibraryAndDefaultContent = (props: UseLibraryAndDefaultContentProps) =>
       assetLibraryId = v;
       library = undefined;
       defaultLibContent = undefined;
-      setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
-      setValue("data.source", "", { shouldDirty: true });
-
+      // setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
+      // setValue("data.source", "", { shouldDirty: true });
       refresh(v);
     };
     const getLibAndDefaultContent = () => ({ library, defaultLibContent, assetLibraryId });
     return [getLibAndDefaultContent, setLib, setAssetLib] as const;
-  }, [valueSource, dataFileType, setValue]);
+  }, [valueSource, dataFileType]);
 };
 
 interface H5pComposeEditorProps {
   formMethods: UseFormMethods<ContentDetailForm>;
   assetEditor: JSX.Element;
   allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
+  onChangeDataSource: (value: string) => any;
+  dataInputSource: ContentInputSourceType;
+  onChangeDataInputSource: (value: ContentInputSourceType) => any;
 }
 export function H5pComposeEditor(props: H5pComposeEditorProps) {
-  const { formMethods, assetEditor, allDefaultValueAndKey } = props;
-  const { control, errors, watch } = formMethods;
-  const valueSource = allDefaultValueAndKey["data.content"]?.value
-    ? allDefaultValueAndKey["data.content"]?.value
-    : allDefaultValueAndKey["data.source"]?.value;
+  const {
+    formMethods,
+    assetEditor,
+    allDefaultValueAndKey,
+    dataInputSource: formDataInputSource,
+    onChangeDataInputSource,
+    onChangeDataSource,
+  } = props;
+  const { control, errors } = formMethods;
+  const valueSource = allDefaultValueAndKey["data.content"]?.value;
   const dataInputSource = allDefaultValueAndKey["data.input_source"]?.value;
   const dataFileType = allDefaultValueAndKey["data.file_type"]?.value;
-  // todo: delete next line
-  const formDataInputSource: ContentInputSourceType = watch("data.input_source");
-  const [getLibAndDefaultContent, setLibrary, setAssetLib] = useLibraryAndDefaultContent({ valueSource, dataFileType, formMethods });
+  const [getLibAndDefaultContent, setLibrary, setAssetLib] = useLibraryAndDefaultContent({ valueSource, dataFileType });
 
   const { library, assetLibraryId, defaultLibContent } = getLibAndDefaultContent();
   const contentTypeList = useContentTypeList();
@@ -133,16 +136,8 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
         contentTypeList={contentTypeList as ContentTypeList}
         value={library}
         assetLibraryId={assetLibraryId}
-        onChange={setLibrary}
-        onChangeAssetLibraryId={setAssetLib}
-      />
-      <Controller
-        name="data.input_source"
-        defaultValue={dataInputSource ?? ""}
-        key={allDefaultValueAndKey["data.input_source"]?.key}
-        control={control}
-        as="input"
-        hidden
+        onChange={(v) => [setLibrary(v), onChangeDataInputSource(ContentInputSourceType.h5p), onChangeDataSource("")]}
+        onChangeAssetLibraryId={(v) => [setAssetLib(v), onChangeDataInputSource(ContentInputSourceType.fromFile), onChangeDataSource("")]}
       />
       {formDataInputSource === ContentInputSourceType.h5p && !schemaPending && schema && library && (
         <Controller
@@ -166,7 +161,7 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
         />
       )}
       {(formDataInputSource === ContentInputSourceType.fromFile || formDataInputSource === ContentInputSourceType.fromAssets) &&
-        cloneElement(assetEditor, { assetLibraryId })}
+        cloneElement(assetEditor, { assetLibraryId, key: assetLibraryId })}
     </Fragment>
   );
 }

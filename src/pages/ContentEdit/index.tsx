@@ -93,7 +93,7 @@ function ContentEditForm() {
     visibility_settings,
     lesson_types,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const { lesson, tab, rightside } = useParams();
+  const { lesson, tab, rightside } = useParams<RouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
   const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
@@ -396,78 +396,127 @@ function ContentEditForm() {
           ]}
           render={(value) =>
             isEnableNewH5p ? (
-              isOldH5p ? (
-                <Fragment>
-                  <Controller name="data.input_source" defaultValue={ContentInputSourceType.h5p} as="input" control={control} hidden />
-                  <ContentH5p
-                    sub={id ? H5pSub.edit : H5pSub.new}
-                    allDefaultValueAndKey={allDefaultValueAndKey}
-                    formMethods={formMethods}
-                    valueSource={allDefaultValueAndKey["data.source"]?.value}
+              <Controller
+                name="data.input_source"
+                control={control}
+                defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
+                key={allDefaultValueAndKey["data.input_source"]?.key}
+                render={(dataInputSourceProps) => (
+                  <Controller
+                    name="data.source"
+                    control={control}
+                    defaultValue={allDefaultValueAndKey["data.source"]?.value}
+                    key={allDefaultValueAndKey["data.source"]?.key}
+                    render={(dataSourceProps) =>
+                      isOldH5p ? (
+                        <Controller
+                          name="source_type"
+                          control={control}
+                          defaultValue={allDefaultValueAndKey["source_type"]?.value}
+                          key={allDefaultValueAndKey["source_type"]?.key}
+                          render={(sourceTypeProps) => (
+                            <ContentH5p
+                              sub={id ? H5pSub.edit : H5pSub.new}
+                              value={dataSourceProps.value}
+                              onChange={dataSourceProps.onChange}
+                              onChangeSourceType={sourceTypeProps.onChange}
+                            />
+                          )}
+                        />
+                      ) : (
+                        <H5pComposeEditor
+                          key={`H5pComposeEditor:${contentDetail.data}`}
+                          formMethods={formMethods}
+                          allDefaultValueAndKey={allDefaultValueAndKey}
+                          dataInputSource={dataInputSourceProps.value}
+                          onChangeDataSource={dataSourceProps.onChange}
+                          onChangeDataInputSource={dataInputSourceProps.onChange}
+                          assetEditor={
+                            <MediaAssetsEdit
+                              value={dataSourceProps.value}
+                              onChange={dataSourceProps.onChange}
+                              onChangeInputSource={dataInputSourceProps.onChange}
+                              readonly={false}
+                              overlay={false}
+                              contentDetail={contentDetail}
+                              onclosePreview={handleClosePreview}
+                              permission={!value}
+                            />
+                          }
+                        />
+                      )
+                    }
                   />
-                </Fragment>
-              ) : (
-                <H5pComposeEditor
-                  key={`H5pComposeEditor:${contentDetail.data}`}
-                  formMethods={formMethods}
-                  allDefaultValueAndKey={allDefaultValueAndKey}
-                  assetEditor={
-                    <MediaAssetsEdit
-                      allDefaultValueAndKey={allDefaultValueAndKey}
-                      readonly={false}
-                      overlay={false}
-                      formMethods={formMethods}
-                      contentDetail={contentDetail}
-                      onclosePreview={handleClosePreview}
-                      permission={!value}
-                    />
-                  }
-                />
-              )
+                )}
+              />
             ) : (
               <Fragment>
                 <Controller
                   name="data.input_source"
-                  as={SelectH5PRadio}
                   defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
                   key={allDefaultValueAndKey["data.input_source"]?.key}
                   control={control}
-                  formMethods={formMethods}
-                  disabled={!!id}
+                  render={(dataInputSourceProps) => (
+                    <Fragment>
+                      <SelectH5PRadio formMethods={formMethods} disabled={!!id} {...dataInputSourceProps} />
+                      <Controller
+                        name="data.source"
+                        control={control}
+                        defaultValue={allDefaultValueAndKey["data.source"]?.value}
+                        key={allDefaultValueAndKey["data.source"]?.key}
+                        render={(dataSourceProps) =>
+                          inputSource === ContentInputSourceType.h5p ? (
+                            <Controller
+                              name="source_type"
+                              control={control}
+                              defaultValue={allDefaultValueAndKey["source_type"]?.value}
+                              key={allDefaultValueAndKey["source_type"]?.key}
+                              render={(sourceTypeProps) => (
+                                <ContentH5p
+                                  sub={id ? H5pSub.edit : H5pSub.new}
+                                  value={dataSourceProps.value}
+                                  onChange={dataSourceProps.onChange}
+                                  onChangeSourceType={sourceTypeProps.onChange}
+                                />
+                              )}
+                            />
+                          ) : (
+                            <MediaAssetsEdit
+                              value={dataSourceProps.value}
+                              onChange={dataSourceProps.onChange}
+                              onChangeInputSource={dataInputSourceProps.onChange}
+                              readonly={false}
+                              overlay={false}
+                              contentDetail={contentDetail}
+                              onclosePreview={handleClosePreview}
+                              permission={!value}
+                            />
+                          )
+                        }
+                      />
+                    </Fragment>
+                  )}
                 />
-                <Controller
-                  as="input"
-                  hidden
-                  name="source_type"
-                  defaultValue={allDefaultValueAndKey.source_type?.value}
-                  key={allDefaultValueAndKey.source_type?.key}
-                  control={formMethods.control}
-                />
-                {inputSource === ContentInputSourceType.h5p ? (
-                  <ContentH5p
-                    sub={id ? H5pSub.edit : H5pSub.new}
-                    allDefaultValueAndKey={allDefaultValueAndKey}
-                    formMethods={formMethods}
-                    valueSource={allDefaultValueAndKey["data.source"]?.value}
-                  />
-                ) : (
-                  <MediaAssetsEdit
-                    allDefaultValueAndKey={allDefaultValueAndKey}
-                    readonly={false}
-                    overlay={false}
-                    formMethods={formMethods}
-                    contentDetail={contentDetail}
-                    onclosePreview={handleClosePreview}
-                    permission={!value}
-                  />
-                )}
               </Fragment>
             )
           }
         />
       )}
       {!includeH5p && includeAsset && (
-        <MediaAssetsEdit overlay={includeH5p} isAsset={true} {...{ allDefaultValueAndKey, readonly, formMethods, contentDetail }} />
+        <Controller
+          name="data.source"
+          control={control}
+          defaultValue={allDefaultValueAndKey["data.source"]?.value}
+          key={allDefaultValueAndKey["data.source"]?.key}
+          render={(dataSourceProps) => (
+            <MediaAssetsEdit
+              {...dataSourceProps}
+              overlay={includeH5p}
+              isAsset={true}
+              {...{ allDefaultValueAndKey, readonly, formMethods, contentDetail }}
+            />
+          )}
+        />
       )}
       {includePlanComposeGraphic && (
         <Controller
@@ -531,7 +580,7 @@ function ContentEditForm() {
 
 export default function ContentEdit() {
   const { id, editindex } = useQueryCms();
-  const { lesson } = useParams();
+  const { lesson } = useParams<RouteParams>();
   return <ContentEditForm key={`id${id},editindex${editindex}lesson${lesson}`} />;
 }
 

@@ -210,10 +210,14 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       ],
       meInfo.me
     );
+    //根据权限调接口
+    // 1 如果只有看自己的report的权限 finalTeachId => 我自己的user_id
     if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organization_reports_612) {
       teacherList = [];
       finalTearchId = myTearchId;
     } else {
+      // 2 如果有查看自己组织的report的权限或者查看所有report的权限
+      //    teacherList => 通过组织id获取所有classes =>所有的teacherid(可能有重复)
       if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
         const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
           query: TeacherByOrgIdDocument,
@@ -225,6 +229,8 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
           teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
         });
       }
+      // 2 如果有查看自己学校的report的权限或者查看所有report的权限
+      //    teacherList => 通过我的user_id 获取我所在的所有学校 => 过滤出当前组织的学校 => 遍历出所有的teacher
       if (perm.view_my_school_reports_611 || perm.view_reports_610) {
         const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
           query: GetSchoolTeacherDocument,
@@ -240,6 +246,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
             )
           );
       }
+      // 3 去重
       teacherList = ModelReport.teacherListSetDiff(teacherList);
       finalTearchId = teacher_id || (teacherList && teacherList[0]?.user_id) || "";
       if (!teacherList || !teacherList[0])

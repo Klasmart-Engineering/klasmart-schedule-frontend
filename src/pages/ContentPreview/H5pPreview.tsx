@@ -317,14 +317,14 @@ export function H5pPreview(props: H5pPreview) {
             isNewH5p ? (
               <Box className={css.innerH5pCon}>
                 <H5pPlayer
-                  valueSource={parsedData.content ? parsedData.content : parsedData.source}
+                  valueSource={parsedData.content}
                   id={h5pItem?.id}
                   scheduleId={schdeuleId}
                   userId={userId}
                 />
               </Box>
             ) : (
-              <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
+              <ContentH5p sub={H5pSub.view} value={parsedData.source} />
             )
           ) : (
             showAssets()

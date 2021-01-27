@@ -4,6 +4,7 @@ import React, { useCallback } from "react";
 import { useDrag } from "react-dnd";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { ContentFileType } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
@@ -166,8 +167,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   );
 
   const rows = list?.map((item, idx) => {
-    const fileType = item.data && JSON.parse(item.data)?.file_type;
-
+    const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
     return (
       <TableRow key={idx}>
         <TableCell className={css.cellThumnbnail}>

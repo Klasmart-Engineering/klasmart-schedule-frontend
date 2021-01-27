@@ -4,14 +4,11 @@ import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import React, { useCallback, useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
-import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
-import { ContentDetailForm } from "../../models/ModelContentDetailForm";
-import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { DragItem, mapDropSegmentPropsReturn } from "./PlanComposeGraphic";
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -103,28 +100,29 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
   canDrop: monitor.canDrop(),
 });
 interface AssetEditProps {
-  allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
   isAsset?: boolean;
-  formMethods: UseFormMethods<ContentDetailForm>;
   contentDetail: EntityContentInfoWithDetails;
   onclosePreview?: () => any;
   permission?: boolean;
   assetLibraryId?: ContentFileType;
+  value?: string;
+  onChange: (value?: string) => any;
+  onChangeInputSource?: (value: ContentInputSourceType) => any;
 }
-
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, formMethods, contentDetail, onclosePreview, permission, allDefaultValueAndKey, assetLibraryId } = props;
-  const { setValue } = formMethods;
-  const isPreview = formMethods.watch("data.source", JSON.parse(contentDetail.data || JSON.stringify({ source: "" })).source);
+  const { isAsset, contentDetail, onclosePreview, permission, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  const isPreview = !!dataSource;
   const setFile = useMemo(
     () => (item: DragItem) => {
       const source = JSON.parse(item.data.data).source;
-      setValue("data.source", source, { shouldDirty: true });
-      setValue("data.input_source", ContentInputSourceType.fromAssets, { shouldDirty: true });
+      onChange(source);
+      onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromAssets);
+      // setValue("data.source", source, { shouldDirty: true });
+      // setValue("data.input_source", ContentInputSourceType.fromAssets, { shouldDirty: true });
     },
-    [setValue]
+    [onChange, onChangeInputSource]
   );
   const [{ canDrop: canDropfile }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
     accept: `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}`,
@@ -135,12 +133,13 @@ function AssetEdit(props: AssetEditProps) {
     drop: setFile,
   });
   const handleChangeFileType = useCallback(() => {
-    setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
-  }, [setValue]);
+    onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromFile);
+    // setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
+  }, [onChangeInputSource]);
 
   const previewHeader = (
     <Box position="relative">
-      {typeof isPreview === "string" && isPreview ? (
+      {isPreview ? (
         <>
           <p className={css.title}>{d("Preview").t("library_label_preview")}</p>
           {!isAsset && (
@@ -173,37 +172,28 @@ function AssetEdit(props: AssetEditProps) {
       {previewHeader}
       <div ref={fileRef} className={clsx(css.uploadTool, { [css.canDropFile]: canDropfile })}>
         <div className={css.uploadBtn}>
-          <Controller
-            name="data.source"
-            control={formMethods.control}
-            // defaultValue={JSON.parse(contentDetail.data || "{}")}
-            defaultValue={allDefaultValueAndKey["data.source"]?.value}
-            key={allDefaultValueAndKey["data.source"]?.key}
-            render={({ ref, ...props }) => (
-              <SingleUploader
-                ref={ref}
-                partition="assets"
-                onChangeFile={handleChangeFileType}
-                accept={accept()}
-                {...props}
-                render={({ item, btnRef, value, isUploading }) => (
+          <SingleUploader
+            partition="assets"
+            onChangeFile={handleChangeFileType}
+            accept={accept()}
+            value={dataSource}
+            onChange={onChange}
+            render={({ item, btnRef, value, isUploading }) => (
+              <>
+                {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
                   <>
-                    {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
-                      <>
-                        <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
-                        <p>or</p>
-                      </>
-                    )}
-                    {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
-                    {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
-                      <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
-                        {d("Upload from Device").t("library_label_upload_from_device")}
-                      </Button>
-                    )}
-                    {isUploading && <ProgressWithText value={item?.completed} />}
+                    <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
+                    <p>or</p>
                   </>
                 )}
-              />
+                {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
+                {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
+                  <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
+                    {d("Upload from Device").t("library_label_upload_from_device")}
+                  </Button>
+                )}
+                {isUploading && <ProgressWithText value={item?.completed} />}
+              </>
             )}
           />
         </div>
