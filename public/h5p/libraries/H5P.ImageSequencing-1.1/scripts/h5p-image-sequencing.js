@@ -291,84 +291,46 @@ H5P.ImageSequencing = (function (EventDispatcher, $, UI) {
       that.$buttonContainer = $('<div class="sequencing-feedback-show" />');
     };
 
-    
     /**
      * Activate the sortable functionality on the cards list.
      */
     that.activateSortableFunctionality = function () {
-      //设置配置
-      var ops = {
-          animation: 1000,
-          dataIdAttr: "aria-label",
-          //拖动结束
-          onEnd: function (evt) {
-            that.counter.increment();
-            that.timer.play();
-          },
-          disabled: false,
-          store: {
-            get: function(sortable) {
-            },
-            set: function(sortable) {
-              let idArr = []
-              $("li").each(function(i) {
-                idArr.push($(this).attr("id"))
-              })
-              // var order = sortable.toArray();
-              that.sequencingCards = that.sequencingCards.map(function (card, index) {
-                return (that.sequencingCards.filter(function (cardItem) {
-                  return cardItem.uniqueId === parseInt(idArr[index].split('_')[1]);
-                }))[0];
-              })
-              console.log(that.sequencingCards)
-            }
-          },
-        };
-      //初始化
-      var sortable1 = Sortable.create($("ul")[0], ops);
+      that.$list.sortable({
+        placeholder: 'sequencing-dropzone',
+        tolerance: 'pointer',
+        helper: 'clone',
+        containment: that.$wrapper,
 
-      // console.log(that.sequencingCards)
-      // that.$list.sortable({
-      //   placeholder: 'sequencing-dropzone',
-      //   tolerance: 'pointer',
-      //   helper: 'clone',
-      //   containment: that.$wrapper,
+        start: function (event, ui) {
+          $(ui.helper).addClass('ui-sortable-helper');
+          that.timer.play();
+          that.triggerXAPI('interacted');
+        },
 
-      //   start: function (event, ui) {
-      //     // console.log("start")
-      //     $(ui.helper).addClass('ui-sortable-helper');
-      //     that.timer.play();
-      //     that.triggerXAPI('interacted');
-      //   },
+        stop: function (event, ui) {
+          $(ui.helper).removeClass('ui-sortable-helper');
+        },
 
-      //   stop: function (event, ui) {
-      //     // console.log("stop")
-      //     $(ui.helper).removeClass('ui-sortable-helper');
-      //   },
+        update: function () {
+          const order = that.$list.sortable('toArray');
+          that.sequencingCards = that.sequencingCards.map(function (card, index) {
+            return (that.sequencingCards.filter(function (cardItem) {
+              return cardItem.uniqueId === parseInt(order[index].split('_')[1]);
+            }))[0];
+          });
+        },
+      });
 
-      //   update: function () {
-      //     // console.log("update")
-      //     const order = that.$list.sortable('toArray');
-      //     console.log(order, 11)
-      //     that.sequencingCards = that.sequencingCards.map(function (card, index) {
-      //       return (that.sequencingCards.filter(function (cardItem) {
-      //         return cardItem.uniqueId === parseInt(order[index].split('_')[1]);
-      //       }))[0];
-      //     });
-      //     console.log(that.sequencingCards)
-      //   },
-      // });
+      // for preventing clicks on each sortable element
+      that.$list.disableSelection();
 
-      // // for preventing clicks on each sortable element
-      // that.$list.disableSelection();
-
-      // // capturing the drop event on sortable
-      // that.$list.find('li').droppable({
-      //   drop: function () {
-      //     that.counter.increment();
-      //     that.isAttempted = true;
-      //   }
-      // });
+      // capturing the drop event on sortable
+      that.$list.find('li').droppable({
+        drop: function () {
+          that.counter.increment();
+          that.isAttempted = true;
+        }
+      });
     };
 
 
@@ -379,7 +341,7 @@ H5P.ImageSequencing = (function (EventDispatcher, $, UI) {
       that.isSubmitted = true;
       that.isGamePaused = true;
       that.timer.stop();
-      // that.$list.sortable('disable');
+      that.$list.sortable('disable');
       that.stopAudio();
 
       that.sequencingCards.forEach(function (card, index) {
