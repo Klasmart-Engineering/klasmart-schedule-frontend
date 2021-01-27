@@ -15004,9 +15004,20 @@ $.widget( "ui.tooltip", {
  *  jquery.ui.mouse.js
  */
 (function ($) {
+	function isTouchDevice() {
+		return (
+			!!(typeof window !== 'undefined' &&
+				('ontouchstart' in window ||
+					(window.DocumentTouch &&
+						typeof document !== 'undefined' &&
+						document instanceof window.DocumentTouch))) ||
+			!!(typeof navigator !== 'undefined' &&
+				(navigator.maxTouchPoints || navigator.msMaxTouchPoints))
+		);
+	}
 
   // Detect touch support
-  $.support.touch = 'ontouchend' in document;
+  $.support.touch = isTouchDevice();
 
   // Ignore browsers without touch support
   if (!$.support.touch) {
