@@ -247,8 +247,7 @@ export interface ApiContentBulkOperateRequest {
 }
 
 export interface EntityActivityFlashCards {
-  card_number?: number;
-  click_answer_time_items?: number[];
+  cards_number?: number;
   play_records?: EntityActivityFlashCardsPlayRecord[];
 }
 
@@ -259,13 +258,13 @@ export interface EntityActivityFlashCardsPlayRecord {
   start_time?: number;
 }
 
-export interface EntityActivityImageParing {
+export interface EntityActivityImagePair {
   paris_number?: number;
-  play_records?: EntityActivityImageParingPlayRecord[];
+  play_records?: EntityActivityImagePairPlayRecord[];
   play_times?: number;
 }
 
-export interface EntityActivityImageParingPlayRecord {
+export interface EntityActivityImagePairPlayRecord {
   correct_pairs_count?: number;
   duration?: number;
   end_time?: number;
@@ -274,8 +273,7 @@ export interface EntityActivityImageParingPlayRecord {
 
 export interface EntityActivityImageSequencing {
   cards_number?: number;
-  click_answer_time_items?: number[];
-  play_records?: EntityActivityImageSequencingPlayRecord;
+  play_records?: EntityActivityImageSequencingPlayRecord[];
   play_times?: number;
 }
 
@@ -287,6 +285,7 @@ export interface EntityActivityImageSequencingPlayRecord {
 }
 
 export interface EntityActivityMemoryGame {
+  pairs_number?: number;
   play_records?: EntityActivityMemoryGamePlayRecord[];
   play_times?: number;
 }
@@ -683,12 +682,12 @@ export interface EntityFolderShareRecords {
 }
 
 export interface EntityGetStudentPerformanceH5PReportResponse {
-  items?: EntityListStudentPerformanceH5PReportItem[];
+  items?: EntityStudentPerformanceH5PReportItem[];
 }
 
 export interface EntityGetStudentPerformanceReportResponse {
   assessment_ids?: string[];
-  items?: EntityStudentPerformanceReportScheduleItem[];
+  items?: EntityStudentPerformanceReportItem[];
 }
 
 export interface EntityGrade {
@@ -720,25 +719,13 @@ export interface EntityListAssessmentsResponse {
   total?: number;
 }
 
-export interface EntityListStudentPerformanceH5PReportItem {
-  activity_flash_cards?: EntityActivityFlashCards;
-  activity_image_paring?: EntityActivityImageParing;
-  activity_image_sequencing?: EntityActivityImageSequencing;
-  activity_memory_game?: EntityActivityMemoryGame;
-  activity_type?: string;
-  avg_spent_time?: number;
-  material_id?: string;
-  material_name?: string;
-  total_spent_time?: number;
-}
-
 export interface EntityListStudentsPerformanceH5PReportResponse {
   items?: EntityStudentsPerformanceH5PReportItem[];
 }
 
 export interface EntityListStudentsPerformanceReportResponse {
   assessment_ids?: string[];
-  items?: EntityStudentPerformanceReportItem[];
+  items?: EntityStudentsPerformanceReportItem[];
 }
 
 export interface EntityLiveTokenView {
@@ -888,7 +875,7 @@ export interface EntityScheduleAccessibleUserView {
 
 export interface EntityScheduleAddView {
   attachment?: EntityScheduleShortInfo;
-  class_id: string;
+  class_id?: string;
   class_roster_student_ids?: string[];
   class_roster_teacher_ids?: string[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
@@ -943,6 +930,7 @@ export interface EntityScheduleDetailsView {
 export interface EntityScheduleListView {
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  due_at?: number;
   end_at?: number;
   id?: string;
   is_repeat?: boolean;
@@ -983,7 +971,7 @@ export interface EntityScheduleShortInfo {
 
 export interface EntityScheduleUpdateView {
   attachment?: EntityScheduleShortInfo;
-  class_id: string;
+  class_id?: string;
   class_roster_student_ids?: string[];
   class_roster_teacher_ids?: string[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
@@ -1048,17 +1036,22 @@ export interface EntityStudentAchievementReportResponse {
   student_name?: string;
 }
 
+export interface EntityStudentPerformanceH5PReportItem {
+  activity_flash_cards?: EntityActivityFlashCards;
+  activity_image_pair?: EntityActivityImagePair;
+  activity_image_sequencing?: EntityActivityImageSequencing;
+  activity_memory_game?: EntityActivityMemoryGame;
+  activity_type?: "H5P.ImageSequencing" | "H5P.MemoryGame" | "H5P.ImagePair" | "H5P.Flashcards";
+  avg_spent_time?: number;
+  material_id?: string;
+  material_name?: string;
+  total_spent_time?: number;
+}
+
 export interface EntityStudentPerformanceReportItem {
   achieved_count?: number;
   achieved_names?: string[];
-  attend?: boolean;
-  student_id?: string;
-  student_name?: string;
-}
-
-export interface EntityStudentPerformanceReportScheduleItem {
-  achieved_count?: number;
-  achieved_names?: string[];
+  achieved_percent?: number;
   attend?: boolean;
   schedule_id?: string;
   schedule_start_time?: number;
@@ -1074,6 +1067,15 @@ export interface EntityStudentsAchievementReportResponse {
 export interface EntityStudentsPerformanceH5PReportItem {
   attend?: boolean;
   spent_time?: number;
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface EntityStudentsPerformanceReportItem {
+  achieved_count?: number;
+  achieved_names?: string[];
+  achieved_percent?: number;
+  attend?: boolean;
   student_id?: string;
   student_name?: string;
 }
@@ -2870,14 +2872,18 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduleTimeView: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year";
-        time_at: number;
-        time_zone_offset: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
+        time_at?: number;
+        time_zone_offset?: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
+        class_types?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+        due_at_eq?: number;
+        start_at_ge?: number;
+        end_at_le?: number;
       },
       params?: RequestParams
     ) =>

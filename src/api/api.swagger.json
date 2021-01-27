@@ -5601,7 +5601,7 @@
         "operationId": "getScheduleTimeView",
         "parameters": [
           {
-            "enum": ["day", "work_week", "week", "month", "year"],
+            "enum": ["day", "work_week", "week", "month", "year", "full_view"],
             "type": "string",
             "description": "search schedules by view_type",
             "name": "view_type",
@@ -5612,19 +5612,17 @@
             "type": "integer",
             "description": "search schedules by time_at",
             "name": "time_at",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "integer",
             "description": "time zone offset",
             "name": "time_zone_offset",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "string",
-            "description": "school ids,separated by comma",
+            "description": "school id,separated by comma",
             "name": "school_ids",
             "in": "query"
           },
@@ -5650,6 +5648,31 @@
             "type": "string",
             "description": "program id,separated by comma",
             "name": "program_ids",
+            "in": "query"
+          },
+          {
+            "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"],
+            "type": "string",
+            "description": "class type,separated by comma",
+            "name": "class_types",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "get schedules equal to due_at",
+            "name": "due_at_eq",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "get schedules greater than or equal to start_at",
+            "name": "start_at_ge",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "get schedules less than or equal to end_at",
+            "name": "end_at_le",
             "in": "query"
           }
         ],
@@ -7180,14 +7203,8 @@
     "entity.ActivityFlashCards": {
       "type": "object",
       "properties": {
-        "card_number": {
+        "cards_number": {
           "type": "integer"
-        },
-        "click_answer_time_items": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
         },
         "play_records": {
           "type": "array",
@@ -7214,7 +7231,7 @@
         }
       }
     },
-    "entity.ActivityImageParing": {
+    "entity.ActivityImagePair": {
       "type": "object",
       "properties": {
         "paris_number": {
@@ -7223,7 +7240,7 @@
         "play_records": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ActivityImageParingPlayRecord"
+            "$ref": "#/definitions/entity.ActivityImagePairPlayRecord"
           }
         },
         "play_times": {
@@ -7231,7 +7248,7 @@
         }
       }
     },
-    "entity.ActivityImageParingPlayRecord": {
+    "entity.ActivityImagePairPlayRecord": {
       "type": "object",
       "properties": {
         "correct_pairs_count": {
@@ -7254,15 +7271,11 @@
         "cards_number": {
           "type": "integer"
         },
-        "click_answer_time_items": {
+        "play_records": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "$ref": "#/definitions/entity.ActivityImageSequencingPlayRecord"
           }
-        },
-        "play_records": {
-          "type": "object",
-          "$ref": "#/definitions/entity.ActivityImageSequencingPlayRecord"
         },
         "play_times": {
           "type": "integer"
@@ -7289,6 +7302,9 @@
     "entity.ActivityMemoryGame": {
       "type": "object",
       "properties": {
+        "pairs_number": {
+          "type": "integer"
+        },
         "play_records": {
           "type": "array",
           "items": {
@@ -8485,7 +8501,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ListStudentPerformanceH5PReportItem"
+            "$ref": "#/definitions/entity.StudentPerformanceH5PReportItem"
           }
         }
       }
@@ -8502,7 +8518,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.StudentPerformanceReportScheduleItem"
+            "$ref": "#/definitions/entity.StudentPerformanceReportItem"
           }
         }
       }
@@ -8585,42 +8601,6 @@
         }
       }
     },
-    "entity.ListStudentPerformanceH5PReportItem": {
-      "type": "object",
-      "properties": {
-        "activity_flash_cards": {
-          "type": "object",
-          "$ref": "#/definitions/entity.ActivityFlashCards"
-        },
-        "activity_image_paring": {
-          "type": "object",
-          "$ref": "#/definitions/entity.ActivityImageParing"
-        },
-        "activity_image_sequencing": {
-          "type": "object",
-          "$ref": "#/definitions/entity.ActivityImageSequencing"
-        },
-        "activity_memory_game": {
-          "type": "object",
-          "$ref": "#/definitions/entity.ActivityMemoryGame"
-        },
-        "activity_type": {
-          "type": "string"
-        },
-        "avg_spent_time": {
-          "type": "integer"
-        },
-        "material_id": {
-          "type": "string"
-        },
-        "material_name": {
-          "type": "string"
-        },
-        "total_spent_time": {
-          "type": "integer"
-        }
-      }
-    },
     "entity.ListStudentsPerformanceH5PReportResponse": {
       "type": "object",
       "properties": {
@@ -8644,7 +8624,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.StudentPerformanceReportItem"
+            "$ref": "#/definitions/entity.StudentsPerformanceReportItem"
           }
         }
       }
@@ -9052,7 +9032,7 @@
     },
     "entity.ScheduleAddView": {
       "type": "object",
-      "required": ["class_id", "end_at", "start_at", "title"],
+      "required": ["end_at", "start_at", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9257,6 +9237,9 @@
           "type": "string",
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
+        "due_at": {
+          "type": "integer"
+        },
         "end_at": {
           "type": "integer"
         },
@@ -9367,7 +9350,7 @@
     },
     "entity.ScheduleUpdateView": {
       "type": "object",
-      "required": ["class_id", "end_at", "start_at", "title"],
+      "required": ["end_at", "start_at", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9580,6 +9563,43 @@
         }
       }
     },
+    "entity.StudentPerformanceH5PReportItem": {
+      "type": "object",
+      "properties": {
+        "activity_flash_cards": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ActivityFlashCards"
+        },
+        "activity_image_pair": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ActivityImagePair"
+        },
+        "activity_image_sequencing": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ActivityImageSequencing"
+        },
+        "activity_memory_game": {
+          "type": "object",
+          "$ref": "#/definitions/entity.ActivityMemoryGame"
+        },
+        "activity_type": {
+          "type": "string",
+          "enum": ["H5P.ImageSequencing", "H5P.MemoryGame", "H5P.ImagePair", "H5P.Flashcards"]
+        },
+        "avg_spent_time": {
+          "type": "integer"
+        },
+        "material_id": {
+          "type": "string"
+        },
+        "material_name": {
+          "type": "string"
+        },
+        "total_spent_time": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.StudentPerformanceReportItem": {
       "type": "object",
       "properties": {
@@ -9592,28 +9612,8 @@
             "type": "string"
           }
         },
-        "attend": {
-          "type": "boolean"
-        },
-        "student_id": {
-          "type": "string"
-        },
-        "student_name": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.StudentPerformanceReportScheduleItem": {
-      "type": "object",
-      "properties": {
-        "achieved_count": {
-          "type": "integer"
-        },
-        "achieved_names": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "achieved_percent": {
+          "type": "number"
         },
         "attend": {
           "type": "boolean"
@@ -9657,6 +9657,32 @@
         },
         "spent_time": {
           "type": "integer"
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.StudentsPerformanceReportItem": {
+      "type": "object",
+      "properties": {
+        "achieved_count": {
+          "type": "integer"
+        },
+        "achieved_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "achieved_percent": {
+          "type": "number"
+        },
+        "attend": {
+          "type": "boolean"
         },
         "student_id": {
           "type": "string"
