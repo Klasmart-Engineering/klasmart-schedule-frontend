@@ -1,39 +1,42 @@
 import React from "react";
 import { useLocation } from "react-router";
-import { useDispatch } from "react-redux";
-import { getScheduleLiveToken } from "../../reducers/schedule";
-import { AsyncTrunkReturned, getContentLiveToken } from "../../reducers/content";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { apiLivePath } from "../../api/extra";
+import { useDispatch, useSelector } from "react-redux";
+import { onLoadContentPreview } from "../../reducers/content";
+import { H5pPlayer } from "../ContentEdit/H5pPlayer";
+import { RootState } from "../../reducers";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
+import { Box } from "@material-ui/core";
+import { EntityContentInfoWithDetails } from "../../api/api.auto";
 
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const content_id = query.get("content_id") as string;
+  const content_id = query.get("id") as string;
   const schedule_id = query.get("schedule_id") as string;
-  const class_id = query.get("class_id") as string;
-  return { content_id, schedule_id, class_id };
+  return { content_id, schedule_id };
 };
 
-export default function Live() {
-  const { content_id, schedule_id, class_id } = useQuery();
+export default function LiveH5p() {
+  const { contentPreview, user_id } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { content_id, schedule_id } = useQuery();
+  const [h5pContent, setH5pContent] = React.useState<string>("");
   const dispatch = useDispatch();
+  const checkH5p = (h5pArray: (EntityContentInfoWithDetails | undefined)[]) => {
+    const res: any = h5pArray.filter((item: EntityContentInfoWithDetails | undefined) => {
+      return JSON.parse(item?.data as string).file_type === 6;
+    });
+    if (res && res[0]) return JSON.parse(res[0].data);
+  };
   React.useEffect(() => {
-    async function asynsGetliveToken() {
-      let tokenInfo: any;
-      if (schedule_id)
-        tokenInfo = ((await dispatch(
-          getScheduleLiveToken({ schedule_id, live_token_type: "preview", metaLoading: true })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleLiveToken>>;
-      if (content_id)
-        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, metaLoading: true }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof getContentLiveToken>
-        >;
-      if (tokenInfo) window.location.href = apiLivePath(tokenInfo?.payload.token);
-    }
-    asynsGetliveToken();
-  }, [schedule_id, content_id, dispatch, class_id]);
-  return null;
+    dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
+  }, [content_id, dispatch, schedule_id]);
+  React.useEffect(() => {
+    const segment: Segment = JSON.parse(contentPreview.data || "{}");
+    const h5pArray = ModelLessonPlan.toArray(segment);
+    const h5pItem = checkH5p(h5pArray);
+    if (h5pItem && h5pItem.content) setH5pContent(h5pItem.content);
+  }, [contentPreview]);
+  return <Box>{h5pContent && <H5pPlayer valueSource={h5pContent} id={content_id} scheduleId={schedule_id} userId={user_id} />}</Box>;
 }
 
-Live.routeBasePath = "/live";
+LiveH5p.routeBasePath = "/live-h5p";
