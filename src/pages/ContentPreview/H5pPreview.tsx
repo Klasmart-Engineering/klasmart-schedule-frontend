@@ -71,6 +71,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     justifyContent: "center",
     alignItems: "center",
   },
+  innerH5pCon: {
+    flex: 1,
+    maxHeight: "100%",
+    overflow: "auto",
+    display: "flex",
+    justifyContent: "center",
+  },
   btnCon: {
     width: "100%",
     height: "80px",
@@ -308,12 +315,14 @@ export function H5pPreview(props: H5pPreview) {
             <EmptyContent />
           ) : !getSuffix(parsedData) ? (
             isNewH5p ? (
-              <H5pPlayer
-                valueSource={parsedData.content ? parsedData.content : parsedData.source}
-                id={h5pItem?.id}
-                scheduleId={schdeuleId}
-                userId={userId}
-              />
+              <Box className={css.innerH5pCon}>
+                <H5pPlayer
+                  valueSource={parsedData.content ? parsedData.content : parsedData.source}
+                  id={h5pItem?.id}
+                  scheduleId={schdeuleId}
+                  userId={userId}
+                />
+              </Box>
             ) : (
               <ContentH5p sub={H5pSub.view} valueSource={parsedData.source} />
             )
