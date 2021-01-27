@@ -10,8 +10,8 @@ import { MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { GetReportMockOptionsResponse } from "../../reducers/report";
-import { ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
+import { GetStuReportMockOptionsResponse } from "../../reducers/report";
+import { ALL_STUDENT, ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -131,7 +131,7 @@ const GetClassItem = forwardRef<React.RefObject<HTMLElement>, GetClassItemProps>
 export interface FilterAchievementReportProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
-  reportMockOptions: GetReportMockOptionsResponse;
+  reportMockOptions: GetStuReportMockOptionsResponse;
   isShowStudentList?: Boolean;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
@@ -153,6 +153,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const classs = reportMockOptions.classList.user?.classesTeaching || [];
   const teachers = reportMockOptions.teacherList || [];
   const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
+  const students = reportMockOptions.studentList || [];
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
   const [anchorElStatus, setAnchorElStatus] = React.useState<null | HTMLElement>(null);
@@ -192,6 +193,16 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     return list.user.classesTeaching.map((item) => (
       <MenuItem key={item.class_id} value={item.class_id}>
         {item.class_name}
+      </MenuItem>
+    ));
+  };
+  const getStudentList = (studentList: Pick<User, "user_id" | "user_name">[] | undefined | null) => {
+    if (studentList === null || studentList === undefined) return;
+    const all: Pick<User, "user_id" | "user_name">[] = [{ user_id: ALL_STUDENT, user_name: d("All").t("report_label_all") }];
+    const newStudentList = [...all, ...studentList];
+    return newStudentList.map((item) => (
+      <MenuItem key={item.user_id} value={item.user_id}>
+        {item.user_name}
       </MenuItem>
     ));
   };
@@ -239,43 +250,47 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               >
                 {getOptions(reportMockOptions.lessonPlanList)}
               </TextField>
-              <TextField
-                size="small"
-                className={css.selectButton}
-                onChange={(e) => onChange(e.target.value, "student_id")}
-                label={d("Student").t("schedule_time_conflict_student")}
-                value={value.lesson_plan_id}
-                select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-                disabled={planIsDisabled}
-              >
-                {getOptions(reportMockOptions.lessonPlanList)}
-              </TextField>
+              {isShowStudentList && (
+                <TextField
+                  size="small"
+                  className={css.selectButton}
+                  onChange={(e) => onChange(e.target.value, "student_id")}
+                  label={d("Student").t("schedule_time_conflict_student")}
+                  value={value.student_id || ALL_STUDENT}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  disabled={students.length <= 0}
+                >
+                  {getStudentList(reportMockOptions.studentList)}
+                </TextField>
+              )}
             </Box>
-            {!isShowStudentList && <Box className={css.boxRight}>
-              <TextField
-                size="small"
-                className={css.selectButton}
-                onChange={(e) => onChange(e.target.value, "status")}
-                value={value.status}
-                select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              >
-                {getOptions(statusList())}
-              </TextField>
+            {!isShowStudentList && (
+              <Box className={css.boxRight}>
+                <TextField
+                  size="small"
+                  className={css.selectButton}
+                  onChange={(e) => onChange(e.target.value, "status")}
+                  value={value.status}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                >
+                  {getOptions(statusList())}
+                </TextField>
 
-              <TextField
-                size="small"
-                className={clsx(css.selectButton, css.lastButton)}
-                onChange={(e) => onChange(e.target.value, "sort_by")}
-                label={d("Sort By").t("report_label_sort_by")}
-                value={value.sort_by}
-                select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              >
-                {getOptions(sortOptions())}
-              </TextField>
-            </Box>}
+                <TextField
+                  size="small"
+                  className={clsx(css.selectButton, css.lastButton)}
+                  onChange={(e) => onChange(e.target.value, "sort_by")}
+                  label={d("Sort By").t("report_label_sort_by")}
+                  value={value.sort_by}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                >
+                  {getOptions(sortOptions())}
+                </TextField>
+              </Box>
+            )}
           </Box>
         </Hidden>
       )}

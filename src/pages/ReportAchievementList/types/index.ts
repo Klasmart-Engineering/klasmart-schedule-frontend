@@ -37,3 +37,4 @@ export interface ClassList {
     classesTeaching: ClassItem[];
   };
 }
+export const ALL_STUDENT = "all";

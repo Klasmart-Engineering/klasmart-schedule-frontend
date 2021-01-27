@@ -3,25 +3,38 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import {
+  EntityStudentPerformanceH5PReportItem,
+  EntityStudentPerformanceReportItem,
+  EntityStudentsPerformanceH5PReportItem,
+} from "../../api/api.auto";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
 import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
-  HorizontalSingleBarStackDataItem
+  HorizontalSingleBarStackDataItem,
 } from "../../components/Chart/HorizontalBarStackChart";
 import { VerticalBarGroupChart, verticalBarGroupChartSize, VerticalBarGroupDataItem } from "../../components/Chart/VerticalBarGroupChart";
 import {
   VerticalBarStackChart,
   verticalBarStackChartSize,
-  VerticalSingleBarStackDataItem
+  VerticalSingleBarStackDataItem,
 } from "../../components/Chart/VerticalBarStackChart";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
+import {
+  AsyncTrunkReturned,
+  getLessonPlan,
+  getScheduleParticipant,
+  getStuReportDetail,
+  getStuReportList,
+  stuPerformanceReportOnload,
+} from "../../reducers/report";
 import { ReportAchievementList, useReportQuery } from "../ReportAchievementList";
+import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "../ReportAchievementList/FilterAchievementReport";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
-import { QueryCondition } from "../ReportAchievementList/types";
+import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
 
 const mockData1: HorizontalSingleBarStackDataItem[] = [
@@ -142,6 +155,54 @@ const mockData4: VerticalBarGroupDataItem[] = [
   },
 ];
 
+export const convertStuReportListType = (stuReportList: EntityStudentPerformanceReportItem[]): HorizontalSingleBarStackDataItem[] => {
+  const stuReport = stuReportList.map((item) => {
+    return {
+      id: item.student_id || "",
+      name: item.student_name || "",
+      description: item.achieved_names ? item.achieved_names.join(",") || "" : "",
+      value: item.achieved_count || 100,
+    };
+  });
+  return stuReport;
+};
+export const convertH5pReportListType = (h5pReportList: EntityStudentsPerformanceH5PReportItem[]): HorizontalSingleBarStackDataItem[] => {
+  const h5pReport = h5pReportList.map((item) => {
+    return {
+      id: item.student_id || "",
+      name: item.student_name || "",
+      description: `${item.spent_time} mins`,
+      value: item.spent_time || 0,
+    };
+  });
+  return h5pReport;
+};
+export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerformanceReportItem[]): VerticalSingleBarStackDataItem[] => {
+  const stuReport = stuReportDetail.map((item) => {
+    return {
+      id: item.student_id || "",
+      name: item.schedule_start_time ? item.schedule_start_time.toString() : "",
+      description: `${item.achieved_percent} ${item.achieved_count} LOs`,
+      value: item.achieved_count || 0,
+    };
+  });
+  return stuReport;
+};
+export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerformanceH5PReportItem[]): VerticalBarGroupDataItem[] => {
+  const h5pReport = h5pReportDetail.map((item) => {
+    return {
+      id: item.material_id || "",
+      name: item.material_name || "",
+      description: "",
+      value: [
+        { name: "", title: `${item.total_spent_time} mins`, description: "", value: 0, color: "#8693F0" },
+        { name: "", title: `${item.avg_spent_time} mins`, description: "", value: 0, color: "#8693F0" },
+      ],
+    };
+  });
+  return h5pReport;
+};
+
 export function ReportStudentPerformance() {
   const condition = useReportQuery();
   const history = useHistory();
@@ -159,7 +220,13 @@ export function ReportStudentPerformance() {
   const verticalChartHeight = Math.max(h3, h4);
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   // const reportList = totalData.reportList ?? [];
-  const reportMockOptions = totalData.reportMockOptions;
+  const stuReportMockOptions = totalData.stuReportMockOptions;
+  const student_name = totalData.student_name;
+  const stuReportList = totalData.stuReportList ?? [];
+  const h5pReportList = totalData.h5pReportList ?? [];
+  const stuReportDetail = totalData.stuReportDetail ?? [];
+  const h5pReportDetail = totalData.h5pReportDetail ?? [];
+  convertStuReportListType(stuReportList);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) history.push(ReportAchievementList.routeBasePath);
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -168,15 +235,20 @@ export function ReportStudentPerformance() {
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
   };
+  const finalStuReportList = useMemo(() => convertStuReportListType(stuReportList), [stuReportList]);
+  const finalH5pReportList = useMemo(() => convertH5pReportListType(h5pReportList), [h5pReportList]);
+  const finalStuReportDetail = useMemo(() => convertStuReportDetailType(stuReportDetail), [stuReportDetail]);
+  const finalH5pRepirtDetail = useMemo(() => convertH5pReportDetailType(h5pReportDetail), [h5pReportDetail]);
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
+      await dispatch(getScheduleParticipant({ class_id }));
       const { payload: data } = ((await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
       if (data) {
         const lesson_plan_id = (data[0] && data[0].id) || "";
-        history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
-        lesson_plan_id && dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
+        history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id, student_id: ALL_STUDENT }) });
+        lesson_plan_id && dispatch(getStuReportList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
       } else {
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id: "" }) });
       }
@@ -186,44 +258,61 @@ export function ReportStudentPerformance() {
 
   const computeFilter = useMemo(
     () => async (tab: keyof QueryCondition, value: string) => {
+      const { teacher_id, class_id, lesson_plan_id } = condition;
       history.push({ search: setQuery(history.location.search, { [tab]: value }) });
       if (tab === "teacher_id") {
         history.push({
-          search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
+          search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "", student_id: ALL_STUDENT }),
         });
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
       }
       if (tab === "lesson_plan_id") {
-        if (condition.teacher_id && condition.class_id) {
-          dispatch(
-            getAchievementList({
-              metaLoading: true,
-              teacher_id: condition.teacher_id,
-              class_id: condition.class_id,
-              lesson_plan_id: value,
-            })
-          );
-        }
+        history.push({
+          search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id: value, student_id: ALL_STUDENT }),
+        });
+        dispatch(getStuReportList({ metaLoading: true, teacher_id, class_id, lesson_plan_id: value }));
+      }
+      if (tab === "student_id") {
+        value === ALL_STUDENT
+          ? dispatch(getStuReportList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }))
+          : dispatch(getStuReportDetail({ metaLoading: true, teacher_id, class_id, lesson_plan_id, id: value }));
       }
     },
-    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id]
+    [condition, history, getFirstLessonPlanId, dispatch]
   );
   useEffect(() => {
     dispatch(
-      reportOnload({
+      stuPerformanceReportOnload({
         teacher_id: condition.teacher_id,
         class_id: condition.class_id,
         lesson_plan_id: condition.lesson_plan_id,
         status: condition.status,
         sort_by: condition.sort_by,
+        student_id: condition.student_id,
         metaLoading: true,
       })
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch]);
+  }, [condition.teacher_id, dispatch]);
+
+  useEffect(() => {
+    if (stuReportMockOptions) {
+      const { teacher_id, class_id, lesson_plan_id, student_id } = stuReportMockOptions;
+      teacher_id &&
+        history.push({
+          search: setQuery(history.location.search, {
+            teacher_id,
+            class_id,
+            lesson_plan_id,
+            student_id: student_id ? student_id : ALL_STUDENT,
+          }),
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history, stuReportMockOptions.teacher_id]);
   return (
     <>
       <FirstSearchHeader value={Category.studentPerformance} onChange={handleChange} />
@@ -231,29 +320,34 @@ export function ReportStudentPerformance() {
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}
-        reportMockOptions={reportMockOptions}
+        reportMockOptions={stuReportMockOptions}
         isShowStudentList={true}
       ></FilterAchievementReport>
-      <ChartLayout
-        chartWidth={horizontalChartWidth}
-        chartHeight={horizontalChartHeight}
-        render={(px) => (
-          <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
-            <HorizontalBarStackChart data={mockData1} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-            <HorizontalBarStackChart data={mockData2} color="#FF9492" px={px} valueAxiosLabel="in mins" />
-          </Box>
-        )}
-      />
-      <ChartLayout
-        chartWidth={verticalChartWidth}
-        chartHeight={verticalChartHeight}
-        render={(px) => (
-          <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={verticalChartWidth * px}>
-            <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-            <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" />
-          </Box>
-        )}
-      />
+      <BriefIntroduction value={condition} reportMockOptions={stuReportMockOptions} student_name={student_name} />
+      {condition.student_id === ALL_STUDENT && (
+        <ChartLayout
+          chartWidth={horizontalChartWidth}
+          chartHeight={horizontalChartHeight}
+          render={(px) => (
+            <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
+              <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+              <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
+            </Box>
+          )}
+        />
+      )}
+      {condition.student_id && condition.student_id !== ALL_STUDENT && (
+        <ChartLayout
+          chartWidth={verticalChartWidth}
+          chartHeight={verticalChartHeight}
+          render={(px) => (
+            <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={verticalChartWidth * px}>
+              <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+              <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
+            </Box>
+          )}
+        />
+      )}
     </>
   );
 }

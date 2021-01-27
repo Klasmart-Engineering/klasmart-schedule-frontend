@@ -210,12 +210,14 @@ export function VerticalBarStackChart(props: VerticalBarStackChartProps) {
         />
       ))
     );
-  const descriptionList = (barStacks: TBarStack[]) =>
+  const descriptionList = (barStacks: TBarStack[]) => {
+    if (!barStacks.length) return [];
     barStacks.slice(-1)[0].bars.map((bar) => (
       <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
         {data[bar.index].description}
       </text>
     ));
+  };
   const tickComponent = (tickProps: TickRendererProps): ReactNode => {
     const { formattedValue: id, ...tickTextProps } = tickProps;
     if (!id) return null;

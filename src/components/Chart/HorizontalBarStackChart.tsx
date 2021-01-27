@@ -221,6 +221,7 @@ export function HorizontalBarStackChart(props: HorizontalBarStackChartProps) {
       ))
     );
   const descriptionList = (barStacks: TBarStack[]) => {
+    if (!barStacks.length) return [];
     const pixels = getPixels(px);
     return barStacks.slice(-1)[0].bars.map((bar) => (
       <text key={`desc-${bar.index}`} x={bar.x + bar.width + pixels.descMarginLeft} y={bar.y + 0.5 * bar.height} style={inlineStyles.desc}>

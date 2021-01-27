@@ -1,0 +1,53 @@
+[
+  {
+    "activity_flash_cards": {},
+    "activity_image_pair": {},
+    "activity_image_sequencing": {},
+    "activity_memory_game": {},
+    "avg_spent_time": 1,
+    "material_id": "12313213",
+    "material_name": "material 1",
+    "total_spent_time": 4
+  },
+  {
+    "activity_flash_cards": {},
+    "activity_image_pair": {},
+    "activity_image_sequencing": {},
+    "activity_memory_game": {},
+    "avg_spent_time": 2,
+    "material_id": "12313213",
+    "material_name": "material 2",
+    "total_spent_time": 5
+  },
+
+  {
+    "activity_flash_cards": {},
+    "activity_image_pair": {},
+    "activity_image_sequencing": {},
+    "activity_memory_game": {},
+    "avg_spent_time": 3,
+    "material_id": "12313213",
+    "material_name": "material 3",
+    "total_spent_time": 6
+  },
+  {
+    "activity_flash_cards": {},
+    "activity_image_pair": {},
+    "activity_image_sequencing": {},
+    "activity_memory_game": {},
+    "avg_spent_time": 4,
+    "material_id": "12313213",
+    "material_name": "material 4",
+    "total_spent_time": 7
+  },
+  {
+    "activity_flash_cards": {},
+    "activity_image_pair": {},
+    "activity_image_sequencing": {},
+    "activity_memory_game": {},
+    "avg_spent_time": 5,
+    "material_id": "12313213",
+    "material_name": "material 5",
+    "total_spent_time": 8
+  }
+]

@@ -32,8 +32,8 @@ export const useReportQuery = () => {
     const lesson_plan_id = query.get("lesson_plan_id") || "";
     const status = query.get("status") || "all";
     const sort_by = query.get("sort_by") || "desc";
-    // const student_id = query.get("student_id") || "";
-    return clearNull({ teacher_id, class_id, lesson_plan_id, status, sort_by });
+    const student_id = query.get("student_id") || "";
+    return clearNull({ teacher_id, class_id, lesson_plan_id, status, sort_by, student_id });
   }, [search]);
 };
 
