@@ -11,7 +11,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
-  const content_id = query.get("id") as string;
+  const content_id = query.get("content_id") as string;
   const schedule_id = query.get("schedule_id") as string;
   return { content_id, schedule_id };
 };
