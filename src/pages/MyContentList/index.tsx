@@ -191,9 +191,17 @@ export default function MyContentList() {
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
     if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
-      history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
+      if (condition.path && condition.path !== ROOT_PATH) {
+        history.replace(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
+      } else {
+        history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit`);
+      }
     } else {
-      history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
+      if (condition.path && condition.path !== ROOT_PATH) {
+        history.replace({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
+      } else {
+        history.push({ pathname: ContentEdit.routeRedirectDefault, search: toQueryString({ back: toFullUrl(history.location) }) });
+      }
     }
   };
 
