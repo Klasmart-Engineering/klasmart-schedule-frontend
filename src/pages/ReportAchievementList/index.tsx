@@ -61,7 +61,7 @@ export function ReportAchievementList() {
   };
   const handleChangeStudent: AchievementListChartProps["onClickStudent"] = (studentId) => {
     const { status, sort_by, ...ortherCondition } = condition;
-    history.push({ pathname: ReportAchievementDetail.routeBasePath, search: toQueryString({ student_id: studentId, ...ortherCondition }) });
+    history.push({ pathname: ReportAchievementDetail.routeBasePath, search: toQueryString({ ...ortherCondition, student_id: studentId }) });
   };
 
   const getFirstLessonPlanId = useMemo(
