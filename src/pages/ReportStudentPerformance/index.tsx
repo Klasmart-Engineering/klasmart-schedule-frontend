@@ -162,7 +162,7 @@ export const convertStuReportListType = (stuReportList: EntityStudentPerformance
       id: item.student_id || "",
       name: item.student_name || "",
       description: `${item.achieved_percent}%, ${item.achieved_count} LOs`,
-      value: item.achieved_count || 100,
+      value: item.achieved_count || 0,
     };
   });
   return stuReport;
@@ -193,21 +193,21 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
   const h5pReport = h5pReportDetail.map((item) => {
     return {
       id: item.material_id || "",
-      name: `${item.material_name}(${item.activity_type})`,
+      name: `${item.material_name}`,
       description: "",
       value: [
         {
-          name: item.total_spent_time + "",
+          name: "total",
           title: `${item.total_spent_time ? item.total_spent_time / 60 : 0} mins`,
           description: "",
-          value: 0,
+          value: item.total_spent_time || 0,
           color: "#8693F0",
         },
         {
-          name: item.avg_spent_time + "",
+          name: "svg",
           title: `${item.avg_spent_time ? item.avg_spent_time / 60 : 0} mins`,
           description: "",
-          value: 0,
+          value: item.avg_spent_time || 0,
           color: "#77DCB7",
         },
       ],
