@@ -9,7 +9,7 @@ import { MockData } from "./types/index";
 
 interface ExpandContentProps {
   value: string | undefined;
-  assetLibraryId?: ContentFileType;
+  assetLibraryId?: ContentFileType | string;
   contentTypeList: ContentTypeList;
   onChange: (value: string) => any;
   onChangeAssetLibraryId?: (value: ContentFileType) => any;
@@ -39,46 +39,75 @@ export default function ExpandContent(props: ExpandContentProps) {
     assetLibraryId,
     contentTypeList,
   ]);
-  const [newList, setNewList] = React.useState<ContentTypeList>(contentTypeList);
+  const [newList, setNewList] = React.useState<(ContentTypeList[0] | MockData)[]>(contentTypeList);
   const [show, setShow] = React.useState("list");
-  const [h5pId, setH5pId] = React.useState<string>("");
-  const data: MockData = {
+  const [h5pId, setH5pId] = React.useState<string | ContentFileType>("");
+  const data: ContentTypeList[0] = {
     icon: H5pFile,
     title: "this is image",
     owner: "Fake Owner",
     example: "",
     screenshots: [],
     license: {
-      attributes: {},
+      id: "",
+      attributes: {
+        canHoldLiable: false,
+        distributable: true,
+        modifiable: true,
+        mustIncludeCopyright: true,
+        mustIncludeLicense: true,
+        sublicensable: true,
+        useCommercially: true,
+      },
     },
     description: "this is an amazing file",
-    id: ContentFileType.image,
+    id: `${ContentFileType.image}`,
     summary: "this is an amazing file",
+    categories: [],
+    coreApiVersionNeeded: {
+      major: 0,
+      minor: 0,
+    },
+    createdAt: "",
+    isRecommended: true,
+    keywords: [],
+    tutorial: "",
+    updatedAt: "",
+    version: {
+      major: 0,
+      minor: 0,
+      patch: 0,
+    },
+    popularity: 0,
   };
 
-  const [mockData, setMockData] = React.useState(data);
+  const [mockData, setMockData] = React.useState<ContentTypeList[0] | MockData>(data);
+  const [initial, setInitial] = React.useState<(ContentTypeList[0] | MockData)[]>(assetsData);
 
   React.useEffect(() => {
-    setNewList(contentTypeList);
+    if (contentTypeList) {
+      setInitial([...contentTypeList, ...assetsData]);
+      setNewList([...contentTypeList, ...assetsData]);
+    }
   }, [contentTypeList]);
 
   const sortList = (type: string) => {
     if (type === "popularFirst") {
-      const result = contentTypeList.sort((a: any, b: any) => b["popularity"] - a["popularity"]);
+      const result = newList.sort((a: any, b: any) => b["popularity"] - a["popularity"]);
       setNewList(JSON.parse(JSON.stringify(result)));
     }
     if (type === "NewestFirst") {
-      const result = contentTypeList.sort((a: any, b: any) => new Date(b["createdAt"]).valueOf() - new Date(a["createdAt"]).valueOf());
+      const result = newList.sort((a: any, b: any) => new Date(b["createdAt"]).valueOf() - new Date(a["createdAt"]).valueOf());
       setNewList(JSON.parse(JSON.stringify(result)));
     }
     if (type === "aToZ") {
-      const result = contentTypeList.sort((a: any, b: any) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
+      const result = newList.sort((a: any, b: any) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
       setNewList(JSON.parse(JSON.stringify(result)));
     }
   };
 
   const searchChange = (value: string) => {
-    const result = contentTypeList.filter((item: any) => item.title.toLowerCase().includes(value.toLowerCase()));
+    const result = initial.filter((item: any) => item.title.toLowerCase().includes(value.toLowerCase()));
     setNewList(result);
   };
 

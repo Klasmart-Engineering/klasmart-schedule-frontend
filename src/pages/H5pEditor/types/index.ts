@@ -14,4 +14,20 @@ export interface MockData {
   screenshots: ScreenshotsItem[];
   id: ContentFileType;
   summary: string;
+  categories: string[];
+  coreApiVersionNeeded: {
+    major: number;
+    minor: number;
+  };
+  createdAt: string;
+  isRecommended: boolean;
+  keywords: string[];
+  tutorial: string;
+  updatedAt: string;
+  version: {
+    major: number;
+    minor: number;
+    patch: number;
+  };
+  popularity: number;
 }

@@ -58,33 +58,114 @@ export const assetsData: MockData[] = [
     id: ContentFileType.image,
     icon: H5pPicture,
     summary: "this is image uploader",
-    license: {},
+    license: {
+      id: "",
+      attributes: {
+        canHoldLiable: false,
+        distributable: true,
+        modifiable: true,
+        mustIncludeCopyright: true,
+        mustIncludeLicense: true,
+        sublicensable: true,
+        useCommercially: true,
+      },
+    },
     description: "this is image uploader",
     owner: "Fake Owner",
     example: "",
     screenshots: [],
+    categories: [],
+    coreApiVersionNeeded: {
+      major: 0,
+      minor: 0,
+    },
+    createdAt: "",
+    isRecommended: true,
+    keywords: [],
+    tutorial: "",
+    updatedAt: "",
+    version: {
+      major: 0,
+      minor: 0,
+      patch: 0,
+    },
+    popularity: 0,
   },
   {
     title: "Audio",
     id: ContentFileType.audio,
     icon: H5pAudio,
     summary: "this is audio uploader",
-    license: {},
+    license: {
+      id: "",
+      attributes: {
+        canHoldLiable: false,
+        distributable: true,
+        modifiable: true,
+        mustIncludeCopyright: true,
+        mustIncludeLicense: true,
+        sublicensable: true,
+        useCommercially: true,
+      },
+    },
     description: "this is audio uploader",
     owner: "Fake Owner",
     example: "",
     screenshots: [],
+    categories: [],
+    coreApiVersionNeeded: {
+      major: 0,
+      minor: 0,
+    },
+    createdAt: "",
+    isRecommended: true,
+    keywords: [],
+    tutorial: "",
+    updatedAt: "",
+    version: {
+      major: 0,
+      minor: 0,
+      patch: 0,
+    },
+    popularity: 0,
   },
   {
     title: "Video",
     id: ContentFileType.video,
     icon: H5pVideo,
     summary: "this is video uploader",
-    license: {},
+    license: {
+      id: "",
+      attributes: {
+        canHoldLiable: false,
+        distributable: true,
+        modifiable: true,
+        mustIncludeCopyright: true,
+        mustIncludeLicense: true,
+        sublicensable: true,
+        useCommercially: true,
+      },
+    },
     description: "this is video uploader",
     owner: "Fake Owner",
     example: "",
     screenshots: [],
+    categories: [],
+    coreApiVersionNeeded: {
+      major: 0,
+      minor: 0,
+    },
+    createdAt: "",
+    isRecommended: true,
+    keywords: [],
+    tutorial: "",
+    updatedAt: "",
+    version: {
+      major: 0,
+      minor: 0,
+      patch: 0,
+    },
+    popularity: 0,
   },
   // {
   //   title: "Document",
@@ -101,15 +182,15 @@ export const assetsData: MockData[] = [
 
 interface H5pListProps {
   libraryId?: string;
-  assetLibraryId?: ContentFileType;
-  contentTypeList: ContentTypeList;
+  assetLibraryId?: ContentFileType | string;
+  contentTypeList: (ContentTypeList[0] | MockData)[];
   onChange: (value: string) => any;
   onChangeAssetLibraryId?: (value: ContentFileType) => any;
   expand: boolean;
   onExpand: (value: boolean) => any;
   setShow: (value: string) => any;
-  setH5pId: (value: string) => void;
-  setMockData: (value: MockData) => void;
+  setH5pId: (value: string | ContentFileType) => void;
+  setMockData: (value: ContentTypeList[0] | MockData) => void;
 }
 
 export default function H5pList(props: H5pListProps) {
@@ -131,7 +212,11 @@ export default function H5pList(props: H5pListProps) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [tempItem, setTempItem] = React.useState<string | ContentFileType>();
 
-  const handleClick = (item: ContentTypeList[0]) => {
+  const handleClick = (item: ContentTypeList[0] | MockData) => {
+    if (!item.createdAt) {
+      handleClickAsset(item);
+      return;
+    }
     if (libraryId || assetLibraryId) {
       setTempItem(h5plibId2Name(`${item.id}-${item.version.major}.${item.version.minor}`));
       setOpen(true);
@@ -141,20 +226,25 @@ export default function H5pList(props: H5pListProps) {
     onExpand(!expand);
   };
 
-  const handleClickAsset = (item: MockData) => {
+  const handleClickAsset = (item: ContentTypeList[0] | MockData) => {
     if (libraryId || assetLibraryId) {
       setTempItem(item.id);
       setOpen(true);
       return;
     }
-    onChangeAssetLibraryId && onChangeAssetLibraryId(item.id);
+    setTempItem(item.id);
+    onChangeAssetLibraryId && onChangeAssetLibraryId(item.id as ContentFileType);
     onExpand(!expand);
   };
 
-  const getDetails = (e: React.KeyboardEvent | React.MouseEvent, id: string) => {
+  const getDetails = (e: React.KeyboardEvent | React.MouseEvent, item: ContentTypeList[0] | MockData) => {
     e.stopPropagation();
+    if (typeof item.id === "number") {
+      getMockDetails(item);
+      return;
+    }
     setShow("info");
-    setH5pId(id);
+    setH5pId(item.id);
   };
 
   const handleClose = () => {
@@ -172,34 +262,16 @@ export default function H5pList(props: H5pListProps) {
     onExpand(!expand);
   };
 
-  const getMockDetails = (e: React.KeyboardEvent | React.MouseEvent, item: MockData) => {
-    e.stopPropagation();
+  const getMockDetails = (item: ContentTypeList[0] | MockData) => {
+    console.log(11111111111);
+    setH5pId("");
     setMockData(item);
     setShow("info");
-    setH5pId("");
   };
 
   return (
     <div className={css.listContainer}>
       <List component="nav" aria-label="secondary mailbox folders">
-        {assetsData.map((item) => {
-          return (
-            <ListItem key={item.title} button className={css.listItem} onClick={() => handleClickAsset(item)}>
-              <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
-                <img src={item.icon} alt="aaa" />
-              </Box>
-              <Box style={{ width: sm ? "40%" : "80%" }}>
-                <h3>{item.title}</h3>
-                <p>{item.summary}</p>
-              </Box>
-              <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
-                <Button variant="contained" color="primary" onClick={(e) => getMockDetails(e, item)}>
-                  {reportMiss("Detail", "h5p_detail")}
-                </Button>
-              </Box>
-            </ListItem>
-          );
-        })}
         {contentTypeList &&
           contentTypeList.map((item) => {
             return (
@@ -212,7 +284,7 @@ export default function H5pList(props: H5pListProps) {
                   <p>{item.summary}</p>
                 </Box>
                 <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
-                  <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item.id)}>
+                  <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item)}>
                     {reportMiss("Detail", "h5p_detail")}
                   </Button>
                 </Box>

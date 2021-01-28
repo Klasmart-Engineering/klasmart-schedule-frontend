@@ -2,9 +2,9 @@ import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Grid, IconButt
 import { ArrowBack, ArrowForward, Close, ExpandMore, Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { ContentTypeList } from "../../api/type";
+import { ContentFileType, ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
-import { MockData } from "./types/index";
+import { MockData } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
@@ -192,9 +192,9 @@ const useStyles = makeStyles((theme) => ({
 
 interface H5pInfoProps {
   contentTypeList: ContentTypeList;
-  h5pId: string;
+  h5pId: string | ContentFileType;
   setShow: (value: string) => any;
-  mockData: MockData;
+  mockData: ContentTypeList[0] | MockData;
 }
 
 export default function H5pInfo(props: H5pInfoProps) {
@@ -220,7 +220,6 @@ export default function H5pInfo(props: H5pInfoProps) {
   };
 
   const getLicenseContent = () => {
-    console.log(h5pInfo.license);
     let result: any[] = [];
     const keys = Object.keys(h5pInfo.license.attributes);
     const values = Object.values(h5pInfo.license.attributes);

@@ -4,6 +4,7 @@ import clsx from "clsx";
 import React from "react";
 import { ContentTypeList } from "../../api/type";
 import { reportMiss } from "../../locale/LocaleManager";
+import { MockData } from "./types/index";
 
 const useStyles = makeStyles((theme) => ({
   header_container: {
@@ -89,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface H5pHeaderProps {
-  contentTypeList: ContentTypeList;
+  contentTypeList: (ContentTypeList[0] | MockData)[];
   sortList: (type: string) => void;
   searchChange: (value: string) => void;
 }
