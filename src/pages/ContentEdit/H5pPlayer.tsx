@@ -214,7 +214,7 @@ function useInlineIframe(props: UseInlineIframeProps) {
     if (iframe.current) {
       resizerRef.current?.removeListeners();
     }
-    const [{ iFrameResizer }] = iframeResizer({ log: true }, iframe);
+    const [{ iFrameResizer }] = iframeResizer({ log: false }, iframe);
     iframeRef.current = iframe;
     resizerRef.current = iFrameResizer as FixedIFrameResizerObject;
   }, []);

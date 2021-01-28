@@ -196,7 +196,7 @@ export function H5pPlayerInline(props: H5pPlayerInlineProps) {
     if (!library || !library.scripts || library.scripts.length === 0) return;
     new InlineIframeManager({
       contentWindow: window,
-      scripts: resolveH5pDir(library.scripts),
+      scripts: resolveH5pDir(library.scripts).concat(require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")),
       styles: resolveH5pDir(library.styles),
       injectBeforeLoad,
       injectAfterLoad,

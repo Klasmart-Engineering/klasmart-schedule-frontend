@@ -27,8 +27,8 @@ export default function LiveH5p() {
     if (res && res[0]) return JSON.parse(res[0].data);
   };
   const emitPostMessage = () => {
-    window.parent.postMessage({ context: "h5p", action: "hello" }, "*");
-    window.parent.postMessage("[iFrameResizerChild]Ready", "*");
+    // window.parent.postMessage({ context: "h5p", action: "hello" }, "*");
+    // window.parent.postMessage("[iFrameResizerChild]Ready", "*");
   };
   React.useEffect(() => {
     dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
