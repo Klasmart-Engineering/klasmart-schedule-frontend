@@ -27,8 +27,11 @@ export default function LiveH5p() {
     });
     if (res && res[0]) return JSON.parse(res[0].data);
   };
-  React.useEffect(() => {
+  const emitPostMessage = () => {
+    window.parent.postMessage({ context: "h5p", action: "hello" }, "*");
     window.parent.postMessage("[iFrameResizerChild]Ready", "*");
+  };
+  React.useEffect(() => {
     dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
   }, [content_id, dispatch, schedule_id]);
   React.useEffect(() => {
@@ -42,7 +45,13 @@ export default function LiveH5p() {
       if (h5pItem && h5pItem.content) setH5pContent(h5pItem.content);
     }
   }, [contentPreview]);
-  return <Box>{h5pContent && <H5pPlayer valueSource={h5pContent} id={content_id} scheduleId={schedule_id} userId={user_id} />}</Box>;
+  return (
+    <Box>
+      {h5pContent && (
+        <H5pPlayer onReady={emitPostMessage} valueSource={h5pContent} id={content_id} scheduleId={schedule_id} userId={user_id} />
+      )}
+    </Box>
+  );
 }
 
 LiveH5p.routeBasePath = "/live-h5p";
