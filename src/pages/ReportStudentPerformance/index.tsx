@@ -43,8 +43,8 @@ const mockData1: HorizontalBarStackDataItem[] = [
     description: "description 0",
     value: [
       { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
-      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
-      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+      { name: "category A", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category A", description: "name 1 category B description", value: 40, color: "#DADADA" },
     ],
   },
   {
@@ -194,19 +194,19 @@ export const convertStuReportListType = (stuReportList: EntityStudentsPerformanc
       description: `${count ? 100 : 0}%, ${count} LOs`,
       value: [
         {
-          name: "a",
+          name: "achieved_count",
           description: `${Math.round((achieved_count / count) * 100)}% ${achieved_count}LOs`,
           value: achieved_count,
           color: "#8693F0",
         },
         {
-          name: "a",
-          description: `${Math.round((achieved_count / count) * 100)}% ${not_achieve_count}LOs`,
-          value: achieved_count,
+          name: "not_achieve_count",
+          description: `${Math.round((not_achieve_count / count) * 100)}% ${not_achieve_count}LOs`,
+          value: not_achieve_count,
           color: "#FE9B9B",
         },
         {
-          name: "a",
+          name: "not_attempted_count",
           description: `${Math.round((not_attempted_count / count) * 100)}% ${not_attempted_count}LOs`,
           value: not_attempted_count,
           color: "#DADADA",
@@ -239,19 +239,19 @@ export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerform
       description: `${count ? 100 : 0}% ${count} LOs`,
       value: [
         {
-          name: "a",
+          name: "achieved_count",
           description: `${Math.round((achieved_count / count) * 100)}% ${achieved_count}LOs`,
           value: achieved_count,
           color: "#8693F0",
         },
         {
-          name: "a",
+          name: "not_achieve_count",
           description: `${Math.round((not_achieve_count / count) * 100)}% ${not_achieve_count}LOs`,
           value: not_achieve_count,
           color: "#FE9B9B",
         },
         {
-          name: "a",
+          name: "not_attempted_count",
           description: `${Math.round((not_attempted_count / count) * 100)}% ${not_attempted_count}LOs`,
           value: not_attempted_count,
           color: "#DADADA",
