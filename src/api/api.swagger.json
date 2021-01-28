@@ -9603,20 +9603,26 @@
     "entity.StudentPerformanceReportItem": {
       "type": "object",
       "properties": {
-        "achieved_count": {
-          "type": "integer"
-        },
         "achieved_names": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "achieved_percent": {
-          "type": "number"
-        },
         "attend": {
           "type": "boolean"
+        },
+        "not_achieved_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_attempted_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "schedule_id": {
           "type": "string"
@@ -9669,20 +9675,26 @@
     "entity.StudentsPerformanceReportItem": {
       "type": "object",
       "properties": {
-        "achieved_count": {
-          "type": "integer"
-        },
         "achieved_names": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "achieved_percent": {
-          "type": "number"
-        },
         "attend": {
           "type": "boolean"
+        },
+        "not_achieved_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_attempted_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "student_id": {
           "type": "string"

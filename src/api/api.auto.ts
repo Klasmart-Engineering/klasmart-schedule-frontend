@@ -1049,10 +1049,10 @@ export interface EntityStudentPerformanceH5PReportItem {
 }
 
 export interface EntityStudentPerformanceReportItem {
-  achieved_count?: number;
   achieved_names?: string[];
-  achieved_percent?: number;
   attend?: boolean;
+  not_achieved_names?: string[];
+  not_attempted_names?: string[];
   schedule_id?: string;
   schedule_start_time?: number;
   student_id?: string;
@@ -1072,10 +1072,10 @@ export interface EntityStudentsPerformanceH5PReportItem {
 }
 
 export interface EntityStudentsPerformanceReportItem {
-  achieved_count?: number;
   achieved_names?: string[];
-  achieved_percent?: number;
   attend?: boolean;
+  not_achieved_names?: string[];
+  not_attempted_names?: string[];
   student_id?: string;
   student_name?: string;
 }
@@ -2902,18 +2902,14 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
-        time_at?: number;
-        time_zone_offset?: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year";
+        time_at: number;
+        time_zone_offset: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
-        class_types?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
-        due_at_eq?: number;
-        start_at_ge?: number;
-        end_at_le?: number;
       },
       params?: RequestParams
     ) =>
