@@ -7,20 +7,18 @@ import {
   EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   EntityStudentsPerformanceH5PReportItem,
+  EntityStudentsPerformanceReportItem,
 } from "../../api/api.auto";
 import { formatTimeToEn } from "../../api/extra";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
 import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
+  HorizontalBarStackDataItem,
   HorizontalSingleBarStackDataItem,
 } from "../../components/Chart/HorizontalBarStackChart";
 import { VerticalBarGroupChart, verticalBarGroupChartSize, VerticalBarGroupDataItem } from "../../components/Chart/VerticalBarGroupChart";
-import {
-  VerticalBarStackChart,
-  verticalBarStackChartSize,
-  VerticalSingleBarStackDataItem,
-} from "../../components/Chart/VerticalBarStackChart";
+import { VerticalBarStackChart, verticalBarStackChartSize, VerticalBarStackDataItem } from "../../components/Chart/VerticalBarStackChart";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import {
@@ -38,25 +36,37 @@ import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProp
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
 
-const mockData1: HorizontalSingleBarStackDataItem[] = [
+const mockData1: HorizontalBarStackDataItem[] = [
   {
     id: "id 0",
     name: "name 0",
     description: "description 0",
-    value: 3,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
   {
     id: "id 1",
     name: "name 1",
     title: "title 1",
     description: "description 1",
-    value: 6,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
   {
     id: "id 2",
     name: "name 2",
     description: "description 2",
-    value: 9,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
 ];
 
@@ -88,31 +98,47 @@ const mockData2: HorizontalSingleBarStackDataItem[] = [
   },
 ];
 
-const mockData3: VerticalSingleBarStackDataItem[] = [
+const mockData3: VerticalBarStackDataItem[] = [
   {
     id: "id 0",
     name: "name 0",
     description: "description 0",
-    value: 70,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
   {
     id: "id 1",
     name: "name 1",
     title: "title 1",
     description: "description 1",
-    value: 40,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
   {
     id: "id 2",
     name: "name 2",
     description: "description 2",
-    value: 90,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
   {
     id: "id 3",
     name: "name 3",
     description: "description 3",
-    value: 120,
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
   },
 ];
 
@@ -156,13 +182,36 @@ const mockData4: VerticalBarGroupDataItem[] = [
   },
 ];
 
-export const convertStuReportListType = (stuReportList: EntityStudentPerformanceReportItem[]): HorizontalSingleBarStackDataItem[] => {
+export const convertStuReportListType = (stuReportList: EntityStudentsPerformanceReportItem[]): HorizontalBarStackDataItem[] => {
   const stuReport = stuReportList.map((item) => {
+    const achieved_count = item.achieved_names ? item.achieved_names.length : 0;
+    const not_achieve_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
+    const not_attempted_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
+    const count = achieved_count + not_achieve_count + not_attempted_count;
     return {
       id: item.student_id || "",
       name: item.student_name || "",
-      description: `${item.achieved_percent}%, ${item.achieved_count} LOs`,
-      value: item.achieved_count || 0,
+      description: `${count ? 100 : 0}%, ${count} LOs`,
+      value: [
+        {
+          name: "a",
+          description: `${(achieved_count / count).toFixed(2)}% ${achieved_count}LOs`,
+          value: 0,
+          color: "#8693F0",
+        },
+        {
+          name: "a",
+          description: `${(not_achieve_count / count).toFixed(2)}% ${not_achieve_count}LOs`,
+          value: 0,
+          color: "#8693F0",
+        },
+        {
+          name: "a",
+          description: `${(not_attempted_count / count).toFixed(2)}% ${not_attempted_count}LOs`,
+          value: 0,
+          color: "#8693F0",
+        },
+      ],
     };
   });
   return stuReport;
@@ -178,13 +227,36 @@ export const convertH5pReportListType = (h5pReportList: EntityStudentsPerformanc
   });
   return h5pReport;
 };
-export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerformanceReportItem[]): VerticalSingleBarStackDataItem[] => {
+export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerformanceReportItem[]): VerticalBarStackDataItem[] => {
   const stuReport = stuReportDetail.map((item) => {
+    const achieved_count = item.achieved_names ? item.achieved_names.length : 0;
+    const not_achieve_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
+    const not_attempted_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
+    const count = achieved_count + not_achieve_count + not_attempted_count;
     return {
       id: item.student_id || "",
       name: item.schedule_start_time ? formatTimeToEn(item.schedule_start_time) : "",
-      description: `${item.achieved_percent}% ${item.achieved_count} LOs`,
-      value: item.achieved_count || 0,
+      description: `${count ? 100 : 0}% ${count} LOs`,
+      value: [
+        {
+          name: "a",
+          description: `${(achieved_count / count).toFixed(2)}% ${achieved_count}LOs`,
+          value: 0,
+          color: "#8693F0",
+        },
+        {
+          name: "a",
+          description: `${(not_achieve_count / count).toFixed(2)}% ${not_achieve_count}LOs`,
+          value: 0,
+          color: "#8693F0",
+        },
+        {
+          name: "a",
+          description: `${(not_attempted_count / count).toFixed(2)}% ${not_attempted_count}LOs`,
+          value: 0,
+          color: "#8693F0",
+        },
+      ],
     };
   });
   return stuReport;

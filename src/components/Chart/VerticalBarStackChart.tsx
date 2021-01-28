@@ -214,6 +214,7 @@ export function VerticalBarStackChart(props: VerticalBarStackChartProps) {
     if (!barStacks.length) return [];
     barStacks.slice(-1)[0].bars.map((bar) => (
       <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
+        12334
         {data[bar.index].description}
       </text>
     ));
