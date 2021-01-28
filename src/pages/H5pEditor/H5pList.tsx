@@ -79,7 +79,7 @@ export const assetsData: MockData[] = [
       major: 0,
       minor: 0,
     },
-    createdAt: "",
+    createdAt: "2016-08-28T08:58:39+0000",
     isRecommended: true,
     keywords: [],
     tutorial: "",
@@ -117,7 +117,7 @@ export const assetsData: MockData[] = [
       major: 0,
       minor: 0,
     },
-    createdAt: "",
+    createdAt: "2015-08-28T08:58:39+0000",
     isRecommended: true,
     keywords: [],
     tutorial: "",
@@ -155,7 +155,7 @@ export const assetsData: MockData[] = [
       major: 0,
       minor: 0,
     },
-    createdAt: "",
+    createdAt: "2014-08-28T08:58:39+0000",
     isRecommended: true,
     keywords: [],
     tutorial: "",
@@ -213,7 +213,7 @@ export default function H5pList(props: H5pListProps) {
   const [tempItem, setTempItem] = React.useState<string | ContentFileType>();
 
   const handleClick = (item: ContentTypeList[0] | MockData) => {
-    if (!item.createdAt) {
+    if (!item.updatedAt) {
       handleClickAsset(item);
       return;
     }
@@ -263,7 +263,6 @@ export default function H5pList(props: H5pListProps) {
   };
 
   const getMockDetails = (item: ContentTypeList[0] | MockData) => {
-    console.log(11111111111);
     setH5pId("");
     setMockData(item);
     setShow("info");

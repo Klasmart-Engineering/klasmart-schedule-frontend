@@ -93,15 +93,21 @@ export default function ExpandContent(props: ExpandContentProps) {
 
   const sortList = (type: string) => {
     if (type === "popularFirst") {
-      const result = newList.sort((a: any, b: any) => b["popularity"] - a["popularity"]);
+      const result = initial.sort((a: any, b: any) => b["popularity"] - a["popularity"]);
       setNewList(JSON.parse(JSON.stringify(result)));
     }
     if (type === "NewestFirst") {
-      const result = newList.sort((a: any, b: any) => new Date(b["createdAt"]).valueOf() - new Date(a["createdAt"]).valueOf());
+      const result = initial.sort((a: any, b: any) => new Date(b["createdAt"]).valueOf() - new Date(a["createdAt"]).valueOf());
       setNewList(JSON.parse(JSON.stringify(result)));
     }
     if (type === "aToZ") {
-      const result = newList.sort((a: any, b: any) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
+      // const result = initial.sort((a: any, b: any) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
+      const result = initial.sort((a: any, b: any) => {
+        if (a.title < b.title) return -1;
+        if (a.title > b.title) return 1;
+        return 0;
+        // return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+      });
       setNewList(JSON.parse(JSON.stringify(result)));
     }
   };
