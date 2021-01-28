@@ -195,21 +195,21 @@ export const convertStuReportListType = (stuReportList: EntityStudentsPerformanc
       value: [
         {
           name: "a",
-          description: `${(achieved_count / count).toFixed(2)}% ${achieved_count}LOs`,
+          description: `${Math.round((achieved_count / count) * 100)}% ${achieved_count}LOs`,
           value: achieved_count,
           color: "#8693F0",
         },
         {
           name: "a",
-          description: `${(achieved_count / count).toFixed(2)}% ${not_achieve_count}LOs`,
+          description: `${Math.round((achieved_count / count) * 100)}% ${not_achieve_count}LOs`,
           value: achieved_count,
-          color: "#8693F0",
+          color: "#FE9B9B",
         },
         {
           name: "a",
-          description: `${(not_attempted_count / count).toFixed(2)}% ${not_attempted_count}LOs`,
+          description: `${Math.round((not_attempted_count / count) * 100)}% ${not_attempted_count}LOs`,
           value: not_attempted_count,
-          color: "#8693F0",
+          color: "#DADADA",
         },
       ],
     };
@@ -240,21 +240,21 @@ export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerform
       value: [
         {
           name: "a",
-          description: `${(achieved_count / count).toFixed(2)}% ${achieved_count}LOs`,
+          description: `${Math.round((achieved_count / count) * 100)}% ${achieved_count}LOs`,
           value: achieved_count,
           color: "#8693F0",
         },
         {
           name: "a",
-          description: `${(not_achieve_count / count).toFixed(2)}% ${not_achieve_count}LOs`,
+          description: `${Math.round((not_achieve_count / count) * 100)}% ${not_achieve_count}LOs`,
           value: not_achieve_count,
-          color: "#8693F0",
+          color: "#FE9B9B",
         },
         {
           name: "a",
-          description: `${(not_attempted_count / count).toFixed(2)}% ${not_attempted_count}LOs`,
+          description: `${Math.round((not_attempted_count / count) * 100)}% ${not_attempted_count}LOs`,
           value: not_attempted_count,
-          color: "#8693F0",
+          color: "#DADADA",
         },
       ],
     };
