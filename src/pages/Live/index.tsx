@@ -1,12 +1,12 @@
-import React from "react";
-import { useLocation } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { onLoadContentPreview } from "../../reducers/content";
-import { H5pPlayer } from "../ContentEdit/H5pPlayer";
-import { RootState } from "../../reducers";
-import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { Box } from "@material-ui/core";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
+import { RootState } from "../../reducers";
+import { onLoadContentPreview } from "../../reducers/content";
+import { H5pPlayerInline } from "./H5pPlayerInline";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -15,7 +15,6 @@ const useQuery = () => {
   const schedule_id = query.get("schedule_id") as string;
   return { content_id, schedule_id };
 };
-
 export default function LiveH5p() {
   const { contentPreview, user_id } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { content_id, schedule_id } = useQuery();
@@ -48,7 +47,7 @@ export default function LiveH5p() {
   return (
     <Box>
       {h5pContent && (
-        <H5pPlayer onReady={emitPostMessage} valueSource={h5pContent} id={content_id} scheduleId={schedule_id} userId={user_id} />
+        <H5pPlayerInline onReady={emitPostMessage} valueSource={h5pContent} id={content_id} scheduleId={schedule_id} userId={user_id} />
       )}
     </Box>
   );
