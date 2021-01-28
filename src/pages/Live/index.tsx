@@ -28,6 +28,7 @@ export default function LiveH5p() {
     if (res && res[0]) return JSON.parse(res[0].data);
   };
   React.useEffect(() => {
+    window.parent.postMessage("[iFrameResizerChild]Ready", "*");
     dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
   }, [content_id, dispatch, schedule_id]);
   React.useEffect(() => {
