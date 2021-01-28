@@ -115,6 +115,11 @@ const l10n = {
   },
 };
 
+interface ISize {
+  width?: number;
+  height?: number;
+}
+
 interface H5pPlayerInlineProps {
   id?: string;
   userId: string;
@@ -124,6 +129,7 @@ interface H5pPlayerInlineProps {
 }
 export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   const dispatch = useDispatch();
+  const sizeRef = useRef<ISize>({ width: undefined, height: undefined });
   const { valueSource, id, scheduleId, userId, onReady } = props;
   const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
   const onReadyRef = useRef(onReady);
@@ -204,6 +210,21 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
     });
     /* eslint-ignore-next-line react-hooks/exhaustive-deps */
   }, [id, userId, scheduleId, valueSource, library, injectBeforeLoad]);
+
+  useEffect(() => {
+    setInterval(() => {
+      const parentIFrame = (window as any).parentIFrame;
+      if (!parentIFrame) return;
+      parentIFrame.autoResize(false);
+      const offsetHeight = document.body.offsetHeight;
+      const offsetWidth = document.body.offsetWidth;
+      if (offsetHeight !== sizeRef.current.height || offsetWidth !== sizeRef.current.width) {
+        sizeRef.current.width = offsetWidth;
+        sizeRef.current.height = offsetHeight;
+        parentIFrame.size(offsetHeight, offsetWidth);
+      }
+    }, 1000);
+  }, []);
 
   return (
     <div className={css.iframe}>
