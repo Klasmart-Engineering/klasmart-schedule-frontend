@@ -132,7 +132,7 @@ export function H5pPlayer(props: H5pPlayerProps) {
         l10n,
         postUserStatistics: false,
         saveFreq: false,
-        url: "/h5p",
+        url: "h5p",
         hubIsEnabled: true,
         fullscreenDisabled: 0,
         contents: {
@@ -193,7 +193,7 @@ export function H5pPlayer(props: H5pPlayerProps) {
   library.scripts.push(`../${require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")}`);
   const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });
 
-  return <iframe className={css.iframe} ref={register} src="/h5p" frameBorder="0" title="h5p" onLoad={onLoad} key={valueSource} />;
+  return <iframe className={css.iframe} ref={register} src="h5p" frameBorder="0" title="h5p" onLoad={onLoad} key={valueSource} />;
 }
 interface UseInlineIframeProps {
   styles: string[];
