@@ -8,6 +8,7 @@ import {
   EntityStudentPerformanceReportItem,
   EntityStudentsPerformanceH5PReportItem,
 } from "../../api/api.auto";
+import { formatTimeToEn } from "../../api/extra";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
 import {
   HorizontalBarStackChart,
@@ -160,7 +161,7 @@ export const convertStuReportListType = (stuReportList: EntityStudentPerformance
     return {
       id: item.student_id || "",
       name: item.student_name || "",
-      description: item.achieved_names ? item.achieved_names.join(",") || "" : "",
+      description: `${item.achieved_percent}%, ${item.achieved_count} LOs`,
       value: item.achieved_count || 100,
     };
   });
@@ -171,7 +172,7 @@ export const convertH5pReportListType = (h5pReportList: EntityStudentsPerformanc
     return {
       id: item.student_id || "",
       name: item.student_name || "",
-      description: `${item.spent_time} mins`,
+      description: `${item.spent_time ? item.spent_time / 60 : 0}  mins`,
       value: item.spent_time || 0,
     };
   });
@@ -181,8 +182,8 @@ export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerform
   const stuReport = stuReportDetail.map((item) => {
     return {
       id: item.student_id || "",
-      name: item.schedule_start_time ? item.schedule_start_time.toString() : "",
-      description: `${item.achieved_percent} ${item.achieved_count} LOs`,
+      name: item.schedule_start_time ? formatTimeToEn(item.schedule_start_time) : "",
+      description: `${item.achieved_percent}% ${item.achieved_count} LOs`,
       value: item.achieved_count || 0,
     };
   });
@@ -192,11 +193,23 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
   const h5pReport = h5pReportDetail.map((item) => {
     return {
       id: item.material_id || "",
-      name: item.material_name || "",
+      name: `${item.material_name}(${item.activity_type})`,
       description: "",
       value: [
-        { name: "", title: `${item.total_spent_time} mins`, description: "", value: 0, color: "#8693F0" },
-        { name: "", title: `${item.avg_spent_time} mins`, description: "", value: 0, color: "#8693F0" },
+        {
+          name: item.total_spent_time + "",
+          title: `${item.total_spent_time ? item.total_spent_time / 60 : 0} mins`,
+          description: "",
+          value: 0,
+          color: "#8693F0",
+        },
+        {
+          name: item.avg_spent_time + "",
+          title: `${item.avg_spent_time ? item.avg_spent_time / 60 : 0} mins`,
+          description: "",
+          value: 0,
+          color: "#77DCB7",
+        },
       ],
     };
   });
@@ -221,12 +234,10 @@ export function ReportStudentPerformance() {
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   // const reportList = totalData.reportList ?? [];
   const stuReportMockOptions = totalData.stuReportMockOptions;
-  const student_name = totalData.student_name;
   const stuReportList = totalData.stuReportList ?? [];
   const h5pReportList = totalData.h5pReportList ?? [];
   const stuReportDetail = totalData.stuReportDetail ?? [];
   const h5pReportDetail = totalData.h5pReportDetail ?? [];
-  convertStuReportListType(stuReportList);
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) history.push(ReportAchievementList.routeBasePath);
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
@@ -235,6 +246,13 @@ export function ReportStudentPerformance() {
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
   };
+  const getStudentName = useMemo(() => {
+    if (stuReportMockOptions && stuReportMockOptions.studentList && condition.student_id !== ALL_STUDENT) {
+      return stuReportMockOptions.studentList.find((item) => item.user_id === condition.student_id)?.user_name as string;
+    } else {
+      return "";
+    }
+  }, [condition.student_id, stuReportMockOptions]);
   const finalStuReportList = useMemo(() => convertStuReportListType(stuReportList), [stuReportList]);
   const finalH5pReportList = useMemo(() => convertH5pReportListType(h5pReportList), [h5pReportList]);
   const finalStuReportDetail = useMemo(() => convertStuReportDetailType(stuReportDetail), [stuReportDetail]);
@@ -323,7 +341,7 @@ export function ReportStudentPerformance() {
         reportMockOptions={stuReportMockOptions}
         isShowStudentList={true}
       ></FilterAchievementReport>
-      <BriefIntroduction value={condition} reportMockOptions={stuReportMockOptions} student_name={student_name} />
+      <BriefIntroduction value={condition} reportMockOptions={stuReportMockOptions} student_name={getStudentName} />
       {condition.student_id === ALL_STUDENT && (
         <ChartLayout
           chartWidth={horizontalChartWidth}

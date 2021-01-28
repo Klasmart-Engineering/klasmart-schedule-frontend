@@ -31,10 +31,6 @@ import {
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import classListByTeacher from "../mocks/classListByTeacher.json";
-import stuPerformanceDetail from "../mocks/stuPerformanceDetail.json";
-import stuPerformanceH5pDetail from "../mocks/stuPerformanceH5pDetail.json";
-import stuPerformanceH5pList from "../mocks/stuPerformanceH5pList.json";
-import stuPerformaceList from "../mocks/stuPerformanceList.json";
 import { ModelReport } from "../models/ModelReports";
 import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -566,14 +562,14 @@ export const stuPerformanceReportOnload = createAsyncThunk<
         lesson_plan_id: finalPlanId as string,
       });
       stuReportList = stuItems.items || [];
-      stuReportList = stuPerformaceList;
+      // stuReportList = stuPerformaceList;
       const h5pItems = await api.reports.listStudentsPerformanceH5PReport({
         teacher_id: finalTearchId,
         class_id: finalClassId,
         lesson_plan_id: finalPlanId as string,
       });
       h5pReportList = h5pItems.items || [];
-      h5pReportList = stuPerformanceH5pList;
+      // h5pReportList = stuPerformanceH5pList;
     } else {
       const stuItems = await api.reports.getStudentPerformanceReport(student_id, {
         teacher_id: finalTearchId,
@@ -581,14 +577,14 @@ export const stuPerformanceReportOnload = createAsyncThunk<
         lesson_plan_id: finalPlanId as string,
       });
       stuReportDetail = stuItems.items || [];
-      stuReportDetail = stuPerformanceDetail;
+      // stuReportDetail = stuPerformanceDetail;
       const h5pItems = await api.reports.getStudentPerformanceH5PReport(student_id, {
         teacher_id: finalTearchId,
         class_id: finalClassId,
         lesson_plan_id: finalPlanId as string,
       });
       h5pReportDetail = h5pItems.items || [];
-      h5pReportDetail = stuPerformanceH5pDetail;
+      // h5pReportDetail = stuPerformanceH5pDetail;
     }
   }
 
