@@ -115,11 +115,13 @@ interface H5pPlayerProps {
   userId: string;
   scheduleId?: string;
   valueSource: string;
+  onReady?: () => any;
 }
 export function H5pPlayer(props: H5pPlayerProps) {
   const dispatch = useDispatch();
-  const { valueSource, id, scheduleId, userId } = props;
+  const { valueSource, id, scheduleId, userId, onReady } = props;
   const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
+  const onReadyRef = useRef(onReady);
   const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
   // const userId = useUserId();
   const { library: libraryName, params: libraryParams, subContentId: libraryContentId } = parseLibraryContent(valueSource);
@@ -153,15 +155,7 @@ export function H5pPlayer(props: H5pPlayerProps) {
     },
     [core, libraryContentId, library, libraryParams, libraryName]
   );
-  const injectAfterLoad: InjectHandler = useMemo(() => {
-    return async (root) => {
-      xApiRef.current && xApiRef.current(undefined, true);
-      (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
-        xApiRef.current && xApiRef.current(event.data.statement);
-      });
-    };
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [xApiRef, valueSource]);
+  onReadyRef.current = onReady;
   xApiRef.current = (statement?: H5PStatement, isInitial?: boolean) => {
     if (!scheduleId) return;
     const baseInfo = {
@@ -190,6 +184,16 @@ export function H5pPlayer(props: H5pPlayerProps) {
       dispatch(h5pEvent(resultInfo));
     }
   };
+  const injectAfterLoad: InjectHandler = useMemo(() => {
+    return async (root) => {
+      (async () => onReadyRef.current && onReadyRef.current())();
+      xApiRef.current && xApiRef.current(undefined, true);
+      (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
+        xApiRef.current && xApiRef.current(event.data.statement);
+      });
+    };
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [xApiRef, valueSource]);
   library.scripts.push(`../${require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")}`);
   const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });
 
