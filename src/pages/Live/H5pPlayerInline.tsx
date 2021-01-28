@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from "@material-ui/core";
 import { iframeResizer } from "iframe-resizer";
-import React, { HTMLAttributes, useEffect, useMemo, useRef } from "react";
+import React, { HTMLAttributes, memo, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
@@ -122,7 +122,7 @@ interface H5pPlayerInlineProps {
   valueSource: string;
   onReady?: () => any;
 }
-export function H5pPlayerInline(props: H5pPlayerInlineProps) {
+export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   const dispatch = useDispatch();
   const { valueSource, id, scheduleId, userId, onReady } = props;
   const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
@@ -185,6 +185,7 @@ export function H5pPlayerInline(props: H5pPlayerInlineProps) {
   };
   const injectAfterLoad: InjectHandler = async (root) => {
     (async () => onReadyRef.current && onReadyRef.current())();
+    import("iframe-resizer/js/iframeResizer.contentWindow");
     xApiRef.current && xApiRef.current(undefined, true);
     (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
       xApiRef.current && xApiRef.current(event.data.statement);
@@ -196,7 +197,7 @@ export function H5pPlayerInline(props: H5pPlayerInlineProps) {
     if (!library || !library.scripts || library.scripts.length === 0) return;
     new InlineIframeManager({
       contentWindow: window,
-      scripts: resolveH5pDir(library.scripts).concat(require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")),
+      scripts: resolveH5pDir(library.scripts),
       styles: resolveH5pDir(library.styles),
       injectBeforeLoad,
       injectAfterLoad,
@@ -211,7 +212,7 @@ export function H5pPlayerInline(props: H5pPlayerInlineProps) {
       </div>
     </div>
   );
-}
+}, equalH5pPlayerInlineProps);
 
 interface InjectHandler {
   (contentWindow: NonNullable<HTMLIFrameElement["contentWindow"]>): Promise<any>;
@@ -310,4 +311,10 @@ class InlineIframeManager {
     if (!this.contentWindow || !handler) return;
     return handler(this.contentWindow);
   }
+}
+
+function equalH5pPlayerInlineProps(prev: H5pPlayerInlineProps, props: H5pPlayerInlineProps) {
+  return (
+    prev.id === props.id && prev.userId === props.userId && prev.scheduleId === props.scheduleId && prev.valueSource === props.valueSource
+  );
 }
