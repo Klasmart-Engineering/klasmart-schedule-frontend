@@ -59,7 +59,6 @@ export default function AssetAudio(props: Audio) {
   const [loaded, dispatchLoaded] = useReducer(() => true, false);
 
   const handleChange = (event: any, newValue: number | number[]) => {
-    // const audio = document.getElementById("audio") as HTMLAudioElement;
     const audio = audioRef.current;
     if (!audio) return;
     setValue(newValue as number);
@@ -67,14 +66,12 @@ export default function AssetAudio(props: Audio) {
   };
 
   const handlePlay = () => {
-    // const audio = document.getElementById("audio") as HTMLAudioElement;
     const audio = audioRef.current;
     if (!audio) return;
     setIsplay(!isplay);
     isplay ? audio.pause() : audio.play();
   };
   useEffect(() => {
-    // const audio = document.getElementById("audio") as HTMLAudioElement;
     const audio = audioRef.current;
     if (!audio) return;
     const timer = setInterval(() => {

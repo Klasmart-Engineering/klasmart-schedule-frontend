@@ -44,8 +44,6 @@ export default function ContentH5p(props: ContentH5pProps) {
       if (!contentId) return;
       onChange && onChange(contentId);
       onChangeSourceType && onChangeSourceType(source_type);
-      // formMethods.setValue("data.source", contentId, { shouldDirty: true });
-      // formMethods.setValue("source_type", source_type, { shouldDirty: true });
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);

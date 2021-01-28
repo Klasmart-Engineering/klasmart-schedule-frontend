@@ -102,7 +102,6 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
 interface AssetEditProps {
   isAsset?: boolean;
   contentDetail: EntityContentInfoWithDetails;
-  onclosePreview?: () => any;
   permission?: boolean;
   assetLibraryId?: ContentFileType;
   value?: string;
@@ -112,15 +111,13 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, contentDetail, onclosePreview, permission, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  const { isAsset, contentDetail, permission, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
   const setFile = useMemo(
     () => (item: DragItem) => {
       const source = JSON.parse(item.data.data).source;
       onChange(source);
       onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromAssets);
-      // setValue("data.source", source, { shouldDirty: true });
-      // setValue("data.input_source", ContentInputSourceType.fromAssets, { shouldDirty: true });
     },
     [onChange, onChangeInputSource]
   );
@@ -134,7 +131,6 @@ function AssetEdit(props: AssetEditProps) {
   });
   const handleChangeFileType = useCallback(() => {
     onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromFile);
-    // setValue("data.input_source", ContentInputSourceType.fromFile, { shouldDirty: true });
   }, [onChangeInputSource]);
 
   const previewHeader = (
@@ -143,7 +139,7 @@ function AssetEdit(props: AssetEditProps) {
         <>
           <p className={css.title}>{d("Preview").t("library_label_preview")}</p>
           {!isAsset && (
-            <IconButton aria-label="close" className={css.closeButton} onClick={onclosePreview}>
+            <IconButton aria-label="close" className={css.closeButton} onClick={() => onChange("")}>
               <CloseIcon />
             </IconButton>
           )}

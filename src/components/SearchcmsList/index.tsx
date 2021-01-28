@@ -27,7 +27,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     height: 42,
     [breakpoints.down(1460)]: {
       marginLeft: 15,
-      // marginRight: 10,
     },
     [breakpoints.down("md")]: {
       marginLeft: 40,
@@ -39,7 +38,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   checkField: (props: SearchcmsListProps) => ({
     flexShrink: 0.5,
     marginRight: 100,
-    // opacity: props.searchName === "searchOutcome" ? 1 : 0,
     [breakpoints.down(1690)]: {
       marginRight: 10,
     },
@@ -54,7 +52,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     },
   }),
   fieldset: {
-    // minWidth: 90,
     marginRight: 30,
     [breakpoints.down(1460)]: {
       marginRight: 10,
@@ -165,11 +162,6 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
         )}
 
         {searchType === "searchMedia" && lesson === "plan" && (
-          // <FormControlLabel
-          //   className={css.checkField}
-          //   control={<Checkbox checked={Boolean(isShare)} onChange={handleChangeShare} color="primary" />}
-          //   label="Badanamu Content"
-          // />
           <Hidden smDown>
             <RadioGroup value={isShare} onChange={handleChangeShare} className={css.radioGroup}>
               <FormControlLabel

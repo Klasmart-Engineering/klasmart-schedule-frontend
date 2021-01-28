@@ -58,7 +58,6 @@ export default function AssetVideo(props: video) {
   const [loaded, dispatchLoaded] = useReducer(() => true, false);
   const display = loaded ? "flex" : "none";
   const handleChange = (event: any, newValue: number | number[]) => {
-    // const video = document.getElementById("video") as HTMLVideoElement;
     const video = videoRef.current;
     if (!video) return;
     setValue(newValue as number);
@@ -66,7 +65,6 @@ export default function AssetVideo(props: video) {
   };
 
   const handlePlay = () => {
-    // const video = document.getElementById("video") as HTMLVideoElement;
     const video = videoRef.current;
     if (!video) return;
     setIsplay(!isplay);
@@ -74,7 +72,6 @@ export default function AssetVideo(props: video) {
   };
 
   useEffect(() => {
-    // const video = document.getElementById("video") as HTMLVideoElement;
     const video = videoRef.current;
     if (!video) return;
     const timer = setInterval(() => {

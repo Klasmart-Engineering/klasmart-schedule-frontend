@@ -80,7 +80,7 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  const { handleSubmit, control, setValue, watch, errors } = formMethods;
+  const { handleSubmit, control, watch, errors } = formMethods;
   // console.log("errors =", errors);
 
   const {
@@ -293,11 +293,6 @@ function ContentEditForm() {
     },
     []
   );
-
-  const handleClosePreview = useCallback(() => {
-    setValue("data.source", "", { shouldDirty: true });
-  }, [setValue]);
-
   const handleChangeProgram = useMemo(
     () => async (programId: string) => {
       setRegulation(Regulation.ByOptionCount);
@@ -439,7 +434,6 @@ function ContentEditForm() {
                               readonly={false}
                               overlay={false}
                               contentDetail={contentDetail}
-                              onclosePreview={handleClosePreview}
                               permission={!value}
                             />
                           }
@@ -488,7 +482,6 @@ function ContentEditForm() {
                               readonly={false}
                               overlay={false}
                               contentDetail={contentDetail}
-                              onclosePreview={handleClosePreview}
                               permission={!value}
                             />
                           )
