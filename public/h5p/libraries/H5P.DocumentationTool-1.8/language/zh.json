@@ -1,37 +1,37 @@
 {
   "semantics": [
     {
-      "label": "標語",
+      "label": "标语",
       "default": "文件工具",
-      "description": "文件工具的標題名稱"
+      "description": "文件工具的标题名称"
     },
     {
-      "label": "項目",
+      "label": "项目",
       "widgets": [
         {
           "label": "Default"
         }
       ],
-      "entity": "頁面",
+      "entity": "页面",
       "field": {
-        "label": "頁面形式",
-        "description": "頁面的形式"
+        "label": "页面形式",
+        "description": "页面的形式"
       }
     },
     {
       "label": "介面本地化",
       "fields": [
         {
-          "label": "上一張投影片按鈕文字",
-          "default": "上一張"
+          "label": "上一张投影片文字",
+          "default": "上一张"
         },
         {
-          "label": "下一張投影片按鈕文字",
-          "default": "下一張"
+          "label": "下一张投影片文字",
+          "default": "下一张"
         },
         {
-          "label": "關閉投影片按鈕文字",
-          "default": "關閉"
+          "label": "关闭投影片按钮文字",
+          "default": "关闭"
         }
       ]
     }

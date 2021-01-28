@@ -1,39 +1,39 @@
 {
   "semantics": [
     {
-      "label": "Task description"
+      "label": "translate:: Task description"
     },
     {
       "widgets": [
         {
-          "label": "Default"
+          "label": "translate:: Default"
         }
       ],
-      "label": "Cards",
-      "entity": "card",
+      "label": "translate:: Cards",
+      "entity": "translate:: card",
       "field": {
-        "label": "Card",
+        "label": "translate:: Card",
         "fields": [
           {
-            "label": "Question",
-            "description": "Optional textual question for the card. (The card may use just an image, just a text or both)"
+            "label": "translate:: Question",
+            "description": "translate:: Optional textual question for the card. (The card may use just an image, just a text or both)"
           },
           {
-            "label": "Answer",
-            "description": "Optional answer(solution) for the card."
+            "label": "translate:: Answer",
+            "description": "translate:: Optional answer(solution) for the card."
           },
           {
-            "label": "Image",
-            "description": "Optional image for the card. (The card may use just an image, just a text or both)"
+            "label": "translate:: Image",
+            "description": "translate:: Optional image for the card. (The card may use just an image, just a text or both)"
           },
           {
-            "label": "Alternative text for image"
+            "label": "translate:: Alternative text for image"
           },
           {
-            "label": "Tip",
+            "label": "translate:: Tip",
             "fields": [
               {
-                "label": "Tip text"
+                "label": "translate:: Tip text"
               }
             ]
           }
@@ -41,75 +41,75 @@
       }
     },
     {
-      "label": "Progress text",
-      "default": "Card @card of @total",
-      "description": "Progress text, variables available: @card and @total. Example: 'Card @card of @total'"
+      "label": "translate:: Progress text",
+      "default": "translate:: Card @card of @total",
+      "description": "translate:: Progress text, variables available: @card and @total. Example: 'Card @card of @total'"
     },
     {
-      "label": "Text for the next button",
-      "default": "Next"
+      "label": "translate:: Text for the next button",
+      "default": "translate:: Next"
     },
     {
-      "label": "Text for the previous button",
-      "default": "Previous"
+      "label": "translate:: Text for the previous button",
+      "default": "translate:: Previous"
     },
     {
-      "label": "Text for the check answers button",
-      "default": "Check"
+      "label": "translate:: Text for the check answers button",
+      "default": "translate:: Check"
     },
     {
-      "label": "Require user input before the solution can be viewed"
+      "label": "translate:: Require user input before the solution can be viewed"
     },
     {
-      "label": "Text for the answer input field",
-      "default": "Your answer"
+      "label": "translate:: Text for the answer input field",
+      "default": "translate:: Your answer"
     },
     {
-      "label": "Text for correct answer",
-      "default": "Correct"
+      "label": "translate:: Text for correct answer",
+      "default": "translate:: Correct"
     },
     {
-      "label": "Text for incorrect answer",
-      "default": "Incorrect"
+      "label": "translate:: Text for incorrect answer",
+      "default": "translate:: Incorrect"
     },
     {
-      "label": "Show solution text",
-      "default": "Correct answer"
+      "label": "translate:: Show solution text",
+      "default": "translate:: Correct answer"
     },
     {
-      "label": "Text for results title",
-      "default": "Results"
+      "label": "translate:: Text for results title",
+      "default": "translate:: Results"
     },
     {
-      "label": "Text for number of correct",
-      "default": "@score of @total correct",
-      "description": "Result text, variables available: @score and @total. Example: '@score of @total correct'"
+      "label": "translate:: Text for number of correct",
+      "default": "translate:: @score of @total correct",
+      "description": "translate:: Result text, variables available: @score and @total. Example: '@score of @total correct'"
     },
     {
-      "label": "Text for show results",
-      "default": "Show results"
+      "label": "translate:: Text for show results",
+      "default": "translate:: Show results"
     },
     {
-      "label": "Text for short answer label",
-      "default": "A:"
+      "label": "translate:: Text for short answer label",
+      "default": "translate:: A:"
     },
     {
-      "label": "Text for \"retry\" button",
-      "default": "Retry"
+      "label": "translate:: Text for \"retry\" button",
+      "default": "translate:: Retry"
     },
     {
-      "label": "Case sensitive",
-      "description": "Makes sure the user input has to be exactly the same as the answer."
+      "label": "translate:: Case sensitive",
+      "description": "translate:: Makes sure the user input has to be exactly the same as the answer."
     },
     {
-      "label": "Incorrect text for assistive technologies",
-      "default": "Incorrect answer. Correct answer was @answer",
-      "description": "Text that will be announced to assistive technologies. Use @answer as variable."
+      "label": "translate:: Incorrect text for assistive technologies",
+      "default": "translate:: Incorrect answer. Correct answer was @answer",
+      "description": "translate:: Text that will be announced to assistive technologies. Use @answer as variable."
     },
     {
-      "label": "Card change for assistive technologies",
-      "default": "Page @current of @total",
-      "description": "Text that will be announced to assistive technologies when navigating between cards. Use @current and @total as variables."
+      "label": "translate:: Card change for assistive technologies",
+      "default": "translate:: Page @current of @total",
+      "description": "translate:: Text that will be announced to assistive technologies when navigating between cards. Use @current and @total as variables."
     }
   ]
 }

@@ -1,0 +1,97 @@
+{
+  "semantics": [
+    {
+      "label": "tanslate:: Destination",
+      "fields": [
+        {
+          "label": "tanslate:: Type",
+          "options": [
+            {
+              "label": "tanslate:: Timecode"
+            },
+            {
+              "label": "tanslate:: Another page (URL)"
+            }
+          ]
+        },
+        {
+          "label": "tanslate:: Go To",
+          "description": "tanslate:: The target time the user will be taken to upon pressing the hotspot. Enter timecode in the format M:SS."
+        },
+        {
+          "label": "tanslate:: URL",
+          "fields": [
+            {
+              "label": "tanslate:: Protocol",
+              "options": [
+                {
+                  "label": "http://"
+                },
+                {
+                  "label": "https://"
+                },
+                {
+                  "label": "tanslate:: (root relative)"
+                },
+                {
+                  "label": "tanslate:: other"
+                }
+              ]
+            },
+            {
+              "label": "tanslate:: URL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "tanslate:: Visuals",
+      "fields": [
+        {
+          "label": "tanslate:: Shape",
+          "options": [
+            {
+              "label": "tanslate:: Rectangular"
+            },
+            {
+              "label": "tanslate:: Circular"
+            },
+            {
+              "label": "tanslate:: Rounded Rectangle"
+            }
+          ]
+        },
+        {
+          "label": "tanslate:: Background color for hotspot"
+        },
+        {
+          "label": "tanslate:: Use pointer cursor"
+        },
+        {
+          "label": "tanslate:: Add blinking effect",
+          "description": "tanslate:: Note: Blinking effect is always enabled in the editor so you are able to find transparent hotspots"
+        }
+      ]
+    },
+    {
+      "label": "tanslate:: Texts",
+      "fields": [
+        {
+          "label": "tanslate:: Alternative Text",
+          "description": "tanslate:: Describe the subject the hotspot covers. Used for readspeakers",
+          "placeholder": "tanslate:: An apple on a table"
+        },
+        {
+          "label": "tanslate:: Hotspot Label"
+        },
+        {
+          "label": "tanslate:: Show label"
+        },
+        {
+          "label": "tanslate:: Label color"
+        }
+      ]
+    }
+  ]
+}

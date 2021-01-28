@@ -1,99 +1,99 @@
 {
   "semantics": [
     {
-      "label": "Source files"
+      "label": "translate:: Source files"
     },
     {
-      "label": "Player mode",
-      "description": "Select the layout of the player.",
+      "label": "translate:: Player mode",
+      "description": "translate:: Select the layout of the player.",
       "options": [
         {
-          "label": "Minimalistic"
+          "label": "translate:: Minimalistic"
         },
         {
-          "label": "Full"
+          "label": "translate:: Full"
         },
         {
-          "label": "Transparent"
+          "label": "translate:: Transparent"
         }
       ]
     },
     {
-      "label": "Fit to wrapper"
+      "label": "translate:: Fit to wrapper"
     },
     {
-      "label": "Enable controls",
-      "description": "Controls allow the user to for instance pause the audio"
+      "label": "translate:: Enable controls",
+      "description": "translate:: Controls allow the user to for instance pause the audio"
     },
     {
-      "label": "Enable autoplay",
-      "description": "With autoplay the audio starts to play immediately. If autoplay is disabled the user presses a play button to start the audio."
+      "label": "translate:: Enable autoplay",
+      "description": "translate:: With autoplay the audio starts to play immediately. If autoplay is disabled the user presses a play button to start the audio."
     },
     {
-      "label": "Copyright information",
+      "label": "translate:: Copyright information",
       "fields": [
         {
-          "label": "Title",
-          "placeholder": "Für Elise"
+          "label": "translate:: Title",
+          "placeholder": "translate:: Für Elise"
         },
         {
-          "label": "Author",
-          "placeholder": "Ludwig van Beethoven"
+          "label": "translate:: Author",
+          "placeholder": "translate:: Ludwig van Beethoven"
         },
         {
-          "label": "Source",
-          "placeholder": "http://en.wikipedia.org/wiki/F%C3%BCr_Elise"
+          "label": "translate:: Source",
+          "placeholder": "translate:: http://en.wikipedia.org/wiki/F%C3%BCr_Elise"
         },
         {
-          "label": "License",
+          "label": "translate:: License",
           "options": [
             {
-              "label": "Undisclosed"
+              "label": "translate:: Undisclosed"
             },
             {
-              "label": "Attribution"
+              "label": "translate:: Attribution"
             },
             {
-              "label": "Attribution-ShareAlike"
+              "label": "translate:: Attribution-ShareAlike"
             },
             {
-              "label": "Attribution-NoDerivs"
+              "label": "translate:: Attribution-NoDerivs"
             },
             {
-              "label": "Attribution-NonCommercial"
+              "label": "translate:: Attribution-NonCommercial"
             },
             {
-              "label": "Attribution-NonCommercial-ShareAlike"
+              "label": "translate:: Attribution-NonCommercial-ShareAlike"
             },
             {
-              "label": "Attribution-NonCommercial-NoDerivs"
+              "label": "translate:: Attribution-NonCommercial-NoDerivs"
             },
             {
-              "label": "General Public License"
+              "label": "translate:: General Public License"
             },
             {
-              "label": "Public Domain"
+              "label": "translate:: Public Domain"
             },
             {
-              "label": "Public Domain Dedication and Licence"
+              "label": "translate:: Public Domain Dedication and Licence"
             },
             {
-              "label": "Public Domain Mark"
+              "label": "translate:: Public Domain Mark"
             },
             {
-              "label": "Copyright"
+              "label": "translate:: Copyright"
             }
           ]
         }
       ]
     },
     {
-      "label": "Audio content name",
-      "default": "Audio"
+      "label": "translate:: Audio content name",
+      "default": "translate:: Audio"
     },
     {
-      "label": "Audio not supported message",
-      "default": "Your browser does not support this audio"
+      "label": "translate:: Audio not supported message",
+      "default": "translate:: Your browser does not support this audio"
     }
   ]
 }

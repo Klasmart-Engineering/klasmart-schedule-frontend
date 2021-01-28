@@ -14,20 +14,20 @@
                     {},
                     {},
                     {
-                      "label": "註解",
-                      "description": "註解內容會在使用者顯示建議答案時一併呈現。"
+                      "label": "注解",
+                      "description": "注解内容会在使用者显示建议答案时一并显现。"
                     },
                     {
-                      "label": "總是顯示註解"
+                      "label": "总是显示注解"
                     },
                     {
                       "label": "背景不透明度"
                     },
                     {
-                      "label": "以按鈕樣式顯示"
+                      "label": "以按钮样式显示"
                     },
                     {
-                      "label": "按鈕尺寸",
+                      "label": "按钮尺寸",
                       "options": [
                         {
                           "label": "小型"
@@ -38,29 +38,29 @@
                       ]
                     },
                     {
-                      "label": "標題"
+                      "label": "标题"
                     },
                     {
                       "label": "移至",
                       "options": [
                         {
-                          "label": "指定的投影片"
+                          "label": "指定幻灯片"
                         },
                         {
-                          "label": "下一張投影片"
+                          "label": "下一张幻灯片"
                         },
                         {
-                          "label": "上一張投影片"
+                          "label": "上一张幻灯片"
                         }
                       ]
                     },
                     {
-                      "label": "指定投影片的編號",
-                      "description": "只有選擇「指定的投影片」時適用"
+                      "label": "指定幻灯片编号",
+                      "description": "只有选择「指定的幻灯片」时适用"
                     },
                     {
-                      "label": "不可見",
-                      "description": "預設的游標樣式，沒有標題也沒有無索引標籤。警告：殘障用戶或僅限鍵盤用戶將無法使用此元素。"
+                      "label": "不可见",
+                      "description": "默认光标，没有标题也没有标签索引。警告：残障用户或仅有键盘用户将无法使用此元素。"
                     }
                   ]
                 }
@@ -69,11 +69,11 @@
               {
                 "fields": [
                   {
-                    "label": "圖片",
-                    "description": "圖片背景寬高比建議為 2：1 可避免延伸時超出。高解析度的圖片在大屏幕上顯示較佳。"
+                    "label": "图片",
+                    "description": "图片宽高比建议为 2：1 可避免延伸时超出。高解析度的图片在大屏幕上显示较佳。"
                   },
                   {
-                    "label": "選擇一種顏色",
+                    "label": "选择颜色",
                     "default": ""
                   }
                 ]
@@ -83,25 +83,25 @@
         },
         {},
         {
-          "label": "關鍵字列表"
+          "label": "关键字列表"
         },
         {
-          "label": "總是顯示"
+          "label": "总是显示"
         },
         {
-          "label": "自動隱藏"
+          "label": "自动隐藏"
         },
         {
-          "label": "不透明度"
+          "label": "透明度"
         },
         {
           "fields": [
             {
-              "label": "圖片",
-              "description": "圖片背景寬高比建議為 2：1 避免延伸時超出。高解析度的圖片在大屏幕上顯示較佳。"
+              "label": "图片",
+              "description": "图片宽高比建议为 2：1 可避免延伸时超出。高解析度的图片在大屏幕上显示较佳。"
             },
             {
-              "label": "選擇一種顏色",
+              "label": "选择颜色",
               "default": ""
             }
           ]
@@ -109,90 +109,90 @@
       ]
     },
     {
-      "label": "介面本地化",
+      "label": "本地化",
       "fields": [
         {
-          "label": "投影片標題",
-          "default": "投影片"
+          "label": "幻灯片标题",
+          "default": "幻灯片"
         },
         {
-          "label": "分數標題",
-          "default": "分數"
+          "label": "分数标题",
+          "default": "分数"
         },
         {
-          "label": "你的分數",
-          "default": "你的分數"
+          "label": "你的分数",
+          "default": "你的分数"
         },
         {
-          "label": "最高分數",
-          "default": "最高分數"
+          "label": "最高分数",
+          "default": "最高分数"
         },
         {
-          "label": "總計標題",
-          "default": "總計"
+          "label": "总计标题",
+          "default": "总计"
         },
         {
-          "label": "總分標題",
-          "default": "總分"
+          "label": "总分标题",
+          "default": "总分"
         },
         {
-          "label": "觀看解法功能按鈕名稱",
-          "default": "觀看解法"
+          "label": "查看答案按钮标题",
+          "default": "查看答案"
         },
         {
-          "label": "重試功能按鈕名稱",
-          "default": "重試"
+          "label": "重试按钮标题",
+          "default": "重试"
         },
         {
-          "label": "匯出功能按鈕名稱",
-          "default": "匯出"
+          "label": "导出按钮标题",
+          "default": "导出"
         },
         {
-          "label": "隱藏關鍵字列表功能按鈕名稱",
-          "default": "隱藏關鍵字列表"
+          "label": "隐藏关键字按钮标题",
+          "default": "隐藏关键字列表"
         },
         {
-          "label": "顯示關鍵字列表功能按鈕名稱",
-          "default": "顯示關鍵字列表"
+          "label": "显示关键字按钮标题",
+          "default": "显示关键字列表"
         },
         {
-          "label": "全螢幕標題",
-          "default": "全屏顯示"
+          "label": "全屏标题",
+          "default": "全屏显示"
         },
         {
-          "label": "退出全螢幕標題",
-          "default": "取消全屏顯示"
+          "label": "退出全屏标题",
+          "default": "取消全屏"
         },
         {
-          "label": "上一張投影片名稱",
-          "default": "上一張投影片"
+          "label": "上一张幻灯片标题",
+          "default": "上一张幻灯片"
         },
         {
-          "label": "下一張投影片名稱",
-          "default": "下一張投影片"
+          "label": "下一张幻灯片标题",
+          "default": "下一张幻灯片"
         },
         {
-          "label": "目前投影片名稱",
-          "default": "目前投影片"
+          "label": "当前幻灯片标题",
+          "default": "当前幻灯片"
         },
         {
-          "label": "上次投影片名稱",
-          "default": "上次投影片"
+          "label": "最后幻灯片标题",
+          "default": "最后幻灯片"
         },
         {
-          "label": "退出觀看解法模式名稱",
-          "default": "隱藏解法"
+          "label": "退出解法模式名称",
+          "default": "隐藏接法"
         },
         {
-          "label": "顯示解法模式名稱",
-          "default": "顯示解法"
+          "label": "显示解法模式名称",
+          "default": "显示解法"
         },
         {
-          "label": "單頁多組任務名稱",
-          "default": "多組任務"
+          "label": "单页多组任務名称",
+          "default": "多组任务"
         },
         {
-          "label": "評分訊息名稱",
+          "label": "评分信息名称",
           "default": "你的得分:"
         },
         {
@@ -208,98 +208,98 @@
           "default": "在 Google+ 上分享"
         },
         {
-          "label": "結果投影片的標題",
-          "default": "結果"
+          "label": "结果幻灯片的标题",
+          "default": "总结"
         },
         {
-          "label": "評論功能按鈕名稱",
-          "default": "顯示評論"
+          "label": "评论图标名称",
+          "default": "显示评论"
         },
         {
-          "label": "列印功能按鈕名稱",
-          "default": "列印"
+          "label": "打印按钮名称",
+          "default": "打印"
         },
         {
-          "label": "列印對話視窗",
-          "default": "您要怎麼列印此投影片?"
+          "label": "打印对话框",
+          "default": "您要怎么打印此幻灯片?"
         },
         {
-          "label": "\"列印所有投影片\" 功能按鈕名稱",
-          "default": "列印所有投影片"
+          "label": "\"打印所有幻灯片\" 功能按钮名称",
+          "default": "打印所有幻灯片"
         },
         {
-          "label": "\"列印當前投影片\"功能按鈕名稱",
-          "default": "列印當前投影片"
+          "label": "\"打印当前幻灯片\"功能按钮名称",
+          "default": "打印当前幻灯片"
         },
         {
-          "label": "沒有標題的投影片標題名稱",
-          "default": "無標題"
+          "label": "没有标题的幻灯片名称",
+          "default": "无标题"
         },
         {
-          "label": "投影片快捷鍵說明",
-          "default": "可用左右方向鍵來切換投影片"
+          "label": "幻灯片快捷键说明",
+          "default": "可用左右方向键來切换幻灯片"
         },
         {
-          "label": "輔助操作說明",
+          "label": "辅助操作说明",
           "default": "播放時可使用左右方向鍵來切換投影片"
         },
         {
-          "label": "未完成互動的投影片名稱",
-          "default": "@slideName 未完成互動"
+          "label": "未完成互动的幻灯片名称",
+          "default": "@slideName 未完成互动"
         },
         {
-          "label": "完成互動的投影片名稱",
-          "default": "@slideName 已完成互動"
+          "label": "完成互动的幻灯片名称",
+          "default": "@slideName 已完成互动"
         },
         {
-          "label": "投影片計數器，變數是 @index, @total",
-          "default": "投影片 @index / @total"
+          "label": "幻灯片计数器，变量是 @index, @total",
+          "default": "幻灯片 @index / @total"
         },
         {
-          "label": "正確作答的標示",
-          "default": "@slideName 作答正確"
+          "label": "正确作答的幻灯片的标签",
+          "default": "@slideName 回答正確"
         },
         {
-          "label": "錯誤作答的標示",
-          "default": "@slideName 作答錯誤"
+          "label": "错误作答的幻灯片标签",
+          "default": "@slideName 回答错误"
         },
         {
-          "label": "社交分享欄的標籤",
-          "default": "分享結果"
+          "label": "社交分享栏的标签",
+          "default": "分享结果"
         },
         {
-          "label": "得分宣告",
-          "default": "你得到 @score 分，總分是 @maxScore。",
-          "description": "可用的變數為得分 @score 與總分 @maxScore"
+          "label": "总成绩展示",
+          "default": "你得到 @score 分，总分是 @maxScore。",
+          "description": "可用的变量为 得分 @score 总分数 @maxScore"
         },
         {
-          "label": "Entered fullscreen announcement for assistive technologies",
-          "default": "Entered fullscreen"
+          "label": "残疾辅助的进入全屏",
+          "default": "进入全屏"
         },
         {
-          "label": "Exited fullscreen announcement for assistive technologies",
-          "default": "Exited fullscreen"
+          "label": "残疾辅助的退出全屏",
+          "default": "退出全屏"
         }
       ]
     },
     {
-      "label": "行為設定",
-      "description": "這些設定會覆蓋預設值。",
+      "label": "行为设定",
+      "description": "这些设定会覆盖默认值。",
       "fields": [
         {
-          "label": "播放模式設定",
-          "description": "選擇使用者是否可用控制項。"
+          "label": "Activate Active Surface Mode",
+          "description": "选择使用者是否可用控制项。"
         },
         {
-          "label": "隱藏結果投影片",
-          "description": "隱藏結果投影片"
+          "label": "隐藏总结幻灯片",
+          "description": "隐藏总结幻灯片"
         },
         {
-          "label": " 啟用\"查看解法\"功能",
-          "description": "設定所有問題是否顯示\"查看解法\"功能按鈕。",
+          "label": " 启用\"查看解法\"功能",
+          "description": "设定所有问题是否显示\"查看解法\"功能按鈕。",
           "options": [
             {
-              "label": "啟用"
+              "label": "启用"
             },
             {
               "label": "停用"
@@ -307,11 +307,11 @@
           ]
         },
         {
-          "label": "啟用\"重試\"功能",
-          "description": "設定所有問題是否顯示\"重試\"功能按鈕。",
+          "label": "启用\"重试\"功能",
+          "description": "设定所有问题是否显示\"重试\"功能按鈕。",
           "options": [
             {
-              "label": "啟用"
+              "label": "启用"
             },
             {
               "label": "停用"

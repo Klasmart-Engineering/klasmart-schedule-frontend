@@ -1,12 +1,12 @@
 {
   "semantics": [
     {
-      "label": "Title"
+      "label": "translate:: Title"
     },
     {
       "fields": [
         {
-          "label": "Protocol",
+          "label": "translate:: Protocol",
           "options": [
             {
               "label": "http://"
@@ -15,15 +15,15 @@
               "label": "https://"
             },
             {
-              "label": "(root relative)"
+              "label": "translate:: (root relative)"
             },
             {
-              "label": "other"
+              "label": "translate:: other"
             }
           ]
         },
         {
-          "label": "URL"
+          "label": "translate:: URL"
         }
       ]
     }

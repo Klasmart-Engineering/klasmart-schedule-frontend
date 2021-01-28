@@ -1,0 +1,256 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Question"
+    },
+    {
+      "label": "translate:: Placeholder text",
+      "default": "translate:: Enter your response here",
+      "description": "translate:: Text that initially will be shown in the input field. Will be removed automatically when the user starts writing."
+    },
+    {
+      "label": "translate:: Max score",
+      "description": "translate:: Used for grading and not shown to the learner"
+    },
+    {
+      "label": "translate:: Required",
+      "description": "translate:: Learners must provide an answer in order to proceed"
+    },
+    {
+      "label": "translate:: Localize Free Text Question buttons",
+      "fields": [
+        {
+          "label": "translate:: Required text label",
+          "description": "translate:: Text shown to notify learner that input is required before proceeding",
+          "default": "translate:: required"
+        },
+        {
+          "label": "translate:: Required message",
+          "default": "translate:: This question requires an answer",
+          "description": "translate:: Will display if this field is unanswered and required by a wrapper content type"
+        },
+        {
+          "label": "translate:: Skip button label",
+          "default": "translate:: Skip Question"
+        },
+        {
+          "label": "translate:: Proceed button label",
+          "default": "translate:: Answer and proceed"
+        },
+        {
+          "label": "translate:: Wysiwyg editor language",
+          "description": "translate:: The language of the wysiwyg user interface",
+          "options": [
+            {
+              "label": "translate:: Afrikaans"
+            },
+            {
+              "label": "translate:: Arabic"
+            },
+            {
+              "label": "translate:: Azerbaijani"
+            },
+            {
+              "label": "translate:: Bulgarian"
+            },
+            {
+              "label": "translate:: Bengali"
+            },
+            {
+              "label": "translate:: Bosnian"
+            },
+            {
+              "label": "translate:: Catalan"
+            },
+            {
+              "label": "translate:: Czech"
+            },
+            {
+              "label": "translate:: Welsh"
+            },
+            {
+              "label": "translate:: Danish"
+            },
+            {
+              "label": "translate:: German (Switzerland)"
+            },
+            {
+              "label": "translate:: German"
+            },
+            {
+              "label": "translate:: Greek"
+            },
+            {
+              "label": "translate:: English (Australia)"
+            },
+            {
+              "label": "translate:: English (Canada)"
+            },
+            {
+              "label": "translate:: English (United Kingdom)"
+            },
+            {
+              "label": "translate:: English"
+            },
+            {
+              "label": "translate:: Esperanto"
+            },
+            {
+              "label": "translate:: Spanish (Mexico)"
+            },
+            {
+              "label": "translate:: Spanish (Spain)"
+            },
+            {
+              "label": "translate:: Estonian"
+            },
+            {
+              "label": "translate:: Basque"
+            },
+            {
+              "label": "translate:: Farsi"
+            },
+            {
+              "label": "translate:: Finnish"
+            },
+            {
+              "label": "translate:: Faeroese"
+            },
+            {
+              "label": "translate:: French (Canada)"
+            },
+            {
+              "label": "translate:: French (Standard)"
+            },
+            {
+              "label": "translate:: Galician"
+            },
+            {
+              "label": "translate:: Gujarati"
+            },
+            {
+              "label": "translate:: Hebrew (modern)"
+            },
+            {
+              "label": "translate:: Hindi"
+            },
+            {
+              "label": "translate:: Croatian"
+            },
+            {
+              "label": "translate:: Hungarian"
+            },
+            {
+              "label": "translate:: Indonesian"
+            },
+            {
+              "label": "translate:: Icelandic"
+            },
+            {
+              "label": "translate:: Italian (Standard)"
+            },
+            {
+              "label": "translate:: Japanese"
+            },
+            {
+              "label": "translate:: Georgian"
+            },
+            {
+              "label": "translate:: Central Khmer"
+            },
+            {
+              "label": "translate:: Korean"
+            },
+            {
+              "label": "translate:: Kurdish"
+            },
+            {
+              "label": "translate:: Lithuanian"
+            },
+            {
+              "label": "translate:: Latvian"
+            },
+            {
+              "label": "translate:: Macedonian"
+            },
+            {
+              "label": "translate:: Mongolian"
+            },
+            {
+              "label": "translate:: Malay"
+            },
+            {
+              "label": "translate:: Norwegian Bokmål"
+            },
+            {
+              "label": "translate:: Dutch (Standard)"
+            },
+            {
+              "label": "translate:: Norwegian"
+            },
+            {
+              "label": "translate:: Occitan"
+            },
+            {
+              "label": "translate:: Polish"
+            },
+            {
+              "label": "translate:: Portuguese (Brazil)"
+            },
+            {
+              "label": "translate:: Portuguese (Portugal)"
+            },
+            {
+              "label": "translate:: Romanian"
+            },
+            {
+              "label": "translate:: Russian"
+            },
+            {
+              "label": "translate:: Sinhala/Sinhalese"
+            },
+            {
+              "label": "translate:: Slovak"
+            },
+            {
+              "label": "translate:: Slovenian"
+            },
+            {
+              "label": "translate:: Albanian"
+            },
+            {
+              "label": "translate:: Serbian (Latin)"
+            },
+            {
+              "label": "translate:: Serbian"
+            },
+            {
+              "label": "translate:: Swedish"
+            },
+            {
+              "label": "translate:: Thai"
+            },
+            {
+              "label": "translate:: Turkish"
+            },
+            {
+              "label": "translate:: Tatar"
+            },
+            {
+              "label": "translate:: Uighur/Uyghur"
+            },
+            {
+              "label": "translate:: Ukrainian"
+            },
+            {
+              "label": "translate:: Vietnamese"
+            },
+            {
+              "label": "translate:: Chinese (PRC)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

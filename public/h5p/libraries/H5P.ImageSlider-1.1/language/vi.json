@@ -1,0 +1,63 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Images",
+      "field": {
+        "label": "translate:: Image Slide",
+        "fields": [
+          {
+            "label": "translate:: Image Slide"
+          }
+        ]
+      }
+    },
+    {
+      "label": "translate:: Aspect ratio",
+      "description": "translate:: Automatic means fixed aspect ratio automatically determined based on the images",
+      "options": [
+        {
+          "label": "translate:: Automatic"
+        },
+        {
+          "label": "translate:: Custom"
+        },
+        {
+          "label": "translate:: Not fixed"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Aspect Ratio Settings",
+      "fields": [
+        {
+          "label": "translate:: Aspect ratio width",
+          "description": "translate:: If you use 4 here, and 3 for the height the aspect ratio will be 4:3"
+        },
+        {
+          "label": "translate:: Aspect ratio height",
+          "description": "translate:: If you use 3 here, and 4 for the width the aspect ratio will be 4:3"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Image slider accessibility",
+      "fields": [
+        {
+          "label": "translate:: Label for next slide buttons",
+          "default": "translate:: Next Image",
+          "description": "translate:: This is only used for read-speakers. It won't be displayed."
+        },
+        {
+          "label": "translate:: Label for previous slide buttons",
+          "default": "translate:: Previous Image",
+          "description": "translate:: This is only used for read-speakers. It won't be displayed."
+        },
+        {
+          "label": "translate:: Label for slide buttons",
+          "default": "translate:: Go to image %slide",
+          "description": "translate:: This is only used for read-speakers. It won't be displayed. %slide is a variable and will be replaced with the image number."
+        }
+      ]
+    }
+  ]
+}

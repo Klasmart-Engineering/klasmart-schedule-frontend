@@ -1,49 +1,49 @@
 {
   "semantics": [
     {
-      "label": "Source files"
+      "label": "translate:: Source files"
     },
     {
-      "label": "Player mode",
-      "description": "Select the layout of the player.",
+      "label": "translate:: Player mode",
+      "description": "translate:: Select the layout of the player.",
       "options": [
         {
-          "label": "Minimalistic"
+          "label": "translate:: Minimalistic"
         },
         {
-          "label": "Full"
+          "label": "translate:: Full"
         },
         {
-          "label": "Transparent"
+          "label": "translate:: Transparent"
         }
       ]
     },
     {
-      "label": "Fit to wrapper"
+      "label": "translate:: Fit to wrapper"
     },
     {
-      "label": "Enable controls",
-      "description": "Controls allow the user to for instance pause the audio"
+      "label": "translate:: Enable controls",
+      "description": "translate:: Controls allow the user to for instance pause the audio"
     },
     {
-      "label": "Enable autoplay",
-      "description": "With autoplay the audio starts to play immediately. If autoplay is disabled the user presses a play button to start the audio."
+      "label": "translate:: Enable autoplay",
+      "description": "translate:: With autoplay the audio starts to play immediately. If autoplay is disabled the user presses a play button to start the audio."
     },
     {
-      "label": "Play audio (Readspeaker)",
-      "default": "Play audio"
+      "label": "translate:: Play audio (Readspeaker)",
+      "default": "translate:: Play audio"
     },
     {
-      "label": "Pause audio (Readspeaker)",
-      "default": "Pause audio"
+      "label": "translate:: Pause audio (Readspeaker)",
+      "default": "translate:: Pause audio"
     },
     {
-      "label": "Audio content name",
-      "default": "Audio"
+      "label": "translate:: Audio content name",
+      "default": "translate:: Audio"
     },
     {
-      "label": "Audio not supported message",
-      "default": "Your browser does not support this audio"
+      "label": "translate:: Audio not supported message",
+      "default": "translate:: Your browser does not support this audio"
     }
   ]
 }

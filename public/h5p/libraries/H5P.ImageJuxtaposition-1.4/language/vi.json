@@ -1,0 +1,61 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Heading",
+      "placeholder": "translate:: Here you can add an optional heading.",
+      "description": "translate:: The heading you'd like to show before the befort/after image"
+    },
+    {
+      "label": "translate:: First image",
+      "fields": [
+        {
+          "label": "translate:: First image",
+          "description": "translate:: The first image. Please make sure that it has the same size as the second image."
+        },
+        {
+          "label": "translate:: Label for first image",
+          "description": "translate:: Label to put over first image"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Second image",
+      "fields": [
+        {
+          "label": "translate:: Second image",
+          "description": "translate:: The second image. Please make sure that it has the same size as the first image."
+        },
+        {
+          "label": "translate:: Label for second image",
+          "description": "translate:: Label to put over second image"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Behavioral settings",
+      "description": "translate:: These options will let you set some details",
+      "fields": [
+        {
+          "label": "translate:: Slider start position in %",
+          "description": "translate:: Sets the start position of the slider"
+        },
+        {
+          "label": "translate:: Slider orientation",
+          "description": "translate:: Horizontal will move left and right, vertical will move up and down.",
+          "options": [
+            {
+              "label": "translate:: Horizontal"
+            },
+            {
+              "label": "translate:: Vertical"
+            }
+          ]
+        },
+        {
+          "label": "translate:: Slider color"
+        }
+      ]
+    }
+  ]
+  
+}

@@ -1,133 +1,133 @@
 {
   "semantics": [
     {
-      "label": "Intro",
-      "description": "The intro text (maximum 100 characters)"
+      "label": "translate:: Intro",
+      "description": "translate:: The intro text (maximum 100 characters)"
     },
     {
-      "label": "Quiz type",
+      "label": "translate:: Quiz type",
       "options": [
         {
-          "label": "Arithmetic Operations Quiz"
+          "label": "translate:: Arithmetic Operations Quiz"
         },
         {
-          "label": "Linear Equations Quiz"
+          "label": "translate:: Linear Equations Quiz"
         }
       ]
     },
     {
-      "label": "Arithmetic type",
+      "label": "translate:: Arithmetic type",
       "options": [
         {
-          "label": "Addition"
+          "label": "translate:: Addition"
         },
         {
-          "label": "Subtraction"
+          "label": "translate:: Subtraction"
         },
         {
-          "label": "Multiplication"
+          "label": "translate:: Multiplication"
         },
         {
-          "label": "Division"
+          "label": "translate:: Division"
         }
       ]
     },
     {
-      "label": "Equation type",
+      "label": "translate:: Equation type",
       "options": [
         {
-          "label": "Basic [ 3x = 12 ]"
+          "label": "translate:: Basic [ 3x = 12 ]"
         },
         {
-          "label": "Intermediate [ 4x - 3 = 13 ]"
+          "label": "translate:: Intermediate [ 4x - 3 = 13 ]"
         },
         {
-          "label": "Advanced [ 5x + 3 = 3x + 15 ]"
+          "label": "translate:: Advanced [ 5x + 3 = 3x + 15 ]"
         }
       ]
     },
     {
-      "label": "Enable fractions",
-      "description": "Enable to allow fractions in equations."
+      "label": "translate:: Enable fractions",
+      "description": "translate:: Enable to allow fractions in equations."
     },
     {
-      "label": "Max number of questions"
+      "label": "translate:: Max number of questions"
     },
     {
-      "label": "User interface translations",
+      "label": "translate:: User interface translations",
       "fields": [
         {
-          "label": "Scoring during quiz",
-          "default": "Score:"
+          "label": "translate:: Scoring during quiz",
+          "default": "translate:: Score:"
         },
         {
-          "label": "Time",
-          "default": "Time: @time"
+          "label": "translate:: Time",
+          "default": "translate:: Time: @time"
         },
         {
-          "label": "Result page header",
-          "default": "Finished!"
+          "label": "translate:: Result page header",
+          "default": "translate:: Finished!"
         },
         {
-          "label": "Go label",
-          "default": "GO!"
+          "label": "translate:: Go label",
+          "default": "translate:: GO!"
         },
         {
-          "label": "Start button label",
-          "default": "Start"
+          "label": "translate:: Start button label",
+          "default": "translate:: Start"
         },
         {
-          "label": "Retry button label",
-          "default": "Retry"
+          "label": "translate:: Retry button label",
+          "default": "translate:: Retry"
         },
         {
-          "label": "Readspeaker text for correct answer",
-          "default": "Correct"
+          "label": "translate:: Readspeaker text for correct answer",
+          "default": "translate:: Correct"
         },
         {
-          "label": "Readspeaker text for incorrect answer",
-          "default": "Incorrect. Correct answer was :num"
+          "label": "translate:: Readspeaker text for incorrect answer",
+          "default": "translate:: Incorrect. Correct answer was :num"
         },
         {
-          "label": "Readspeaker label for the timer",
-          "default": "Duration in hours, minutes and seconds."
+          "label": "translate:: Readspeaker label for the timer",
+          "default": "translate:: Duration in hours, minutes and seconds."
         },
         {
-          "label": "Readspeaker text for question",
-          "default": "What does :arithmetic equal?"
+          "label": "translate:: Readspeaker text for question",
+          "default": "translate:: What does :arithmetic equal?"
         },
         {
-          "label": "Readspeaker text for equation question",
-          "default": "For the equation :equation, what does :item equal?"
+          "label": "translate:: Readspeaker text for equation question",
+          "default": "translate:: For the equation :equation, what does :item equal?"
         },
         {
-          "label": "Readspeaker text for equation variable",
-          "default": "What does :item equal?"
+          "label": "translate:: Readspeaker text for equation variable",
+          "default": "translate:: What does :item equal?"
         },
         {
-          "label": "Plus operator text",
-          "default": "plus"
+          "label": "translate:: Plus operator text",
+          "default": "translate:: plus"
         },
         {
-          "label": "Subtraction operator text",
-          "default": "minus"
+          "label": "translate:: Subtraction operator text",
+          "default": "translate:: minus"
         },
         {
-          "label": "Multiplication operator text",
-          "default": "times"
+          "label": "translate:: Multiplication operator text",
+          "default": "translate:: times"
         },
         {
-          "label": "Division operator text",
-          "default": "divided by"
+          "label": "translate:: Division operator text",
+          "default": "translate:: divided by"
         },
         {
-          "label": "Equality sign text",
-          "default": "equals"
+          "label": "translate:: Equality sign text",
+          "default": "translate:: equals"
         },
         {
-          "label": "Slide number text",
-          "description": "Announces current slide and total number of slides, variables are :num and :total",
-          "default": "Slide :num of :total"
+          "label": "translate:: Slide number text",
+          "description": "translate:: Announces current slide and total number of slides, variables are :num and :total",
+          "default": "translate:: Slide :num of :total"
         }
       ]
     }

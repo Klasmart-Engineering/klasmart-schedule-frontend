@@ -1,34 +1,34 @@
 {
   "semantics": [
     {
-      "label": "分叉式問題編輯器",
+      "label": "reanslate:: 分叉式問題編輯器",
       "fields": [
         {
-          "label": "題目"
+          "label": "reanslate:: 題目"
         },
         {
-          "label": "可用的替代項",
-          "entity": "alternative",
+          "label": "reanslate:: 可用的替代項",
+          "entity": "reanslate:: alternative",
           "field": {
-            "label": "替代",
+            "label": "reanslate:: 替代",
             "fields": [
               {
-                "label": "內容"
+                "label": "reanslate:: 內容"
               },
               {
-                "label": "下個內容（-1 表示最後）"
+                "label": "reanslate:: 下個內容（-1 表示最後）"
               },
               {
-                "label": "反饋",
+                "label": "reanslate:: 反饋",
                 "fields": [
                   {
-                    "label": "反饋標題"
+                    "label": "reanslate:: 反饋標題"
                   },
                   {
-                    "label": "反饋內容"
+                    "label": "reanslate:: 反饋內容"
                   },
                   {
-                    "label": "反饋圖像"
+                    "label": "reanslate:: 反饋圖像"
                   }
                 ]
               }

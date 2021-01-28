@@ -1,24 +1,24 @@
 {
   "semantics": [
     {
-      "label": "欄位內容",
-      "entity": "content",
+      "label": "栏位内容",
+      "entity": "内容",
       "field": {
         "fields": [
           {
-            "label": "內容"
+            "label": "内容"
           },
           {
-            "label": "用水平線分隔內容",
+            "label": "用水平线分隔内容",
             "options": [
               {
-                "label": "自動（預設）"
+                "label": "自动（预设）"
               },
               {
                 "label": "永不使用"
               },
               {
-                "label": "永遠使用"
+                "label": "永远使用"
               }
             ]
           }

@@ -1,47 +1,47 @@
 {
   "semantics": [
     {
-      "label": "Description",
-      "description": "Description of the export page.",
-      "default": "On this page you can choose to export your text, goals and goals assessments."
+      "label": "translate:: Description",
+      "description": "translate:: Description of the export page.",
+      "default": "translate:: On this page you can choose to export your text, goals and goals assessments."
     },
     {
-      "label": "Create document button label",
-      "description": "Text that will be displayed on the \"Create document\"-button.",
-      "default": "Create document"
+      "label": "translate:: Create document button label",
+      "description": "translate:: Text that will be displayed on the \"Create document\"-button.",
+      "default": "translate:: Create document"
     },
     {
-      "label": "Submit text button",
-      "description": "Text that will be displayed on the \"Submit\"-button.",
-      "default": "Submit"
+      "label": "translate:: Submit text button",
+      "description": "translate:: Text that will be displayed on the \"Submit\"-button.",
+      "default": "translate:: Submit"
     },
     {
-      "label": "Submit success label",
-      "default": "Your report was submitted successfully!"
+      "label": "translate:: Submit success label",
+      "default": "translate:: Your report was submitted successfully!"
     },
     {
-      "label": "Select all exportable text button label",
-      "description": "Text that will be displayed on the \"Select all text\"-button.",
-      "default": "Select"
+      "label": "translate:: Select all exportable text button label",
+      "description": "translate:: Text that will be displayed on the \"Select all text\"-button.",
+      "default": "translate:: Select"
     },
     {
-      "label": "Export text button label",
-      "description": "Text that will be displayed on the \"Export text\"-button.",
-      "default": "Export"
+      "label": "translate:: Export text button label",
+      "description": "translate:: Text that will be displayed on the \"Export text\"-button.",
+      "default": "translate:: Export"
     },
     {
-      "label": "Label for help text",
-      "description": "Label for showing additional helpful information to the user.",
-      "default": "More information"
+      "label": "translate:: Label for help text",
+      "description": "translate:: Label for showing additional helpful information to the user.",
+      "default": "translate:: More information"
     },
     {
-      "label": "Fill in additional help information",
-      "description": "Here you can fill in additional helpful information for the user."
+      "label": "translate:: Fill in additional help information",
+      "description": "translate:: Here you can fill in additional helpful information for the user."
     },
     {
-      "label": "Required input missing text",
-      "description": "An error message which will be displayed if one or more required input fields have not been filled. @pages will be replaced with the titles of affected pages.",
-      "default": "The following pages contain required fields that need to be filled in order to review or submit this document: @pages"
+      "label": "translate:: Required input missing text",
+      "description": "translate:: An error message which will be displayed if one or more required input fields have not been filled. @pages will be replaced with the titles of affected pages.",
+      "default": "translate:: The following pages contain required fields that need to be filled in order to review or submit this document: @pages"
     }
   ]
 }

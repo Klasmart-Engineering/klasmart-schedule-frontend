@@ -1,12 +1,12 @@
 {
   "semantics": [
     {
-      "label": "標題文字"
+      "label": "translate:: 標題文字"
     },
     {
       "fields": [
         {
-          "label": "通訊協定",
+          "label": "translate:: 通訊協定",
           "options": [
             {
               "label": "http://"
@@ -15,15 +15,15 @@
               "label": "https://"
             },
             {
-              "label": "相對位址"
+              "label": "translate:: 相對位址"
             },
             {
-              "label": "其它"
+              "label": "translate:: 其它"
             }
           ]
         },
         {
-          "label": "網路位址"
+          "label": "translate:: 網路位址"
         }
       ]
     }

@@ -1,34 +1,34 @@
 {
   "semantics":[
     {
-      "label":"Panels",
-      "entity":"panel",
+      "label":"translate:: Panels",
+      "entity":"translate:: panel",
       "field":{
-        "label":"Content",
-        "entity":"content",
+        "label":"translate:: Content",
+        "entity":"translate:: content",
         "fields":[
           {
-            "label":"Title"
+            "label":"translate:: Title"
           },
           {
-            "label":"Content type",
-            "entity":"content"
+            "label":"translate:: Content type",
+            "entity":"translate:: content"
           }
         ]
       }
     },
     {
-      "label":"H tags for labels (does not affect the size of the label)",
-      "description":"The h tag used on the labels. Normally H2 but if this belongs under an H2 heading use H3. Does not affect the size of the labels, only used for semantical purposes.",
+      "label":"translate:: H tags for labels (does not affect the size of the label)",
+      "description":"translate:: The h tag used on the labels. Normally H2 but if this belongs under an H2 heading use H3. Does not affect the size of the labels, only used for semantical purposes.",
       "options":[
         {
-          "label":"H2"
+          "label":"translate:: H2"
         },
         {
-          "label":"H3"
+          "label":"translate:: H3"
         },
         {
-          "label":"H4"
+          "label":"translate:: H4"
         }
       ]
     }
