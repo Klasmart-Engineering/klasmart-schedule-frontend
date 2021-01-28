@@ -719,6 +719,15 @@ const { reducer } = createSlice({
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.stuReportMockOptions.studentList = payload.participantList.class?.students as Pick<User, "user_id" | "user_name">[];
     },
+    [getStuReportDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportDetail>>) => {
+      state.stuReportDetail = payload.stuReportDetail;
+      state.h5pReportDetail = payload.h5pReportDetail;
+    },
+    [getStuReportDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.stuReportDetail = initialState.stuReportDetail;
+      state.h5pReportDetail = initialState.h5pReportDetail;
+    },
   },
 });
 export default reducer;

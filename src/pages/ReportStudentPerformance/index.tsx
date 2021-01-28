@@ -257,6 +257,7 @@ export function ReportStudentPerformance() {
   const finalH5pReportList = useMemo(() => convertH5pReportListType(h5pReportList), [h5pReportList]);
   const finalStuReportDetail = useMemo(() => convertStuReportDetailType(stuReportDetail), [stuReportDetail]);
   const finalH5pRepirtDetail = useMemo(() => convertH5pReportDetailType(h5pReportDetail), [h5pReportDetail]);
+  console.log(finalH5pRepirtDetail);
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
       await dispatch(getScheduleParticipant({ class_id }));
