@@ -464,7 +464,7 @@ function EditBox(props: CalendarStateProps) {
       ) {
         dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       }
-      dispatch(getScheduleParticipant({ class_id: newData.class_id }));
+      dispatch(getScheduleParticipant({ class_id: newData.class_id as string }));
     }
   }, [dispatch, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();

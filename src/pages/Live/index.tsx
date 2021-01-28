@@ -31,10 +31,15 @@ export default function LiveH5p() {
     dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
   }, [content_id, dispatch, schedule_id]);
   React.useEffect(() => {
+    if (!contentPreview.id) return;
     const segment: Segment = JSON.parse(contentPreview.data || "{}");
-    const h5pArray = ModelLessonPlan.toArray(segment);
-    const h5pItem = checkH5p(h5pArray);
-    if (h5pItem && h5pItem.content) setH5pContent(h5pItem.content);
+    if (segment.content) {
+      setH5pContent(segment.content);
+    } else {
+      const h5pArray = ModelLessonPlan.toArray(segment);
+      const h5pItem = checkH5p(h5pArray);
+      if (h5pItem && h5pItem.content) setH5pContent(h5pItem.content);
+    }
   }, [contentPreview]);
   return <Box>{h5pContent && <H5pPlayer valueSource={h5pContent} id={content_id} scheduleId={schedule_id} userId={user_id} />}</Box>;
 }

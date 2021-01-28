@@ -8,6 +8,7 @@ export interface Segment {
   material?: EntityContentInfoWithDetails;
   materialId?: string;
   next?: Segment[];
+  content?: string;
 }
 
 interface HashSegment
