@@ -40,7 +40,7 @@ buildAndUploadBucketAws:
     - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\b/'
       when: manual
     - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(test|demo)\b/'
-      when: always
+      when: manual
 
 buildAndUploadBucketAwsCn:
   variables:
