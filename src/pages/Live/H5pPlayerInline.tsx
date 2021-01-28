@@ -212,7 +212,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   }, [id, userId, scheduleId, valueSource, library, injectBeforeLoad]);
 
   useEffect(() => {
-    setInterval(() => {
+    const timer = setInterval(() => {
       const parentIFrame = (window as any).parentIFrame;
       if (!parentIFrame) return;
       parentIFrame.autoResize(false);
@@ -223,6 +223,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
         sizeRef.current.height = offsetHeight;
         parentIFrame.size(offsetHeight, offsetWidth);
       }
+      return () => clearInterval(timer);
     }, 1000);
   }, []);
 
