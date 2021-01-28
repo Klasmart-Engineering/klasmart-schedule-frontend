@@ -110,6 +110,8 @@ const l10n = {
   },
 };
 
+const heightCalculationMethod = () => document.body.offsetHeight;
+
 interface H5pPlayerProps {
   id?: string;
   userId: string;
@@ -149,6 +151,7 @@ export function H5pPlayer(props: H5pPlayerProps) {
           },
         },
       };
+      (root as any).iFrameResizer = { heightCalculationMethod };
       if (libraryContentId) {
         root.document.getElementById("h5-content")?.setAttribute("data-content-id", libraryContentId);
       }
