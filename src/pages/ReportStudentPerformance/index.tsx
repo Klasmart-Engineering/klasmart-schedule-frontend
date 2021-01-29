@@ -43,7 +43,7 @@ import { FilterAchievementReport, FilterAchievementReportProps } from "../Report
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
-import { LegendTip } from "./LegendTip";
+import { LegendTip, LegendTip2 } from "./LegendTip";
 import { ReportHeader } from "./ReportHeader";
 import { ReportStudentPerformanceChartLayout } from "./ReportStudentPerformanceChartLayout";
 
@@ -740,6 +740,7 @@ export function ReportStudentPerformance() {
               aspectRatio={600 / 560}
               render={(px) => (
                 <Fragment>
+                  <LegendTip />
                   <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                   <VerticalBarStackChart
                     data={finalStuReportDetail}
@@ -764,6 +765,7 @@ export function ReportStudentPerformance() {
               aspectRatio={600 / 560}
               render={(px) => (
                 <Fragment>
+                  <LegendTip2 />
                   <ReportHeader
                     title={reportMiss(
                       "Time Spent on H5p activities Break-down",

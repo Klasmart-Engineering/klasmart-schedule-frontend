@@ -72,11 +72,11 @@ export function LegendTip2() {
     <>
       <div className={clsx(css.rightContainer, css.container)}>
         <Box className={clsx(css.rightContainer)}>
-          <div className={clsx(css.colorPart, css.blue)}></div>
+          <div className={clsx(css.colorPart, css.deepBlue)}></div>
           <span>{reportMiss("Total duration", "label_report_total_duration")}</span>
         </Box>
         <Box className={clsx(css.rightContainer)}>
-          <div className={clsx(css.colorPart, css.pink)}></div>
+          <div className={clsx(css.colorPart, css.green)}></div>
           <span>{reportMiss("Avg duration", "label_report_avg_duration")}</span>
         </Box>
       </div>
