@@ -168,7 +168,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
       material_id: id,
       play_id: playId,
       user_id: userId,
-      time: Date.now(),
+      time: Math.round(Date.now() / 1000),
     };
     const [local_library_name, local_library_version] = libraryName.split(" ");
     if (isInitial) {
