@@ -37,8 +37,8 @@ import { FilterAchievementReport, FilterAchievementReportProps } from "../Report
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
+import { ReportHeader } from "./ReportHeader";
 import { ReportStudentPerformanceChartLayout } from "./ReportStudentPerformanceChartLayout";
-import { ReportTitle } from "./ReportHeader";
 
 const mockData1: HorizontalBarStackDataItem[] = [
   {
@@ -638,11 +638,11 @@ export function ReportStudentPerformance() {
           render={(px) => (
             <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
               <Box>
-                <ReportTitle title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
+                <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                 <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               </Box>
               <Box>
-                <ReportTitle title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
+                <ReportHeader title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
                 <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
               </Box>
             </Box>
@@ -658,7 +658,7 @@ export function ReportStudentPerformance() {
               aspectRatio={600 / 560}
               render={(px) => (
                 <Fragment>
-                  <ReportTitle title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
+                  <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                   <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
                   {/* <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" /> */}
                 </Fragment>
@@ -670,7 +670,7 @@ export function ReportStudentPerformance() {
               aspectRatio={600 / 560}
               render={(px) => (
                 <Fragment>
-                  <ReportTitle
+                  <ReportHeader
                     title={reportMiss(
                       "Time Spent on H5p activities Break-down",
                       "label_report_title_time_spent_on_h5p_activities_break_down"

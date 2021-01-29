@@ -10,10 +10,10 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-type ReportTitleProps = {
+type ReportHeaderProps = {
   title: string;
 };
-export function ReportTitle(props: ReportTitleProps) {
+export function ReportHeader(props: ReportHeaderProps) {
   const { title } = props;
   const css = useStyles();
   return <Typography className={css.fontCss}>{title}</Typography>;
