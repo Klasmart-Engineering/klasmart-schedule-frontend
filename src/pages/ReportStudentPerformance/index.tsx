@@ -1,4 +1,4 @@
-import { Box, useMediaQuery, useTheme } from "@material-ui/core";
+import { Box, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -140,6 +140,166 @@ const mockData3: VerticalBarStackDataItem[] = [
       { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
     ],
   },
+  {
+    id: "id 4",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 5",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 6",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 7",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 8",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 9",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 10",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 11",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 12",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 13",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 14",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 15",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 16",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 17",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 18",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
+  {
+    id: "id 19",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", description: "name 1 category A description", value: 100, color: "#8693F0" },
+      { name: "category B", description: "name 1 category B description", value: 40, color: "#FE9B9B" },
+      { name: "category C", description: "name 1 category B description", value: 40, color: "#DADADA" },
+    ],
+  },
 ];
 
 const mockData4: VerticalBarGroupDataItem[] = [
@@ -173,6 +333,60 @@ const mockData4: VerticalBarGroupDataItem[] = [
   },
   {
     id: "id 3",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 4",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 5",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 6",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 7",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 8",
+    name: "name 3",
+    description: "description 3",
+    value: [
+      { name: "category A", title: "160 min", description: "name 3 category A description", value: 160, color: "#8693F0" },
+      { name: "category B", title: "120 min", description: "name 3 category B description", value: 120, color: "#77DCB7" },
+    ],
+  },
+  {
+    id: "id 9",
     name: "name 3",
     description: "description 3",
     value: [
@@ -329,7 +543,6 @@ export function ReportStudentPerformance() {
   const finalH5pReportList = useMemo(() => convertH5pReportListType(h5pReportList), [h5pReportList]);
   const finalStuReportDetail = useMemo(() => convertStuReportDetailType(stuReportDetail), [stuReportDetail]);
   const finalH5pRepirtDetail = useMemo(() => convertH5pReportDetailType(h5pReportDetail), [h5pReportDetail]);
-  console.log(finalH5pRepirtDetail);
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
       await dispatch(getScheduleParticipant({ class_id }));
@@ -421,8 +634,16 @@ export function ReportStudentPerformance() {
           chartHeight={horizontalChartHeight}
           render={(px) => (
             <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
-              <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-              <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
+              <Box>
+                <Typography>Learning Outcome Completion</Typography>
+                <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+              </Box>
+              <Box>
+                <Typography variant="h5" component="h5">
+                  Time Spent on H5P activities
+                </Typography>
+                <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
+              </Box>
             </Box>
           )}
         />
@@ -435,6 +656,8 @@ export function ReportStudentPerformance() {
             <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={verticalChartWidth * px}>
               <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
+              <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+              <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" />
             </Box>
           )}
         />
