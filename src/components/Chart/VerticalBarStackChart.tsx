@@ -79,6 +79,10 @@ const dataItemById = (id: string, data: VerticalBarStackDataItem[]) => {
   return data.find((item) => item.id === id) as VerticalBarStackDataItem;
 };
 
+const dataIndexById = (id: string, data: VerticalBarStackDataItem[]) => {
+  return data.findIndex((item) => item.id === id);
+};
+
 const calcDataSum = (data: VerticalBarStackDataItem[]) => {
   return data.map(({ value: categoryValues }) => {
     return categoryValues.reduce((r, item) => r + item.value, 0);
@@ -143,18 +147,18 @@ const showBarTooltip = (tooltipData: TooltipData, showTooltip: UseTooltipParams<
 
 function parseProps(props: VerticalBarStackChartProps): VerticalMultiBarChartProps {
   let data: VerticalBarStackDataItem[];
-  const { px, onSelect, valueAxiosLabel } = props;
+  const { data: _, ...restProps } = props;
   if (isVerticalSingleBarChartProps(props)) {
     data = props.data.map((item) => ({ ...item, value: [{ name: "KEY", value: item.value, color: props.color }] }));
   } else {
     data = props.data;
   }
-  return { px, onSelect, data, valueAxiosLabel };
+  return { data, ...restProps };
 }
 
 export interface VerticalBarStackDataItemCategoryValue {
   name: string;
-  description?: string;
+  description?: ReactNode;
   value: number;
   color: string;
 }
@@ -179,16 +183,21 @@ export interface VerticalSingleBarStackChartProps {
   valueAxiosLabel: string;
 }
 
+interface RenderXAxiosLabelProps extends Omit<TickRendererProps, "formattedValue"> {
+  index: number;
+}
+
 export interface VerticalMultiBarChartProps {
   data: VerticalBarStackDataItem[];
   onSelect?: (id: string) => any;
   px?: number;
   valueAxiosLabel: string;
+  renderXAxiosLabel?: (props: RenderXAxiosLabelProps) => ReactNode;
 }
 
 export type VerticalBarStackChartProps = VerticalSingleBarStackChartProps | VerticalMultiBarChartProps;
 export function VerticalBarStackChart(props: VerticalBarStackChartProps) {
-  const { onSelect, px = 0, data, valueAxiosLabel } = useMemo(() => parseProps(props), [props]);
+  const { onSelect, px = 0, data, valueAxiosLabel, renderXAxiosLabel } = useMemo(() => parseProps(props), [props]);
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
@@ -225,7 +234,9 @@ export function VerticalBarStackChart(props: VerticalBarStackChartProps) {
     const { formattedValue: id, ...tickTextProps } = tickProps;
     if (!id) return null;
     const { name } = dataItemById(id, data);
-    return (
+    return renderXAxiosLabel ? (
+      renderXAxiosLabel({ ...tickTextProps, index: dataIndexById(id, data) })
+    ) : (
       <Text {...tickTextProps} onClick={() => onSelect && onSelect(id)}>
         {name}
       </Text>

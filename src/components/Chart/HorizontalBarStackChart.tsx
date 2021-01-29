@@ -161,7 +161,7 @@ function parseProps(props: HorizontalBarStackChartProps): HorizontalMultiBarChar
 
 export interface HorizontalBarStackDataItemCategoryValue {
   name: string;
-  description?: string;
+  description?: ReactNode;
   value: number;
   color: string;
 }

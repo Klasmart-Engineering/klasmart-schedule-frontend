@@ -80,11 +80,12 @@ const dataItemById = (id: string, data: VerticalBarGroupDataItem[]) => {
 };
 
 const calcYMax = (data: VerticalBarGroupDataItem[]) => {
-  return Math.max(
+  const max = Math.max(
     ...data.map(({ value: categoryValues }) => {
       return Math.max(...categoryValues.map((c) => c.value));
     })
   );
+  return max === 0 ? 1 : max;
 };
 
 const calcChartData = (data: VerticalBarGroupDataItem[]): ChartDataItem[] => {
@@ -115,7 +116,6 @@ function computed(props: Pick<VerticalMultiBarChartProps, "px" | "data">) {
   const barAmount = data.length;
   const pixels = getPixels(px);
   const yMax = calcYMax(data);
-  console.log("yMax = ", yMax);
   const xScale = scaleBand({
     domain: data.map((item) => item.id),
     range: [0, pixels.barGroupsWidth(barAmount)],
@@ -148,7 +148,7 @@ const showBarTooltip = (tooltipData: TooltipData, showTooltip: UseTooltipParams<
 export interface VerticalBarGroupDataItemCategoryValue {
   name: string;
   title?: string;
-  description?: string;
+  description?: ReactNode;
   value: number;
   color: string;
 }
@@ -166,11 +166,12 @@ export interface VerticalMultiBarChartProps {
   onSelect?: (id: string) => any;
   px?: number;
   valueAxiosLabel: string;
+  renderTooltipContent?: (props: { barGroupIndex: number; barIndex: number }) => ReactNode;
 }
 
 export type VerticalBarGroupChartProps = VerticalMultiBarChartProps;
 export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
-  const { onSelect, px = 1, data, valueAxiosLabel } = props;
+  const { onSelect, px = 1, data, valueAxiosLabel, renderTooltipContent } = props;
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
@@ -221,7 +222,12 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
     );
   };
   const tooltipContent =
-    tooltipOpen && tooltipData ? data[tooltipData.barGroup.index].value[tooltipData.bar.index]?.description : undefined;
+    tooltipOpen && tooltipData
+      ? renderTooltipContent
+        ? renderTooltipContent({ barGroupIndex: tooltipData.barGroup.index, barIndex: tooltipData.bar.index })
+        : data[tooltipData.barGroup.index].value[tooltipData.bar.index]?.description
+      : undefined;
+
   return (
     <div className={css.svg}>
       <svg width={viewPort[2]} height={viewPort[3]}>
