@@ -40,7 +40,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author, class_id } = useQuery();
-  const { contentPreview, token, user_id } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
   const content_type = contentPreview.content_type;
@@ -141,8 +141,6 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
           classType={scheduleDetial.class_type}
           h5pArray={planRes()}
           onGoLive={handleGoLive}
-          schdeuleId={sid}
-          userId={user_id}
         ></H5pPreview>
       )}
     </Fragment>

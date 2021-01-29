@@ -250,13 +250,11 @@ interface H5pPreview extends PreviewBaseProps {
   h5pArray: (EntityContentInfoWithDetails | undefined)[];
   classType: EntityScheduleDetailsView["class_type"];
   content_type: EntityContentInfoWithDetails["content_type"];
-  schdeuleId: string;
-  userId: string;
 }
 export function H5pPreview(props: H5pPreview) {
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
-  const { h5pArray, onGoLive, classType, content_type, schdeuleId, userId } = props;
+  const { h5pArray, onGoLive, classType, content_type } = props;
   let h5pItem = h5pArray[currIndex];
   const handlePrev = () => {
     if (currIndex > 0) {
@@ -316,12 +314,7 @@ export function H5pPreview(props: H5pPreview) {
           ) : !getSuffix(parsedData) ? (
             isNewH5p ? (
               <Box className={css.innerH5pCon}>
-                <H5pPlayer
-                  valueSource={parsedData.content}
-                  id={h5pItem?.id}
-                  scheduleId={schdeuleId}
-                  userId={userId}
-                />
+                <H5pPlayer valueSource={parsedData.content} />
               </Box>
             ) : (
               <ContentH5p sub={H5pSub.view} value={parsedData.source} />

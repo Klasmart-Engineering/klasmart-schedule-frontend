@@ -1,16 +1,13 @@
 import { createStyles, makeStyles } from "@material-ui/core";
 import { iframeResizer } from "iframe-resizer";
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
-import { useDispatch } from "react-redux";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
-import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
-import { h5pEvent } from "../../reducers/content";
+import { h5pName2libId, parseLibraryContent } from "../../models/ModelH5pSchema";
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
   removeListeners: () => void;
 }
 
 const SPECIAL_SYMBOL = "***";
-const INITIAL_EVENT_VERB_ID = "http://verb.kidsloop.cn/verbs/initgame";
 
 /* eslint-disable import/no-webpack-loader-syntax */
 const useStyle = makeStyles(() =>
@@ -111,19 +108,12 @@ const l10n = {
 };
 
 interface H5pPlayerProps {
-  id?: string;
-  userId: string;
-  scheduleId?: string;
   valueSource: string;
   onReady?: () => any;
 }
 export function H5pPlayer(props: H5pPlayerProps) {
-  const dispatch = useDispatch();
-  const { valueSource, id, scheduleId, userId, onReady } = props;
-  const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
+  const { valueSource, onReady } = props;
   const onReadyRef = useRef(onReady);
-  const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
-  // const userId = useUserId();
   const { library: libraryName, params: libraryParams, subContentId: libraryContentId } = parseLibraryContent(valueSource);
   const css = useStyle();
   const { library, core } = apiCreateContentTypeLibrary(h5pName2libId(libraryName));
@@ -155,45 +145,13 @@ export function H5pPlayer(props: H5pPlayerProps) {
     },
     [core, libraryContentId, library, libraryParams, libraryName]
   );
-  onReadyRef.current = onReady;
-  xApiRef.current = (statement?: H5PStatement, isInitial?: boolean) => {
-    if (!scheduleId) return;
-    const baseInfo = {
-      schedule_id: scheduleId,
-      material_id: id,
-      play_id: playId,
-      user_id: userId,
-      time: Date.now(),
-    };
-    const [local_library_name, local_library_version] = libraryName.split(" ");
-    if (isInitial) {
-      const resultInfo = {
-        ...baseInfo,
-        verb_id: INITIAL_EVENT_VERB_ID,
-        local_library_name,
-        local_library_version,
-        local_content_id: libraryContentId,
-      };
-      // console.log("initial resultInfo = ", resultInfo);
-      dispatch(h5pEvent(resultInfo));
-    } else {
-      if (!statement) return;
-      const info = { ...baseInfo, ...extractH5pStatement(statement) };
-      const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
-      // console.log("resultInfo = ", resultInfo);
-      dispatch(h5pEvent(resultInfo));
-    }
-  };
+
   const injectAfterLoad: InjectHandler = useMemo(() => {
     return async (root) => {
       (async () => onReadyRef.current && onReadyRef.current())();
-      xApiRef.current && xApiRef.current(undefined, true);
-      (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
-        xApiRef.current && xApiRef.current(event.data.statement);
-      });
     };
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [xApiRef, valueSource]);
+  }, [valueSource]);
   library.scripts.push(`../${require("!!file-loader!iframe-resizer/js/iframeResizer.contentWindow")}`);
   const { register, onLoad } = useInlineIframe({ ...library, injectBeforeLoad, injectAfterLoad });
 
