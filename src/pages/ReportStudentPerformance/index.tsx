@@ -43,6 +43,7 @@ import { FilterAchievementReport, FilterAchievementReportProps } from "../Report
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
+import { LegendTip } from "./LegendTip";
 import { ReportHeader } from "./ReportHeader";
 import { ReportStudentPerformanceChartLayout } from "./ReportStudentPerformanceChartLayout";
 
@@ -499,7 +500,7 @@ interface ExtendVerticalBarGroupDataItem extends Omit<VerticalBarGroupDataItem, 
 }
 export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerformanceH5PReportItem[]): ExtendVerticalBarGroupDataItem[] => {
   const h5pReport = h5pReportDetail.map((item) => {
-    let description: string[];
+    let description: string[] = [];
     if (item.activity_image_sequencing) {
       const imgSequence = item.activity_image_sequencing;
       const infoArray = imgSequence.play_records;
@@ -709,7 +710,7 @@ export function ReportStudentPerformance() {
         reportMockOptions={stuReportMockOptions}
         isShowStudentList={true}
       ></FilterAchievementReport>
-      <BriefIntroduction value={condition} reportMockOptions={stuReportMockOptions} student_name={getStudentName} />
+      <BriefIntroduction value={condition} reportMockOptions={stuReportMockOptions} student_name={getStudentName} hiddenLegend={true} />
       {condition.student_id === ALL_STUDENT && (
         <ChartLayout
           chartWidth={horizontalChartWidth}
@@ -717,10 +718,12 @@ export function ReportStudentPerformance() {
           render={(px) => (
             <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
               <Box>
+                <LegendTip />
                 <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                 <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               </Box>
               <Box>
+                <LegendTip />
                 <ReportHeader title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
                 <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
               </Box>
