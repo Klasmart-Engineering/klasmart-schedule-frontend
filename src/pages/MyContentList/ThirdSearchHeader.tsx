@@ -206,6 +206,11 @@ function getBulkAction(
             { label: d("Move to").t("library_label_move"), value: BulkAction.move },
             { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
           ];
+        } else if (!perm.create_folder_289 && perm.archive_published_content_273) {
+          res = [
+            { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
+            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          ];
         } else {
           res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
         }
