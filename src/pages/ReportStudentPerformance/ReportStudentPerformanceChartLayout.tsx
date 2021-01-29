@@ -1,5 +1,6 @@
-import { Grid, makeStyles } from '@material-ui/core';
-import React, { ReactNode } from 'react';
+import { Grid, makeStyles } from "@material-ui/core";
+import React, { ReactNode } from "react";
+import LayoutBox from "../../components/LayoutBox";
 
 const useStyle = makeStyles({
   pageChartLayout: {
@@ -18,13 +19,15 @@ export function ReportStudentPerformanceChartLayout(props: ReportStudentPerforma
   const { charts } = props;
   const css = useStyle();
   return (
-    <Grid className={css.pageChartLayout} container spacing={2}>
-      <Grid item lg={6} xs={12}>
-        {charts[0]}
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+      <Grid className={css.pageChartLayout} container spacing={4}>
+        <Grid item lg={6} xs={12}>
+          {charts[0]}
+        </Grid>
+        <Grid item lg={6} xs={12}>
+          {charts[1]}
+        </Grid>
       </Grid>
-      <Grid item lg={6} xs={12}>
-        {charts[1]}
-      </Grid>
-    </Grid>
-  )
+    </LayoutBox>
+  );
 }

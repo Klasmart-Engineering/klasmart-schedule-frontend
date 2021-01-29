@@ -397,7 +397,7 @@ export const getStuReportList = createAsyncThunk<GetStuReportListResponse, GetSt
   "getStuReportList",
   async ({ teacher_id, class_id, lesson_plan_id }) => {
     const stuItems = await api.reports.listStudentsPerformanceReport({ teacher_id, class_id, lesson_plan_id });
-    const h5pItems = await api.reports.listStudentsAchievementReport({ teacher_id, class_id, lesson_plan_id });
+    const h5pItems = await api.reports.listStudentsPerformanceH5PReport({ teacher_id, class_id, lesson_plan_id });
     return { stuReportList: stuItems.items, h5pReportList: h5pItems.items };
   }
 );

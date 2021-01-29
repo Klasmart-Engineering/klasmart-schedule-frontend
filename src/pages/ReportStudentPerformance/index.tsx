@@ -1,6 +1,6 @@
 import { Box, useMediaQuery, useTheme } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useEffect, useMemo } from "react";
+import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -11,6 +11,7 @@ import {
 } from "../../api/api.auto";
 import { formatTimeToEn } from "../../api/extra";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
+import { CoverFitChartLayout } from "../../components/Chart/CoverFitChartLayout";
 import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
@@ -36,6 +37,7 @@ import { FilterAchievementReport, FilterAchievementReportProps } from "../Report
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
+import { ReportStudentPerformanceChartLayout } from "./ReportStudentPerformanceChartLayout";
 import { ReportTitle } from "./ReportTitle";
 
 const mockData1: HorizontalBarStackDataItem[] = [
@@ -437,7 +439,7 @@ export const convertH5pReportListType = (h5pReportList: EntityStudentsPerformanc
     return {
       id: item.student_id || "",
       name: item.student_name || "",
-      description: `${item.spent_time ? item.spent_time / 60 : 0}  mins`,
+      description: `${item.spent_time ? Math.round(item.spent_time / 60) : 0}  mins`,
       value: item.spent_time || 0,
     };
   });
@@ -486,14 +488,14 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
       value: [
         {
           name: "total",
-          title: `${item.total_spent_time ? item.total_spent_time / 60 : 0} mins`,
+          title: `${item.total_spent_time ? Math.round(item.total_spent_time / 60) : 0} mins`,
           description: "",
           value: item.total_spent_time || 0,
           color: "#8693F0",
         },
         {
           name: "svg",
-          title: `${item.avg_spent_time ? item.avg_spent_time / 60 : 0} mins`,
+          title: `${item.avg_spent_time ? Math.round(item.avg_spent_time) / 60 : 0} mins`,
           description: "",
           value: item.avg_spent_time || 0,
           color: "#77DCB7",
@@ -517,10 +519,9 @@ export function ReportStudentPerformance() {
   const [w4, h4] = verticalBarGroupChartSize({ data: mockData4 });
   const horizontalChartWidth = upLg ? w1 + w2 + 120 : Math.max(w1, w2);
   const horizontalChartHeight = Math.max(h1, h2);
-  const verticalChartWidth = upLg ? w3 + w4 + 120 : Math.max(w3, w4);
-  const verticalChartHeight = Math.max(h3, h4);
+  // const verticalChartWidth = upLg ? w3 + w4 + 120 : Math.max(w3, w4);
+  // const verticalChartHeight = Math.max(h3, h4);
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
-  // const reportList = totalData.reportList ?? [];
   const stuReportMockOptions = totalData.stuReportMockOptions;
   const stuReportList = totalData.stuReportList ?? [];
   const h5pReportList = totalData.h5pReportList ?? [];
@@ -649,28 +650,38 @@ export function ReportStudentPerformance() {
         />
       )}
       {condition.student_id && condition.student_id !== ALL_STUDENT && (
-        <ChartLayout
-          chartWidth={verticalChartWidth}
-          chartHeight={verticalChartHeight}
-          render={(px) => (
-            <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={verticalChartWidth * px}>
-              <Box>
-                <ReportTitle title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
-                <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-              </Box>
-              <Box>
-                <ReportTitle
-                  title={reportMiss(
-                    "Time Spent on H5p activities Break-down",
-                    "label_report_title_time_spent_on_h5p_activities_break_down"
-                  )}
-                />
-                <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
-              </Box>
-              <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-              <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" />
-            </Box>
-          )}
+        <ReportStudentPerformanceChartLayout
+          charts={[
+            <CoverFitChartLayout
+              chartWidth={w3}
+              chartHeight={h3}
+              aspectRatio={600 / 560}
+              render={(px) => (
+                <Fragment>
+                  <ReportTitle title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
+                  <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+                  {/* <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" /> */}
+                </Fragment>
+              )}
+            />,
+            <CoverFitChartLayout
+              chartWidth={w4}
+              chartHeight={h4}
+              aspectRatio={600 / 560}
+              render={(px) => (
+                <Fragment>
+                  <ReportTitle
+                    title={reportMiss(
+                      "Time Spent on H5p activities Break-down",
+                      "label_report_title_time_spent_on_h5p_activities_break_down"
+                    )}
+                  />
+                  <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
+                  {/* <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" /> */}
+                </Fragment>
+              )}
+            />,
+          ]}
         />
       )}
     </>
