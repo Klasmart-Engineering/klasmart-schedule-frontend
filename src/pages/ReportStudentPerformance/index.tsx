@@ -234,7 +234,7 @@ export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerform
     const not_attempted_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
     const count = achieved_count + not_achieve_count + not_attempted_count;
     return {
-      id: item.student_id || "",
+      id: item.schedule_id || "",
       name: item.schedule_start_time ? formatTimeToEn(item.schedule_start_time) : "",
       description: `${count ? 100 : 0}% ${count} LOs`,
       value: [
