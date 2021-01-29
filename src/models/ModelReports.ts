@@ -13,3 +13,33 @@ export const ModelReport = {
     return teacherList;
   },
 };
+
+export function formatTime(seconds: number) {
+  const date = new Date(seconds * 1000);
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  const hour = date.getHours();
+  const min = date.getMinutes();
+  const second = date.getSeconds();
+  return `${year}/${month}/${day}  ${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+export function formatTimeToMonWek(seconds: number) {
+  const date = new Date(seconds * 1000);
+  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const weekArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const month = monthArr[date.getMonth()];
+  const day = date.getDate();
+  const week = weekArr[date.getDay()];
+  return `${month}  ${day},  ${week}`;
+}
+
+export function formatTimeToHourMin(seconds: number) {
+  const date = new Date(seconds * 1000);
+  const hour = date.getHours();
+  const min = date.getMinutes();
+  return `${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`;
+}

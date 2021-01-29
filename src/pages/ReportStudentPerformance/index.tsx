@@ -1,5 +1,6 @@
 import { Box, useMediaQuery, useTheme } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { Text } from "@visx/text";
 import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -9,7 +10,6 @@ import {
   EntityStudentsPerformanceH5PReportItem,
   EntityStudentsPerformanceReportItem,
 } from "../../api/api.auto";
-import { formatTimeToEn } from "../../api/extra";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
 import { CoverFitChartLayout } from "../../components/Chart/CoverFitChartLayout";
 import {
@@ -18,10 +18,16 @@ import {
   HorizontalBarStackDataItem,
   HorizontalSingleBarStackDataItem,
 } from "../../components/Chart/HorizontalBarStackChart";
-import { VerticalBarGroupChart, verticalBarGroupChartSize, VerticalBarGroupDataItem } from "../../components/Chart/VerticalBarGroupChart";
+import {
+  VerticalBarGroupChart,
+  verticalBarGroupChartSize,
+  VerticalBarGroupDataItem,
+  VerticalBarGroupDataItemCategoryValue,
+} from "../../components/Chart/VerticalBarGroupChart";
 import { VerticalBarStackChart, verticalBarStackChartSize, VerticalBarStackDataItem } from "../../components/Chart/VerticalBarStackChart";
 import { reportMiss } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
+import { formatTime, formatTimeToHourMin, formatTimeToMonWek } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,
@@ -439,21 +445,28 @@ export const convertH5pReportListType = (h5pReportList: EntityStudentsPerformanc
     return {
       id: item.student_id || "",
       name: item.student_name || "",
-      description: `${item.spent_time ? Math.round(item.spent_time / 60) : 0}  mins`,
+      description: item.spent_time ? `${item.spent_time}s` : "",
       value: item.spent_time || 0,
     };
   });
   return h5pReport;
 };
-export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerformanceReportItem[]): VerticalBarStackDataItem[] => {
+
+interface ExtendedVerticalBarStackDataItem extends VerticalBarStackDataItem {
+  xLabel: string[];
+}
+export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerformanceReportItem[]): ExtendedVerticalBarStackDataItem[] => {
   const stuReport = stuReportDetail.map((item) => {
     const achieved_count = item.achieved_names ? item.achieved_names.length : 0;
     const not_achieve_count = item.not_achieved_names ? item.not_achieved_names.length : 0;
     const not_attempted_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
     const count = achieved_count + not_achieve_count + not_attempted_count;
+    const monthWeek = item.schedule_start_time ? formatTimeToMonWek(item.schedule_start_time) : "";
+    const hourMin = item.schedule_start_time ? formatTimeToHourMin(item.schedule_start_time) : "";
     return {
       id: item.schedule_id || "",
-      name: item.schedule_start_time ? formatTimeToEn(item.schedule_start_time) : "",
+      name: "",
+      xLabel: [monthWeek, hourMin],
       description: `${count ? 100 : 0}% ${count} LOs`,
       value: [
         {
@@ -479,24 +492,90 @@ export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerform
   });
   return stuReport;
 };
-export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerformanceH5PReportItem[]): VerticalBarGroupDataItem[] => {
+interface ExtendVerticalBarGroupDataItem extends Omit<VerticalBarGroupDataItem, "value"> {
+  value: (VerticalBarGroupDataItemCategoryValue & {
+    tooltipArr: string[];
+  })[];
+}
+export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerformanceH5PReportItem[]): ExtendVerticalBarGroupDataItem[] => {
   const h5pReport = h5pReportDetail.map((item) => {
+    let description: string[];
+    if (item.activity_image_sequencing) {
+      const imgSequence = item.activity_image_sequencing;
+      const infoArray = imgSequence.play_records;
+      let newArr: string[] = [];
+      if (infoArray && infoArray.length) {
+        infoArray.forEach((item, index) => {
+          newArr.push(`${index + 1}:`);
+          newArr.push(`Start time: ${formatTime(item.start_time)}`);
+          newArr.push(`End time: ${formatTime(item.end_time)}`);
+          newArr.push(`Duration: ${item.duration} s`);
+          newArr.push(`Correct cards count: ${item.correct_cards_count}`);
+        });
+      }
+      description = [`Cards number: ${imgSequence.cards_number}`, `Play times: ${imgSequence.play_times}`, ...newArr];
+    }
+    if (item.activity_memory_game) {
+      const memoryGame = item.activity_memory_game;
+      const infoArray = memoryGame.play_records;
+      let newArr: string[] = [];
+      if (infoArray && infoArray.length) {
+        infoArray.forEach((item, index) => {
+          newArr.push(`${index + 1}:`);
+          newArr.push(`Start time: ${formatTime(item.start_time)}`);
+          newArr.push(`End time: ${formatTime(item.end_time)}`);
+          newArr.push(`Duration: ${item.duration} s`);
+          newArr.push(`Click Count: ${item.clicks_count}`);
+        });
+      }
+      description = [`Cards number: ${memoryGame.pairs_number}`, `Play times: ${memoryGame.play_times}`, ...newArr];
+    }
+    if (item.activity_image_pair) {
+      const imgPair = item.activity_image_pair;
+      const infoArray = imgPair.play_records;
+      let newArr: string[] = [];
+      if (infoArray && infoArray.length) {
+        infoArray.forEach((item, index) => {
+          newArr.push(`${index + 1}:`);
+          newArr.push(` Start time: ${formatTime(item.start_time)}`);
+          newArr.push(`End time: ${formatTime(item.end_time)}`);
+          newArr.push(`Duration: ${item.duration} s`);
+          newArr.push(`Correct cards count: ${item.correct_pairs_count}`);
+        });
+      }
+      description = [`Paris number: ${imgPair.play_records}`, `Play times: ${imgPair.play_times}`, ...newArr];
+    }
+    if (item.activity_flash_cards) {
+      const flasCards = item.activity_flash_cards;
+      const infoArray = flasCards.play_records;
+      let newArr: string[] = [];
+      if (infoArray && infoArray.length) {
+        infoArray.forEach((item, index) => {
+          newArr.push(`${index + 1}:`);
+          newArr.push(` Start time: ${formatTime(item.start_time)}`);
+          newArr.push(`End time: ${formatTime(item.end_time)}`);
+          newArr.push(`Duration: ${item.duration} s`);
+          newArr.push(`Correct cards count: ${item.correct_cards_count}`);
+        });
+      }
+      description = [`Cards number: ${flasCards.cards_number}`, ...newArr];
+    }
     return {
       id: item.material_id || "",
       name: `${item.material_name}`,
-      description: "",
+      description: "123",
       value: [
         {
           name: "total",
-          title: `${item.total_spent_time ? Math.round(item.total_spent_time / 60) : 0} mins`,
-          description: "",
+          title: item.total_spent_time ? `${item.total_spent_time}s` : "",
+          tooltipArr: description,
           value: item.total_spent_time || 0,
           color: "#8693F0",
         },
         {
           name: "svg",
-          title: `${item.avg_spent_time ? Math.round(item.avg_spent_time) / 60 : 0} mins`,
-          description: "",
+          title: item.avg_spent_time ? `${item.avg_spent_time}s` : "",
+          tooltipArr: description,
           value: item.avg_spent_time || 0,
           color: "#77DCB7",
         },
@@ -659,8 +738,20 @@ export function ReportStudentPerformance() {
               render={(px) => (
                 <Fragment>
                   <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
-                  <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-                  {/* <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" /> */}
+                  <VerticalBarStackChart
+                    data={finalStuReportDetail}
+                    color="#8693F0"
+                    px={px}
+                    valueAxiosLabel="in % of LOs"
+                    renderXAxiosLabel={({ index, ...textProps }) => (
+                      <Fragment>
+                        <Text {...textProps}>{finalStuReportDetail[index].xLabel[0]}</Text>
+                        <Text {...textProps} dy={25 * px}>
+                          {finalStuReportDetail[index].xLabel[1]}
+                        </Text>
+                      </Fragment>
+                    )}
+                  />
                 </Fragment>
               )}
             />,
@@ -676,8 +767,18 @@ export function ReportStudentPerformance() {
                       "label_report_title_time_spent_on_h5p_activities_break_down"
                     )}
                   />
-                  <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
-                  {/* <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" /> */}
+                  <VerticalBarGroupChart
+                    data={finalH5pRepirtDetail}
+                    px={px}
+                    valueAxiosLabel="in mins"
+                    renderTooltipContent={(tooltipProps) => (
+                      <div>
+                        {finalH5pRepirtDetail[tooltipProps.barGroupIndex].value[tooltipProps.barIndex].tooltipArr.map((item) => {
+                          return <div>{item}</div>;
+                        })}
+                      </div>
+                    )}
+                  />
                 </Fragment>
               )}
             />,

@@ -184,15 +184,3 @@ export function apiGetContentTypeList() {
 export function apiIsEnableNewH5p() {
   return process.env.REACT_APP_ENABLE_NEW_H5P === "1";
 }
-
-export function formatTimeToEn(seconds: number) {
-  const date = new Date(seconds * 1000);
-  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
-  const weekArr = ["Mon", "Tue", "Wed", "Thu", "Fri", "SAT", "Sun"];
-  const month = monthArr[date.getMonth()];
-  const day = date.getDate();
-  const week = weekArr[date.getDay()];
-  const hour = date.getHours();
-  const min = date.getMinutes();
-  return `${month} ${day},${week} ${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`;
-}
