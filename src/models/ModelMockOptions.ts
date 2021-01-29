@@ -163,7 +163,7 @@ export class ModelMockOptions {
     const content = JSON.parse(contentDetail.data || "{}").content ?? "";
     result["data.input_source"] = {
       key: ModelMockOptions.createSelectKey([], input_source, "data.input_source"),
-      value: input_source ?? "",
+      value: input_source ?? ContentInputSourceType.h5p,
     };
     result["data.source"] = {
       key: ModelMockOptions.createSelectKey([], contentDetail.data, "data.source"),
