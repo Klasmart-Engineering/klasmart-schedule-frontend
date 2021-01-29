@@ -185,7 +185,7 @@ const mockData4: VerticalBarGroupDataItem[] = [
 export const convertStuReportListType = (stuReportList: EntityStudentsPerformanceReportItem[]): HorizontalBarStackDataItem[] => {
   const stuReport = stuReportList.map((item) => {
     const achieved_count = item.achieved_names ? item.achieved_names.length : 0;
-    const not_achieve_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
+    const not_achieve_count = item.not_achieved_names ? item.not_achieved_names.length : 0;
     const not_attempted_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
     const count = achieved_count + not_achieve_count + not_attempted_count;
     return {
@@ -230,7 +230,7 @@ export const convertH5pReportListType = (h5pReportList: EntityStudentsPerformanc
 export const convertStuReportDetailType = (stuReportDetail: EntityStudentPerformanceReportItem[]): VerticalBarStackDataItem[] => {
   const stuReport = stuReportDetail.map((item) => {
     const achieved_count = item.achieved_names ? item.achieved_names.length : 0;
-    const not_achieve_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
+    const not_achieve_count = item.not_achieved_names ? item.not_achieved_names.length : 0;
     const not_attempted_count = item.not_attempted_names ? item.not_attempted_names.length : 0;
     const count = achieved_count + not_achieve_count + not_attempted_count;
     return {
