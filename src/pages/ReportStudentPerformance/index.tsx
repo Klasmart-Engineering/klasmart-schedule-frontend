@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import { Box, useMediaQuery, useTheme } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,7 @@ import {
 } from "../../components/Chart/HorizontalBarStackChart";
 import { VerticalBarGroupChart, verticalBarGroupChartSize, VerticalBarGroupDataItem } from "../../components/Chart/VerticalBarGroupChart";
 import { VerticalBarStackChart, verticalBarStackChartSize, VerticalBarStackDataItem } from "../../components/Chart/VerticalBarStackChart";
+import { reportMiss } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import {
@@ -35,6 +36,7 @@ import { FilterAchievementReport, FilterAchievementReportProps } from "../Report
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
+import { ReportTitle } from "./reportTItle";
 
 const mockData1: HorizontalBarStackDataItem[] = [
   {
@@ -635,13 +637,11 @@ export function ReportStudentPerformance() {
           render={(px) => (
             <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={horizontalChartWidth * px}>
               <Box>
-                <Typography>Learning Outcome Completion</Typography>
+                <ReportTitle title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                 <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               </Box>
               <Box>
-                <Typography variant="h5" component="h5">
-                  Time Spent on H5P activities
-                </Typography>
+                <ReportTitle title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
                 <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
               </Box>
             </Box>
@@ -654,8 +654,19 @@ export function ReportStudentPerformance() {
           chartHeight={verticalChartHeight}
           render={(px) => (
             <Box display="flex" justifyContent="space-between" flexWrap="wrap" width={verticalChartWidth * px}>
-              <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
-              <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
+              <Box>
+                <ReportTitle title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
+                <VerticalBarStackChart data={finalStuReportDetail} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
+              </Box>
+              <Box>
+                <ReportTitle
+                  title={reportMiss(
+                    "Time Spent on H5p activities Break-down",
+                    "label_report_title_time_spent_on_h5p_activities_break_down"
+                  )}
+                />
+                <VerticalBarGroupChart data={finalH5pRepirtDetail} px={px} valueAxiosLabel="in mins" />
+              </Box>
               <VerticalBarStackChart data={mockData3} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               <VerticalBarGroupChart data={mockData4} px={px} valueAxiosLabel="in mins" />
             </Box>
