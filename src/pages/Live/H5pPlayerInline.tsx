@@ -125,12 +125,13 @@ interface H5pPlayerInlineProps {
   userId: string;
   scheduleId?: string;
   valueSource: string;
+  isPreview: boolean;
   onReady?: () => any;
 }
 export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   const dispatch = useDispatch();
   const sizeRef = useRef<ISize>({ width: undefined, height: undefined });
-  const { valueSource, id, scheduleId, userId, onReady } = props;
+  const { valueSource, id, scheduleId, userId, onReady, isPreview } = props;
   const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
   const onReadyRef = useRef(onReady);
   const playId = useMemo(() => sha1(valueSource + Date.now().toString()), [valueSource]);
@@ -179,19 +180,19 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
         local_library_version,
         local_content_id: libraryContentId,
       };
-      // console.log("initial resultInfo = ", resultInfo);
       dispatch(h5pEvent(resultInfo));
     } else {
       if (!statement) return;
       const info = { ...baseInfo, ...extractH5pStatement(statement) };
       const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
-      // console.log("resultInfo = ", resultInfo);
       dispatch(h5pEvent(resultInfo));
     }
   };
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   const injectAfterLoad: InjectHandler = async (root) => {
     (async () => onReadyRef.current && onReadyRef.current())();
     import("iframe-resizer/js/iframeResizer.contentWindow");
+    if (isPreview) return;
     xApiRef.current && xApiRef.current(undefined, true);
     (root as any).H5P.externalDispatcher.on("xAPI", function (event: any) {
       xApiRef.current && xApiRef.current(event.data.statement);
@@ -199,7 +200,8 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   };
 
   useEffect(() => {
-    if (!id || !userId || !scheduleId || !valueSource) return;
+    if (!id || !userId || !valueSource) return;
+    if (!isPreview && !scheduleId) return;
     if (!library || !library.scripts || library.scripts.length === 0) return;
     new InlineIframeManager({
       contentWindow: window,
@@ -209,7 +211,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
       injectAfterLoad,
     });
     /* eslint-ignore-next-line react-hooks/exhaustive-deps */
-  }, [id, userId, scheduleId, valueSource, library, injectBeforeLoad]);
+  }, [id, userId, scheduleId, valueSource, library, isPreview, injectBeforeLoad, injectAfterLoad]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -337,6 +339,10 @@ class InlineIframeManager {
 
 function equalH5pPlayerInlineProps(prev: H5pPlayerInlineProps, props: H5pPlayerInlineProps) {
   return (
-    prev.id === props.id && prev.userId === props.userId && prev.scheduleId === props.scheduleId && prev.valueSource === props.valueSource
+    prev.id === props.id &&
+    prev.userId === props.userId &&
+    prev.scheduleId === props.scheduleId &&
+    prev.valueSource === props.valueSource &&
+    prev.isPreview === props.isPreview
   );
 }
