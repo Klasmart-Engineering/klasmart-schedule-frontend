@@ -1,101 +1,101 @@
 {
   "semantics": [
     {
-      "label": "Questionnaire elements",
+      "label": "translate:: Questionnaire elements",
       "widgets": [
         {
-          "label": "Default"
+          "label": "translate:: Default"
         }
       ],
-      "entity": "element",
+      "entity": "translate:: element",
       "field": {
-        "label": "Choose library",
+        "label": "translate:: Choose library",
         "fields": [
           {
-            "label": "Library",
-            "description": "Choose a library"
+            "label": "translate:: Library",
+            "description": "translate:: Choose a library"
           },
           {
-            "label": "Required field"
+            "label": "translate:: Required field"
           }
         ]
       }
     },
     {
-      "label": "Success screen options",
+      "label": "translate:: Success screen options",
       "fields": [
         {
-          "label": "Enable success screen"
+          "label": "translate:: Enable success screen"
         },
         {
-          "label": "Add success screen image",
+          "label": "translate:: Add success screen image",
           "fields": [
             {
-              "label": "Replace success icon with image"
+              "label": "translate:: Replace success icon with image"
             }
           ]
         },
         {
-          "label": "Text to display on submit",
-          "default": "You have completed the questionnaire."
+          "label": "translate:: Text to display on submit",
+          "default": "translate:: You have completed the questionnaire."
         }
       ]
     },
     {
-      "label": "UI Elements",
+      "label": "translate:: UI Elements",
       "fields": [
         {
-          "label": "Button labels",
+          "label": "translate:: Button labels",
           "fields": [
             {
-              "label": "Previous button label",
-              "default": "Back"
+              "label": "translate:: Previous button label",
+              "default": "translate:: Back"
             },
             {
-              "label": "Continue button label",
-              "default": "Continue"
+              "label": "translate:: Continue button label",
+              "default": "translate:: Continue"
             },
             {
-              "label": "Next button label",
-              "default": "Next"
+              "label": "translate:: Next button label",
+              "default": "translate:: Next"
             },
             {
-              "label": "Submit button label",
-              "default": "Submit"
+              "label": "translate:: Submit button label",
+              "default": "translate:: Submit"
             }
           ]
         },
         {
-          "label": "Accessibility",
+          "label": "translate:: Accessibility",
           "fields": [
             {
-              "label": "Required message exit button label",
-              "default": "Close error message"
+              "label": "translate:: Required message exit button label",
+              "default": "translate:: Close error message"
             },
             {
-              "label": "Progress bar text",
-              "default": "Question %current of %max",
-              "description": "Used to tell assistive technologies what question it is. Variables: [ %current, %max ]"
+              "label": "translate:: Progress bar text",
+              "default": "translate:: Question %current of %max",
+              "description": "translate:: Used to tell assistive technologies what question it is. Variables: [ %current, %max ]"
             }
           ]
         },
         {
-          "label": "Required message",
-          "default": "This question requires an answer",
-          "description": "Will display if this field is unanswered and required by a wrapper content type"
+          "label": "translate:: Required message",
+          "default": "translate:: This question requires an answer",
+          "description": "translate:: Will display if this field is unanswered and required by a wrapper content type"
         },
         {
-          "label": "Required symbol text",
-          "default": "required",
-          "description": "Text that will accompany an asterisk to signal that a question is required"
+          "label": "translate:: Required symbol text",
+          "default": "translate:: required",
+          "description": "translate:: Text that will accompany an asterisk to signal that a question is required"
         },
         {
-          "label": "Title for the submit screen",
-          "default": "You successfully answered all of the questions"
+          "label": "translate:: Title for the submit screen",
+          "default": "translate:: You successfully answered all of the questions"
         },
         {
-          "label": "Subtitle for the submit screen",
-          "default": "Click below to submit your answers"
+          "label": "translate:: Subtitle for the submit screen",
+          "default": "translate:: Click below to submit your answers"
         }
       ]
     }

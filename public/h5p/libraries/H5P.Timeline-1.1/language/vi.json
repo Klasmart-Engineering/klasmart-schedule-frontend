@@ -1,92 +1,92 @@
 {
   "semantics": [
     {
-      "label": "Timeline",
+      "label": "translate::Timeline",
       "fields": [
         {
-          "label": "Headline",
-          "description": "Main timeline heading goes here (first page)"
+          "label": "translate::Headline",
+          "description": "translate::Main timeline heading goes here (first page)"
         },
         {
-          "label": "Body Text",
-          "description": "The main timeline body goes here (first page)."
+          "label": "translate::Body Text",
+          "description": "translate::The main timeline body goes here (first page)."
         },
         {
-          "label": "Default zoom level",
-          "description": "This will tweak the default zoom level. Equivilent to pressing the zoom in or zoom out button the specified number of times. Negative numbers zoom out. default is 0"
+          "label": "translate::Default zoom level",
+          "description": "translate::This will tweak the default zoom level. Equivilent to pressing the zoom in or zoom out button the specified number of times. Negative numbers zoom out. default is 0"
         },
         {
-          "label": "Background image",
-          "description": "An image to display as background."
+          "label": "translate::Background image",
+          "description": "translate::An image to display as background."
         },
         {
-          "label": "Height",
-          "description": "The height in pixels"
+          "label": "translate::Height",
+          "description": "translate::The height in pixels"
         },
         {
-          "label": "Asset",
-          "description": "Here you can add an asset to your timeline \"front page\"",
+          "label": "translate::Asset",
+          "description": "translate::Here you can add an asset to your timeline \"front page\"",
           "fields": [
             {
-              "label": "Media",
-              "description": "Link to media URL (Twitter, YouTube, Flickr, Vimeo, Google Maps and SoundCloud are currently supported)"
+              "label": "translate::Media",
+              "description": "translate::Link to media URL (Twitter, YouTube, Flickr, Vimeo, Google Maps and SoundCloud are currently supported)"
             },
             {
-              "label": "Credits",
-              "description": "Credits to the media"
+              "label": "translate::Credits",
+              "description": "translate::Credits to the media"
             },
             {
-              "label": "Caption",
-              "description": "Caption description goes here"
+              "label": "translate::Caption",
+              "description": "translate::Caption description goes here"
             }
           ]
         },
         {
-          "label": "Dates",
-          "description": "Add some dates to your timeline!",
+          "label": "translate::Dates",
+          "description": "translate::Add some dates to your timeline!",
           "field": {
-            "label": "Date",
-            "description": "Date",
+            "label": "translate::Date",
+            "description": "translate::Date",
             "fields": [
               {
-                "label": "Start date",
-                "description": "YYYY,MM,DD (Minimum YYYY required)"
+                "label": "translate::Start date",
+                "description": "translate::YYYY,MM,DD (Minimum YYYY required)"
               },
               {
-                "label": "End date",
-                "description": "YYYY,MM,DD (Minimum YYYY required)"
+                "label": "translate::End date",
+                "description": "translate::YYYY,MM,DD (Minimum YYYY required)"
               },
               {
-                "label": "Headline",
-                "description": "Headline for the date entry"
+                "label": "translate::Headline",
+                "description": "translate::Headline for the date entry"
               },
               {
-                "label": "Body text",
-                "description": "Body for the date entry"
+                "label": "translate::Body text",
+                "description": "translate::Body for the date entry"
               },
               {
-                "label": "Tags",
-                "description": "Enter Tags (categories)"
+                "label": "translate::Tags",
+                "description": "translate::Enter Tags (categories)"
               },
               {
-                "label": "Asset",
-                "description": "",
+                "label": "translate::Asset",
+                "description": "translate::",
                 "fields": [
                   {
-                    "label": "Media",
-                    "description": "URL to the media (Twitter, YouTube, Flickr, Vimeo, Wikipedia, Google Maps and SoundCloud are currently supported)."
+                    "label": "translate::Media",
+                    "description": "translate::URL to the media (Twitter, YouTube, Flickr, Vimeo, Wikipedia, Google Maps and SoundCloud are currently supported)."
                   },
                   {
-                    "label": "Thumbnail",
-                    "description": "Add a thumbnail if needed, 32x32"
+                    "label": "translate::Thumbnail",
+                    "description": "translate::Add a thumbnail if needed, 32x32"
                   },
                   {
-                    "label": "Credit",
-                    "description": "Credits to the media"
+                    "label": "translate::Credit",
+                    "description": "translate::Credits to the media"
                   },
                   {
-                    "label": "Caption",
-                    "description": "Caption text"
+                    "label": "translate::Caption",
+                    "description": "translate::Caption text"
                   }
                 ]
               }
@@ -94,38 +94,38 @@
           }
         },
         {
-          "label": "Eras",
-          "description": "Add an era to your timeline",
+          "label": "translate::Eras",
+          "description": "translate::Add an era to your timeline",
           "field": {
-            "label": "Era",
-            "description": "",
+            "label": "translate::Era",
+            "description": "translate::",
             "fields": [
               {
-                "label": "Start date",
-                "description": "YYYY,MM,DD (Minimum YYYY required)"
+                "label": "translate::Start date",
+                "description": "translate::YYYY,MM,DD (Minimum YYYY required)"
               },
               {
-                "label": "End date",
-                "description": "YYYY,MM,DD (Minimum YYYY required)"
+                "label": "translate::End date",
+                "description": "translate::YYYY,MM,DD (Minimum YYYY required)"
               },
               {
-                "label": "Headline",
-                "description": "Era headline"
+                "label": "translate::Headline",
+                "description": "translate::Era headline"
               },
               {
-                "label": "Text",
-                "description": "Era body"
+                "label": "translate::Text",
+                "description": "translate::Era body"
               },
               {
-                "label": "Tag",
-                "description": "Era tags (categories)"
+                "label": "translate::Tag",
+                "description": "translate::Era tags (categories)"
               }
             ]
           }
         },
         {
-          "label": "Language",
-          "description": "The language of the user interface",
+          "label": "translate::Language",
+          "description": "translate::The language of the user interface",
           "options": [
             {
               "label": "Afrikaans"

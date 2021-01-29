@@ -1,21 +1,21 @@
 {
   "semantics": [
     {
-      "label": "Elements",
-      "entity": "element",
+      "label": "translate:: Elements",
+      "entity": "translate:: element",
       "field": {
-        "label": "Element type",
-        "description": "Library for this page."
+        "label": "translate:: Element type",
+        "description": "translate:: Library for this page."
       }
     },
     {
-      "label": "Label for help text",
-      "description": "Label for showing additional helpful information to the user.",
-      "default": "More information"
+      "label": "translate:: Label for help text",
+      "description": "translate:: Label for showing additional helpful information to the user.",
+      "default": "translate:: More information"
     },
     {
-      "label": "Fill in additional help information",
-      "description": "Here you can fill in additional information for the user, which will be available when clicked."
+      "label": "translate:: Fill in additional help information",
+      "description": "translate:: Here you can fill in additional information for the user, which will be available when clicked."
     }
   ]
 }

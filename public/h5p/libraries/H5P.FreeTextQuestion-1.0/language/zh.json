@@ -42,211 +42,211 @@
           "description": "translate:: The language of the wysiwyg user interface",
           "options": [
             {
-              "label": "translate:: Afrikaans"
+              "label": "Afrikaans"
             },
             {
-              "label": "translate:: Arabic"
+              "label": "Arabic"
             },
             {
-              "label": "translate:: Azerbaijani"
+              "label": "Azerbaijani"
             },
             {
-              "label": "translate:: Bulgarian"
+              "label": "Bulgarian"
             },
             {
-              "label": "translate:: Bengali"
+              "label": "Bengali"
             },
             {
-              "label": "translate:: Bosnian"
+              "label": "Bosnian"
             },
             {
-              "label": "translate:: Catalan"
+              "label": "Catalan"
             },
             {
-              "label": "translate:: Czech"
+              "label": "Czech"
             },
             {
-              "label": "translate:: Welsh"
+              "label": "Welsh"
             },
             {
-              "label": "translate:: Danish"
+              "label": "Danish"
             },
             {
-              "label": "translate:: German (Switzerland)"
+              "label": "German (Switzerland)"
             },
             {
-              "label": "translate:: German"
+              "label": "German"
             },
             {
-              "label": "translate:: Greek"
+              "label": "Greek"
             },
             {
-              "label": "translate:: English (Australia)"
+              "label": "English (Australia)"
             },
             {
-              "label": "translate:: English (Canada)"
+              "label": "English (Canada)"
             },
             {
-              "label": "translate:: English (United Kingdom)"
+              "label": "English (United Kingdom)"
             },
             {
-              "label": "translate:: English"
+              "label": "English"
             },
             {
-              "label": "translate:: Esperanto"
+              "label": "Esperanto"
             },
             {
-              "label": "translate:: Spanish (Mexico)"
+              "label": "Spanish (Mexico)"
             },
             {
-              "label": "translate:: Spanish (Spain)"
+              "label": "Spanish (Spain)"
             },
             {
-              "label": "translate:: Estonian"
+              "label": "Estonian"
             },
             {
-              "label": "translate:: Basque"
+              "label": "Basque"
             },
             {
-              "label": "translate:: Farsi"
+              "label": "Farsi"
             },
             {
-              "label": "translate:: Finnish"
+              "label": "Finnish"
             },
             {
-              "label": "translate:: Faeroese"
+              "label": "Faeroese"
             },
             {
-              "label": "translate:: French (Canada)"
+              "label": "French (Canada)"
             },
             {
-              "label": "translate:: French (Standard)"
+              "label": "French (Standard)"
             },
             {
-              "label": "translate:: Galician"
+              "label": "Galician"
             },
             {
-              "label": "translate:: Gujarati"
+              "label": "Gujarati"
             },
             {
-              "label": "translate:: Hebrew (modern)"
+              "label": "Hebrew (modern)"
             },
             {
-              "label": "translate:: Hindi"
+              "label": "Hindi"
             },
             {
-              "label": "translate:: Croatian"
+              "label": "Croatian"
             },
             {
-              "label": "translate:: Hungarian"
+              "label": "Hungarian"
             },
             {
-              "label": "translate:: Indonesian"
+              "label": "Indonesian"
             },
             {
-              "label": "translate:: Icelandic"
+              "label": "Icelandic"
             },
             {
-              "label": "translate:: Italian (Standard)"
+              "label": "Italian (Standard)"
             },
             {
-              "label": "translate:: Japanese"
+              "label": "Japanese"
             },
             {
-              "label": "translate:: Georgian"
+              "label": "Georgian"
             },
             {
-              "label": "translate:: Central Khmer"
+              "label": "Central Khmer"
             },
             {
-              "label": "translate:: Korean"
+              "label": "Korean"
             },
             {
-              "label": "translate:: Kurdish"
+              "label": "Kurdish"
             },
             {
-              "label": "translate:: Lithuanian"
+              "label": "Lithuanian"
             },
             {
-              "label": "translate:: Latvian"
+              "label": "Latvian"
             },
             {
-              "label": "translate:: Macedonian"
+              "label": "Macedonian"
             },
             {
-              "label": "translate:: Mongolian"
+              "label": "Mongolian"
             },
             {
-              "label": "translate:: Malay"
+              "label": "Malay"
             },
             {
-              "label": "translate:: Norwegian Bokmål"
+              "label": "Norwegian Bokmål"
             },
             {
-              "label": "translate:: Dutch (Standard)"
+              "label": "Dutch (Standard)"
             },
             {
-              "label": "translate:: Norwegian"
+              "label": "Norwegian"
             },
             {
-              "label": "translate:: Occitan"
+              "label": "Occitan"
             },
             {
-              "label": "translate:: Polish"
+              "label": "Polish"
             },
             {
-              "label": "translate:: Portuguese (Brazil)"
+              "label": "Portuguese (Brazil)"
             },
             {
-              "label": "translate:: Portuguese (Portugal)"
+              "label": "Portuguese (Portugal)"
             },
             {
-              "label": "translate:: Romanian"
+              "label": "Romanian"
             },
             {
-              "label": "translate:: Russian"
+              "label": "Russian"
             },
             {
-              "label": "translate:: Sinhala/Sinhalese"
+              "label": "Sinhala/Sinhalese"
             },
             {
-              "label": "translate:: Slovak"
+              "label": "Slovak"
             },
             {
-              "label": "translate:: Slovenian"
+              "label": "Slovenian"
             },
             {
-              "label": "translate:: Albanian"
+              "label": "Albanian"
             },
             {
-              "label": "translate:: Serbian (Latin)"
+              "label": "Serbian (Latin)"
             },
             {
-              "label": "translate:: Serbian"
+              "label": "Serbian"
             },
             {
-              "label": "translate:: Swedish"
+              "label": "Swedish"
             },
             {
-              "label": "translate:: Thai"
+              "label": "Thai"
             },
             {
-              "label": "translate:: Turkish"
+              "label": "Turkish"
             },
             {
-              "label": "translate:: Tatar"
+              "label": "Tatar"
             },
             {
-              "label": "translate:: Uighur/Uyghur"
+              "label": "Uighur/Uyghur"
             },
             {
-              "label": "translate:: Ukrainian"
+              "label": "Ukrainian"
             },
             {
-              "label": "translate:: Vietnamese"
+              "label": "Vietnamese"
             },
             {
-              "label": "translate:: Chinese (PRC)"
+              "label": "Chinese (PRC)"
             }
           ]
         }

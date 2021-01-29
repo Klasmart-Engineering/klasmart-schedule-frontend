@@ -1,38 +1,38 @@
 {
   "semantics": [
     {
-      "label": "Question"
+      "label": "translate:: Question"
     },
     {
-      "label": "Multiple choice type",
+      "label": "translate:: Multiple choice type",
       "options": [
         {
-          "label": "Multiple answers"
+          "label": "translate:: Multiple answers"
         },
         {
-          "label": "Single answer"
+          "label": "translate:: Single answer"
         }
       ]
     },
     {
-      "label": "Answer alternatives",
-      "entity": "Alternative",
+      "label": "translate:: Answer alternatives",
+      "entity": "translate:: Alternative",
       "field": {
-        "label": "Alternative",
+        "label": "translate:: Alternative",
         "fields": [
           {
-            "label": "Text"
+            "label": "translate:: Text"
           },
           {
-            "label": "Feedback",
+            "label": "translate:: Feedback",
             "fields": [
               {
-                "label": "Message displayed if answer is selected",
-                "description": "Message will appear below the answer on \"continue\" if this answer is selected."
+                "label": "translate:: Message displayed if answer is selected",
+                "description": "translate:: Message will appear below the answer on \"continue\" if this answer is selected."
               },
               {
-                "label": "Message displayed if answer is not selected",
-                "description": "Message will appear below the answer on \"continue\" if this answer is not selected."
+                "label": "translate:: Message displayed if answer is not selected",
+                "description": "translate:: Message will appear below the answer on \"continue\" if this answer is not selected."
               }
             ]
           }

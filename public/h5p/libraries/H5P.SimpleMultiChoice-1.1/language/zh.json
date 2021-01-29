@@ -1,38 +1,38 @@
 {
   "semantics": [
     {
-      "label": "題目"
+      "label": "translate:: 題目"
     },
     {
-      "label": "題型",
+      "label": "translate:: 題型",
       "options": [
         {
-          "label": "複選（勾選方塊）"
+          "label": "translate:: 複選（勾選方塊）"
         },
         {
-          "label": "單選（單選按鈕）"
+          "label": "translate:: 單選（單選按鈕）"
         }
       ]
     },
     {
-      "label": "所有選項",
-      "entity": "選項",
+      "label": "translate:: 所有選項",
+      "entity": "translate:: 選項",
       "field": {
-        "label": "選項",
+        "label": "translate:: 選項",
         "fields": [
           {
-            "label": "文字"
+            "label": "translate:: 文字"
           },
           {
-            "label": "回饋",
+            "label": "translate:: 回饋",
             "fields": [
               {
-                "label": "被選項目的訊息",
-                "description": "訊息會在項目被選為答案時，顯示在「繼續」時的答案下方。"
+                "label": "translate:: 被選項目的訊息",
+                "description": "translate:: 訊息會在項目被選為答案時，顯示在「繼續」時的答案下方。"
               },
               {
-                "label": "未選項目的訊息",
-                "description": "訊息會在項目未選為答案時，顯示在「繼續」時的答案下方。"
+                "label": "translate:: 未選項目的訊息",
+                "description": "translate:: 訊息會在項目未選為答案時，顯示在「繼續」時的答案下方。"
               }
             ]
           }
