@@ -14,17 +14,18 @@ export const ModelReport = {
   },
 };
 
-export function formatTime(seconds: number) {
+export function formatTime(seconds: number | undefined) {
+  if (!seconds) return "";
   const date = new Date(seconds * 1000);
   const year = date.getFullYear();
-  const month = date.getMonth();
+  const month = date.getMonth() + 1;
   const day = date.getDate();
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}/${month}/${day}  ${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 
 export function formatTimeToMonWek(seconds: number) {
