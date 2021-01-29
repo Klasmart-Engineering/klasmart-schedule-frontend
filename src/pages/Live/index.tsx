@@ -1,7 +1,6 @@
 import { Box } from "@material-ui/core";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { RootState } from "../../reducers";
@@ -9,8 +8,7 @@ import { onLoadContentPreview } from "../../reducers/content";
 import { H5pPlayerInline } from "./H5pPlayerInline";
 
 const useQuery = () => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
+  const query = new URLSearchParams(window.location.search);
   const content_id = query.get("content_id") as string;
   const schedule_id = query.get("schedule_id") as string;
   return { content_id, schedule_id };
