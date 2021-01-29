@@ -188,7 +188,7 @@ export interface VerticalMultiBarChartProps {
 
 export type VerticalBarStackChartProps = VerticalSingleBarStackChartProps | VerticalMultiBarChartProps;
 export function VerticalBarStackChart(props: VerticalBarStackChartProps) {
-  const { onSelect, px, data, valueAxiosLabel } = useMemo(() => parseProps(props), [props]);
+  const { onSelect, px = 0, data, valueAxiosLabel } = useMemo(() => parseProps(props), [props]);
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);

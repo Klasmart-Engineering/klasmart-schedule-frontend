@@ -16,5 +16,5 @@ export type ReportTitleProps = {
 export function ReportTitle(props: ReportTitleProps) {
   const { title } = props;
   const css = useStyles();
-  return <Typography class={css.fontCss}>{title}</Typography>;
+  return <Typography className={css.fontCss}>{title}</Typography>;
 }
