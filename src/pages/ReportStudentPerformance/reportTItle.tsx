@@ -10,7 +10,7 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-export type ReportTitleProps = {
+type ReportTitleProps = {
   title: string;
 };
 export function ReportTitle(props: ReportTitleProps) {

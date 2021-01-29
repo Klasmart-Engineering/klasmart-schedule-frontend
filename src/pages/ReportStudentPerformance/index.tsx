@@ -36,7 +36,7 @@ import { FilterAchievementReport, FilterAchievementReportProps } from "../Report
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
-import { ReportTitle } from "./reportTItle";
+import { ReportTitle } from "./ReportTitle";
 
 const mockData1: HorizontalBarStackDataItem[] = [
   {
