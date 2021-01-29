@@ -8,10 +8,10 @@ function requireContentType(kind: 'asset', id: string) : {
   core: ContentTypeLibraryAssets 
 };
 
-type asyncHash<T> = {
-  [key in keyof T]: Promise<{ default: T[key] }>;
+type asyncSchemaHash<T> = {
+  [key in keyof T]: () => Promise<{ default: T[key] }>;
 }
 
-function requireContentType<T extends Record<string, unknown>>(kind: 'schema', id: string) : asyncHash<T>;
+function requireContentType<T extends Record<string, unknown>>(kind: 'schema', id: string) : asyncSchemaHash<T>;
 
 export default requireContentType;

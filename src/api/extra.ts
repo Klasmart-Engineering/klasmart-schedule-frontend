@@ -167,7 +167,7 @@ export const apiCreateContentTypeLibrary = (id: string) => {
 export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string) {
   const schema = {} as T;
   for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
-    schema[name as keyof T] = (await value).default;
+    schema[name as keyof T] = (await value()).default;
   }
   return schema;
 }

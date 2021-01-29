@@ -11,11 +11,14 @@ const coreDir = path.resolve(publicDir, 'core');
 const cacheLibIds = {};
 const cacheLibAssets = {};
 const cacheLibSchemas = {};
+const cacheLibSchemaLanguages = {};
+const languages = ['en', 'zh', 'vi', 'ko', 'id'];
 const resolvePackage = x => path.relative(path.resolve(publicDir, '..'), x);
 
 let libHashExpression;
 let coreAssetsExpression;
 let libSchemaExpression;
+let libSchemaLanguagesExpression;
 
 const contentTypeExpression = template.expression(`
   (function(){
@@ -37,7 +40,7 @@ const schemaExpression = template.expression(`
 `);
 
 const requireExpression = template.expression(`require(%%path%%)`);
-const importExpression = template.expression(`import(%%path%%)`);
+const importExpression = template.expression(`()=>import(%%path%%)`);
 
 module.exports = createMacro(contentTypeMacro)
 
@@ -45,13 +48,17 @@ function contentTypeMacro({references, state, babel}) {
   references.default.forEach(nodePath => {
     if (nodePath.parent.type !== "CallExpression") return;
     if (nodePath.parent.arguments.length !== 2) throw new MacroError(`${name} should be called with two parameters!`);
-    const [kindExpression, libIdExpression] = nodePath.parent.arguments;
+    const [kindExpression, libIdExpression, langNameExpression] = nodePath.parent.arguments;
     if (kindExpression.value === 'asset') {
       const targetExpression = contentTypeExpression({ libHash: libHashExpression, libId: libIdExpression, coreAssets: coreAssetsExpression });
       nodePath.parentPath.replaceWith(targetExpression);
     }
     if (kindExpression.value === 'schema') {
       const targetExpression = schemaExpression({ libSchemas: libSchemaExpression, libId: libIdExpression });
+      nodePath.parentPath.replaceWith(targetExpression);
+    }
+    if (kindExpression.value === 'language') {
+      const targetExpression = schemaExpression({ libSchemas: libSchemaLanguagesExpression, libId: libIdExpression });
       nodePath.parentPath.replaceWith(targetExpression);
     }
   })
@@ -127,6 +134,20 @@ function createLibrarySchema(libraryId) {
   }, {});
 }
 
+function createLibrarySchemaLanguages(libraryId) {
+  const dependancyLibs = createDeppendancyLibraries(libraryId);
+  return languages.reduce((schemaLanguages, langName) => {
+    schemaLanguages[langName] = dependancyLibs.reduce((schemas, libId) => {
+      const filePath = path.resolve(librariesDir, libId, `language/${langName}.json`);
+      if (!existsSync(filePath)) return schemas;
+      schemas[libId] = filePath;
+      return schemas
+    }, {});
+    return schemaLanguages;
+  }, {});
+}
+
+
 function resolveAssetsExpression(assetsExpression) {
   assetsExpression.properties.forEach(theObjectProperty => {
     const prefix = theObjectProperty.key.name === 'styles' ? '!!file-loader!extract-loader!css-loader!' : '!!file-loader!';
@@ -146,6 +167,17 @@ function resolveSchemaExpression(schemaExpression) {
   });
 }
 
+function resolveSchemaLanguagesExpression(schemaLanguagesExpression) {
+  schemaLanguagesExpression.properties.forEach(theObjectProperty => {
+    theObjectProperty.value.properties.forEach(languageObjectProperty => {
+      languageObjectProperty.value.properties.forEach(schemaObjectProperty => {
+        const pathExpression = stringLiteral(resolvePackage(schemaObjectProperty.value.value));
+        schemaObjectProperty.value = importExpression({ path: pathExpression });
+      })
+    });
+  });
+}
+
 function checkAssests(libHash) {
   for (const [id, lib] of Object.entries(libHash)) {
     lib.scripts.concat(lib.styles).forEach(filePath => {
@@ -161,6 +193,7 @@ function onModuleLoad() {
     .forEach((libraryId) => {
       cacheLibAssets[libraryId] = createDependancyAssets(libraryId);
       cacheLibSchemas[libraryId] = createLibrarySchema(libraryId);
+      cacheLibSchemaLanguages[libraryId] = createLibrarySchemaLanguages(libraryId);
     })
   ;
   const coreAssets = createCoreDependencyAssets();
@@ -169,7 +202,9 @@ function onModuleLoad() {
   libHashExpression = template.expression(JSON.stringify(cacheLibAssets))();
   coreAssetsExpression = template.expression(JSON.stringify(coreAssets))();
   libSchemaExpression = template.expression(JSON.stringify(cacheLibSchemas))(); 
+  libSchemaLanguagesExpression = template.expression(JSON.stringify(cacheLibSchemaLanguages))(); 
   resolveSchemaExpression(libSchemaExpression);
+  resolveSchemaLanguagesExpression(libSchemaLanguagesExpression);
 }
 
 onModuleLoad();
