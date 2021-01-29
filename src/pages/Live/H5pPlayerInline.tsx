@@ -140,6 +140,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   const { library, core } = apiCreateContentTypeLibrary(h5pName2libId(libraryName));
   /* eslint-disable-next-line react-hooks/exhaustive-deps */
   const injectBeforeLoad = async (root: Window) => {
+    root.document.documentElement.classList.add("h5p-iframe");
     (root as any).H5PIntegration = {
       core,
       l10n,
@@ -231,9 +232,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
 
   return (
     <div className={css.iframe}>
-      <div title="html" className="h5p-iframe">
-        <div id="h5-content" className="h5p-content" data-content-id={libraryContentId}></div>
-      </div>
+      <div id="h5-content" className="h5p-content" data-content-id={libraryContentId}></div>
     </div>
   );
 }, equalH5pPlayerInlineProps);
