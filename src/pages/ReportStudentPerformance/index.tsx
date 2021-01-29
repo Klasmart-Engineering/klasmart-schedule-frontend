@@ -38,7 +38,7 @@ import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProp
 import { ALL_STUDENT, QueryCondition } from "../ReportAchievementList/types";
 import { ReportCategories } from "../ReportCategories";
 import { ReportStudentPerformanceChartLayout } from "./ReportStudentPerformanceChartLayout";
-import { ReportTitle } from "./ReportTitle";
+import { ReportTitle } from "./ReportHeader";
 
 const mockData1: HorizontalBarStackDataItem[] = [
   {
