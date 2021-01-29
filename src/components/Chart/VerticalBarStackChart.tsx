@@ -24,9 +24,9 @@ const useStyle = makeStyles({
 });
 
 const getPixels = (px: number) => ({
-  barStacksWidth: 560 * px,
+  barStacksWidth: (barAmount: number) => (60 * 2 + barAmount * (90 + 40)) * px,
   barStacksHeight: 400 * px,
-  barStackMarginRatio: (84 / (84 + 40)) * px,
+  barStackMarginRatio: 90 / (90 + 40),
   descMarginBottom: 16 * px,
   xMarginTop: 180 * px,
   xMarginBottom: 160 * px,
@@ -110,18 +110,21 @@ export const verticalBarStackChartSize = (props: Pick<VerticalBarStackChartProps
 
 function computed(props: Pick<VerticalMultiBarChartProps, "px" | "data">) {
   const { px = 1, data } = props;
+  const barAmount = data.length;
   const pixels = getPixels(px);
   const yMax = Math.max(...calcDataSum(data));
   const xScale = scaleBand({
     domain: data.map((item) => item.id),
-    range: [0, pixels.barStacksWidth],
+    range: [0, pixels.barStacksWidth(barAmount)],
     padding: pixels.barStackMarginRatio,
   });
   const yScale = scaleLinear({ domain: [yMax, 0], range: [0, pixels.barStacksHeight] });
   const yAxiosScale = scaleLinear({ domain: [yMax, 0], range: [0, pixels.barStacksHeight + pixels.xMarginTop] });
   const getX = (item: ChartDataItem) => item.id;
-  const xAxiosLabelWidth = data.length ? (pixels.barStacksWidth / data.length) * AXIOS_TICK_RABEL_MAX_WIDTH_RATIO : pixels.barStacksWidth;
-  const viewPort = [0, 0, pixels.barStacksWidth, pixels.barStacksHeight + pixels.xMarginTop + pixels.xMarginBottom];
+  const xAxiosLabelWidth = data.length
+    ? (pixels.barStacksWidth(barAmount) / data.length) * AXIOS_TICK_RABEL_MAX_WIDTH_RATIO
+    : pixels.barStacksWidth(barAmount);
+  const viewPort = [0, 0, pixels.barStacksWidth(barAmount), pixels.barStacksHeight + pixels.xMarginTop + pixels.xMarginBottom];
   const chartData = calcChartData(data);
   const categoryNames = calcCategoryNames(data);
   const colorScale = scaleOrdinal({ domain: categoryNames, range: calcColorRange(data) });
@@ -185,7 +188,7 @@ export interface VerticalMultiBarChartProps {
 
 export type VerticalBarStackChartProps = VerticalSingleBarStackChartProps | VerticalMultiBarChartProps;
 export function VerticalBarStackChart(props: VerticalBarStackChartProps) {
-  const { onSelect, px = 1, data, valueAxiosLabel } = useMemo(() => parseProps(props), [props]);
+  const { onSelect, px, data, valueAxiosLabel } = useMemo(() => parseProps(props), [props]);
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);

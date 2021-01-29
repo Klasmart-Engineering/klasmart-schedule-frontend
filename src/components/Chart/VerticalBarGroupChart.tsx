@@ -24,9 +24,9 @@ const useStyle = makeStyles({
 });
 
 const getPixels = (px: number) => ({
-  barGroupsWidth: 630 * px,
+  barGroupsWidth: (barAmount: number) => (60 * 2 + barAmount * (90 + 60)) * px,
   barGroupsHeight: 400 * px,
-  barGroupMarginRatio: (60 / (60 + 90)) * px,
+  barGroupMarginRatio: 60 / (60 + 90),
   descMarginBottom: 16 * px,
   xMarginTop: 180 * px,
   xMarginBottom: 160 * px,
@@ -112,19 +112,22 @@ export const verticalBarGroupChartSize = (props: Pick<VerticalBarGroupChartProps
 
 function computed(props: Pick<VerticalMultiBarChartProps, "px" | "data">) {
   const { px = 1, data } = props;
+  const barAmount = data.length;
   const pixels = getPixels(px);
   const yMax = calcYMax(data);
   console.log("yMax = ", yMax);
   const xScale = scaleBand({
     domain: data.map((item) => item.id),
-    range: [0, pixels.barGroupsWidth],
+    range: [0, pixels.barGroupsWidth(barAmount)],
     padding: pixels.barGroupMarginRatio,
   });
   const yScale = scaleLinear({ domain: [yMax, 0], range: [0, pixels.barGroupsHeight] });
   const yAxiosScale = scaleLinear({ domain: [yMax, 0], range: [0, pixels.barGroupsHeight + pixels.xMarginTop] });
   const getX = (item: ChartDataItem) => item.id;
-  const xAxiosLabelWidth = data.length ? (pixels.barGroupsWidth / data.length) * AXIOS_TICK_RABEL_MAX_WIDTH_RATIO : pixels.barGroupsWidth;
-  const viewPort = [0, 0, pixels.barGroupsWidth, pixels.barGroupsHeight + pixels.xMarginTop + pixels.xMarginBottom];
+  const xAxiosLabelWidth = data.length
+    ? (pixels.barGroupsWidth(barAmount) / data.length) * AXIOS_TICK_RABEL_MAX_WIDTH_RATIO
+    : pixels.barGroupsWidth(barAmount);
+  const viewPort = [0, 0, pixels.barGroupsWidth(barAmount), pixels.barGroupsHeight + pixels.xMarginTop + pixels.xMarginBottom];
   const chartData = calcChartData(data);
   const categoryNames = calcCategoryNames(data);
   const categoryScale = scaleBand({ domain: categoryNames, range: [0, xScale.bandwidth()], padding: 0.2 });
