@@ -563,7 +563,7 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
     }
     return {
       id: item.material_id || "",
-      name: `${item.material_name}`,
+      name: `${item.material_name}(${item.activity_type?.split(".")[1]})`,
       description: "123",
       value: [
         {
@@ -725,7 +725,7 @@ export function ReportStudentPerformance() {
               <Box>
                 <LegendTip />
                 <ReportHeader title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
-                <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in mins" />
+                <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in seconds" />
               </Box>
             </Box>
           )}
@@ -775,7 +775,7 @@ export function ReportStudentPerformance() {
                   <VerticalBarGroupChart
                     data={finalH5pRepirtDetail}
                     px={px}
-                    valueAxiosLabel="in mins"
+                    valueAxiosLabel="in seconds"
                     renderTooltipContent={(tooltipProps) => (
                       <div>
                         {finalH5pRepirtDetail[tooltipProps.barGroupIndex].value[tooltipProps.barIndex].tooltipArr.map((item) => {

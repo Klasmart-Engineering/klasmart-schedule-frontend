@@ -17,7 +17,7 @@ import {
   QeuryMeQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables,
+  TeacherByOrgIdQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityScheduleShortInfo,
@@ -26,7 +26,7 @@ import {
   EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -548,8 +548,6 @@ export const stuPerformanceReportOnload = createAsyncThunk<
       query: ParticipantsByClassDocument,
       variables: { class_id: finalClassId },
     });
-    // const all: Pick<User, "user_id" | "user_name">[] = [{ user_id: ALL_STUDENT, user_name: d("All").t("report_label_all") }];
-    // studentList = [...all];
     studentList = studentList.concat(data.class?.students as Pick<User, "user_id" | "user_name">[]) || [];
   }
   const finalStudentId = student_id ? student_id : ALL_STUDENT;
