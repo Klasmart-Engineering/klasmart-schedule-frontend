@@ -8,7 +8,7 @@ import {
   EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   EntityStudentsPerformanceH5PReportItem,
-  EntityStudentsPerformanceReportItem,
+  EntityStudentsPerformanceReportItem
 } from "../../api/api.auto";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
 import { CoverFitChartLayout } from "../../components/Chart/CoverFitChartLayout";
@@ -16,13 +16,13 @@ import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
   HorizontalBarStackDataItem,
-  HorizontalSingleBarStackDataItem,
+  HorizontalSingleBarStackDataItem
 } from "../../components/Chart/HorizontalBarStackChart";
 import {
   VerticalBarGroupChart,
   verticalBarGroupChartSize,
   VerticalBarGroupDataItem,
-  VerticalBarGroupDataItemCategoryValue,
+  VerticalBarGroupDataItemCategoryValue
 } from "../../components/Chart/VerticalBarGroupChart";
 import { VerticalBarStackChart, verticalBarStackChartSize, VerticalBarStackDataItem } from "../../components/Chart/VerticalBarStackChart";
 import { reportMiss } from "../../locale/LocaleManager";
@@ -35,7 +35,7 @@ import {
   getScheduleParticipant,
   getStuReportDetail,
   getStuReportList,
-  stuPerformanceReportOnload,
+  stuPerformanceReportOnload
 } from "../../reducers/report";
 import { ReportAchievementList, useReportQuery } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
@@ -544,7 +544,7 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
           newArr.push(`Correct cards count: ${item.correct_pairs_count}`);
         });
       }
-      description = [`Paris number: ${imgPair.play_records}`, `Play times: ${imgPair.play_times}`, ...newArr];
+      description = [`Paris number: ${imgPair.paris_number}`, `Play times: ${imgPair.play_times}`, ...newArr];
     }
     if (item.activity_flash_cards) {
       const flasCards = item.activity_flash_cards;
