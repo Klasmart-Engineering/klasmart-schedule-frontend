@@ -249,7 +249,7 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
             top={pixels.barGroupsHeight}
             scale={xScale}
             axisLineClassName={css.axiosLine}
-            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth })}
+            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth,wordWrap: "break-word"})}
             tickComponent={tickComponent}
           />
         </Group>

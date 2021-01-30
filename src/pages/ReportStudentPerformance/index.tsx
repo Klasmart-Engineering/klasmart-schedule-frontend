@@ -507,11 +507,13 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
       let newArr: string[] = [];
       if (infoArray && infoArray.length) {
         infoArray.forEach((item, index) => {
+          const wrongNum = (imgSequence.cards_number ? imgSequence.cards_number : 0) - (item.correct_cards_count ? item.correct_cards_count : 0);
           newArr.push(`${index + 1}:`);
           newArr.push(`Start time: ${formatTime(item.start_time)}`);
           newArr.push(`End time: ${formatTime(item.end_time)}`);
           newArr.push(`Duration: ${item.duration} s`);
           newArr.push(`Correct cards count: ${item.correct_cards_count}`);
+          newArr.push(`Wrong cards count: ${wrongNum}`)
         });
       }
       description = [`Cards number: ${imgSequence.cards_number}`, `Play times: ${imgSequence.play_times}`, ...newArr];
@@ -529,41 +531,46 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
           newArr.push(`Click Count: ${item.clicks_count}`);
         });
       }
-      description = [`Cards number: ${memoryGame.pairs_number}`, `Play times: ${memoryGame.play_times}`, ...newArr];
+      description = [`Paris number: ${memoryGame.pairs_number}`, `Play times: ${memoryGame.play_times}`, ...newArr];
     }
     if (item.activity_image_pair) {
       const imgPair = item.activity_image_pair;
       const infoArray = imgPair.play_records;
       let newArr: string[] = [];
       if (infoArray && infoArray.length) {
+        
         infoArray.forEach((item, index) => {
+          const wrongNum = (imgPair.paris_number ? imgPair.paris_number : 0) - (item.correct_pairs_count ? item.correct_pairs_count : 0);
           newArr.push(`${index + 1}:`);
           newArr.push(` Start time: ${formatTime(item.start_time)}`);
           newArr.push(`End time: ${formatTime(item.end_time)}`);
           newArr.push(`Duration: ${item.duration} s`);
           newArr.push(`Correct cards count: ${item.correct_pairs_count}`);
+          newArr.push(`Wrong cards count: ${wrongNum}`)
         });
       }
       description = [`Paris number: ${imgPair.paris_number}`, `Play times: ${imgPair.play_times}`, ...newArr];
     }
     if (item.activity_flash_cards) {
-      const flasCards = item.activity_flash_cards;
-      const infoArray = flasCards.play_records;
+      const flashCards = item.activity_flash_cards;
+      const infoArray = flashCards.play_records;
       let newArr: string[] = [];
       if (infoArray && infoArray.length) {
         infoArray.forEach((item, index) => {
+          const wrongNum = (flashCards.cards_number ? flashCards.cards_number : 0) - (item.correct_cards_count ? item.correct_cards_count : 0)
           newArr.push(`${index + 1}:`);
           newArr.push(` Start time: ${formatTime(item.start_time)}`);
           newArr.push(`End time: ${formatTime(item.end_time)}`);
           newArr.push(`Duration: ${item.duration} s`);
           newArr.push(`Correct cards count: ${item.correct_cards_count}`);
+          newArr.push(`Wrong cards count: ${wrongNum}`)
         });
       }
-      description = [`Cards number: ${flasCards.cards_number}`, ...newArr];
+      description = [`Cards number: ${flashCards.cards_number}`, ...newArr];
     }
     return {
       id: item.material_id || "",
-      name: `${item.material_name}(${item.activity_type?.split(".")[1]})`,
+      name: `${item.material_name} (${item.activity_type?.split(".")[1]})`,
       description: "123",
       value: [
         {
@@ -778,8 +785,8 @@ export function ReportStudentPerformance() {
                     valueAxiosLabel="in seconds"
                     renderTooltipContent={(tooltipProps) => (
                       <div>
-                        {finalH5pRepirtDetail[tooltipProps.barGroupIndex].value[tooltipProps.barIndex].tooltipArr.map((item) => {
-                          return <div>{item}</div>;
+                        {finalH5pRepirtDetail[tooltipProps.barGroupIndex].value[tooltipProps.barIndex].tooltipArr.map((item, index) => {
+                          return <div key={index}>{item}</div>;
                         })}
                       </div>
                     )}
