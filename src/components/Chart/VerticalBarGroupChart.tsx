@@ -144,7 +144,6 @@ const showBarTooltip = (tooltipData: TooltipData, showTooltip: UseTooltipParams<
     tooltipData,
   });
 };
-
 export interface VerticalBarGroupDataItemCategoryValue {
   name: string;
   title?: string;
@@ -200,6 +199,7 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
               width={bar.width}
               height={bar.height}
               fill={bar.color}
+              // onClick={() => showBarTooltip({ bar, barGroup }, showTooltip, px, tooltipOpen, hideTooltip)}
               onMouseOver={() => showBarTooltip({ bar, barGroup }, showTooltip, px)}
               onMouseLeave={hideTooltip}
             />
@@ -249,7 +249,7 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
             top={pixels.barGroupsHeight}
             scale={xScale}
             axisLineClassName={css.axiosLine}
-            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth,wordWrap: "break-word"})}
+            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth, wordwrap: "break-word" })}
             tickComponent={tickComponent}
           />
         </Group>

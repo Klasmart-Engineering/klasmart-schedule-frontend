@@ -17,7 +17,7 @@ import {
   QeuryMeQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables
+  TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityScheduleShortInfo,
@@ -26,7 +26,7 @@ import {
   EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory
+  EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -613,7 +613,6 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
       variables: { class_id },
     });
     const participantList = data;
-    console.log(participantList);
     return { participantList };
   }
 );
@@ -701,6 +700,10 @@ const { reducer } = createSlice({
     },
     [stuPerformanceReportOnload.pending.type]: (state) => {
       state.stuReportMockOptions = cloneDeep(initialState.stuReportMockOptions);
+      state.h5pReportList = cloneDeep(initialState.h5pReportList);
+      state.stuReportList = cloneDeep(initialState.stuReportList);
+      state.h5pReportDetail = cloneDeep(initialState.h5pReportDetail);
+      state.stuReportDetail = cloneDeep(initialState.stuReportDetail);
     },
     [getStuReportList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportList>>) => {
       state.stuReportList = payload.stuReportList;

@@ -654,7 +654,6 @@ export function ReportStudentPerformance() {
   const computeFilter = useMemo(
     () => async (tab: keyof QueryCondition, value: string) => {
       const { teacher_id, class_id, lesson_plan_id } = condition;
-      history.push({ search: setQuery(history.location.search, { [tab]: value }) });
       if (tab === "teacher_id") {
         history.push({
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "", student_id: ALL_STUDENT }),
@@ -670,6 +669,7 @@ export function ReportStudentPerformance() {
         dispatch(getStuReportList({ metaLoading: true, teacher_id, class_id, lesson_plan_id: value }));
       }
       if (tab === "student_id") {
+        history.push({ search: setQuery(history.location.search, { [tab]: value }) });
         value === ALL_STUDENT
           ? dispatch(getStuReportList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }))
           : dispatch(getStuReportDetail({ metaLoading: true, teacher_id, class_id, lesson_plan_id, id: value }));
@@ -731,6 +731,7 @@ export function ReportStudentPerformance() {
                 <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               </Box>
               <Box>
+                <div style={{ height: 30 }}></div>
                 <ReportHeader title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
                 <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in seconds" />
               </Box>
