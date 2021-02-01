@@ -243,7 +243,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ListAssessmentsResponse"
+              "$ref": "#/definitions/entity.ListAssessmentsResult"
             }
           },
           "400": {
@@ -280,7 +280,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentRequest"
+              "$ref": "#/definitions/entity.AddAssessmentCommand"
             }
           }
         ],
@@ -288,7 +288,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentResponse"
+              "$ref": "#/definitions/entity.AddAssessmentResult"
             }
           },
           "400": {
@@ -377,7 +377,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.UpdateAssessmentRequest"
+              "$ref": "#/definitions/entity.UpdateAssessmentCommand"
             }
           }
         ],
@@ -424,7 +424,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentRequest"
+              "$ref": "#/definitions/entity.AddAssessmentCommand"
             }
           }
         ],
@@ -432,7 +432,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentResponse"
+              "$ref": "#/definitions/entity.AddAssessmentResult"
             }
           },
           "400": {
@@ -1064,12 +1064,6 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5183,19 +5177,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.SuccessRequestResponse"
+              "$ref": "#/definitions/api.IDResponse"
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5207,7 +5195,7 @@
           "409": {
             "description": "Conflict",
             "schema": {
-              "$ref": "#/definitions/api.ConflictResponse"
+              "$ref": "#/definitions/entity.ScheduleConflictView"
             }
           },
           "500": {
@@ -5292,19 +5280,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.SuccessRequestResponse"
+              "$ref": "#/definitions/api.IDResponse"
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5316,7 +5298,7 @@
           "409": {
             "description": "Conflict",
             "schema": {
-              "$ref": "#/definitions/api.ConflictResponse"
+              "$ref": "#/definitions/entity.ScheduleConflictView"
             }
           },
           "500": {
@@ -5362,12 +5344,6 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5421,12 +5397,6 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5541,7 +5511,7 @@
         "description": "get lessonPlans by teacher and class",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["reports"],
+        "tags": ["schedule"],
         "summary": "get lessonPlans by teacher and class",
         "operationId": "getLessonPlans",
         "parameters": [
@@ -5591,6 +5561,33 @@
         }
       }
     },
+    "/schedules_participate/class": {
+      "get": {
+        "description": "get participate Class",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getParticipateClass",
+        "operationId": "getParticipateClass",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/external.Class"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules_time_view": {
       "get": {
         "description": "get schedule time view",
@@ -5622,7 +5619,7 @@
           },
           {
             "type": "string",
-            "description": "school id,separated by comma",
+            "description": "school ids,separated by comma",
             "name": "school_ids",
             "in": "query"
           },
@@ -5661,18 +5658,6 @@
             "type": "integer",
             "description": "get schedules equal to due_at",
             "name": "due_at_eq",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "get schedules greater than or equal to start_at",
-            "name": "start_at_ge",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "get schedules less than or equal to end_at",
-            "name": "end_at_le",
             "in": "query"
           }
         ],
@@ -5780,12 +5765,6 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -6583,7 +6562,7 @@
       }
     },
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.CheckAccountResponse": {
       "type": "object",
@@ -6594,7 +6573,7 @@
       }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.Response"
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -6620,6 +6599,18 @@
         },
         "developmental_name": {
           "type": "string"
+        }
+      }
+    },
+    "api.ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
         }
       }
     },
@@ -6649,7 +6640,7 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.Response"
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -6685,7 +6676,7 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.Response"
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.LoginRequest": {
       "type": "object",
@@ -6710,7 +6701,7 @@
       }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.Response"
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.OutcomeBulkRejectRequest": {
       "type": "object",
@@ -7122,18 +7113,6 @@
         }
       }
     },
-    "api.Response": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
-    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -7175,9 +7154,6 @@
         }
       }
     },
-    "api.SuccessRequestResponse": {
-      "$ref": "#/definitions/api.Response"
-    },
     "api.TokenResponse": {
       "type": "object",
       "properties": {
@@ -7187,7 +7163,7 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "$ref": "#/definitions/api.Response"
+      "$ref": "#/definitions/api.ErrorResponse"
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -7333,7 +7309,7 @@
         }
       }
     },
-    "entity.AddAssessmentRequest": {
+    "entity.AddAssessmentCommand": {
       "type": "object",
       "properties": {
         "attendance_ids": {
@@ -7353,7 +7329,7 @@
         }
       }
     },
-    "entity.AddAssessmentResponse": {
+    "entity.AddAssessmentResult": {
       "type": "object",
       "properties": {
         "id": {
@@ -8587,7 +8563,7 @@
         }
       }
     },
-    "entity.ListAssessmentsResponse": {
+    "entity.ListAssessmentsResult": {
       "type": "object",
       "properties": {
         "items": {
@@ -9013,26 +8989,9 @@
         }
       }
     },
-    "entity.ScheduleAccessibleUserView": {
-      "type": "object",
-      "properties": {
-        "enable": {
-          "type": "boolean"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        }
-      }
-    },
     "entity.ScheduleAddView": {
       "type": "object",
-      "required": ["end_at", "start_at", "title"],
+      "required": ["class_id", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9117,6 +9076,35 @@
         }
       }
     },
+    "entity.ScheduleConflictView": {
+      "type": "object",
+      "properties": {
+        "class_roster_student": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "class_roster_teacher": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "participants_student": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "participants_teacher": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        }
+      }
+    },
     "entity.ScheduleDetailsView": {
       "type": "object",
       "properties": {
@@ -9128,16 +9116,16 @@
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
-        "class_roster_students": {
+        "class_roster_student": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
           }
         },
-        "class_roster_teachers": {
+        "class_roster_teacher": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
           }
         },
         "class_type": {
@@ -9175,16 +9163,16 @@
         "org_id": {
           "type": "string"
         },
-        "participants_students": {
+        "participants_student": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
           }
         },
-        "participants_teachers": {
+        "participants_teacher": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
           }
         },
         "program": {
@@ -9350,7 +9338,7 @@
     },
     "entity.ScheduleUpdateView": {
       "type": "object",
-      "required": ["end_at", "start_at", "title"],
+      "required": ["class_id", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9761,7 +9749,7 @@
         }
       }
     },
-    "entity.UpdateAssessmentRequest": {
+    "entity.UpdateAssessmentCommand": {
       "type": "object",
       "properties": {
         "action": {
@@ -9833,6 +9821,17 @@
           "type": "integer"
         },
         "updateID": {
+          "type": "string"
+        }
+      }
+    },
+    "external.Class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         }
       }

@@ -4,30 +4,30 @@ import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
   ClassesByOrganizationQueryVariables,
-  ClassesBySchoolDocument,
-  ClassesBySchoolQuery,
-  ClassesBySchoolQueryVariables,
   ClassesByTeacherDocument,
   ClassesByTeacherQuery,
   ClassesByTeacherQueryVariables,
-  MySchoolIDsDocument,
-  MySchoolIDsQuery,
-  MySchoolIDsQueryVariables,
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
-  ParticipantsByOrganizationDocument,
-  ParticipantsByOrganizationQuery,
-  ParticipantsByOrganizationQueryVariables,
-  ParticipantsBySchoolDocument,
-  ParticipantsBySchoolQuery,
-  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
+  ClassesBySchoolDocument,
+  MySchoolIDsDocument,
+  MySchoolIDsQuery,
+  MySchoolIDsQueryVariables,
+  ClassesBySchoolQuery,
+  ClassesBySchoolQueryVariables,
+  ParticipantsByOrganizationDocument,
+  ParticipantsBySchoolDocument,
+  ParticipantsByOrganizationQuery,
+  ParticipantsByOrganizationQueryVariables,
+  ParticipantsBySchoolQuery,
+  ParticipantsBySchoolQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassType,
@@ -40,10 +40,9 @@ import {
   EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
-import teacherListByOrg from "../mocks/teacherListByOrg.json";
-import { ClassesData, ParticipantsData, RolesData } from "../types/scheduleTypes";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
+import teacherListByOrg from "../mocks/teacherListByOrg.json";
 
 const MOCK = false;
 interface scheduleViewData {
@@ -62,6 +61,20 @@ interface classOptionsProp {
   classListOrg: ClassesByOrganizationQuery;
   classListTeacher: ClassesByTeacherQuery;
   classListSchool: ClassesBySchoolQuery;
+}
+
+interface RolesData {
+  user_id: string;
+  user_name: string;
+}
+
+interface ClassesData {
+  students: RolesData[];
+  teachers: RolesData[];
+}
+
+interface ParticipantsData {
+  classes: ClassesData;
 }
 
 export interface ScheduleState {
@@ -197,11 +210,9 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       },
     } = getState();
     if (!id) {
-      // @ts-ignore
-      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).data?.id;
+      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).id;
     } else {
-      // @ts-ignore
-      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).data?.id;
+      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).id;
     }
     // @ts-ignore
     return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
@@ -518,15 +529,7 @@ const { actions, reducer } = createSlice({
       state.classOptions.classListSchool = payload.data;
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
-      // console.log(payload)
-      // state.ParticipantsData = payload;
-      let teachers: RolesData[] = [];
-      let students: RolesData[] = [];
-      payload.classes.forEach((item: ClassesData) => {
-        teachers = teachers.concat(item.teachers);
-        students = students.concat(item.students);
-      });
-      state.ParticipantsData = { classes: { students, teachers } };
+      state.ParticipantsData = payload;
     },
   },
 });
