@@ -3,6 +3,7 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
+import ShowChartIcon from "@material-ui/icons/ShowChart";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 export enum Category {
   archived = "archived",
   learningOutcomes = "learningOutcomes",
-  studentPerformance = "studentPerformance"
+  studentPerformance = "studentPerformance",
 }
 export interface FirstSearchHeaderProps {
   value: Category;
@@ -115,9 +116,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                     <Button
                       onClick={createHandleClick(Category.studentPerformance)}
                       className={clsx(css.nav, { [css.actives]: value === Category.studentPerformance })}
-                      startIcon={value === Category.studentPerformance ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
+                      startIcon={<ShowChartIcon />}
                     >
-                      {reportMiss("Student Performance","report_label_student_performance")}
+                      {reportMiss("Student Performance", "report_label_student_performance")}
                     </Button>
                   </Grid>
                 </Grid>
