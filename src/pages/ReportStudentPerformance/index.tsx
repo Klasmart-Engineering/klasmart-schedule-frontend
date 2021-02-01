@@ -8,7 +8,7 @@ import {
   EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   EntityStudentsPerformanceH5PReportItem,
-  EntityStudentsPerformanceReportItem
+  EntityStudentsPerformanceReportItem,
 } from "../../api/api.auto";
 import { ChartLayout } from "../../components/Chart/ChartLayout";
 import { CoverFitChartLayout } from "../../components/Chart/CoverFitChartLayout";
@@ -16,13 +16,13 @@ import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
   HorizontalBarStackDataItem,
-  HorizontalSingleBarStackDataItem
+  HorizontalSingleBarStackDataItem,
 } from "../../components/Chart/HorizontalBarStackChart";
 import {
   VerticalBarGroupChart,
   verticalBarGroupChartSize,
   VerticalBarGroupDataItem,
-  VerticalBarGroupDataItemCategoryValue
+  VerticalBarGroupDataItemCategoryValue,
 } from "../../components/Chart/VerticalBarGroupChart";
 import { VerticalBarStackChart, verticalBarStackChartSize, VerticalBarStackDataItem } from "../../components/Chart/VerticalBarStackChart";
 import { reportMiss } from "../../locale/LocaleManager";
@@ -35,7 +35,7 @@ import {
   getScheduleParticipant,
   getStuReportDetail,
   getStuReportList,
-  stuPerformanceReportOnload
+  stuPerformanceReportOnload,
 } from "../../reducers/report";
 import { ReportAchievementList, useReportQuery } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
@@ -507,13 +507,14 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
       let newArr: string[] = [];
       if (infoArray && infoArray.length) {
         infoArray.forEach((item, index) => {
-          const wrongNum = (imgSequence.cards_number ? imgSequence.cards_number : 0) - (item.correct_cards_count ? item.correct_cards_count : 0);
+          const wrongNum =
+            (imgSequence.cards_number ? imgSequence.cards_number : 0) - (item.correct_cards_count ? item.correct_cards_count : 0);
           newArr.push(`${index + 1}:`);
           newArr.push(`Start time: ${formatTime(item.start_time)}`);
           newArr.push(`End time: ${formatTime(item.end_time)}`);
           newArr.push(`Duration: ${item.duration} s`);
           newArr.push(`Correct cards count: ${item.correct_cards_count}`);
-          newArr.push(`Wrong cards count: ${wrongNum}`)
+          newArr.push(`Wrong cards count: ${wrongNum}`);
         });
       }
       description = [`Cards number: ${imgSequence.cards_number}`, `Play times: ${imgSequence.play_times}`, ...newArr];
@@ -538,7 +539,6 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
       const infoArray = imgPair.play_records;
       let newArr: string[] = [];
       if (infoArray && infoArray.length) {
-        
         infoArray.forEach((item, index) => {
           const wrongNum = (imgPair.paris_number ? imgPair.paris_number : 0) - (item.correct_pairs_count ? item.correct_pairs_count : 0);
           newArr.push(`${index + 1}:`);
@@ -546,7 +546,7 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
           newArr.push(`End time: ${formatTime(item.end_time)}`);
           newArr.push(`Duration: ${item.duration} s`);
           newArr.push(`Correct cards count: ${item.correct_pairs_count}`);
-          newArr.push(`Wrong cards count: ${wrongNum}`)
+          newArr.push(`Wrong cards count: ${wrongNum}`);
         });
       }
       description = [`Paris number: ${imgPair.paris_number}`, `Play times: ${imgPair.play_times}`, ...newArr];
@@ -557,13 +557,14 @@ export const convertH5pReportDetailType = (h5pReportDetail: EntityStudentPerform
       let newArr: string[] = [];
       if (infoArray && infoArray.length) {
         infoArray.forEach((item, index) => {
-          const wrongNum = (flashCards.cards_number ? flashCards.cards_number : 0) - (item.correct_cards_count ? item.correct_cards_count : 0)
+          const wrongNum =
+            (flashCards.cards_number ? flashCards.cards_number : 0) - (item.correct_cards_count ? item.correct_cards_count : 0);
           newArr.push(`${index + 1}:`);
           newArr.push(` Start time: ${formatTime(item.start_time)}`);
           newArr.push(`End time: ${formatTime(item.end_time)}`);
           newArr.push(`Duration: ${item.duration} s`);
           newArr.push(`Correct cards count: ${item.correct_cards_count}`);
-          newArr.push(`Wrong cards count: ${wrongNum}`)
+          newArr.push(`Wrong cards count: ${wrongNum}`);
         });
       }
       description = [`Cards number: ${flashCards.cards_number}`, ...newArr];
@@ -747,7 +748,6 @@ export function ReportStudentPerformance() {
               aspectRatio={600 / 560}
               render={(px) => (
                 <Fragment>
-                  <LegendTip />
                   <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                   <VerticalBarStackChart
                     data={finalStuReportDetail}
