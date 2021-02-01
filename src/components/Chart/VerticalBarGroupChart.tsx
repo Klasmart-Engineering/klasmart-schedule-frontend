@@ -7,7 +7,7 @@ import { BarGroup } from "@visx/shape/lib/types";
 import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 
 const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
 
@@ -39,6 +39,7 @@ const getInlineStyles = (px: number) => ({
     fontWeight: "lighter" as const,
     textAnchor: "middle" as const,
     verticalAnchor: "start" as const,
+    wordwrap: "break-word",
   },
   yAxiosLabel: {
     x: 15 * px,
@@ -135,9 +136,22 @@ function computed(props: Pick<VerticalMultiBarChartProps, "px" | "data">) {
   return { chartData, categoryNames, categoryScale, xScale, yScale, yAxiosScale, colorScale, getX, xAxiosLabelWidth, viewPort };
 }
 
-const showBarTooltip = (tooltipData: TooltipData, showTooltip: UseTooltipParams<TooltipData>["showTooltip"], px: number) => {
+const showBarTooltip = (
+  tooltipData: TooltipData,
+  showTooltip: UseTooltipParams<TooltipData>["showTooltip"],
+  px: number,
+  tooltipOpen: boolean,
+  hideTooltip: UseTooltipParams<TooltipData>["hideTooltip"],
+  prevX0: number,
+  setPrevX0: { (value: React.SetStateAction<number>): void; (arg0: number): void }
+) => {
   const { bar, barGroup } = tooltipData;
   const pixels = getPixels(px);
+  if (prevX0 === barGroup.x0 && tooltipOpen) {
+    hideTooltip();
+    return;
+  }
+  setPrevX0(barGroup.x0);
   showTooltip({
     tooltipLeft: barGroup.x0 + bar.x + bar.width,
     tooltipTop: bar.y + pixels.xMarginTop,
@@ -187,7 +201,7 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
     viewPort,
   } = useMemo(() => computed({ px, data }), [data, px]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TooltipData>();
-
+  const [prevX0, setPrevX0] = useState<number>(0);
   const rectList = (barGroups: TBarGroup[]) =>
     barGroups.map((barGroup) => (
       <Group key={`barGroup-group-${barGroup.index}-${barGroup.x0}`} left={barGroup.x0}>
@@ -199,9 +213,9 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
               width={bar.width}
               height={bar.height}
               fill={bar.color}
-              // onClick={() => showBarTooltip({ bar, barGroup }, showTooltip, px, tooltipOpen, hideTooltip)}
-              onMouseOver={() => showBarTooltip({ bar, barGroup }, showTooltip, px)}
-              onMouseLeave={hideTooltip}
+              onClick={() => showBarTooltip({ bar, barGroup }, showTooltip, px, tooltipOpen, hideTooltip, prevX0, setPrevX0)}
+              // onMouseOver={() => showBarTooltip({ bar, barGroup }, showTooltip, px)}
+              // onMouseLeave={hideTooltip}
             />
             <text x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
               {data[barGroup.index].value[bar.index].title}
@@ -249,7 +263,7 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
             top={pixels.barGroupsHeight}
             scale={xScale}
             axisLineClassName={css.axiosLine}
-            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth, wordwrap: "break-word" })}
+            tickLabelProps={() => ({ ...inlineStyles.xAxiosTickLabel, width: xAxiosLabelWidth })}
             tickComponent={tickComponent}
           />
         </Group>
