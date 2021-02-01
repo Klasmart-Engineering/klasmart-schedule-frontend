@@ -4,7 +4,170 @@ type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMes
 export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
 type LangRecord<T = string> =
-  | { id: "undefined"; description: "All"; values: undefined }
+  | { id: "library_label_create"; description: "Create"; values: undefined }
+  | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
+  | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
+  | { id: "library_label_save"; description: "Save"; values: undefined }
+  | { id: "library_label_publish"; description: "Publish"; values: undefined }
+  | { id: "library_msg_publish_content"; description: "Are you sure you want to publish these contents?"; values: undefined }
+  | { id: "library_label_ok"; description: "OK"; values: undefined }
+  | { id: "library_label_create_new_content"; description: "Create New Content"; values: undefined }
+  | { id: "library_label_lesson_material"; description: "Lesson Material"; values: undefined }
+  | { id: "library_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
+  | { id: "library_label_details"; description: "Details"; values: undefined }
+  | { id: "library_label_learning_outcomes"; description: "Learning Outcomes"; values: undefined }
+  | { id: "library_label_added_learning_outcomes"; description: "Added Learning Outcomes"; values: undefined }
+  | { id: "library_msg_coming_soon"; description: "Coming soon..."; values: undefined }
+  | { id: "library_label_assets"; description: "Assets"; values: undefined }
+  | { id: "library_label_material_name"; description: "Material Name"; values: undefined }
+  | { id: "library_label_thumbnail"; description: "Thumbnail"; values: undefined }
+  | { id: "library_label_clip_image"; description: "Clip Image"; values: undefined }
+  | { id: "library_label_duration"; description: "Duration:min"; values: undefined }
+  | { id: "library_label_plan_duration"; description: "Duration:min(Should be greater than lesson materials' sum)"; values: undefined }
+  | { id: "library_label_program"; description: "Program"; values: undefined }
+  | { id: "library_label_subject"; description: "Subject"; values: undefined }
+  | { id: "library_label_category"; description: "Category"; values: undefined }
+  | { id: "library_label_subcategory"; description: "Subcategory"; values: undefined }
+  | { id: "library_label_age"; description: "Age"; values: undefined }
+  | { id: "library_label_grade"; description: "Grade"; values: undefined }
+  | { id: "library_label_visibility_settings"; description: "Visibility Settings"; values: undefined }
+  | { id: "library_label_visibility_school"; description: "School"; values: undefined }
+  | { id: "library_label_visibility_organization"; description: "Organization"; values: undefined }
+  | { id: "library_label_description"; description: "Description"; values: undefined }
+  | { id: "library_label_keywords"; description: "Keywords"; values: undefined }
+  | { id: "library_label_plan_name"; description: "Plan Name"; values: undefined }
+  | { id: "library_label_start"; description: "Start"; values: undefined }
+  | { id: "library_msg_drag_lesson_material"; description: "Drag and drop a lesson material here"; values: undefined }
+  | { id: "library_label_published"; description: "Published"; values: undefined }
+  | { id: "library_label_pending"; description: "Pending"; values: undefined }
+  | { id: "library_label_unpublished"; description: "Unpublished"; values: undefined }
+  | { id: "library_label_archived"; description: "Archived"; values: undefined }
+  | { id: "library_label_empty"; description: "Empty"; values: undefined }
+  | { id: "library_label_search"; description: "Search"; values: undefined }
+  | { id: "library_msg_no_results_found"; description: "No results found"; values: undefined }
+  | { id: "library_label_my_only"; description: "My Only"; values: undefined }
+  | { id: "library_label_bulk_actions"; description: "Bulk Actions"; values: undefined }
+  | { id: "library_label_remove"; description: "Remove"; values: undefined }
+  | { id: "library_msg_remove_content"; description: "Are you sure you want to remove this content?"; values: undefined }
+  | { id: "library_msg_bulk_remove_content"; description: "Are you sure you want to remove these contents?"; values: undefined }
+  | { id: "library_msg_remove_select_one"; description: "At least one content should be selected."; values: undefined }
+  | { id: "library_label_sort_by"; description: "Sort By"; values: undefined }
+  | { id: "library_label_content_name_atoz"; description: "Content Name (A-Z)"; values: undefined }
+  | { id: "library_label_content_name_ztoa"; description: "Content Name (Z-A)"; values: undefined }
+  | { id: "library_label_created_on_newtoold"; description: "Created On (New-Old)"; values: undefined }
+  | { id: "library_label_created_on_oldtonew"; description: "Created On (Old-New)"; values: undefined }
+  | { id: "library_label_material"; description: "Material"; values: undefined }
+  | { id: "library_label_plan"; description: "Plan"; values: undefined }
+  | { id: "library_label_delete"; description: "Delete"; values: undefined }
+  | { id: "library_msg_delete_content"; description: "Are you sure you want to delete this content?"; values: undefined }
+  | { id: "library_msg_bulk_delete_content"; description: "Are you sure you want to delete these contents?"; values: undefined }
+  | { id: "library_label_draft"; description: "Draft"; values: undefined }
+  | { id: "library_label_waiting_for_approval"; description: "Waiting for Approval"; values: undefined }
+  | { id: "library_label_rejected"; description: "Rejected"; values: undefined }
+  | { id: "library_label_republish"; description: "Republish"; values: undefined }
+  | { id: "library_msg_republish_content"; description: "Are you sure you want to republish this content?"; values: undefined }
+  | { id: "library_msg_bulk_republish_content"; description: "Are you sure you want to republish these contents?"; values: undefined }
+  | { id: "library_label_name"; description: "Name"; values: undefined }
+  | { id: "library_label_created_on"; description: "Created On"; values: undefined }
+  | { id: "library_label_author"; description: "Author"; values: undefined }
+  | { id: "library_label_edit"; description: "Edit"; values: undefined }
+  | { id: "library_label_view_in"; description: "View in"; values: undefined }
+  | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
+  | { id: "library_label_approve"; description: "Approve"; values: undefined }
+  | { id: "library_msg_approve_content"; description: "Are you sure you want to approve these contents?"; values: undefined }
+  | { id: "library_label_reject"; description: "Reject"; values: undefined }
+  | { id: "library_label_inappropriate_content"; description: "Inappropriate Content"; values: undefined }
+  | { id: "library_label_quality_of_lesson"; description: "Quality of Lesson is Poor"; values: undefined }
+  | { id: "library_label_no_permissions_use_assets"; description: "No Permissions to Use Assets"; values: undefined }
+  | { id: "library_label_add_remove_learning_outcomes"; description: "Add/Remove Learning Outcomes"; values: undefined }
+  | { id: "library_label_other"; description: "Other"; values: undefined }
+  | { id: "library_msg_reject_content"; description: "Are you sure you want to reject these contents?"; values: undefined }
+  | { id: "library_msg_reject_reason"; description: "Please specify the reason for rejection."; values: undefined }
+  | { id: "library_label_reason"; description: "Reason"; values: undefined }
+  | { id: "library_msg_file_deleted"; description: "The file has been deleted"; values: undefined }
+  | { id: "library_label_previous"; description: "Previous"; values: undefined }
+  | { id: "library_label_next"; description: "Next"; values: undefined }
+  | { id: "library_label_edit_content"; description: "Edit Content"; values: undefined }
+  | { id: "library_error_no_permissions"; description: "You have no permission."; values: undefined }
+  | { id: "library_error_no_network_connection"; description: "No network connection"; values: undefined }
+  | { id: "library_error_unknown_error"; description: "Unknown error"; values: undefined }
+  | { id: "library_label_image"; description: "Image"; values: undefined }
+  | { id: "library_label_video"; description: "Video"; values: undefined }
+  | { id: "library_label_audio"; description: "Audio"; values: undefined }
+  | { id: "library_label_document"; description: "Document"; values: undefined }
+  | { id: "library_label_asset_name"; description: "Asset Name"; values: undefined }
+  | { id: "library_label_upload_a_file"; description: "Upload a File"; values: undefined }
+  | { id: "library_label_upload_a"; description: "Upload a {fillfileType} here"; values: { fillfileType: string | number } }
+  | { id: "library_label_upload"; description: "Upload"; values: undefined }
+  | { id: "library_label_file_type"; description: "File Type"; values: undefined }
+  | { id: "library_label_h5p"; description: "H5P"; values: undefined }
+  | { id: "library_label_non_h5p"; description: "Non H5P"; values: undefined }
+  | { id: "library_label_select_a_file"; description: "Select a File"; values: undefined }
+  | { id: "library_msg_drag_asset"; description: "Drag from Assets Library"; values: undefined }
+  | { id: "library_label_upload_from_device"; description: "Upload from Device"; values: undefined }
+  | { id: "library_label_preview"; description: "Preview"; values: undefined }
+  | { id: "library_msg_publish_lesson_material"; description: "How would you like to publish?"; values: undefined }
+  | { id: "library_msg_only_publish_lesson_material"; description: "Only publish as a lesson material"; values: undefined }
+  | {
+      id: "library_msg_publish_lesson_material_and_asset";
+      description: "Publish as a lesson material, and add to assets library";
+      values: undefined;
+    }
+  | { id: "library_label_lesson_type"; description: "Lesson Type"; values: undefined }
+  | { id: "library_label_test"; description: "Test"; values: undefined }
+  | { id: "library_label_not_test"; description: "Not Test"; values: undefined }
+  | { id: "library_label_self_study"; description: "Suitable for Self Study"; values: undefined }
+  | { id: "library_label_drawing_activity"; description: "Drawing Activity"; values: undefined }
+  | { id: "library_label_program_esl"; description: "Badanamu ESL"; values: undefined }
+  | { id: "library_label_program_math"; description: "Bada Math"; values: undefined }
+  | { id: "library_error_unsupported_format"; description: "Unsupported Format"; values: undefined }
+  | { id: "library_error_no_content"; description: "Content does not exist"; values: undefined }
+  | {
+      id: "library_error_content_locked";
+      description: "This content is locked by editor at {email}. To use this content, ask the editor to check their Draft or Waiting for Approval or Rejected content, publish, then get it approved.";
+      values: { email: string | number };
+    }
+  | {
+      id: "library_error_content_locked_by_me";
+      description: "This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.";
+      values: undefined;
+    }
+  | { id: "library_error_content_data_invalid"; description: "Content is empty, please upload a file."; values: undefined }
+  | {
+      id: "library_error_delete_lesson_plan_in_schedule";
+      description: "Unable to delete lesson plan which is scheduled";
+      values: undefined;
+    }
+  | { id: "library_error_update_content_failed"; description: "Update content failed"; values: undefined }
+  | { id: "library_error_read_content_failed"; description: "Read content failed"; values: undefined }
+  | { id: "library_error_delete_content_failed"; description: "Delete content failed"; values: undefined }
+  | { id: "library_error_invalid_visibility_settings"; description: "Invalid Visibility Settings"; values: undefined }
+  | { id: "library_error_associate_learning_outcome_failed"; description: "Associate learning outcome failed"; values: undefined }
+  | { id: "library_label_teacher_manual"; description: "Teacher Manual"; values: undefined }
+  | { id: "library_label_supported_format"; description: "Supported Format"; values: undefined }
+  | { id: "library_label_max_size"; description: "Max Size"; values: undefined }
+  | { id: "library_label_new_folder"; description: "New Folder"; values: undefined }
+  | { id: "library_label_folder_name"; description: "Folder Name"; values: undefined }
+  | { id: "library_error_duplicate_folder_name"; description: "Folder name should be unique, please use another name."; values: undefined }
+  | { id: "library_label_folder"; description: "Folder"; values: undefined }
+  | { id: "library_label_items"; description: "items"; values: undefined }
+  | { id: "library_label_visible"; description: "visible"; values: undefined }
+  | { id: "library_label_rename"; description: "Rename"; values: undefined }
+  | { id: "library_label_move"; description: "Move to"; values: undefined }
+  | { id: "library_error_move_folder_to_own"; description: "Folder cannot be moved to itself or a subdirectory"; values: undefined }
+  | { id: "library_label_delete_folder"; description: "Delete Folder"; values: undefined }
+  | { id: "library_msg_delete_folder"; description: "Are you sure you want to delete these folders?"; values: undefined }
+  | { id: "library_error_delete_folder"; description: "Folder cannot be deleted unless it is empty"; values: undefined }
+  | { id: "library_label_export_as_csv"; description: "Export as CSV"; values: undefined }
+  | { id: "library_label_distribute"; description: "Distribute"; values: undefined }
+  | { id: "library_label_preset"; description: "Preset"; values: undefined }
+  | {
+      id: "library_msg_preset";
+      description: "Choosing this option will make the selected content available to current and future organizations.";
+      values: undefined;
+    }
+  | { id: "library_label_select_organizations"; description: "Select Organizations"; values: undefined }
+  | { id: "library_label_all_organizations"; description: "All"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -340,8 +503,6 @@ type LangRecord<T = string> =
       description: "Please confirm the fileld of ‘Add Participants’ by clicking OK";
       values: undefined;
     }
-  | { id: "schedule_msg_edit_due_date"; description: "You cannot edit this event after the due date. "; values: undefined }
-  | { id: "schedule_msg_delete_due_date"; description: "You cannot delete this event after the due date. "; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
