@@ -1,4 +1,5 @@
 import api from ".";
+import { apiGetContentTypeList } from "./extra";
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
   ? U
@@ -16,7 +17,17 @@ export enum ContentType {
   material = 1,
   folder = 10,
 }
-export enum MaterialType {
+
+export enum ContentFileType {
+  image = 1,
+  video = 2,
+  audio = 3,
+  doc = 4,
+  h5p = 5,
+  h5pExtend = 6,
+}
+
+export enum ContentInputSourceType {
   h5p = 1,
   fromFile = 2,
   fromAssets = 3,
@@ -124,3 +135,5 @@ export enum FolderFileTyoe {
   folder = "folder",
   content = "content",
 }
+
+export type ContentTypeList = AsyncReturnType<typeof apiGetContentTypeList>;

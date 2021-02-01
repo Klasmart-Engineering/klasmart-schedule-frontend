@@ -1,0 +1,192 @@
+{
+  "semantics": [
+    {
+        "label": "translate:: Title Screen",
+        "fields": [
+            {
+                "label": "translate:: Title",
+                "fields": [
+                    {
+                        "label": "translate:: Title"
+                    },
+                    {
+                        "label": "translate:: Display Title",
+                        "description": "translate:: Wether or not to show the title as a headline at the start of the personality quiz."
+                    }
+                ]
+            },
+            {
+                "label": "translate:: Optional: Image",
+                "fields": [
+                    {
+                        "label": "translate:: File"
+                    },
+                    {
+                        "label": "translate:: Alt text",
+                        "description": "translate:: Alternative text if the browser is unable to load the image."
+                    }
+                ]
+            },
+            {
+                "label": "translate:: Skip",
+                "description": "translate:: Select if you want the quiz to start on the first question instead of the title screen."
+            }
+        ]
+    },
+    {
+        "label": "translate:: Result screen",
+        "fields": [
+            {
+                "label": "translate:: Animation",
+                "description": "translate:: The Wheel of Fortune animation will only use the images associated with personalities if ALL personalities has an image associated with them.",
+                "options": [
+                    {
+                        "label": "translate:: None"
+                    },
+                    {
+                        "label": "translate:: Fade in"
+                    },
+                    {
+                        "label": "translate:: Wheel of Fortune"
+                    }
+                ]
+            },
+            {
+                "label": "translate:: Display personality title?"
+            },
+            {
+                "label": "translate:: Display description?"
+            },
+            {
+                "label": "translate:: Personality Image Position",
+                "description": "translate:: Choose how to display the image, if there is any, of the result personality. Background will fill the entire H5P container and center the image. Inline will put the image as an image element between the result personality name and description.",
+                "default": "translate:: background",
+                "options": [
+                    {
+                        "label": "translate:: Background"
+                    },
+                    {
+                        "label": "translate:: Inline"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "label": "translate:: Personality",
+        "entity": "translate:: personality",
+        "field": {
+            "label": "translate:: Personality",
+            "fields": [
+                {
+                    "label": "translate:: Personality name",
+                    "description": "translate:: The personality name will be used to associate answers with their respective personalities."
+                },
+                {
+                    "label": "translate:: Description",
+                    "widget": "translate:: textarea"
+                },
+                {
+                    "label": "translate:: Optional: Image",
+                    "fields": [
+                        {
+                            "label": "translate:: Image",
+                            "description": "translate:: An image to display on the result screen."
+                        },
+                        {
+                            "label": "translate:: Alt text",
+                            "description": "translate:: Alternative text if the browser is unable to load the image."
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "label": "translate:: Questions",
+        "entity": "translate:: question",
+        "field": {
+            "label": "translate:: Question",
+            "fields": [
+                {
+                    "label": "translate:: Question"
+                },
+                {
+                    "label": "translate:: Optional: Image",
+                    "description": "translate:: Image displayed at the top of the screen above or below the question text.",
+                    "fields": [
+                        {
+                            "label": "translate:: File"
+                        },
+                        {
+                            "label": "translate:: Alt text",
+                            "description": "translate:: Alternative text if the browser is unable to load the image."
+                        }
+                    ]
+                },
+                {
+                    "label": "translate:: Answers",
+                    "entity": "translate:: answer",
+                    "field": {
+                        "label": "translate:: Answer",
+                        "fields": [
+                            {
+                                "label": "translate:: text"
+                            },
+                            {
+                                "label": "translate:: Personalities",
+                                "description": "translate:: A comma separated list of personality names associated with this answer."
+                            },
+                            {
+                                "description": "translate:: Images associated with answers will not show up unless all answers associated with a question has an image attached.",
+                                "label": "translate:: Optional: Image",
+                                "fields": [
+                                    {
+                                        "label": "translate:: File"
+                                    },
+                                    {
+                                        "label": "translate:: Alt text",
+                                        "description": "translate:: Alternative text if the browser is unable to load the image."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "label": "translate:: Start",
+        "default": "translate:: Start",
+        "description": "translate:: Text displayed on the start quiz button on the title card."
+    },
+    {
+        "label": "translate:: Progress text",
+        "default": "translate:: @question of @total",
+        "description": "translate:: Progress text, variables available: @question and @total. Example: '@question of @total'"
+    },
+    {
+        "label": "translate:: Retake",
+        "default": "translate:: Retake the quiz",
+        "description": "translate:: Retake text"
+    },
+    {
+        "label": "translate:: Animation",
+        "description": "translate:: Uncheck to turn off all animation"
+    },
+    {
+        "label": "translate:: Button Accent",
+        "description": "translate:: Change the color of the button borders and the animation color fill",
+        "default": "translate:: 4D5DAA",
+        "widget": "translate:: colorSelector"
+    },
+    {
+        "label": "translate:: Progressbar Color",
+        "description": "translate:: Determines the color of the progress bar",
+        "default": "translate:: 38B755",
+        "widget": "translate:: colorSelector"
+    }
+]
+
+}

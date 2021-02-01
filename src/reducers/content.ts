@@ -1,7 +1,14 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
-import { OrganizationsDocument, OrganizationsQuery, OrganizationsQueryVariables } from "../api/api-ko.auto";
+import {
+  OrganizationsDocument,
+  OrganizationsQuery,
+  OrganizationsQueryVariables,
+  QeuryMeDocument,
+  QeuryMeQuery,
+  QeuryMeQueryVariables,
+} from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
@@ -45,6 +52,7 @@ interface IContentState {
   orgList: OrgInfoProps[];
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
+  user_id: string;
 }
 
 interface RootState {
@@ -173,8 +181,9 @@ const initialState: IContentState = {
   parentFolderInfo: {},
   orgProperty: {},
   orgList: [],
-  selectedOrg: [], //"2136d74b-27dc-42d7-a77a-c48093d545e0"
+  selectedOrg: [],
   myOrgId: "",
+  user_id: "",
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -368,31 +377,6 @@ export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContent
     return { list, total };
   }
 );
-type IQueryPendingContentsParams = Parameters<typeof api.contentsPending.searchPendingContents>[0] & LoadingMetaPayload;
-type IQueryPendingContentsResult = AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
-export const pendingContentLists = createAsyncThunk<IQueryPendingContentsResult, IQueryPendingContentsParams, { state: RootState }>(
-  "content/pendingContentLists",
-  async ({ metaLoading, ...query }, { getState }) => {
-    const {
-      content: { page_size },
-    } = getState();
-    const { list, total } = await api.contentsPending.searchPendingContents({ ...query, page_size });
-    return { list, total };
-  }
-);
-
-type IQueryPrivateContentsParams = Parameters<typeof api.contentsPrivate.searchPrivateContents>[0] & LoadingMetaPayload;
-type IQueryPrivateContentsResult = AsyncReturnType<typeof api.contentsPrivate.searchPrivateContents>;
-export const privateContentLists = createAsyncThunk<IQueryPrivateContentsResult, IQueryPrivateContentsParams, { state: RootState }>(
-  "content/privateContentLists",
-  async ({ metaLoading, ...query }, { getState }) => {
-    const {
-      content: { page_size },
-    } = getState();
-    const { list, total } = await api.contentsPrivate.searchPrivateContents({ ...query, page_size });
-    return { list, total };
-  }
-);
 
 type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
 type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
@@ -512,13 +496,42 @@ export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQu
     return { list, total };
   }
 );
-interface IQueryGetContentDetailByIdParams extends LoadingMetaPayload {
+
+interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentById>[0];
+  schedule_id: string;
 }
-type IQueryGetContentDetailByIdResult = AsyncReturnType<typeof api.contents.getContentById>;
-export const getContentDetailById = createAsyncThunk<IQueryGetContentDetailByIdResult, IQueryGetContentDetailByIdParams>(
-  "content/getContentDetailById",
-  ({ content_id }) => api.contents.getContentById(content_id)
+interface IQyeryOnLoadCotnentPreviewResult {
+  contentDetail: AsyncReturnType<typeof api.contents.getContentById>;
+  user_id?: string;
+  token: string;
+}
+export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewResult, IQueryOnLoadContentPreviewParams>(
+  "content/onLoadContentPreview",
+  async ({ content_id, schedule_id }) => {
+    let token: string;
+    if (schedule_id) {
+      const data = await api.schedules
+        .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
+        .catch((err) => Promise.reject(err.label));
+      await api.schedules.getScheduleById(schedule_id);
+      token = data.token as string;
+    } else {
+      const data = await api.contents.getContentLiveToken(content_id);
+      token = data.token as string;
+    }
+    const contentDetail = await api.contents.getContentById(content_id);
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    const { data } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+      fetchPolicy: "cache-first",
+    });
+    const user_id = data?.me?.user_id;
+    return { contentDetail, user_id, token };
+  }
 );
 
 type IQueryDeleteContentParams = {
@@ -821,6 +834,12 @@ export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRe
     return res;
   }
 );
+type IQueryH5pEventParams = Parameters<typeof api.h5P.createH5PEvent>[0];
+type IQueryH5pEventResult = AsyncReturnType<typeof api.h5P.createH5PEvent>;
+export const h5pEvent = createAsyncThunk<IQueryH5pEventResult, IQueryH5pEventParams>("content/h5pEvent", async (h5pSegment) => {
+  return await api.h5P.createH5PEvent(h5pSegment);
+});
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -954,41 +973,23 @@ const { actions, reducer } = createSlice({
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {},
-    [pendingContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.contentsList = initialState.contentsList;
-      state.total = initialState.total;
-    },
-    [pendingContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.contentsList = payload.list;
-      state.mediaList = payload.list;
-      state.total = payload.total;
-    },
-    [pendingContentLists.rejected.type]: (state, { error }: any) => {},
-    [privateContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.contentsList = initialState.contentsList;
-      state.total = initialState.total;
-    },
-    [privateContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.contentsList = payload.list;
-      state.mediaList = payload.list;
-      state.total = payload.total;
-    },
-    [privateContentLists.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
 
     [searchOutcomeList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getContentDetailById.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.contentPreview = initialState.contentPreview;
+      state.user_id = initialState.user_id;
+      state.token = initialState.token;
     },
-    [getContentDetailById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
-      state.contentPreview = payload;
+      state.contentPreview = payload.contentDetail;
+      state.user_id = payload.user_id;
+      state.token = payload.token;
     },
-    [getContentDetailById.rejected.type]: (state, { error }: any) => {
+    [onLoadContentPreview.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [deleteContent.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {

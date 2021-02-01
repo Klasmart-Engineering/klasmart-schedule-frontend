@@ -9,7 +9,7 @@ import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { useMemo } from "react";
-import { EntityStudentReportItem } from "../../api/api.auto";
+import { EntityStudentAchievementReportItem } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { useChartScale } from "../../hooks/useChartScale";
 import { ReportFilter, StatusColor } from "./types";
@@ -94,7 +94,7 @@ const getInlineStyles = (px: number) => {
   };
 };
 
-type TBarStack = BarStack<RatioExtendedEntityStudentReportItem, string>;
+type TBarStack = BarStack<RatioExtendedEntityStudentAchievementReportItem, string>;
 type TBar = TBarStack["bars"][0];
 type RatioKey = typeof RATIO_KEYS[keyof typeof RATIO_KEYS];
 type CountKey = typeof COUNT_KEYS[keyof typeof COUNT_KEYS];
@@ -116,15 +116,15 @@ const ratioKey2countKey = (ratioKey: RatioKey): CountKey => {
   return result;
 };
 
-const isAttend = (studentId: string | undefined, data: EntityStudentReportItem[]): boolean => {
+const isAttend = (studentId: string | undefined, data: EntityStudentAchievementReportItem[]): boolean => {
   return data.find((item) => item.student_id === studentId)?.attend || false;
 };
 
-type RatioExtendedEntityStudentReportItem = EntityStudentReportItem &
+type RatioExtendedEntityStudentAchievementReportItem = EntityStudentAchievementReportItem &
   {
     [key in RatioKey | "sum"]: number;
   };
-const mapRatio = (data: EntityStudentReportItem[]): RatioExtendedEntityStudentReportItem[] => {
+const mapRatio = (data: EntityStudentAchievementReportItem[]): RatioExtendedEntityStudentAchievementReportItem[] => {
   return data.map((item) => {
     // const { achieved_count = 0, not_achieved_count = 0, not_attempted_count = 0 } = item;
     const achieved_count = item.achieved_count ?? 0;
@@ -141,7 +141,7 @@ const mapRatio = (data: EntityStudentReportItem[]): RatioExtendedEntityStudentRe
   });
 };
 
-const studentId2studentName = (id: string, data: EntityStudentReportItem[]) => {
+const studentId2studentName = (id: string, data: EntityStudentAchievementReportItem[]) => {
   return data.find((item) => item.student_id === id)?.student_name as string;
 };
 
@@ -159,7 +159,7 @@ const computed = (props: AchievementListStaticChartProps) => {
     domain: ratioKeys,
     range: filter === ReportFilter.all ? Object.values(StatusColor) : [StatusColor[filter]],
   });
-  const getY = (data: EntityStudentReportItem) => data.student_id as string;
+  const getY = (data: EntityStudentAchievementReportItem) => data.student_id as string;
   const viewPort = [0, 0, pixels.barStackWidth + pixels.yMarginLeft + pixels.yMarginRight, barStacksHeight];
   return { data, xScale, xAxiosScale, yScale, colorScale, getY, ratioKeys, barStacksHeight, viewPort };
 };
@@ -273,7 +273,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
 }
 
 export interface AchievementListChartProps {
-  data: EntityStudentReportItem[];
+  data: EntityStudentAchievementReportItem[];
   filter: ReportFilter;
   onClickStudent: (studentId: string) => any;
 }

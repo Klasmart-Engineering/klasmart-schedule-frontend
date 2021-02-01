@@ -1,0 +1,32 @@
+{
+  "library": "H5P.ArithmeticQuiz-1.1",
+  "subContentId": "123",
+  "params": {
+    "quizType": "arithmetic",
+    "arithmeticType": "addition",
+    "equationType": "intermediate",
+    "useFractions": false,
+    "maxQuestions": 3,
+    "UI": {
+      "score": "得分：",
+      "time": "時間：@time",
+      "resultPageHeader": "測驗結束！",
+      "go": "開始！",
+      "startButton": "進入測驗",
+      "retryButton": "重新測驗",
+      "correctText": "答案正確",
+      "incorrectText": "答案不正確，正解為 :num",
+      "durationLabel": "Duration in hours, minutes and seconds.",
+      "humanizedQuestion": "What does :arithmetic equal?",
+      "humanizedEquation": "For the equation :equation, what does :item equal?",
+      "humanizedVariable": "What does :item equal?",
+      "plusOperator": "plus",
+      "subtractionOperator": "minus",
+      "multiplicationOperator": "times",
+      "divisionOperator": "divided by",
+      "equalitySign": "equals",
+      "slideOfTotal": "目前為第 :num 題，共 :total 題。"
+    },
+    "intro": "abc intro"
+  }
+}

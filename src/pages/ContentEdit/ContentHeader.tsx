@@ -26,6 +26,7 @@ import clsx from "clsx";
 import React, { forwardRef, Fragment, useCallback, useReducer } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { ContentInputSourceType } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
@@ -126,7 +127,7 @@ interface HeaderProps {
   onBack: ButtonProps["onClick"];
   onDelete: ButtonProps["onClick"];
   id: string | null;
-  inputSourceWatch: any;
+  inputSourceWatch: ContentInputSourceType;
 }
 
 export function ContentHeader(props: HeaderProps) {
@@ -148,6 +149,7 @@ export function ContentHeader(props: HeaderProps) {
     toggle();
     onPublish();
   }, [onPublish]);
+
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
@@ -177,7 +179,7 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (inputSourceWatch === 2 && lesson === "material" ? (
+            (inputSourceWatch === ContentInputSourceType.fromFile && lesson === "material" ? (
               <Button
                 variant="contained"
                 endIcon={<Publish />}
@@ -243,7 +245,7 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (inputSourceWatch === 2 ? (
+            (inputSourceWatch === ContentInputSourceType.fromFile ? (
               <IconButton
                 className={clsx(css.iconButton, css.greenButton)}
                 onClick={toggle}

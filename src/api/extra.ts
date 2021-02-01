@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import api from ".";
+import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { EntityFolderItem } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -65,11 +66,7 @@ export const apiGenH5pResourceByToken = (token: string) => {
 };
 
 export const apiLivePath = (token: string) => {
-  const { hostname } = window.location;
-  const lastDomainDotName = hostname !== "localhost" ? hostname.split(".").pop() : "cn";
-  // 地址修改后需要再改
-  const cl = hostname.split(".").pop() === "net" ? "/class-live/" : "";
-  return `https://live.kidsloop.${lastDomainDotName}${cl}?token=${token}`;
+  return `${process.env.REACT_APP_LIVE_LINK}?token=${token}`;
 };
 
 export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: string) => {
@@ -152,3 +149,38 @@ export const apiAddOrganizationToPageUrl = (id: string) => {
 export const apiLocaleInCookie = () => {
   return Cookies.get(LOCALE_KEY)?.slice(0, 2);
 };
+
+export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
+  let cache = apiLocaleInCookie();
+  setInterval(() => {
+    const current = apiLocaleInCookie();
+    if (cache === current) return;
+    cache = current;
+    if (current) handler(current);
+  }, 1000);
+};
+
+export const apiCreateContentTypeLibrary = (id: string) => {
+  return requireContentType("asset", id);
+};
+
+export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string) {
+  const schema = {} as T;
+  for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
+    schema[name as keyof T] = (await value).default;
+  }
+  return schema;
+}
+
+export function apiGetContentTypeList() {
+  return import("h5p/libraries/content-types.auto.json").then((x) => {
+    return x.default.contentTypes.filter(
+      (item) =>
+        item.id === "H5P.Flashcards" || item.id === "H5P.ImageSequencing" || item.id === "H5P.MemoryGame" || item.id === "H5P.ImagePair"
+    );
+  });
+}
+
+export function apiIsEnableNewH5p() {
+  return process.env.REACT_APP_ENABLE_NEW_H5P === "1";
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "label": "translate:: Task Description",
+    "description": "translate:: Optional text to display above the audio recorder"
+  },
+  {
+    "label": "translate:: Localization",
+    "fields": [
+      {
+        "label": "translate:: Record button text",
+        "default": "translate:: Record"
+      },
+      {
+        "label": "translate:: Pause button text",
+        "default": "translate:: Pause"
+      },
+      {
+        "label": "translate:: Continue button text",
+        "default": "translate:: Continue"
+      },
+      {
+        "label": "translate:: Download button text",
+        "default": "translate:: Download"
+      },
+      {
+        "label": "translate:: Done button text",
+        "default": "translate:: Done"
+      },
+      {
+        "label": "translate:: Retry button text",
+        "default": "translate:: Retry"
+      },
+      {
+        "label": "translate:: Microphone not supported error message",
+        "default": "translate:: Microphone not supported. Make sure you are using a browser that allows microphone recording."
+      },
+      {
+        "label": "translate:: Microphone inaccessible error message",
+        "default": "translate:: Microphone is not accessible. Make sure that the browser microphone is enabled."
+      },
+      {
+        "label": "translate:: Message displayed when insecure access is not allowed",
+        "description": "translate:: Some browsers do not allow using the microphone when the page is served using HTTP. This message will be displayed if that is the case",
+        "default": "translate:: Access to microphone is not allowed in your browser since this page is not served using HTTPS. Please contact the author, and ask him to make this available using HTTPS"
+      },
+      {
+        "label": "translate:: Ready to record status message",
+        "default": "translate:: Press a button below to record your answer."
+      },
+      {
+        "label": "translate:: Recording status message",
+        "default": "translate:: Recording..."
+      },
+      {
+        "label": "translate:: Paused status message",
+        "default": "translate:: Recording paused. Press a button to continue recording."
+      },
+      {
+        "label": "translate:: Finished recording status message",
+        "default": "translate:: You have successfully recorded your answer! Listen to the recording below."
+      },
+      {
+        "label": "translate:: Download recording message",
+        "default": "translate:: Download this recording or retry."
+      },
+      {
+        "label": "translate:: Retry dialog header text",
+        "default": "translate:: Retry recording?"
+      },
+      {
+        "label": "translate:: Retry dialog body text",
+        "default": "translate:: By pressing \"Retry\" you will lose your current recording."
+      },
+      {
+        "label": "translate:: Retry dialog confirm text",
+        "default": "translate:: Retry"
+      },
+      {
+        "label": "translate:: Retry dialog cancel text",
+        "default": "translate:: Cancel"
+      },
+      {
+        "label": "translate:: Can't create audio file status message",
+        "default": "translate:: Can't create the audio file."
+      }
+    ]
+  }
+]

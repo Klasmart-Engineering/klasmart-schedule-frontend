@@ -1,0 +1,148 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Task description",
+      "description": "translate:: Describe how the user should solve the task.",
+      "default": "translate:: Drag the words into the correct boxes"
+    },
+    {
+      "label": "translate:: Text",
+      "placeholder": "translate:: *Oslo* is the capital of Norway, *Stockholm* is the capital of Sweden and *Copenhagen* is the capital of Denmark. All cities are located in the *Scandinavian:Northern Part of Europe* peninsula.",
+      "description": "",
+      "important": {
+        "description": "translate:: <ul><li>Droppable words are added with an asterisk (*) in front and behind the correct word/phrase.</li><li>You may add a textual tip, using a colon (:) in front of the tip.</li><li>For every empty spot there is only one correct word.</li><li>You may add feedback to be displayed when a task is completed. Use '\\+' for correct and '\\-' for incorrect feedback.</li></ul>",
+        "example": "translate:: H5P content may be edited using a *browser:What type of program is Chrome?*. </br> H5P content is *interactive\\+Correct! \\-Incorrect, try again!*"
+      }
+    },
+    {
+      "label": "translate:: Overall Feedback",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "translate:: Default"
+            }
+          ],
+          "label": "translate:: Define custom feedback for any score range",
+          "description": "translate:: Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+          "entity": "translate:: range",
+          "field": {
+            "fields": [
+              {
+                "label": "translate:: Score Range"
+              },
+              {},
+              {
+                "label": "translate:: Feedback for defined score range",
+                "placeholder": "translate:: Fill in the feedback"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "translate:: Text for \"Check\" button",
+      "default": "translate:: Check"
+    },
+    {
+      "label": "translate:: Text for \"Retry\" button",
+      "default": "translate:: Retry"
+    },
+    {
+      "label": "translate:: Text for \"Show Solution\" button",
+      "default": "translate:: Show solution"
+    },
+    {
+      "label": "translate:: Numbered Drop zone label",
+      "default": "translate:: Drop Zone @index.",
+      "description": "translate:: Label used for accessibility, where the Read speaker will read the index of a drop zone. Variable available: @index"
+    },
+    {
+      "label": "translate:: Empty Drop Zone label",
+      "default": "translate:: Drop Zone @index is empty.",
+      "description": "translate:: Label used for accessibility, where the Read speaker will read that the drop zone is empty"
+    },
+    {
+      "label": "translate:: Contains Drop Zone label",
+      "default": "translate:: Drop Zone @index contains draggable @draggable.",
+      "description": "translate:: Label used for accessibility, where the Read speaker will read that the drop zone contains a draggable"
+    },
+    {
+      "label": "translate:: Draggable elements label",
+      "default": "translate:: @index of @count draggables.",
+      "description": "translate:: Label used for accessibility, where the Read speaker reads that this is a draggable element. Variable available: @index, @count"
+    },
+    {
+      "label": "translate:: Label for show tip button",
+      "default": "translate:: Show tip",
+      "description": "translate:: Label used for accessibility, where the Read speaker reads it before the tip is read out"
+    },
+    {
+      "label": "translate:: Readspeaker text for correct answer",
+      "default": "translate:: Correct!"
+    },
+    {
+      "label": "translate:: Readspeaker text for incorrect answer",
+      "default": "translate:: Incorrect!"
+    },
+    {
+      "label": "translate:: Confirmation dialog title that user wants to reset a droppable",
+      "default": "translate:: Reset drop"
+    },
+    {
+      "label": "translate:: Confirmation dialog description that user wants to reset a droppable",
+      "default": "translate:: Are you sure you want to reset this drop zone?"
+    },
+    {
+      "label": "translate:: Label used for accessibility, where the read speaker indicates that dragging is initiated",
+      "default": "translate:: Draggable is grabbed."
+    },
+    {
+      "label": "translate:: Label used for accessibility, where the read speaker indicates that dragging is canceled",
+      "default": "translate:: Cancelled dragging."
+    },
+    {
+      "label": "translate:: Label used for accessibility, where the read speaker indicates that a text is the correct answer",
+      "default": "translate:: Correct answer:"
+    },
+    {
+      "label": "translate:: Header for panel containing feedback for correct/incorrect answers",
+      "default": "translate:: Feedback"
+    },
+    {
+      "label": "translate:: Behavioural settings.",
+      "description": "translate:: These options will let you control how the task behaves.",
+      "fields": [
+        {
+          "label": "translate:: Enable \"Retry\""
+        },
+        {
+          "label": "translate:: Enable \"Show Solution\" button"
+        },
+        {
+          "label": "translate:: Enable \"Check\" button"
+        },
+        {
+          "label": "translate:: Instant feedback"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Textual representation of the score bar for those using a readspeaker",
+      "default": "translate:: You got :num out of :total points"
+    },
+    {
+      "label": "translate:: Assistive technology label for \"Check\" button",
+      "default": "translate:: Check the answers. The responses will be marked as correct, incorrect, or unanswered."
+    },
+    {
+      "label": "translate:: Assistive technology label for \"Show Solution\" button",
+      "default": "translate:: Show the solution. The task will be marked with its correct solution."
+    },
+    {
+      "label": "translate:: Assistive technology label for \"Retry\" button",
+      "default": "translate:: Retry the task. Reset all responses and start the task over again."
+    }
+  ]
+}

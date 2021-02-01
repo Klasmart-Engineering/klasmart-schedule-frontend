@@ -8,6 +8,7 @@ import { RootState } from "../../reducers";
 import { reportCategoriesOnload } from "../../reducers/report";
 import { ReportAchievementList, useReportQuery } from "../ReportAchievementList";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
+import { ReportStudentPerformance } from "../ReportStudentPerformance";
 import { CategoriesChart } from "./CategoriesChart";
 import { SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 
@@ -26,6 +27,7 @@ export function ReportCategories() {
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.learningOutcomes) return;
     if (value === Category.archived) history.push(ReportAchievementList.routeBasePath);
+    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
   };
   const handleChangeFilter: SecondSearchHeaderProps["onChange"] = (value, tab) => {
     history.replace({ search: toQueryString({ [tab]: value }) });

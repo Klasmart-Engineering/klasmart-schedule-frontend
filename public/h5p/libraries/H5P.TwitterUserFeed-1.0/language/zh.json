@@ -1,0 +1,14 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Twitter 上的用戶名稱",
+      "description": "translate:: 我們會撈取這個用戶名稱在推特上的推文。"
+    },
+    {
+      "label": "translate:: 顯示推文下的回應"
+    },
+    {
+      "label": "translate:: 一次顯示的推文數量"
+    }
+  ]
+}

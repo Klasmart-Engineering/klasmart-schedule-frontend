@@ -8,6 +8,7 @@ import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
 import { ReportCategories } from "../ReportCategories";
+import { ReportStudentPerformance } from "../ReportStudentPerformance";
 import { AchievementDetailChart } from "./AchievementDetailChart";
 
 const clearNull = (obj: Record<string, any>) => {
@@ -40,6 +41,7 @@ export function ReportAchievementDetail() {
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.archived) return;
     if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
+    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
   };
   const backByLessonPlan = (urlParams: string) => {
     history.push({ pathname: ReportAchievementList.routeBasePath, search: urlParams });

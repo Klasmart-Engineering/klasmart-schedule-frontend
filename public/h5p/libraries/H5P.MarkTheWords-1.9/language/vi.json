@@ -1,0 +1,128 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Task description",
+      "description": "translate:: Describe how the user should solve the task.",
+      "placeholder": "translate:: Click on all the verbs in the text that follows."
+    },
+    {
+      "label": "translate:: Textfield",
+      "placeholder": "translate:: This is an answer: *answer*.",
+      "description": "translate:: ",
+      "important": {
+        "description": "translate:: <ul><li>Marked words are added with an asterisk (*).</li><li>Asterisks can be added within marked words by adding another asterisk, *correctword*** => correctword*.</li></ul>",
+        "example": "translate:: The correct words are marked like this: *correctword*, an asterisk is written like this: *correctword***."
+      }
+    },
+    {
+      "label": "translate:: Overall Feedback",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "translate:: Default"
+            }
+          ],
+          "label": "translate:: Define custom feedback for any score range",
+          "description": "translate:: Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+          "entity": "translate:: range",
+          "field": {
+            "fields": [
+              {
+                "label": "translate:: Score Range"
+              },
+              {},
+              {
+                "label": "translate:: Feedback for defined score range",
+                "placeholder": "translate:: Fill in the feedback"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "translate:: Text for \"Check\" button",
+      "default": "translate:: Check"
+    },
+    {
+      "label": "translate:: Text for \"Retry\" button",
+      "default": "translate:: Retry"
+    },
+    {
+      "label": "translate:: Text for \"Show solution\" button",
+      "default": "translate:: Show solution"
+    },
+    {
+      "label": "translate:: Behavioural settings.",
+      "description": "translate:: These options will let you control how the task behaves.",
+      "fields": [
+        {
+          "label": "translate:: Enable \"Retry\""
+        },
+        {
+          "label": "translate:: Enable \"Show solution\" button"
+        },
+        {
+          "label": "translate:: Enable \"Check\" button"
+        },
+        {
+          "label": "translate:: Show score points",
+          "description": "translate:: Show points earned for each answer."
+        }
+      ]
+    },
+    {
+      "label": "translate:: Correct answer text",
+      "default": "translate:: Correct!",
+      "description": "translate:: Text used to indicate that an answer is correct"
+    },
+    {
+      "label": "translate:: Incorrect answer text",
+      "default": "translate:: Incorrect!",
+      "description": "translate:: Text used to indicate that an answer is incorrect"
+    },
+    {
+      "label": "translate:: Missed answer text",
+      "default": "translate:: Answer not found!",
+      "description": "translate:: Text used to indicate that an answer is missing"
+    },
+    {
+      "label": "translate:: Description for Display Solution",
+      "default": "translate:: Task is updated to contain the solution.",
+      "description": "translate:: This text tells the user that the tasks has been updated with the solution."
+    },
+    {
+      "label": "translate:: Textual representation of the score bar for those using a readspeaker",
+      "default": "translate:: You got :num out of :total points"
+    },
+    {
+      "label": "translate:: Label for the full readable text for assistive technologies",
+      "default": "translate:: Full readable text"
+    },
+    {
+      "label": "translate:: Label for the text where words can be marked for assistive technologies",
+      "default": "translate:: Full text where words can be marked"
+    },
+    {
+      "label": "translate:: Solution mode header for assistive technologies",
+      "default": "translate:: Solution mode"
+    },
+    {
+      "label": "translate:: Checking mode header for assistive technologies",
+      "default": "translate:: Checking mode"
+    },
+    {
+      "label": "translate:: Assistive technology description for \"Check\" button",
+      "default": "translate:: Check the answers. The responses will be marked as correct, incorrect, or unanswered."
+    },
+    {
+      "label": "translate:: Assistive technology description for \"Show Solution\" button",
+      "default": "translate:: Show the solution. The task will be marked with its correct solution."
+    },
+    {
+      "label": "translate:: Assistive technology description for \"Retry\" button",
+      "default": "translate:: Retry the task. Reset all responses and start the task over again."
+    }
+  ]
+}

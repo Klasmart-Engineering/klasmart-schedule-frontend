@@ -6,7 +6,7 @@ import clsx from "clsx";
 import React, { useState } from "react";
 import { EntityContentInfoWithDetails, EntityScheduleDetailsView } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
-import { ContentType, H5pSub } from "../../api/type";
+import { ContentFileType, ContentType, H5pSub } from "../../api/type";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
 import { Thumbnail } from "../../components/Thumbnail";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
@@ -14,7 +14,9 @@ import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
 import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
 import AssetVideo from "../../components/UIAssetPreview/AssetPreview/AssetVideo";
 import { d } from "../../locale/LocaleManager";
+import { formLiteFileType } from "../../models/ModelH5pSchema";
 import ContentH5p from "../ContentEdit/ContentH5p";
+import { H5pPlayer } from "../ContentEdit/H5pPlayer";
 import { fileFormat } from "../ContentEdit/MediaAssetsEdit";
 import { PreviewBaseProps } from "./type";
 
@@ -68,6 +70,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  innerH5pCon: {
+    flex: 1,
+    maxHeight: "100%",
+    overflow: "auto",
+    display: "flex",
+    justifyContent: "center",
   },
   btnCon: {
     width: "100%",
@@ -224,6 +233,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
 }));
 
+// data.file_type === ContentType.image || data... === ContentType.
+
 function EmptyContent() {
   const css = useStyles();
   return (
@@ -236,7 +247,7 @@ function EmptyContent() {
   );
 }
 interface H5pPreview extends PreviewBaseProps {
-  h5pArray: any[];
+  h5pArray: (EntityContentInfoWithDetails | undefined)[];
   classType: EntityScheduleDetailsView["class_type"];
   content_type: EntityContentInfoWithDetails["content_type"];
 }
@@ -257,40 +268,60 @@ export function H5pPreview(props: H5pPreview) {
       h5pItem = h5pArray[currIndex];
     }
   };
-  const getSuffix = (source: string | undefined) => {
-    if (source?.split(".").length === 1) return false;
-    return source?.split(".").pop()?.toLowerCase();
+  const getSuffix = (data: any) => {
+    const source = data.source;
+    if (
+      data.file_type === ContentFileType.image ||
+      data.file_type === ContentFileType.video ||
+      data.file_type === ContentFileType.audio ||
+      data.file_type === ContentFileType.doc
+    ) {
+      return source?.split(".").pop()?.toLowerCase();
+    } else {
+      return false;
+    }
   };
   const handleClickItem = (index: number): void => {
     setCurrIndex(index);
     h5pItem = h5pArray[currIndex];
   };
-  const path = h5pItem ? (JSON.parse(h5pItem.data) ? apiResourcePathById(JSON.parse(h5pItem.data).source) : "") : "";
+  const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
+  const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
+
+  // const isNewH5p = h5pItem ? isDataSourceNewH5p(h5pItem.data, h5pItem.id) : false;
+
+  const isNewH5p = h5pItem ? formLiteFileType(h5pItem.id, parsedData.file_type, parsedData.input_source)?.isNewH5p : false;
+  const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
+  const showAssets = () => {
+    if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetImg src={path} />;
+    } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetVideo src={path} />;
+    } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetAudio src={path} />;
+    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0 && <AssetFile src={path} />) {
+      return <AssetFile src={path} />;
+    }
+  };
+  // const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
+
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
         <Box className={css.h5pCon}>
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.image.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetImg src={path} />
-          )}
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.video.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetVideo src={path} />
-          )}
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.audio.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetAudio src={path} />
-          )}
-          {h5pItem && JSON.parse(h5pItem.data) && fileFormat.document.indexOf(`.${getSuffix(JSON.parse(h5pItem.data).source)}`) >= 0 && (
-            <AssetFile src={path} />
-          )}
-          {!h5pItem && <EmptyContent />}
-          {h5pItem &&
-            JSON.parse(h5pItem.data) &&
-            !getSuffix(JSON.parse(h5pItem.data).source) &&
-            (JSON.stringify(JSON.parse(h5pItem.data)) === JSON.stringify({}) ? (
-              <EmptyContent />
+          {isEmpty ? (
+            <EmptyContent />
+          ) : !getSuffix(parsedData) ? (
+            isNewH5p ? (
+              <Box className={css.innerH5pCon}>
+                <H5pPlayer valueSource={parsedData.content} />
+              </Box>
             ) : (
-              <ContentH5p sub={H5pSub.view} valueSource={JSON.parse(h5pItem.data).source} />
-            ))}
+              <ContentH5p sub={H5pSub.view} value={parsedData.source} />
+            )
+          ) : (
+            showAssets()
+          )}
         </Box>
         <Box className={css.btnCon}>
           {h5pArray.length > 1 && (

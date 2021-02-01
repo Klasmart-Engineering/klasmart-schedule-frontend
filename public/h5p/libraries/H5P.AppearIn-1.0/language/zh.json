@@ -1,0 +1,20 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Room name",
+      "description": "translate:: Name of the appear.in room"
+    },
+    {
+      "label": "translate:: Fit to container",
+      "description": "translate:: Make the room fit its container, will override any height and width defined with 100% values."
+    },
+    {
+      "label": "translate:: Height",
+      "description": "translate:: Set Height of chat/talk room"
+    },
+    {
+      "label": "translate:: Width",
+      "description": "translate:: Set Width of chat/talk room"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Task description",
+      "description": "translate:: Describe how the user should solve the task."
+    },
+    {
+      "label": "translate:: Media",
+      "fields": [
+        {
+          "label": "translate:: Type",
+          "description": "translate:: Optional media to display above the question."
+        }
+      ]
+    },
+    {
+      "label": "translate:: Descriptive solution label",
+      "default": "translate:: Click to see the answer.",
+      "description": "translate:: Clickable text area where the solution will be displayed."
+    },
+    {
+      "label": "translate:: Solution text",
+      "description": "translate:: The solution for the picture."
+    }
+  ]
+}

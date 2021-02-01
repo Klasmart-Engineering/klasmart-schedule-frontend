@@ -4,6 +4,7 @@ import React, { useCallback } from "react";
 import { useDrag } from "react-dnd";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { ContentFileType } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
@@ -136,7 +137,7 @@ function DraggableImage(props: DraggableItemProps) {
   const [, dragRef] = useDrag({ item: { type, data: item }, canDrag: () => editbale });
   const contentType =
     lesson === "material"
-      ? item.content_type && Number(item.content_type * 10 + (JSON.parse(item.data || JSON.stringify({ file_type: "" })).file_type || 1))
+      ? item.content_type && Number(item.content_type * 10 + (item.data && (JSON.parse(item.data).file_type || 1)))
       : item.content_type;
   return <Thumbnail key={item.id} ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={contentType} />;
 }
@@ -165,20 +166,23 @@ export default function MediaAssets(props: MediaAssetsProps) {
     [onChangePage]
   );
 
-  const rows = list?.map((item, idx) => (
-    <TableRow key={idx}>
-      <TableCell className={css.cellThumnbnail}>
-        <DraggableImage type="LIBRARY_ITEM" item={item} lesson={lesson} />
-      </TableCell>
-      <TableCell>{item.name}</TableCell>
-      <TableCell>{item.author_name}</TableCell>
-      {/* <TableCell className={css.cellAction}>
+  const rows = list?.map((item, idx) => {
+    const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
+    return (
+      <TableRow key={idx}>
+        <TableCell className={css.cellThumnbnail}>
+          <DraggableImage type={lesson === "plan" ? "LIBRARY_ITEM" : `LIBRARY_ITEM_FILE_TYPE_${fileType}`} item={item} lesson={lesson} />
+        </TableCell>
+        <TableCell>{item.name}</TableCell>
+        <TableCell>{item.author_name}</TableCell>
+        {/* <TableCell className={css.cellAction}>
         <Button color="primary" variant="contained">
           Select
         </Button>
       </TableCell> */}
-    </TableRow>
-  ));
+      </TableRow>
+    );
+  });
   const table = (
     <>
       <TableContainer className={css.tableContainer}>

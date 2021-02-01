@@ -89,7 +89,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
 }));
 
-function ProgressWithText(props: CircularProgressProps) {
+export function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
   return (
     <Box position="relative" display="inline-flex" alignItems="center">
@@ -308,6 +308,7 @@ export default function Details(props: DetailsProps) {
           control={control}
           render={(props) => (
             <CropImage
+              aspectRatio={16 / 9}
               render={({ crop }) => (
                 <SingleUploader
                   partition="thumbnail"
@@ -629,7 +630,7 @@ export default function Details(props: DetailsProps) {
             render={({ ref, ...props }) => (
               <SingleUploader
                 ref={ref}
-                onChangeOther={(filename?: string) => handleChangeTeacherManualName(filename)}
+                onChangeFile={(file) => handleChangeTeacherManualName(file?.name)}
                 partition="teacher_manual"
                 accept=".pdf"
                 {...props}

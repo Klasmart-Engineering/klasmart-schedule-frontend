@@ -19,12 +19,6 @@ export const ModelAssessment = {
     const attendance_ids = draft.attendances?.filter((attendance) => attendance.checked).map((item) => item.id as string);
     const outcome_attendance_maps = draft.outcome_attendance_maps || [];
     return { attendance_ids, outcome_attendance_maps };
-
-    // return produce(detail, draft => {
-    //   const attendance_ids = detail.attendances?.map(attendance => attendance.id as string) || [];
-    //   const outcome_attendance_maps = detail.outcome_attendance_maps || [];
-    //   return { attendance_ids, outcome_attendance_maps };
-    // });
   },
 
   toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestDataOmitAction): GetAssessmentResult {
@@ -37,10 +31,5 @@ export const ModelAssessment = {
       draft.attendances = [];
     }
     return draft;
-
-    // return produce(defaultDetail, draft => {
-    //   const attendanceHash = toHash(defaultDetail.attendances || []);
-    //   draft.attendances = value.attendance_ids?.map(id => attendanceHash[id]) || [];
-    // });
   },
 };

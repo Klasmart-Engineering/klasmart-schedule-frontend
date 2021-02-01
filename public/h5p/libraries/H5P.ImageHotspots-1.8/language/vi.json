@@ -1,0 +1,94 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Background image",
+      "description": "translate:: Image shown on background."
+    },
+    {
+      "label": "translate:: Alternative text for background image",
+      "description": "translate:: If the browser can't load the image this text will be displayed instead. Also used by assistive technologies."
+    },
+    {
+      "label": "translate:: Hotspot Icon",
+      "options": [
+        {
+          "label": "translate:: Predefined icon"
+        },
+        {
+          "label": "translate:: Uploaded image"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Predefined icon",
+      "description": "translate:: Using a predefined icon for the hotspot.",
+      "options": [
+        {
+          "label": "translate:: Plus"
+        },
+        {
+          "label": "translate:: Minus"
+        },
+        {
+          "label": "translate:: Times"
+        },
+        {
+          "label": "translate:: Check"
+        },
+        {
+          "label": "translate:: Question"
+        },
+        {
+          "label": "translate:: Info"
+        },
+        {
+          "label": "translate:: Exclamation"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Uploaded image",
+      "description": "translate:: Use your own image for the hotspot icon.<br>75px by 75px is recommended for your image."
+    },
+    {
+      "label": "translate:: Hotspot color",
+      "description": "translate:: The color of the hotspots"
+    },
+    {
+      "entity": "translate:: hotspot",
+      "label": "translate:: Hotspots",
+      "field": {
+        "label": "translate:: Hotspot",
+        "fields": [
+          {
+            "label": "translate:: Hotspot position",
+            "description": "translate:: Click on the thumbnail image to place the hotspot"
+          },
+          {
+            "label": "translate:: Cover entire background image",
+            "description": "translate:: When the user clicks the hotspot the popup will cover the entire background image"
+          },
+          {
+            "label": "translate:: Header",
+            "description": "translate:: Optional header for the popup"
+          },
+          {
+            "label": "translate:: Popup content",
+            "field": {
+              "label": "translate:: Content Item"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "translate:: Hotspot label for assistive technologies",
+      "default": "translate:: Hotspot #num",
+      "description": "translate:: Will help announce what hotspot element has been navigated to if there is no header specified for a hotspot. #num can be used to replace the hotspot number."
+    },
+    {
+      "label": "translate:: Close button label for assistive technologies",
+      "default": "translate:: Close"
+    }
+  ]
+}

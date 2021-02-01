@@ -1,0 +1,24 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Width",
+      "description": "translate:: Width of iFrame in CSS compliant format. Default: \"500px\""
+    },
+    {
+      "label": "translate:: Minimum width",
+      "description": "translate:: Minimum width of iFrame in CSS compliant format. Default: \"300px\""
+    },
+    {
+      "label": "translate:: Height",
+      "description": "translate:: Height of iFrame in CSS compliant format. Default: \"500px\""
+    },
+    {
+      "label": "translate:: Source",
+      "description": "translate:: URI to external document, or path to document found inside H5P (under /content)"
+    },
+    {
+      "label": "translate:: Resize supported",
+      "description": "translate:: If enabled, fullscreen button will be displayed, and H5P will be resized to fit it's surroundings"
+    }
+  ]
+}

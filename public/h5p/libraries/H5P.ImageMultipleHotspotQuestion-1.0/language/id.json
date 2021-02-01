@@ -1,0 +1,87 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Image Multiple Hotspot Question Editor",
+      "fields": [
+        {
+          "label": "translate:: Background image",
+          "fields": [
+            {
+              "label": "translate:: The title of this question",
+              "default": "translate:: Image hotspot question",
+              "description": "translate:: Used in summaries, statistics etc."
+            },
+            {
+              "label": "translate:: Background image",
+              "description": "translate:: Select an image to use as background the image hotspot question."
+            }
+          ]
+        },
+        {
+          "label": "translate:: Hotspots",
+          "description": "translate:: Choose appropriate figure for your hotspot, configure it, then drag and resize it into place.",
+          "fields": [
+            {
+              "label": "translate:: Task description",
+              "description": "translate:: Instructions to the user."
+            },
+            {
+              "label": "translate:: Hotspot Name",
+              "description": "translate:: Please enter what the user is trying to find i.e. risks, objects, errors (this will be used in feedback statements)."
+            },
+            {
+              "label": "translate:: Number of correct hotspots that need to be found for question completion",
+              "description": "translate:: If left blank, will default to the number of correct hotspots created."
+            },
+            {
+              "label": "translate:: Hotspot",
+              "entity": "translate:: Hotspot",
+              "field": {
+                "label": "translate:: Hotspot",
+                "fields": [
+                  {
+                    "label": "translate:: userSettings",
+                    "fields": [
+                      {
+                        "label": "translate:: Correct",
+                        "description": "translate:: There can be multiple correct hotspots. The user gets correct/incorrect feedback immediately after each click. The feedback will be displayed in the form of - (Text entered below) (Number of hotspots found) of (Correct hotspots needed) (Hotspot Name entered above)."
+                      },
+                      {
+                        "label": "translate:: Feedback",
+                        "placeholder": "translate:: Correct, you have found"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "translate:: computedSettings",
+                    "fields": [
+                      {
+                      },
+                      {
+                      },
+                      {
+                      },
+                      {
+                      },
+                      {
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "label": "translate:: Feedback if the user selects an empty spot:",
+              "placeholder": "translate:: You didn't locate any hotspots, try again!"
+            },
+            {
+              "label": "translate:: Feedback if the user selects an already found hotspot:",
+              "placeholder": "translate:: You have already found this one!"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  
+}

@@ -116,7 +116,6 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
 };
 interface PopupInputProps {
   assessmentDetail: SummaryProps["assessmentDetail"];
-  setValue: UseFormMethods["setValue"];
   value?: UpdateAssessmentRequestDatAattendanceIds;
   onChange?: (value: PopupInputProps["value"]) => any;
   isMyAssessment?: boolean;
@@ -193,7 +192,7 @@ interface SummaryProps {
 export function Summary(props: SummaryProps) {
   const { assessmentDetail, isMyAssessment } = props;
   const {
-    formMethods: { control, setValue },
+    formMethods: { control },
   } = props;
   const { breakpoints } = useTheme();
   const css = useStyles();
@@ -219,7 +218,6 @@ export function Summary(props: SummaryProps) {
             name="attendance_ids"
             defaultValue={attendance_ids}
             assessmentDetail={assessmentDetail}
-            setValue={setValue}
             control={control}
             isMyAssessment={isMyAssessment}
           />

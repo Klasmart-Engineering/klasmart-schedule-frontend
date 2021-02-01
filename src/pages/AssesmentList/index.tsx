@@ -67,27 +67,17 @@ export function AssessmentList() {
       <SecondSearchHeaderMb value={condition} onChange={handleChange} />
       <ThirdSearchHeader value={condition} onChange={handleChange} />
       <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
-      {
-        assessmentList && assessmentList.length > 0 ? (
-          <AssessmentTable
-            list={assessmentList}
-            total={total}
-            queryCondition={condition}
-            onChangePage={handleChangePage}
-            onClickAssessment={handleClickAssessment}
-          />
-        ) : (
-          emptyTip
-        )
-        // (
-        //   <div style={{ margin: "0 auto", textAlign: "center" }}>
-        //     <img src={emptyIconUrl} alt="" />
-        //     <Typography variant="body1" color="textSecondary">
-        //       Empty...
-        //     </Typography>
-        //   </div>
-        // )
-      }
+      {assessmentList && assessmentList.length > 0 ? (
+        <AssessmentTable
+          list={assessmentList}
+          total={total}
+          queryCondition={condition}
+          onChangePage={handleChangePage}
+          onClickAssessment={handleClickAssessment}
+        />
+      ) : (
+        emptyTip
+      )}
     </div>
   );
 }

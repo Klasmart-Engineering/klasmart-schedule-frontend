@@ -82,12 +82,13 @@ function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: 
 interface BriefIntroductionProps {
   value: QueryCondition;
   student_name: string | undefined;
+  hiddenLegend?: Boolean;
   backByLessonPlan?: (urlParams: string) => void;
   reportMockOptions?: GetReportMockOptionsResponse;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, student_name, backByLessonPlan, reportMockOptions } = props;
+  const { value, student_name, backByLessonPlan, reportMockOptions, hiddenLegend } = props;
   const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
   const history = useHistory();
@@ -144,22 +145,24 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
             )}
             {value.student_id && <span className={css.teacherAndClass}>{"- " + student_name}</span>}
           </Box>
-          <Box className={css.rightContainer}>
-            <Box className={clsx(css.rightContainer, css.marginItem)}>
-              <div className={clsx(css.colorPart, css.blue)}></div>
-              <span>
-                {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
-              </span>
+          {!hiddenLegend && (
+            <Box className={css.rightContainer}>
+              <Box className={clsx(css.rightContainer, css.marginItem)}>
+                <div className={clsx(css.colorPart, css.blue)}></div>
+                <span>
+                  {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
+                </span>
+              </Box>
+              <Box className={clsx(css.rightContainer, css.marginItem)}>
+                <div className={clsx(css.colorPart, css.pink)}></div>
+                <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
+              </Box>
+              <Box className={clsx(css.rightContainer, css.marginItem)}>
+                <div className={clsx(css.colorPart, css.gray)}></div>
+                <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
+              </Box>
             </Box>
-            <Box className={clsx(css.rightContainer, css.marginItem)}>
-              <div className={clsx(css.colorPart, css.pink)}></div>
-              <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
-            </Box>
-            <Box className={clsx(css.rightContainer, css.marginItem)}>
-              <div className={clsx(css.colorPart, css.gray)}></div>
-              <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
-            </Box>
-          </Box>
+          )}
         </Box>
       )}
     </LayoutBox>

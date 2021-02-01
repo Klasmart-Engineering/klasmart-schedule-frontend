@@ -63,6 +63,10 @@ export interface ApiGrade {
   grade_name?: string;
 }
 
+export interface ApiIDResponse {
+  id?: string;
+}
+
 export type ApiInternalServerErrorResponse = ApiErrorResponse;
 
 export interface ApiLoginRequest {
@@ -182,16 +186,16 @@ export interface ApiPublishOutcomeReq {
 }
 
 export interface ApiRegisterRequest {
-  /** 当前是电话号码 */
+  /** phone number for now 当前是电话号码 */
   account?: string;
 
-  /** 注册类型 */
+  /** register manner 注册类型 */
   act_type?: string;
 
-  /** 验证码 */
+  /** verification code 验证码 */
   auth_code?: string;
 
-  /** 密码 */
+  /** password 密码 */
   password?: string;
 }
 
@@ -238,6 +242,57 @@ export type ApiUnAuthorizedResponse = ApiErrorResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
+}
+
+export interface EntityActivityFlashCards {
+  cards_number?: number;
+  play_records?: EntityActivityFlashCardsPlayRecord[];
+}
+
+export interface EntityActivityFlashCardsPlayRecord {
+  correct_cards_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityActivityImagePair {
+  paris_number?: number;
+  play_records?: EntityActivityImagePairPlayRecord[];
+  play_times?: number;
+}
+
+export interface EntityActivityImagePairPlayRecord {
+  correct_pairs_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityActivityImageSequencing {
+  cards_number?: number;
+  play_records?: EntityActivityImageSequencingPlayRecord[];
+  play_times?: number;
+}
+
+export interface EntityActivityImageSequencingPlayRecord {
+  correct_cards_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityActivityMemoryGame {
+  pairs_number?: number;
+  play_records?: EntityActivityMemoryGamePlayRecord[];
+  play_times?: number;
+}
+
+export interface EntityActivityMemoryGamePlayRecord {
+  clicks_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
 }
 
 export interface EntityAddAssessmentCommand {
@@ -519,6 +574,19 @@ export interface EntityCreateFolderRequest {
   thumbnail?: string;
 }
 
+export interface EntityCreateH5PEventRequest {
+  extends?: object;
+  local_content_id?: string;
+  local_library_name?: string;
+  local_library_version?: string;
+  material_id?: string;
+  play_id?: string;
+  schedule_id?: string;
+  time?: number;
+  user_id?: string;
+  verb_id?: string;
+}
+
 export interface EntityDeleteAuthedContentRequest {
   content_id?: string;
   org_id?: string;
@@ -611,6 +679,15 @@ export interface EntityFolderShareRecords {
   data?: EntityFolderShareRecord[];
 }
 
+export interface EntityGetStudentPerformanceH5PReportResponse {
+  items?: EntityStudentPerformanceH5PReportItem[];
+}
+
+export interface EntityGetStudentPerformanceReportResponse {
+  assessment_ids?: string[];
+  items?: EntityStudentPerformanceReportItem[];
+}
+
 export interface EntityGrade {
   createAt?: number;
   createID?: string;
@@ -621,10 +698,6 @@ export interface EntityGrade {
   number?: number;
   updateAt?: number;
   updateID?: string;
-}
-
-export interface EntityIDResponse {
-  id?: string;
 }
 
 export interface EntityLessonType {
@@ -642,6 +715,15 @@ export interface EntityLessonType {
 export interface EntityListAssessmentsResult {
   items?: EntityAssessmentListView[];
   total?: number;
+}
+
+export interface EntityListStudentsPerformanceH5PReportResponse {
+  items?: EntityStudentsPerformanceH5PReportItem[];
+}
+
+export interface EntityListStudentsPerformanceReportResponse {
+  assessment_ids?: string[];
+  items?: EntityStudentsPerformanceReportItem[];
 }
 
 export interface EntityLiveTokenView {
@@ -806,9 +888,18 @@ export interface EntityScheduleAddView {
   version?: number;
 }
 
+export interface EntityScheduleConflictView {
+  class_roster_student?: EntityScheduleShortInfo[];
+  class_roster_teacher?: EntityScheduleShortInfo[];
+  participants_student?: EntityScheduleShortInfo[];
+  participants_teacher?: EntityScheduleShortInfo[];
+}
+
 export interface EntityScheduleDetailsView {
   attachment?: EntityScheduleShortInfo;
   class?: EntityScheduleShortInfo;
+  class_roster_student?: EntityScheduleShortInfo[];
+  class_roster_teacher?: EntityScheduleShortInfo[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
@@ -819,6 +910,8 @@ export interface EntityScheduleDetailsView {
   lesson_plan?: EntityScheduleShortInfo;
   member_teachers?: EntityScheduleShortInfo[];
   org_id?: string;
+  participants_student?: EntityScheduleShortInfo[];
+  participants_teacher?: EntityScheduleShortInfo[];
   program?: EntityScheduleShortInfo;
   real_time_status?: EntityScheduleRealTimeView;
   repeat?: EntityRepeatOptions;
@@ -834,6 +927,7 @@ export interface EntityScheduleDetailsView {
 export interface EntityScheduleListView {
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  due_at?: number;
   end_at?: number;
   id?: string;
   is_repeat?: boolean;
@@ -875,24 +969,25 @@ export interface EntityScheduleShortInfo {
 export interface EntityScheduleUpdateView {
   attachment?: EntityScheduleShortInfo;
   class_id: string;
+  class_roster_student_ids?: string[];
+  class_roster_teacher_ids?: string[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
-  end_at: number;
+  end_at?: number;
   id?: string;
   is_all_day?: boolean;
   is_force?: boolean;
   is_repeat?: boolean;
   lesson_plan_id?: string;
   org_id?: string;
+  participants_student_ids?: string[];
+  participants_teacher_ids?: string[];
   program_id?: string;
   repeat?: EntityRepeatOptions;
   repeat_edit_options?: "only_current" | "with_following";
-  start_at: number;
+  start_at?: number;
   subject_id?: string;
-
-  /** Abandoned */
-  teacher_ids: string[];
   time_zone_offset?: number;
   title: string;
   version?: number;
@@ -915,21 +1010,14 @@ export interface EntitySkill {
   updateID?: string;
 }
 
-export interface EntityStudentReport {
-  assessment_ids?: string[];
-  attend?: boolean;
-  categories?: EntityStudentReportCategory[];
-  student_name?: string;
-}
-
-export interface EntityStudentReportCategory {
+export interface EntityStudentAchievementReportCategoryItem {
   achieved_items?: string[];
   name?: string;
   not_achieved_items?: string[];
   not_attempted_items?: string[];
 }
 
-export interface EntityStudentReportItem {
+export interface EntityStudentAchievementReportItem {
   achieved_count?: number;
   attend?: boolean;
   not_achieved_count?: number;
@@ -938,9 +1026,55 @@ export interface EntityStudentReportItem {
   student_name?: string;
 }
 
-export interface EntityStudentsReport {
+export interface EntityStudentAchievementReportResponse {
   assessment_ids?: string[];
-  items?: EntityStudentReportItem[];
+  attend?: boolean;
+  categories?: EntityStudentAchievementReportCategoryItem[];
+  student_name?: string;
+}
+
+export interface EntityStudentPerformanceH5PReportItem {
+  activity_flash_cards?: EntityActivityFlashCards;
+  activity_image_pair?: EntityActivityImagePair;
+  activity_image_sequencing?: EntityActivityImageSequencing;
+  activity_memory_game?: EntityActivityMemoryGame;
+  activity_type?: "H5P.ImageSequencing" | "H5P.MemoryGame" | "H5P.ImagePair" | "H5P.Flashcards";
+  avg_spent_time?: number;
+  material_id?: string;
+  material_name?: string;
+  total_spent_time?: number;
+}
+
+export interface EntityStudentPerformanceReportItem {
+  achieved_names?: string[];
+  attend?: boolean;
+  not_achieved_names?: string[];
+  not_attempted_names?: string[];
+  schedule_id?: string;
+  schedule_start_time?: number;
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface EntityStudentsAchievementReportResponse {
+  assessment_ids?: string[];
+  items?: EntityStudentAchievementReportItem[];
+}
+
+export interface EntityStudentsPerformanceH5PReportItem {
+  attend?: boolean;
+  spent_time?: number;
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface EntityStudentsPerformanceReportItem {
+  achieved_names?: string[];
+  attend?: boolean;
+  not_achieved_names?: string[];
+  not_attempted_names?: string[];
+  student_id?: string;
+  student_name?: string;
 }
 
 export interface EntitySubject {
@@ -1124,7 +1258,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add age
      */
     addAge: (age: EntityAge, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/ages`, "POST", params, age),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/ages`, "POST", params, age),
 
     /**
      * @tags age
@@ -1144,7 +1278,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description updateAge
      */
     updateAge: (id: string, age: EntityAge, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/ages/${id}`, "PUT", params, age),
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/ages/${id}`, "PUT", params, age),
 
     /**
      * @tags age
@@ -1154,7 +1288,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description deleteAge
      */
     deleteAge: (id: string, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/ages/${id}`, "DELETE", params),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/ages/${id}`, "DELETE", params),
   };
   assessments = {
     /**
@@ -1330,7 +1464,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @name searchContents
      * @summary queryContent
      * @request GET:/contents
-     * @description query content by condition
+     * @description query content by condition (Inherent & unchangeable)
      */
     searchContents: (
       query?: {
@@ -1385,7 +1519,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @name getContentById
      * @summary getContent
      * @request GET:/contents/{content_id}
-     * @description get a content by id
+     * @description get a content by id (Inherent & unchangeable)
      */
     getContentById: (content_id: string, params?: RequestParams) =>
       this.request<EntityContentInfoWithDetails, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
@@ -1822,7 +1956,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description addDevelopmental
      */
     addDevelopmental: (developmental: EntityDevelopmental, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/developmentals`, "POST", params, developmental),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/developmentals`, "POST", params, developmental),
 
     /**
      * @tags developmental
@@ -1842,7 +1976,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description updateDevelopmental
      */
     updateDevelopmental: (id: string, developmental: EntityDevelopmental, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/developmentals/${id}`,
         "PUT",
         params,
@@ -1857,7 +1991,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description deleteDevelopmental
      */
     deleteDevelopmental: (id: string, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/developmentals/${id}`, "DELETE", params),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/developmentals/${id}`, "DELETE", params),
   };
   folders = {
     /**
@@ -2065,7 +2199,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description addGrade
      */
     addGrade: (grade: EntityGrade, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/grades`, "POST", params, grade),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/grades`, "POST", params, grade),
 
     /**
      * @tags grade
@@ -2085,7 +2219,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description updateGrade
      */
     updateGrade: (id: string, grade: EntityGrade, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/grades/${id}`, "PUT", params, grade),
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/grades/${id}`, "PUT", params, grade),
 
     /**
      * @tags grade
@@ -2095,7 +2229,23 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description deleteGrade
      */
     deleteGrade: (id: string, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/grades/${id}`, "DELETE", params),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/grades/${id}`, "DELETE", params),
+  };
+  h5P = {
+    /**
+     * @tags h5p
+     * @name createH5PEvent
+     * @summary createH5PEvent
+     * @request POST:/h5p/events
+     * @description create h5p event
+     */
+    createH5PEvent: (content: EntityCreateH5PEventRequest, params?: RequestParams) =>
+      this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/h5p/events`,
+        "POST",
+        params,
+        content
+      ),
   };
   learningOutcomes = {
     /**
@@ -2364,7 +2514,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description addProgram
      */
     addProgram: (program: EntityProgram, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/programs`, "POST", params, program),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/programs`, "POST", params, program),
 
     /**
      * @tags program
@@ -2384,7 +2534,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description updateProgram
      */
     updateProgram: (id: string, program: EntityProgram, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/programs/${id}`, "PUT", params, program),
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/programs/${id}`, "PUT", params, program),
 
     /**
      * @tags program
@@ -2394,7 +2544,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description deleteProgram
      */
     deleteProgram: (id: string, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/programs/${id}`, "DELETE", params),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/programs/${id}`, "DELETE", params),
 
     /**
      * @tags program
@@ -2469,12 +2619,72 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   reports = {
     /**
      * @tags reports
-     * @name listStudentsReport
+     * @name listStudentsPerformanceH5PReport
+     * @summary list student performance h5p report
+     * @request GET:/reports/performance/h5p/students
+     * @description list student performance h5p report
+     */
+    listStudentsPerformanceH5PReport: (query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
+      this.request<
+        EntityListStudentsPerformanceH5PReportResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/performance/h5p/students${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports
+     * @name getStudentPerformanceH5PReport
+     * @summary get student performance h5p report
+     * @request GET:/reports/performance/h5p/students/{id}
+     * @description get student performance h5p report
+     */
+    getStudentPerformanceH5PReport: (
+      id: string,
+      query: { teacher_id: string; class_id: string; lesson_plan_id: string },
+      params?: RequestParams
+    ) =>
+      this.request<
+        EntityGetStudentPerformanceH5PReportResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/reports/performance/h5p/students/${id}${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports
+     * @name listStudentsPerformanceReport
+     * @summary list student performance report
+     * @request GET:/reports/performance/students
+     * @description list student performance report
+     */
+    listStudentsPerformanceReport: (query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
+      this.request<
+        EntityListStudentsPerformanceReportResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/performance/students${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports
+     * @name getStudentPerformanceReport
+     * @summary get student performance report
+     * @request GET:/reports/performance/students/{id}
+     * @description get student performance report
+     */
+    getStudentPerformanceReport: (
+      id: string,
+      query: { teacher_id: string; class_id: string; lesson_plan_id: string },
+      params?: RequestParams
+    ) =>
+      this.request<
+        EntityGetStudentPerformanceReportResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/reports/performance/students/${id}${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports
+     * @name listStudentsAchievementReport
      * @summary list student report
      * @request GET:/reports/students
      * @description list student report
      */
-    listStudentsReport: (
+    listStudentsAchievementReport: (
       query: {
         teacher_id: string;
         class_id: string;
@@ -2484,7 +2694,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityStudentsReport, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityStudentsAchievementReportResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/students${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2492,14 +2702,18 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
-     * @name getStudentReport
+     * @name getStudentAchievementReport
      * @summary get student report
      * @request GET:/reports/students/{id}
      * @description get student report
      */
-    getStudentReport: (id: string, query: { teacher_id: string; class_id: string; lesson_plan_id: string }, params?: RequestParams) =>
+    getStudentAchievementReport: (
+      id: string,
+      query: { teacher_id: string; class_id: string; lesson_plan_id: string },
+      params?: RequestParams
+    ) =>
       this.request<
-        EntityStudentReport,
+        EntityStudentAchievementReportResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/students/${id}${this.addQueryParams(query)}`, "GET", params),
 
@@ -2549,12 +2763,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description add a schedule data
      */
     addSchedule: (scheduleData: EntityScheduleAddView, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
-        `/schedules`,
-        "POST",
-        params,
-        scheduleData
-      ),
+      this.request<
+        ApiIDResponse,
+        ApiBadRequestResponse | ApiNotFoundResponse | EntityScheduleConflictView | ApiInternalServerErrorResponse
+      >(`/schedules`, "POST", params, scheduleData),
 
     /**
      * @tags schedule
@@ -2578,12 +2790,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update a schedule data
      */
     updateSchedule: (schedule_id: string, scheduleData: EntityScheduleUpdateView, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
-        `/schedules/${schedule_id}`,
-        "PUT",
-        params,
-        scheduleData
-      ),
+      this.request<
+        ApiIDResponse,
+        ApiBadRequestResponse | ApiNotFoundResponse | EntityScheduleConflictView | ApiInternalServerErrorResponse
+      >(`/schedules/${schedule_id}`, "PUT", params, scheduleData),
 
     /**
      * @tags schedule
@@ -2635,7 +2845,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update schedule status
      */
     updateStatus: (schedule_id: string, query: { status: "NotStart" | "Started" | "Closed" }, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<ApiIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/status${this.addQueryParams(query)}`,
         "PUT",
         params
@@ -2643,7 +2853,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   };
   schedulesLessonPlans = {
     /**
-     * @tags reports
+     * @tags schedule
      * @name getLessonPlans
      * @summary get lessonPlans by teacher and class
      * @request GET:/schedules_lesson_plans
@@ -2677,14 +2887,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduleTimeView: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year";
-        time_at: number;
-        time_zone_offset: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
+        time_at?: number;
+        time_zone_offset?: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
+        class_types?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+        due_at_eq?: number;
       },
       params?: RequestParams
     ) =>
@@ -2703,14 +2915,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year";
-        time_at: number;
-        time_zone_offset: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
+        time_at?: number;
+        time_zone_offset?: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
+        class_types?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+        due_at_eq?: number;
       },
       params?: RequestParams
     ) =>
@@ -2739,7 +2953,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description addSkill
      */
     addSkill: (skill: EntitySkill, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/skills`, "POST", params, skill),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/skills`, "POST", params, skill),
 
     /**
      * @tags skill
@@ -2759,7 +2973,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description updateSkill
      */
     updateSkill: (id: string, skill: EntitySkill, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/skills/${id}`, "PUT", params, skill),
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/skills/${id}`, "PUT", params, skill),
 
     /**
      * @tags skill
@@ -2769,7 +2983,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description deleteSkill
      */
     deleteSkill: (id: string, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/skills/${id}`, "DELETE", params),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/skills/${id}`, "DELETE", params),
   };
   subjects = {
     /**
@@ -2790,7 +3004,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description addSubject
      */
     addSubject: (subject: EntitySubject, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/subjects`, "POST", params, subject),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/subjects`, "POST", params, subject),
 
     /**
      * @tags subject
@@ -2810,7 +3024,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description updateSubject
      */
     updateSubject: (id: string, subject: EntitySubject, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/subjects/${id}`, "PUT", params, subject),
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/subjects/${id}`, "PUT", params, subject),
 
     /**
      * @tags subject
@@ -2820,7 +3034,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description deleteSubject
      */
     deleteSubject: (id: string, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiInternalServerErrorResponse>(`/subjects/${id}`, "DELETE", params),
+      this.request<ApiIDResponse, ApiInternalServerErrorResponse>(`/subjects/${id}`, "DELETE", params),
   };
   userSettings = {
     /**
@@ -2841,7 +3055,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description set user setting
      */
     setUserSetting: (userSetting: EntityUserSettingJsonContent, params?: RequestParams) =>
-      this.request<EntityIDResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/user_settings`, "POST", params, userSetting),
+      this.request<ApiIDResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/user_settings`, "POST", params, userSetting),
   };
   users = {
     /**

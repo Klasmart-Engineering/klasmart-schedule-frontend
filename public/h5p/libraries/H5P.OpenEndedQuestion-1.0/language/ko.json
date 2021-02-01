@@ -1,0 +1,30 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Question or description"
+    },
+    {
+      "label": "translate:: Placeholder text",
+      "default": "translate:: Start writing...",
+      "description": "translate:: Text that initially will be shown in the input field. Will be removed automatically when the user starts writing."
+    },
+    {
+      "label": "translate:: Input rows",
+      "description": "translate:: Determines the height of the input field.",
+      "options": [
+        {
+          "label": "translate:: 1 line"
+        },
+        {
+          "label": "translate:: 2 lines"
+        },
+        {
+          "label": "translate:: 3 lines"
+        },
+        {
+          "label": "translate:: 10 lines"
+        }
+      ]
+    }
+  ]
+}

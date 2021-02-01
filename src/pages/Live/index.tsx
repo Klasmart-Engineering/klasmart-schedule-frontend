@@ -1,39 +1,48 @@
+import { Box } from "@material-ui/core";
 import React from "react";
-import { useLocation } from "react-router";
-import { useDispatch } from "react-redux";
-import { getScheduleLiveToken } from "../../reducers/schedule";
-import { AsyncTrunkReturned, getContentLiveToken } from "../../reducers/content";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { apiLivePath } from "../../api/extra";
+import { useDispatch, useSelector } from "react-redux";
+import { ContentType } from "../../api/type";
+import { RootState } from "../../reducers";
+import { onLoadContentPreview } from "../../reducers/content";
+import { H5pPlayerInline } from "./H5pPlayerInline";
 
-const useQuery = () => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const content_id = query.get("content_id") as string;
-  const schedule_id = query.get("schedule_id") as string;
-  const class_id = query.get("class_id") as string;
-  return { content_id, schedule_id, class_id };
-};
-
-export default function Live() {
-  const { content_id, schedule_id, class_id } = useQuery();
-  const dispatch = useDispatch();
-  React.useEffect(() => {
-    async function asynsGetliveToken() {
-      let tokenInfo: any;
-      if (schedule_id)
-        tokenInfo = ((await dispatch(
-          getScheduleLiveToken({ schedule_id, live_token_type: "preview", metaLoading: true })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleLiveToken>>;
-      if (content_id)
-        tokenInfo = ((await dispatch(getContentLiveToken({ content_id, metaLoading: true }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof getContentLiveToken>
-        >;
-      if (tokenInfo) window.location.href = apiLivePath(tokenInfo?.payload.token);
-    }
-    asynsGetliveToken();
-  }, [schedule_id, content_id, dispatch, class_id]);
-  return null;
+enum LiveType {
+  preview = "preview",
 }
 
-Live.routeBasePath = "/live";
+const useQuery = () => {
+  const query = new URLSearchParams(window.location.search);
+  const content_id = query.get("content_id") ?? undefined;
+  const schedule_id = query.get("schedule_id") ?? undefined;
+  const type = query.get("type") ?? undefined;
+  return { content_id, schedule_id, type };
+};
+export default function LiveH5p() {
+  const { contentPreview, user_id } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { content_id: materialId, schedule_id, type } = useQuery();
+  const dispatch = useDispatch();
+  const h5pContent =
+    contentPreview.content_type === ContentType.material && contentPreview.data
+      ? (JSON.parse(contentPreview.data)?.content as string)
+      : undefined;
+  React.useEffect(() => {
+    if (!materialId) return;
+    dispatch(onLoadContentPreview({ metaLoading: true, content_id: materialId, schedule_id: "" }));
+  }, [materialId, dispatch]);
+
+  return (
+    <Box>
+      {h5pContent && (
+        <H5pPlayerInline
+          isPreview={type === LiveType.preview}
+          valueSource={h5pContent}
+          id={materialId}
+          scheduleId={schedule_id}
+          userId={user_id}
+        />
+      )}
+    </Box>
+  );
+}
+
+LiveH5p.routeBasePath = "/live-h5p";

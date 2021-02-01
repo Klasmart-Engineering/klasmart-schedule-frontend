@@ -1,0 +1,113 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Introduction text",
+      "default": "translate:: Choose the correct statement.",
+      "description": "translate:: Will be displayed above the summary task."
+    },
+    {
+      "widgets": [
+        {
+          "label": "translate:: Default"
+        },
+        {
+          "label": "translate:: Textual"
+        }
+      ],
+      "label": "translate:: Summary",
+      "entity": "translate:: statements",
+      "field": {
+        "label": "translate:: Set of statements",
+        "fields": [
+          {
+            "label": "translate:: List of statements for the summary - the first statement is correct.",
+            "entity": "translate:: statement",
+            "field": {
+              "label": "translate:: Statement"
+            }
+          },
+          {
+            "label": "translate:: Tip",
+            "fields": [
+              {
+                "label": "translate:: Tip text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "translate:: Overall Feedback",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "translate:: Default"
+            }
+          ],
+          "label": "translate:: Define custom feedback for any score range",
+          "description": "translate:: Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+          "entity": "translate:: range",
+          "field": {
+            "fields": [
+              {
+                "label": "translate:: Score Range"
+              },
+              {},
+              {
+                "label": "translate:: Feedback for defined score range",
+                "placeholder": "translate:: Fill in the feedback"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "translate:: Text displayed before number of statements solved in the summary task.",
+      "default": "translate:: Progress:",
+      "description": "translate:: Will be displayed above the statements. Example: 'Progress: 2/5'"
+    },
+    {
+      "label": "translate:: Text displayed before number of wrong statements selected in the summary task.",
+      "default": "translate:: Wrong answers:",
+      "description": "translate:: Will be displayed above the statements. Example: 'Wrong answers: 4'"
+    },
+    {
+      "label": "translate:: Summary feedback header",
+      "default": "translate:: Your result",
+      "description": "translate:: Will be displayed above the summary feedback."
+    },
+    {
+      "label": "translate:: Readspeaker text for correct answer",
+      "default": "translate:: Correct."
+    },
+    {
+      "label": "translate:: Readspeaker text for announcing incorrect answer",
+      "default": "translate:: Incorrect! Please try again."
+    },
+    {
+      "label": "translate:: Readspeaker label for incorrect answer",
+      "default": "translate:: Incorrect"
+    },
+    {
+      "label": "translate:: Label list of correct answers",
+      "default": "translate:: Correct answers."
+    },
+    {
+      "label": "translate:: Label for the show tip button",
+      "default": "translate:: Show tip"
+    },
+    {
+      "label": "translate:: Textual representation of the score bar for those using a readspeaker",
+      "description": "translate:: :num and :total are special keywords which are programmatically updated",
+      "default": "translate:: You got :num out of :total points"
+    },
+    {
+      "label": "translate:: Text used for readspeakers to communicate progress",
+      "description": "translate:: :num and :total are special keywords which are programmatically updated",
+      "default": "translate:: Progress :num of :total"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Title"
+    },
+    {
+      "fields": [
+        {
+          "label": "translate:: Protocol",
+          "options": [
+            {
+              "label": "http://"
+            },
+            {
+              "label": "https://"
+            },
+            {
+              "label": "translate:: (root relative)"
+            },
+            {
+              "label": "translate:: other"
+            }
+          ]
+        },
+        {
+          "label": "translate:: URL"
+        }
+      ]
+    }
+  ]
+}

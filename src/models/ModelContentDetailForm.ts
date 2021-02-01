@@ -1,5 +1,5 @@
 import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
-import { ContentType } from "../api/type";
+import { ContentFileType, ContentInputSourceType, ContentType } from "../api/type";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 interface MyExtendedDetailForm {
@@ -11,7 +11,7 @@ export interface ContentDetailPlanType extends Omit<EntityCreateContentRequest, 
 }
 let time: number | undefined = 0;
 export interface ContentDetailMaterialType extends Omit<EntityCreateContentRequest, "data">, MyExtendedDetailForm {
-  data?: { source: string; input_source: string; file_type: number };
+  data?: { source?: string; input_source: ContentInputSourceType; file_type: ContentFileType; content?: string };
   created_at?: string;
 }
 
@@ -29,7 +29,7 @@ export class ModelContentDetailForm {
   }
 
   static decode(contentDetail: EntityContentInfoWithDetails): ContentDetailForm {
-    const data = contentDetail.data ? JSON.parse(contentDetail.data) : { input_source: 1 };
+    const data = contentDetail.data ? JSON.parse(contentDetail.data) : { input_source: ContentInputSourceType.h5p };
     time = contentDetail.created_at;
     const created_at = formattedTime(contentDetail.created_at);
     // const lesson_type = contentDetail.lesson_type === 0 ? "" : String(contentDetail.lesson_type);

@@ -1,0 +1,47 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Description",
+      "description": "translate:: Description of the export page.",
+      "default": "translate:: On this page you can choose to export your text, goals and goals assessments."
+    },
+    {
+      "label": "translate:: Create document button label",
+      "description": "translate:: Text that will be displayed on the \"Create document\"-button.",
+      "default": "translate:: Create document"
+    },
+    {
+      "label": "translate:: Submit text button",
+      "description": "translate:: Text that will be displayed on the \"Submit\"-button.",
+      "default": "translate:: Submit"
+    },
+    {
+      "label": "translate:: Submit success label",
+      "default": "translate:: Your report was submitted successfully!"
+    },
+    {
+      "label": "translate:: Select all exportable text button label",
+      "description": "translate:: Text that will be displayed on the \"Select all text\"-button.",
+      "default": "translate:: Select"
+    },
+    {
+      "label": "translate:: Export text button label",
+      "description": "translate:: Text that will be displayed on the \"Export text\"-button.",
+      "default": "translate:: Export"
+    },
+    {
+      "label": "translate:: Label for help text",
+      "description": "translate:: Label for showing additional helpful information to the user.",
+      "default": "translate:: More information"
+    },
+    {
+      "label": "translate:: Fill in additional help information",
+      "description": "translate:: Here you can fill in additional helpful information for the user."
+    },
+    {
+      "label": "translate:: Required input missing text",
+      "description": "translate:: An error message which will be displayed if one or more required input fields have not been filled. @pages will be replaced with the titles of affected pages.",
+      "default": "translate:: The following pages contain required fields that need to be filled in order to review or submit this document: @pages"
+    }
+  ]
+}

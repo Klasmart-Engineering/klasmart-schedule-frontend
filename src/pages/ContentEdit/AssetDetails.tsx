@@ -158,6 +158,7 @@ export default function AssetsDetails(props: AssetDetailsProps) {
             control={control}
             render={(props: any) => (
               <CropImage
+                aspectRatio={16 / 9}
                 render={({ crop }) => (
                   <SingleUploader
                     partition="thumbnail"

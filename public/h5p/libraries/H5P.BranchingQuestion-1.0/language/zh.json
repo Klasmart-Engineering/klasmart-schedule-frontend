@@ -1,0 +1,41 @@
+{
+  "semantics": [
+    {
+      "label": "reanslate:: 分叉式問題編輯器",
+      "fields": [
+        {
+          "label": "reanslate:: 題目"
+        },
+        {
+          "label": "reanslate:: 可用的替代項",
+          "entity": "reanslate:: alternative",
+          "field": {
+            "label": "reanslate:: 替代",
+            "fields": [
+              {
+                "label": "reanslate:: 內容"
+              },
+              {
+                "label": "reanslate:: 下個內容（-1 表示最後）"
+              },
+              {
+                "label": "reanslate:: 反饋",
+                "fields": [
+                  {
+                    "label": "reanslate:: 反饋標題"
+                  },
+                  {
+                    "label": "reanslate:: 反饋內容"
+                  },
+                  {
+                    "label": "reanslate:: 反饋圖像"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

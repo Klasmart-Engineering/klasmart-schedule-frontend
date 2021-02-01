@@ -5,7 +5,7 @@ import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import audioUrl from "../../../assets/icons/music.svg";
 import AssetLoading from "./AssetLoading";
 const useStyles = makeStyles({
@@ -54,26 +54,35 @@ interface Audio {
 export default function AssetAudio(props: Audio) {
   const classes = useStyles();
   const [value, setValue] = React.useState<number>(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [isplay, setIsplay] = React.useState<boolean>(false);
   const [loaded, dispatchLoaded] = useReducer(() => true, false);
 
   const handleChange = (event: any, newValue: number | number[]) => {
-    const audio = document.getElementById("audio") as HTMLAudioElement;
+    const audio = audioRef.current;
+    if (!audio) return;
     setValue(newValue as number);
     audio.currentTime = audio.duration * (newValue as number) * 0.01;
   };
 
   const handlePlay = () => {
-    const audio = document.getElementById("audio") as HTMLAudioElement;
+    const audio = audioRef.current;
+    if (!audio) return;
     setIsplay(!isplay);
     isplay ? audio.pause() : audio.play();
   };
   useEffect(() => {
-    const audio = document.getElementById("audio") as HTMLAudioElement;
+    const audio = audioRef.current;
+    if (!audio) return;
     const timer = setInterval(() => {
       isplay ? setValue((audio.currentTime / audio.duration) * 100) : clearInterval(timer);
     }, 500);
   });
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !props.src) return;
+    audio.load();
+  }, [props.src]);
   return (
     <Box className={classes.wrap}>
       {!loaded && <AssetLoading />}
@@ -95,7 +104,7 @@ export default function AssetAudio(props: Audio) {
           </Box>
         </>
       )}
-      <audio id="audio" onCanPlayThrough={(e) => dispatchLoaded()} style={{ width: "100%" }} src={props.src}></audio>
+      <audio id="audio" onCanPlayThrough={(e) => dispatchLoaded()} style={{ width: "100%" }} src={props.src} ref={audioRef}></audio>
     </Box>
   );
 }
