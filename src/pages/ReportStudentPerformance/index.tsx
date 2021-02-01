@@ -731,7 +731,6 @@ export function ReportStudentPerformance() {
                 <HorizontalBarStackChart data={finalStuReportList} color="#8693F0" px={px} valueAxiosLabel="in % of LOs" />
               </Box>
               <Box>
-                <LegendTip />
                 <ReportHeader title={reportMiss("Time Spent on H5P activities", "label_report_title_time_spent_on_h5p_activities")} />
                 <HorizontalBarStackChart data={finalH5pReportList} color="#FF9492" px={px} valueAxiosLabel="in seconds" />
               </Box>
@@ -748,6 +747,7 @@ export function ReportStudentPerformance() {
               aspectRatio={600 / 560}
               render={(px) => (
                 <Fragment>
+                  <LegendTip />
                   <ReportHeader title={reportMiss("Learning Outcome Completion", "label_report_title_learning_outcome_completion")} />
                   <VerticalBarStackChart
                     data={finalStuReportDetail}
