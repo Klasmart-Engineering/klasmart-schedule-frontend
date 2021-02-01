@@ -711,7 +711,7 @@ export function ReportStudentPerformance() {
   return (
     <>
       <FirstSearchHeader value={Category.studentPerformance} onChange={handleChange} />
-      <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
+      <FirstSearchHeaderMb value={Category.studentPerformance} onChange={handleChange} />
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}

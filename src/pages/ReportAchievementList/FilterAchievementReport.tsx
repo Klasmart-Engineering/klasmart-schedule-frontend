@@ -1,5 +1,6 @@
 import { Box, Hidden, makeStyles, Menu, MenuItem, TextField } from "@material-ui/core";
 import { ClassOutlined, LocalBarOutlined } from "@material-ui/icons";
+import FaceIcon from "@material-ui/icons/Face";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
@@ -128,6 +129,29 @@ const GetClassItem = forwardRef<React.RefObject<HTMLElement>, GetClassItemProps>
     </>
   );
 });
+
+interface GetStudentItemProps {
+  list: Pick<User, "user_id" | "user_name">[];
+  value: QueryCondition;
+  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
+  tab: keyof QueryCondition;
+}
+const GetStudentItem = forwardRef<React.RefObject<HTMLElement>, GetStudentItemProps>((props, ref) => {
+  const { list, value, onChangeMenu, tab } = props;
+  const all: Pick<User, "user_id" | "user_name">[] = [{ user_id: ALL_STUDENT, user_name: d("All").t("report_label_all") }];
+  const newStudentList = [...all, ...list];
+  return (
+    <>
+      {" "}
+      {newStudentList &&
+        newStudentList.map((item) => (
+          <MenuItem key={item.user_id} selected={value[tab] === item.user_id} onClick={(e) => onChangeMenu(e, item.user_id as string, tab)}>
+            {item.user_name}
+          </MenuItem>
+        ))}
+    </>
+  );
+});
 export interface FilterAchievementReportProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
@@ -160,6 +184,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
   const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
   const [anchorElClass, setAnchorElClass] = React.useState<null | HTMLElement>(null);
   const [anchorElPlan, setAnchorElPlan] = React.useState<null | HTMLElement>(null);
+  const [anchorElStudent, setAnchorElstudent] = React.useState<null | HTMLElement>(null);
 
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id" && classs.length > 0) setAnchorElTeacher(event.currentTarget);
@@ -167,6 +192,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "lesson_plan_id" && classs.length > 0 && reportMockOptions.lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
     if (tab === "status") setAnchorElStatus(event.currentTarget);
     if (tab === "sort_by") setAnchorElOrderBy(event.currentTarget);
+    if (tab === "student_id" && students.length > 0) setAnchorElstudent(event.currentTarget);
   };
   const handleClose = (e: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
@@ -174,6 +200,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
     if (tab === "status") setAnchorElStatus(null);
     if (tab === "sort_by") setAnchorElOrderBy(null);
+    if (tab === "student_id") setAnchorElstudent(null);
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
     handleClose(e, tab);
@@ -327,7 +354,6 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                   tab="class_id"
                 ></GetClassItem>
               </Menu>
-
               <ClassOutlined
                 fontSize="large"
                 className={clsx(css.selectIcon, planIsDisabled && css.selectIconDisabled)}
@@ -341,19 +367,38 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                   tab="lesson_plan_id"
                 ></GetMenuItem>
               </Menu>
+              <>
+                {isShowStudentList && (
+                  <FaceIcon
+                    fontSize="large"
+                    className={clsx(css.selectIcon, students.length <= 0 && css.selectIconDisabled)}
+                    onClick={(e) => showItem(e, "student_id")}
+                  />
+                )}
+                <Menu anchorEl={anchorElStudent} keepMounted open={Boolean(anchorElStudent)} onClose={(e) => handleClose(e, "student_id")}>
+                  <GetStudentItem
+                    list={reportMockOptions.studentList ?? []}
+                    value={value}
+                    onChangeMenu={handleChangeMenu}
+                    tab="student_id"
+                  ></GetStudentItem>
+                </Menu>
+              </>
             </Box>
 
-            <Box flex={2} display="flex" justifyContent="flex-end">
-              <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
-              <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
-                <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
-              </Menu>
+            {!isShowStudentList && (
+              <Box flex={2} display="flex" justifyContent="flex-end">
+                <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
+                <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
+                  <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
+                </Menu>
 
-              <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
-              <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
-                <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
-              </Menu>
-            </Box>
+                <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
+                <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
+                  <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
+                </Menu>
+              </Box>
+            )}
           </Box>
         </Hidden>
       )}
