@@ -134,6 +134,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+  console.log(value);
   const handleChange = (event: React.ChangeEvent<{}>, category: Category) => {
     onChange(category);
   };
