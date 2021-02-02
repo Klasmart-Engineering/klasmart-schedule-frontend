@@ -5,14 +5,19 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { Close, DeleteOutlineOutlined, FileCopyOutlined } from "@material-ui/icons";
+import { Close, DeleteOutlineOutlined, FileCopyOutlined, ExpandLessOutlined, ExpandMoreOutlined } from "@material-ui/icons";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { EntityScheduleAddView, EntityScheduleDetailsView, EntityScheduleShortInfo } from "../../api/api.auto";
+import {
+  EntityContentInfoWithDetails,
+  EntityScheduleAddView,
+  EntityScheduleDetailsView,
+  EntityScheduleShortInfo,
+} from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
@@ -39,6 +44,9 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
+import { modelSchedule } from "../../models/ModelSchedule";
+import Paper from "@material-ui/core/Paper";
+import Collapse from "@material-ui/core/Collapse";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -100,6 +108,9 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginLeft: "10px",
     borderRadius: "18px",
     float: "left",
+  },
+  paper: {
+    width: "100%",
   },
 }));
 
@@ -172,6 +183,8 @@ function EditBox(props: CalendarStateProps) {
     getParticipantOptions,
     setSpecificStatus,
     specificStatus,
+    LinkageLessonPlan,
+    contentPreview,
   } = props;
   const { scheduleDetial, contentsAuthList, classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -336,6 +349,10 @@ function EditBox(props: CalendarStateProps) {
       });
     }
   }, [dispatchRepeat, scheduleDetial]);
+  React.useEffect(() => {
+    setProgramItem(modelSchedule.LinkageLessonPlan(contentPreview).program[0] as EntityScheduleShortInfo);
+    setSubjectItem(modelSchedule.LinkageLessonPlan(contentPreview).subject[0] as EntityScheduleShortInfo);
+  }, [contentPreview]);
   const currentTime = timestampInt(new Date().getTime() / 1000);
   const initData: EntityScheduleAddView = {
     attachment: {},
@@ -360,6 +377,7 @@ function EditBox(props: CalendarStateProps) {
   };
   const [scheduleList, setScheduleList] = React.useState<EntityScheduleAddView>(initData);
   const [initScheduleList, setInitScheduleList] = React.useState<EntityScheduleAddView>(initData);
+  const [linkageLessonPlanOpen, setLinkageLessonPlanOpen] = React.useState<boolean>(false);
 
   const timeToTimestamp = (time: string) => {
     const currentTime = time.replace(/-/g, "/").replace(/T/g, " ");
@@ -382,7 +400,7 @@ function EditBox(props: CalendarStateProps) {
 
     if (type === "all_day_start") {
       const currentDate = new Date();
-      if (dateNumFun(currentDate.getMonth() + 1) === M && currentDate.getDate() === D) {
+      if (dateNumFun(currentDate.getMonth() + 1) === M && dateNumFun(currentDate.getDate()) === D) {
         return (currentTime as number) + 60;
       } else {
         return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 0, 0, 0).getTime() / 1000);
@@ -409,6 +427,7 @@ function EditBox(props: CalendarStateProps) {
     }
 
     if (name === "lesson_plan_id") {
+      LinkageLessonPlan(value);
       setLessonPlan(value);
     }
 
@@ -456,7 +475,6 @@ function EditBox(props: CalendarStateProps) {
     lesson_plan_id: false,
     start_at: false,
     end_at: false,
-    subject_id: false,
     program_id: false,
     class_type: false,
   };
@@ -488,7 +506,7 @@ function EditBox(props: CalendarStateProps) {
       }
     }
     if (scheduleList.class_type === "Task") {
-      isValidator.lesson_plan_id = isValidator.program_id = isValidator.subject_id = false;
+      isValidator.lesson_plan_id = isValidator.program_id = false;
     }
     if (scheduleList.class_type === "Homework") {
       isValidator.start_at = isValidator.end_at = false;
@@ -1155,51 +1173,66 @@ function EditBox(props: CalendarStateProps) {
           </Box>
         )}
         {scheduleList.class_type !== "Task" && (
-          <Autocomplete
-            id="combo-box-demo"
-            options={scheduleMockOptions.programList}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "program_id");
-            }}
-            value={programItem}
-            disabled={isScheduleExpired()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className={css.fieldset}
-                label={d("Program").t("assess_label_program")}
-                variant="outlined"
-                error={validator.program_id}
-                value={scheduleList.program_id}
-                required
-              />
-            )}
-          />
-        )}
-        {scheduleList.class_type !== "Task" && (
-          <Autocomplete
-            id="combo-box-demo"
-            options={scheduleMockOptions.subjectList}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "subject_id");
-            }}
-            value={subjectItem}
-            disabled={isScheduleExpired()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className={css.fieldset}
-                label={d("Subject").t("assess_label_subject")}
-                error={validator.subject_id}
-                variant="outlined"
-                value={scheduleList.subject_id}
-                disabled={isScheduleExpired()}
-                required
-              />
-            )}
-          />
+          <>
+            <span
+              style={{ color: "#0E78D5", cursor: "pointer" }}
+              onClick={() => {
+                setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
+              }}
+            >
+              See More{" "}
+              {linkageLessonPlanOpen ? (
+                <ExpandLessOutlined style={{ position: "absolute" }} />
+              ) : (
+                <ExpandMoreOutlined style={{ position: "absolute" }} />
+              )}
+            </span>
+            <Collapse in={linkageLessonPlanOpen}>
+              <Paper elevation={0} className={css.paper}>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList)}
+                  getOptionLabel={(option: any) => option.name}
+                  onChange={(e: any, newValue) => {
+                    autocompleteChange(newValue, "program_id");
+                  }}
+                  value={programItem}
+                  disabled={isScheduleExpired()}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      className={css.fieldset}
+                      label={d("Program").t("assess_label_program")}
+                      variant="outlined"
+                      error={validator.program_id}
+                      value={scheduleList.program_id}
+                      required
+                    />
+                  )}
+                />
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={modelSchedule.LinkageLessonPlan(contentPreview).subject.concat(scheduleMockOptions.subjectList)}
+                  getOptionLabel={(option: any) => option.name}
+                  onChange={(e: any, newValue) => {
+                    autocompleteChange(newValue, "subject_id");
+                  }}
+                  value={subjectItem}
+                  disabled={isScheduleExpired()}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      className={css.fieldset}
+                      label={d("Subject").t("assess_label_subject")}
+                      variant="outlined"
+                      value={scheduleList.subject_id}
+                      disabled={isScheduleExpired()}
+                    />
+                  )}
+                />
+              </Paper>
+            </Collapse>
+          </>
         )}
         <Box
           style={{
@@ -1333,6 +1366,8 @@ interface CalendarStateProps {
   getParticipantOptions: (class_id: string) => void;
   specificStatus?: boolean;
   setSpecificStatus?: (value: boolean) => void;
+  LinkageLessonPlan: (content_id: string) => void;
+  contentPreview: EntityContentInfoWithDetails;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -1355,6 +1390,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     getParticipantOptions,
     setSpecificStatus,
     specificStatus,
+    LinkageLessonPlan,
+    contentPreview,
   } = props;
   const template = (
     <>
@@ -1375,6 +1412,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleMockOptions={scheduleMockOptions}
           participantMockOptions={participantMockOptions}
           getParticipantOptions={getParticipantOptions}
+          LinkageLessonPlan={LinkageLessonPlan}
+          contentPreview={contentPreview}
         />
       </Box>
       <Box
@@ -1397,6 +1436,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getParticipantOptions={getParticipantOptions}
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
+          LinkageLessonPlan={LinkageLessonPlan}
+          contentPreview={contentPreview}
         />
       </Box>
     </>

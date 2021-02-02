@@ -123,13 +123,14 @@ export interface ParticipantsData {
   classes: ClassesData;
 }
 
-interface ConflictsInnerItem {
-  id: string;
-  name: string;
+export interface EntityScheduleShortInfo {
+  id?: string;
+  name?: string;
 }
+
 export interface ConflictsData {
-  class_roster_teachers: ConflictsInnerItem[];
-  class_roster_students: ConflictsInnerItem[];
-  participants_teachers: ConflictsInnerItem[];
-  participants_students: ConflictsInnerItem[];
+  class_roster_teachers: EntityScheduleShortInfo[];
+  class_roster_students: EntityScheduleShortInfo[];
+  participants_teachers: EntityScheduleShortInfo[];
+  participants_students: EntityScheduleShortInfo[];
 }

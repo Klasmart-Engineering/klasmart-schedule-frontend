@@ -10,7 +10,7 @@ import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists } from "../../reducers/content";
+import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
   getClassesByOrg,
@@ -65,9 +65,14 @@ function ScheduleContent() {
   const { type } = state;
   const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
+  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
+  };
+
+  const LinkageLessonPlan = (content_id: string) => {
+    dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
   };
 
   const initModalDate: AlertDialogProps = {
@@ -230,6 +235,8 @@ function ScheduleContent() {
               getParticipantOptions={getParticipantOptions}
               setSpecificStatus={setSpecificStatus}
               specificStatus={specificStatus}
+              contentPreview={contentPreview}
+              LinkageLessonPlan={LinkageLessonPlan}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
