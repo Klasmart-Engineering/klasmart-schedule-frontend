@@ -200,7 +200,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       <Permission
                         value={PermissionType.edit_my_unpublished_learning_outcome_430}
                         render={(value) =>
-                          value && (
+                          value &&
+                          isSelf && (
                             <Button
                               variant="contained"
                               endIcon={<Create />}

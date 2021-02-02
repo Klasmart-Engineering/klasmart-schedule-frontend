@@ -127,6 +127,12 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const [downloadUrl, setDownloadUrl] = React.useState<string | undefined>(attachmentId);
   const [openStatus, setOpenStatus] = React.useState(false);
 
+  React.useEffect(() => {
+    if (attachmentId) {
+      const url: string | undefined = apiResourcePathById(attachmentId);
+      setDownloadUrl(url);
+    }
+  }, [attachmentId]);
   const modalDate: any = {
     title: "",
     text: d("Please upload the file in the correct format").t("schedule_msg_upload_format"),
