@@ -4,30 +4,30 @@ import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
   ClassesByOrganizationQueryVariables,
+  ClassesBySchoolDocument,
+  ClassesBySchoolQuery,
+  ClassesBySchoolQueryVariables,
   ClassesByTeacherDocument,
   ClassesByTeacherQuery,
   ClassesByTeacherQueryVariables,
+  MySchoolIDsDocument,
+  MySchoolIDsQuery,
+  MySchoolIDsQueryVariables,
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
+  ParticipantsByOrganizationDocument,
+  ParticipantsByOrganizationQuery,
+  ParticipantsByOrganizationQueryVariables,
+  ParticipantsBySchoolDocument,
+  ParticipantsBySchoolQuery,
+  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
-  ClassesBySchoolDocument,
-  MySchoolIDsDocument,
-  MySchoolIDsQuery,
-  MySchoolIDsQueryVariables,
-  ClassesBySchoolQuery,
-  ClassesBySchoolQueryVariables,
-  ParticipantsByOrganizationDocument,
-  ParticipantsBySchoolDocument,
-  ParticipantsByOrganizationQuery,
-  ParticipantsByOrganizationQueryVariables,
-  ParticipantsBySchoolQuery,
-  ParticipantsBySchoolQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassType,
@@ -40,9 +40,9 @@ import {
   EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
+import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
-import teacherListByOrg from "../mocks/teacherListByOrg.json";
 
 const MOCK = false;
 interface scheduleViewData {
@@ -55,6 +55,7 @@ interface scheduleViewData {
   status: "NotStart" | "Started" | "Closed";
   class_type: string;
   class_id: string;
+  due_at: number;
 }
 
 interface classOptionsProp {

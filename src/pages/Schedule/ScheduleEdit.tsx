@@ -778,26 +778,49 @@ function EditBox(props: CalendarStateProps) {
 
   const handleDelete = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
-      changeModalDate({
-        title: "",
-        // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-        text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
-        openStatus: true,
-        enableCustomization: false,
-        buttons: [
-          {
-            label: d("OK").t("schedule_button_ok"),
-            event: () => {
-              changeModalDate({ openStatus: false, enableCustomization: false });
+    if (scheduleDetial.class_type === "Homework" || scheduleDetial.class_type === "Task") {
+      if (scheduleDetial.due_at && scheduleDetial.due_at !== 0 && scheduleDetial.due_at < currentTime) {
+        changeModalDate({
+          title: "",
+          text: "You cannot delete this event after the due date",
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
             },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
           },
-        ],
-        handleClose: () => {
-          changeModalDate({ openStatus: false, enableCustomization: false });
-        },
-      });
-      return;
+        });
+        return;
+      }
+    } else {
+      if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
+        changeModalDate({
+          title: "",
+          // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
+          text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+        return;
+      }
     }
     if (scheduleDetial.is_repeat) {
       changeModalDate({

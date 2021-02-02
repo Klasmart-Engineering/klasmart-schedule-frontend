@@ -85,6 +85,7 @@ interface scheduleInfoProps {
   status: string;
   class_type: string;
   class_id: string;
+  due_at: number;
 }
 
 interface InfoProps {
@@ -121,6 +122,29 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const handleEditSchedule = (scheduleInfo: scheduleInfoProps): void => {
+    const currentTime = Math.floor(new Date().getTime());
+    if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+      if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
+        changeModalDate({
+          title: "",
+          text: "You cannot edit this event after the due date",
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+        return;
+      }
+    }
     handleClose();
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
   };

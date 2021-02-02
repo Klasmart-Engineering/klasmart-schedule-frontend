@@ -30,6 +30,7 @@ interface scheduleInfoProps {
   status: string;
   class_type: string;
   class_id: string;
+  due_at: number;
 }
 
 const useStyles = makeStyles(({ shadows }) => ({
@@ -197,25 +198,50 @@ function MyCalendar(props: CalendarProps) {
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoProps) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
-        changeModalDate({
-          title: "",
-          text: d("You can only delete a class at least 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
-          openStatus: true,
-          enableCustomization: false,
-          buttons: [
-            {
-              label: d("OK").t("schedule_button_ok"),
-              event: () => {
-                changeModalDate({ openStatus: false, enableCustomization: false });
+      console.log(scheduleInfo, 11);
+      console.log(currentTime);
+      if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+        if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
+          changeModalDate({
+            title: "",
+            text: "You cannot delete this event after the due date",
+            openStatus: true,
+            enableCustomization: false,
+            buttons: [
+              {
+                label: d("OK").t("schedule_button_ok"),
+                event: () => {
+                  changeModalDate({ openStatus: false, enableCustomization: false });
+                },
               },
+            ],
+            handleClose: () => {
+              changeModalDate({ openStatus: false, enableCustomization: false });
             },
-          ],
-          handleClose: () => {
-            changeModalDate({ openStatus: false, enableCustomization: false });
-          },
-        });
-        return;
+          });
+          return;
+        }
+      } else {
+        if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
+          changeModalDate({
+            title: "",
+            text: d("You can only delete a class at least 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
+            openStatus: true,
+            enableCustomization: false,
+            buttons: [
+              {
+                label: d("OK").t("schedule_button_ok"),
+                event: () => {
+                  changeModalDate({ openStatus: false, enableCustomization: false });
+                },
+              },
+            ],
+            handleClose: () => {
+              changeModalDate({ openStatus: false, enableCustomization: false });
+            },
+          });
+          return;
+        }
       }
       if (scheduleInfo.is_repeat) {
         changeModalDate({
@@ -263,6 +289,7 @@ function MyCalendar(props: CalendarProps) {
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
+    console.log(event, 11);
     const currentTime = Math.floor(new Date().getTime());
     if (
       ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
