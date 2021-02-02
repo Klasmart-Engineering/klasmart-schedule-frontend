@@ -26,6 +26,7 @@ import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
 import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
+import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -390,7 +391,10 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
     return { list, total };
   }
 );
-type IQueryOnLoadContentList = QueryCondition & LoadingMetaPayload;
+type IQueryOnLoadContentList = {
+  exectSearch: string;
+} & QueryCondition &
+  LoadingMetaPayload;
 interface IQyertOnLoadContentListResult {
   folderRes?: AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
   pendingRes?: AsyncReturnType<typeof api.contentsPending.searchPendingContents>;
@@ -406,14 +410,15 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const {
       content: { page_size },
     } = getState();
-    const { name, publish_status, author, content_type, page, program_group, order_by, path } = query;
+    const { name, publish_status, author, content_type, page, program_group, order_by, path, exectSearch } = query;
+
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
-        name,
+        name: exectSearch === ExectSearch.all ? name : "",
         publish_status,
         author,
         content_type,
@@ -421,17 +426,19 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         path,
         page_size,
+        content_name: exectSearch === ExectSearch.name ? name : "",
       });
       return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
       const pendingRes = await api.contentsPending.searchPendingContents({
-        name,
+        name: exectSearch === ExectSearch.all ? name : "",
         publish_status,
         author,
         content_type,
         page,
         order_by,
         page_size,
+        content_name: exectSearch === ExectSearch.name ? name : "",
       });
       return { pendingRes, organization_id };
     } else if (
@@ -440,27 +447,36 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       (publish_status === PublishStatus.pending && author === Author.self)
     ) {
       const privateRes = await api.contentsPrivate.searchPrivateContents({
-        name,
+        name: exectSearch === ExectSearch.all ? name : "",
         publish_status,
         author,
         content_type,
         page,
         order_by,
         page_size,
+        content_name: exectSearch === ExectSearch.name ? name : "",
       });
       return { privateRes, organization_id };
     } else if (program_group) {
-      const badaContent = await api.contentsAuthed.queryAuthContent({ name, program_group, page, order_by, page_size });
+      const badaContent = await api.contentsAuthed.queryAuthContent({
+        name: exectSearch === ExectSearch.all ? name : "",
+        program_group,
+        page,
+        order_by,
+        page_size,
+        content_name: exectSearch === ExectSearch.name ? name : "",
+      });
       return { badaContent, organization_id };
     } else {
       const contentRes = await api.contents.searchContents({
-        name,
+        name: exectSearch === ExectSearch.all ? name : "",
         publish_status,
         author,
         content_type,
         page,
         order_by,
         page_size,
+        content_name: exectSearch === ExectSearch.name ? name : "",
       });
       return { contentRes, organization_id };
     }

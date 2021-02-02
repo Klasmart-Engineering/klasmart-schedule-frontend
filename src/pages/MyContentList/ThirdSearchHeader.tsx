@@ -479,14 +479,14 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Divider />
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
-            <Grid item sm={10} xs={10}>
+            <Grid item sm={9} xs={9}>
               {(value.publish_status === PublishStatus.published ||
                 value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
                 <CreateNewFolderOutlinedIcon onClick={handleClickNewFolderIcon} />
               )}
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
-            <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
+            <Grid container justify="flex-end" alignItems="center" item sm={3} xs={3}>
               {value.content_type !== SearchContentsRequestContentType.assetsandfolder && !value.program_group && (
                 <FilterListIcon onClick={handleClickFilterIcon} />
               )}

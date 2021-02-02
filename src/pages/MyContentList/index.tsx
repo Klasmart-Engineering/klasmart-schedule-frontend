@@ -41,7 +41,7 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
-import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
+import { ExectSearch, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -131,6 +131,7 @@ export default function MyContentList() {
     shareFolder,
     setShareFolder,
   } = useOrganizationList<OrgInfoProps[]>();
+  const [exectSearch, setExectSearch] = useState<string>(ExectSearch.all);
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -181,6 +182,7 @@ export default function MyContentList() {
     }
   };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+    setExectSearch(ExectSearch.all);
     if (condition.path && condition.path !== ROOT_PATH) {
       history.replace({ search: toQueryString(clearNull(value)) });
     } else {
@@ -274,6 +276,10 @@ export default function MyContentList() {
     await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
     closeOrganizationList();
   };
+  const handleChangeExectSearch = (exectSearch: string) => {
+    console.log(exectSearch);
+    setExectSearch(exectSearch);
+  };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -287,10 +293,10 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
+      await dispatch(onLoadContentList({ ...condition, metaLoading: true, exectSearch }));
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey]);
+  }, [condition, reset, dispatch, refreshKey, exectSearch]);
 
   return (
     <div>
@@ -312,8 +318,20 @@ export default function MyContentList() {
           onCreateContent={handleCreateContent}
         />
       )}
-      <SecondSearchHeader value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
-      <SecondSearchHeaderMb value={condition} onChange={handleChange} onCreateContent={handleCreateContent} />
+      <SecondSearchHeader
+        value={condition}
+        onChange={handleChange}
+        onCreateContent={handleCreateContent}
+        onChangeExectSearchCondition={handleChangeExectSearch}
+        exectSearch={exectSearch}
+      />
+      <SecondSearchHeaderMb
+        value={condition}
+        onChange={handleChange}
+        onCreateContent={handleCreateContent}
+        onChangeExectSearchCondition={handleChangeExectSearch}
+        exectSearch={exectSearch}
+      />
       <ThirdSearchHeader
         value={condition}
         onChange={handleChange}

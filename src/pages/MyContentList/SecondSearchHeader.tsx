@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Grid, InputAdornment, Menu, MenuItem } from "@material-ui/core";
+import { Checkbox, FormControlLabel, Grid, Menu, MenuItem } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
@@ -35,10 +35,11 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "capitalize",
   },
   searchBtn: {
-    width: "111px",
+    // width: "98px",
     height: "40px",
     backgroundColor: "#0E78D5",
     marginLeft: "20px",
+    marginTop: "-4px",
   },
   formControl: {
     minWidth: 136,
@@ -55,7 +56,11 @@ const useStyles = makeStyles((theme) => ({
     padding: "20px 0px 10px 0px",
   },
   searchText: {
-    width: "34%",
+    // width: "34%",
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: 0,
+      borderRadius: 0,
+    },
   },
   actives: {
     color: "#0E78D5",
@@ -74,6 +79,22 @@ const useStyles = makeStyles((theme) => ({
   tabs: {
     minHeight: "42px",
     height: "42px",
+  },
+  exectSearchInput: {
+    width: 90,
+    marignRgiht: -10,
+    height: 40,
+    boxSizing: "border-box",
+    background: "#F0F0F0",
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: 0,
+    },
+  },
+  searchCon: {
+    display: "inline-flex",
+    border: "1px solid rgba(0,0,0,0.23)",
+    borderRadius: 4,
+    boxSizing: "border-box",
   },
 }));
 
@@ -104,9 +125,20 @@ const menuItemList = (list: options[]) =>
       {item.label}
     </MenuItem>
   ));
+
+export enum ExectSearch {
+  all = "{all}",
+  name = "name",
+}
+const getExectSearch = () => {
+  return [
+    { label: "All", value: "{all}" },
+    { label: "Name", value: "name" },
+  ];
+};
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onCreateContent } = props;
+  const { exectSearch, value, onChange, onCreateContent, onChangeExectSearchCondition } = props;
   const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClickSearch = () => {
@@ -130,6 +162,14 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         author ? (draft.author = author) : delete draft.author;
       })
     );
+  };
+  const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    // const newValue = produce(value, (draft) => {
+    //   const content_name = event.target.value;
+    //   draft.content_name = content_name;
+    // })
+    // onChange({ ...newValue });
+    onChangeExectSearchCondition(event.target.value);
   };
   useEffect(() => {
     reset();
@@ -165,8 +205,8 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 </MenuItem>
               </Menu>
             </Grid>
-            <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
-              <Controller
+            <Grid item xs={12} sm={12} style={{ textAlign: "center", padding: 0 }}>
+              {/* <Controller
                 as={TextField}
                 name={SEARCH_TEXT_KEY}
                 control={control}
@@ -182,7 +222,33 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                     </InputAdornment>
                   ),
                 }}
-              />
+              /> */}
+              <div className={classes.searchCon}>
+                <TextField
+                  className={classes.exectSearchInput}
+                  size="small"
+                  onChange={handleChangeSearch}
+                  // label={d("Content Type").t("library")}
+                  value={exectSearch}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                >
+                  {menuItemList(getExectSearch())}
+                </TextField>
+                <Controller
+                  style={{ borderLeft: 0 }}
+                  as={TextField}
+                  name={SEARCH_TEXT_KEY}
+                  control={control}
+                  size="small"
+                  className={classes.searchText}
+                  placeholder={d("Search").t("library_label_search")}
+                  defaultValue={value.name || ""}
+                />
+              </div>
+              <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
+                <Search /> {d("Search").t("library_label_search")}
+              </Button>
             </Grid>
           </Grid>
         </Hidden>
@@ -192,12 +258,14 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 }
 
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
+  exectSearch: string;
   onCreateContent: () => any;
+  onChangeExectSearchCondition: (exectSearch: string) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { control, reset, getValues } = useForm();
-  const { value, onChange } = props;
+  const { exectSearch, value, onChange, onChangeExectSearchCondition } = props;
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
       const searchText = getValues()[SEARCH_TEXT_KEY];
@@ -224,6 +292,14 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     });
     onChange({ ...newValue });
   };
+  const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    // const newValue = produce(value, (draft) => {
+    //   const content_name = event.target.value;
+    //   draft.content_name = content_name;
+    // })
+    // onChange({ ...newValue });
+    onChangeExectSearchCondition(event.target.value);
+  };
   useEffect(() => {
     reset();
   }, [value.name, reset]);
@@ -233,16 +309,30 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <Controller
-                as={TextField}
-                name={SEARCH_TEXT_KEY}
-                control={control}
-                size="small"
-                className={classes.searchText}
-                onKeyPress={handleKeyPress}
-                placeholder={d("Search").t("library_label_search")}
-                defaultValue={value.name || ""}
-              />
+              <div className={classes.searchCon}>
+                <TextField
+                  className={classes.exectSearchInput}
+                  size="small"
+                  onChange={handleChangeSearch}
+                  // label={d("Content Type").t("library")}
+                  value={exectSearch}
+                  select
+                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                >
+                  {menuItemList(getExectSearch())}
+                </TextField>
+                <Controller
+                  style={{ borderLeft: 0 }}
+                  as={TextField}
+                  name={SEARCH_TEXT_KEY}
+                  control={control}
+                  size="small"
+                  className={classes.searchText}
+                  onKeyPress={handleKeyPress}
+                  placeholder={d("Search").t("library_label_search")}
+                  defaultValue={value.name || ""}
+                />
+              </div>
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("library_label_search")}
               </Button>
