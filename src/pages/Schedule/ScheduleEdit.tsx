@@ -325,6 +325,7 @@ function EditBox(props: CalendarStateProps) {
         dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       }
       dispatch(getScheduleParticipant({ class_id: newData.class_id }));
+      setLinkageLessonPlanOpen(false);
     }
   }, [dispatch, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();
@@ -350,8 +351,10 @@ function EditBox(props: CalendarStateProps) {
     }
   }, [dispatchRepeat, scheduleDetial]);
   React.useEffect(() => {
-    setProgramItem(modelSchedule.LinkageLessonPlan(contentPreview).program[0] as EntityScheduleShortInfo);
-    setSubjectItem(modelSchedule.LinkageLessonPlan(contentPreview).subject[0] as EntityScheduleShortInfo);
+    const program = modelSchedule.LinkageLessonPlan(contentPreview).program[0] as EntityScheduleShortInfo;
+    const subject = modelSchedule.LinkageLessonPlan(contentPreview).subject[0] as EntityScheduleShortInfo;
+    setProgramItem(program);
+    setSubjectItem(subject);
   }, [contentPreview]);
   const currentTime = timestampInt(new Date().getTime() / 1000);
   const initData: EntityScheduleAddView = {
@@ -417,18 +420,13 @@ function EditBox(props: CalendarStateProps) {
    * @param name
    */
 
-  const autocompleteChange = (value: any | null, name: string) => {
+  const autocompleteChange = async (value: any | null, name: string) => {
     let ids: any[] = [];
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
       getParticipantOptions(value["id"]);
       setClassItem(value);
-    }
-
-    if (name === "lesson_plan_id") {
-      LinkageLessonPlan(value["id"]);
-      setLessonPlan(value);
     }
 
     if (name === "subject_id") {
@@ -441,7 +439,13 @@ function EditBox(props: CalendarStateProps) {
       setProgramItem(value);
     }
 
-    setScheduleData(name, ids);
+    if (name === "lesson_plan_id") {
+      const LinkageLessonData: any = await LinkageLessonPlan(value["id"]);
+      setScheduleList({ ...scheduleList, ...LinkageLessonData, lesson_plan_id: ids });
+      setLessonPlan(value);
+    } else {
+      setScheduleData(name, ids);
+    }
   };
   /**
    * Normal input box change
@@ -500,6 +504,7 @@ function EditBox(props: CalendarStateProps) {
         // @ts-ignore
         validator[name] = !result;
         if (!result) {
+          console.log(scheduleList);
           // @ts-ignore
           verificaPath = false;
         }

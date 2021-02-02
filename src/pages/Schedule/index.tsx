@@ -71,8 +71,15 @@ function ScheduleContent() {
     setChangeProgram(programId);
   };
 
-  const LinkageLessonPlan = (content_id: string) => {
-    dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false }));
+  const LinkageLessonPlan = async (content_id: string) => {
+    let resultInfo: any;
+    resultInfo = ((await dispatch(
+      onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>;
+    return {
+      program_id: resultInfo.payload.contentDetail.program as string,
+      subject_id: resultInfo.payload.contentDetail.subject![0] as string,
+    };
   };
 
   const initModalDate: AlertDialogProps = {
