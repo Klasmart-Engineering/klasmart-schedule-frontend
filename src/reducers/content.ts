@@ -500,6 +500,7 @@ export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQu
 interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentById>[0];
   schedule_id: string;
+  tokenToCall?: boolean;
 }
 interface IQyeryOnLoadCotnentPreviewResult {
   contentDetail: AsyncReturnType<typeof api.contents.getContentById>;
@@ -508,17 +509,19 @@ interface IQyeryOnLoadCotnentPreviewResult {
 }
 export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewResult, IQueryOnLoadContentPreviewParams>(
   "content/onLoadContentPreview",
-  async ({ content_id, schedule_id }) => {
-    let token: string;
-    if (schedule_id) {
-      const data = await api.schedules
-        .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
-        .catch((err) => Promise.reject(err.label));
-      await api.schedules.getScheduleById(schedule_id);
-      token = data.token as string;
-    } else {
-      const data = await api.contents.getContentLiveToken(content_id);
-      token = data.token as string;
+  async ({ content_id, schedule_id, tokenToCall = true }) => {
+    let token: string = "";
+    if (tokenToCall) {
+      if (schedule_id) {
+        const data = await api.schedules
+          .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
+          .catch((err) => Promise.reject(err.label));
+        await api.schedules.getScheduleById(schedule_id);
+        token = data.token as string;
+      } else {
+        const data = await api.contents.getContentLiveToken(content_id);
+        token = data.token as string;
+      }
     }
     const contentDetail = await api.contents.getContentById(content_id);
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;

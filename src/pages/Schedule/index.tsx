@@ -72,7 +72,7 @@ function ScheduleContent() {
   };
 
   const LinkageLessonPlan = (content_id: string) => {
-    dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "" }));
+    dispatch(onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false }));
   };
 
   const initModalDate: AlertDialogProps = {

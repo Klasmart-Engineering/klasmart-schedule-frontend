@@ -14,4 +14,15 @@ export class modelSchedule {
     ];
     return { program, subject };
   }
+
+  static Deduplication(childItem: EntityScheduleShortInfo[]): EntityScheduleShortInfo[] {
+    const reduceTemporaryStorage: { [id: string]: boolean } = {};
+    return childItem.reduce<EntityScheduleShortInfo[]>((item, next) => {
+      if (!reduceTemporaryStorage[next.id as string]) {
+        item.push(next);
+        reduceTemporaryStorage[next.id as string] = true;
+      }
+      return item;
+    }, []);
+  }
 }

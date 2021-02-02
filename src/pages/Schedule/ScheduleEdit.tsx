@@ -427,7 +427,7 @@ function EditBox(props: CalendarStateProps) {
     }
 
     if (name === "lesson_plan_id") {
-      LinkageLessonPlan(value);
+      LinkageLessonPlan(value["id"]);
       setLessonPlan(value);
     }
 
@@ -1191,7 +1191,9 @@ function EditBox(props: CalendarStateProps) {
               <Paper elevation={0} className={css.paper}>
                 <Autocomplete
                   id="combo-box-demo"
-                  options={modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList)}
+                  options={modelSchedule.Deduplication(
+                    modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList)
+                  )}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
                     autocompleteChange(newValue, "program_id");
@@ -1212,7 +1214,9 @@ function EditBox(props: CalendarStateProps) {
                 />
                 <Autocomplete
                   id="combo-box-demo"
-                  options={modelSchedule.LinkageLessonPlan(contentPreview).subject.concat(scheduleMockOptions.subjectList)}
+                  options={modelSchedule.Deduplication(
+                    modelSchedule.LinkageLessonPlan(contentPreview).subject.concat(scheduleMockOptions.subjectList)
+                  )}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
                     autocompleteChange(newValue, "subject_id");
