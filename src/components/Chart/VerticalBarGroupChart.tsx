@@ -7,7 +7,7 @@ import { BarGroup } from "@visx/shape/lib/types";
 import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
-import React, { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useState } from "react";
 
 const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
 
@@ -236,12 +236,17 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
     );
   };
   const tooltipContent =
-    tooltipOpen && tooltipData
+    tooltipOpen && tooltipData && data.length
       ? renderTooltipContent
         ? renderTooltipContent({ barGroupIndex: tooltipData.barGroup.index, barIndex: tooltipData.bar.index })
         : data[tooltipData.barGroup.index].value[tooltipData.bar.index]?.description
       : undefined;
-
+  useEffect(() => {
+    return () => {
+      hideTooltip();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
   return (
     <div className={css.svg}>
       <svg width={viewPort[2]} height={viewPort[3]}>
