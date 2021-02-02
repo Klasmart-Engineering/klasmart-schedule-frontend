@@ -480,7 +480,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                       <Permission
                         value={PermissionType.edit_my_unpublished_learning_outcome_430}
                         render={(value) =>
-                          value && (
+                          value &&
+                          isSelf && (
                             <IconButton
                               color="primary"
                               className={clsx(css.iconButton, css.editButton, css.greenButton)}
@@ -598,9 +599,17 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
                   <Delete fontSize="small" />
                 </IconButton>
-                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={handleEdit}>
-                  <Create fontSize="small" />
-                </IconButton>
+                <Permission
+                  value={PermissionType.edit_my_unpublished_learning_outcome_430}
+                  render={(value) =>
+                    value &&
+                    isSelf && (
+                      <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={handleEdit}>
+                        <Create fontSize="small" />
+                      </IconButton>
+                    )
+                  }
+                />
               </>
             )}
             {!showEdit && (
