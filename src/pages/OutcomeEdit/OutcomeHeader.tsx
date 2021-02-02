@@ -347,15 +347,23 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
                   {d("Delete").t("assess_label_delete")}
                 </Button>
-                <Button
-                  variant="contained"
-                  endIcon={<Create />}
-                  color="primary"
-                  className={clsx(css.headerButton, css.editButton)}
-                  onClick={handleEdit}
-                >
-                  {d("Edit").t("library_label_edit")}
-                </Button>
+                <Permission
+                  value={PermissionType.edit_my_unpublished_learning_outcome_430}
+                  render={(value) =>
+                    value &&
+                    isSelf && (
+                      <Button
+                        variant="contained"
+                        endIcon={<Create />}
+                        color="primary"
+                        className={clsx(css.headerButton, css.editButton)}
+                        onClick={handleEdit}
+                      >
+                        {d("Edit").t("library_label_edit")}
+                      </Button>
+                    )
+                  }
+                />
               </>
             )}
             {!showEdit && (
