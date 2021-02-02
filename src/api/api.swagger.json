@@ -775,6 +775,12 @@
           },
           {
             "type": "string",
+            "description": "search content name",
+            "name": "content_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content path",
             "name": "path",
             "in": "query"
@@ -1631,6 +1637,12 @@
           },
           {
             "type": "string",
+            "description": "search content name",
+            "name": "content_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search program group",
             "name": "program_group",
             "in": "query"
@@ -1800,6 +1812,12 @@
           },
           {
             "type": "string",
+            "description": "search content name",
+            "name": "content_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content program",
             "name": "program",
             "in": "query"
@@ -1918,6 +1936,12 @@
           },
           {
             "type": "string",
+            "description": "search content name",
+            "name": "content_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search program group",
             "name": "program_group",
             "in": "query"
@@ -2014,6 +2038,12 @@
             "type": "string",
             "description": "search program group",
             "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content name",
+            "name": "content_name",
             "in": "query"
           },
           {

@@ -867,22 +867,23 @@ export interface EntityRepeatYearly {
 export interface EntityScheduleAddView {
   attachment?: EntityScheduleShortInfo;
   class_id: string;
+  class_roster_student_ids?: string[];
+  class_roster_teacher_ids?: string[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
-  end_at: number;
+  end_at?: number;
   is_all_day?: boolean;
   is_force?: boolean;
   is_repeat?: boolean;
   lesson_plan_id?: string;
   org_id?: string;
+  participants_student_ids?: string[];
+  participants_teacher_ids?: string[];
   program_id?: string;
   repeat?: EntityRepeatOptions;
-  start_at: number;
+  start_at?: number;
   subject_id?: string;
-
-  /** Abandoned */
-  teacher_ids: string[];
   time_zone_offset?: number;
   title: string;
   version?: number;
@@ -1474,6 +1475,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         scope?: string;
         program_group?: string;
         program?: string;
+        content_name?: string;
         path?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -1726,6 +1728,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         name?: string;
         content_type?: string;
         program?: string;
+        content_name?: string;
         program_group?: string;
         source_type?: string;
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
@@ -1775,6 +1778,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         author?: string;
         content_type?: string;
         scope?: string;
+        content_name?: string;
         program?: string;
         program_group?: string;
         path?: string;
@@ -1807,6 +1811,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        content_name?: string;
         program_group?: string;
         source_type?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -1837,6 +1842,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         program?: string;
         program_group?: string;
+        content_name?: string;
         source_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -2915,16 +2921,14 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
-        time_at?: number;
-        time_zone_offset?: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year";
+        time_at: number;
+        time_zone_offset: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
-        class_types?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
-        due_at_eq?: number;
       },
       params?: RequestParams
     ) =>
