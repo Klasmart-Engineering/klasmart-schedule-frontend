@@ -174,10 +174,7 @@ export async function apiCreateContentTypeSchema<T extends Record<string, unknow
 
 export function apiGetContentTypeList() {
   return import("h5p/libraries/content-types.auto.json").then((x) => {
-    return x.default.contentTypes.filter(
-      (item) =>
-        item.id === "H5P.Flashcards" || item.id === "H5P.ImageSequencing" || item.id === "H5P.MemoryGame" || item.id === "H5P.ImagePair"
-    );
+    return x.default.contentTypes;
   });
 }
 

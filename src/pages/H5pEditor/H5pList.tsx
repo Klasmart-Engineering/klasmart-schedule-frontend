@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Check } from "@material-ui/icons";
+import clsx from "clsx";
 import React from "react";
 import { ContentFileType, ContentTypeList } from "../../api/type";
 import H5pAudio from "../../assets/icons/h5p_audio.svg";
@@ -22,7 +23,7 @@ import { reportMiss } from "../../locale/LocaleManager";
 import { h5plibId2Name } from "../../models/ModelH5pSchema";
 import { MockData } from "./types/index";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({ palette }) => ({
   listItem: {
     borderBottom: "1px solid #ececec",
     position: "relative",
@@ -50,6 +51,9 @@ const useStyles = makeStyles(() => ({
   listContainer: {
     // maxHeight: '660px',
     // overflow: "auto"
+  },
+  disableBackground: {
+    opacity: 0.5,
   },
 }));
 export const assetsData: MockData[] = [
@@ -167,6 +171,7 @@ export const assetsData: MockData[] = [
     },
     popularity: 0,
   },
+
   // {
   //   title: "Document",
   //   id: ContentFileType.doc,
@@ -272,24 +277,65 @@ export default function H5pList(props: H5pListProps) {
     <div className={css.listContainer}>
       <List component="nav" aria-label="secondary mailbox folders">
         {contentTypeList &&
-          contentTypeList.map((item) => {
-            return (
-              <ListItem key={item.id} button className={css.listItem} onClick={() => handleClick(item)}>
-                <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
-                  <img src={item.icon} alt="aaa" />
-                </Box>
-                <Box style={{ width: sm ? "40%" : "80%" }}>
-                  <h3>{item.title}</h3>
-                  <p>{item.summary}</p>
-                </Box>
-                <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
-                  <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item)}>
-                    {reportMiss("Detail", "h5p_detail")}
-                  </Button>
-                </Box>
-              </ListItem>
-            );
-          })}
+          contentTypeList
+            .filter(
+              (item) =>
+                item.id === "H5P.Flashcards" ||
+                item.id === "H5P.ImageSequencing" ||
+                item.id === "H5P.MemoryGame" ||
+                item.id === "H5P.ImagePair" ||
+                item.id === ContentFileType.image ||
+                item.id === ContentFileType.video ||
+                item.id === ContentFileType.audio
+            )
+            .map((item) => {
+              return (
+                <ListItem key={item.id} button className={css.listItem} onClick={() => handleClick(item)}>
+                  <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
+                    <img src={item.icon} alt="aaa" />
+                  </Box>
+                  <Box style={{ width: sm ? "40%" : "80%" }}>
+                    <h3>{item.title}</h3>
+                    <p>{item.summary}</p>
+                  </Box>
+                  <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
+                    <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item)}>
+                      {reportMiss("Detail", "h5p_detail")}
+                    </Button>
+                  </Box>
+                </ListItem>
+              );
+            })}
+        {contentTypeList &&
+          contentTypeList
+            .filter(
+              (item) =>
+                item.id !== "H5P.Flashcards" &&
+                item.id !== "H5P.ImageSequencing" &&
+                item.id !== "H5P.MemoryGame" &&
+                item.id !== "H5P.ImagePair" &&
+                item.id !== ContentFileType.image &&
+                item.id !== ContentFileType.video &&
+                item.id !== ContentFileType.audio
+            )
+            .map((item) => {
+              return (
+                <ListItem key={item.id} className={clsx(css.listItem, css.disableBackground)}>
+                  <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
+                    <img src={item.icon} alt="aaa" />
+                  </Box>
+                  <Box style={{ width: sm ? "40%" : "80%" }}>
+                    <h3>{item.title}</h3>
+                    <p>{item.summary}</p>
+                  </Box>
+                  <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
+                    <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item)}>
+                      {reportMiss("Detail", "h5p_detail")}
+                    </Button>
+                  </Box>
+                </ListItem>
+              );
+            })}
       </List>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">{reportMiss("Change content type?", "h5p_change_content_type")}</DialogTitle>
