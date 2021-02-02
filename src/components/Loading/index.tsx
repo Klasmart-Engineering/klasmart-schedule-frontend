@@ -15,8 +15,9 @@ const useStyles = makeStyles((theme) =>
 export function Loading() {
   const css = useStyles();
   const { loading } = useSelector<RootState, RootState["loading"]>((state) => state.loading);
+  if (!loading) return null;
   return (
-    <Backdrop className={css.backdrop} open={loading}>
+    <Backdrop className={css.backdrop} open>
       <CircularProgress color="inherit" />
     </Backdrop>
   );

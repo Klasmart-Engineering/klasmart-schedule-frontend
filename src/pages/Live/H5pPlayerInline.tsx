@@ -1,4 +1,5 @@
 import { createStyles, makeStyles } from "@material-ui/core";
+import clsx from "clsx";
 import { iframeResizer } from "iframe-resizer";
 import React, { HTMLAttributes, memo, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
@@ -18,12 +19,28 @@ const resolveH5pDir = (scripts: string[]) => {
 };
 
 /* eslint-disable import/no-webpack-loader-syntax */
-const useStyle = makeStyles(() =>
+export const useStyle = makeStyles(() =>
   createStyles({
-    iframe: {
-      width: 1,
-      minWidth: "100%",
-      // border: "1px dashed red",
+    "@global": {
+      html: {
+        width: "100%",
+        height: "100%",
+      },
+      body: {
+        width: "100%",
+        height: "100%",
+      },
+      "#root": {
+        width: "100%",
+        height: "100%",
+      },
+      ".MuiBox-root": {
+        width: "100%",
+        height: "100%",
+      },
+    },
+    h5pContent: {
+      overflow: "hidden",
     },
   })
 );
@@ -130,7 +147,6 @@ interface H5pPlayerInlineProps {
 }
 export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
   const dispatch = useDispatch();
-  const sizeRef = useRef<ISize>({ width: undefined, height: undefined });
   const { valueSource, id, scheduleId, userId, onReady, isPreview } = props;
   const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
   const onReadyRef = useRef(onReady);
@@ -213,28 +229,7 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
     });
     /* eslint-ignore-next-line react-hooks/exhaustive-deps */
   }, [id, userId, scheduleId, valueSource, library, isPreview, injectBeforeLoad, injectAfterLoad]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const parentIFrame = (window as any).parentIFrame;
-      if (!parentIFrame) return;
-      parentIFrame.autoResize(false);
-      const offsetHeight = document.body.offsetHeight;
-      const offsetWidth = document.body.offsetWidth;
-      if (offsetHeight !== sizeRef.current.height || offsetWidth !== sizeRef.current.width) {
-        sizeRef.current.width = offsetWidth;
-        sizeRef.current.height = offsetHeight;
-        parentIFrame.size(offsetHeight, offsetWidth);
-      }
-      return () => clearInterval(timer);
-    }, 1000);
-  }, []);
-
-  return (
-    <div className={css.iframe}>
-      <div id="h5-content" className="h5p-content" data-content-id={libraryContentId}></div>
-    </div>
-  );
+  return <div id="h5-content" className={clsx("h5p-content", css.h5pContent)} data-content-id={libraryContentId} data-iframe-height />;
 }, equalH5pPlayerInlineProps);
 
 interface InjectHandler {
@@ -248,34 +243,29 @@ interface InlineIframeManagerProps {
   styles?: string[];
 }
 class InlineIframeManager {
-  contentWindow: Window;
-  injectAfterLoad: InjectHandler;
-
   constructor(props: InlineIframeManagerProps) {
     const { contentWindow, injectBeforeLoad, injectAfterLoad, scripts = [], styles = [] } = props;
-    this.injectAfterLoad = injectAfterLoad;
-    this.contentWindow = contentWindow;
     const documentElement = contentWindow.document.documentElement;
     if (!documentElement) throw new Error("My Error: iframe.contentDocument?.documentElement not exist");
-    this.addStyles(styles);
-    this.injectScript(injectBeforeLoad)?.then(() => {
-      this.addScripts(scripts).then(this.ready.bind(this));
+    this.addStyles(contentWindow, styles);
+    this.injectScript(contentWindow, injectBeforeLoad)?.then(() => {
+      this.addScripts(contentWindow, scripts).then(() => this.ready(contentWindow, injectAfterLoad));
     });
   }
 
-  ready() {
-    this.contentWindow.dispatchEvent(new Event("ready"));
-    setTimeout(() => this.injectAfterLoad(this.contentWindow));
+  ready(contentWindow: Window, injectAfterLoad: InjectHandler) {
+    contentWindow.dispatchEvent(new Event("ready"));
+    setTimeout(() => injectAfterLoad(contentWindow));
   }
 
-  setHtmlElementClass(classNames: string[]) {
-    const contentDocument = this.contentWindow.document;
+  setHtmlElementClass(contentWindow: Window, classNames: string[]) {
+    const contentDocument = contentWindow.document;
     if (!contentDocument) return;
     contentDocument.documentElement.classList.add(...classNames);
   }
 
-  async addScripts(scripts: string[]) {
-    const contentDocument = this.contentWindow.document;
+  async addScripts(contentWindow: Window, scripts: string[]) {
+    const contentDocument = contentWindow.document;
     if (!contentDocument) return;
     const loadScript = (src: string) => {
       return new Promise((resolve, reject) => {
@@ -292,11 +282,12 @@ class InlineIframeManager {
   }
 
   addNode<T extends keyof HTMLElementTagNameMap, A extends HTMLAttributes<HTMLElementTagNameMap[T]>>(
+    contentWindow: Window,
     type: "body" | "head",
     tag: T,
     attrs: A
   ) {
-    const contentDocument = this.contentWindow.document;
+    const contentDocument = contentWindow.document;
     if (!contentDocument) return;
     const element = contentDocument.createElement(tag);
     Object.keys(attrs).forEach((name) => {
@@ -309,18 +300,19 @@ class InlineIframeManager {
       }
     });
     contentDocument[type].append(element);
+    return element;
   }
 
-  addInlineScript(code: string) {
-    const contentDocument = this.contentWindow.document;
+  addInlineScript(contentWindow: Window, code: string) {
+    const contentDocument = contentWindow.document;
     if (!contentDocument) return;
     const scriptElement = contentDocument.createElement("script");
     scriptElement.innerText = code;
     contentDocument.head.append(scriptElement);
   }
 
-  addStyles(styles: string[]) {
-    const contentDocument = this.contentWindow.document;
+  addStyles(contentWindow: Window, styles: string[]) {
+    const contentDocument = contentWindow.document;
     if (!contentDocument) return;
     styles.forEach((src) => {
       const linkElement = contentDocument.createElement("link");
@@ -330,9 +322,9 @@ class InlineIframeManager {
     });
   }
 
-  injectScript(handler?: InjectHandler) {
-    if (!this.contentWindow || !handler) return;
-    return handler(this.contentWindow);
+  injectScript(contentWindow: Window, handler?: InjectHandler) {
+    if (!contentWindow || !handler) return;
+    return handler(contentWindow);
   }
 }
 

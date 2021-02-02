@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from "@material-ui/core";
-import { iframeResizer } from "iframe-resizer";
+import iframeResizer from "iframe-resizer/js/iframeResizer";
 import React, { HTMLAttributes, useCallback, useMemo, useRef } from "react";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { h5pName2libId, parseLibraryContent } from "../../models/ModelH5pSchema";

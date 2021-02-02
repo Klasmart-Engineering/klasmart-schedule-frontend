@@ -1,5 +1,5 @@
 import { Box } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ContentType } from "../../api/type";
 import { RootState } from "../../reducers";
@@ -25,22 +25,20 @@ export default function LiveH5p() {
     contentPreview.content_type === ContentType.material && contentPreview.data
       ? (JSON.parse(contentPreview.data)?.content as string)
       : undefined;
-  React.useEffect(() => {
+  useEffect(() => {
     if (!materialId) return;
     dispatch(onLoadContentPreview({ metaLoading: true, content_id: materialId, schedule_id: "" }));
   }, [materialId, dispatch]);
-
+  if (!h5pContent) return null;
   return (
     <Box>
-      {h5pContent && (
-        <H5pPlayerInline
-          isPreview={type === LiveType.preview}
-          valueSource={h5pContent}
-          id={materialId}
-          scheduleId={schedule_id}
-          userId={user_id}
-        />
-      )}
+      <H5pPlayerInline
+        isPreview={type === LiveType.preview}
+        valueSource={h5pContent}
+        id={materialId}
+        scheduleId={schedule_id}
+        userId={user_id}
+      />
     </Box>
   );
 }

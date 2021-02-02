@@ -10,7 +10,9 @@ import { localeManager, t } from "./locale/LocaleManager";
 import { store } from "./reducers";
 import { actError, actInfo } from "./reducers/notify";
 import * as serviceWorker from "./serviceWorker";
+import { livePolyfill } from "./setupPolyfill";
 
+livePolyfill();
 // const UNAUTHORIZED_LABEL = 'general_error_unauthorized';
 
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
