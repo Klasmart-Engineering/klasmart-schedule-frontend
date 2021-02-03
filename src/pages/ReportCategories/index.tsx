@@ -27,7 +27,7 @@ export function ReportCategories() {
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
     if (value === Category.learningOutcomes) return;
     if (value === Category.archived) history.push(ReportAchievementList.routeBasePath);
-    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath)
+    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
   };
   const handleChangeFilter: SecondSearchHeaderProps["onChange"] = (value, tab) => {
     history.replace({ search: toQueryString({ [tab]: value }) });

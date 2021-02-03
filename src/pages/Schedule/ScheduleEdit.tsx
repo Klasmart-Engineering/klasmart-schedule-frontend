@@ -198,6 +198,7 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
+  const [scheduleRestNum, setScheduleRestNum] = React.useState(0);
   const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
   const perm = usePermission([
     PermissionType.create_event_520,
@@ -271,7 +272,7 @@ function EditBox(props: CalendarStateProps) {
     setInitScheduleList(newData);
     dispatch(resetScheduleDetial(initScheduleDetial));
     dispatch(resetParticipantList());
-  }, [dispatch, timesTamp]);
+  }, [dispatch, timesTamp, scheduleRestNum]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: string[] = [];
@@ -780,11 +781,7 @@ function EditBox(props: CalendarStateProps) {
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
         })
       );
-      /*    changeTimesTamp({
-        start: Math.floor(new Date().getTime() / 1000),
-        end: Math.floor(new Date().getTime() / 1000),
-      });*/
-
+      setScheduleRestNum(scheduleRestNum + 1);
       changeModalDate({
         openStatus: false,
       });

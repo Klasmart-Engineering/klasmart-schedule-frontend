@@ -20,7 +20,7 @@ import {
   EntityOrganizationInfo,
   EntityOrganizationProperty,
 } from "../api/api.auto";
-import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import { apiIsEnableExactSearch, apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -411,14 +411,15 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       content: { page_size },
     } = getState();
     const { name, publish_status, author, content_type, page, program_group, order_by, path, exectSearch } = query;
-    const nameValue = exectSearch === ExectSearch.all ? name : "";
+    const isEnableExactSearch = apiIsEnableExactSearch();
+    const nameValue = isEnableExactSearch ? (exectSearch === ExectSearch.all ? name : "") : name;
     const contentNameValue = exectSearch === ExectSearch.name ? name : "";
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
-      const folderRes = await api.contentsFolders.queryFolderContent({
+      const params = {
         name: nameValue,
         publish_status,
         author,
@@ -428,10 +429,12 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         path,
         page_size,
         content_name: contentNameValue,
-      });
+      };
+      if (!isEnableExactSearch) delete params.content_name;
+      const folderRes = await api.contentsFolders.queryFolderContent(params);
       return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
-      const pendingRes = await api.contentsPending.searchPendingContents({
+      const params = {
         name: nameValue,
         publish_status,
         author,
@@ -440,14 +443,16 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         page_size,
         content_name: contentNameValue,
-      });
+      };
+      if (!isEnableExactSearch) delete params.content_name;
+      const pendingRes = await api.contentsPending.searchPendingContents(params);
       return { pendingRes, organization_id };
     } else if (
       publish_status === PublishStatus.draft ||
       publish_status === PublishStatus.rejected ||
       (publish_status === PublishStatus.pending && author === Author.self)
     ) {
-      const privateRes = await api.contentsPrivate.searchPrivateContents({
+      const params = {
         name: nameValue,
         publish_status,
         author,
@@ -456,20 +461,24 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         page_size,
         content_name: contentNameValue,
-      });
+      };
+      if (!isEnableExactSearch) delete params.content_name;
+      const privateRes = await api.contentsPrivate.searchPrivateContents(params);
       return { privateRes, organization_id };
     } else if (program_group) {
-      const badaContent = await api.contentsAuthed.queryAuthContent({
+      const params = {
         name: nameValue,
         program_group,
         page,
         order_by,
         page_size,
         content_name: contentNameValue,
-      });
+      };
+      if (!isEnableExactSearch) delete params.content_name;
+      const badaContent = await api.contentsAuthed.queryAuthContent(params);
       return { badaContent, organization_id };
     } else {
-      const contentRes = await api.contents.searchContents({
+      const params = {
         name: nameValue,
         publish_status,
         author,
@@ -478,7 +487,9 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         page_size,
         content_name: contentNameValue,
-      });
+      };
+      if (!isEnableExactSearch) delete params.content_name;
+      const contentRes = await api.contents.searchContents(params);
       return { contentRes, organization_id };
     }
   }

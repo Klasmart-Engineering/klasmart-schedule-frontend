@@ -1,1 +1,1 @@
-export * from './RichTextInput';
+export * from "./RichTextInput";

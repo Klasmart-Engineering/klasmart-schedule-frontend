@@ -251,7 +251,7 @@ function ContentEditForm() {
     [dispatch, history, searchContentType, searchMedia, lesson]
   );
   const handleGoBack = useCallback(() => {
-    back ? history.push(back) : history.goBack();
+    back ? history.replace(back) : history.goBack();
   }, [back, history]);
 
   const handleChangePage = useMemo(
@@ -471,7 +471,7 @@ function ContentEditForm() {
                               key={allDefaultValueAndKey["source_type"]?.key}
                               render={(sourceTypeProps) => (
                                 <ContentH5p
-                                  sub={id ? H5pSub.edit : H5pSub.new}
+                                  sub={id ? H5pSub.edit : dataSourceProps.value ? H5pSub.view : H5pSub.new}
                                   value={dataSourceProps.value}
                                   onChange={dataSourceProps.onChange}
                                   onChangeSourceType={sourceTypeProps.onChange}
