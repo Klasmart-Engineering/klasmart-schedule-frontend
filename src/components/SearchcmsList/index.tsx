@@ -126,11 +126,10 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
-
   return (
     <Box>
       <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
-        {searchType === "searchOutcome" && (
+        {(process.env.REACT_APP_ENABLE_EXECT_SEARCH === "0" || searchType === "searchOutcome") && (
           <Hidden smDown>
             <Controller
               as={TextField}
@@ -154,7 +153,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
             </Button>
           </Hidden>
         )}
-        {searchType === "searchMedia" && (
+        {searchType === "searchMedia" && process.env.REACT_APP_ENABLE_EXECT_SEARCH === "1" && (
           <Hidden smDown>
             <Controller
               control={control}
