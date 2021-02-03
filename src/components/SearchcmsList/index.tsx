@@ -17,6 +17,7 @@ import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { apiIsEnableExactSearch } from "../../api/extra";
 import { d, reportMiss } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -106,11 +107,11 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
   const { searchType, lesson, onSearch, onCheckAssumed, exactSerch = "all", value, assumed, isShare, onCheckShare } = props;
   const { getValues, control } = useForm<Pick<SearchcmsListProps, "value" | "exactSerch">>();
+  const enableExactSearch = apiIsEnableExactSearch();
   const handleClickSearch = useCallback(() => {
     const { value, exactSerch } = getValues();
     onSearch(value, exactSerch);
   }, [getValues, onSearch]);
-
   const handleChangeAssumed = useCallback(
     (e) => {
       if (onCheckAssumed) onCheckAssumed(e.target.checked ? "true" : "");
@@ -129,7 +130,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   return (
     <Box>
       <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
-        {(process.env.REACT_APP_ENABLE_EXECT_SEARCH === "0" || searchType === "searchOutcome") && (
+        {(!enableExactSearch || searchType === "searchOutcome") && (
           <Hidden smDown>
             <Controller
               as={TextField}
@@ -153,7 +154,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
             </Button>
           </Hidden>
         )}
-        {searchType === "searchMedia" && process.env.REACT_APP_ENABLE_EXECT_SEARCH === "1" && (
+        {searchType === "searchMedia" && enableExactSearch && (
           <Hidden smDown>
             <Controller
               control={control}

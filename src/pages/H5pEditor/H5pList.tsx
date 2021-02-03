@@ -54,6 +54,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
   disableBackground: {
     opacity: 0.5,
+    cursor: "not-allowed",
   },
 }));
 export const assetsData: MockData[] = [
