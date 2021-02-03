@@ -204,7 +204,8 @@ function MyCalendar(props: CalendarProps) {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
           changeModalDate({
             title: "",
-            text: "You cannot delete this event after the due date",
+            // text: "You cannot delete this event after the due date",
+            text: d("You cannot delete this event after the due date. ").t("schedule_msg_delete_due_date"),
             openStatus: true,
             enableCustomization: false,
             buttons: [
@@ -289,7 +290,6 @@ function MyCalendar(props: CalendarProps) {
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoProps) => {
-    console.log(event, 11);
     const currentTime = Math.floor(new Date().getTime());
     if (
       ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||

@@ -127,7 +127,8 @@ export default function CustomizeTempalte(props: InfoProps) {
       if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
         changeModalDate({
           title: "",
-          text: "You cannot edit this event after the due date",
+          // text: "You cannot edit this event after the due date",
+          text: d("You cannot edit this event after the due date. ").t("schedule_msg_edit_due_date"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
