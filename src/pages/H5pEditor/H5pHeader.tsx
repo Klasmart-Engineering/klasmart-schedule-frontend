@@ -78,8 +78,9 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "20px",
   },
   all_content_types: {
-    paddingLeft: "20px",
-    paddingRight: "10px",
+    // paddingLeft: "20px",
+    // paddingRight: "10px",
+    padding: "20px 0 0 20px",
   },
   downIcon: {
     position: "absolute",
