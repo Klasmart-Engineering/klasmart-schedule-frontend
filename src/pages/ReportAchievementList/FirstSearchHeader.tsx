@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ShowChartIcon from "@material-ui/icons/ShowChart";
 import clsx from "clsx";
 import React from "react";
-import { apiIsEnableExactSearch } from "../../api/extra";
+import { apiIsEnableReport } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
 import { d, reportMiss } from "../../locale/LocaleManager";
@@ -87,7 +87,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
   const createHandleClick = (category: Category) => () => onChange(category);
-  const isEnableExactSearch = apiIsEnableExactSearch();
+  const isEnableReport = apiIsEnableReport();
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -115,7 +115,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                         {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
                       </Button>
                     )}
-                    {!isEnableExactSearch && (
+                    {isEnableReport && (
                       <Button
                         onClick={createHandleClick(Category.studentPerformance)}
                         className={clsx(css.nav, { [css.actives]: value === Category.studentPerformance })}
@@ -141,7 +141,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const handleChange = (event: React.ChangeEvent<{}>, category: Category) => {
     onChange(category);
   };
-  const isEnableExactSearch = apiIsEnableExactSearch();
+  const isEnableReport = apiIsEnableReport();
   return (
     <div className={classes.root}>
       <Permission
@@ -172,7 +172,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                           className={classes.capitalize}
                         />
                       )}
-                      {!isEnableExactSearch && (
+                      {isEnableReport && (
                         <Tab
                           value={Category.studentPerformance}
                           label={reportMiss("Student Performance", "report_label_student_performance")}

@@ -194,3 +194,6 @@ export function apiIsEnableNewH5p() {
 export function apiIsEnableExactSearch() {
   return process.env.REACT_APP_ENABLE_EXECT_SEARCH === "1";
 }
+export function apiIsEnableReport() {
+  return process.env.REACT_APP_ENABLE_REPORT === "1";
+}
