@@ -117,5 +117,3 @@ export const localeManager = new LocaleManager(shouldBeLangName(defaultLocale));
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
 export const reportMiss = localeManager.reportMiss.bind(localeManager);
-
-(window as any).localeManager = localeManager;
