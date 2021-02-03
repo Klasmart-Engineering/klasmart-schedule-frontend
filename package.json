@@ -91,7 +91,8 @@
   "lint-staged": {
     "public/h5p/**/*": [
       "node ./scripts/syncH5pVersion.js",
-      "git add"
+      "git add",
+      "git add public/h5p/package.json"
     ],
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix --max-warnings=0",
