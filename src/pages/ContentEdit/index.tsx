@@ -251,7 +251,7 @@ function ContentEditForm() {
     [dispatch, history, searchContentType, searchMedia, lesson]
   );
   const handleGoBack = useCallback(() => {
-    back ? history.push(back) : history.goBack();
+    back ? history.replace(back) : history.goBack();
   }, [back, history]);
 
   const handleChangePage = useMemo(
