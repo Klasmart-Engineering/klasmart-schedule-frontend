@@ -55,10 +55,12 @@ interface CropImageRenderProps {
 
 interface CropImageProps {
   aspectRatio?: number;
+  maxWidth?: number;
+  maxHeight?: number;
   render: (props: CropImageRenderProps) => ReactNode;
 }
 export function CropImage(props: CropImageProps) {
-  const { render, aspectRatio } = props;
+  const { render, aspectRatio, maxWidth, maxHeight } = props;
   const css = useStyles();
   const [cropper, setCropper] = useState<Cropper>();
   const [[file, src, resolve, reject], setCropState] = useState<[FileLike?, string?, CropResolve?, Function?]>([]);
@@ -74,11 +76,11 @@ export function CropImage(props: CropImageProps) {
   );
   const handleConfirm = useCallback(async () => {
     if (!cropper || !file) return;
-    const canvas = cropper.getCroppedCanvas();
+    const canvas = cropper.getCroppedCanvas({ maxWidth, maxHeight });
     const resultFile = await getFileFromCanvas(canvas, file);
     setCropState([]);
     if (resolve) resolve(resultFile);
-  }, [resolve, cropper, file]);
+  }, [resolve, cropper, file, maxWidth, maxHeight]);
   const handleCancel = useCallback(() => {
     setCropState([]);
     reject && reject();

@@ -18,7 +18,7 @@ import {
   MenuItem,
   styled,
   TextField,
-  TextFieldProps,
+  TextFieldProps
 } from "@material-ui/core";
 import { Cancel, Close, CloudUploadOutlined, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
@@ -50,7 +50,7 @@ import {
   H5P_ROOT_NAME,
   IH5PCopyright,
   isH5pListItemInfo,
-  MapHandlerProps,
+  MapHandlerProps
 } from "../../models/ModelH5pSchema";
 import { ProgressWithText } from "../../pages/ContentEdit/Details";
 import { CropImage } from "../CropImage";
@@ -58,6 +58,9 @@ import { getImageDimension, SingleUploader, SingleUploaderProps } from "../Singl
 import { Thumbnail } from "../Thumbnail";
 
 const MULTILINE_TEXT_FIELD_MIN_HEIGHT = 19;
+const MAX_UPLOAD_IMAGE_WIDTH = 4096;
+const MAX_UPLOAD_IMAGE_HEIGHT = 2160;
+
 export interface H5PBaseElementProps<S extends H5PItemSemantic> extends MapHandlerProps<JSX.Element, H5PItemHelper<S>> {
   className?: string;
   error?: string | boolean;
@@ -481,6 +484,8 @@ export function H5pElementImage(props: H5pElementImageProps) {
         <FormHelperText error={!!error}>{error}</FormHelperText>
       </div>
       <CropImage
+        maxWidth={MAX_UPLOAD_IMAGE_WIDTH}
+        maxHeight={MAX_UPLOAD_IMAGE_HEIGHT}
         render={({ crop }) => (
           <SingleUploader
             partition="assets"
