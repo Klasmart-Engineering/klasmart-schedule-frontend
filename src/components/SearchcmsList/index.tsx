@@ -167,7 +167,16 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                   defaultValue={exactSerch}
                   render={(exactSerchProps) => (
                     <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
-                      <TextField {...exactSerchProps} select className={css.exactSerch} size="small">
+                      <TextField
+                        defaultValue={exactSerchProps.value}
+                        onChange={(e) => {
+                          exactSerchProps.onChange(e.target.value);
+                          handleClickSearch();
+                        }}
+                        select
+                        className={css.exactSerch}
+                        size="small"
+                      >
                         <MenuItem value="all">All</MenuItem>
                         <MenuItem value="name">Name</MenuItem>
                       </TextField>
