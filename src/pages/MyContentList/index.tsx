@@ -189,6 +189,13 @@ export default function MyContentList() {
       history.push({ search: toQueryString(clearNull(value)) });
     }
   };
+  const handleNotChangeExectSearchCondition: FirstSearchHeaderProps["onChange"] = (value) => {
+    if (condition.path && condition.path !== ROOT_PATH) {
+      history.replace({ search: toQueryString(clearNull(value)) });
+    } else {
+      history.push({ search: toQueryString(clearNull(value)) });
+    }
+  };
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
@@ -293,7 +300,7 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      await dispatch(onLoadContentList({ ...condition, metaLoading: true, exectSearch }));
+      await dispatch(onLoadContentList({ ...condition, exectSearch, metaLoading: true }));
       setTimeout(reset, 500);
     })();
   }, [condition, reset, dispatch, refreshKey, exectSearch]);
@@ -322,6 +329,7 @@ export default function MyContentList() {
         value={condition}
         onChange={handleChange}
         onCreateContent={handleCreateContent}
+        onChangeSearchCondition={handleNotChangeExectSearchCondition}
         onChangeExectSearchCondition={handleChangeExectSearch}
         exectSearch={exectSearch}
       />
@@ -329,12 +337,13 @@ export default function MyContentList() {
         value={condition}
         onChange={handleChange}
         onCreateContent={handleCreateContent}
+        onChangeSearchCondition={handleNotChangeExectSearchCondition}
         onChangeExectSearchCondition={handleChangeExectSearch}
         exectSearch={exectSearch}
       />
       <ThirdSearchHeader
         value={condition}
-        onChange={handleChange}
+        onChange={handleNotChangeExectSearchCondition}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
         onAddFolder={() => handlePageAddFolder()}
@@ -349,7 +358,7 @@ export default function MyContentList() {
       />
       <ThirdSearchHeaderMb
         value={condition}
-        onChange={handleChange}
+        onChange={handleNotChangeExectSearchCondition}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
         onAddFolder={() => handlePageAddFolder()}

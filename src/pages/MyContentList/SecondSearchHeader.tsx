@@ -138,7 +138,7 @@ const getExectSearch = () => {
 };
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { exectSearch, value, onChange, onCreateContent, onChangeExectSearchCondition } = props;
+  const { exectSearch, value, onChange, onCreateContent, onChangeExectSearchCondition, onChangeSearchCondition } = props;
   const { control, reset, getValues } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClickSearch = () => {
@@ -146,7 +146,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
       const searchText = getValues()[SEARCH_TEXT_KEY];
       searchText ? (draft.name = searchText) : delete draft.name;
     });
-    onChange({ ...newValue, page: 1 });
+    onChangeSearchCondition({ ...newValue, page: 1 });
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -261,17 +261,18 @@ export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
   exectSearch: string;
   onCreateContent: () => any;
   onChangeExectSearchCondition: (exectSearch: string) => any;
+  onChangeSearchCondition: (value: QueryCondition) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { control, reset, getValues } = useForm();
-  const { exectSearch, value, onChange, onChangeExectSearchCondition } = props;
+  const { exectSearch, value, onChange, onChangeExectSearchCondition, onChangeSearchCondition } = props;
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
       const searchText = getValues()[SEARCH_TEXT_KEY];
       searchText ? (draft.name = searchText) : delete draft.name;
     });
-    onChange({ ...newValue, page: 1 });
+    onChangeSearchCondition({ ...newValue, page: 1 });
   };
 
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
