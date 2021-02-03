@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
     height: "40px",
     backgroundColor: "#0E78D5",
     marginLeft: "20px",
-    marginTop: "-4px",
   },
   formControl: {
     minWidth: 136,
@@ -96,6 +95,7 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid rgba(0,0,0,0.23)",
     borderRadius: 4,
     boxSizing: "border-box",
+    verticalAlign: "top",
   },
 }));
 
@@ -315,17 +315,19 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
               {!isEnableExactSearch && (
-                <Controller
-                  style={{ borderLeft: 0 }}
-                  as={TextField}
-                  name={SEARCH_TEXT_KEY}
-                  control={control}
-                  size="small"
-                  className={classes.searchText}
-                  onKeyPress={handleKeyPress}
-                  placeholder={d("Search").t("library_label_search")}
-                  defaultValue={value.name || ""}
-                />
+                <div className={classes.searchCon}>
+                  <Controller
+                    style={{ borderLeft: 0 }}
+                    as={TextField}
+                    name={SEARCH_TEXT_KEY}
+                    control={control}
+                    size="small"
+                    className={classes.searchText}
+                    onKeyPress={handleKeyPress}
+                    placeholder={d("Search").t("library_label_search")}
+                    defaultValue={value.name || ""}
+                  />
+                </div>
               )}
               {isEnableExactSearch && (
                 <div className={classes.searchCon}>
