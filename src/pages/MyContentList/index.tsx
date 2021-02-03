@@ -202,7 +202,6 @@ export default function MyContentList() {
     } else {
       history.push({ search: toQueryString(clearNull(value)) });
     }
-    await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
   };
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
@@ -311,7 +310,7 @@ export default function MyContentList() {
       setTimeout(reset, 500);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition, reset, dispatch, refreshKey]);
+  }, [condition, reset, dispatch, refreshKey, exectSearch]);
 
   return (
     <div>
@@ -351,7 +350,7 @@ export default function MyContentList() {
       />
       <ThirdSearchHeader
         value={condition}
-        onChange={handleNotChangeExectSearchCondition}
+        onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
         onAddFolder={() => handlePageAddFolder()}
@@ -366,7 +365,7 @@ export default function MyContentList() {
       />
       <ThirdSearchHeaderMb
         value={condition}
-        onChange={handleNotChangeExectSearchCondition}
+        onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
         onAddFolder={() => handlePageAddFolder()}
