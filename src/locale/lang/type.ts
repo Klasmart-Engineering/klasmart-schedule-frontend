@@ -3,6 +3,15 @@ import { IntlFormatters, MessageDescriptor } from "react-intl";
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
 export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
+export function assertLangName(name?: string): asserts name is LangName {
+  if (!name || !["en", "ko", "zh", "vi", "id"].includes(name)) throw new TypeError();
+}
+
+export function shouldBeLangName(name?: string): LangName {
+  assertLangName(name);
+  return name;
+}
+
 type LangRecord<T = string> =
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
