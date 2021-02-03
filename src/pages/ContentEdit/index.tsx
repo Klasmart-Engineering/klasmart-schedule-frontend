@@ -471,7 +471,7 @@ function ContentEditForm() {
                               key={allDefaultValueAndKey["source_type"]?.key}
                               render={(sourceTypeProps) => (
                                 <ContentH5p
-                                  sub={id ? H5pSub.edit : H5pSub.new}
+                                  sub={id ? H5pSub.edit : dataSourceProps.value ? H5pSub.view : H5pSub.new}
                                   value={dataSourceProps.value}
                                   onChange={dataSourceProps.onChange}
                                   onChangeSourceType={sourceTypeProps.onChange}
