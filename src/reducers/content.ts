@@ -54,6 +54,7 @@ interface IContentState {
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
   user_id: string;
+  exectSearch: string;
 }
 
 interface RootState {
@@ -185,6 +186,7 @@ const initialState: IContentState = {
   selectedOrg: [],
   myOrgId: "",
   user_id: "",
+  exectSearch: ExectSearch.all,
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -402,6 +404,7 @@ interface IQyertOnLoadContentListResult {
   contentRes?: AsyncReturnType<typeof api.contents.searchContents>;
   badaContent?: AsyncReturnType<typeof api.contentsAuthed.queryAuthContent>;
   organization_id: string;
+  exectSearch: string;
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
@@ -432,7 +435,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       };
       if (!isEnableExactSearch) delete params.content_name;
       const folderRes = await api.contentsFolders.queryFolderContent(params);
-      return { folderRes, organization_id };
+      return { folderRes, organization_id, exectSearch };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
       const params = {
         name: nameValue,
@@ -446,7 +449,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       };
       if (!isEnableExactSearch) delete params.content_name;
       const pendingRes = await api.contentsPending.searchPendingContents(params);
-      return { pendingRes, organization_id };
+      return { pendingRes, organization_id, exectSearch };
     } else if (
       publish_status === PublishStatus.draft ||
       publish_status === PublishStatus.rejected ||
@@ -464,7 +467,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       };
       if (!isEnableExactSearch) delete params.content_name;
       const privateRes = await api.contentsPrivate.searchPrivateContents(params);
-      return { privateRes, organization_id };
+      return { privateRes, organization_id, exectSearch };
     } else if (program_group) {
       const params = {
         name: nameValue,
@@ -476,7 +479,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       };
       if (!isEnableExactSearch) delete params.content_name;
       const badaContent = await api.contentsAuthed.queryAuthContent(params);
-      return { badaContent, organization_id };
+      return { badaContent, organization_id, exectSearch };
     } else {
       const params = {
         name: nameValue,
@@ -490,7 +493,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       };
       if (!isEnableExactSearch) delete params.content_name;
       const contentRes = await api.contents.searchContents(params);
-      return { contentRes, organization_id };
+      return { contentRes, organization_id, exectSearch };
     }
   }
 );
@@ -1098,12 +1101,14 @@ const { actions, reducer } = createSlice({
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
       state.parentFolderInfo = initialState.parentFolderInfo;
+      state.exectSearch = initialState.exectSearch;
     },
     [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.myOrgId = payload.organization_id;
       if (payload.folderRes) {
         state.total = payload.folderRes.total;
         state.contentsList = payload.folderRes.list;
+        state.exectSearch = payload.exectSearch;
       }
       if (payload.pendingRes) {
         state.total = payload.pendingRes.total;

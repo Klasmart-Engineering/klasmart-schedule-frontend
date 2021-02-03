@@ -41,7 +41,7 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
-import { ExectSearch, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
+import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -111,10 +111,18 @@ export default function MyContentList() {
   const formMethods = useForm<ContentListForm>();
   const { watch, reset } = formMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
-    RootState,
-    RootState["content"]
-  >((state) => state.content);
+  const {
+    contentsList,
+    total,
+    page_size,
+    folderTree,
+    parentFolderInfo,
+    orgList,
+    selectedOrg,
+    orgProperty,
+    myOrgId,
+    exectSearch,
+  } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
@@ -131,7 +139,7 @@ export default function MyContentList() {
     shareFolder,
     setShareFolder,
   } = useOrganizationList<OrgInfoProps[]>();
-  const [exectSearch, setExectSearch] = useState<string>(ExectSearch.all);
+  // const [exectSearch, setExectSearch] = useState<string>(ExectSearch.all);
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -182,7 +190,6 @@ export default function MyContentList() {
     }
   };
   const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
-    setExectSearch(ExectSearch.all);
     if (condition.path && condition.path !== ROOT_PATH) {
       history.replace({ search: toQueryString(clearNull(value)) });
     } else {
@@ -283,9 +290,9 @@ export default function MyContentList() {
     await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
     closeOrganizationList();
   };
-  const handleChangeExectSearch = (exectSearch: string) => {
+  const handleChangeExectSearch = async (exectSearch: string) => {
     console.log(exectSearch);
-    setExectSearch(exectSearch);
+    await dispatch(onLoadContentList({ ...condition, exectSearch, metaLoading: true }));
   };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
@@ -303,7 +310,8 @@ export default function MyContentList() {
       await dispatch(onLoadContentList({ ...condition, exectSearch, metaLoading: true }));
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey, exectSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [condition, reset, dispatch, refreshKey]);
 
   return (
     <div>
