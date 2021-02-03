@@ -272,7 +272,7 @@ function EditBox(props: CalendarStateProps) {
     setInitScheduleList(newData);
     dispatch(resetScheduleDetial(initScheduleDetial));
     dispatch(resetParticipantList());
-  }, [dispatch, timesTamp, setScheduleRestNum]);
+  }, [dispatch, timesTamp, scheduleRestNum]);
 
   const formatTeahcerId = (teacherIds: any) => {
     let ids: string[] = [];
