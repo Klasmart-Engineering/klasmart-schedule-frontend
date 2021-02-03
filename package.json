@@ -76,7 +76,7 @@
     "typescript": "~3.8.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --max_old_space_size=8192 start",
     "build": "react-scripts build && cp -r build h5pextend && mv h5pextend build/h5pextend",
     "test": "react-scripts test",
     "syncapi": "node ./scripts/syncapi.js",
@@ -89,6 +89,10 @@
     "extends": "react-app"
   },
   "lint-staged": {
+    "public/h5p/**/*": [
+      "node ./scripts/syncH5pVersion.js",
+      "git add"
+    ],
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix --max-warnings=0",
       "prettier --write",
@@ -135,6 +139,7 @@
     "cross-env": "^7.0.2",
     "env-cmd": "^10.1.0",
     "eslint": "^6.6.0",
+    "folder-hash": "^4.0.0",
     "glob": "^7.1.6",
     "google-spreadsheet": "^3.0.13",
     "http-proxy-middleware": "^1.0.5",
