@@ -292,6 +292,8 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   };
   const handleChangeFilterOption = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = produce(value, (draft) => {
+      const searchText = getValues()[SEARCH_TEXT_KEY];
+      searchText ? (draft.name = searchText) : delete draft.name;
       const content_type = event.target.value;
       draft.content_type = content_type;
     });

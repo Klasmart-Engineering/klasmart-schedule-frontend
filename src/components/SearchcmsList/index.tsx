@@ -11,7 +11,7 @@ import {
   RadioGroup,
   TextField,
   TextFieldProps,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
@@ -79,6 +79,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     },
   },
   searchText: {
+    flex: 1,
     "& .MuiOutlinedInput-notchedOutline": {
       border: 0,
     },
