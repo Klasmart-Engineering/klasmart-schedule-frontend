@@ -148,7 +148,7 @@ export interface MediaAssetsProps {
   amountPerPage?: number;
   comingsoon?: boolean;
   value?: string;
-  onSearch: (searchText: MediaAssetsProps["value"]) => any;
+  onSearch: (searchText: MediaAssetsProps["value"], exactSerch?: string) => any;
   onChangePage: (page: number) => any;
   mediaPage: number;
   isShare?: string;

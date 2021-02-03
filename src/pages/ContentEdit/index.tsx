@@ -168,23 +168,27 @@ function ContentEditForm() {
   }, [dispatch, id, history]);
 
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
-    () => (searchMedia = "") => {
+    () => (searchMedia = "", exactSerch = "all") => {
       history.replace({
         search: setQuery(history.location.search, { searchMedia }),
       });
+      const contentNameValue = exactSerch === "all" ? "" : searchMedia;
+      const nameValue = exactSerch === "all" ? searchMedia : "";
       isShare === "badanamu" && lesson === "plan"
         ? dispatch(
             searchAuthContentLists({
               metaLoading: true,
               content_type: searchContentType,
-              name: searchMedia,
+              name: nameValue,
+              content_name: contentNameValue,
             })
           )
         : dispatch(
             searchContentLists({
               metaLoading: true,
               content_type: searchContentType,
-              name: searchMedia,
+              name: nameValue,
+              content_name: contentNameValue,
             })
           );
       setMediaPage(1);
