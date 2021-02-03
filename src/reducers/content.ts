@@ -411,14 +411,15 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       content: { page_size },
     } = getState();
     const { name, publish_status, author, content_type, page, program_group, order_by, path, exectSearch } = query;
-
+    const nameValue = exectSearch === ExectSearch.all ? name : "";
+    const contentNameValue = exectSearch === ExectSearch.name ? name : "";
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       const folderRes = await api.contentsFolders.queryFolderContent({
-        name: exectSearch === ExectSearch.all ? name : "",
+        name: nameValue,
         publish_status,
         author,
         content_type,
@@ -426,19 +427,19 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
         order_by,
         path,
         page_size,
-        content_name: exectSearch === ExectSearch.name ? name : "",
+        content_name: contentNameValue,
       });
       return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
       const pendingRes = await api.contentsPending.searchPendingContents({
-        name: exectSearch === ExectSearch.all ? name : "",
+        name: nameValue,
         publish_status,
         author,
         content_type,
         page,
         order_by,
         page_size,
-        content_name: exectSearch === ExectSearch.name ? name : "",
+        content_name: contentNameValue,
       });
       return { pendingRes, organization_id };
     } else if (
@@ -447,36 +448,36 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       (publish_status === PublishStatus.pending && author === Author.self)
     ) {
       const privateRes = await api.contentsPrivate.searchPrivateContents({
-        name: exectSearch === ExectSearch.all ? name : "",
+        name: nameValue,
         publish_status,
         author,
         content_type,
         page,
         order_by,
         page_size,
-        content_name: exectSearch === ExectSearch.name ? name : "",
+        content_name: contentNameValue,
       });
       return { privateRes, organization_id };
     } else if (program_group) {
       const badaContent = await api.contentsAuthed.queryAuthContent({
-        name: exectSearch === ExectSearch.all ? name : "",
+        name: nameValue,
         program_group,
         page,
         order_by,
         page_size,
-        content_name: exectSearch === ExectSearch.name ? name : "",
+        content_name: contentNameValue,
       });
       return { badaContent, organization_id };
     } else {
       const contentRes = await api.contents.searchContents({
-        name: exectSearch === ExectSearch.all ? name : "",
+        name: nameValue,
         publish_status,
         author,
         content_type,
         page,
         order_by,
         page_size,
-        content_name: exectSearch === ExectSearch.name ? name : "",
+        content_name: contentNameValue,
       });
       return { contentRes, organization_id };
     }
