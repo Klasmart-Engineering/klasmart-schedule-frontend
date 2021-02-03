@@ -53,7 +53,7 @@ const useStyles = makeStyles(({ palette }) => ({
     // overflow: "auto"
   },
   disableBackground: {
-    opacity: 0.5,
+    opacity: 0.3,
     cursor: "not-allowed",
   },
 }));
