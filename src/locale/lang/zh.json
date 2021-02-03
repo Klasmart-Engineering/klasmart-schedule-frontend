@@ -434,6 +434,8 @@
   "schedule_msg_participants_update": "该机构的参与者名单刚刚被更新，请刷新重试",
   "schedule_msg_roster_participants_edit": "这节课的用户名单已被更新",
   "schedule_msg_participants_no_ok": "请确认参与者名单",
+  "schedule_msg_edit_due_date": "您只能在截止日期前编辑该事件",
+  "schedule_msg_delete_due_date": "您只能在截止日期前删除该事件",
   "report_label_student_achievement": "学生成绩",
   "report_label_teacher": "老师",
   "report_label_class": "班级",

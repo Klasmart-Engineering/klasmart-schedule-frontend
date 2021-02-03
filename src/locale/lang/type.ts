@@ -45,7 +45,7 @@ type LangRecord<T = string> =
   | { id: "library_label_empty"; description: "Empty"; values: undefined }
   | { id: "library_label_search"; description: "Search"; values: undefined }
   | { id: "library_msg_no_results_found"; description: "No results found"; values: undefined }
-  | { id: "library_label_my_only"; description: "My Only"; values: undefined }
+  | { id: "library_label_my_only"; description: "Only Mine"; values: undefined }
   | { id: "library_label_bulk_actions"; description: "Bulk Actions"; values: undefined }
   | { id: "library_label_remove"; description: "Remove"; values: undefined }
   | { id: "library_msg_remove_content"; description: "Are you sure you want to remove this content?"; values: undefined }
@@ -503,6 +503,8 @@ type LangRecord<T = string> =
       description: "Please confirm the fileld of ‘Add Participants’ by clicking OK";
       values: undefined;
     }
+  | { id: "schedule_msg_edit_due_date"; description: "You cannot edit this event after the due date. "; values: undefined }
+  | { id: "schedule_msg_delete_due_date"; description: "You cannot delete this event after the due date. "; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
