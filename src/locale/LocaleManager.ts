@@ -8,6 +8,7 @@ import {
   LangRecodeDescription,
   LangRecordId,
   LangRecordIdByDescription,
+  shouldBeLangName,
 } from "./lang/type";
 
 type FormatMessageReturn = ReturnType<IntlFormatters<string>["formatMessage"]>;
@@ -39,7 +40,6 @@ function getLocaleFromUrl() {
   const url = new URL(window.location.href);
   return url.searchParams.get("iso");
 }
-
 export interface ChangeHandler {
   (intl?: IntlShape): any;
 }
@@ -63,6 +63,11 @@ class LocaleManager {
     const cache = createIntlCache();
     this.intl = createIntl({ locale, messages }, cache);
     this.emitter.emit("change", this.intl);
+  }
+
+  getLocale(): LangName | undefined {
+    if (!this.intl?.locale) return;
+    return shouldBeLangName(this.intl?.locale);
   }
 
   reportMiss<T extends string, M extends string>(
@@ -106,8 +111,11 @@ class LocaleManager {
     this.emitter.on("change", handler);
   }
 }
+
 const defaultLocale = getLocaleFromUrl() || apiLocaleInCookie() || getDefaultLocale(AVAILABLE_LANGUAGES);
-export const localeManager = new LocaleManager(defaultLocale as LangName);
+export const localeManager = new LocaleManager(shouldBeLangName(defaultLocale));
 export const t = localeManager.formatMessage.bind(localeManager);
 export const d = localeManager.dscribe.bind(localeManager);
 export const reportMiss = localeManager.reportMiss.bind(localeManager);
+
+(window as any).localeManager = localeManager;

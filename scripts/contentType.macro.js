@@ -39,6 +39,13 @@ const schemaExpression = template.expression(`
   }())
 `);
 
+const schemaLanguagesExpression = template.expression(`
+  (function(){
+    const libSchemas = %%libSchemas%%;
+    return libSchemas[%%libId%%][%%langName%%];
+  }())
+`);
+
 const requireExpression = template.expression(`require(%%path%%)`);
 const importExpression = template.expression(`()=>import(%%path%%)`);
 
@@ -47,18 +54,20 @@ module.exports = createMacro(contentTypeMacro)
 function contentTypeMacro({references, state, babel}) {
   references.default.forEach(nodePath => {
     if (nodePath.parent.type !== "CallExpression") return;
-    if (nodePath.parent.arguments.length !== 2) throw new MacroError(`${name} should be called with two parameters!`);
     const [kindExpression, libIdExpression, langNameExpression] = nodePath.parent.arguments;
     if (kindExpression.value === 'asset') {
+      if (nodePath.parent.arguments.length !== 2) throw new MacroError(`${name} with asset should be called with two parameters!`);
       const targetExpression = contentTypeExpression({ libHash: libHashExpression, libId: libIdExpression, coreAssets: coreAssetsExpression });
       nodePath.parentPath.replaceWith(targetExpression);
     }
     if (kindExpression.value === 'schema') {
+      if (nodePath.parent.arguments.length !== 2) throw new MacroError(`${name} with schema should be called with two parameters!`);
       const targetExpression = schemaExpression({ libSchemas: libSchemaExpression, libId: libIdExpression });
       nodePath.parentPath.replaceWith(targetExpression);
     }
     if (kindExpression.value === 'language') {
-      const targetExpression = schemaExpression({ libSchemas: libSchemaLanguagesExpression, libId: libIdExpression });
+      if (nodePath.parent.arguments.length !== 3) throw new MacroError(`${name} with language should be called with three parameters!`);
+      const targetExpression = schemaLanguagesExpression({ libSchemas: libSchemaLanguagesExpression, libId: libIdExpression, langName: langNameExpression });
       nodePath.parentPath.replaceWith(targetExpression);
     }
   })
@@ -187,9 +196,14 @@ function checkAssests(libHash) {
   }
 }
 
+function isEditorLibrary(libId) {
+  return libId.startsWith('H5PEditor.');
+}
+
 function onModuleLoad() {
   readdirSync(librariesDir)
     .filter(fileName => fileName !== 'content' && lstatSync(path.resolve(librariesDir, fileName)).isDirectory())
+    .filter(libId => !isEditorLibrary(libId))
     .forEach((libraryId) => {
       cacheLibAssets[libraryId] = createDependancyAssets(libraryId);
       cacheLibSchemas[libraryId] = createLibrarySchema(libraryId);

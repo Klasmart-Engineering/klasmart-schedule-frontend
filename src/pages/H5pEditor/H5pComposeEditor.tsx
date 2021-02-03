@@ -2,6 +2,7 @@ import React, { cloneElement, Fragment, useEffect, useMemo, useState } from "rea
 import { Controller, UseFormMethods } from "react-hook-form";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType, ContentTypeList } from "../../api/type";
+import { localeManager } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import {
   H5PItemType,
@@ -29,7 +30,9 @@ const useSchema = (library?: string) => {
   const pending = getPending();
   useEffect(() => {
     if (!library) return;
-    apiCreateContentTypeSchema<H5PSchema>(h5pName2libId(library)).then((v) => {
+    const locale = localeManager.getLocale();
+    if (!locale) return;
+    apiCreateContentTypeSchema<H5PSchema>(h5pName2libId(library), locale).then((v) => {
       setPending(false);
       setSchema(v);
     });

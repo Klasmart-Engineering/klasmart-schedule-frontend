@@ -1,7 +1,9 @@
 import Cookies from "js-cookie";
+import cloneDeep from "lodash/cloneDeep";
+import merge from "lodash/merge";
 import api from ".";
 import requireContentType from "../../scripts/contentType.macro";
-import { LangRecordId } from "../locale/lang/type";
+import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
 import { EntityFolderItem } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -52,14 +54,6 @@ export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
-
-// export const apiGetH5pResourceById = (id: string) => {
-//   return `${process.env.REACT_APP_H5P_API}/h5p/play/${id}`;
-// };
-
-// export const apiCreateH5pResource = () => {
-//   return `${process.env.REACT_APP_H5P_API}/h5p/new`;
-// };
 
 export const apiGenH5pResourceByToken = (token: string) => {
   return `${process.env.REACT_APP_H5P_API}/h5p/token/${token}`;
@@ -164,12 +158,28 @@ export const apiCreateContentTypeLibrary = (id: string) => {
   return requireContentType("asset", id);
 };
 
-export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string) {
+export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
   const schema = {} as T;
+  const schemaLanguages = {} as T;
   for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
-    schema[name as keyof T] = (await value()).default;
+    schema[name as keyof T] = cloneDeep((await value()).default);
   }
-  return schema;
+  for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
+    schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
+  }
+  const result = merge(schema, schemaLanguages);
+  console.log("schemaLanguages = ", schemaLanguages);
+  console.log("schema = ", schema);
+  console.log("mergedSchema = ", result);
+  return result;
+}
+
+export async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
+  const schemaLanguages = {} as T;
+  for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
+    schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
+  }
+  return schemaLanguages;
 }
 
 export function apiGetContentTypeList() {

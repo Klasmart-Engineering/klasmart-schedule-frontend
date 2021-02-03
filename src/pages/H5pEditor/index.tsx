@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { apiCreateContentTypeSchema, apiGetContentTypeList } from "../../api/extra";
 import { ContentTypeList } from "../../api/type";
+import { localeManager } from "../../locale/LocaleManager";
 import {
   H5PItemType,
   H5PLibraryContent,
@@ -30,7 +31,9 @@ const useSchema = (library?: string) => {
   const pending = getPending();
   useEffect(() => {
     if (!library) return;
-    apiCreateContentTypeSchema<H5PSchema>(h5pName2libId(library)).then((v) => {
+    const locale = localeManager.getLocale();
+    if (!locale) return;
+    apiCreateContentTypeSchema<H5PSchema>(h5pName2libId(library), locale).then((v) => {
       setPending(false);
       setSchema(v);
     });

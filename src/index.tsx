@@ -5,7 +5,7 @@ import { apiAddOrganizationToPageUrl, subscribeLocaleInCookie } from "./api/extr
 import { subscribeIframeMessage } from "./api/iframeMessage";
 import App from "./App";
 import "./index.css";
-import { LangName, LangRecordId } from "./locale/lang/type";
+import { LangRecordId, shouldBeLangName } from "./locale/lang/type";
 import { localeManager, t } from "./locale/LocaleManager";
 import { store } from "./reducers";
 import { actError, actInfo } from "./reducers/notify";
@@ -31,7 +31,7 @@ apiEmitter.on<ApiInfoEventData>(ApiEvent.Info, (e) => {
   if (message) store.dispatch(actInfo(message));
 });
 
-subscribeLocaleInCookie((locale) => localeManager.toggle(locale.slice(0, 2) as LangName));
+subscribeLocaleInCookie((locale) => localeManager.toggle(shouldBeLangName(locale.slice(0, 2))));
 subscribeIframeMessage("changeOrganization", apiAddOrganizationToPageUrl);
 
 // if (process.env.NODE_ENV === 'development') {
