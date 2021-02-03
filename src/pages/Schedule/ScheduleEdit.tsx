@@ -313,7 +313,6 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
-      LinkageLessonPlan(scheduleDetial.lesson_plan?.id as string);
       if ((scheduleDetial.due_at as number) > 0) {
         setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
       }
@@ -328,7 +327,7 @@ function EditBox(props: CalendarStateProps) {
       dispatch(getScheduleParticipant({ class_id: newData.class_id }));
       setLinkageLessonPlanOpen(false);
     }
-  }, [LinkageLessonPlan, dispatch, scheduleDetial, scheduleId]);
+  }, [dispatch, scheduleDetial, scheduleId]);
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
   const repeatData = {
@@ -357,15 +356,6 @@ function EditBox(props: CalendarStateProps) {
     setProgramItem(program);
     setSubjectItem(subject);
   }, [contentPreview]);
-
-  const setLinkageLessonPlanData = (LinkageLessonData: EntityScheduleAddView) => {
-    const program = modelSchedule.LinkageLessonPlan(contentPreview).program[0] as EntityScheduleShortInfo;
-    const subject = modelSchedule.LinkageLessonPlan(contentPreview).subject[0] as EntityScheduleShortInfo;
-    setProgramItem(program);
-    setSubjectItem(subject);
-    setScheduleList(LinkageLessonData);
-  };
-
   const currentTime = timestampInt(new Date().getTime() / 1000);
   const initData: EntityScheduleAddView = {
     attachment: {},
@@ -451,7 +441,7 @@ function EditBox(props: CalendarStateProps) {
 
     if (name === "lesson_plan_id") {
       const LinkageLessonData: any = await LinkageLessonPlan(value["id"]);
-      setLinkageLessonPlanData({ ...scheduleList, ...LinkageLessonData, lesson_plan_id: ids });
+      setScheduleList({ ...scheduleList, ...LinkageLessonData, lesson_plan_id: ids });
       setLessonPlan(value);
     } else {
       setScheduleData(name, ids);
@@ -1207,7 +1197,7 @@ function EditBox(props: CalendarStateProps) {
                 <Autocomplete
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(
-                    modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList)
+                    modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
                   )}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
@@ -1230,7 +1220,7 @@ function EditBox(props: CalendarStateProps) {
                 <Autocomplete
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(
-                    modelSchedule.LinkageLessonPlan(contentPreview).subject.concat(scheduleMockOptions.subjectList)
+                    modelSchedule.LinkageLessonPlan(contentPreview).subject.concat(scheduleMockOptions.subjectList).concat(subjectItem!)
                   )}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
