@@ -140,7 +140,6 @@ export default function MyContentList() {
     shareFolder,
     setShareFolder,
   } = useOrganizationList<OrgInfoProps[]>();
-  // const [exectSearch, setExectSearch] = useState<string>(ExectSearch.all);
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -197,12 +196,13 @@ export default function MyContentList() {
       history.push({ search: toQueryString(clearNull(value)) });
     }
   };
-  const handleNotChangeExectSearchCondition: FirstSearchHeaderProps["onChange"] = (value) => {
+  const handleNotChangeExectSearchCondition: FirstSearchHeaderProps["onChange"] = async (value) => {
     if (condition.path && condition.path !== ROOT_PATH) {
       history.replace({ search: toQueryString(clearNull(value)) });
     } else {
       history.push({ search: toQueryString(clearNull(value)) });
     }
+    await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
   };
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
@@ -292,7 +292,6 @@ export default function MyContentList() {
     closeOrganizationList();
   };
   const handleChangeExectSearch = async (exectSearch: string) => {
-    console.log(exectSearch);
     await dispatch(getExectSearch({ exectSearch }));
   };
   useEffect(() => {
@@ -308,7 +307,7 @@ export default function MyContentList() {
 
   useEffect(() => {
     (async () => {
-      await dispatch(onLoadContentList({ ...condition, exectSearch, metaLoading: true }));
+      await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

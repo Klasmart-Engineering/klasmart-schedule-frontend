@@ -394,7 +394,7 @@ export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, I
   }
 );
 type IQueryOnLoadContentList = {
-  exectSearch: string;
+  exectSearch?: string;
 } & QueryCondition &
   LoadingMetaPayload;
 interface IQyertOnLoadContentListResult {
@@ -423,11 +423,11 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
   async (query, { getState, dispatch }) => {
     await dispatch(getUserSetting());
     const {
-      content: { page_size },
+      content: { page_size, exectSearch },
     } = getState();
-    const { name, publish_status, author, content_type, page, program_group, order_by, path, exectSearch } = query;
+    const { name, publish_status, author, content_type, page, program_group, order_by, path } = query;
     const isEnableExactSearch = apiIsEnableExactSearch();
-    const nameValue = isEnableExactSearch ? (exectSearch === ExectSearch.all ? name : "") : name;
+    const nameValue = exectSearch === ExectSearch.all ? name : "";
     const contentNameValue = exectSearch === ExectSearch.name ? name : "";
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
@@ -1113,14 +1113,13 @@ const { actions, reducer } = createSlice({
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
       state.parentFolderInfo = initialState.parentFolderInfo;
-      state.exectSearch = initialState.exectSearch;
     },
     [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.myOrgId = payload.organization_id;
+      state.exectSearch = payload.exectSearch;
       if (payload.folderRes) {
         state.total = payload.folderRes.total;
         state.contentsList = payload.folderRes.list;
-        state.exectSearch = payload.exectSearch;
       }
       if (payload.pendingRes) {
         state.total = payload.pendingRes.total;

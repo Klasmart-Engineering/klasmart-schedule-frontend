@@ -133,8 +133,8 @@ export enum ExectSearch {
 }
 const getExectSearch = () => {
   return [
-    { label: "All", value: "{all}" },
-    { label: "Name", value: "name" },
+    { label: "All", value: ExectSearch.all },
+    { label: "Name", value: ExectSearch.name },
   ];
 };
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
