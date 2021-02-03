@@ -198,9 +198,9 @@ export default function MyContentList() {
   };
   const handleNotChangeExectSearchCondition: FirstSearchHeaderProps["onChange"] = async (value) => {
     if (condition.path && condition.path !== ROOT_PATH) {
-      history.replace({ search: toQueryString(clearNull(value)) });
+      history.replace({ search: toQueryString(clearNull(Object.assign(value, { exectSearch: exectSearch }))) });
     } else {
-      history.push({ search: toQueryString(clearNull(value)) });
+      history.push({ search: toQueryString(clearNull(Object.assign(value, { exectSearch: exectSearch }))) });
     }
   };
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
@@ -309,8 +309,7 @@ export default function MyContentList() {
       await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
       setTimeout(reset, 500);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition, reset, dispatch, refreshKey, exectSearch]);
+  }, [condition, reset, dispatch, refreshKey]);
 
   return (
     <div>
