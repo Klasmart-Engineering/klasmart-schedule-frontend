@@ -201,7 +201,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               )}
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem selected={value.author === Author.self} onClick={handleItemClick}>
-                  {d("My Only").t("library_label_my_only")}
+                  {d("Only Mine").t("library_label_my_only")}
                 </MenuItem>
               </Menu>
             </Grid>
@@ -357,7 +357,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}
-                  label={d("My Only").t("library_label_my_only")}
+                  label={d("Only Mine").t("library_label_my_only")}
                   labelPlacement="end"
                 />
               ) : (
