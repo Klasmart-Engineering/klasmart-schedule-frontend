@@ -406,6 +406,18 @@ interface IQyertOnLoadContentListResult {
   organization_id: string;
   exectSearch: string;
 }
+type IQueryGetExectSearchParams = {
+  exectSearch: string;
+};
+interface IQueryGetExectSearchResult {
+  exectSearch: string;
+}
+export const getExectSearch = createAsyncThunk<IQueryGetExectSearchResult, IQueryGetExectSearchParams>(
+  "content/getExectSearch",
+  ({ exectSearch }) => {
+    return { exectSearch };
+  }
+);
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
   async (query, { getState, dispatch }) => {
@@ -1139,6 +1151,9 @@ const { actions, reducer } = createSlice({
       } else {
         state.selectedOrg = [];
       }
+    },
+    [getExectSearch.fulfilled.type]: (state, { payload }: any) => {
+      state.exectSearch = payload.exectSearch;
     },
   },
 });

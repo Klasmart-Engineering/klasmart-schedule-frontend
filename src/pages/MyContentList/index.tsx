@@ -24,6 +24,7 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
+  getExectSearch,
   getOrgList,
   onLoadContentList,
   publishContent,
@@ -292,7 +293,7 @@ export default function MyContentList() {
   };
   const handleChangeExectSearch = async (exectSearch: string) => {
     console.log(exectSearch);
-    await dispatch(onLoadContentList({ ...condition, exectSearch, metaLoading: true }));
+    await dispatch(getExectSearch({ exectSearch }));
   };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
