@@ -4,6 +4,7 @@ import React, { useCallback } from "react";
 import { useDrag } from "react-dnd";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList } from "../../components/SearchcmsList";
@@ -165,13 +166,13 @@ export default function MediaAssets(props: MediaAssetsProps) {
     },
     [onChangePage]
   );
-
   const rows = list?.map((item, idx) => {
     const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
+    const dragType = apiIsEnableNewH5p() && lesson === "material" ? `LIBRARY_ITEM_FILE_TYPE_${fileType}` : "LIBRARY_ITEM";
     return (
       <TableRow key={idx}>
         <TableCell className={css.cellThumnbnail}>
-          <DraggableImage type={lesson === "plan" ? "LIBRARY_ITEM" : `LIBRARY_ITEM_FILE_TYPE_${fileType}`} item={item} lesson={lesson} />
+          <DraggableImage type={dragType} item={item} lesson={lesson} />
         </TableCell>
         <TableCell>{item.name}</TableCell>
         <TableCell>{item.author_name}</TableCell>

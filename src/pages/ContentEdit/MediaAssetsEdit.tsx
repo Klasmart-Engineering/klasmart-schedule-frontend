@@ -5,6 +5,7 @@ import clsx from "clsx";
 import React, { useCallback, useMemo } from "react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
@@ -121,12 +122,13 @@ function AssetEdit(props: AssetEditProps) {
     },
     [onChange, onChangeInputSource]
   );
+  const dropType = apiIsEnableNewH5p() ? `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}` : "LIBRARY_ITEM";
   const [{ canDrop: canDropfile }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}`,
+    accept: dropType,
     collect: mapDropContainerProps,
   });
   const [, fileRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}`,
+    accept: dropType,
     drop: setFile,
   });
   const handleChangeFileType = useCallback(() => {
