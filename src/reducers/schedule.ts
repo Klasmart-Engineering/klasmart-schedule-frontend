@@ -7,9 +7,10 @@ import {
   ClassesBySchoolDocument,
   ClassesBySchoolQuery,
   ClassesBySchoolQueryVariables,
-  ClassesByTeacherDocument,
   ClassesByTeacherQuery,
-  ClassesByTeacherQueryVariables,
+  ClassesTeachingQueryDocument,
+  ClassesTeachingQueryQuery,
+  ClassesTeachingQueryQueryVariables,
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
@@ -248,10 +249,11 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
       organization_id,
     },
   });
-  return gqlapi.query<ClassesByTeacherQuery, ClassesByTeacherQueryVariables>({
-    query: ClassesByTeacherDocument,
+  return gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+    query: ClassesTeachingQueryDocument,
     variables: {
       user_id: meInfo.me?.user_id as string,
+      organization_id,
     },
   });
 });
@@ -521,7 +523,7 @@ const { actions, reducer } = createSlice({
       state.contentsAuthList = payload.list;
     },
     [getClassesByTeacher.fulfilled.type]: (state, { payload }: any) => {
-      state.classOptions.classListTeacher = payload.data;
+      state.classOptions.classListTeacher = { user: payload.data.user.membership };
     },
     [getClassesByOrg.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListOrg = payload.data;
