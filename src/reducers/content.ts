@@ -404,7 +404,6 @@ interface IQyertOnLoadContentListResult {
   contentRes?: AsyncReturnType<typeof api.contents.searchContents>;
   badaContent?: AsyncReturnType<typeof api.contentsAuthed.queryAuthContent>;
   organization_id: string;
-  exectSearch: string;
 }
 type IQueryGetExectSearchParams = {
   exectSearch: string;
@@ -429,83 +428,57 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const isEnableExactSearch = apiIsEnableExactSearch();
     const nameValue = exectSearch === ExectSearch.all ? name : "";
     const contentNameValue = exectSearch === ExectSearch.name ? name : "";
+    const isExectSearch = exectSearch === ExectSearch.name;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
+    const params = {
+      name: nameValue,
+      content_name: contentNameValue,
+      publish_status,
+      author,
+      content_type,
+      program_group,
+      order_by,
+      page,
+      page_size,
+      path,
+    };
+    if (!isEnableExactSearch) delete params.content_name;
+    if (isEnableExactSearch && isExectSearch) delete params.name;
+    if (isEnableExactSearch && !isExectSearch) delete params.content_name;
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
-      const params = {
-        name: nameValue,
-        publish_status,
-        author,
-        content_type,
-        page,
-        order_by,
-        path,
-        page_size,
-        content_name: contentNameValue,
-      };
-      if (!isEnableExactSearch) delete params.content_name;
+      delete params.program_group;
       const folderRes = await api.contentsFolders.queryFolderContent(params);
-      return { folderRes, organization_id, exectSearch };
+      return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
-      const params = {
-        name: nameValue,
-        publish_status,
-        author,
-        content_type,
-        page,
-        order_by,
-        page_size,
-        content_name: contentNameValue,
-      };
-      if (!isEnableExactSearch) delete params.content_name;
+      delete params.path;
+      delete params.program_group;
       const pendingRes = await api.contentsPending.searchPendingContents(params);
-      return { pendingRes, organization_id, exectSearch };
+      return { pendingRes, organization_id };
     } else if (
       publish_status === PublishStatus.draft ||
       publish_status === PublishStatus.rejected ||
       (publish_status === PublishStatus.pending && author === Author.self)
     ) {
-      const params = {
-        name: nameValue,
-        publish_status,
-        author,
-        content_type,
-        page,
-        order_by,
-        page_size,
-        content_name: contentNameValue,
-      };
-      if (!isEnableExactSearch) delete params.content_name;
+      delete params.path;
+      delete params.program_group;
       const privateRes = await api.contentsPrivate.searchPrivateContents(params);
-      return { privateRes, organization_id, exectSearch };
+      return { privateRes, organization_id };
     } else if (program_group) {
-      const params = {
-        name: nameValue,
-        program_group,
-        page,
-        order_by,
-        page_size,
-        content_name: contentNameValue,
-      };
-      if (!isEnableExactSearch) delete params.content_name;
+      delete params.publish_status;
+      delete params.author;
+      delete params.content_type;
+      delete params.path;
       const badaContent = await api.contentsAuthed.queryAuthContent(params);
-      return { badaContent, organization_id, exectSearch };
+      return { badaContent, organization_id };
     } else {
-      const params = {
-        name: nameValue,
-        publish_status,
-        author,
-        content_type,
-        page,
-        order_by,
-        page_size,
-        content_name: contentNameValue,
-      };
-      if (!isEnableExactSearch) delete params.content_name;
+      delete params.path;
+      delete params.program_group;
+
       const contentRes = await api.contents.searchContents(params);
-      return { contentRes, organization_id, exectSearch };
+      return { contentRes, organization_id };
     }
   }
 );
@@ -1116,7 +1089,6 @@ const { actions, reducer } = createSlice({
     },
     [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.myOrgId = payload.organization_id;
-      state.exectSearch = payload.exectSearch;
       if (payload.folderRes) {
         state.total = payload.folderRes.total;
         state.contentsList = payload.folderRes.list;
