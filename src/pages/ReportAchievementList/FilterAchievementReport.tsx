@@ -6,13 +6,13 @@ import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined"
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
-import { User } from "../../api/api-ko-schema.auto";
+import { Class, User } from "../../api/api-ko-schema.auto";
 import { MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { GetStuReportMockOptionsResponse } from "../../reducers/report";
-import { ALL_STUDENT, ClassItem, ClassList, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
+import { ALL_STUDENT, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -105,7 +105,7 @@ const GetTeacherItem = forwardRef<React.RefObject<HTMLElement>, GetTeacherItemPr
 });
 
 interface GetClassItemProps {
-  list: ClassItem[];
+  list: Pick<Class, "class_id" | "class_name">[];
   value: QueryCondition;
   onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
   tab: keyof QueryCondition;
@@ -174,7 +174,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
         {item.name}
       </MenuItem>
     ));
-  const classs = reportMockOptions.classList.user?.classesTeaching || [];
+  const classs = reportMockOptions.classList || [];
   const teachers = reportMockOptions.teacherList || [];
   const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
   const students = reportMockOptions.studentList || [];
@@ -215,9 +215,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   };
-  const getClassList = (list: ClassList | undefined | null) => {
-    if (list === null || list === undefined || list.user === undefined) return;
-    return list.user.classesTeaching.map((item) => (
+  const getClassList = (list: Pick<Class, "class_id" | "class_name">[] | undefined | null) => {
+    if (list === null || list === undefined) return;
+    return list.map((item) => (
       <MenuItem key={item.class_id} value={item.class_id}>
         {item.class_name}
       </MenuItem>
@@ -263,7 +263,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
                 disabled={classs.length <= 0}
               >
-                {getClassList(reportMockOptions.classList as ClassList)}
+                {getClassList(reportMockOptions.classList)}
               </TextField>
               <TextField
                 size="small"
@@ -348,7 +348,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               />
               <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
                 <GetClassItem
-                  list={reportMockOptions.classList.user?.classesTeaching as ClassItem[]}
+                  list={reportMockOptions.classList}
                   value={value}
                   onChangeMenu={handleChangeMenu}
                   tab="class_id"

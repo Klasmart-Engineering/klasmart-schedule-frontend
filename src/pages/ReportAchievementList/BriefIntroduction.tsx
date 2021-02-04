@@ -8,7 +8,7 @@ import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
-import { ClassItem, QueryCondition } from "./types";
+import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   container_intro: {
@@ -65,16 +65,13 @@ const useStyles = makeStyles(({ breakpoints }) => ({
 
 function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: string, id: string) {
   const teacherList = reportMockOptions.teacherList;
-  const classList =
-    reportMockOptions.classList &&
-    reportMockOptions.classList.user?.classesTeaching &&
-    (reportMockOptions.classList.user.classesTeaching as ClassItem[]);
+  const classList = reportMockOptions.classList;
   if (type === "teacher" && teacherList) {
     const temp = teacherList.filter((item: Pick<User, "user_id" | "user_name">) => item.user_id === id)[0];
     return temp ? temp.user_name : "";
   }
   if (type === "class" && classList) {
-    const tempClass = classList.filter((item: ClassItem) => item.class_id === id)[0];
+    const tempClass = classList.filter((item) => item.class_id === id)[0];
     return tempClass ? tempClass.class_name : "";
   }
 }
@@ -109,14 +106,6 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   }, [backByLessonPlan, lessonPlanList, value.lesson_plan_id]);
 
   const handleClick = () => {
-    // history.go(-1)
-    // const urlParams =
-    //   "?" +
-    //   setQuery("", {
-    //     teacher_id: value.teacher_id as string,
-    //     class_id: value.class_id as string,
-    //     lesson_plan_id: value.lesson_plan_id as string,
-    //   });
     if (backByLessonPlan) {
       history.go(-1);
     }

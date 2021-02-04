@@ -28,13 +28,5 @@ export enum StatusColor {
   not_achieved = "#fe9b9b",
   not_attempted = "#dadada",
 }
-export interface ClassItem {
-  class_id: string;
-  class_name: string;
-}
-export interface ClassList {
-  user: {
-    classesTeaching: ClassItem[];
-  };
-}
+
 export const ALL_STUDENT = "all";
