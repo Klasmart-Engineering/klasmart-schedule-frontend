@@ -139,12 +139,13 @@ function MyCalendar(props: CalendarProps) {
   const changeWeek = (week_type: string, type: string, year: number, month: number) => {
     const offsets = 604800;
     if (document.getElementsByClassName("rbc-time-header-cell").length > 0) {
+      const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
       const firstNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].firstChild;
       const startWeek = firstNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;
       const timestampResult =
         type === "preve"
-          ? getTimestamp(`${year}-${month + 1}-${startWeek}`) - offsets
-          : getTimestamp(`${year}-${month + 1}-${startWeek}`) + offsets;
+          ? getTimestamp(`${year}-${dateNumFun(month + 1)}-${startWeek}`) - offsets
+          : getTimestamp(`${year}-${dateNumFun(month + 1)}-${startWeek}`) + offsets;
       changeTimesTamp({ start: timestampResult, end: timestampResult });
     }
   };
@@ -169,6 +170,7 @@ function MyCalendar(props: CalendarProps) {
         changeTimesTamp({ start: times, end: times });
         break;
       case "month":
+        const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
         let offsetYear = 0;
         let offsetMonth = 0;
         if (type === "preve") {
@@ -179,8 +181,8 @@ function MyCalendar(props: CalendarProps) {
           offsetMonth = M === 11 ? 0 : M + 1;
         }
         changeTimesTamp({
-          start: getTimestamp(`${offsetYear}-${offsetMonth + 1}-01`),
-          end: getTimestamp(`${offsetYear}-${offsetMonth + 1}-01`),
+          start: getTimestamp(`${offsetYear}-${dateNumFun(offsetMonth + 1)}-01`),
+          end: getTimestamp(`${offsetYear}-${dateNumFun(offsetMonth + 1)}-01`),
         });
         break;
       case "week":
@@ -198,8 +200,6 @@ function MyCalendar(props: CalendarProps) {
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoProps) => {
       const currentTime = Math.floor(new Date().getTime());
-      console.log(scheduleInfo, 11);
-      console.log(currentTime);
       if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
           changeModalDate({
