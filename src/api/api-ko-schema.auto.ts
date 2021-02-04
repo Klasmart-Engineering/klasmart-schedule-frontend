@@ -1,5 +1,7 @@
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -17,6 +19,7 @@ export type Query = {
   me?: Maybe<User>;
   user?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
+  my_users?: Maybe<Array<User>>;
   organization?: Maybe<Organization>;
   organizations?: Maybe<Array<Maybe<Organization>>>;
   role?: Maybe<Role>;
@@ -55,7 +58,7 @@ export type Mutation = {
   me?: Maybe<User>;
   user?: Maybe<User>;
   newUser?: Maybe<User>;
-  newOrganizationOwnership?: Maybe<OrganizationMembership>;
+  switch_user?: Maybe<User>;
   organization?: Maybe<Organization>;
   role?: Maybe<Role>;
   roles?: Maybe<Array<Maybe<Role>>>;
@@ -79,9 +82,8 @@ export type MutationNewUserArgs = {
   avatar?: Maybe<Scalars["String"]>;
 };
 
-export type MutationNewOrganizationOwnershipArgs = {
+export type MutationSwitch_UserArgs = {
   user_id: Scalars["ID"];
-  organization_id: Scalars["ID"];
 };
 
 export type MutationOrganizationArgs = {
@@ -108,13 +110,19 @@ export type MutationSchoolArgs = {
 export type User = {
   __typename?: "User";
   user_id: Scalars["ID"];
+  /** @deprecated Use `full_name`. */
   user_name?: Maybe<Scalars["String"]>;
+  full_name?: Maybe<Scalars["String"]>;
   given_name?: Maybe<Scalars["String"]>;
   family_name?: Maybe<Scalars["String"]>;
   email?: Maybe<Scalars["String"]>;
   phone?: Maybe<Scalars["String"]>;
+  date_of_birth?: Maybe<Scalars["String"]>;
   avatar?: Maybe<Scalars["String"]>;
-  /** 'my_organization' is the Organization that this user has created */
+  /**
+   * 'my_organization' is the Organization that this user has created
+   * @deprecated Use `organization_ownerships`.
+   */
   my_organization?: Maybe<Organization>;
   organization_ownerships?: Maybe<Array<Maybe<OrganizationOwnership>>>;
   memberships?: Maybe<Array<Maybe<OrganizationMembership>>>;
@@ -185,7 +193,10 @@ export type Organization = {
   phone?: Maybe<Scalars["String"]>;
   shortCode?: Maybe<Scalars["String"]>;
   status?: Maybe<Scalars["String"]>;
-  /** 'owner' is the User that created this Organization */
+  /**
+   * 'owner' is the User that created this Organization
+   * @deprecated Use `organization_ownerships`.
+   */
   owner?: Maybe<User>;
   primary_contact?: Maybe<User>;
   roles?: Maybe<Array<Maybe<Role>>>;
@@ -239,6 +250,7 @@ export type OrganizationInviteUserArgs = {
   phone?: Maybe<Scalars["String"]>;
   given_name?: Maybe<Scalars["String"]>;
   family_name?: Maybe<Scalars["String"]>;
+  date_of_birth?: Maybe<Scalars["String"]>;
   organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
   school_ids?: Maybe<Array<Scalars["ID"]>>;
   school_role_ids?: Maybe<Array<Scalars["ID"]>>;
@@ -249,13 +261,15 @@ export type OrganizationEditMembershipArgs = {
   phone?: Maybe<Scalars["String"]>;
   given_name?: Maybe<Scalars["String"]>;
   family_name?: Maybe<Scalars["String"]>;
+  date_of_birth?: Maybe<Scalars["String"]>;
   organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
   school_ids?: Maybe<Array<Scalars["ID"]>>;
   school_role_ids?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type OrganizationCreateRoleArgs = {
-  role_name?: Maybe<Scalars["String"]>;
+  role_name: Scalars["String"];
+  role_description: Scalars["String"];
 };
 
 export type OrganizationCreateDefaultRolesArgs = {
@@ -341,6 +355,8 @@ export type Role = {
   __typename?: "Role";
   role_id: Scalars["ID"];
   role_name?: Maybe<Scalars["String"]>;
+  role_description: Scalars["String"];
+  status: Scalars["String"];
   organization?: Maybe<Organization>;
   memberships?: Maybe<Array<Maybe<OrganizationMembership>>>;
   permissions?: Maybe<Array<Maybe<Permission>>>;
@@ -348,6 +364,7 @@ export type Role = {
   set?: Maybe<Role>;
   grant?: Maybe<Permission>;
   revoke?: Maybe<Scalars["Boolean"]>;
+  edit_permissions?: Maybe<Array<Maybe<Permission>>>;
   deny?: Maybe<Permission>;
   delete_role?: Maybe<Scalars["Boolean"]>;
 };
@@ -357,7 +374,8 @@ export type RolePermissionArgs = {
 };
 
 export type RoleSetArgs = {
-  role_name?: Maybe<Scalars["String"]>;
+  role_name: Scalars["String"];
+  role_description: Scalars["String"];
 };
 
 export type RoleGrantArgs = {
@@ -366,6 +384,10 @@ export type RoleGrantArgs = {
 
 export type RoleRevokeArgs = {
   permission_name: Scalars["String"];
+};
+
+export type RoleEdit_PermissionsArgs = {
+  permission_names?: Maybe<Array<Scalars["String"]>>;
 };
 
 export type RoleDenyArgs = {
@@ -379,7 +401,12 @@ export type RoleDelete_RoleArgs = {
 export type Permission = {
   __typename?: "Permission";
   role_id: Scalars["ID"];
+  permission_id?: Maybe<Scalars["ID"]>;
   permission_name: Scalars["ID"];
+  permission_category?: Maybe<Scalars["String"]>;
+  permission_group?: Maybe<Scalars["String"]>;
+  permission_level?: Maybe<Scalars["String"]>;
+  permission_description?: Maybe<Scalars["String"]>;
   allow?: Maybe<Scalars["Boolean"]>;
   role?: Maybe<Role>;
 };
