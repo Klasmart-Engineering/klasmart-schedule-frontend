@@ -8,35 +8,35 @@
     {
       "widgets": [
         {
-          "label": "translate:: Default"
+          "label": "预设"
         }
       ],
-      "label": "translate:: Cards",
-      "entity": "translate:: card",
+      "label": "所有卡片",
+      "entity": "卡片",
       "field": {
-        "label": "translate:: Card",
+        "label": "卡片",
         "fields": [
           {
-            "label": "translate:: Image"
+            "label": "图像"
           },
           {
-            "label": "translate:: Alternative text for Image",
-            "description": "translate:: Describe what can be seen in the photo. The text is read by text-to-speech tools needed by visually impaired users."
+            "label": "配对图像的替代文字",
+            "description": "在报读器上用、或是配对图像无法正常输出时的文字。"
           },
           {
-            "label": "translate:: Matching Image",
-            "description": "translate:: An optional image to match against instead of using two cards with the same image."
+            "label": "配对图像（非必要项）",
+            "description": "如果游戏中要配对的不是同一张图像，那么可以在这里添加要配对的另一张图像。"
           },
           {
-            "label": "translate:: Alternative text for Matching Image",
-            "description": "translate:: Describe what can be seen in the photo. The text is read by text-to-speech tools needed by visually impaired users."
+            "label": "配对成功文字（非必要项）",
+            "description": "在找到配对时会显示的文字讯息。"
           }
         ]
       }
     },
     {
-      "label": "translate:: Behavioural settings",
-      "description": "translate:: These options will let you control how the game behaves.",
+      "label": "行为设置",
+      "description": "让你控制游戏行为的一些设置。",
       "fields": [
         {
           "label": "translate:: Add button for retrying when the game is over"

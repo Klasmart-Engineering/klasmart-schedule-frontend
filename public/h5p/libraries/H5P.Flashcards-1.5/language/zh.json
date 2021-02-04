@@ -27,7 +27,7 @@
             "description": "卡片的可选图像. (可以使用图像卡，或者文字卡，也可以是图像配文字的卡片)"
           },
           {
-            "label": "translate:: Alternative text for image"
+            "label": "配对图像的替代文字"
           },
           {
             "label": "提示",
