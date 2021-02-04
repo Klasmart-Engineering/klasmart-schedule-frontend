@@ -540,6 +540,7 @@ H5P.MemoryGame = (function (EventDispatcher, $) {
     };
 
     if (parameters.behaviour && parameters.behaviour.useGrid && cardsToUse.length) {
+      debugger;
       self.on('resize', scaleGameSize);
     }
   }

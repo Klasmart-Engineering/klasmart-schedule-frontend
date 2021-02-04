@@ -13,7 +13,6 @@ export function Locale(props: LocaleProps) {
     localeManager.on("change", refresh);
     if (locale !== localeManager.getLocale()) refresh();
   }, [locale]);
-  console.log("locale, localeManager.intl = ", locale, localeManager.intl);
   if (!locale || !localeManager.intl) return null;
   return (
     <RawIntlProvider key={locale} value={localeManager.intl}>
