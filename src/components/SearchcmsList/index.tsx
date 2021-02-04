@@ -11,7 +11,7 @@ import {
   RadioGroup,
   TextField,
   TextFieldProps,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
@@ -92,39 +92,26 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-export interface SearchcmsListProps {
-  searchType: "searchMedia" | "searchOutcome";
-  lesson?: string;
+export interface SearchItems {
   value?: string;
   exactSerch?: string;
-  onSearch: (value: SearchcmsListProps["value"], exactSerch?: SearchcmsListProps["exactSerch"]) => any;
-  assumed?: string;
-  onCheckAssumed?: (assumed: SearchcmsListProps["assumed"]) => any;
+  assumed?: boolean;
   isShare?: string;
-  onCheckShare?: (isShare: SearchcmsListProps["isShare"]) => any;
+}
+export interface SearchcmsListProps extends SearchItems {
+  searchType: "searchMedia" | "searchOutcome";
+  lesson?: string;
+  onSearch: (query: SearchItems) => any;
 }
 
 export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
-  const { searchType, lesson, onSearch, onCheckAssumed, exactSerch = "all", value, assumed, isShare, onCheckShare } = props;
-  const { getValues, control } = useForm<Pick<SearchcmsListProps, "value" | "exactSerch">>();
+  const { searchType, lesson, onSearch, exactSerch = "all", value, assumed, isShare } = props;
+  const { getValues, control } = useForm<SearchItems>();
   const enableExactSearch = apiIsEnableExactSearch();
   const handleClickSearch = useCallback(() => {
-    const { value, exactSerch } = getValues();
-    onSearch(value, exactSerch);
+    onSearch(getValues());
   }, [getValues, onSearch]);
-  const handleChangeAssumed = useCallback(
-    (e) => {
-      if (onCheckAssumed) onCheckAssumed(e.target.checked ? "true" : "");
-    },
-    [onCheckAssumed]
-  );
-  const handleChangeShare = useCallback(
-    (e, value) => {
-      if (onCheckShare) onCheckShare(value);
-    },
-    [onCheckShare]
-  );
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
@@ -184,6 +171,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                       <TextField
                         {...valueProps}
                         size="small"
+                        fullWidth
                         className={css.searchText}
                         onKeyPress={handleKeyPress}
                         placeholder={d("Search").t("library_label_search")}
@@ -225,46 +213,88 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
           />
         </Hidden>
         {searchType === "searchOutcome" && (
-          <FormControlLabel
-            className={css.checkField}
-            control={<Checkbox checked={Boolean(assumed)} onChange={handleChangeAssumed} color="primary" />}
-            label={d("Assumed").t("assess_filter_assumed")}
+          <Controller
+            name="assumed"
+            defaultValue={assumed}
+            control={control}
+            render={(assumedProps) => (
+              <FormControlLabel
+                className={css.checkField}
+                control={
+                  <Checkbox
+                    checked={assumedProps.value}
+                    onChange={(e) => {
+                      assumedProps.onChange(e.target.checked);
+                      handleClickSearch();
+                    }}
+                    color="primary"
+                  />
+                }
+                label={d("Assumed").t("assess_filter_assumed")}
+              />
+            )}
           />
         )}
 
         {searchType === "searchMedia" && lesson === "plan" && (
           <Hidden smDown>
-            <RadioGroup value={isShare} onChange={handleChangeShare} className={css.radioGroup}>
-              <FormControlLabel
-                value="org"
-                control={<Radio size="small" color="primary" />}
-                label={<Typography variant="body2">{reportMiss("Org", "library_label_org")}</Typography>}
-              />
-              <FormControlLabel
-                value="badanamu"
-                control={<Radio size="small" color="primary" />}
-                label={<Typography variant="body2">{reportMiss("Badanamu", "library_label_Badanamu")}</Typography>}
-              />
-            </RadioGroup>
+            <Controller
+              name="isShare"
+              control={control}
+              defaultValue={isShare || "org"}
+              render={(isShareProps) => (
+                <RadioGroup
+                  value={isShareProps.value}
+                  onChange={(e) => {
+                    isShareProps.onChange(e.target.value);
+                    handleClickSearch();
+                  }}
+                  className={css.radioGroup}
+                >
+                  <FormControlLabel
+                    value="org"
+                    control={<Radio size="small" color="primary" />}
+                    label={<Typography variant="body2">{reportMiss("Org", "library_label_org")}</Typography>}
+                  />
+                  <FormControlLabel
+                    value="badanamu"
+                    control={<Radio size="small" color="primary" />}
+                    label={<Typography variant="body2">{reportMiss("Badanamu", "library_label_Badanamu")}</Typography>}
+                  />
+                </RadioGroup>
+              )}
+            />
           </Hidden>
         )}
       </Box>
       <Hidden mdUp>
         {searchType === "searchMedia" && lesson === "plan" && (
-          <Box display="flex" justifyContent="center">
-            <RadioGroup value={isShare} onChange={handleChangeShare} className={css.radioGroup}>
-              <FormControlLabel
-                value="org"
-                control={<Radio size="small" color="primary" />}
-                label={<Typography variant="body2">{reportMiss("Org", "library_label_org")}</Typography>}
-              />
-              <FormControlLabel
-                value="badanamu"
-                control={<Radio size="small" color="primary" />}
-                label={<Typography variant="body2">{reportMiss("Badanamu", "library_label_Badanamu")}</Typography>}
-              />
-            </RadioGroup>
-          </Box>
+          <Controller
+            name="isShare"
+            control={control}
+            defaultValue={isShare || "org"}
+            render={(isShareProps) => (
+              <RadioGroup
+                value={isShareProps.value}
+                onChange={(e) => {
+                  isShareProps.onChange(e.target.value);
+                  handleClickSearch();
+                }}
+                className={css.radioGroup}
+              >
+                <FormControlLabel
+                  value="org"
+                  control={<Radio size="small" color="primary" />}
+                  label={<Typography variant="body2">{reportMiss("Org", "library_label_org")}</Typography>}
+                />
+                <FormControlLabel
+                  value="badanamu"
+                  control={<Radio size="small" color="primary" />}
+                  label={<Typography variant="body2">{reportMiss("Badanamu", "library_label_Badanamu")}</Typography>}
+                />
+              </RadioGroup>
+            )}
+          />
         )}
       </Hidden>
     </Box>

@@ -312,7 +312,7 @@ interface onLoadContentEditPayload extends LoadingMetaPayload {
   type: "assets" | "material" | "plan";
   searchMedia?: string;
   searchOutcome?: string;
-  assumed?: string;
+  assumed?: boolean;
   isShare?: boolean;
 }
 
@@ -345,7 +345,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
             )
         : undefined,
       type === "material" || type === "plan"
-        ? dispatch(searchOutcomeList({ search_key: searchOutcome, page: 1, assumed: assumed === "true" ? 1 : -1 }))
+        ? dispatch(searchOutcomeList({ search_key: searchOutcome, page: 1, assumed: assumed ? 1 : -1 }))
         : undefined,
       dispatch(
         getLinkedMockOptions({

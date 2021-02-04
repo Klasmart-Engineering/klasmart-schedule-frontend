@@ -56,7 +56,7 @@ export const useQueryCms = () => {
   const id = query.get("id");
   const searchMedia = query.get("searchMedia") || "";
   const searchOutcome = query.get("searchOutcome") || "";
-  const assumed = query.get("assumed") || "";
+  const assumed = (query.get("assumed") || "") === "true" ? true : false;
   const isShare = query.get("isShare") || "org";
   const editindex: number = Number(query.get("editindex") || 0);
   const back = query.get("back") || "";
@@ -168,12 +168,12 @@ function ContentEditForm() {
   }, [dispatch, id, history]);
 
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
-    () => (searchMedia = "", exactSerch = "all") => {
+    () => ({ value = "", exactSerch = "all", isShare = "org" }) => {
       history.replace({
-        search: setQuery(history.location.search, { searchMedia }),
+        search: setQuery(history.location.search, { searchMedia: value, isShare }),
       });
-      const contentNameValue = exactSerch === "all" ? "" : searchMedia;
-      const nameValue = exactSerch === "all" ? searchMedia : "";
+      const contentNameValue = exactSerch === "all" ? "" : value;
+      const nameValue = exactSerch === "all" ? value : "";
       isShare === "badanamu" && lesson === "plan"
         ? dispatch(
             searchAuthContentLists({
@@ -193,62 +193,23 @@ function ContentEditForm() {
           );
       setMediaPage(1);
     },
-    [dispatch, history, isShare, searchContentType, lesson]
+    [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => (searchOutcome = "") => {
+    () => ({ value = "", assumed }) => {
       history.replace({
-        search: setQuery(history.location.search, { searchOutcome }),
+        search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
       });
       dispatch(
         searchOutcomeList({
           metaLoading: true,
-          search_key: searchOutcome,
-          assumed: assumed === "true" ? 1 : -1,
+          search_key: value,
+          assumed: assumed ? 1 : -1,
         })
       );
       setOutcomePage(1);
     },
-    [assumed, dispatch, history]
-  );
-  const handleCheckAssumed = useMemo<OutcomesProps["onCheck"]>(
-    () => (assumed = "") => {
-      history.replace({
-        search: setQuery(history.location.search, { assumed }),
-      });
-      dispatch(
-        searchOutcomeList({
-          metaLoading: true,
-          search_key: searchOutcome,
-          assumed: assumed === "true" ? 1 : -1,
-        })
-      );
-      setOutcomePage(1);
-    },
-    [dispatch, history, searchOutcome]
-  );
-  const handleCheckShare = useMemo(
-    () => (isShare: MediaAssetsProps["isShare"] = "org") => {
-      history.replace({
-        search: setQuery(history.location.search, { isShare }),
-      });
-      isShare === "badanamu" && lesson === "plan"
-        ? dispatch(
-            searchAuthContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: searchMedia,
-            })
-          )
-        : dispatch(
-            searchContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: searchMedia,
-            })
-          );
-    },
-    [dispatch, history, searchContentType, searchMedia, lesson]
+    [dispatch, history]
   );
   const handleGoBack = useCallback(() => {
     back ? history.replace(back) : history.goBack();
@@ -285,7 +246,7 @@ function ContentEditForm() {
           metaLoading: true,
           page,
           search_key: searchOutcome,
-          assumed: assumed === "true" ? 1 : -1,
+          assumed: assumed ? 1 : -1,
         })
       );
     },
@@ -350,7 +311,6 @@ function ContentEditForm() {
             lesson_types={lesson_types}
             onChangeProgram={handleChangeProgram}
             onChangeDevelopmental={handleChangeDevelopmental}
-            // onDrawingActivity={handleDrawingActivity}
             permission={!value}
           />
         )}
@@ -363,7 +323,6 @@ function ContentEditForm() {
         control={control}
         list={outcomeList}
         onSearch={handleSearchOutcomes}
-        onCheck={handleCheckAssumed}
         searchName={searchOutcome}
         assumed={assumed}
         total={OutcomesListTotal}
@@ -379,7 +338,6 @@ function ContentEditForm() {
         total={mediaListTotal}
         mediaPage={mediaPage}
         isShare={isShare}
-        onCheckShare={handleCheckShare}
       />
     </ContentTabs>
   );

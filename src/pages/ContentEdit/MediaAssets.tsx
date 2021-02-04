@@ -7,7 +7,7 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { SearchcmsList } from "../../components/SearchcmsList";
+import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
@@ -18,6 +18,10 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     [breakpoints.down("sm")]: {
       minHeight: 698,
     },
+  },
+  assetImage: {
+    width: 104,
+    height: 64,
   },
   tableContainer: {
     marginTop: 5,
@@ -35,43 +39,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
   cellAction: {
     width: 162,
-  },
-  assetImage: {
-    width: 104,
-    height: 64,
-  },
-  emptyImage: {
-    marginTop: 200,
-    marginBottom: 40,
-    width: 200,
-    height: 156,
-  },
-  comingsoonImage: {
-    marginTop: 200,
-    marginBottom: 40,
-    width: 130,
-    height: 133,
-  },
-  noFilesImage: {
-    marginTop: 200,
-    marginBottom: 40,
-    width: 135,
-    height: 125,
-  },
-  emptyDesc: {
-    marginBottom: "auto",
-  },
-  searchField: {
-    flexGrow: 2,
-    flexShrink: 0.5,
-    marginLeft: 40,
-  },
-  fieldset: {
-    minWidth: 110,
-    "&:not(:first-child)": {
-      marginLeft: 16,
-      marginRight: 221,
-    },
   },
   pagination: {
     marginBottom: 20,
@@ -149,16 +116,15 @@ export interface MediaAssetsProps {
   amountPerPage?: number;
   comingsoon?: boolean;
   value?: string;
-  onSearch: (searchText: MediaAssetsProps["value"], exactSerch?: string) => any;
+  onSearch: (query: SearchItems) => any;
   onChangePage: (page: number) => any;
   mediaPage: number;
   isShare?: string;
-  onCheckShare: (isShare: MediaAssetsProps["isShare"]) => any;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
-  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, onCheckShare, isShare } = props;
+  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, isShare } = props;
   const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -217,14 +183,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
         comingsoonTip
       ) : (
         <Box width="100%">
-          <SearchcmsList
-            searchType="searchMedia"
-            onSearch={onSearch}
-            value={value}
-            lesson={lesson}
-            onCheckShare={onCheckShare}
-            isShare={isShare}
-          />
+          <SearchcmsList searchType="searchMedia" onSearch={onSearch} value={value} lesson={lesson} isShare={isShare} />
           {list.length > 0 ? table : resultsTip}
         </Box>
       )}
