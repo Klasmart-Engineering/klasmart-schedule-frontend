@@ -3,11 +3,11 @@ import { AxisBottom, AxisLeft, TickRendererProps } from "@visx/axis";
 import { Group } from "@visx/group";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { BarGroup as VisxBarGroup } from "@visx/shape";
-import { BarGroup } from "@visx/shape/lib/types";
+import { BarGroup, BarGroupBar } from "@visx/shape/lib/types";
 import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 
 const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
 
@@ -136,28 +136,28 @@ function computed(props: Pick<VerticalMultiBarChartProps, "px" | "data">) {
   return { chartData, categoryNames, categoryScale, xScale, yScale, yAxiosScale, colorScale, getX, xAxiosLabelWidth, viewPort };
 }
 
-const showBarTooltip = (
-  tooltipData: TooltipData,
-  showTooltip: UseTooltipParams<TooltipData>["showTooltip"],
-  px: number,
-  tooltipOpen: boolean,
-  hideTooltip: UseTooltipParams<TooltipData>["hideTooltip"],
-  prevX0: number,
-  setPrevX0: { (value: React.SetStateAction<number>): void; (arg0: number): void }
-) => {
+const showBarTooltip = (tooltipData: TooltipData, showTooltip: UseTooltipParams<TooltipData>["showTooltip"], px: number) => {
   const { bar, barGroup } = tooltipData;
   const pixels = getPixels(px);
-  if (prevX0 === barGroup.x0 && tooltipOpen) {
-    hideTooltip();
-    return;
-  }
-  setPrevX0(barGroup.x0);
   showTooltip({
     tooltipLeft: barGroup.x0 + bar.x + bar.width,
     tooltipTop: bar.y + pixels.xMarginTop,
     tooltipData,
   });
 };
+
+function useTooltipTriggerClick() {
+  const [barIndex, setBarIndex] = useState<number>();
+  const [barGroupIndex, setBarGroupIndex] = useState<number>();
+  const toggle = (barIdx: number, barGroupIdx: number) => {
+    const open = barGroupIndex !== barGroupIdx || barIndex !== barIdx;
+    setBarIndex(open ? barIdx : undefined);
+    setBarGroupIndex(open ? barGroupIdx : undefined);
+    return open;
+  };
+  return { toggle };
+}
+
 export interface VerticalBarGroupDataItemCategoryValue {
   name: string;
   title?: string;
@@ -174,20 +174,28 @@ export interface VerticalBarGroupDataItem {
   value: VerticalBarGroupDataItemCategoryValue[];
 }
 
+export enum TooltipTriggerEventName {
+  click = "click",
+  mouseEnter = "mouseEnter",
+}
+
 export interface VerticalMultiBarChartProps {
   data: VerticalBarGroupDataItem[];
   onSelect?: (id: string) => any;
   px?: number;
   valueAxiosLabel: string;
   renderTooltipContent?: (props: { barGroupIndex: number; barIndex: number }) => ReactNode;
+  tooltipTriggerEvent?: TooltipTriggerEventName;
 }
 
 export type VerticalBarGroupChartProps = VerticalMultiBarChartProps;
 export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
-  const { onSelect, px = 1, data, valueAxiosLabel, renderTooltipContent } = props;
+  const { onSelect, px = 1, data, valueAxiosLabel, renderTooltipContent, tooltipTriggerEvent = TooltipTriggerEventName.mouseEnter } = props;
   const css = useStyle();
   const pixels = useMemo(() => getPixels(px), [px]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
+  const { toggle } = useTooltipTriggerClick();
+  const isTooltipTriggerClick = tooltipTriggerEvent === TooltipTriggerEventName.click;
   const {
     chartData,
     categoryNames,
@@ -201,7 +209,10 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
     viewPort,
   } = useMemo(() => computed({ px, data }), [data, px]);
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TooltipData>();
-  const [prevX0, setPrevX0] = useState<number>(0);
+  const handleClickBar = (bar: BarGroupBar<string>, barGroup: TBarGroup) => {
+    const open = toggle(bar.index, barGroup.index);
+    open ? showBarTooltip({ bar, barGroup }, showTooltip, px) : hideTooltip();
+  };
   const rectList = (barGroups: TBarGroup[]) =>
     barGroups.map((barGroup) => (
       <Group key={`barGroup-group-${barGroup.index}-${barGroup.x0}`} left={barGroup.x0}>
@@ -213,9 +224,9 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
               width={bar.width}
               height={bar.height}
               fill={bar.color}
-              onClick={() => showBarTooltip({ bar, barGroup }, showTooltip, px, tooltipOpen, hideTooltip, prevX0, setPrevX0)}
-              // onMouseOver={() => showBarTooltip({ bar, barGroup }, showTooltip, px)}
-              // onMouseLeave={hideTooltip}
+              onClick={() => (!isTooltipTriggerClick ? undefined : handleClickBar(bar, barGroup))}
+              onMouseOver={isTooltipTriggerClick ? undefined : () => showBarTooltip({ bar, barGroup }, showTooltip, px)}
+              onMouseLeave={isTooltipTriggerClick ? undefined : hideTooltip}
             />
             <text x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
               {data[barGroup.index].value[bar.index].title}
@@ -241,12 +252,6 @@ export function VerticalBarGroupChart(props: VerticalBarGroupChartProps) {
         ? renderTooltipContent({ barGroupIndex: tooltipData.barGroup.index, barIndex: tooltipData.bar.index })
         : data[tooltipData.barGroup.index].value[tooltipData.bar.index]?.description
       : undefined;
-  useEffect(() => {
-    return () => {
-      hideTooltip();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
   return (
     <div className={css.svg}>
       <svg width={viewPort[2]} height={viewPort[3]}>

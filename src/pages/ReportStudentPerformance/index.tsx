@@ -19,6 +19,7 @@ import {
   HorizontalSingleBarStackDataItem,
 } from "../../components/Chart/HorizontalBarStackChart";
 import {
+  TooltipTriggerEventName,
   VerticalBarGroupChart,
   verticalBarGroupChartSize,
   VerticalBarGroupDataItem,
@@ -600,7 +601,6 @@ export function ReportStudentPerformance() {
   const dispatch = useDispatch();
   const theme = useTheme();
   const upLg = useMediaQuery(theme.breakpoints.up("lg"));
-  console.log("upLg = ", upLg);
   const [w1, h1] = horizontalBarStackChartSize({ data: mockData1 });
   const [w2, h2] = horizontalBarStackChartSize({ data: mockData2 });
   const [w3, h3] = verticalBarStackChartSize({ data: mockData3 });
@@ -781,9 +781,11 @@ export function ReportStudentPerformance() {
                     )}
                   />
                   <VerticalBarGroupChart
+                    key={condition.student_id}
                     data={finalH5pRepirtDetail}
                     px={px}
                     valueAxiosLabel="in seconds"
+                    tooltipTriggerEvent={TooltipTriggerEventName.click}
                     renderTooltipContent={(tooltipProps) => (
                       <div>
                         {finalH5pRepirtDetail[tooltipProps.barGroupIndex].value[tooltipProps.barIndex].tooltipArr.map((item, index) => {
