@@ -116,7 +116,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   return (
     <Box>
       <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
-        {/* {(!enableExactSearch || searchType === "searchOutcome") && (
+        {searchType === "searchOutcome" && (
           <Hidden smDown>
             <Controller
               as={TextField}
@@ -139,7 +139,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
               {d("Search").t("library_label_search")}
             </Button>
           </Hidden>
-        )} */}
+        )}
         {searchType === "searchMedia" && (
           <Hidden smDown>
             <Controller
