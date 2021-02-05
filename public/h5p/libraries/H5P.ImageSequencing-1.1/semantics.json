@@ -45,7 +45,8 @@
           "type": "text",
           "label": "Image Description",
           "importance": "low",
-          "description": "An image description for users who cannot recognize the image"
+          "description": "An image description for users who cannot recognize the image",
+          "optional": true
         },
         {
           "name": "audio",
