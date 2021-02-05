@@ -20,7 +20,7 @@ import {
   EntityOrganizationInfo,
   EntityOrganizationProperty,
 } from "../api/api.auto";
-import { apiIsEnableExactSearch, apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -54,7 +54,6 @@ interface IContentState {
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
   user_id: string;
-  exectSearch: string;
 }
 
 interface RootState {
@@ -186,7 +185,6 @@ const initialState: IContentState = {
   selectedOrg: [],
   myOrgId: "",
   user_id: "",
-  exectSearch: ExectSearch.all,
 };
 
 // const ADD_FOLDER_MODEL_INFO = {
@@ -405,30 +403,17 @@ interface IQyertOnLoadContentListResult {
   badaContent?: AsyncReturnType<typeof api.contentsAuthed.queryAuthContent>;
   organization_id: string;
 }
-type IQueryGetExectSearchParams = {
-  exectSearch: string;
-};
-interface IQueryGetExectSearchResult {
-  exectSearch: string;
-}
-export const getExectSearch = createAsyncThunk<IQueryGetExectSearchResult, IQueryGetExectSearchParams>(
-  "content/getExectSearch",
-  ({ exectSearch }) => {
-    return { exectSearch };
-  }
-);
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
   async (query, { getState, dispatch }) => {
     await dispatch(getUserSetting());
     const {
-      content: { page_size, exectSearch },
+      content: { page_size },
     } = getState();
-    const { name, publish_status, author, content_type, page, program_group, order_by, path } = query;
-    const isEnableExactSearch = apiIsEnableExactSearch();
-    const nameValue = exectSearch === ExectSearch.all ? name : "";
-    const contentNameValue = exectSearch === ExectSearch.name ? name : "";
-    const isExectSearch = exectSearch === ExectSearch.name;
+    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search } = query;
+    const nameValue = exect_search === ExectSearch.all ? name : "";
+    const contentNameValue = exect_search === ExectSearch.name ? name : "";
+    const isExectSearch = exect_search === ExectSearch.name;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
@@ -445,9 +430,8 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       page_size,
       path,
     };
-    if (!isEnableExactSearch) delete params.content_name;
-    if (isEnableExactSearch && isExectSearch) delete params.name;
-    if (isEnableExactSearch && !isExectSearch) delete params.content_name;
+    if (isExectSearch) delete params.name;
+    if (!isExectSearch) delete params.content_name;
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       delete params.program_group;
       const folderRes = await api.contentsFolders.queryFolderContent(params);
@@ -1122,9 +1106,6 @@ const { actions, reducer } = createSlice({
       } else {
         state.selectedOrg = [];
       }
-    },
-    [getExectSearch.fulfilled.type]: (state, { payload }: any) => {
-      state.exectSearch = payload.exectSearch;
     },
   },
 });

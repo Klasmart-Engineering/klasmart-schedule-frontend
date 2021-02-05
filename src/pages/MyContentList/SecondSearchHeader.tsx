@@ -7,16 +7,16 @@ import { Search } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, UseFormMethods } from "react-hook-form";
 import { apiIsEnableExactSearch } from "../../api/extra";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { ContentListForm, QueryCondition, QueryConditionBaseProps } from "./types";
 
-const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
-
+export const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
+export const EXECT_SEARCH = "EXECT_SEARCH";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -139,16 +139,18 @@ const getExectSearch = () => {
 };
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { exectSearch, value, onChange, onCreateContent, onChangeExectSearchCondition, onChangeSearchCondition } = props;
-  const { control, reset, getValues } = useForm();
+  const { value, onChange, onCreateContent, conditionFormMethods } = props;
+  const { control, reset } = conditionFormMethods;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isEnableExactSearch = apiIsEnableExactSearch();
   const handleClickSearch = () => {
-    const newValue = produce(value, (draft) => {
-      const searchText = getValues()[SEARCH_TEXT_KEY];
-      searchText ? (draft.name = searchText) : delete draft.name;
-    });
-    onChangeSearchCondition({ ...newValue, page: 1 });
+    // const newValue = produce(value, (draft) => {
+    //   const searchText = getValues()[SEARCH_TEXT_KEY];
+    //   searchText ? (draft.name = searchText) : delete draft.name;
+    //   const exect_search = getValues()[EXECT_SEARCH];
+    //   draft.exect_search = exect_search;
+    // });
+    onChange({ ...value, page: 1 });
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -164,9 +166,6 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         author ? (draft.author = author) : delete draft.author;
       })
     );
-  };
-  const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangeExectSearchCondition(event.target.value);
   };
   useEffect(() => {
     reset();
@@ -225,11 +224,10 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               {isEnableExactSearch && (
                 <div className={classes.searchCon}>
                   <TextField
+                    name={EXECT_SEARCH}
                     className={classes.exectSearchInput}
                     size="small"
-                    onChange={handleChangeSearch}
-                    // label={d("Content Type").t("library")}
-                    value={exectSearch}
+                    defaultValue={value.exect_search || ExectSearch.all}
                     select
                     SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
                   >
@@ -261,22 +259,16 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 }
 
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
-  exectSearch: string;
   onCreateContent: () => any;
-  onChangeExectSearchCondition: (exectSearch: string) => any;
-  onChangeSearchCondition: (value: QueryCondition) => any;
+  conditionFormMethods: UseFormMethods<ContentListForm>;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { control, reset, getValues } = useForm();
-  const { exectSearch, value, onChange, onChangeExectSearchCondition, onChangeSearchCondition } = props;
+  const { value, onChange, conditionFormMethods } = props;
+  const { control, reset } = conditionFormMethods;
   const isEnableExactSearch = apiIsEnableExactSearch();
   const handleClickSearch = () => {
-    const newValue = produce(value, (draft) => {
-      const searchText = getValues()[SEARCH_TEXT_KEY];
-      searchText ? (draft.name = searchText) : delete draft.name;
-    });
-    onChangeSearchCondition({ ...newValue, page: 1 });
+    onChange({ ...value, page: 1 });
   };
 
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
@@ -292,24 +284,14 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   };
   const handleChangeFilterOption = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = produce(value, (draft) => {
-      const searchText = getValues()[SEARCH_TEXT_KEY];
-      searchText ? (draft.name = searchText) : delete draft.name;
       const content_type = event.target.value;
       draft.content_type = content_type;
     });
     onChange({ ...newValue });
   };
-  const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    // const newValue = produce(value, (draft) => {
-    //   const content_name = event.target.value;
-    //   draft.content_name = content_name;
-    // })
-    // onChange({ ...newValue });
-    onChangeExectSearchCondition(event.target.value);
-  };
   useEffect(() => {
     reset();
-  }, [value.name, reset]);
+  }, [value.name, value.exect_search, reset]);
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -333,17 +315,18 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               )}
               {isEnableExactSearch && (
                 <div className={classes.searchCon}>
-                  <TextField
+                  <Controller
+                    as={TextField}
+                    name={EXECT_SEARCH}
+                    control={control}
                     className={classes.exectSearchInput}
                     size="small"
-                    onChange={handleChangeSearch}
-                    // label={d("Content Type").t("library")}
-                    value={exectSearch}
+                    defaultValue={value.exect_search || ExectSearch.all}
                     select
                     SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
                   >
                     {menuItemList(getExectSearch())}
-                  </TextField>
+                  </Controller>
                   <Controller
                     style={{ borderLeft: 0 }}
                     as={TextField}
