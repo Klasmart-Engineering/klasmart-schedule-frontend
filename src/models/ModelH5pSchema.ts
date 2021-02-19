@@ -55,6 +55,7 @@ export type H5PSingleMediaContent =
       copyright?: IH5PCopyright;
       width?: number;
       height?: number;
+      imageAlt?: string;
     }
   | undefined;
 
