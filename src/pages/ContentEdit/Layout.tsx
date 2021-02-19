@@ -45,6 +45,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       flexBasis: "100%",
       maxWidth: "none",
     },
+    position: "relative",
   }),
 }));
 
