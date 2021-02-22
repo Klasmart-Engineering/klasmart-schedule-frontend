@@ -189,7 +189,7 @@ function ScheduleContent() {
   }, [dispatch, getOrgByClass, getOrgBySchool]);
 
   React.useEffect(() => {
-    dispatch(contentLists({ publish_status: "published", content_type: "2" }));
+    dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));
     dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));

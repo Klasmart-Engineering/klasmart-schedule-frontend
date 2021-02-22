@@ -365,16 +365,12 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
     return api.contentsResources.getContentResourceUploadPath(query);
   }
 );
-
 type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0] & LoadingMetaPayload;
 type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
-export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams, { state: RootState }>(
+export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
   "content/contentLists",
-  async ({ metaLoading, ...query }, { getState }) => {
-    const {
-      content: { page_size },
-    } = getState();
-    const { list, total } = await api.contents.searchContents({ ...query, page_size });
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contents.searchContents({ ...query });
     return { list, total };
   }
 );
