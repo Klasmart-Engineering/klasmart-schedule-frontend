@@ -43,12 +43,10 @@ buildAndUploadBucketAws:
       when: manual
 
 buildAndUploadBucketAwsCn:
-  variables:
-    extraBizName: 'Cn'
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\/cn\b/'
       when: manual
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(dev|test|demo)\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(dev|test|demo)\/cn\b/'
       when: manual
 
 buildAndUploadBucketAwsUk:
