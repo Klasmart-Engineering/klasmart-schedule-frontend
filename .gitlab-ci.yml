@@ -34,12 +34,10 @@ buildAndUploadBucketTencent:
       when: always
 
 buildAndUploadBucketAws:
-  variables:
-    extraBizName: 'Global'
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\/global\b/'
       when: manual
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(test|demo)\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(test|demo)\/global\b/'
       when: manual
 
 buildAndUploadBucketAwsCn:
@@ -53,5 +51,5 @@ buildAndUploadBucketAwsUk:
   variables:
     extraBizName: 'Uk'
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\b/'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /release\/global\b/'
       when: manual
