@@ -17,6 +17,7 @@ import {
   getClassesByTeacher,
   getContentsAuthed,
   getMockOptions,
+  getParticipantsData,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
@@ -25,7 +26,7 @@ import {
   scheduleUpdateStatus,
   getClassesBySchool,
 } from "../../reducers/schedule";
-import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -55,7 +56,7 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData } = useSelector<
+  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData, ParticipantsData } = useSelector<
     RootState,
     RootState["schedule"]
   >((state) => state.schedule);
@@ -66,6 +67,8 @@ function ScheduleContent() {
   const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const [participantsIds, setParticipantsIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
+  const [classRosterIds, setClassRosterIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
@@ -80,6 +83,10 @@ function ScheduleContent() {
       program_id: resultInfo.payload.contentDetail.program as string,
       subject_id: resultInfo.payload.contentDetail.subject![0] as string,
     };
+  };
+
+  const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
+    type === "classRoster" ? setClassRosterIds(data) : setParticipantsIds(data);
   };
 
   const initModalDate: AlertDialogProps = {
@@ -146,6 +153,10 @@ function ScheduleContent() {
   const toLive = () => {
     dispatch(scheduleUpdateStatus({ schedule_id: scheduleId, status: { status: "Started" } }));
     if (liveToken) window.open(apiLivePath(liveToken));
+  };
+
+  const getParticipants = (is_org: boolean = true) => {
+    dispatch(getParticipantsData(is_org));
   };
 
   React.useEffect(() => {
@@ -244,6 +255,11 @@ function ScheduleContent() {
               specificStatus={specificStatus}
               contentPreview={contentPreview}
               LinkageLessonPlan={LinkageLessonPlan}
+              participantsIds={participantsIds}
+              classRosterIds={classRosterIds}
+              handleChangeParticipants={handleChangeParticipants}
+              ParticipantsData={ParticipantsData}
+              getParticipantsData={getParticipants}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
