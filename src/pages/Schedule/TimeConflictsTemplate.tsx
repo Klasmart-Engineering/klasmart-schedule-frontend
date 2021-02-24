@@ -95,13 +95,12 @@ interface Conflicts {
 
 interface TimeConflictsTemplateProps {
   handleClose: () => void;
-  setParticipantsIds: (value: ParticipantsShortInfo) => void;
-  setClassRosterIds: (value: ParticipantsShortInfo) => void;
   conflictsData: ConflictsData;
+  handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { setParticipantsIds, setClassRosterIds, conflictsData } = props;
+  const { conflictsData, handleChangeParticipants } = props;
   const css = useStyles();
 
   const { breakpoints } = useTheme();
@@ -152,24 +151,14 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         .filter((item) => item.selected === "schedule")
         .map((item) => ({ id: item.id, name: item.name }));
     }
-    setParticipantsIds({
+    handleChangeParticipants("paiticipants", {
       teacher: arr.participants_teacher_ids,
       student: arr.participants_student_ids,
     });
-    setClassRosterIds({
+    handleChangeParticipants("classRoster", {
       teacher: arr.class_roster_teacher_ids,
       student: arr.class_roster_student_ids,
     });
-    console.log(
-      {
-        teacher: arr.class_roster_teacher_ids,
-        student: arr.class_roster_student_ids,
-      },
-      {
-        teacher: arr.participants_teacher_ids,
-        student: arr.participants_student_ids,
-      }
-    );
   };
 
   const chechkPart = (
