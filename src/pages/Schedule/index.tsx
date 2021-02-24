@@ -25,6 +25,7 @@ import {
   getSearchScheduleList,
   scheduleUpdateStatus,
   getClassesBySchool,
+  changeParticipants,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -56,10 +57,16 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData, ParticipantsData } = useSelector<
-    RootState,
-    RootState["schedule"]
-  >((state) => state.schedule);
+  const {
+    mockOptions,
+    scheduleMockOptions,
+    participantMockOptions,
+    liveToken,
+    scheduleTimeViewYearData,
+    ParticipantsData,
+    classRosterIds,
+    participantsIds,
+  } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
@@ -67,8 +74,6 @@ function ScheduleContent() {
   const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const [participantsIds, setParticipantsIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
-  const [classRosterIds, setClassRosterIds] = React.useState<ParticipantsShortInfo>({ student: [], teacher: [] });
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
@@ -86,7 +91,7 @@ function ScheduleContent() {
   };
 
   const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
-    type === "classRoster" ? setClassRosterIds(data) : setParticipantsIds(data);
+    dispatch(changeParticipants({ type: type, data: data }));
   };
 
   const initModalDate: AlertDialogProps = {
@@ -188,6 +193,10 @@ function ScheduleContent() {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
   }, [dispatch]);
+
+  React.useEffect(() => {
+    dispatch(getParticipantsData(getOrgByClass));
+  }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     if (getOrgByClass) {

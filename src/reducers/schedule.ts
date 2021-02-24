@@ -42,7 +42,7 @@ import {
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
-import { ClassesData, ParticipantsData, RolesData } from "../types/scheduleTypes";
+import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 
@@ -84,6 +84,8 @@ export interface ScheduleState {
   contentsAuthList: EntityContentInfoWithDetails[];
   classOptions: classOptionsProp;
   ParticipantsData: ParticipantsData;
+  participantsIds: ParticipantsShortInfo;
+  classRosterIds: ParticipantsShortInfo;
 }
 
 interface Rootstate {
@@ -176,6 +178,8 @@ const initialState: ScheduleState = {
       teachers: [],
     },
   },
+  participantsIds: { student: [], teacher: [] },
+  classRosterIds: { student: [], teacher: [] },
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -199,8 +203,9 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       },
     } = getState();
     if (!id) {
+      const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
       // @ts-ignore
-      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).data?.id;
+      if (!result.data?.id) return result;
     } else {
       // @ts-ignore
       id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).data?.id;
@@ -459,6 +464,9 @@ const { actions, reducer } = createSlice({
         },
       };
     },
+    changeParticipants: (state, { payload }: PayloadAction<ChangeParticipants>) => {
+      payload.type === "classRoster" ? (state.classRosterIds = payload.data) : (state.participantsIds = payload.data);
+    },
   },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
@@ -534,5 +542,5 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const { resetScheduleDetial, resetParticipantList } = actions;
+export const { resetScheduleDetial, resetParticipantList, changeParticipants } = actions;
 export default reducer;

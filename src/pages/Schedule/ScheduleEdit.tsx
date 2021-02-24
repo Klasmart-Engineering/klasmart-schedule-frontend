@@ -36,6 +36,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
+  changeParticipants,
   getScheduleLiveToken,
   getScheduleMockOptionsResponse,
   getScheduleParticipant,
@@ -67,6 +68,7 @@ import ScheduleFilter from "./ScheduleFilter";
 import { modelSchedule } from "../../models/ModelSchedule";
 import Paper from "@material-ui/core/Paper";
 import Collapse from "@material-ui/core/Collapse";
+import TimeConflictsTemplate from "./TimeConflictsTemplate";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -432,6 +434,8 @@ function EditBox(props: CalendarStateProps) {
     setInitScheduleList(newData);
     dispatch(resetScheduleDetial(initScheduleDetial));
     dispatch(resetParticipantList());
+    dispatch(changeParticipants({ type: "classRoster", data: { student: [], teacher: [] } }));
+    dispatch(changeParticipants({ type: "addParticipants", data: { student: [], teacher: [] } }));
   }, [dispatch, timesTamp, scheduleRestNum]);
 
   const formatTeahcerId = (teacherIds: any) => {
@@ -474,6 +478,34 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
+
+      const getClassOptionsItem = (item: ClassOptionsItem[]) => {
+        const items = item?.map((item: any) => {
+          return { id: item.id, name: item.name };
+        });
+        return items ?? [];
+      };
+
+      dispatch(
+        changeParticipants({
+          type: "classRoster",
+          data: {
+            student: getClassOptionsItem(scheduleDetial.class_roster_students as ClassOptionsItem[]),
+            teacher: getClassOptionsItem(scheduleDetial.class_roster_teachers as ClassOptionsItem[]),
+          },
+        })
+      );
+
+      dispatch(
+        changeParticipants({
+          type: "addParticipants",
+          data: {
+            student: getClassOptionsItem(scheduleDetial.participants_students as ClassOptionsItem[]),
+            teacher: getClassOptionsItem(scheduleDetial.participants_teachers as ClassOptionsItem[]),
+          },
+        })
+      );
+
       if ((scheduleDetial.due_at as number) > 0) {
         setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
       }
@@ -792,6 +824,24 @@ function EditBox(props: CalendarStateProps) {
     >;
 
     if (resultInfo.payload) {
+      if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: true,
+          customizeTemplate: (
+            <TimeConflictsTemplate
+              handleClose={() => {
+                changeModalDate({
+                  openStatus: false,
+                });
+              }}
+              conflictsData={resultInfo.payload.data}
+              handleChangeParticipants={handleChangeParticipants}
+            />
+          ),
+        });
+        return;
+      }
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
@@ -926,14 +976,14 @@ function EditBox(props: CalendarStateProps) {
             {
               label: d("CONFIRM").t("schedule_button_confirm"),
               event: () => {
-                saveSchedule("with_following");
+                saveSchedule("with_following", false);
               },
             },
           ],
         });
       }
     } else {
-      saveSchedule(checkedStatus.repeatCheck ? "with_following" : "only_current");
+      saveSchedule(checkedStatus.repeatCheck ? "with_following" : "only_current", false);
     }
   };
 
@@ -1176,7 +1226,7 @@ function EditBox(props: CalendarStateProps) {
         : participantsIds?.teacher.concat(participantsIds?.student);
     return participantSet.map((item: any, key: number) => (
       <span key={key} className={css.participantContent}>
-        {item.user_name}
+        {item.name}
       </span>
     ));
   };
@@ -1508,7 +1558,6 @@ function EditBox(props: CalendarStateProps) {
               className={css.fieldset}
               multiline
               label={d("Add Participants").t("schedule_detail_participants")}
-              value={scheduleList.title}
               onChange={(e) => handleTopicListChange(e, "title")}
               required
               disabled

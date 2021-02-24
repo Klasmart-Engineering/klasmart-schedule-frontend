@@ -134,3 +134,8 @@ export interface ConflictsData {
   participants_teachers: EntityScheduleShortInfo[];
   participants_students: EntityScheduleShortInfo[];
 }
+
+export interface ChangeParticipants {
+  type: string;
+  data: ParticipantsShortInfo;
+}
