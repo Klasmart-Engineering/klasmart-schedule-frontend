@@ -100,7 +100,7 @@ interface TimeConflictsTemplateProps {
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { conflictsData, handleChangeParticipants } = props;
+  const { conflictsData, handleChangeParticipants, handleClose } = props;
   const css = useStyles();
 
   const { breakpoints } = useTheme();
@@ -111,10 +111,18 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   // const [classRoster, setClassRoster] = React.useState<ParticipantsShortInfo>(classRosterIds)
 
   const [conflicts, setConflict] = React.useState<Conflicts>({
-    class_roster_student_ids: conflictsData.class_roster_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    class_roster_teacher_ids: conflictsData.class_roster_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    participants_student_ids: conflictsData.participants_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    participants_teacher_ids: conflictsData.participants_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_student_ids:
+      conflictsData.class_roster_students &&
+      conflictsData.class_roster_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_teacher_ids:
+      conflictsData.class_roster_teachers &&
+      conflictsData.class_roster_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_student_ids:
+      conflictsData.participants_students &&
+      conflictsData.participants_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_teacher_ids:
+      conflictsData.participants_teachers &&
+      conflictsData.participants_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
   });
 
   const handleChange = (
@@ -159,6 +167,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       teacher: arr.class_roster_teacher_ids,
       student: arr.class_roster_student_ids,
     });
+    handleClose();
   };
 
   const chechkPart = (
