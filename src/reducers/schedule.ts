@@ -206,6 +206,8 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
       // @ts-ignore
       if (!result.data?.id) return result;
+      // @ts-ignore
+      id = result.data?.id;
     } else {
       // @ts-ignore
       id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).data?.id;

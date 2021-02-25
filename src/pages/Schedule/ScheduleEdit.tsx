@@ -805,11 +805,12 @@ function EditBox(props: CalendarStateProps) {
       );
       return;
     }
-    if (!rosterSaveStatus && !participantsIsEmpty) {
+
+    if (!rosterSaveStatus && !rosterIsEmpty) {
       dispatch(actError(d("Please confirm the field of ‘Class Roster’ by clicking OK").t("schedule_msg_roster_no_ok")));
       return;
     }
-    if (!participantSaveStatus && !rosterIsEmpty) {
+    if (!participantSaveStatus && !participantsIsEmpty) {
       dispatch(actError(d("Please confirm the fileld of ‘Add Participants’ by clicking OK").t("schedule_msg_participants_no_ok")));
       return;
     }
