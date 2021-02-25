@@ -154,7 +154,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   };
 
   const handleConfirm = () => {
-    let keepRosterOpen = true;
+    let keepRosterOpen = false;
     let classRosterIds1 = JSON.parse(JSON.stringify(classRosterIds));
     let participantsIds1 = JSON.parse(JSON.stringify(participantsIds));
     for (let key in conflicts) {
@@ -167,10 +167,12 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
           .filter((item) => item.selected === "not_schedule")
           .map((item) => ({ id: item.id, name: item.name }));
       if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) {
-        keepRosterOpen = false;
+        keepRosterOpen = true;
       }
-      arr[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"].forEach(
-        (item, index) => {
+      arr[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"] &&
+        arr[
+          key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+        ].forEach((item, index) => {
           if (key === "class_roster_student_ids") {
             const idx = classRosterIds1.student.findIndex((item1: ClassOptionsItem) => item1.id === item);
             classRosterIds1.student.splice(idx, 1);
@@ -187,8 +189,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
             const idx = participantsIds1.teacher.findIndex((item1: ClassOptionsItem) => item1.id === item);
             participantsIds1.teacher.splice(idx, 1);
           }
-        }
-      );
+        });
     }
 
     // handleChangeParticipants("paiticipants", {
