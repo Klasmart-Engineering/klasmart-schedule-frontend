@@ -153,11 +153,13 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   const handleConfirm = () => {
     for (let key in conflicts) {
       // @ts-ignore
-      arr[key] = conflicts[
-        key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
-      ]
-        .filter((item) => item.selected === "schedule")
-        .map((item) => ({ id: item.id, name: item.name }));
+      arr[key] =
+        conflicts[
+          key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+        ] &&
+        conflicts[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"]
+          .filter((item) => item.selected === "schedule")
+          .map((item) => ({ id: item.id, name: item.name }));
     }
     handleChangeParticipants("paiticipants", {
       teacher: arr.participants_teacher_ids,
@@ -206,39 +208,43 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         <div className={css.classRoster}>
           <p>{d("Class Roster").t("schedule_detail_class_roster")}</p>
           <div className={css.scrollPart}>
-            {conflicts.class_roster_student_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "student", "class_roster_student_ids")}
-                </Grid>
-              );
-            })}
-            {conflicts.class_roster_teacher_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "teacher", "class_roster_teacher_ids")}
-                </Grid>
-              );
-            })}
+            {conflicts.class_roster_student_ids &&
+              conflicts.class_roster_student_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "student", "class_roster_student_ids")}
+                  </Grid>
+                );
+              })}
+            {conflicts.class_roster_teacher_ids &&
+              conflicts.class_roster_teacher_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "teacher", "class_roster_teacher_ids")}
+                  </Grid>
+                );
+              })}
           </div>
         </div>
         <div className={css.classRoster}>
           <p>{d("Participants").t("schedule_time_conflict_checking")}</p>
           <div className={css.scrollPart}>
-            {conflicts.participants_student_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "student", "participants_student_ids")}
-                </Grid>
-              );
-            })}
-            {conflicts.participants_teacher_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "teacher", "participants_teacher_ids")}
-                </Grid>
-              );
-            })}
+            {conflicts.participants_student_ids &&
+              conflicts.participants_student_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "student", "participants_student_ids")}
+                  </Grid>
+                );
+              })}
+            {conflicts.participants_teacher_ids &&
+              conflicts.participants_teacher_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "teacher", "participants_teacher_ids")}
+                  </Grid>
+                );
+              })}
           </div>
         </div>
       </div>
