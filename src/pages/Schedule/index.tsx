@@ -17,6 +17,7 @@ import {
   getClassesByTeacher,
   getContentsAuthed,
   getMockOptions,
+  getParticipantsData,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
@@ -24,8 +25,9 @@ import {
   getSearchScheduleList,
   scheduleUpdateStatus,
   getClassesBySchool,
+  changeParticipants,
 } from "../../reducers/schedule";
-import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -55,10 +57,16 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData } = useSelector<
-    RootState,
-    RootState["schedule"]
-  >((state) => state.schedule);
+  const {
+    mockOptions,
+    scheduleMockOptions,
+    participantMockOptions,
+    liveToken,
+    scheduleTimeViewYearData,
+    ParticipantsData,
+    classRosterIds,
+    participantsIds,
+  } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
@@ -80,6 +88,10 @@ function ScheduleContent() {
       program_id: resultInfo.payload.contentDetail.program as string,
       subject_id: resultInfo.payload.contentDetail.subject![0] as string,
     };
+  };
+
+  const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
+    dispatch(changeParticipants({ type: type, data: data }));
   };
 
   const initModalDate: AlertDialogProps = {
@@ -148,6 +160,10 @@ function ScheduleContent() {
     if (liveToken) window.open(apiLivePath(liveToken));
   };
 
+  const getParticipants = (is_org: boolean = true) => {
+    dispatch(getParticipantsData(is_org));
+  };
+
   React.useEffect(() => {
     if (teacherName) {
       const data = {
@@ -177,6 +193,10 @@ function ScheduleContent() {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
   }, [dispatch]);
+
+  React.useEffect(() => {
+    dispatch(getParticipantsData(getOrgByClass));
+  }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     if (getOrgByClass) {
@@ -244,6 +264,11 @@ function ScheduleContent() {
               specificStatus={specificStatus}
               contentPreview={contentPreview}
               LinkageLessonPlan={LinkageLessonPlan}
+              participantsIds={participantsIds}
+              classRosterIds={classRosterIds}
+              handleChangeParticipants={handleChangeParticipants}
+              ParticipantsData={ParticipantsData}
+              getParticipantsData={getParticipants}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

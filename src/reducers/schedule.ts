@@ -42,6 +42,7 @@ import {
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
+import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 
@@ -65,20 +66,6 @@ interface classOptionsProp {
   classListSchool: ClassesBySchoolQuery;
 }
 
-interface RolesData {
-  user_id: string;
-  user_name: string;
-}
-
-interface ClassesData {
-  students: RolesData[];
-  teachers: RolesData[];
-}
-
-interface ParticipantsData {
-  classes: ClassesData;
-}
-
 export interface ScheduleState {
   total: number;
   searchScheduleList: EntityScheduleSearchView[];
@@ -97,6 +84,8 @@ export interface ScheduleState {
   contentsAuthList: EntityContentInfoWithDetails[];
   classOptions: classOptionsProp;
   ParticipantsData: ParticipantsData;
+  participantsIds: ParticipantsShortInfo;
+  classRosterIds: ParticipantsShortInfo;
 }
 
 interface Rootstate {
@@ -189,6 +178,8 @@ const initialState: ScheduleState = {
       teachers: [],
     },
   },
+  participantsIds: { student: [], teacher: [] },
+  classRosterIds: { student: [], teacher: [] },
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -212,9 +203,12 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).id;
+      const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
+      // @ts-ignore
+      if (!result.data?.id) return result;
     } else {
-      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).id;
+      // @ts-ignore
+      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).data?.id;
     }
     // @ts-ignore
     return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
@@ -470,6 +464,9 @@ const { actions, reducer } = createSlice({
         },
       };
     },
+    changeParticipants: (state, { payload }: PayloadAction<ChangeParticipants>) => {
+      payload.type === "classRoster" ? (state.classRosterIds = payload.data) : (state.participantsIds = payload.data);
+    },
   },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
@@ -532,10 +529,18 @@ const { actions, reducer } = createSlice({
       state.classOptions.classListSchool = payload.data;
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
-      state.ParticipantsData = payload;
+      // console.log(payload)
+      // state.ParticipantsData = payload;
+      let teachers: RolesData[] = [];
+      let students: RolesData[] = [];
+      payload.classes.forEach((item: ClassesData) => {
+        teachers = teachers.concat(item.teachers);
+        students = students.concat(item.students);
+      });
+      state.ParticipantsData = { classes: { students, teachers } };
     },
   },
 });
 
-export const { resetScheduleDetial, resetParticipantList } = actions;
+export const { resetScheduleDetial, resetParticipantList, changeParticipants } = actions;
 export default reducer;

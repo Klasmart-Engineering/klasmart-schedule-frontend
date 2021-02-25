@@ -1,5 +1,5 @@
 import { Button, IconButton, InputBase, makeStyles } from "@material-ui/core";
-import { ArrowBack, ArrowForward } from "@material-ui/icons";
+import { ArrowBack, ArrowForward, Autorenew, Check, Clear } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 
@@ -156,6 +156,7 @@ const useStyle = makeStyles((theme) => ({
     fontSize: 30,
     color: "#fff",
     overflowY: "auto",
+    paddingBottom: 10,
   },
   answerListItemContainer: {
     marginTop: 50,
@@ -188,6 +189,28 @@ const useStyle = makeStyles((theme) => ({
     height: 70,
     borderRadius: "0 20px 20px 0",
     backgroundColor: "red",
+    textAlign: "center",
+    // lineHeight: 70
+  },
+  retryButton: {
+    position: "absolute",
+    border: "1px solid #414d66",
+    padding: "5px 15px 5px 15px",
+    borderRadius: 15,
+    color: "#adb6c7",
+    fontSize: 20,
+    bottom: "30px",
+    left: "50%",
+    transform: "translateX(-50%)",
+  },
+  correctOrWrong: {
+    // fontSize:
+    width: "100%",
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    fontSize: 36,
   },
 }));
 
@@ -202,12 +225,12 @@ interface Answers {
 }
 
 export function FlashCard(props: FlashCardProps) {
-  const { px = 1 } = props;
-  const fakeArr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+  const { px = 1, value } = props;
+  const fakeArr = ["a", "b", "c", "d", "e"];
 
   const [answers, setAnswers] = React.useState<Answers[]>([{ text: "", status: "unknown" }]);
 
-  const [showList, setShowList] = React.useState("answers");
+  const [showList, setShowList] = React.useState("questions");
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [currentPosition, setCurrentPosition] = React.useState(250);
@@ -284,6 +307,17 @@ export function FlashCard(props: FlashCardProps) {
     setShowList("answers");
   };
 
+  const handleShowQuestions = () => {
+    const arr = fakeArr.map(() => ({ text: "", status: "unknown" }));
+    setAnswers(arr);
+    let container = document.getElementById("container");
+    if (container) {
+      setCurrentPosition(container.clientWidth / 2 - 350 / 2);
+    }
+    setCurrentIndex(0);
+    setShowList("questions");
+  };
+
   return (
     <div className={css.container} id="container">
       {showList === "questions" && (
@@ -302,7 +336,22 @@ export function FlashCard(props: FlashCardProps) {
               >
                 <div className={clsx(css.imagePart, "imagePart")} style={{ backgroundColor: getColor(index) }}></div>
                 <div className={css.questionPart}>
-                  <p className={css.number}>Q{index + 1}</p>
+                  {console.log(
+                    value &&
+                      value[0] &&
+                      value[0].data &&
+                      JSON.parse(value[0].data).content &&
+                      JSON.parse(JSON.parse(value[0].data).content).params
+                  )}
+                  <p className={css.number}>
+                    {value &&
+                      value[0] &&
+                      value[0].data &&
+                      JSON.parse(value[0].data).content &&
+                      JSON.parse(JSON.parse(value[0].data).content).params &&
+                      JSON.parse(JSON.parse(value[0].data).content).params.cards[index] &&
+                      JSON.parse(JSON.parse(value[0].data).content).params.cards[index].text}
+                  </p>
                 </div>
                 <div className={css.answer}>
                   <InputBase
@@ -319,11 +368,13 @@ export function FlashCard(props: FlashCardProps) {
                 </div>
               </div>
             ))}
-            <div className={clsx(css.cardItem, css.resultItem)}>
-              <div className={css.showResult} onClick={handleShowResult}>
-                show result
+            {answers.every((item) => item.status !== "unknown") && (
+              <div className={clsx(css.cardItem, css.resultItem)}>
+                <div className={css.showResult} onClick={handleShowResult}>
+                  show result
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <div className={css.buttons}>
             {currentIndex !== 0 && (
@@ -347,16 +398,24 @@ export function FlashCard(props: FlashCardProps) {
           </div>
           <div className={css.answerListItemContainer}></div>
           {answers.map((item, index) => (
-            <div className={css.answerListItem}>
+            <div key={index} className={css.answerListItem}>
               <div className={css.leftImage}></div>
               <div className={css.middleIntro}>
                 <div style={{ marginTop: "10px" }}>Q1</div>
                 <div style={{ marginTop: "10px" }}>A: s Correct answer: a1</div>
               </div>
-              <div className={css.rightSignal}></div>
+              <div className={css.rightSignal}>
+                {item.status === "correct" && <Check className={css.correctOrWrong} />}
+                {item.status === "wrong" && <Clear className={css.correctOrWrong} />}
+              </div>
             </div>
           ))}
         </div>
+      )}
+      {showList === "answers" && (
+        <Button startIcon={<Autorenew />} className={css.retryButton} onClick={handleShowQuestions}>
+          Retry
+        </Button>
       )}
     </div>
   );
