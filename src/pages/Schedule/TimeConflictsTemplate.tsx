@@ -243,7 +243,9 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         </div>
       </div>
       <div className={css.buttons}>
-        <Button variant="outlined">{d("Cancel").t("assess_button_cancel")}</Button>
+        <Button variant="outlined" onClick={handleClose}>
+          {d("Cancel").t("assess_button_cancel")}
+        </Button>
         <Button variant="contained" color="primary" className={css.lastButton} onClick={handleConfirm}>
           {d("OK").t("assess_label_ok")}
         </Button>
