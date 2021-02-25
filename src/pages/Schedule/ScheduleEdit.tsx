@@ -575,6 +575,7 @@ function EditBox(props: CalendarStateProps) {
   const [initScheduleList, setInitScheduleList] = React.useState<EntityScheduleAddView>(initData);
   const [linkageLessonPlanOpen, setLinkageLessonPlanOpen] = React.useState<boolean>(false);
   const [rosterSaveStatus, setRosterSaveStatus] = React.useState(false);
+  const [isForce, setIsForce] = React.useState(false);
   const [participantSaveStatus, setParticipantSaveStatus] = React.useState(false);
 
   const timeToTimestamp = (time: string) => {
@@ -781,7 +782,7 @@ function EditBox(props: CalendarStateProps) {
     }
 
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
-    addData["is_force"] = is_force;
+    addData["is_force"] = isForce ?? is_force;
 
     // participants && class roster collision detection
     const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.student.length);
@@ -837,6 +838,7 @@ function EditBox(props: CalendarStateProps) {
               }}
               conflictsData={resultInfo.payload.data}
               handleChangeParticipants={handleChangeParticipants}
+              handleDestroyOperations={DestroyOperations}
             />
           ),
         });
@@ -889,6 +891,11 @@ function EditBox(props: CalendarStateProps) {
         ],
       });
     }
+  };
+
+  const DestroyOperations = (keepRosterOpen: boolean = true): void => {
+    setRosterSaveStatus(keepRosterOpen);
+    setIsForce(true);
   };
 
   const isScheduleExpired = (): boolean => {
