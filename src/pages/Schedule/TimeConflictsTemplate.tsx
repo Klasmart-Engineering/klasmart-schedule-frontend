@@ -97,10 +97,11 @@ interface TimeConflictsTemplateProps {
   handleClose: () => void;
   conflictsData: ConflictsData;
   handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
+  handleDestroyOperations: (value?: boolean) => void;
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { conflictsData, handleChangeParticipants, handleClose } = props;
+  const { conflictsData, handleChangeParticipants, handleClose, handleDestroyOperations } = props;
   const css = useStyles();
 
   const { breakpoints } = useTheme();
@@ -151,6 +152,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   };
 
   const handleConfirm = () => {
+    let keepRosterOpen = true;
     for (let key in conflicts) {
       // @ts-ignore
       arr[key] =
@@ -160,6 +162,9 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         conflicts[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"]
           .filter((item) => item.selected === "schedule")
           .map((item) => ({ id: item.id, name: item.name }));
+      if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) {
+        keepRosterOpen = false;
+      }
     }
     handleChangeParticipants("paiticipants", {
       teacher: arr.participants_teacher_ids,
@@ -169,6 +174,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       teacher: arr.class_roster_teacher_ids,
       student: arr.class_roster_student_ids,
     });
+    handleDestroyOperations(keepRosterOpen);
     handleClose();
   };
 
