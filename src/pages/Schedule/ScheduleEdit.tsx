@@ -317,6 +317,7 @@ function EditBox(props: CalendarStateProps) {
       return { id: item.user_id, name: item.user_name };
     });
     handleChangeParticipants("classRoster", { student, teacher } as ParticipantsShortInfo);
+    setIsForce(false);
   };
 
   const handleRosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,6 +327,7 @@ function EditBox(props: CalendarStateProps) {
       handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
     }
     setRosterChecked(event.target.value);
+    setIsForce(false);
   };
 
   const handleParticipantsChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
@@ -340,6 +342,7 @@ function EditBox(props: CalendarStateProps) {
       student: type === "students" ? ids : participantsIds?.student,
       teacher: type === "teachers" ? ids : participantsIds?.teacher,
     } as ParticipantsShortInfo);
+    setIsForce(false);
   };
 
   const handleRosterChangeBox = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
@@ -362,6 +365,7 @@ function EditBox(props: CalendarStateProps) {
       } as ParticipantsShortInfo);
     }
     setRosterChecked("other");
+    setIsForce(false);
   };
 
   const rosterIsExist = (item: any) => {
@@ -785,10 +789,13 @@ function EditBox(props: CalendarStateProps) {
     addData["is_force"] = isForce ?? is_force;
 
     // participants && class roster collision detection
-    const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.student.length);
-    const rosterIsEmpty: boolean = !(classRosterIds?.student.length || classRosterIds?.student.length);
+    const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.teacher.length);
+    const rosterIsEmpty: boolean = !(classRosterIds?.student.length || classRosterIds?.teacher.length);
 
-    if (participantsIsEmpty && rosterIsEmpty) {
+    if (
+      !(participantsIds?.teacher.length || classRosterIds?.teacher.length) &&
+      !(participantsIds?.student.length || classRosterIds?.student.length)
+    ) {
       dispatch(
         actError(
           d(
@@ -867,6 +874,7 @@ function EditBox(props: CalendarStateProps) {
               end: scheduleList.end_at as number,
             };
       changeTimesTamp(timesTampCallback);
+      setIsForce(false);
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
@@ -894,7 +902,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const DestroyOperations = (keepRosterOpen: boolean = true): void => {
-    setRosterSaveStatus(keepRosterOpen);
+    setRosterSaveStatus(!keepRosterOpen);
     setIsForce(true);
   };
 
