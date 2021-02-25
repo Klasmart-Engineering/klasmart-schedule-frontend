@@ -1,9 +1,11 @@
 import DateFnsUtils from "@date-io/date-fns";
 import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
+import Collapse from "@material-ui/core/Collapse";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import Radio from "@material-ui/core/Radio";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -11,9 +13,9 @@ import {
   AddCircleOutlineOutlined,
   Close,
   DeleteOutlineOutlined,
-  FileCopyOutlined,
   ExpandLessOutlined,
   ExpandMoreOutlined,
+  FileCopyOutlined,
 } from "@material-ui/icons";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -32,6 +34,7 @@ import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, t } from "../../locale/LocaleManager";
+import { modelSchedule } from "../../models/ModelSchedule";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
@@ -65,9 +68,6 @@ import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
-import { modelSchedule } from "../../models/ModelSchedule";
-import Paper from "@material-ui/core/Paper";
-import Collapse from "@material-ui/core/Collapse";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 
 const useStyles = makeStyles(({ shadows }) => ({
@@ -846,6 +846,8 @@ function EditBox(props: CalendarStateProps) {
               conflictsData={resultInfo.payload.data}
               handleChangeParticipants={handleChangeParticipants}
               handleDestroyOperations={DestroyOperations}
+              classRosterIds={classRosterIds}
+              participantsIds={participantsIds}
             />
           ),
         });
