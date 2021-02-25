@@ -167,12 +167,12 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       }
     }
     handleChangeParticipants("paiticipants", {
-      teacher: arr.participants_teacher_ids,
-      student: arr.participants_student_ids,
+      teacher: arr.participants_teacher_ids ? arr.participants_teacher_ids : [],
+      student: arr.participants_student_ids ? arr.participants_student_ids : [],
     });
     handleChangeParticipants("classRoster", {
-      teacher: arr.class_roster_teacher_ids,
-      student: arr.class_roster_student_ids,
+      teacher: arr.class_roster_teacher_ids ? arr.class_roster_teacher_ids : [],
+      student: arr.class_roster_student_ids ? arr.class_roster_student_ids : [],
     });
     handleDestroyOperations(keepRosterOpen);
     handleClose();
