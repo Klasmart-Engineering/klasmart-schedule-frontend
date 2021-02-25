@@ -904,7 +904,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const DestroyOperations = (keepRosterOpen: boolean = true): void => {
-    setRosterSaveStatus(!keepRosterOpen);
+    setRosterSaveStatus(keepRosterOpen);
     setIsForce(true);
   };
 
