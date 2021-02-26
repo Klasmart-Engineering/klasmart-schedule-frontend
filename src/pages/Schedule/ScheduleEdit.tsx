@@ -16,6 +16,7 @@ import {
   ExpandLessOutlined,
   ExpandMoreOutlined,
   FileCopyOutlined,
+  PermIdentity,
 } from "@material-ui/icons";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -153,6 +154,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginLeft: "10px",
     borderRadius: "18px",
     float: "left",
+    display: "flex",
   },
   scrollRoster: {
     display: "flex",
@@ -333,14 +335,16 @@ function EditBox(props: CalendarStateProps) {
   const handleParticipantsChange = (event: React.ChangeEvent<HTMLInputElement>, type: string) => {
     const participantsItem = [{ id: event.target.value, name: event.target.name }];
     const ids = type === "students" ? participantsIds?.student : participantsIds?.teacher;
-    ids?.forEach((item: ClassOptionsItem, index: number) => {
+    // @ts-ignore
+    const deconstructIds = [...ids];
+    deconstructIds?.forEach((item: ClassOptionsItem, index: number) => {
       if (JSON.stringify(item) === JSON.stringify(participantsItem[0])) {
-        ids.splice(index, 1);
+        deconstructIds.splice(index, 1);
       }
     });
     handleChangeParticipants("participants", {
-      student: type === "students" ? ids : participantsIds?.student,
-      teacher: type === "teachers" ? ids : participantsIds?.teacher,
+      student: type === "students" ? deconstructIds : participantsIds?.student,
+      teacher: type === "teachers" ? deconstructIds : participantsIds?.teacher,
     } as ParticipantsShortInfo);
     setIsForce(false);
   };
@@ -789,7 +793,10 @@ function EditBox(props: CalendarStateProps) {
     }
 
     addData["time_zone_offset"] = -new Date().getTimezoneOffset() * 60;
+
     addData["is_force"] = isForce ?? is_force;
+
+    if (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") addData["is_force"] = true;
 
     // participants && class roster collision detection
     const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.teacher.length);
@@ -1253,13 +1260,24 @@ function EditBox(props: CalendarStateProps) {
     ));
 
   const menuItemListClassKr = (type: string) => {
+    const classRosterIdsTeacher = classRosterIds?.teacher.map((item: any) => {
+      return { ...item, type: "teacher" };
+    });
+    const classRosterIdsStudent = classRosterIds?.student.map((item: any) => {
+      return { ...item, type: "student" };
+    });
+    const participantsIdsTeacher = participantsIds?.teacher.map((item: any) => {
+      return { ...item, type: "teacher" };
+    });
+    const participantsIdsStudent = participantsIds?.student.map((item: any) => {
+      return { ...item, type: "student" };
+    });
     const participantSet: any =
-      type === "roster"
-        ? classRosterIds?.teacher.concat(classRosterIds?.student)
-        : participantsIds?.teacher.concat(participantsIds?.student);
+      type === "roster" ? classRosterIdsTeacher?.concat(classRosterIdsStudent) : participantsIdsTeacher?.concat(participantsIdsStudent);
     return participantSet.map((item: any, key: number) => (
       <span key={key} className={css.participantContent}>
-        {item.name}
+        {item.type === "teacher" && <PermIdentity />}
+        <span>{item.name}</span>
       </span>
     ));
   };
@@ -1422,31 +1440,6 @@ function EditBox(props: CalendarStateProps) {
             />
           )}
         />
-        {scheduleList.class_type !== "Task" && (
-          <Autocomplete
-            id="combo-box-demo"
-            freeSolo
-            options={options()}
-            groupBy={(option) => option.title as string}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "lesson_plan_id");
-            }}
-            value={lessonPlan}
-            disabled={isScheduleExpired()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className={css.fieldset}
-                label={d("Lesson Plan").t("library_label_lesson_plan")}
-                error={validator.lesson_plan_id}
-                value={scheduleList.lesson_plan_id}
-                variant="outlined"
-                required={scheduleList.class_type !== "Task"}
-              />
-            )}
-          />
-        )}
         {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
           !rosterSaveStatus && (
             <Box className={css.participantBox}>
@@ -1571,6 +1564,31 @@ function EditBox(props: CalendarStateProps) {
               Add
             </Button>
           </Box>
+        )}
+        {scheduleList.class_type !== "Task" && (
+          <Autocomplete
+            id="combo-box-demo"
+            freeSolo
+            options={options()}
+            groupBy={(option) => option.title as string}
+            getOptionLabel={(option: any) => option.name}
+            onChange={(e: any, newValue) => {
+              autocompleteChange(newValue, "lesson_plan_id");
+            }}
+            value={lessonPlan}
+            disabled={isScheduleExpired()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={css.fieldset}
+                label={d("Lesson Plan").t("library_label_lesson_plan")}
+                error={validator.lesson_plan_id}
+                value={scheduleList.lesson_plan_id}
+                variant="outlined"
+                required={scheduleList.class_type !== "Task"}
+              />
+            )}
+          />
         )}
         {menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
           <Box className={css.participantSaveBox}>
