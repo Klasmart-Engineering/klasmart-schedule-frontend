@@ -354,14 +354,16 @@ function EditBox(props: CalendarStateProps) {
       } as ParticipantsShortInfo);
     } else {
       const ids = type === "students" ? classRosterIds?.student : classRosterIds?.teacher;
-      ids?.forEach((item: ClassOptionsItem, index: number) => {
+      // @ts-ignore
+      const deconstructIds = [...ids];
+      deconstructIds?.forEach((item: ClassOptionsItem, index: number) => {
         if (JSON.stringify(item) === JSON.stringify(rosterItem[0])) {
-          ids.splice(index, 1);
+          deconstructIds.splice(index, 1);
         }
       });
       handleChangeParticipants("classRoster", {
-        student: type === "students" ? ids : classRosterIds?.student,
-        teacher: type === "teachers" ? ids : classRosterIds?.teacher,
+        student: type === "students" ? deconstructIds : classRosterIds?.student,
+        teacher: type === "teacher" ? deconstructIds : classRosterIds?.teacher,
       } as ParticipantsShortInfo);
     }
     setRosterChecked("other");
@@ -793,7 +795,7 @@ function EditBox(props: CalendarStateProps) {
     const rosterIsEmpty: boolean = !(classRosterIds?.student.length || classRosterIds?.teacher.length);
 
     if (
-      !(participantsIds?.teacher.length || classRosterIds?.teacher.length) &&
+      !(participantsIds?.teacher.length || classRosterIds?.teacher.length) ||
       !(participantsIds?.student.length || classRosterIds?.student.length)
     ) {
       dispatch(
@@ -1006,6 +1008,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const addParticipants = () => {
+    if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
