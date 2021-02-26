@@ -627,7 +627,8 @@ function EditBox(props: CalendarStateProps) {
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      getParticipantOptions(value["id"]);
+      await getParticipantOptions(value["id"]);
+      setRosterSaveStatus(false);
       setClassItem(value);
     }
 
@@ -1009,6 +1010,17 @@ function EditBox(props: CalendarStateProps) {
 
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
+    // will class roster data remove in ParticipantsData
+    const participantsFilterData = {
+      classes: {
+        students: ParticipantsData?.classes.students.filter(
+          (a: any) => !participantMockOptions?.participantList?.class?.students?.some((b: any) => b.id === a.id)
+        ),
+        teachers: ParticipantsData?.classes.teachers.filter(
+          (a: any) => !participantMockOptions?.participantList?.class?.teachers?.some((b: any) => b.id === a.id)
+        ),
+      },
+    } as ParticipantsData;
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
@@ -1019,7 +1031,7 @@ function EditBox(props: CalendarStateProps) {
               openStatus: false,
             });
           }}
-          ParticipantsData={ParticipantsData}
+          ParticipantsData={participantsFilterData}
           handleChangeParticipants={handleChangeParticipants}
           getParticipantsData={getParticipantsData}
           participantsIds={participantsIds as ParticipantsShortInfo}
@@ -1327,7 +1339,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const arrEmpty = (item: ClassOptionsItem[] | undefined): boolean => {
-    return JSON.stringify(participantsIds?.student) === "[]";
+    return JSON.stringify(item) === "[]";
   };
 
   return (
