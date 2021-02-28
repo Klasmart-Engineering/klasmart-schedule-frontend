@@ -449,6 +449,7 @@ function EditBox(props: CalendarStateProps) {
   }, [dispatch, timesTamp, scheduleRestNum]);
 
   const formatTeahcerId = (teacherIds: any) => {
+    if (!teacherIds) return;
     let ids: string[] = [];
     teacherIds.forEach((val: EntityScheduleShortInfo | any) => {
       ids.push(val.id.toString());
@@ -460,7 +461,7 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleId && scheduleDetial.id) {
       const newData: EntityScheduleAddView = {
         attachment: scheduleDetial.attachment,
-        class_id: scheduleDetial.class!.id || "",
+        class_id: scheduleDetial.class?.id || "",
         class_type: scheduleDetial.class_type,
         description: scheduleDetial.description,
         due_at: scheduleDetial.due_at,
@@ -481,7 +482,7 @@ function EditBox(props: CalendarStateProps) {
         repeatCheck: false,
         dueDateCheck: newData.due_at ? true : false,
       });
-      setClassItem(scheduleDetial.class);
+      if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
       setSubjectItem(scheduleDetial.subject);
       setProgramItem(scheduleDetial.program);
@@ -527,7 +528,11 @@ function EditBox(props: CalendarStateProps) {
       ) {
         dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       }
-      dispatch(getScheduleParticipant({ class_id: newData.class_id as string }));
+      if (scheduleDetial.class) dispatch(getScheduleParticipant({ class_id: newData.class_id as string }));
+
+      if (scheduleDetial.class_roster_students || scheduleDetial.class_roster_teachers) setRosterSaveStatus(true);
+
+      if (scheduleDetial.participants_students || scheduleDetial.participants_teachers) setParticipantSaveStatus(true);
       setLinkageLessonPlanOpen(false);
     }
   }, [dispatch, scheduleDetial, scheduleId]);
@@ -682,7 +687,6 @@ function EditBox(props: CalendarStateProps) {
 
   const isValidator = {
     title: false,
-    class_id: false,
     lesson_plan_id: false,
     start_at: false,
     end_at: false,
@@ -696,7 +700,6 @@ function EditBox(props: CalendarStateProps) {
 
     const taskValidator = {
       title: false,
-      class_id: false,
       start_at: false,
       end_at: false,
       class_type: false,
@@ -803,6 +806,7 @@ function EditBox(props: CalendarStateProps) {
     const rosterIsEmpty: boolean = !(classRosterIds?.student.length || classRosterIds?.teacher.length);
 
     if (
+      (!scheduleList.class_id && !participantsIds?.teacher.length && !participantsIds?.student.length) ||
       !(participantsIds?.teacher.length || classRosterIds?.teacher.length) ||
       !(participantsIds?.student.length || classRosterIds?.student.length)
     ) {
@@ -1017,14 +1021,15 @@ function EditBox(props: CalendarStateProps) {
 
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
+
     // will class roster data remove in ParticipantsData
     const participantsFilterData = {
       classes: {
         students: ParticipantsData?.classes.students.filter(
-          (a: any) => !participantMockOptions?.participantList?.class?.students?.some((b: any) => b.id === a.id)
+          (a: any) => !participantMockOptions?.participantList?.class?.students?.some((b: any) => b.user_id === a.user_id)
         ),
         teachers: ParticipantsData?.classes.teachers.filter(
-          (a: any) => !participantMockOptions?.participantList?.class?.teachers?.some((b: any) => b.id === a.id)
+          (a: any) => !participantMockOptions?.participantList?.class?.teachers?.some((b: any) => b.user_id === a.user_id)
         ),
       },
     } as ParticipantsData;
@@ -1432,7 +1437,6 @@ function EditBox(props: CalendarStateProps) {
           renderInput={(params) => (
             <TextField
               {...params}
-              error={validator.class_id}
               className={css.fieldset}
               label={d("Add Class").t("schedule_detail_add_class")}
               required
@@ -1605,7 +1609,6 @@ function EditBox(props: CalendarStateProps) {
         {arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
-              error={validator.title}
               className={css.fieldset}
               multiline
               label={d("Add Participants").t("schedule_detail_participants")}
