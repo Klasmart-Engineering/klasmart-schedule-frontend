@@ -344,7 +344,7 @@ function EditBox(props: CalendarStateProps) {
     });
     handleChangeParticipants("participants", {
       student: type === "students" ? deconstructIds : participantsIds?.student,
-      teacher: type === "teachers" ? deconstructIds : participantsIds?.teacher,
+      teacher: type === "teacher" ? deconstructIds : participantsIds?.teacher,
     } as ParticipantsShortInfo);
     setIsForce(false);
   };
@@ -639,6 +639,8 @@ function EditBox(props: CalendarStateProps) {
     ids = value ? value["id"] : "";
     if (name === "class_id") {
       await getParticipantOptions(value["id"]);
+      handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
+      setRosterChecked("other");
       setRosterSaveStatus(false);
       setClassItem(value);
     }
@@ -1571,31 +1573,6 @@ function EditBox(props: CalendarStateProps) {
             </Button>
           </Box>
         )}
-        {scheduleList.class_type !== "Task" && (
-          <Autocomplete
-            id="combo-box-demo"
-            freeSolo
-            options={options()}
-            groupBy={(option) => option.title as string}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "lesson_plan_id");
-            }}
-            value={lessonPlan}
-            disabled={isScheduleExpired()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className={css.fieldset}
-                label={d("Lesson Plan").t("library_label_lesson_plan")}
-                error={validator.lesson_plan_id}
-                value={scheduleList.lesson_plan_id}
-                variant="outlined"
-                required={scheduleList.class_type !== "Task"}
-              />
-            )}
-          />
-        )}
         {menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
           <Box className={css.participantSaveBox}>
             <CreateOutlinedIcon
@@ -1620,6 +1597,31 @@ function EditBox(props: CalendarStateProps) {
             ></TextField>
             <AddCircleOutlineOutlined onClick={addParticipants} className={css.iconField} style={{ top: "46%", cursor: "pointer" }} />
           </Box>
+        )}
+        {scheduleList.class_type !== "Task" && (
+          <Autocomplete
+            id="combo-box-demo"
+            freeSolo
+            options={options()}
+            groupBy={(option) => option.title as string}
+            getOptionLabel={(option: any) => option.name}
+            onChange={(e: any, newValue) => {
+              autocompleteChange(newValue, "lesson_plan_id");
+            }}
+            value={lessonPlan}
+            disabled={isScheduleExpired()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={css.fieldset}
+                label={d("Lesson Plan").t("library_label_lesson_plan")}
+                error={validator.lesson_plan_id}
+                value={scheduleList.lesson_plan_id}
+                variant="outlined"
+                required={scheduleList.class_type !== "Task"}
+              />
+            )}
+          />
         )}
         {scheduleList.class_type !== "Homework" && (
           <Box>
