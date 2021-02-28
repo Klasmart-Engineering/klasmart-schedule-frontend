@@ -446,6 +446,8 @@ function EditBox(props: CalendarStateProps) {
     dispatch(resetParticipantList());
     dispatch(changeParticipants({ type: "classRoster", data: { student: [], teacher: [] } }));
     dispatch(changeParticipants({ type: "addParticipants", data: { student: [], teacher: [] } }));
+    setRosterSaveStatus(false);
+    setParticipantSaveStatus(false);
   }, [dispatch, timesTamp, scheduleRestNum]);
 
   const formatTeahcerId = (teacherIds: any) => {
