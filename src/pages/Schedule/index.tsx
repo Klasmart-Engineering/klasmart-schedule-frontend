@@ -26,6 +26,7 @@ import {
   scheduleUpdateStatus,
   getClassesBySchool,
   changeParticipants,
+  getSchoolInfo,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -192,6 +193,7 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
+    dispatch(getSchoolInfo());
   }, [dispatch]);
 
   React.useEffect(() => {

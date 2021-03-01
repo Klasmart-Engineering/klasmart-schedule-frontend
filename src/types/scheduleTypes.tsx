@@ -96,6 +96,7 @@ export interface FilterQueryTypeProps {
 export interface ClassOptionsItem {
   id?: string;
   name?: string;
+  enable?: boolean;
 }
 
 export interface EntityLessonPlanShortInfo {

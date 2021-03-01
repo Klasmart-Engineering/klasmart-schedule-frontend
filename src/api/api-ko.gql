@@ -127,16 +127,30 @@ query classesBySchool($school_id: ID!) {
   }
 }
 
+query userSchoolIDs($user_id: ID!) {
+  user(user_id: $user_id) {
+    school_memberships {
+       school_id
+    }
+  }
+}
+
 query participantsBySchool($school_id: ID!) {
    school(school_id: $school_id) {
      classes {
         teachers {
           user_id
-          user_name
+          user_name,
+          school_memberships {
+            school_id
+          }
         }
         students {
           user_id
           user_name
+          school_memberships {
+            school_id
+          }
         }
      }
    }
@@ -148,10 +162,16 @@ query participantsByOrganization($organization_id: ID!) {
         teachers {
           user_id
           user_name
+          school_memberships {
+            school_id
+          }
         }
         students {
           user_id
-          user_name
+          user_name,
+          school_memberships {
+            school_id
+          }
         }
      }
    }

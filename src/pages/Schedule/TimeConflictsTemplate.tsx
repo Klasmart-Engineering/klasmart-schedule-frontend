@@ -183,7 +183,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
           }
           if (key === "participants_student_ids") {
             const idx = participantsIds1.student.findIndex((item1: ClassOptionsItem) => item1.id === item);
-            participantsIds1.teacher.splice(idx, 1);
+            participantsIds1.student.splice(idx, 1);
           }
           if (key === "participants_teacher_ids") {
             const idx = participantsIds1.teacher.findIndex((item1: ClassOptionsItem) => item1.id === item);

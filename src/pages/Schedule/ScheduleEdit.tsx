@@ -286,7 +286,9 @@ function EditBox(props: CalendarStateProps) {
     LinkageLessonPlan,
     contentPreview,
   } = props;
-  const { scheduleDetial, contentsAuthList, classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { scheduleDetial, contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>(
+    (state) => state.schedule
+  );
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -494,7 +496,7 @@ function EditBox(props: CalendarStateProps) {
 
       const getClassOptionsItem = (item: ClassOptionsItem[]) => {
         const items = item?.map((item: any) => {
-          return { id: item.id, name: item.name };
+          return { id: item.id, name: item.name, enable: item.enable };
         });
         return items ?? [];
       };
@@ -1026,18 +1028,26 @@ function EditBox(props: CalendarStateProps) {
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     const isFillter = !menuItemListClassKr("roster").length && rosterSaveStatus;
+    const isVested = (item: any): boolean => item.some((list: any) => (perm.create_event_520 ? true : list.school_id === mySchoolId));
+
     // will class roster data remove in ParticipantsData
     const participantsFilterData = {
       classes: {
         students: isFillter
           ? ParticipantsData?.classes.students
           : ParticipantsData?.classes.students.filter(
-              (a: any) => !participantMockOptions?.participantList?.class?.students?.some((b: any) => b.user_id === a.user_id)
+              (a: any) =>
+                !participantMockOptions?.participantList?.class?.students?.some(
+                  (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
+                )
             ),
         teachers: isFillter
           ? ParticipantsData?.classes.teachers
           : ParticipantsData?.classes.teachers.filter(
-              (a: any) => !participantMockOptions?.participantList?.class?.teachers?.some((b: any) => b.user_id === a.user_id)
+              (a: any) =>
+                !participantMockOptions?.participantList?.class?.teachers?.some(
+                  (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
+                )
             ),
       },
     } as ParticipantsData;
@@ -1525,6 +1535,7 @@ function EditBox(props: CalendarStateProps) {
                             value={item.id}
                             color="primary"
                             checked={true}
+                            disabled={item.enable === false}
                             onChange={(e) => {
                               handleParticipantsChange(e, "students");
                             }}
@@ -1550,6 +1561,7 @@ function EditBox(props: CalendarStateProps) {
                             value={item.id}
                             color="primary"
                             checked={true}
+                            disabled={item.enable === false}
                             onChange={(e) => {
                               handleParticipantsChange(e, "teacher");
                             }}
