@@ -210,7 +210,11 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       id = result.data?.id;
     } else {
       // @ts-ignore
-      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).data?.id;
+      const result = await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label));
+      // @ts-ignore
+      if (!result.data?.id) return result;
+      // @ts-ignore
+      id = result.data?.id;
     }
     // @ts-ignore
     return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
@@ -478,7 +482,7 @@ const { actions, reducer } = createSlice({
     },
     [getSearchScheduleList.rejected.type]: (state, { error }: any) => {},
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleDetial = payload;
+      if (payload.label !== "schedule_msg_users_conflict") state.scheduleDetial = payload;
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       state.errorLable = error.message;
