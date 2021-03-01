@@ -79,7 +79,7 @@ const useUploadBoxStyles = makeStyles({
 export const fileFormat = {
   video: [".avi", ".mov", ".mp4"],
   image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
-  document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"],
+  document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
   audio: [".mp3", ".wav"],
   pdf: [".pdf"],
 };
@@ -167,7 +167,7 @@ function AssetEdit(props: AssetEditProps) {
     }
     if (assetLibraryId === ContentFileType.video) {
       return fileFormat.video.join();
-    } else return `image/*,audio/*,video/*,${fileFormat.document.join()}`;
+    } else return `image/*,audio/*,video/*,${fileFormat.document.join()}, ${fileFormat.pdf.join()}`;
   };
   return (
     <Box className={uploadCss.uploadBox} boxShadow={3}>
