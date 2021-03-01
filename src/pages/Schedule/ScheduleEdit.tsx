@@ -1025,16 +1025,20 @@ function EditBox(props: CalendarStateProps) {
 
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
-
+    const isFillter = !menuItemListClassKr("roster").length && rosterSaveStatus;
     // will class roster data remove in ParticipantsData
     const participantsFilterData = {
       classes: {
-        students: ParticipantsData?.classes.students.filter(
-          (a: any) => !participantMockOptions?.participantList?.class?.students?.some((b: any) => b.user_id === a.user_id)
-        ),
-        teachers: ParticipantsData?.classes.teachers.filter(
-          (a: any) => !participantMockOptions?.participantList?.class?.teachers?.some((b: any) => b.user_id === a.user_id)
-        ),
+        students: isFillter
+          ? ParticipantsData?.classes.students
+          : ParticipantsData?.classes.students.filter(
+              (a: any) => !participantMockOptions?.participantList?.class?.students?.some((b: any) => b.user_id === a.user_id)
+            ),
+        teachers: isFillter
+          ? ParticipantsData?.classes.teachers
+          : ParticipantsData?.classes.teachers.filter(
+              (a: any) => !participantMockOptions?.participantList?.class?.teachers?.some((b: any) => b.user_id === a.user_id)
+            ),
       },
     } as ParticipantsData;
     changeModalDate({

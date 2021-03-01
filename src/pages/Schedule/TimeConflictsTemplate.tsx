@@ -154,7 +154,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   };
 
   const handleConfirm = () => {
-    let keepRosterOpen = false;
+    let keepRosterOpen = true;
     let classRosterIds1 = JSON.parse(JSON.stringify(classRosterIds));
     let participantsIds1 = JSON.parse(JSON.stringify(participantsIds));
     for (let key in conflicts) {
@@ -167,7 +167,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
           .filter((item) => item.selected === "not_schedule")
           .map((item) => ({ id: item.id, name: item.name }));
       if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) {
-        keepRosterOpen = true;
+        keepRosterOpen = false;
       }
       arr[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"] &&
         arr[
@@ -192,18 +192,10 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         });
     }
 
-    // handleChangeParticipants("paiticipants", {
-    //   teacher: arr.participants_teacher_ids ? arr.participants_teacher_ids : [],
-    //   student: arr.participants_student_ids ? arr.participants_student_ids : [],
-    // });
     handleChangeParticipants("paiticipants", {
       teacher: participantsIds1.teacher ? participantsIds1.teacher : [],
       student: participantsIds1.student ? participantsIds1.student : [],
     });
-    // handleChangeParticipants("classRoster", {
-    //   teacher: arr.class_roster_teacher_ids ? arr.class_roster_teacher_ids : [],
-    //   student: arr.class_roster_student_ids ? arr.class_roster_student_ids : [],
-    // });
     handleChangeParticipants("classRoster", {
       teacher: classRosterIds1.teacher ? classRosterIds1.teacher : [],
       student: classRosterIds1.student ? classRosterIds1.student : [],
