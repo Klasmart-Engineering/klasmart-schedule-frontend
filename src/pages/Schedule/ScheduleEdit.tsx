@@ -340,7 +340,7 @@ function EditBox(props: CalendarStateProps) {
     // @ts-ignore
     const deconstructIds = [...ids];
     deconstructIds?.forEach((item: ClassOptionsItem, index: number) => {
-      if (JSON.stringify(item) === JSON.stringify(participantsItem[0])) {
+      if (JSON.stringify({ id: item.id, name: item.name }) === JSON.stringify(participantsItem[0])) {
         deconstructIds.splice(index, 1);
       }
     });
@@ -363,7 +363,7 @@ function EditBox(props: CalendarStateProps) {
       // @ts-ignore
       const deconstructIds = [...ids];
       deconstructIds?.forEach((item: ClassOptionsItem, index: number) => {
-        if (JSON.stringify(item) === JSON.stringify(rosterItem[0])) {
+        if (JSON.stringify({ id: item.id, name: item.name }) === JSON.stringify(rosterItem[0])) {
           deconstructIds.splice(index, 1);
         }
       });
@@ -380,7 +380,7 @@ function EditBox(props: CalendarStateProps) {
     const rosterItem = [{ id: item.user_id, name: item.user_name }];
     return classRosterIds?.teacher
       .concat(classRosterIds?.student)
-      .some((item) => JSON.stringify(item) === JSON.stringify(rosterItem[0])) as boolean;
+      .some((item) => JSON.stringify({ id: item.id, name: item.name }) === JSON.stringify(rosterItem[0])) as boolean;
   };
 
   React.useEffect(() => {
@@ -1512,6 +1512,7 @@ function EditBox(props: CalendarStateProps) {
             <CreateOutlinedIcon
               onClick={() => {
                 setRosterSaveStatus(false);
+                setIsForce(false);
               }}
               style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
             />
@@ -1579,6 +1580,7 @@ function EditBox(props: CalendarStateProps) {
               color="primary"
               onClick={() => {
                 setParticipantSaveStatus(true);
+                setIsForce(false);
               }}
               className={css.participantButton}
             >
