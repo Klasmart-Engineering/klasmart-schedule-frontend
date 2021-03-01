@@ -12,6 +12,7 @@ import { Thumbnail } from "../../components/Thumbnail";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
 import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
 import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
+import AssetPdf from "../../components/UIAssetPreview/AssetPreview/AssetPdf";
 import AssetVideo from "../../components/UIAssetPreview/AssetPreview/AssetVideo";
 import { d } from "../../locale/LocaleManager";
 import { formLiteFileType } from "../../models/ModelH5pSchema";
@@ -267,7 +268,8 @@ export function H5pPreview(props: H5pPreview) {
       data.file_type === ContentFileType.image ||
       data.file_type === ContentFileType.video ||
       data.file_type === ContentFileType.audio ||
-      data.file_type === ContentFileType.doc
+      data.file_type === ContentFileType.doc ||
+      data.file_type === ContentFileType.pdf
     ) {
       return source?.split(".").pop()?.toLowerCase();
     } else {
@@ -290,8 +292,10 @@ export function H5pPreview(props: H5pPreview) {
       return <AssetVideo src={path} />;
     } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
       return <AssetAudio src={path} />;
-    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0 && <AssetFile src={path} />) {
-      return <AssetFile src={path} />;
+    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetFile src={parsedData.source} />;
+    } else if (fileFormat.pdf.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetPdf src={path} />;
     }
   };
 

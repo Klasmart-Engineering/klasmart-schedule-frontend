@@ -79,8 +79,9 @@ const useUploadBoxStyles = makeStyles({
 export const fileFormat = {
   video: [".avi", ".mov", ".mp4"],
   image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
-  document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
+  document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"],
   audio: [".mp3", ".wav"],
+  pdf: [".pdf"],
 };
 
 function ProgressWithText(props: CircularProgressProps) {
@@ -160,6 +161,9 @@ function AssetEdit(props: AssetEditProps) {
     }
     if (assetLibraryId === ContentFileType.doc) {
       return fileFormat.document.join();
+    }
+    if (assetLibraryId === ContentFileType.pdf) {
+      return fileFormat.pdf.join();
     }
     if (assetLibraryId === ContentFileType.video) {
       return fileFormat.video.join();
