@@ -95,13 +95,15 @@ interface Conflicts {
 
 interface TimeConflictsTemplateProps {
   handleClose: () => void;
-  setParticipantsIds: (value: ParticipantsShortInfo) => void;
-  setClassRosterIds: (value: ParticipantsShortInfo) => void;
   conflictsData: ConflictsData;
+  handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
+  handleDestroyOperations: (value?: boolean) => void;
+  participantsIds?: ParticipantsShortInfo;
+  classRosterIds?: ParticipantsShortInfo;
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { setParticipantsIds, setClassRosterIds, conflictsData } = props;
+  const { conflictsData, handleChangeParticipants, handleClose, handleDestroyOperations, participantsIds, classRosterIds } = props;
   const css = useStyles();
 
   const { breakpoints } = useTheme();
@@ -112,10 +114,18 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   // const [classRoster, setClassRoster] = React.useState<ParticipantsShortInfo>(classRosterIds)
 
   const [conflicts, setConflict] = React.useState<Conflicts>({
-    class_roster_student_ids: conflictsData.class_roster_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    class_roster_teacher_ids: conflictsData.class_roster_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    participants_student_ids: conflictsData.participants_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
-    participants_teacher_ids: conflictsData.participants_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_student_ids:
+      conflictsData.class_roster_students &&
+      conflictsData.class_roster_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    class_roster_teacher_ids:
+      conflictsData.class_roster_teachers &&
+      conflictsData.class_roster_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_student_ids:
+      conflictsData.participants_students &&
+      conflictsData.participants_students.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
+    participants_teacher_ids:
+      conflictsData.participants_teachers &&
+      conflictsData.participants_teachers.map((item: ClassOptionsItem) => ({ ...item, selected: "not_schedule" })),
   });
 
   const handleChange = (
@@ -144,32 +154,54 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
   };
 
   const handleConfirm = () => {
+    let keepRosterOpen = false;
+    let classRosterIds1 = JSON.parse(JSON.stringify(classRosterIds));
+    let participantsIds1 = JSON.parse(JSON.stringify(participantsIds));
     for (let key in conflicts) {
       // @ts-ignore
-      arr[key] = conflicts[
-        key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
-      ]
-        .filter((item) => item.selected === "schedule")
-        .map((item) => ({ id: item.id, name: item.name }));
-    }
-    setParticipantsIds({
-      teacher: arr.participants_teacher_ids,
-      student: arr.participants_student_ids,
-    });
-    setClassRosterIds({
-      teacher: arr.class_roster_teacher_ids,
-      student: arr.class_roster_student_ids,
-    });
-    console.log(
-      {
-        teacher: arr.class_roster_teacher_ids,
-        student: arr.class_roster_student_ids,
-      },
-      {
-        teacher: arr.participants_teacher_ids,
-        student: arr.participants_student_ids,
+      arr[key] =
+        conflicts[
+          key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+        ] &&
+        conflicts[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"]
+          .filter((item) => item.selected === "not_schedule")
+          .map((item) => ({ id: item.id, name: item.name }));
+      if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) {
+        keepRosterOpen = true;
       }
-    );
+      arr[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"] &&
+        arr[
+          key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+        ].forEach((item, index) => {
+          if (key === "class_roster_student_ids") {
+            const idx = classRosterIds1.student.findIndex((item1: ClassOptionsItem) => item1.id === item);
+            classRosterIds1.student.splice(idx, 1);
+          }
+          if (key === "class_roster_teacher_ids") {
+            const idx = classRosterIds1.teacher.findIndex((item1: ClassOptionsItem) => item1.id === item);
+            classRosterIds1.teacher.splice(idx, 1);
+          }
+          if (key === "participants_student_ids") {
+            const idx = participantsIds1.student.findIndex((item1: ClassOptionsItem) => item1.id === item);
+            participantsIds1.student.splice(idx, 1);
+          }
+          if (key === "participants_teacher_ids") {
+            const idx = participantsIds1.teacher.findIndex((item1: ClassOptionsItem) => item1.id === item);
+            participantsIds1.teacher.splice(idx, 1);
+          }
+        });
+    }
+
+    handleChangeParticipants("paiticipants", {
+      teacher: participantsIds1.teacher ? participantsIds1.teacher : [],
+      student: participantsIds1.student ? participantsIds1.student : [],
+    });
+    handleChangeParticipants("classRoster", {
+      teacher: classRosterIds1.teacher ? classRosterIds1.teacher : [],
+      student: classRosterIds1.student ? classRosterIds1.student : [],
+    });
+    handleDestroyOperations(keepRosterOpen);
+    handleClose();
   };
 
   const chechkPart = (
@@ -194,8 +226,18 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
           value={item.selected}
           onChange={(event) => handleChange(event, item.id, signal)}
         >
-          <FormControlLabel value="not_schedule" control={<Radio />} label="Not schedule" className={css.radioItem} />
-          <FormControlLabel value="schedule" control={<Radio />} label="Schedule anyway" className={css.radioItem} />
+          <FormControlLabel
+            value="not_schedule"
+            control={<Radio />}
+            label={d("Not schedule").t("schedule_time_conflict_option_1")}
+            className={css.radioItem}
+          />
+          <FormControlLabel
+            value="schedule"
+            control={<Radio />}
+            label={d("Schedule anyway").t("schedule_time_conflict_option_2")}
+            className={css.radioItem}
+          />
         </RadioGroup>
       </Grid>
     </>
@@ -208,44 +250,50 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         <div className={css.classRoster}>
           <p>{d("Class Roster").t("schedule_detail_class_roster")}</p>
           <div className={css.scrollPart}>
-            {conflicts.class_roster_student_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "student", "class_roster_student_ids")}
-                </Grid>
-              );
-            })}
-            {conflicts.class_roster_teacher_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "teacher", "class_roster_teacher_ids")}
-                </Grid>
-              );
-            })}
+            {conflicts.class_roster_student_ids &&
+              conflicts.class_roster_student_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "student", "class_roster_student_ids")}
+                  </Grid>
+                );
+              })}
+            {conflicts.class_roster_teacher_ids &&
+              conflicts.class_roster_teacher_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "teacher", "class_roster_teacher_ids")}
+                  </Grid>
+                );
+              })}
           </div>
         </div>
         <div className={css.classRoster}>
           <p>{d("Participants").t("schedule_time_conflict_checking")}</p>
           <div className={css.scrollPart}>
-            {conflicts.participants_student_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "student", "participants_student_ids")}
-                </Grid>
-              );
-            })}
-            {conflicts.participants_teacher_ids.map((item) => {
-              return (
-                <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                  {chechkPart(item, "teacher", "participants_teacher_ids")}
-                </Grid>
-              );
-            })}
+            {conflicts.participants_student_ids &&
+              conflicts.participants_student_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "student", "participants_student_ids")}
+                  </Grid>
+                );
+              })}
+            {conflicts.participants_teacher_ids &&
+              conflicts.participants_teacher_ids.map((item) => {
+                return (
+                  <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
+                    {chechkPart(item, "teacher", "participants_teacher_ids")}
+                  </Grid>
+                );
+              })}
           </div>
         </div>
       </div>
       <div className={css.buttons}>
-        <Button variant="outlined">{d("Cancel").t("assess_button_cancel")}</Button>
+        <Button variant="outlined" onClick={handleClose}>
+          {d("Cancel").t("assess_button_cancel")}
+        </Button>
         <Button variant="contained" color="primary" className={css.lastButton} onClick={handleConfirm}>
           {d("OK").t("assess_label_ok")}
         </Button>

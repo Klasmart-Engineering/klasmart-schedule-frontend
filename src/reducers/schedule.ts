@@ -29,6 +29,9 @@ import {
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
+  UserSchoolIDsDocument,
+  UserSchoolIDsQuery,
+  UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassType,
@@ -42,6 +45,7 @@ import {
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
+import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 
@@ -65,20 +69,6 @@ interface classOptionsProp {
   classListSchool: ClassesBySchoolQuery;
 }
 
-interface RolesData {
-  user_id: string;
-  user_name: string;
-}
-
-interface ClassesData {
-  students: RolesData[];
-  teachers: RolesData[];
-}
-
-interface ParticipantsData {
-  classes: ClassesData;
-}
-
 export interface ScheduleState {
   total: number;
   searchScheduleList: EntityScheduleSearchView[];
@@ -97,6 +87,9 @@ export interface ScheduleState {
   contentsAuthList: EntityContentInfoWithDetails[];
   classOptions: classOptionsProp;
   ParticipantsData: ParticipantsData;
+  participantsIds: ParticipantsShortInfo;
+  classRosterIds: ParticipantsShortInfo;
+  mySchoolId: string;
 }
 
 interface Rootstate {
@@ -189,6 +182,9 @@ const initialState: ScheduleState = {
       teachers: [],
     },
   },
+  participantsIds: { student: [], teacher: [] },
+  classRosterIds: { student: [], teacher: [] },
+  mySchoolId: "",
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -212,9 +208,18 @@ export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntitySc
       },
     } = getState();
     if (!id) {
-      id = (await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label))).id;
+      const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
+      // @ts-ignore
+      if (!result.data?.id) return result;
+      // @ts-ignore
+      id = result.data?.id;
     } else {
-      id = (await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label))).id;
+      // @ts-ignore
+      const result = await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label));
+      // @ts-ignore
+      if (!result.data?.id) return result;
+      // @ts-ignore
+      id = result.data?.id;
     }
     // @ts-ignore
     return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
@@ -306,6 +311,22 @@ export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async (
     query: ClassesBySchoolDocument,
     variables: {
       school_id: data.me?.membership?.schoolMemberships![0]?.school_id as string,
+    },
+  });
+});
+
+export const getSchoolInfo = createAsyncThunk("getSchoolInfo", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return gqlapi.query<UserSchoolIDsQuery, UserSchoolIDsQueryVariables>({
+    query: UserSchoolIDsDocument,
+    variables: {
+      user_id: meInfo.me?.user_id as string,
     },
   });
 });
@@ -470,6 +491,9 @@ const { actions, reducer } = createSlice({
         },
       };
     },
+    changeParticipants: (state, { payload }: PayloadAction<ChangeParticipants>) => {
+      payload.type === "classRoster" ? (state.classRosterIds = payload.data) : (state.participantsIds = payload.data);
+    },
   },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
@@ -479,7 +503,7 @@ const { actions, reducer } = createSlice({
     },
     [getSearchScheduleList.rejected.type]: (state, { error }: any) => {},
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleDetial = payload;
+      if (payload.label !== "schedule_msg_users_conflict") state.scheduleDetial = payload;
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       state.errorLable = error.message;
@@ -532,10 +556,21 @@ const { actions, reducer } = createSlice({
       state.classOptions.classListSchool = payload.data;
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
-      state.ParticipantsData = payload;
+      // console.log(payload)
+      // state.ParticipantsData = payload;
+      let teachers: RolesData[] = [];
+      let students: RolesData[] = [];
+      payload.classes.forEach((item: ClassesData) => {
+        teachers = teachers.concat(item.teachers);
+        students = students.concat(item.students);
+      });
+      state.ParticipantsData = { classes: { students, teachers } };
+    },
+    [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
+      state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
     },
   },
 });
 
-export const { resetScheduleDetial, resetParticipantList } = actions;
+export const { resetScheduleDetial, resetParticipantList, changeParticipants } = actions;
 export default reducer;

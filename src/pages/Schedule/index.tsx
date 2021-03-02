@@ -17,6 +17,7 @@ import {
   getClassesByTeacher,
   getContentsAuthed,
   getMockOptions,
+  getParticipantsData,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
@@ -24,8 +25,10 @@ import {
   getSearchScheduleList,
   scheduleUpdateStatus,
   getClassesBySchool,
+  changeParticipants,
+  getSchoolInfo,
 } from "../../reducers/schedule";
-import { AlertDialogProps, modeViewType, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -55,10 +58,16 @@ function ScheduleContent() {
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { mockOptions, scheduleMockOptions, participantMockOptions, liveToken, scheduleTimeViewYearData } = useSelector<
-    RootState,
-    RootState["schedule"]
-  >((state) => state.schedule);
+  const {
+    mockOptions,
+    scheduleMockOptions,
+    participantMockOptions,
+    liveToken,
+    scheduleTimeViewYearData,
+    ParticipantsData,
+    classRosterIds,
+    participantsIds,
+  } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
@@ -80,6 +89,10 @@ function ScheduleContent() {
       program_id: resultInfo.payload.contentDetail.program as string,
       subject_id: resultInfo.payload.contentDetail.subject![0] as string,
     };
+  };
+
+  const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
+    dispatch(changeParticipants({ type: type, data: data }));
   };
 
   const initModalDate: AlertDialogProps = {
@@ -130,6 +143,7 @@ function ScheduleContent() {
     >;
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
       dispatch(actError(d("There is no student in this class").t("schedule_msg_no_student")));
+    return resultInfo;
   };
 
   /**
@@ -146,6 +160,10 @@ function ScheduleContent() {
   const toLive = () => {
     dispatch(scheduleUpdateStatus({ schedule_id: scheduleId, status: { status: "Started" } }));
     if (liveToken) window.open(apiLivePath(liveToken));
+  };
+
+  const getParticipants = (is_org: boolean = true) => {
+    dispatch(getParticipantsData(is_org));
   };
 
   React.useEffect(() => {
@@ -176,7 +194,12 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
+    dispatch(getSchoolInfo());
   }, [dispatch]);
+
+  React.useEffect(() => {
+    dispatch(getParticipantsData(getOrgByClass));
+  }, [dispatch, getOrgByClass]);
 
   React.useEffect(() => {
     if (getOrgByClass) {
@@ -189,7 +212,7 @@ function ScheduleContent() {
   }, [dispatch, getOrgByClass, getOrgBySchool]);
 
   React.useEffect(() => {
-    dispatch(contentLists({ publish_status: "published", content_type: "2" }));
+    dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));
     dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
@@ -244,6 +267,11 @@ function ScheduleContent() {
               specificStatus={specificStatus}
               contentPreview={contentPreview}
               LinkageLessonPlan={LinkageLessonPlan}
+              participantsIds={participantsIds}
+              classRosterIds={classRosterIds}
+              handleChangeParticipants={handleChangeParticipants}
+              ParticipantsData={ParticipantsData}
+              getParticipantsData={getParticipants}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

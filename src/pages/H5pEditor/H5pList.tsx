@@ -17,6 +17,7 @@ import clsx from "clsx";
 import React from "react";
 import { ContentFileType, ContentTypeList } from "../../api/type";
 import H5pAudio from "../../assets/icons/h5p_audio.svg";
+import H5pPdf from "../../assets/icons/h5p_file.svg";
 import H5pPicture from "../../assets/icons/h5p_picture.svg";
 import H5pVideo from "../../assets/icons/h5p_video.svg";
 import { reportMiss } from "../../locale/LocaleManager";
@@ -172,6 +173,82 @@ export const assetsData: MockData[] = [
     },
     popularity: 0,
   },
+  {
+    title: "Pdf",
+    id: ContentFileType.pdf,
+    icon: H5pPdf,
+    summary: "this is pdf uploader",
+    license: {
+      id: "",
+      attributes: {
+        canHoldLiable: false,
+        distributable: true,
+        modifiable: true,
+        mustIncludeCopyright: true,
+        mustIncludeLicense: true,
+        sublicensable: true,
+        useCommercially: true,
+      },
+    },
+    description: "this is pdf uploader",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [],
+    categories: [],
+    coreApiVersionNeeded: {
+      major: 0,
+      minor: 0,
+    },
+    createdAt: "2014-08-28T08:58:39+0000",
+    isRecommended: true,
+    keywords: [],
+    tutorial: "",
+    updatedAt: "",
+    version: {
+      major: 0,
+      minor: 0,
+      patch: 0,
+    },
+    popularity: 0,
+  },
+  {
+    title: "Document",
+    id: ContentFileType.doc,
+    icon: H5pPdf,
+    summary: "this is document uploader",
+    license: {
+      id: "",
+      attributes: {
+        canHoldLiable: false,
+        distributable: true,
+        modifiable: true,
+        mustIncludeCopyright: true,
+        mustIncludeLicense: true,
+        sublicensable: true,
+        useCommercially: true,
+      },
+    },
+    description: "this is document uploader",
+    owner: "Fake Owner",
+    example: "",
+    screenshots: [],
+    categories: [],
+    coreApiVersionNeeded: {
+      major: 0,
+      minor: 0,
+    },
+    createdAt: "2014-08-28T08:58:39+0000",
+    isRecommended: true,
+    keywords: [],
+    tutorial: "",
+    updatedAt: "",
+    version: {
+      major: 0,
+      minor: 0,
+      patch: 0,
+    },
+    popularity: 0,
+  },
 
   // {
   //   title: "Document",
@@ -287,7 +364,9 @@ export default function H5pList(props: H5pListProps) {
                 item.id === "H5P.ImagePair" ||
                 item.id === ContentFileType.image ||
                 item.id === ContentFileType.video ||
-                item.id === ContentFileType.audio
+                item.id === ContentFileType.audio ||
+                // item.id === ContentFileType.pdf ||
+                item.id === ContentFileType.pdf
             )
             .map((item) => {
               return (

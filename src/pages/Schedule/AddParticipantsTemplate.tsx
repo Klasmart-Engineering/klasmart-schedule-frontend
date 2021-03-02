@@ -1,7 +1,7 @@
 import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Hidden, makeStyles, Radio, RadioGroup, TextField } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import React from "react";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { ClassOptionsItem, ParticipantsData, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
@@ -136,13 +136,13 @@ export default function AddParticipantsTemplate(props: InfoProps) {
 
   return (
     <div>
-      <div className={css.title}>{reportMiss("Add participants", "schedule_add_participants")}</div>
+      <div className={css.title}>{d("Add Participants").t("schedule_detail_participants")}</div>
       <Grid container alignItems="center" className={css.searchPart}>
         <Grid item xs={4} sm={5} md={5} lg={5} xl={5} className={css.searchInput}>
           <TextField
             size="small"
             id="outlined-basic"
-            label="Search"
+            label={d("Search").t("schedule_button_search")}
             variant="outlined"
             value={name}
             onChange={handleNameChange}
@@ -158,8 +158,18 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         </Hidden>
         <Grid item xs={8} sm={5} md={5} lg={5} xl={5}>
           <RadioGroup aria-label="gender" name="gender1" className={css.radioBox} value={defaultFilter} onChange={handleFilterChange}>
-            <FormControlLabel value="students" control={<Radio />} label="Student" className={css.radioItem} />
-            <FormControlLabel value="teachers" control={<Radio />} label="Teacher" className={css.radioItem} />
+            <FormControlLabel
+              value="students"
+              control={<Radio />}
+              label={d("Student").t("schedule_time_conflict_student")}
+              className={css.radioItem}
+            />
+            <FormControlLabel
+              value="teachers"
+              control={<Radio />}
+              label={d("Teacher").t("schedule_detail_teacher")}
+              className={css.radioItem}
+            />
           </RadioGroup>
         </Grid>
       </Grid>

@@ -22,9 +22,10 @@ export enum ContentFileType {
   image = 1,
   video = 2,
   audio = 3,
-  doc = 4,
+  doc = 7,
   h5p = 5,
   h5pExtend = 6,
+  pdf = 4,
 }
 
 export enum ContentInputSourceType {

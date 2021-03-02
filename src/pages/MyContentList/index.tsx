@@ -1,4 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
+import produce from "immer";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +25,6 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
-  getExectSearch,
   getOrgList,
   onLoadContentList,
   publishContent,
@@ -42,7 +42,7 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
-import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
+import { ExectSearch, EXECT_SEARCH, SEARCH_TEXT_KEY, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -66,7 +66,8 @@ const useQuery = (): QueryCondition => {
     const content_type = query.get("content_type");
     const program_group = query.get("program_group");
     const path = query.get("path") || "";
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path });
+    const exect_search = query.get("exect_search") || ExectSearch.all;
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path, exect_search });
   }, [search]);
 };
 
@@ -109,21 +110,13 @@ export default function MyContentList() {
   const condition = useQuery();
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
-  const formMethods = useForm<ContentListForm>();
-  const { watch, reset } = formMethods;
+  const conditionFormMethods = useForm<ContentListForm>();
+  const { watch, reset, getValues } = conditionFormMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const {
-    contentsList,
-    total,
-    page_size,
-    folderTree,
-    parentFolderInfo,
-    orgList,
-    selectedOrg,
-    orgProperty,
-    myOrgId,
-    exectSearch,
-  } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
+    RootState,
+    RootState["content"]
+  >((state) => state.content);
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
@@ -189,18 +182,25 @@ export default function MyContentList() {
       history.push(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?id=${id}`);
     }
   };
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+  const handleChangeTab: FirstSearchHeaderProps["onChange"] = (value) => {
+    reset();
     if (condition.path && condition.path !== ROOT_PATH) {
       history.replace({ search: toQueryString(clearNull(value)) });
     } else {
       history.push({ search: toQueryString(clearNull(value)) });
     }
   };
-  const handleNotChangeExectSearchCondition: FirstSearchHeaderProps["onChange"] = async (value) => {
+  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+    const newValue = produce(value, (draft) => {
+      const searchText = getValues()[SEARCH_TEXT_KEY];
+      searchText ? (draft.name = searchText) : delete draft.name;
+      const exect_search = getValues()[EXECT_SEARCH];
+      draft.exect_search = exect_search;
+    });
     if (condition.path && condition.path !== ROOT_PATH) {
-      history.replace({ search: toQueryString(clearNull(Object.assign(value, { exectSearch: exectSearch }))) });
+      history.replace({ search: toQueryString(clearNull(newValue)) });
     } else {
-      history.push({ search: toQueryString(clearNull(Object.assign(value, { exectSearch: exectSearch }))) });
+      history.push({ search: toQueryString(clearNull(newValue)) });
     }
   };
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
@@ -290,9 +290,6 @@ export default function MyContentList() {
     await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
     closeOrganizationList();
   };
-  const handleChangeExectSearch = async (exectSearch: string) => {
-    await dispatch(getExectSearch({ exectSearch }));
-  };
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -313,12 +310,12 @@ export default function MyContentList() {
 
   return (
     <div>
-      {condition.program_group && <ProgramSearchHeader value={condition} onChange={handleChange} />}
-      {condition.program_group && <ProgramSearchHeaderMb value={condition} onChange={handleChange} />}
+      {condition.program_group && <ProgramSearchHeader value={condition} onChange={handleChangeTab} />}
+      {condition.program_group && <ProgramSearchHeaderMb value={condition} onChange={handleChangeTab} />}
       {!condition.program_group && (
         <FirstSearchHeader
           value={condition}
-          onChange={handleChange}
+          onChange={handleChangeTab}
           onChangeAssets={handleChangeAssets}
           onCreateContent={handleCreateContent}
         />
@@ -326,7 +323,7 @@ export default function MyContentList() {
       {!condition.program_group && (
         <FirstSearchHeaderMb
           value={condition}
-          onChange={handleChange}
+          onChange={handleChangeTab}
           onChangeAssets={handleChangeAssets}
           onCreateContent={handleCreateContent}
         />
@@ -335,17 +332,13 @@ export default function MyContentList() {
         value={condition}
         onChange={handleChange}
         onCreateContent={handleCreateContent}
-        onChangeSearchCondition={handleNotChangeExectSearchCondition}
-        onChangeExectSearchCondition={handleChangeExectSearch}
-        exectSearch={exectSearch}
+        conditionFormMethods={conditionFormMethods}
       />
       <SecondSearchHeaderMb
         value={condition}
         onChange={handleChange}
         onCreateContent={handleCreateContent}
-        onChangeSearchCondition={handleNotChangeExectSearchCondition}
-        onChangeExectSearchCondition={handleChangeExectSearch}
-        exectSearch={exectSearch}
+        conditionFormMethods={conditionFormMethods}
       />
       <ThirdSearchHeader
         value={condition}
@@ -389,7 +382,7 @@ export default function MyContentList() {
           value ? (
             contentsList && contentsList.length > 0 ? (
               <ContentCardList
-                formMethods={formMethods}
+                formMethods={conditionFormMethods}
                 list={contentsList}
                 total={total}
                 amountPerPage={page_size}

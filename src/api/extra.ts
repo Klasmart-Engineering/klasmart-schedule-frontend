@@ -191,9 +191,7 @@ export function apiGetContentTypeList() {
 export function apiIsEnableNewH5p() {
   return process.env.REACT_APP_ENABLE_NEW_H5P === "1";
 }
-export function apiIsEnableExactSearch() {
-  return process.env.REACT_APP_ENABLE_EXECT_SEARCH === "1";
-}
+
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }

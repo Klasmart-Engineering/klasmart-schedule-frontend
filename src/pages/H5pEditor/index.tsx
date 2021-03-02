@@ -64,44 +64,51 @@ export function H5pEditor() {
     return JSON.stringify(result);
   };
   return (
-    <Box width="50%" p={2.5} mt={0} mx="auto">
-      <ExpandContent
-        onExpand={setExpand}
-        expand={expand}
-        contentTypeList={contentTypeList as ContentTypeList}
-        value={library}
-        onChange={setLibrary}
-      />
-      {schemaPending ? null : (
-        <Fragment>
-          <H5pCompare value={libContent} />
-          {library && schema && (
-            <Fragment>
-              <Controller
-                name="data"
-                defaultValue={library ? { library } : undefined}
-                rules={{ validate }}
-                control={control}
-                key={library}
-                render={(props) => (
-                  <H5pDetails
-                    defaultValue={props.value}
-                    onChange={props.onChange}
-                    schema={schema}
-                    errors={parseH5pErrors((errors.data as any)?.message)}
-                  />
-                )}
-              />
-              <Box display="flex" justifyContent="center" mt={4}>
-                <Button color="primary" variant="contained" onClick={handleSubmit(() => {})}>
-                  validate
-                </Button>
-              </Box>
-            </Fragment>
-          )}
-        </Fragment>
-      )}
-    </Box>
+    <div>
+      <Box width="50%" p={2.5} mt={0} mx="auto">
+        {false && (
+          <ExpandContent
+            onExpand={setExpand}
+            expand={expand}
+            contentTypeList={contentTypeList as ContentTypeList}
+            value={library}
+            onChange={setLibrary}
+          />
+        )}
+        {schemaPending ? null : (
+          <Fragment>
+            <H5pCompare value={libContent} />
+            {library && schema && (
+              <Fragment>
+                <Controller
+                  name="data"
+                  defaultValue={library ? { library } : undefined}
+                  rules={{ validate }}
+                  control={control}
+                  key={library}
+                  render={(props) => (
+                    <H5pDetails
+                      defaultValue={props.value}
+                      onChange={props.onChange}
+                      schema={schema}
+                      errors={parseH5pErrors((errors.data as any)?.message)}
+                    />
+                  )}
+                />
+                <Box display="flex" justifyContent="center" mt={4}>
+                  <Button color="primary" variant="contained" onClick={handleSubmit(() => {})}>
+                    validate
+                  </Button>
+                </Box>
+              </Fragment>
+            )}
+          </Fragment>
+        )}
+      </Box>
+      {/* <DndProvider backend={HTML5Backend}>
+      <ImagePair data={JSON.parse(h5pImagePairJson.data).content} px={1} />
+      </DndProvider> */}
+    </div>
   );
 }
 

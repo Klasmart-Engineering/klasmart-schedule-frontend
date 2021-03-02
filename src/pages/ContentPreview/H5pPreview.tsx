@@ -1,4 +1,4 @@
-import { Box, Hidden, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
@@ -12,6 +12,7 @@ import { Thumbnail } from "../../components/Thumbnail";
 import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
 import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
 import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
+import AssetPdf from "../../components/UIAssetPreview/AssetPreview/AssetPdf";
 import AssetVideo from "../../components/UIAssetPreview/AssetPreview/AssetVideo";
 import { d } from "../../locale/LocaleManager";
 import { formLiteFileType } from "../../models/ModelH5pSchema";
@@ -48,9 +49,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     position: "relative",
     height: "100%",
     minHeight: "calc(100vh - 60px)",
-    // [breakpoints.up("md")]: {
-    //   minHeight: 'calc(100vh - 60px)',
-    // },
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -60,12 +58,12 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     width: "100%",
     minHeight: "calc(100% - 200px)",
     display: "flex",
-    justifyContent: "space-around",
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
   },
   h5pCon: {
-    width: "80%",
+    width: "100%",
     height: "90vh",
     display: "flex",
     justifyContent: "center",
@@ -101,20 +99,18 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     cursor: "pointer",
     position: "absolute",
     left: "calc(90% - 204px)",
+    [breakpoints.down("md")]: {
+      width: 100,
+      height: 40,
+      borderRadius: 20,
+      left: "calc(90% - 100px)",
+    },
   },
-  viewMbBtn: {
-    width: 100,
-    height: 40,
-    borderRadius: 20,
-    textAlign: "center",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#d32f2f",
-    color: "#fff",
-    position: "absolute",
-    left: "calc(90% - 100px)",
+  btnFontSize: {
+    fontSize: 24,
+    [breakpoints.down("md")]: {
+      fontSize: 12,
+    },
   },
   iconBtn: {
     width: 48,
@@ -133,7 +129,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
       width: 120,
     },
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
 
   mapCon: {
@@ -233,8 +229,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
 }));
 
-// data.file_type === ContentType.image || data... === ContentType.
-
 function EmptyContent() {
   const css = useStyles();
   return (
@@ -274,7 +268,8 @@ export function H5pPreview(props: H5pPreview) {
       data.file_type === ContentFileType.image ||
       data.file_type === ContentFileType.video ||
       data.file_type === ContentFileType.audio ||
-      data.file_type === ContentFileType.doc
+      data.file_type === ContentFileType.doc ||
+      data.file_type === ContentFileType.pdf
     ) {
       return source?.split(".").pop()?.toLowerCase();
     } else {
@@ -288,8 +283,6 @@ export function H5pPreview(props: H5pPreview) {
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
 
-  // const isNewH5p = h5pItem ? isDataSourceNewH5p(h5pItem.data, h5pItem.id) : false;
-
   const isNewH5p = h5pItem ? formLiteFileType(h5pItem.id, parsedData.file_type, parsedData.input_source)?.isNewH5p : false;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
@@ -299,83 +292,77 @@ export function H5pPreview(props: H5pPreview) {
       return <AssetVideo src={path} />;
     } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
       return <AssetAudio src={path} />;
-    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0 && <AssetFile src={path} />) {
-      return <AssetFile src={path} />;
+    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetFile src={parsedData.source} />;
+    } else if (fileFormat.pdf.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+      return <AssetPdf src={path} />;
     }
   };
-  // const isHideH5p = h5pItem && parsedData && !getSuffix(parsedData.source) && h5pItem.data === "{}";
 
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
-        <Box className={css.h5pCon}>
-          {isEmpty ? (
-            <EmptyContent />
-          ) : !getSuffix(parsedData) ? (
-            isNewH5p ? (
-              <Box className={css.innerH5pCon}>
-                <H5pPlayer valueSource={parsedData.content} />
+        <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
+          <div style={{ flex: 1 }}>
+            {h5pArray.length > 1 && (
+              <Box className={css.iconCon}>
+                <Box className={css.optionCon}>
+                  <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
+                    <ArrowBackIosOutlinedIcon />
+                  </IconButton>
+                  <Typography>{d("Previous").t("library_label_previous")}</Typography>
+                </Box>
               </Box>
+            )}
+          </div>
+          <div style={{ flex: 9 }} className={css.h5pCon}>
+            {isEmpty ? (
+              <EmptyContent />
+            ) : !getSuffix(parsedData) ? (
+              isNewH5p ? (
+                <Box className={css.innerH5pCon}>
+                  <H5pPlayer valueSource={parsedData.content} />
+                </Box>
+              ) : (
+                <ContentH5p sub={H5pSub.view} value={parsedData.source} />
+              )
             ) : (
-              <ContentH5p sub={H5pSub.view} value={parsedData.source} />
-            )
-          ) : (
-            showAssets()
-          )}
-        </Box>
+              showAssets()
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            {h5pArray.length > 1 && (
+              <Box className={css.iconCon}>
+                <Box className={css.optionCon}>
+                  <IconButton
+                    disabled={currIndex >= h5pArray.length - 1}
+                    className={clsx(css.iconBtn, css.whiteIconBtn)}
+                    onClick={handleNext}
+                  >
+                    <ArrowForwardIosOutlinedIcon />
+                  </IconButton>
+                  <Typography>{d("Next").t("library_label_next")}</Typography>
+                </Box>
+              </Box>
+            )}
+          </div>
+        </div>
         <Box className={css.btnCon}>
-          {h5pArray.length > 1 && (
-            <Box className={css.iconCon}>
-              <Box className={css.optionCon}>
-                <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
-                  <ArrowBackIosOutlinedIcon />
-                </IconButton>
-                <Typography>{d("Previous").t("library_label_previous")}</Typography>
-              </Box>
-              <Box className={css.optionCon}>
-                <IconButton
-                  disabled={currIndex >= h5pArray.length - 1}
-                  className={clsx(css.iconBtn, css.whiteIconBtn)}
-                  onClick={handleNext}
-                >
-                  <ArrowForwardIosOutlinedIcon />
-                </IconButton>
-                <Typography>{d("Next").t("library_label_next")}</Typography>
-              </Box>
-            </Box>
-          )}
-          <Hidden only={["xs", "sm"]}>
-            <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-              {d("View in").t("library_label_view_in") !== "-" && (
-                <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
-              )}
-              {classType === "OnlineClass" && (
-                <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-              )}
-              {classType === "OfflineClass" && (
-                <Typography style={{ fontSize: 24 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-              )}
-              {classType === "Homework" && (
-                <Typography style={{ fontSize: 24 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
-              )}
-              {classType === "Task" && <Typography style={{ fontSize: 24 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-            </Box>
-          </Hidden>
-          <Hidden only={["md", "lg", "xl"]}>
-            <Box className={clsx(css.viewMbBtn)} onClick={onGoLive}>
-              {d("View in").t("library_label_view_in") && <Box style={{ fontSize: 12 }}>{d("View in").t("library_label_view_in")}</Box>}
-              {classType === "OnlineClass" && (
-                <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
-              )}
-              {classType === "OfflineClass" && (
-                <Typography style={{ fontSize: 12 }}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
-              )}
-              {classType === "Homework" && (
-                <Typography style={{ fontSize: 12 }}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
-              )}
-              {classType === "Task" && <Typography style={{ fontSize: 12 }}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
-            </Box>
-          </Hidden>
+          <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
+            {d("View in").t("library_label_view_in") !== "-" && (
+              <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
+            )}
+            {classType === "OnlineClass" && (
+              <Typography className={css.btnFontSize}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+            )}
+            {classType === "OfflineClass" && (
+              <Typography className={css.btnFontSize}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
+            )}
+            {classType === "Homework" && (
+              <Typography className={css.btnFontSize}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
+            )}
+            {classType === "Task" && <Typography className={css.btnFontSize}>{d("KidsLoop Live").t("schedule_preview_live")}</Typography>}
+          </Box>
         </Box>
       </Box>
       {h5pArray.length && content_type === ContentType.plan && (

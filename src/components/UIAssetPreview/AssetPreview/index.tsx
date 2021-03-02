@@ -24,7 +24,8 @@ export function AssetPreview(props: PreviewProps) {
       {fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetImg src={path} />}
       {fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetVideo src={path} />}
       {fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetAudio src={path} />}
-      {fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetFile src={path} />}
+      {fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetFile src={source} />}
+      {/* {fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetPdf src={path} />} */}
       <Typography variant="body1" style={{ marginTop: "20px" }}>
         {d("File Type").t("library_label_file_type")} : {getSuffix(source)}
       </Typography>

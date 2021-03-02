@@ -81,6 +81,7 @@ export const fileFormat = {
   image: [".jpg", ".jpeg", ".png", ".gif", ".bmp"],
   document: [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".pdf"],
   audio: [".mp3", ".wav"],
+  pdf: [".pdf"],
 };
 
 function ProgressWithText(props: CircularProgressProps) {
@@ -161,9 +162,12 @@ function AssetEdit(props: AssetEditProps) {
     if (assetLibraryId === ContentFileType.doc) {
       return fileFormat.document.join();
     }
+    if (assetLibraryId === ContentFileType.pdf) {
+      return fileFormat.pdf.join();
+    }
     if (assetLibraryId === ContentFileType.video) {
       return fileFormat.video.join();
-    } else return `image/*,audio/*,video/*,${fileFormat.document.join()}`;
+    } else return `image/*,audio/*,video/*,${fileFormat.document.join()}, ${fileFormat.pdf.join()}`;
   };
   return (
     <Box className={uploadCss.uploadBox} boxShadow={3}>

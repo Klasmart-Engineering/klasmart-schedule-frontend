@@ -5207,13 +5207,19 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.IDResponse"
+              "$ref": "#/definitions/api.SuccessRequestResponse"
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5225,7 +5231,7 @@
           "409": {
             "description": "Conflict",
             "schema": {
-              "$ref": "#/definitions/entity.ScheduleConflictView"
+              "$ref": "#/definitions/api.ConflictResponse"
             }
           },
           "500": {
@@ -5310,13 +5316,19 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.IDResponse"
+              "$ref": "#/definitions/api.SuccessRequestResponse"
             }
           },
           "400": {
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5328,7 +5340,7 @@
           "409": {
             "description": "Conflict",
             "schema": {
-              "$ref": "#/definitions/entity.ScheduleConflictView"
+              "$ref": "#/definitions/api.ConflictResponse"
             }
           },
           "500": {
@@ -5374,6 +5386,12 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5591,33 +5609,6 @@
         }
       }
     },
-    "/schedules_participate/class": {
-      "get": {
-        "description": "get participate Class",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["schedule"],
-        "summary": "getParticipateClass",
-        "operationId": "getParticipateClass",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/external.Class"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/schedules_time_view": {
       "get": {
         "description": "get schedule time view",
@@ -5649,7 +5640,7 @@
           },
           {
             "type": "string",
-            "description": "school ids,separated by comma",
+            "description": "school id,separated by comma",
             "name": "school_ids",
             "in": "query"
           },
@@ -5688,6 +5679,18 @@
             "type": "integer",
             "description": "get schedules equal to due_at",
             "name": "due_at_eq",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "get schedules greater than or equal to start_at",
+            "name": "start_at_ge",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "get schedules less than or equal to end_at",
+            "name": "end_at_le",
             "in": "query"
           }
         ],
@@ -5795,6 +5798,12 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -6592,7 +6601,7 @@
       }
     },
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "$ref": "#/definitions/api.Response"
     },
     "api.CheckAccountResponse": {
       "type": "object",
@@ -6603,7 +6612,7 @@
       }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "$ref": "#/definitions/api.Response"
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -6629,18 +6638,6 @@
         },
         "developmental_name": {
           "type": "string"
-        }
-      }
-    },
-    "api.ErrorResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
         }
       }
     },
@@ -6670,7 +6667,7 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "$ref": "#/definitions/api.Response"
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -6706,7 +6703,7 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "$ref": "#/definitions/api.Response"
     },
     "api.LoginRequest": {
       "type": "object",
@@ -6731,7 +6728,7 @@
       }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "$ref": "#/definitions/api.Response"
     },
     "api.OutcomeBulkRejectRequest": {
       "type": "object",
@@ -7143,6 +7140,18 @@
         }
       }
     },
+    "api.Response": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
+    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -7184,6 +7193,9 @@
         }
       }
     },
+    "api.SuccessRequestResponse": {
+      "$ref": "#/definitions/api.Response"
+    },
     "api.TokenResponse": {
       "type": "object",
       "properties": {
@@ -7193,7 +7205,7 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "$ref": "#/definitions/api.ErrorResponse"
+      "$ref": "#/definitions/api.Response"
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -9019,9 +9031,26 @@
         }
       }
     },
+    "entity.ScheduleAccessibleUserView": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ScheduleAddView": {
       "type": "object",
-      "required": ["class_id", "title"],
+      "required": ["end_at", "start_at", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9106,35 +9135,6 @@
         }
       }
     },
-    "entity.ScheduleConflictView": {
-      "type": "object",
-      "properties": {
-        "class_roster_student": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
-          }
-        },
-        "class_roster_teacher": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
-          }
-        },
-        "participants_student": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
-          }
-        },
-        "participants_teacher": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
-          }
-        }
-      }
-    },
     "entity.ScheduleDetailsView": {
       "type": "object",
       "properties": {
@@ -9146,16 +9146,16 @@
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
-        "class_roster_student": {
+        "class_roster_students": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
+            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
           }
         },
-        "class_roster_teacher": {
+        "class_roster_teachers": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
+            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
           }
         },
         "class_type": {
@@ -9193,16 +9193,16 @@
         "org_id": {
           "type": "string"
         },
-        "participants_student": {
+        "participants_students": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
+            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
           }
         },
-        "participants_teacher": {
+        "participants_teachers": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleShortInfo"
+            "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
           }
         },
         "program": {
@@ -9368,7 +9368,7 @@
     },
     "entity.ScheduleUpdateView": {
       "type": "object",
-      "required": ["class_id", "title"],
+      "required": ["end_at", "start_at", "title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9851,17 +9851,6 @@
           "type": "integer"
         },
         "updateID": {
-          "type": "string"
-        }
-      }
-    },
-    "external.Class": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
           "type": "string"
         }
       }

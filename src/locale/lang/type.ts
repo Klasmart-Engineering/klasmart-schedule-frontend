@@ -129,6 +129,7 @@ type LangRecord<T = string> =
   | { id: "library_label_drawing_activity"; description: "Drawing Activity"; values: undefined }
   | { id: "library_label_program_esl"; description: "Badanamu ESL"; values: undefined }
   | { id: "library_label_program_math"; description: "Bada Math"; values: undefined }
+  | { id: "library_label_program_steam"; description: "Bada STEAM"; values: undefined }
   | { id: "library_error_unsupported_format"; description: "Unsupported Format"; values: undefined }
   | { id: "library_error_no_content"; description: "Content does not exist"; values: undefined }
   | {
@@ -514,6 +515,30 @@ type LangRecord<T = string> =
     }
   | { id: "schedule_msg_edit_due_date"; description: "You cannot edit this event after the due date. "; values: undefined }
   | { id: "schedule_msg_delete_due_date"; description: "You cannot delete this event after the due date. "; values: undefined }
+  | { id: "schedule_checkbox_home_fun"; description: "Home Fun"; values: undefined }
+  | { id: "schedule_student_feedback"; description: "Student Feedback"; values: undefined }
+  | { id: "schedule_detail_comment"; description: "Comment"; values: undefined }
+  | { id: "schedule_upload_assignment"; description: "Upload Assignment"; values: undefined }
+  | { id: "schedule_upload_more"; description: "Upload More"; values: undefined }
+  | { id: "schedule_button_submit"; description: "Submit"; values: undefined }
+  | {
+      id: "schedule_msg_assignment_new";
+      description: "Students have already submitted assignments, a new event will be created.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_hide";
+      description: "This event cannot de deleted because assignments have already been uploaded. Do you want to hide it instead?";
+      values: undefined;
+    }
+  | { id: "schedule_msg_visible"; description: "This event is visible again."; values: undefined }
+  | { id: "schedule_msg_submit"; description: "Your assignment will be submitted for assessment."; values: undefined }
+  | {
+      id: "schedule_msg_cannot_submit";
+      description: "You cannot submit again because your assignment has already been assessed.";
+      values: undefined;
+    }
+  | { id: "schedule_detail_see_more"; description: "See More"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

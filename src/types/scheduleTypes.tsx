@@ -96,6 +96,7 @@ export interface FilterQueryTypeProps {
 export interface ClassOptionsItem {
   id?: string;
   name?: string;
+  enable?: boolean;
 }
 
 export interface EntityLessonPlanShortInfo {
@@ -133,4 +134,9 @@ export interface ConflictsData {
   class_roster_students: EntityScheduleShortInfo[];
   participants_teachers: EntityScheduleShortInfo[];
   participants_students: EntityScheduleShortInfo[];
+}
+
+export interface ChangeParticipants {
+  type: string;
+  data: ParticipantsShortInfo;
 }
