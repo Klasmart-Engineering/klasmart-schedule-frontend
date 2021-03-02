@@ -538,7 +538,7 @@ function EditBox(props: CalendarStateProps) {
       const currentTime = Math.floor(new Date().getTime());
       if (
         (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
-        newData.start_at * 1000 - currentTime < 15 * 60 * 1000
+        newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
       ) {
         dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       }
@@ -772,7 +772,7 @@ function EditBox(props: CalendarStateProps) {
     // @ts-ignore
     const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
     if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
-      if (dueDateTimestamp <= scheduleList.end_at && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
+      if (dueDateTimestamp <= scheduleList.end_at! && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
       }
@@ -787,12 +787,12 @@ function EditBox(props: CalendarStateProps) {
 
       addData["due_at"] = dueDateTimestamp;
     }
-    if (scheduleList.start_at < currentTime && !checkedStatus.repeatCheck && scheduleList.class_type !== "Homework") {
+    if (scheduleList.start_at! < currentTime && !checkedStatus.repeatCheck && scheduleList.class_type !== "Homework") {
       dispatch(actError(d("Start time cannot be earlier than current time").t("schedule_msg_start_current")));
       return;
     }
 
-    if (scheduleList.end_at <= scheduleList.start_at && scheduleList.class_type !== "Homework") {
+    if (scheduleList.end_at! <= scheduleList.start_at! && scheduleList.class_type !== "Homework") {
       dispatch(actError(d("End time cannot be earlier than start time").t("schedule_msg_end_time_earlier")));
       return;
     }
@@ -800,7 +800,7 @@ function EditBox(props: CalendarStateProps) {
     if (
       scheduleId &&
       checkedStatus.repeatCheck &&
-      scheduleList.start_at < currentTime &&
+      scheduleList.start_at! < currentTime &&
       repeat_edit_options === "only_current" &&
       scheduleList.class_type !== "Homework"
     ) {
@@ -1476,7 +1476,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "class_id");
           }}
           value={classItem}
-          disabled={isScheduleExpired()}
+          disabled={isScheduleExpired() || scheduleDetial?.class?.enable === false}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -1545,10 +1545,12 @@ function EditBox(props: CalendarStateProps) {
             <Box className={css.participantSaveBox}>
               <CreateOutlinedIcon
                 onClick={() => {
-                  setRosterSaveStatus(false);
-                  setIsForce(false);
+                  if (scheduleDetial?.class?.enable !== false) {
+                    setRosterSaveStatus(false);
+                    setIsForce(false);
+                  }
                 }}
-                style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+                style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
               />
               <br />
               {menuItemListClassKr("roster")}
@@ -1747,7 +1749,7 @@ function EditBox(props: CalendarStateProps) {
         {scheduleList.class_type !== "Task" && (
           <>
             <span
-              style={{ color: "#0E78D5", cursor: "pointer" }}
+              style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
               onClick={() => {
                 setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
               }}

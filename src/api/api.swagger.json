@@ -5554,6 +5554,86 @@
         }
       }
     },
+    "/schedules_filter/classes": {
+      "get": {
+        "description": "get schedule filter classes",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "get schedule filter classes",
+        "operationId": "getScheduleFilterClasses",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "school id,if ",
+            "name": "school_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleFilterClass"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_filter/schools": {
+      "get": {
+        "description": "get get schedule filter schools",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "get schedule filter schools",
+        "operationId": "getScheduleFilterSchool",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleFilterSchool"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules_lesson_plans": {
       "get": {
         "description": "get lessonPlans by teacher and class",
@@ -5652,7 +5732,7 @@
           },
           {
             "type": "string",
-            "description": "class id,separated by comma",
+            "description": "class id,separated by comma,special classes id is 'Undefined',this class members only under org",
             "name": "class_ids",
             "in": "query"
           },
@@ -5691,6 +5771,13 @@
             "type": "integer",
             "description": "get schedules less than or equal to end_at",
             "name": "end_at_le",
+            "in": "query"
+          },
+          {
+            "enum": ["any_time", "only_mine"],
+            "type": "string",
+            "description": "get schedules by filter option",
+            "name": "filter_option",
             "in": "query"
           }
         ],
@@ -9050,7 +9137,7 @@
     },
     "entity.ScheduleAddView": {
       "type": "object",
-      "required": ["end_at", "start_at", "title"],
+      "required": ["title"],
       "properties": {
         "attachment": {
           "type": "object",
@@ -9144,7 +9231,7 @@
         },
         "class": {
           "type": "object",
-          "$ref": "#/definitions/entity.ScheduleShortInfo"
+          "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "class_roster_students": {
           "type": "array",
@@ -9245,6 +9332,31 @@
         }
       }
     },
+    "entity.ScheduleFilterClass": {
+      "type": "object",
+      "properties": {
+        "has_student_flag": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleFilterSchool": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ScheduleListView": {
       "type": "object",
       "properties": {
@@ -9312,7 +9424,7 @@
       "properties": {
         "class": {
           "type": "object",
-          "$ref": "#/definitions/entity.ScheduleShortInfo"
+          "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "end_at": {
           "type": "integer"
@@ -9368,7 +9480,7 @@
     },
     "entity.ScheduleUpdateView": {
       "type": "object",
-      "required": ["end_at", "start_at", "title"],
+      "required": ["title"],
       "properties": {
         "attachment": {
           "type": "object",
