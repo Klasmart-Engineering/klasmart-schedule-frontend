@@ -224,7 +224,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       <div className={classes.iconPart}>
         <Permission
-          value={PermissionType.delete_event_540}
+          value={PermissionType.edit_event_530}
           render={(value) => value && <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />}
         />
         {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
