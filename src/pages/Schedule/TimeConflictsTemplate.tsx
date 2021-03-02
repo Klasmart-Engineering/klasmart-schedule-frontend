@@ -226,8 +226,18 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
           value={item.selected}
           onChange={(event) => handleChange(event, item.id, signal)}
         >
-          <FormControlLabel value="not_schedule" control={<Radio />} label="Not schedule" className={css.radioItem} />
-          <FormControlLabel value="schedule" control={<Radio />} label="Schedule anyway" className={css.radioItem} />
+          <FormControlLabel
+            value="not_schedule"
+            control={<Radio />}
+            label={d("Not schedule").t("schedule_time_conflict_option_1")}
+            className={css.radioItem}
+          />
+          <FormControlLabel
+            value="schedule"
+            control={<Radio />}
+            label={d("Schedule anyway").t("schedule_time_conflict_option_2")}
+            className={css.radioItem}
+          />
         </RadioGroup>
       </Grid>
     </>

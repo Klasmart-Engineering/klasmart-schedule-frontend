@@ -143,6 +143,7 @@ function ScheduleContent() {
     >;
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
       dispatch(actError(d("There is no student in this class").t("schedule_msg_no_student")));
+    return resultInfo;
   };
 
   /**

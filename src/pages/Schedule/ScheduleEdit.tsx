@@ -640,9 +640,23 @@ function EditBox(props: CalendarStateProps) {
 
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      await getParticipantOptions(value["id"]);
-      handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
-      setRosterChecked("other");
+      let resultInfo: any;
+      const getClassOptionsItem = (item: ClassOptionsItem[]) => {
+        const items = item?.map((item: any) => {
+          return { id: item.user_id, name: item.user_name, enable: true };
+        });
+        return items ?? [];
+      };
+      resultInfo = await getParticipantOptions(value["id"]);
+      handleChangeParticipants("classRoster", {
+        student: getClassOptionsItem(resultInfo.payload.participantList.class.students as ClassOptionsItem[]),
+        teacher: getClassOptionsItem(resultInfo.payload.participantList.class.teachers as ClassOptionsItem[]),
+      } as ParticipantsShortInfo);
+      if (resultInfo.payload.participantList.class.students.length || resultInfo.payload.participantList.class.teachers.length) {
+        setRosterChecked("all");
+      } else {
+        setRosterChecked("other");
+      }
       setRosterSaveStatus(false);
       setClassItem(value);
     }
@@ -1068,6 +1082,7 @@ function EditBox(props: CalendarStateProps) {
         />
       ),
     });
+    setParticipantSaveStatus(false);
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -1705,7 +1720,7 @@ function EditBox(props: CalendarStateProps) {
                 setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
               }}
             >
-              See More{" "}
+              {d("See More").t("schedule_detail_see_more")}{" "}
               {linkageLessonPlanOpen ? (
                 <ExpandLessOutlined style={{ position: "absolute" }} />
               ) : (
