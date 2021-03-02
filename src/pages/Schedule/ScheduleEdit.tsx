@@ -207,6 +207,16 @@ const useStyles = makeStyles(({ shadows }) => ({
   paper: {
     width: "100%",
   },
+  rosterNotice: {
+    position: "absolute",
+    top: "-9px",
+    left: "8px",
+    backgroundColor: "white",
+    color: "rgba(0, 0, 0, 0.54)",
+    fontSize: "12px",
+    zIndex: 10,
+    padding: "0 5px 0 5px",
+  },
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
@@ -1479,143 +1489,165 @@ function EditBox(props: CalendarStateProps) {
         />
         {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
           !rosterSaveStatus && (
-            <Box className={css.participantBox}>
-              <div style={{ textAlign: "end" }}>
-                <FormControlLabel
-                  control={
-                    <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
-                  }
-                  label="Select All"
-                />
-                <FormControlLabel
-                  control={
-                    <Radio
-                      name="checkedB"
-                      value="empty"
-                      color="primary"
-                      checked={rosterChecked === "empty"}
-                      onChange={handleRosterChange}
-                    />
-                  }
-                  label="Unselect All"
-                />
-              </div>
-              <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
-                <div style={{ textAlign: "center", width: "202px" }}>
-                  <span className={css.participantTitle}>Students</span>
-                  {menuItemListClassKrParticipants("students")}
+            <Box style={{ position: "relative" }}>
+              <span className={css.rosterNotice}>
+                {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
+              </span>
+              <Box className={css.participantBox}>
+                <div style={{ textAlign: "end" }}>
+                  <FormControlLabel
+                    control={
+                      <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
+                    }
+                    label="Select All"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        name="checkedB"
+                        value="empty"
+                        color="primary"
+                        checked={rosterChecked === "empty"}
+                        onChange={handleRosterChange}
+                      />
+                    }
+                    label="Unselect All"
+                  />
                 </div>
-                <div className={css.splitLine}></div>
-                <div style={{ textAlign: "center", width: "202px" }}>
-                  <span className={css.participantTitle}>Teachers</span>
-                  {menuItemListClassKrParticipants("teacher")}
+                <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
+                  <div style={{ textAlign: "center", width: "202px" }}>
+                    <span className={css.participantTitle}>Students</span>
+                    {menuItemListClassKrParticipants("students")}
+                  </div>
+                  <div className={css.splitLine}></div>
+                  <div style={{ textAlign: "center", width: "202px" }}>
+                    <span className={css.participantTitle}>Teachers</span>
+                    {menuItemListClassKrParticipants("teacher")}
+                  </div>
                 </div>
-              </div>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  setRosterSaveStatus(true);
-                }}
-                className={css.participantButton}
-              >
-                OK
-              </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setRosterSaveStatus(true);
+                  }}
+                  className={css.participantButton}
+                >
+                  OK
+                </Button>
+              </Box>
             </Box>
           )}
         {menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
-          <Box className={css.participantSaveBox}>
-            <CreateOutlinedIcon
-              onClick={() => {
-                setRosterSaveStatus(false);
-                setIsForce(false);
-              }}
-              style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
-            />
-            <br />
-            {menuItemListClassKr("roster")}
+          <Box style={{ position: "relative" }}>
+            <span className={css.rosterNotice}>
+              {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
+            </span>
+            <Box className={css.participantSaveBox}>
+              <CreateOutlinedIcon
+                onClick={() => {
+                  setRosterSaveStatus(false);
+                  setIsForce(false);
+                }}
+                style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+              />
+              <br />
+              {menuItemListClassKr("roster")}
+            </Box>
           </Box>
         )}
         {(!arrEmpty(participantsIds?.student) || !arrEmpty(participantsIds?.teacher)) && !participantSaveStatus && (
-          <Box className={css.participantBox}>
-            <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
-              <div style={{ textAlign: "center", width: "202px" }}>
-                <span className={css.participantTitle}>Students</span>
-                {participantsIds?.student.map((item: ClassOptionsItem) => {
-                  return (
-                    <Tooltip title={item.name as string} placement="right-start">
-                      <FormControlLabel
-                        className={css.participantText}
-                        control={
-                          <Checkbox
-                            name={item.name}
-                            value={item.id}
-                            color="primary"
-                            checked={true}
-                            disabled={item.enable === false}
-                            onChange={(e) => {
-                              handleParticipantsChange(e, "students");
-                            }}
+          <>
+            <Box style={{ position: "relative" }}>
+              <span className={css.rosterNotice}>
+                {d("Add Participants").t("schedule_detail_participants")} <span style={{ color: "#D32F2F" }}>*</span>
+              </span>
+              <Box className={css.participantBox}>
+                <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
+                  <div style={{ textAlign: "center", width: "202px" }}>
+                    <span className={css.participantTitle}>Students</span>
+                    {participantsIds?.student.map((item: ClassOptionsItem) => {
+                      return (
+                        <Tooltip title={item.name as string} placement="right-start">
+                          <FormControlLabel
+                            className={css.participantText}
+                            control={
+                              <Checkbox
+                                name={item.name}
+                                value={item.id}
+                                color="primary"
+                                checked={true}
+                                disabled={item.enable === false}
+                                onChange={(e) => {
+                                  handleParticipantsChange(e, "students");
+                                }}
+                              />
+                            }
+                            label={item.name}
                           />
-                        }
-                        label={item.name}
-                      />
-                    </Tooltip>
-                  );
-                })}
-              </div>
-              <div className={css.splitLine}></div>
-              <div style={{ textAlign: "center", width: "202px" }}>
-                <span className={css.participantTitle}>Teachers</span>
-                {participantsIds?.teacher.map((item: ClassOptionsItem) => {
-                  return (
-                    <Tooltip title={item.name as string} placement="right-start">
-                      <FormControlLabel
-                        className={css.participantText}
-                        control={
-                          <Checkbox
-                            name={item.name}
-                            value={item.id}
-                            color="primary"
-                            checked={true}
-                            disabled={item.enable === false}
-                            onChange={(e) => {
-                              handleParticipantsChange(e, "teacher");
-                            }}
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
+                  <div className={css.splitLine}></div>
+                  <div style={{ textAlign: "center", width: "202px" }}>
+                    <span className={css.participantTitle}>Teachers</span>
+                    {participantsIds?.teacher.map((item: ClassOptionsItem) => {
+                      return (
+                        <Tooltip title={item.name as string} placement="right-start">
+                          <FormControlLabel
+                            className={css.participantText}
+                            control={
+                              <Checkbox
+                                name={item.name}
+                                value={item.id}
+                                color="primary"
+                                checked={true}
+                                disabled={item.enable === false}
+                                onChange={(e) => {
+                                  handleParticipantsChange(e, "teacher");
+                                }}
+                              />
+                            }
+                            label={item.name}
                           />
-                        }
-                        label={item.name}
-                      />
-                    </Tooltip>
-                  );
-                })}
-              </div>
-            </div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                setParticipantSaveStatus(true);
-                setIsForce(false);
-              }}
-              className={css.participantButton}
-            >
-              OK
-            </Button>
-            <Button variant="contained" onClick={addParticipants} className={css.participantButton}>
-              Add
-            </Button>
-          </Box>
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
+                </div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setParticipantSaveStatus(true);
+                    setIsForce(false);
+                  }}
+                  className={css.participantButton}
+                >
+                  OK
+                </Button>
+                <Button variant="contained" onClick={addParticipants} className={css.participantButton}>
+                  Add
+                </Button>
+              </Box>
+            </Box>
+          </>
         )}
         {menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
-          <Box className={css.participantSaveBox}>
-            <CreateOutlinedIcon
-              onClick={() => {
-                setParticipantSaveStatus(false);
-              }}
-              style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
-            />
-            <br />
-            {menuItemListClassKr("teacher")}
+          <Box style={{ position: "relative" }}>
+            <span className={css.rosterNotice}>
+              {d("Add Participants").t("schedule_detail_participants")} <span style={{ color: "#D32F2F" }}>*</span>
+            </span>
+            <Box className={css.participantSaveBox}>
+              <CreateOutlinedIcon
+                onClick={() => {
+                  setParticipantSaveStatus(false);
+                }}
+                style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+              />
+              <br />
+              {menuItemListClassKr("teacher")}
+            </Box>
           </Box>
         )}
         {arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
