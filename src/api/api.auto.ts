@@ -881,7 +881,7 @@ export interface EntityScheduleAddView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
-  end_at: number;
+  end_at?: number;
   is_all_day?: boolean;
   is_force?: boolean;
   is_repeat?: boolean;
@@ -891,7 +891,7 @@ export interface EntityScheduleAddView {
   participants_teacher_ids?: string[];
   program_id?: string;
   repeat?: EntityRepeatOptions;
-  start_at: number;
+  start_at?: number;
   subject_id?: string;
   time_zone_offset?: number;
   title: string;
@@ -900,7 +900,7 @@ export interface EntityScheduleAddView {
 
 export interface EntityScheduleDetailsView {
   attachment?: EntityScheduleShortInfo;
-  class?: EntityScheduleShortInfo;
+  class?: EntityScheduleAccessibleUserView;
   class_roster_students?: EntityScheduleAccessibleUserView[];
   class_roster_teachers?: EntityScheduleAccessibleUserView[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
@@ -927,6 +927,17 @@ export interface EntityScheduleDetailsView {
   version?: number;
 }
 
+export interface EntityScheduleFilterClass {
+  has_student_flag?: boolean;
+  id?: string;
+  name?: string;
+}
+
+export interface EntityScheduleFilterSchool {
+  id?: string;
+  name?: string;
+}
+
 export interface EntityScheduleListView {
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
@@ -951,7 +962,7 @@ export interface EntityScheduleRealTimeView {
 }
 
 export interface EntityScheduleSearchView {
-  class?: EntityScheduleShortInfo;
+  class?: EntityScheduleAccessibleUserView;
   end_at?: number;
   id?: string;
   lesson_plan?: EntityScheduleShortInfo;
@@ -977,7 +988,7 @@ export interface EntityScheduleUpdateView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
-  end_at: number;
+  end_at?: number;
   id?: string;
   is_all_day?: boolean;
   is_force?: boolean;
@@ -989,7 +1000,7 @@ export interface EntityScheduleUpdateView {
   program_id?: string;
   repeat?: EntityRepeatOptions;
   repeat_edit_options?: "only_current" | "with_following";
-  start_at: number;
+  start_at?: number;
   subject_id?: string;
   time_zone_offset?: number;
   title: string;
@@ -2854,6 +2865,35 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params
       ),
   };
+  schedulesFilter = {
+    /**
+     * @tags schedule
+     * @name getScheduleFilterClasses
+     * @summary get schedule filter classes
+     * @request GET:/schedules_filter/classes
+     * @description get schedule filter classes
+     */
+    getScheduleFilterClasses: (query?: { school_id?: string }, params?: RequestParams) =>
+      this.request<EntityScheduleFilterClass[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_filter/classes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduleFilterSchool
+     * @summary get schedule filter schools
+     * @request GET:/schedules_filter/schools
+     * @description get get schedule filter schools
+     */
+    getScheduleFilterSchool: (params?: RequestParams) =>
+      this.request<EntityScheduleFilterSchool[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_filter/schools`,
+        "GET",
+        params
+      ),
+  };
   schedulesLessonPlans = {
     /**
      * @tags schedule
@@ -2891,6 +2931,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         due_at_eq?: number;
         start_at_ge?: number;
         end_at_le?: number;
+        filter_option?: "any_time" | "only_mine";
       },
       params?: RequestParams
     ) =>
@@ -2921,6 +2962,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         due_at_eq?: number;
         start_at_ge?: number;
         end_at_le?: number;
+        filter_option?: "any_time" | "only_mine";
       },
       params?: RequestParams
     ) =>

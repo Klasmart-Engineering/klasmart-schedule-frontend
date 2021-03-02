@@ -291,13 +291,17 @@ export const getParticipantsData = createAsyncThunk("getParticipantsData", async
       query: MySchoolIDsDocument,
       variables: { organization_id },
     });
-    const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
-      query: ParticipantsBySchoolDocument,
-      variables: {
-        school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
-      },
-    });
-    return data.school;
+    if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
+      const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
+        query: ParticipantsBySchoolDocument,
+        variables: {
+          school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
+        },
+      });
+      return data.school;
+    } else {
+      return { classes: [{ students: [], teachers: [] }] };
+    }
   }
 });
 
