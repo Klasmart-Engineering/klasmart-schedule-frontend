@@ -9,6 +9,7 @@ export interface ApiErrorEventData {
   msg?: string;
   label?: string;
   data?: any;
+  onError?: (message: string) => any;
 }
 
 export interface ApiInfoEventData {

@@ -17,11 +17,11 @@ livePolyfill();
 
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   if (!e) return;
-  const { label, msg, data } = e;
+  const { label, msg, data, onError } = e;
   // 韩国方面说： 他们会在容器外部处理未登录， 不需要通知
   // if (label === UNAUTHORIZED_LABEL) sendIframeMessage({ type: 'unauthorized', payload: null });
   const message = String(t(label as LangRecordId, data || undefined) || msg || "");
-  if (message) store.dispatch(actError(message));
+  if (message) onError ? onError(message) : store.dispatch(actError(message));
 });
 
 apiEmitter.on<ApiInfoEventData>(ApiEvent.Info, (e) => {

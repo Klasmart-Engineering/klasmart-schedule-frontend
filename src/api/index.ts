@@ -1,10 +1,12 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import fetchIntercept from "fetch-intercept";
 import { LangRecordId } from "../locale/lang/type";
-import { Api as AutoApi } from "./api.auto";
+import { Api as AutoApi, RequestParams } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
 export * from "./emitter";
+
+export type ExtendedRequestParams = RequestParams & Pick<ApiErrorEventData, "onError">;
 
 fetchIntercept.register({
   request: function (originUrl, config: RequestInit) {
@@ -25,11 +27,12 @@ fetchIntercept.register({
     response
       .clone()
       .json()
-      .then((result) => {
-        const { msg, label, data } = result;
-        if (!msg && !label) return;
-        apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label, data });
-      })
+      // .then((result) => {
+      //   const { msg, label, data } = result;
+      //   if (!msg && !label) return;
+      //   console.log('api success emit result = ', result);
+      //   apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label, data });
+      // })
       .catch(async (e) => {
         const errorLabel: LangRecordId = "general_error_unknown";
         console.error(e);
@@ -44,10 +47,14 @@ class Api extends AutoApi {
     super(...props);
     const originRequest = this.request;
     this.request = (...args) => {
+      const [, , params] = args;
+      const onError = (params as ExtendedRequestParams | undefined)?.onError;
       return originRequest(...args).catch((err) => {
         if (err.label && !err.name) {
+          const { msg, label, data } = err;
           err.name = err.label;
           err.message = err.data;
+          apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label, data, onError });
         }
         throw err;
       });
