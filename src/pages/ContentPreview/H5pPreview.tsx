@@ -36,8 +36,11 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   whiteIconBtn: {
     color: "#000",
     backgroundColor: "#fff",
+    opacity: 0.5,
     "&:hover": {
-      backgroundColor: "#e0e0e0",
+      backgroundColor: palette.primary.main,
+      color: "#fff",
+      opacity: 1,
     },
     "&:disabled": {
       backgroundColor: "#e0e0e0",
@@ -63,11 +66,13 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     flexDirection: "column",
   },
   h5pCon: {
-    width: "100%",
+    width: "90%",
     height: "90vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    paddingTop: 20,
+    position: "relative",
   },
   innerH5pCon: {
     flex: 1,
@@ -97,13 +102,10 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     background: "#d32f2f",
     color: "#fff",
     cursor: "pointer",
-    position: "absolute",
-    left: "calc(90% - 204px)",
     [breakpoints.down("md")]: {
       width: 100,
       height: 40,
       borderRadius: 20,
-      left: "calc(90% - 100px)",
     },
   },
   btnFontSize: {
@@ -115,6 +117,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   iconBtn: {
     width: 48,
     height: 48,
+    position: "absolute",
   },
   optionCon: {
     display: "flex",
@@ -124,12 +127,15 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     fontSize: 16,
   },
   iconCon: {
-    width: 180,
-    [breakpoints.down("sm")]: {
-      width: 120,
-    },
-    display: "flex",
-    justifyContent: "center",
+    width: "100%",
+    // [breakpoints.down("sm")]: {
+    //   width: 120,
+    // },
+    // display: "flex",
+    // justifyContent: "center",
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
   },
 
   mapCon: {
@@ -282,7 +288,6 @@ export function H5pPreview(props: H5pPreview) {
   };
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
   const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
-
   const isNewH5p = h5pItem ? formLiteFileType(h5pItem.id, parsedData.file_type, parsedData.input_source)?.isNewH5p : false;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
   const showAssets = () => {
@@ -302,50 +307,40 @@ export function H5pPreview(props: H5pPreview) {
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
-        <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
-          <div style={{ flex: 1 }}>
-            {h5pArray.length > 1 && (
-              <Box className={css.iconCon}>
-                <Box className={css.optionCon}>
-                  <IconButton disabled={currIndex === 0} className={clsx(css.iconBtn, css.whiteIconBtn)} onClick={handlePrev}>
-                    <ArrowBackIosOutlinedIcon />
-                  </IconButton>
-                  <Typography>{d("Previous").t("library_label_previous")}</Typography>
-                </Box>
+        <div className={css.h5pCon}>
+          {isEmpty ? (
+            <EmptyContent />
+          ) : !getSuffix(parsedData) ? (
+            isNewH5p ? (
+              <Box className={css.innerH5pCon}>
+                <H5pPlayer valueSource={parsedData.content} />
               </Box>
-            )}
-          </div>
-          <div style={{ flex: 9 }} className={css.h5pCon}>
-            {isEmpty ? (
-              <EmptyContent />
-            ) : !getSuffix(parsedData) ? (
-              isNewH5p ? (
-                <Box className={css.innerH5pCon}>
-                  <H5pPlayer valueSource={parsedData.content} />
-                </Box>
-              ) : (
-                <ContentH5p sub={H5pSub.view} value={parsedData.source} />
-              )
             ) : (
-              showAssets()
-            )}
-          </div>
-          <div style={{ flex: 1 }}>
-            {h5pArray.length > 1 && (
-              <Box className={css.iconCon}>
-                <Box className={css.optionCon}>
-                  <IconButton
-                    disabled={currIndex >= h5pArray.length - 1}
-                    className={clsx(css.iconBtn, css.whiteIconBtn)}
-                    onClick={handleNext}
-                  >
-                    <ArrowForwardIosOutlinedIcon />
-                  </IconButton>
-                  <Typography>{d("Next").t("library_label_next")}</Typography>
-                </Box>
-              </Box>
-            )}
-          </div>
+              <ContentH5p sub={H5pSub.view} value={parsedData.source} />
+            )
+          ) : (
+            showAssets()
+          )}
+          {h5pArray.length > 1 && (
+            <Box className={css.iconCon}>
+              <IconButton
+                disabled={currIndex === 0}
+                className={clsx(css.iconBtn, css.whiteIconBtn)}
+                style={{ left: -32 }}
+                onClick={handlePrev}
+              >
+                <ArrowBackIosOutlinedIcon />
+              </IconButton>
+              <IconButton
+                disabled={currIndex >= h5pArray.length - 1}
+                className={clsx(css.iconBtn, css.whiteIconBtn)}
+                style={{ right: -32 }}
+                onClick={handleNext}
+              >
+                <ArrowForwardIosOutlinedIcon />
+              </IconButton>
+            </Box>
+          )}
         </div>
         <Box className={css.btnCon}>
           <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
