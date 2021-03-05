@@ -13,9 +13,13 @@ const useStyles = makeStyles({
     width: "100%",
     height: "100%",
     textAlign: "center",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
   },
   audioCon: {
-    margin: "137px auto",
+    marginBottom: 137,
   },
   audioImg: {
     width: "73px",
