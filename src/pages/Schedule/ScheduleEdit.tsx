@@ -954,7 +954,11 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const isScheduleExpired = (): boolean => {
-    return scheduleId ? scheduleDetial.status !== "NotStart" : false;
+    return scheduleId ? scheduleDetial.status !== "NotStart" || perm.attend_live_class_as_a_student_187 : false;
+  };
+
+  const isStudent = (): boolean => {
+    return perm.attend_live_class_as_a_student_187;
   };
 
   const getClassOption = (): any => {
@@ -1645,7 +1649,7 @@ function EditBox(props: CalendarStateProps) {
                 onClick={() => {
                   setParticipantSaveStatus(false);
                 }}
-                style={{ float: "right", marginLeft: "8px", cursor: "pointer" }}
+                style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
               />
               <br />
               {menuItemListClassKr("teacher")}
@@ -1662,7 +1666,13 @@ function EditBox(props: CalendarStateProps) {
               required
               disabled
             ></TextField>
-            <AddCircleOutlineOutlined onClick={addParticipants} className={css.iconField} style={{ top: "46%", cursor: "pointer" }} />
+            <AddCircleOutlineOutlined
+              onClick={() => {
+                if (scheduleDetial?.class?.enable !== false) addParticipants();
+              }}
+              className={css.iconField}
+              style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+            />
           </Box>
         )}
         {scheduleList.class_type !== "Task" && (
@@ -1863,6 +1873,7 @@ function EditBox(props: CalendarStateProps) {
           setAttachmentName={setAttachmentName}
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
+          isStudent={isStudent()}
         />
         {!isScheduleExpired() &&
           (perm.create_event_520 || perm.create_my_schedule_events_521 || perm.create_my_schools_schedule_events_522) && (
@@ -1908,7 +1919,7 @@ function EditBox(props: CalendarStateProps) {
               }
               style={{
                 width: "45%",
-                visibility: perm.attend_live_class_as_a_student_187 ? "hidden" : "visible",
+                visibility: perm.attend_live_class_as_a_student_187 && scheduleList.class_type === "OfflineClass" ? "hidden" : "visible",
               }}
               onClick={() => handleGoLive(scheduleDetial)}
             >

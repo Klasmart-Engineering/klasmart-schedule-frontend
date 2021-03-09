@@ -80,6 +80,7 @@ interface ScheduleAttachmentProps {
   setAttachmentName: (name: string) => void;
   specificStatus?: boolean;
   setSpecificStatus?: (value: boolean) => void;
+  isStudent: boolean;
 }
 
 const useQuery = () => {
@@ -90,7 +91,7 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName, specificStatus, setSpecificStatus, attachmentId } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, specificStatus, setSpecificStatus, attachmentId, isStudent } = props;
   const css = useStyles();
   const { schedule_id } = useQuery();
   const handleOnChange = (value: string | undefined): void => {
@@ -172,6 +173,10 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
   }, [setAttachmentName, specificStatus]);
 
+  const textEllipsis = (value: string) => {
+    return value && value.length > 30 ? `${value.substring(0, 30)} ....` : value;
+  };
+
   return (
     <>
       <SingleUploader
@@ -184,14 +189,14 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
               className={css.fieldset}
               // placeholder={d("Attachment").t("schedule_detail_attachment")}
               label={d("Attachment").t("schedule_detail_attachment")}
-              value={specificStatus ? (item ? getFileName(item.file.name) : attachmentName) : attachmentName}
+              value={textEllipsis(specificStatus ? (item ? getFileName(item.file.name) : attachmentName) : attachmentName)}
             ></TextField>
             <HtmlTooltip title={getTipsText()}>
               <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
             </HtmlTooltip>
             <input type="file" style={{ display: "none" }} />
-            <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
-            {attachmentName && <CloseOutlined className={css.iconField} style={{ right: "85px" }} onClick={deleteItem} />}
+            {!isStudent && <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />}
+            {attachmentName && !isStudent && <CloseOutlined className={css.iconField} style={{ right: "85px" }} onClick={deleteItem} />}
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
               {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
             </a>
