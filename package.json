@@ -109,7 +109,7 @@
     "hooks": {
       "pre-commit": "lint-staged",
       "pre-push": "npm run lint",
-      "commit-msg": "yarn commitlint --edit $1"
+      "commit-msg": "npx --no-install commitlint --edit $1"
     }
   },
   "browserslist": {
