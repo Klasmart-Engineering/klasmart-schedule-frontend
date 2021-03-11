@@ -10,8 +10,9 @@ import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "reac
 import { Controller, UseFormMethods } from "react-hook-form";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionOr, PermissionType } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
+import { d, reportMiss } from "../../locale/LocaleManager";
+import { StyledMenu } from "./FirstSearchHeader";
 import { ContentListForm, QueryCondition, QueryConditionBaseProps } from "./types";
 
 export const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
@@ -138,16 +139,15 @@ const getExectSearch = () => {
 };
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onCreateContent, conditionFormMethods } = props;
+  const { value, onChange, onCreateContent, conditionFormMethods, onNewFolder } = props;
   const { control, reset } = conditionFormMethods;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorCreate, setAnchorCreate] = React.useState<null | HTMLElement>(null);
+  const handleClickCreate = (event: any) => {
+    setAnchorCreate(event?.currentTarget);
+  };
+  const handleCreateClose = () => setAnchorCreate(null);
   const handleClickSearch = () => {
-    // const newValue = produce(value, (draft) => {
-    //   const searchText = getValues()[SEARCH_TEXT_KEY];
-    //   searchText ? (draft.name = searchText) : delete draft.name;
-    //   const exect_search = getValues()[EXECT_SEARCH];
-    //   draft.exect_search = exect_search;
-    // });
     onChange({ ...value, page: 1 });
   };
   const handleClose = () => {
@@ -181,10 +181,19 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                   PermissionType.create_lesson_plan_221,
                 ]}
               >
-                <Button variant="contained" color="primary" className={classes.createBtn} onClick={onCreateContent}>
+                <Button variant="contained" color="primary" className={classes.createBtn} onClick={handleClickCreate}>
                   {d("Create").t("library_label_create")} +
                 </Button>
               </PermissionOr>
+              <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
+                <MenuItem onClick={onCreateContent}>{reportMiss("New Content", "library_label_new_content")}</MenuItem>
+                {(value.publish_status === PublishStatus.published ||
+                  value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
+                  <Permission value={PermissionType.create_folder_289}>
+                    <MenuItem onClick={onNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
+                  </Permission>
+                )}
+              </StyledMenu>
             </Grid>
             <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               {value.publish_status === PublishStatus.published ||
@@ -236,6 +245,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
   onCreateContent: () => any;
   conditionFormMethods: UseFormMethods<ContentListForm>;
+  onNewFolder: () => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();

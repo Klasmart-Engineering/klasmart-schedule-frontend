@@ -319,6 +319,7 @@ export default function MyContentList() {
           onChange={handleChangeTab}
           onChangeAssets={handleChangeAssets}
           onCreateContent={handleCreateContent}
+          onNewFolder={handlePageAddFolder}
         />
       )}
       {!condition.program_group && (
@@ -327,6 +328,7 @@ export default function MyContentList() {
           onChange={handleChangeTab}
           onChangeAssets={handleChangeAssets}
           onCreateContent={handleCreateContent}
+          onNewFolder={handlePageAddFolder}
         />
       )}
       <SecondSearchHeader
@@ -334,12 +336,14 @@ export default function MyContentList() {
         onChange={handleChange}
         onCreateContent={handleCreateContent}
         conditionFormMethods={conditionFormMethods}
+        onNewFolder={handlePageAddFolder}
       />
       <SecondSearchHeaderMb
         value={condition}
         onChange={handleChange}
         onCreateContent={handleCreateContent}
         conditionFormMethods={conditionFormMethods}
+        onNewFolder={handlePageAddFolder}
       />
       <ThirdSearchHeader
         value={condition}

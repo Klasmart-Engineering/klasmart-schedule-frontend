@@ -1,10 +1,9 @@
-import { Button, Checkbox, Divider, FormControlLabel, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Checkbox, Divider, FormControlLabel, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { CheckBox, CheckBoxOutlineBlank, MoreHoriz } from "@material-ui/icons";
-import CreateNewFolderOutlinedIcon from "@material-ui/icons/CreateNewFolderOutlined";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
@@ -14,7 +13,7 @@ import { EntityFolderContent } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission";
+import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
@@ -279,7 +278,6 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     onBulkDelete,
     onBulkPublish,
     onBulkMove,
-    onAddFolder,
     actionObj,
     onBulkDeleteFolder,
     onBulkApprove,
@@ -318,9 +316,6 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
         order_by ? (draft.order_by = order_by) : delete draft.order_by;
       })
     );
-  };
-  const handleClickAddFolder = () => {
-    onAddFolder();
   };
   const bulkOptions = getBulkAction(value, perm, actionObj).map((item) => (
     <MenuItem key={item.label} value={item.value}>
@@ -371,14 +366,6 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   {bulkOptions}
                 </TextField>
               )}
-              {(value.publish_status === PublishStatus.published ||
-                value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
-                <Permission value={PermissionType.create_folder_289}>
-                  <Button className={classes.addFloderBtn} startIcon={<CreateNewFolderOutlinedIcon />} onClick={handleClickAddFolder}>
-                    {d("New Folder").t("library_label_new_folder")}
-                  </Button>
-                </Permission>
-              )}
             </Grid>
             {unpublish && (
               <Grid item sm={6} xs={6} md={6}>
@@ -422,7 +409,6 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     onBulkDelete,
     onBulkPublish,
     onBulkMove,
-    onAddFolder,
     actionObj,
     onBulkDeleteFolder,
     onBulkApprove,
@@ -478,9 +464,6 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleSortClose = () => {
     setAnchorEl(null);
   };
-  const handleClickNewFolderIcon = () => {
-    onAddFolder();
-  };
   const actions = getBulkAction(value, perm, actionObj);
   const handleClickFilterIcon = (event: any) => {
     setAnchorFilter(event?.currentTarget);
@@ -516,10 +499,6 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
-              {(value.publish_status === PublishStatus.published ||
-                value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
-                <CreateNewFolderOutlinedIcon style={{ verticalAlign: "middle" }} onClick={handleClickNewFolderIcon} />
-              )}
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={3} xs={3}>

@@ -1,18 +1,37 @@
-import { Grid, Tab, Tabs } from "@material-ui/core";
+import { Grid, Menu, MenuItem, MenuProps, Tab, Tabs } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { ArchiveOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionOr, PermissionType, usePermission } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 
+export const StyledMenu = withStyles({
+  paper: {
+    border: "1px solid #d3d4d5",
+  },
+})((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "center",
+    }}
+    {...props}
+  />
+));
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -93,11 +112,17 @@ export const isUnpublish = (value: QueryCondition): boolean => {
 export interface FirstSearchHeaderProps extends QueryConditionBaseProps {
   onChangeAssets: (contentType: string, scope: string) => any;
   onCreateContent: () => any;
+  onNewFolder: () => any;
 }
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
-  const { value, onChange, onCreateContent } = props;
+  const { value, onChange, onCreateContent, onNewFolder } = props;
   const unpublish = isUnpublish(value);
+  const [anchorCreate, setAnchorCreate] = React.useState<null | HTMLElement>(null);
+  const handleClickCreate = (event: any) => {
+    setAnchorCreate(event?.currentTarget);
+  };
+  const handleCreateClose = () => setAnchorCreate(null);
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
     onChange({
       publish_status,
@@ -121,10 +146,19 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                   PermissionType.create_lesson_plan_221,
                 ]}
               >
-                <Button onClick={onCreateContent} variant="contained" color="primary" className={css.createBtn}>
+                <Button onClick={handleClickCreate} variant="contained" color="primary" className={css.createBtn}>
                   {d("Create").t("library_label_create")} +
                 </Button>
               </PermissionOr>
+              <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
+                <MenuItem onClick={onCreateContent}>{reportMiss("New Content", "library_label_new_content")}</MenuItem>
+                {(value.publish_status === PublishStatus.published ||
+                  value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
+                  <Permission value={PermissionType.create_folder_289}>
+                    <MenuItem onClick={onNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
+                  </Permission>
+                )}
+              </StyledMenu>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={10} lg={8} xl={7}>
               <Permission value={PermissionType.published_content_page_204}>
