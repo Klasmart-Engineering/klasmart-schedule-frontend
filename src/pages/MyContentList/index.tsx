@@ -113,7 +113,6 @@ export default function MyContentList() {
   const conditionFormMethods = useForm<ContentListForm>();
   const { watch, reset, getValues } = conditionFormMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  console.log("ids = ", ids);
   const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
     RootState,
     RootState["content"]
