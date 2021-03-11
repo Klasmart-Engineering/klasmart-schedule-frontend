@@ -1,14 +1,15 @@
-import { Button, Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Button, Checkbox, Divider, FormControlLabel, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import { MoreHoriz } from "@material-ui/icons";
+import { CheckBox, CheckBoxOutlineBlank, MoreHoriz } from "@material-ui/icons";
 import CreateNewFolderOutlinedIcon from "@material-ui/icons/CreateNewFolderOutlined";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent, useMemo } from "react";
+import { UseFormMethods } from "react-hook-form";
 import { EntityFolderContent } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
@@ -19,7 +20,7 @@ import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
 import { filterOptions } from "./SecondSearchHeader";
-import { QueryCondition, QueryConditionBaseProps } from "./types";
+import { ContentListForm, ContentListFormKey, QueryCondition, QueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -266,8 +267,9 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkApprove: () => any;
   onBulkReject: () => any;
   onExportCSV: ExportCSVBtnProps["onClick"];
-  ids: string[];
+  ids?: string[];
   contentList: EntityFolderContent[];
+  conditionFormMethods: UseFormMethods<ContentListForm>;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
@@ -283,8 +285,9 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     onBulkApprove,
     onBulkReject,
     onExportCSV,
-    ids,
     contentList,
+    ids = [],
+    conditionFormMethods,
   } = props;
   const collectedIds = useMemo(() => content2ids(contentList, ids), [contentList, ids]);
   const perm = usePermission([
@@ -307,6 +310,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.reject) onBulkReject();
     // if (event.target.value === BulkAction.exportCsv) onExportCSV();
   };
+  const { setValue } = conditionFormMethods;
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
     onChange(
@@ -339,6 +343,21 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
           <Divider />
           <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
             <Grid item sm={unpublish ? 3 : 6} xs={unpublish ? 3 : 6} md={unpublish ? 3 : 6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+                    checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+                    size="small"
+                    color="secondary"
+                    checked={ids.length > 0 && ids.length === contentList.length}
+                    onChange={(e) => {
+                      setValue(ContentListFormKey.CHECKED_CONTENT_IDS, e.target.checked ? contentList.map((item) => item.id) : []);
+                    }}
+                  />
+                }
+                label={d("Select All").t("schedule_detail_select_all")}
+              />
               {bulkOptions.length > 0 && (
                 <TextField
                   style={{ width: 160 }}
@@ -410,7 +429,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     onBulkReject,
     onExportCSV,
     contentList,
-    ids,
+    ids = [],
+    conditionFormMethods,
   } = props;
   const collectedIds = useMemo(() => content2ids(contentList, ids), [contentList, ids]);
   const perm = usePermission([
@@ -426,6 +446,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
   const [anchorFilter, setAnchorFilter] = React.useState<null | HTMLElement>(null);
+  const { setValue } = conditionFormMethods;
   const handleClickBulkActionButton = (event: any) => {
     setAnchorElLeft(event.currentTarget);
   };
@@ -480,9 +501,24 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
           <Divider />
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
             <Grid item sm={9} xs={9}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+                    checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+                    size="small"
+                    color="secondary"
+                    checked={ids.length > 0 && ids.length === contentList.length}
+                    onChange={(e) => {
+                      setValue(ContentListFormKey.CHECKED_CONTENT_IDS, e.target.checked ? contentList.map((item) => item.id) : []);
+                    }}
+                  />
+                }
+                label={d("Select All").t("schedule_detail_select_all")}
+              />
               {(value.publish_status === PublishStatus.published ||
                 value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
-                <CreateNewFolderOutlinedIcon onClick={handleClickNewFolderIcon} />
+                <CreateNewFolderOutlinedIcon style={{ verticalAlign: "middle" }} onClick={handleClickNewFolderIcon} />
               )}
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
