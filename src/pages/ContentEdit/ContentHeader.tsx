@@ -23,14 +23,14 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import shadows from "@material-ui/core/styles/shadows";
 import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { forwardRef, Fragment, useCallback, useReducer } from "react";
+import React, { forwardRef, Fragment, useReducer } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentInputSourceType } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -138,6 +138,7 @@ export function ContentHeader(props: HeaderProps) {
     control,
     formState: { isDirty },
   } = formMethods;
+  const isShowToggle = inputSourceWatch === ContentInputSourceType.fromFile;
   const sm = useMediaQuery(breakpoints.down("sm"));
   const xs = useMediaQuery(breakpoints.down("xs"));
   const size = sm ? "small" : "medium";
@@ -145,10 +146,10 @@ export function ContentHeader(props: HeaderProps) {
   const [open, toggle] = useReducer((open) => {
     return !open;
   }, false);
-  const handleOk = useCallback(() => {
-    toggle();
-    onPublish();
-  }, [onPublish]);
+  // const handleOk = useCallback(async() => {
+  //   toggle();
+  //   onPublish();
+  // }, [onPublish]);
 
   return (
     <Fragment>
@@ -179,16 +180,16 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (inputSourceWatch === ContentInputSourceType.fromFile && lesson === "material" ? (
-              <Button
+            (isShowToggle ? (
+              <LButton
                 variant="contained"
                 endIcon={<Publish />}
                 className={clsx(css.headerButton, css.greenButton)}
-                onClick={toggle}
+                onClick={async () => toggle()}
                 disabled={!(contentDetail?.publish_status === "draft" && !isDirty)}
               >
                 {d("Publish").t("library_label_publish")}
-              </Button>
+              </LButton>
             ) : (
               <LButton
                 variant="contained"
@@ -320,13 +321,19 @@ export function ContentHeader(props: HeaderProps) {
           {d("How would you like to publish?").t("library_msg_publish_lesson_material")}
         </DialogTitle>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
-          <Controller name="isOnlyMaterial" as={SelectPublishType} control={control} defaultValue="onlyMaterial" />
+          <Controller name="publishType" as={SelectPublishType} lesson={lesson} control={control} defaultValue="onlyMaterialOrPlan" />
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
             {d("Cancel").t("assess_label_cancel")}
           </Button>
-          <Button onClick={handleOk} color="primary">
+          <Button
+            onClick={() => {
+              toggle();
+              onPublish();
+            }}
+            color="primary"
+          >
             {d("OK").t("assess_label_ok")}
           </Button>
         </DialogActions>
@@ -336,11 +343,12 @@ export function ContentHeader(props: HeaderProps) {
 }
 interface SelectPublishTypeProps {
   value?: string;
+  lesson: string;
   onChange?: (value: SelectPublishTypeProps["value"]) => any;
 }
 export function SelectPublishType(props: SelectPublishTypeProps) {
-  const { onChange } = props;
-  const value = props.value ?? "onlyMaterial";
+  const { onChange, lesson } = props;
+  const value = props.value ?? "onlyMaterialOrPlan";
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -357,19 +365,23 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
     >
       <FormControlLabel
         color="primary"
-        control={<Radio size={size} color="primary" value="onlyMaterial" />}
+        control={<Radio size={size} color="primary" value="onlyMaterialOrPlan" />}
         label={
           <Typography variant={radioTypography}>
-            {d("Only publish as a lesson material").t("library_msg_only_publish_lesson_material")}
+            {lesson === "material"
+              ? d("Only publish as a lesson material").t("library_msg_only_publish_lesson_material")
+              : reportMiss("Only publish a Lesson plan", "library_msg_only_publish_lesson_plan")}
           </Typography>
         }
       />
       <FormControlLabel
         color="primary"
-        control={<Radio size={size} color="primary" value="assetAndMaterial" />}
+        control={<Radio size={size} color="primary" value="assetslib" />}
         label={
           <Typography variant={radioTypography}>
-            {d("Publish as a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")}
+            {lesson === "material"
+              ? d("Publish as a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")
+              : reportMiss("Publish a lesson plan, and add teacher manuals to assets library", "library_msg_publish_lesson_plan_and asset")}
           </Typography>
         }
       />
