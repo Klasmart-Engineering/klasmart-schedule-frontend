@@ -70,6 +70,7 @@ import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import ScheduleFeedback from "./ScheduleFeedback";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -429,6 +430,7 @@ function EditBox(props: CalendarStateProps) {
       allDayCheck: false,
       repeatCheck: false,
       dueDateCheck: false,
+      homeFunCheck: false,
     });
     const newData: any = {
       attachment_path: "",
@@ -495,6 +497,7 @@ function EditBox(props: CalendarStateProps) {
         allDayCheck: newData.is_all_day ? true : false,
         repeatCheck: false,
         dueDateCheck: newData.due_at ? true : false,
+        homeFunCheck: false,
       });
       if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
@@ -735,7 +738,7 @@ function EditBox(props: CalendarStateProps) {
       class_type: false,
     };
 
-    const validator = scheduleList.class_type === "Task" ? taskValidator : isValidator;
+    const validator = scheduleList.class_type === "Task" || checkedStatus.homeFunCheck ? taskValidator : isValidator;
 
     for (let name in scheduleList) {
       if (validator.hasOwnProperty(name)) {
@@ -754,6 +757,9 @@ function EditBox(props: CalendarStateProps) {
     }
     if (scheduleList.class_type === "Homework") {
       isValidator.start_at = isValidator.end_at = false;
+    }
+    if (checkedStatus.homeFunCheck) {
+      isValidator.lesson_plan_id = false;
     }
     setValidator({ ...isValidator });
     return verificaPath;
@@ -1103,6 +1109,7 @@ function EditBox(props: CalendarStateProps) {
     allDayCheck: false,
     repeatCheck: false,
     dueDateCheck: false,
+    homeFunCheck: false,
   });
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1458,6 +1465,17 @@ function EditBox(props: CalendarStateProps) {
         >
           {menuItemListClassType(scheduleMockOptions.classTypeList)}
         </TextField>
+        {scheduleList.class_type === "Homework" && (
+          <Box>
+            <FormGroup row>
+              <FormControlLabel
+                disabled={isScheduleExpired()}
+                control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
+                label={d("Home Fun").t("schedule_checkbox_home_fun")}
+              />
+            </FormGroup>
+          </Box>
+        )}
         <Box className={css.fieldBox}>
           <TextField
             error={validator.title}
@@ -1675,7 +1693,7 @@ function EditBox(props: CalendarStateProps) {
             />
           </Box>
         )}
-        {scheduleList.class_type !== "Task" && (
+        {scheduleList.class_type !== "Task" && !checkedStatus.homeFunCheck && (
           <Autocomplete
             id="combo-box-demo"
             freeSolo
@@ -1875,6 +1893,15 @@ function EditBox(props: CalendarStateProps) {
           specificStatus={specificStatus}
           isStudent={isStudent()}
         />
+        {!isStudent() && (
+          <ScheduleFeedback
+            schedule_id={scheduleId}
+            changeModalDate={changeModalDate}
+            className={scheduleDetial.title as string}
+            due_date={timestampToTime(scheduleDetial.due_at, "defaults") as string}
+            teacher={scheduleDetial?.class_roster_teachers?.concat(scheduleDetial?.participants_teachers!)}
+          />
+        )}
         {!isScheduleExpired() &&
           (perm.create_event_520 || perm.create_my_schedule_events_521 || perm.create_my_schools_schedule_events_522) && (
             <Box

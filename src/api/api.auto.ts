@@ -326,6 +326,13 @@ export interface EntityAge {
   updateID?: string;
 }
 
+export interface EntityAssessHomeFunStudyArgs {
+  action?: "save" | "complete";
+  comment?: string;
+  id?: string;
+  score?: 1 | 2 | 3 | 4 | 5;
+}
+
 export interface EntityAssessmentAttendanceView {
   checked?: boolean;
   id?: string;
@@ -606,6 +613,12 @@ export interface EntityDevelopmental {
   updateID?: string;
 }
 
+export interface EntityFeedbackAssignmentView {
+  name?: string;
+  number?: number;
+  url?: string;
+}
+
 export interface EntityFolderContent {
   author?: string;
   author_name?: string;
@@ -717,6 +730,25 @@ export interface EntityLessonType {
 export interface EntityListAssessmentsResult {
   items?: EntityAssessmentListView[];
   total?: number;
+}
+
+export interface EntityListHomeFunStudiesResult {
+  items?: EntityListHomeFunStudiesResultItem[];
+  total?: number;
+}
+
+export interface EntityListHomeFunStudiesResultItem {
+  assess_score?: number;
+  complete_at?: number;
+  due_at?: number;
+  id?: string;
+  latest_feedback_at?: number;
+
+  /** debug */
+  schedule_id?: string;
+  status?: string;
+  student_name?: string;
+  teacher_names?: string[];
 }
 
 export interface EntityListStudentsPerformanceH5PReportResponse {
@@ -884,6 +916,7 @@ export interface EntityScheduleAddView {
   end_at?: number;
   is_all_day?: boolean;
   is_force?: boolean;
+  is_home_fun?: boolean;
   is_repeat?: boolean;
   lesson_plan_id?: string;
   org_id?: string;
@@ -909,6 +942,8 @@ export interface EntityScheduleDetailsView {
   end_at?: number;
   id?: string;
   is_all_day?: boolean;
+  is_hidden?: boolean;
+  is_home_fun?: boolean;
   is_repeat?: boolean;
   lesson_plan?: EntityScheduleShortInfo;
   member_teachers?: EntityScheduleShortInfo[];
@@ -918,6 +953,7 @@ export interface EntityScheduleDetailsView {
   program?: EntityScheduleShortInfo;
   real_time_status?: EntityScheduleRealTimeView;
   repeat?: EntityRepeatOptions;
+  role_type?: string;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   student_count?: number;
@@ -925,6 +961,21 @@ export interface EntityScheduleDetailsView {
   teachers?: EntityScheduleShortInfo[];
   title?: string;
   version?: number;
+}
+
+export interface EntityScheduleFeedbackAddInput {
+  assignments?: EntityFeedbackAssignmentView[];
+  comment?: string;
+  schedule_id?: string;
+}
+
+export interface EntityScheduleFeedbackView {
+  assignments?: EntityFeedbackAssignmentView[];
+  comment?: string;
+  create_at?: number;
+  id?: string;
+  schedule_id?: string;
+  user_id?: string;
 }
 
 export interface EntityScheduleFilterClass {
@@ -944,8 +995,10 @@ export interface EntityScheduleListView {
   due_at?: number;
   end_at?: number;
   id?: string;
+  is_hidden?: boolean;
   is_repeat?: boolean;
   lesson_plan_id?: string;
+  role_type?: string;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   title?: string;
@@ -992,6 +1045,7 @@ export interface EntityScheduleUpdateView {
   id?: string;
   is_all_day?: boolean;
   is_force?: boolean;
+  is_home_fun?: boolean;
   is_repeat?: boolean;
   lesson_plan_id?: string;
   org_id?: string;
@@ -2261,6 +2315,58 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content
       ),
   };
+  homeFunStudies = {
+    /**
+     * @tags homeFunStudies
+     * @name listHomeFunStudies
+     * @summary list home fun studies
+     * @request GET:/home_fun_studies
+     * @description list home fun studies
+     */
+    listHomeFunStudies: (
+      query?: {
+        query?: string;
+        status?: "all" | "in_progress" | "complete";
+        order_by?: "latest_feedback_at" | "-latest_feedback_at" | "complete_at" | "-complete_at";
+        page?: number;
+        page_size?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityListHomeFunStudiesResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/home_fun_studies${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags homeFunStudies
+     * @name getHomeFunStudy
+     * @summary get home fun study
+     * @request GET:/home_fun_studies/{id}
+     * @description get home fun study detail
+     */
+    getHomeFunStudy: (id: string, params?: RequestParams) =>
+      this.request<
+        EntityListHomeFunStudiesResult,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/home_fun_studies/${id}`, "GET", params),
+
+    /**
+     * @tags homeFunStudies
+     * @name assessHomeFunStudy
+     * @summary assess home fun study
+     * @request PUT:/home_fun_studies/{id}/assess
+     * @description assess home fun study
+     */
+    assessHomeFunStudy: (id: string, assess_home_fun_study_args: EntityAssessHomeFunStudyArgs, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/home_fun_studies/${id}/assess`,
+        "PUT",
+        params,
+        assess_home_fun_study_args
+      ),
+  };
   learningOutcomes = {
     /**
      * @tags learning_outcomes
@@ -2744,6 +2850,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/teachers/${id}`, "GET", params),
   };
+  scheduleFeedbacks = {
+    /**
+     * @tags scheduleFeedback
+     * @name queryFeedback
+     * @summary queryFeedback
+     * @request GET:/schedule_feedbacks
+     * @description query feedback list
+     */
+    queryFeedback: (query?: { schedule_id?: string; user_id?: string }, params?: RequestParams) =>
+      this.request<EntityScheduleFeedbackView[], ApiInternalServerErrorResponse>(
+        `/schedule_feedbacks${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
   schedules = {
     /**
      * @tags schedule
@@ -2839,6 +2960,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags schedule
+     * @name getScheduleNewestFeedbackByOperator
+     * @summary getScheduleNewestFeedbackByOperator
+     * @request GET:/schedules/{schedule_id}/operator/newest_feedback
+     * @description get schedule newest feedback by operator
+     */
+    getScheduleNewestFeedbackByOperator: (schedule_id: string, params?: RequestParams) =>
+      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}/operator/newest_feedback`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
      * @name getScheduleRealTimeStatus
      * @summary get schedule real-time status
      * @request GET:/schedules/{schedule_id}/real_time
@@ -2848,6 +2983,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       this.request<EntityScheduleRealTimeView, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/real_time`,
         "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name updateScheduleShowOption
+     * @summary updateScheduleShowOption
+     * @request PUT:/schedules/{schedule_id}/show_option
+     * @description update schedule show option
+     */
+    updateScheduleShowOption: (schedule_id: string, query?: { show_option?: "hidden" | "visible" }, params?: RequestParams) =>
+      this.request<ApiIDResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/${schedule_id}/show_option${this.addQueryParams(query)}`,
+        "PUT",
         params
       ),
 
@@ -2863,6 +3012,22 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         `/schedules/${schedule_id}/status${this.addQueryParams(query)}`,
         "PUT",
         params
+      ),
+  };
+  schedulesFeedbacks = {
+    /**
+     * @tags scheduleFeedback
+     * @name addScheduleFeedback
+     * @summary addScheduleFeedback
+     * @request POST:/schedules_feedbacks
+     * @description add ScheduleFeedback
+     */
+    addScheduleFeedback: (feedback: EntityScheduleFeedbackAddInput, params?: RequestParams) =>
+      this.request<ApiSuccessRequestResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules_feedbacks`,
+        "POST",
+        params,
+        feedback
       ),
   };
   schedulesFilter = {

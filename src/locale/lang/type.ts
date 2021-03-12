@@ -178,6 +178,8 @@ type LangRecord<T = string> =
     }
   | { id: "library_label_select_organizations"; description: "Select Organizations"; values: undefined }
   | { id: "library_label_all_organizations"; description: "All"; values: undefined }
+  | { id: "library_label_org"; description: "Org"; values: undefined }
+  | { id: "library_label_badanamu"; description: "Badanamu"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -228,6 +230,27 @@ type LangRecord<T = string> =
   | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
   | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
   | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
+  | { id: "assess_class_type"; description: "Class Type"; values: undefined }
+  | { id: "assess_class_type_class_live"; description: "Class / Live"; values: undefined }
+  | { id: "assess_class_type_homefun"; description: "Study-Home Fun"; values: undefined }
+  | { id: "assess_column_due_date"; description: "Due Date"; values: undefined }
+  | { id: "assess_column_submit_time"; description: "Submit Time"; values: undefined }
+  | { id: "assess_column_assessment_score"; description: "Assessment Score"; values: undefined }
+  | { id: "assess_column_no_class"; description: "NoClass"; values: undefined }
+  | { id: "assess_column_n_a"; description: "N/A"; values: undefined }
+  | { id: "assess_detail_study_homefun_summary"; description: "Study-Home Fun Summary"; values: undefined }
+  | { id: "assess_assignment_of_student"; description: "Assignment of {studentname}"; values: { studentname: string | number } }
+  | { id: "assess_assignment_uploaded"; description: "Assignment Uploaded"; values: undefined }
+  | { id: "assess_comment"; description: "Comment"; values: undefined }
+  | { id: "assess_teacher_assessment"; description: "Teacher Assessment"; values: undefined }
+  | { id: "assess_score_poor"; description: "Poor"; values: undefined }
+  | { id: "assess_score_fair"; description: "Fair"; values: undefined }
+  | { id: "assess_score_average"; description: "Average"; values: undefined }
+  | { id: "assess_score_good"; description: "Good"; values: undefined }
+  | { id: "assess_score_excellent"; description: "Excellent"; values: undefined }
+  | { id: "assess_leave_a_comment_here"; description: "Leave a comment here"; values: undefined }
+  | { id: "assess_submission_history"; description: "Submission History"; values: undefined }
+  | { id: "assess_msg_new_version"; description: "A new version of the assignment has been submitted, please refresh"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -528,7 +551,7 @@ type LangRecord<T = string> =
     }
   | {
       id: "schedule_msg_hide";
-      description: "This event cannot de deleted because assignments have already been uploaded. Do you want to hide it instead?";
+      description: "This event cannot be deleted because assignments have already been uploaded. Do you want to hide it instead?";
       values: undefined;
     }
   | { id: "schedule_msg_visible"; description: "This event is visible again."; values: undefined }
@@ -539,6 +562,8 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "schedule_detail_see_more"; description: "See More"; values: undefined }
+  | { id: "schedule_msg_hidden"; description: "This event has been hidden"; values: undefined }
+  | { id: "schedule_msg_three_attachment"; description: "You can upload no more than three attachments. "; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
@@ -558,6 +583,12 @@ type LangRecord<T = string> =
   | { id: "report_error_unknown_error"; description: "Unknown error"; values: undefined }
   | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
   | { id: "report_label_lo"; description: "LOs"; values: undefined }
+  | { id: "report_label_student_performance"; description: "Student Performance"; values: undefined }
+  | { id: "report_label_learning_outcome_completion"; description: "Learning Outcome Completion"; values: undefined }
+  | { id: "report_label_time_spent_on_h5p_activities"; description: "Time Spent on Activities"; values: undefined }
+  | { id: "report_label_time_spent_on_h5p_activities_break_down"; description: "Time Spent on Activities Break Down"; values: undefined }
+  | { id: "report_label_total_duration"; description: "Total Duration"; values: undefined }
+  | { id: "report_label_avg_duration"; description: "Avg Duration"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined };

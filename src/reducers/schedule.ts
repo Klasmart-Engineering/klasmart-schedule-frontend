@@ -34,11 +34,13 @@ import {
   UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  ApiSuccessRequestResponse,
   EntityClassType,
   EntityContentInfoWithDetails,
   EntityProgram,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
+  EntityScheduleFeedbackAddInput,
   EntityScheduleListView,
   EntityScheduleSearchView,
   EntitySubject,
@@ -371,6 +373,25 @@ export const getScheduleRealTimeStatusPath = createAsyncThunk<getScheduleRealTim
   }
 );
 
+type getScheduleNewestFeedbackParams = {
+  schedule_id: Parameters<typeof api.schedules.getScheduleNewestFeedbackByOperator>[0];
+} & LoadingMetaPayload;
+type getScheduleNewestFeedbackResult = ReturnType<typeof api.schedules.getScheduleNewestFeedbackByOperator>;
+export const getScheduleNewestFeedback = createAsyncThunk<getScheduleNewestFeedbackResult, getScheduleNewestFeedbackParams>(
+  "schedule/getScheduleNewestFeedback",
+  ({ schedule_id }) => {
+    return api.schedules.getScheduleNewestFeedbackByOperator(schedule_id);
+  }
+);
+
+export const saveScheduleFeedback = createAsyncThunk<
+  ApiSuccessRequestResponse,
+  EntityScheduleFeedbackAddInput & LoadingMetaPayload,
+  { state: Rootstate }
+>("schedules_feedbacks", async (payload, { getState }) => {
+  return api.schedulesFeedbacks.addScheduleFeedback(payload);
+});
+
 type UpdateStatusResourseParams = {
   schedule_id: Parameters<typeof api.schedules.updateStatus>[0];
   status: Parameters<typeof api.schedules.updateStatus>[1];
@@ -559,6 +580,9 @@ const { actions, reducer } = createSlice({
     [getClassesBySchool.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListSchool = payload.data;
     },
+    [saveScheduleFeedback.fulfilled.type]: (state, { payload }: any) => {
+      console.log(saveScheduleFeedback);
+    },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
       // console.log(payload)
       // state.ParticipantsData = payload;
@@ -572,6 +596,9 @@ const { actions, reducer } = createSlice({
     },
     [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
       state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
+    },
+    [getScheduleNewestFeedback.fulfilled.type]: (state, { payload }: any) => {
+      console.log(payload);
     },
   },
 });

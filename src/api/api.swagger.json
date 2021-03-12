@@ -3384,6 +3384,191 @@
         }
       }
     },
+    "/home_fun_studies": {
+      "get": {
+        "description": "list home fun studies",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["homeFunStudies"],
+        "summary": "list home fun studies",
+        "operationId": "listHomeFunStudies",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "fuzzy query teacher name and student name",
+            "name": "query",
+            "in": "query"
+          },
+          {
+            "enum": ["all", "in_progress", "complete"],
+            "type": "string",
+            "description": "query status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "enum": ["latest_feedback_at", "-latest_feedback_at", "complete_at", "-complete_at"],
+            "type": "string",
+            "default": "-latest_feedback_at",
+            "description": "list order by",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "default": 10,
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ListHomeFunStudiesResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/home_fun_studies/{id}": {
+      "get": {
+        "description": "get home fun study detail",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["homeFunStudies"],
+        "summary": "get home fun study",
+        "operationId": "getHomeFunStudy",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "home fun study id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ListHomeFunStudiesResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/home_fun_studies/{id}/assess": {
+      "put": {
+        "description": "assess home fun study",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["homeFunStudies"],
+        "summary": "assess home fun study",
+        "operationId": "assessHomeFunStudy",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "home fun study id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "assess home fun study args",
+            "name": "assess_home_fun_study_args",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.AssessHomeFunStudyArgs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/learning_outcomes": {
       "get": {
         "description": "search learning outcomes",
@@ -5110,6 +5295,47 @@
         }
       }
     },
+    "/schedule_feedbacks": {
+      "get": {
+        "description": "query feedback list",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["scheduleFeedback"],
+        "summary": "queryFeedback",
+        "operationId": "queryFeedback",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "user id",
+            "name": "user_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleFeedbackView"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules": {
       "get": {
         "description": "query schedule",
@@ -5462,6 +5688,45 @@
         }
       }
     },
+    "/schedules/{schedule_id}/operator/newest_feedback": {
+      "get": {
+        "description": "get schedule newest feedback by operator",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduleNewestFeedbackByOperator",
+        "operationId": "getScheduleNewestFeedbackByOperator",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleFeedbackView"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/schedules/{schedule_id}/real_time": {
       "get": {
         "description": "get schedule real-time status",
@@ -5484,6 +5749,58 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/entity.ScheduleRealTimeView"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/{schedule_id}/show_option": {
+      "put": {
+        "description": "update schedule show option",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "updateScheduleShowOption",
+        "operationId": "updateScheduleShowOption",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "enum": ["hidden", "visible"],
+            "type": "string",
+            "description": "hidden properties",
+            "name": "show_option",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "404": {
@@ -5531,6 +5848,53 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/api.IDResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_feedbacks": {
+      "post": {
+        "description": "add ScheduleFeedback",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["scheduleFeedback"],
+        "summary": "addScheduleFeedback",
+        "operationId": "addScheduleFeedback",
+        "parameters": [
+          {
+            "description": "feedback data",
+            "name": "feedback",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleFeedbackAddInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.SuccessRequestResponse"
             }
           },
           "400": {
@@ -7512,6 +7876,28 @@
         }
       }
     },
+    "entity.AssessHomeFunStudyArgs": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["save", "complete"]
+        },
+        "assess_feedback_id": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "score": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        }
+      }
+    },
     "entity.AssessmentAttendanceView": {
       "type": "object",
       "properties": {
@@ -7843,11 +8229,12 @@
         "suggest_time": {
           "type": "integer"
         },
-        "teacher_manual": {
-          "type": "string"
-        },
-        "teacher_manual_name": {
-          "type": "string"
+        "teacher_manual_batch": {
+          "description": "TeacherManual     []string `json:\"teacher_manual\"`\nTeacherManualName []string `json:\"teacher_manual_name\"`",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.TeacherManualFile"
+          }
         },
         "thumbnail": {
           "type": "string"
@@ -8138,11 +8525,12 @@
         "suggest_time": {
           "type": "integer"
         },
-        "teacher_manual": {
-          "type": "string"
-        },
-        "teacher_manual_name": {
-          "type": "string"
+        "teacher_manual_batch": {
+          "description": "TeacherManual     []string `json:\"teacher_manual\"`\nTeacherManualName []string `json:\"teacher_manual_name\"`",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.TeacherManualFile"
+          }
         },
         "thumbnail": {
           "type": "string"
@@ -8261,11 +8649,12 @@
         "suggest_time": {
           "type": "integer"
         },
-        "teacher_manual": {
-          "type": "string"
-        },
-        "teacher_manual_name": {
-          "type": "string"
+        "teacher_manual_batch": {
+          "description": "TeacherManual     string `json:\"teacher_manual\"`\nTeacherManualName string `json:\"teacher_manual_name\"`",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.TeacherManualFile"
+          }
         },
         "thumbnail": {
           "type": "string"
@@ -8386,6 +8775,20 @@
           "type": "integer"
         },
         "updateID": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.FeedbackAssignmentView": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "url": {
           "type": "string"
         }
       }
@@ -8703,6 +9106,56 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ListHomeFunStudiesResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ListHomeFunStudiesResultItem"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ListHomeFunStudiesResultItem": {
+      "type": "object",
+      "properties": {
+        "assess_score": {
+          "type": "integer"
+        },
+        "complete_at": {
+          "type": "integer"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "latest_feedback_at": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "description": "debug",
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "student_name": {
+          "type": "string"
+        },
+        "teacher_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -9177,6 +9630,9 @@
         "is_force": {
           "type": "boolean"
         },
+        "is_home_fun": {
+          "type": "boolean"
+        },
         "is_repeat": {
           "type": "boolean"
         },
@@ -9264,6 +9720,12 @@
         "is_all_day": {
           "type": "boolean"
         },
+        "is_hidden": {
+          "type": "boolean"
+        },
+        "is_home_fun": {
+          "type": "boolean"
+        },
         "is_repeat": {
           "type": "boolean"
         },
@@ -9304,6 +9766,10 @@
           "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
+        "role_type": {
+          "type": "string",
+          "enum": ["Student", "Teacher", "Unknown"]
+        },
         "start_at": {
           "type": "integer"
         },
@@ -9329,6 +9795,49 @@
         },
         "version": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleFeedbackAddInput": {
+      "type": "object",
+      "properties": {
+        "assignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FeedbackAssignmentView"
+          }
+        },
+        "comment": {
+          "type": "string"
+        },
+        "schedule_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleFeedbackView": {
+      "type": "object",
+      "properties": {
+        "assignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FeedbackAssignmentView"
+          }
+        },
+        "comment": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "schedule_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
         }
       }
     },
@@ -9376,10 +9885,16 @@
         "id": {
           "type": "string"
         },
+        "is_hidden": {
+          "type": "boolean"
+        },
         "is_repeat": {
           "type": "boolean"
         },
         "lesson_plan_id": {
+          "type": "string"
+        },
+        "role_type": {
           "type": "string"
         },
         "start_at": {
@@ -9521,6 +10036,9 @@
           "type": "boolean"
         },
         "is_force": {
+          "type": "boolean"
+        },
+        "is_home_fun": {
           "type": "boolean"
         },
         "is_repeat": {
@@ -9862,6 +10380,17 @@
           "type": "integer"
         },
         "updateID": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.TeacherManualFile": {
+      "type": "object",
+      "properties": {
+        "teacher_manual_name": {
+          "type": "string"
+        },
+        "teacher_manual_source": {
           "type": "string"
         }
       }
