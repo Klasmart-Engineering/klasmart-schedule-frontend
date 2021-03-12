@@ -121,10 +121,10 @@ function SubmitTemplate(props: SubmitProps) {
       </p>
       <Box style={{ textAlign: "right" }}>
         <Button color="primary" onClick={handleClose}>
-          CANCEL
+          {d("Cancel").t("library_label_cancel")}
         </Button>
         <Button color="primary" onClick={feedBackSubmit}>
-          OK
+          {d("Ok").t("assess_button_ok")}
         </Button>
       </Box>
     </Box>
@@ -261,10 +261,11 @@ function FeedbackTemplate(props: FeedbackProps) {
           onClick={() => {
             setFileName([]);
           }}
+          disabled={due_date ? true : false}
         >
           {d("Cancel").t("assess_button_cancel")}
         </Button>
-        <Button variant="contained" color="primary" style={{ width: "45%" }} onClick={NoticeTemplate}>
+        <Button variant="contained" color="primary" style={{ width: "45%" }} onClick={NoticeTemplate} disabled={due_date ? true : false}>
           {d("Submit").t("schedule_button_submit")}
         </Button>
       </Box>

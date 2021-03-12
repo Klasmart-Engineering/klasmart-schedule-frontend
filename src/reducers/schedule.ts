@@ -364,6 +364,18 @@ export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResours
   }
 );
 
+type ScheduleShowOptionParams = {
+  schedule_id: Parameters<typeof api.schedules.updateScheduleShowOption>[0];
+  show_option: Parameters<typeof api.schedules.updateScheduleShowOption>[1];
+};
+type ScheduleShowOptionResult = ReturnType<typeof api.schedules.updateScheduleShowOption>;
+export const scheduleShowOption = createAsyncThunk<ScheduleShowOptionResult, ScheduleShowOptionParams>(
+  "updateScheduleShowOption",
+  ({ schedule_id, show_option }) => {
+    return api.schedules.updateScheduleShowOption(schedule_id, show_option);
+  }
+);
+
 type getScheduleRealTimeStatusParams = { schedule_id: Parameters<typeof api.schedules.getScheduleRealTimeStatus>[0] } & LoadingMetaPayload;
 type getScheduleRealTimeStatusResult = ReturnType<typeof api.schedules.getScheduleRealTimeStatus>;
 export const getScheduleRealTimeStatusPath = createAsyncThunk<getScheduleRealTimeStatusResult, getScheduleRealTimeStatusParams>(
@@ -598,6 +610,9 @@ const { actions, reducer } = createSlice({
       state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
     },
     [getScheduleNewestFeedback.fulfilled.type]: (state, { payload }: any) => {
+      console.log(payload);
+    },
+    [scheduleShowOption.fulfilled.type]: (state, { payload }: any) => {
       console.log(payload);
     },
   },

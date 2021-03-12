@@ -17,6 +17,8 @@ import {
   ExpandMoreOutlined,
   FileCopyOutlined,
   PermIdentity,
+  Visibility,
+  VisibilityOff,
 } from "@material-ui/icons";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -51,6 +53,7 @@ import {
   resetParticipantList,
   resetScheduleDetial,
   saveScheduleData,
+  scheduleShowOption,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -306,6 +309,7 @@ function EditBox(props: CalendarStateProps) {
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [isHidden, setIsHidden] = React.useState<boolean>(false);
   const [, setTeacherItem] = React.useState<any[] | undefined>([]);
   const [, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
@@ -456,6 +460,7 @@ function EditBox(props: CalendarStateProps) {
     setTeacherItem([]);
     setScheduleList(newData);
     setInitScheduleList(newData);
+    setIsHidden(false);
     dispatch(resetScheduleDetial(initScheduleDetial));
     dispatch(resetParticipantList());
     dispatch(changeParticipants({ type: "classRoster", data: { student: [], teacher: [] } }));
@@ -492,12 +497,13 @@ function EditBox(props: CalendarStateProps) {
         subject_id: scheduleDetial.subject?.id || "",
         participants_student_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title || "",
+        is_home_fun: scheduleDetial.is_home_fun,
       };
       setStatus({
         allDayCheck: newData.is_all_day ? true : false,
         repeatCheck: false,
         dueDateCheck: newData.due_at ? true : false,
-        homeFunCheck: false,
+        homeFunCheck: newData.is_home_fun ? true : false,
       });
       if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
@@ -506,6 +512,7 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
+      setIsHidden(scheduleDetial.is_hidden as boolean);
 
       const getClassOptionsItem = (item: ClassOptionsItem[]) => {
         const items = item?.map((item: any) => {
@@ -835,6 +842,8 @@ function EditBox(props: CalendarStateProps) {
 
     addData["is_force"] = isForce ?? is_force;
 
+    if (scheduleList.class_type === "Homework") addData["is_home_fun"] = checkedStatus.homeFunCheck;
+
     if (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") addData["is_force"] = true;
 
     // participants && class roster collision detection
@@ -1158,6 +1167,11 @@ function EditBox(props: CalendarStateProps) {
       openStatus: false,
     });
   };
+
+  const handleHide = () => {
+    dispatch(scheduleShowOption({ schedule_id: scheduleId as string, show_option: { show_option: isHidden ? "visible" : "hidden" } }));
+  };
+
   /**
    * modal type delete
    */
@@ -1449,6 +1463,26 @@ function EditBox(props: CalendarStateProps) {
                   className={css.toolset}
                   onClick={handleDelete}
                 />
+                {!isHidden && (
+                  <VisibilityOff
+                    style={{
+                      color: "#D74040",
+                      visibility: scheduleId ? "visible" : "hidden",
+                    }}
+                    onClick={handleHide}
+                    className={css.toolset}
+                  />
+                )}
+                {isHidden && (
+                  <Visibility
+                    style={{
+                      color: "#D74040",
+                      visibility: scheduleId ? "visible" : "hidden",
+                    }}
+                    onClick={handleHide}
+                    className={css.toolset}
+                  />
+                )}
               </Grid>
             )}
           </Grid>
@@ -1554,7 +1588,7 @@ function EditBox(props: CalendarStateProps) {
                   }}
                   className={css.participantButton}
                 >
-                  OK
+                  {d("OK").t("assess_label_ok")}
                 </Button>
               </Box>
             </Box>
@@ -1893,7 +1927,7 @@ function EditBox(props: CalendarStateProps) {
           specificStatus={specificStatus}
           isStudent={isStudent()}
         />
-        {!isStudent() && (
+        {scheduleId && isStudent() && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
           <ScheduleFeedback
             schedule_id={scheduleId}
             changeModalDate={changeModalDate}
