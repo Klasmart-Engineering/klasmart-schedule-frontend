@@ -39,6 +39,7 @@ import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { FolderForm, useFolderForm } from "./folderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
@@ -133,6 +134,7 @@ export default function MyContentList() {
     shareFolder,
     setShareFolder,
   } = useOrganizationList<OrgInfoProps[]>();
+  const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -231,8 +233,9 @@ export default function MyContentList() {
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
   };
   const handlePageAddFolder = async () => {
-    const parent_id = (condition.path || "").split("/").pop() || "";
-    await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
+    // const parent_id = (condition.path || "").split("/").pop() || "";
+    // await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
+    openFolderForm();
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
     return refreshWithDispatch(dispatch(deleteFolder({ item_id: id, params: {} })).then(unwrapResult));
@@ -290,6 +293,7 @@ export default function MyContentList() {
     await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
     closeOrganizationList();
   };
+  const handleSubmitFolderForm = () => {};
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -444,6 +448,7 @@ export default function MyContentList() {
         key={organizationListShowIndex}
         orgProperty={orgProperty}
       />
+      <FolderForm onClose={closeFolderForm} open={folderFormActive} onAddFolder={handleSubmitFolderForm} />
     </div>
   );
 }

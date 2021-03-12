@@ -1,5 +1,5 @@
-import { Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles } from "@material-ui/core";
-import React from "react";
+import { Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField } from "@material-ui/core";
+import React, { useMemo, useState } from "react";
 import { LButton } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
 
@@ -30,7 +30,13 @@ export function FolderForm(props: FolderFormProps) {
   return (
     <Dialog open={open}>
       <DialogTitle>{d("New Folder").t("library_label_new_folder")}</DialogTitle>
-      <DialogContent></DialogContent>
+      <DialogContent dividers>
+        <form noValidate autoComplete="off">
+          <TextField id="standard-basic" label="Standard" />
+          <TextField id="filled-basic" label="Filled" variant="filled" />
+          <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+        </form>
+      </DialogContent>
       <DialogActions>
         <Button color="primary" variant="outlined" onClick={onClose}>
           {d("Cancel").t("library_label_cancel")}
@@ -40,5 +46,22 @@ export function FolderForm(props: FolderFormProps) {
         </LButton>
       </DialogActions>
     </Dialog>
+  );
+}
+
+export function useFolderForm<T>() {
+  const [active, setActive] = useState(false);
+  const [folderFormShowIndex, setFolderFormShowIndex] = useState(2);
+  return useMemo(
+    () => ({
+      folderFormShowIndex,
+      folderFormActive: active,
+      openFolderForm: () => {
+        setFolderFormShowIndex(folderFormShowIndex + 1);
+        setActive(true);
+      },
+      closeFolderForm: () => setActive(false),
+    }),
+    [setActive, active, folderFormShowIndex, setFolderFormShowIndex]
   );
 }
