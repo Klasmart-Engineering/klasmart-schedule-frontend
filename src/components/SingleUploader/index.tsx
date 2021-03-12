@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import api from "../../api";
 import { AsyncTrunkReturned, getContentResourceUploadPath } from "../../reducers/content";
 
-interface UploaderControl {
+export interface SingleUploaderControl {
   uploady: UploadyContextType;
   item: BatchItem;
   btnRef: RefObject<HTMLButtonElement>;
@@ -31,9 +31,9 @@ export function getImageDimension(file: FileLike): Promise<ImageDimesion> {
     img.src = URL.createObjectURL(file);
   });
 }
-interface BaseUploaderProps {
+export interface BaseUploaderProps {
   value?: string;
-  render: (control: UploaderControl) => ReactNode;
+  render: (control: SingleUploaderControl) => ReactNode;
 }
 function BaseUploader(props: BaseUploaderProps) {
   const { value, render } = props;
