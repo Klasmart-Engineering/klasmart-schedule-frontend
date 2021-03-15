@@ -17,10 +17,8 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment, useCallback, useReducer } from "react";
-import { GetAssessmentResult } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -82,14 +80,12 @@ interface AssessmentHeaderProps {
   onBack: ButtonProps["onClick"] | any;
   onSave: LButtonProps["onClick"];
   onComplete: Function;
-  assessmentDetail: GetAssessmentResult;
-  isMyAssessment?: boolean;
+  editable?: boolean;
 }
 export function AssessmentHeader(props: AssessmentHeaderProps) {
-  const { name, onComplete, onSave, onBack, assessmentDetail, isMyAssessment } = props;
+  const { name, onComplete, onSave, onBack, editable } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
-  const editable = usePermission(PermissionType.edit_in_progress_assessment_439) && isMyAssessment;
   const sm = useMediaQuery(breakpoints.down("sm"));
   const [open, toggle] = useReducer((open) => {
     return !open;
@@ -117,7 +113,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
         <Typography variant="h6" className={css.title}>
           {sm ? name : d("For Organizations").t("library_label_for_organizations")}
         </Typography>
-        {editable && assessmentDetail.status === "in_progress" && (
+        {editable && (
           <Hidden smDown>
             <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={toggleCancel}>
               {d("Cancel").t("assess_label_cancel")}
@@ -138,7 +134,7 @@ export function AssessmentHeader(props: AssessmentHeaderProps) {
           </Typography>
         </Box>
       </Hidden>
-      {editable && assessmentDetail.status === "in_progress" && (
+      {editable && (
         <Hidden mdUp>
           <Box display="flex" justifyContent="flex-end" py={2}>
             <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={toggleCancel}>

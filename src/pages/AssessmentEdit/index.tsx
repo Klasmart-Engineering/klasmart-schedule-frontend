@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { EntityOutcomeAttendanceMap } from "../../api/api.auto";
 import { UpdateAssessmentRequestData } from "../../api/type";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
@@ -30,6 +31,7 @@ function AssessmentsEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { filterOutcomes, id, editindex } = useQuery();
+  const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;
@@ -39,7 +41,7 @@ function AssessmentsEditIner() {
   const filteredOutcomelist = assessmentDetail.outcome_attendance_maps;
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
-  const editable = isMyAssessment && assessmentDetail.status === "in_progress";
+  const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
@@ -129,8 +131,7 @@ function AssessmentsEditIner() {
         onSave={handleAssessmentSave}
         onBack={handleGoBack}
         onComplete={handleAssessmentComplete}
-        assessmentDetail={assessmentDetail}
-        isMyAssessment={isMyAssessment}
+        editable={editable}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} isMyAssessment={isMyAssessment} />
