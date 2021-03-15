@@ -9,6 +9,7 @@ import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Loading } from "./components/Loading";
 import { Locale } from "./components/Locale";
 import { Notification } from "./components/Notification";
+import { AssessmentsHomefunEdit } from "./pages/AssesmentHomefunEdit";
 import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit/index";
@@ -71,6 +72,9 @@ function App() {
                   </Route>
                   <Route path={AssessmentsEdit.routeBasePath}>
                     <AssessmentsEdit />
+                  </Route>
+                  <Route path={AssessmentsHomefunEdit.routeBasePath}>
+                    <AssessmentsHomefunEdit />
                   </Route>
                   <Route path={Live.routeBasePath}>
                     <Live />
