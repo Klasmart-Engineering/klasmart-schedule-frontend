@@ -25,6 +25,10 @@ import {
   SvgIconComponent,
 } from "@material-ui/icons";
 import React, { createElement } from "react";
+import { Controller, UseFormMethods } from "_react-hook-form@6.11.5@react-hook-form";
+import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
+import { formattedTime } from "../../models/ModelContentDetailForm";
 
 const useStyle = makeStyles(() =>
   createStyles({
@@ -94,13 +98,14 @@ interface ScoreInputProps {
   optionIcons: SvgIconComponent[];
   optionColors: string[];
   optionNames: string[];
-  optionValues: string[];
-  value?: string;
+  optionValues: number[];
+  value?: number;
   onChange?: RadioGroupProps["onChange"];
 }
 function ScoreInput(props: ScoreInputProps) {
   const css = useStyle();
   const { optionColors, optionNames, optionIcons, optionValues, value, onChange } = props;
+  console.log("value = ", value);
   const radioList = optionNames.map((name, index) => (
     <FormControlLabel
       key={optionValues[index]}
@@ -118,7 +123,7 @@ function ScoreInput(props: ScoreInputProps) {
   ));
   return (
     <FormControl component="fieldset" className={css.scoreInput}>
-      <RadioGroup row defaultValue={value} onChange={onChange}>
+      <RadioGroup row value={value} onChange={onChange}>
         {radioList}
       </RadioGroup>
     </FormControl>
@@ -126,8 +131,8 @@ function ScoreInput(props: ScoreInputProps) {
 }
 
 interface AssignmentDownloadRowProps {
-  name: string;
-  url: string;
+  name?: string;
+  url?: string;
 }
 function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
   const { name, url } = props;
@@ -144,94 +149,114 @@ function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
   );
 }
 
-interface AssignmentTableProps {}
+interface AssignmentTableProps {
+  title: string;
+  feedbacks: AssignmentProps["feedbacks"];
+}
 function AssignmentTable(props: AssignmentTableProps) {
+  const { feedbacks, title } = props;
   const css = useStyle();
+  const tableBodyRows = feedbacks.map(({ id, comment, create_at, assignments }) => (
+    <TableRow key={id}>
+      <TableCell align="center" className={css.assignmentTableBodyItem}>
+        {assignments?.map((assignment) => (
+          <AssignmentDownloadRow name={assignment.name} url={assignment.url} key={assignment.name} />
+        ))}
+      </TableCell>
+      <TableCell align="center" className={css.assignmentTableBodyItem}>
+        <Typography align="justify" variant="body1">
+          {comment}
+        </Typography>
+      </TableCell>
+      <TableCell align="center" className={css.assignmentTableBodyItem}>
+        {formattedTime(create_at)}
+      </TableCell>
+    </TableRow>
+  ));
   return (
     <div className={css.assignmentTableContainer}>
-      <Typography variant="h5">Assignment of Student 1</Typography>
+      <Typography variant="h5">{title}</Typography>
       <Table className={css.assignmentTable}>
         <TableHead className={css.assignmentTableHeader}>
           <TableRow>
             <TableCell align="center" className={css.assignmentTableHeaderItem} width="40%">
-              Assignment Uploaded
+              {d("Assignment Uploaded").t("assess_assignment_uploaded")}
             </TableCell>
             <TableCell align="center" className={css.assignmentTableHeaderItem} width="35%">
-              Comment
+              {d("Comment").t("assess_comment")}
             </TableCell>
             <TableCell align="center" className={css.assignmentTableHeaderItem} width="25%">
-              Submit Time
+              {d("Submit Time").t("assess_column_submit_time")}
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell align="center" className={css.assignmentTableBodyItem}>
-              <AssignmentDownloadRow name="Assignment 1.svg" url="https://hub-test.kidsloop.cn/97ece66af51f6ea324b8256e0d370b68.svg" />
-              <AssignmentDownloadRow name="Assignment 1.svg" url="https://hub-test.kidsloop.cn/97ece66af51f6ea324b8256e0d370b68.svg" />
-              <AssignmentDownloadRow name="Assignment 1.svg" url="https://hub-test.kidsloop.cn/97ece66af51f6ea324b8256e0d370b68.svg" />
-            </TableCell>
-            <TableCell align="center" className={css.assignmentTableBodyItem}>
-              <Typography align="justify" variant="body1">
-                They are grilling celebrities in their own right. You’ve seen them on TV and you see their cookbooks lined along the shelves
-                of your local bookstore. They may have different backgrounds and a variety of cooking styles, but just like you
-              </Typography>
-            </TableCell>
-            <TableCell align="center" className={css.assignmentTableBodyItem}>
-              2020/07/20 10:51AM
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell align="center" className={css.assignmentTableBodyItem}>
-              <AssignmentDownloadRow name="Assignment 1.svg" url="https://hub-test.kidsloop.cn/97ece66af51f6ea324b8256e0d370b68.svg" />
-              <AssignmentDownloadRow name="Assignment 1.svg" url="https://hub-test.kidsloop.cn/97ece66af51f6ea324b8256e0d370b68.svg" />
-              <AssignmentDownloadRow name="Assignment 1.svg" url="https://hub-test.kidsloop.cn/97ece66af51f6ea324b8256e0d370b68.svg" />
-            </TableCell>
-            <TableCell align="center" className={css.assignmentTableBodyItem}>
-              <Typography align="justify" variant="body1">
-                They are grilling celebrities in their own right. You’ve seen them on TV and you see their cookbooks lined along the shelves
-                of your local bookstore. They may have different backgrounds and a variety of cooking styles, but just like you
-              </Typography>
-            </TableCell>
-            <TableCell align="center" className={css.assignmentTableBodyItem}>
-              2020/07/20 10:51AM
-            </TableCell>
-          </TableRow>
-        </TableBody>
+        <TableBody>{tableBodyRows}</TableBody>
       </Table>
     </div>
   );
 }
 
-interface AssignmentProps {}
+interface AssignmentProps {
+  detail: EntityGetHomeFunStudyResult;
+  feedbacks: EntityScheduleFeedbackView[];
+  formMethods: UseFormMethods<EntityAssessHomeFunStudyArgs>;
+}
 
 export function Assignment(props: AssignmentProps) {
+  const { detail, feedbacks, formMethods } = props;
+  console.log("detail.assess_score = ", detail.assess_score);
   const css = useStyle();
+  const { control } = formMethods;
   return (
     <div className={css.assignment}>
-      <AssignmentTable />
-      <Typography variant="h5">Teacher Assessment</Typography>
-      <ScoreInput
-        optionNames={["Poor", "Fair", "Average", "Good", "Excellent"]}
-        optionValues={["Poor", "Fair", "Average", "Good", "Excellent"]}
-        optionColors={["#d32f2f", "#DC6F17", "#FFC107", "#A1CC41", "#4CAF50"]}
-        optionIcons={[
-          SentimentVeryDissatisfiedOutlined,
-          SentimentVeryDissatisfiedOutlined,
-          SentimentSatisfied,
-          SentimentSatisfiedOutlined,
-          SentimentVerySatisfiedOutlined,
-        ]}
-        value="Average"
+      <AssignmentTable
+        feedbacks={feedbacks.slice(0, 1)}
+        title={d("Assignment of {studentname}").t("assess_assignment_of_student", {
+          studentname: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
+        })}
       />
-      <TextField
-        placeholder="Leave a comment here."
+      <Typography variant="h5">{d("Teacher Assessment").t("assess_teacher_assessment")}</Typography>
+      <Controller
+        name="assess_score"
+        control={control}
+        defaultValue={detail.assess_score}
+        key={`assess_score:${detail.assess_score}`}
+        render={({ value, onChange }) => (
+          <ScoreInput
+            optionNames={[
+              d("Poor").t("assess_score_poor"),
+              d("Fair").t("assess_score_fair"),
+              d("Average").t("assess_score_average"),
+              d("Good").t("assess_score_good"),
+              d("Excellent").t("assess_score_excellent"),
+            ]}
+            optionValues={[1, 2, 3, 4, 5]}
+            optionColors={["#d32f2f", "#DC6F17", "#FFC107", "#A1CC41", "#4CAF50"]}
+            optionIcons={[
+              SentimentVeryDissatisfiedOutlined,
+              SentimentVeryDissatisfiedOutlined,
+              SentimentSatisfied,
+              SentimentSatisfiedOutlined,
+              SentimentVerySatisfiedOutlined,
+            ]}
+            value={value}
+            onChange={(e) => onChange(Number(e.target.value))}
+          />
+        )}
+      />
+      <Controller
+        as={TextField}
+        name="assess_comment"
+        control={control}
+        defaultValue={detail.assess_comment}
+        key={`assess_comment:${detail.assess_comment}`}
+        placeholder={d("Leave a comment here").t("assess_leave_a_comment_here")}
         multiline
         className={css.comment}
         fullWidth
         inputProps={{ className: css.commentInput, maxLength: 300 }}
       />
-      <AssignmentTable />
+      <AssignmentTable feedbacks={feedbacks.slice(1)} title={d("Submission History").t("assess_submission_history")} />
     </div>
   );
 }

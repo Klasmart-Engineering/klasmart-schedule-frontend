@@ -1,8 +1,6 @@
 import { Box, makeStyles, Paper, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import React from "react";
-import { UseFormMethods } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
-import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { IAssessmentState } from "../../reducers/assessments";
 const useStyles = makeStyles(({ palette }) => ({
@@ -45,12 +43,11 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 interface SummaryProps {
-  formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
-  assessmentDetail: IAssessmentState["assessmentDetail"];
-  isMyAssessment?: boolean;
+  detail: IAssessmentState["homefunDetail"];
+  feedbacks: IAssessmentState["homefunFeedbacks"];
 }
 export function Summary(props: SummaryProps) {
-  const { assessmentDetail } = props;
+  const { detail, feedbacks } = props;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -58,73 +55,54 @@ export function Summary(props: SummaryProps) {
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
-          <Typography variant="h6">{d("Class Summary").t("assess_class_summary")}</Typography>
+          <Typography variant="h6">{d("Study-Home Fun Summary").t("assess_detail_study_homefun_summary")}</Typography>
         </Box>
         <Box px={5} py={5}>
           <TextField
             fullWidth
             disabled
             name="title"
-            value={assessmentDetail.title || ""}
+            value={detail.title || ""}
             className={css.fieldset}
             label={d("Assessment Title").t("assess_column_title")}
           />
           <TextField
             fullWidth
             disabled
-            name="subject.name"
-            value={assessmentDetail.subject?.name || ""}
-            className={css.fieldset}
-            label={d("Subject").t("library_label_subject")}
-          />
-          <TextField
-            fullWidth
-            disabled
-            name="teacher.name"
-            value={assessmentDetail.teachers?.map((v) => v.name)}
+            name="teacher_names"
+            value={detail.teacher_names}
             className={css.fieldset}
             label={d("Teacher").t("assess_column_teacher")}
           />
           <TextField
             fullWidth
             disabled
-            name="classEndTime"
-            value={formattedTime(assessmentDetail.class_end_time)}
+            name="subject_name"
+            value={detail.subject_name ?? ""}
             className={css.fieldset}
-            label={d("Class End Time").t("assess_column_class_end_time")}
-          />
-          <Box className={css.editBox}>
-            <TextField
-              fullWidth
-              disabled
-              name="classLength"
-              value={assessmentDetail.class_length && Math.ceil(assessmentDetail.class_length / 60)}
-              className={css.fieldset}
-              label={d("Class Length").t("assess_detail_class_length")}
-            />
-            <Typography className={css.minutes}>{d("Minutes").t("assess_detail_minutes")}</Typography>
-          </Box>
-          <TextField
-            fullWidth
-            disabled
-            name="numberofActivities"
-            value={assessmentDetail.number_of_activities || 0}
-            className={css.fieldset}
-            label={d("Number of Activities").t("assess_detail_number_activity")}
+            label={d("Subject").t("library_label_subject")}
           />
           <TextField
             fullWidth
             disabled
-            name="numberofLearningOutcomes"
-            value={assessmentDetail.number_of_outcomes || 0}
+            name="due_at"
+            value={formattedTime(detail.due_at).slice(0, 10) || ""}
             className={css.fieldset}
-            label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
+            label={d("Due Date").t("assess_column_due_date")}
           />
           <TextField
             fullWidth
             disabled
-            name="completeTime"
-            value={formattedTime(assessmentDetail.complete_time) || ""}
+            name="create_at"
+            value={formattedTime(feedbacks[0]?.create_at) || ""}
+            className={css.fieldset}
+            label={d("Submit Time").t("assess_column_submit_time")}
+          />
+          <TextField
+            fullWidth
+            disabled
+            name="complete_at"
+            value={formattedTime(detail.complete_at) || ""}
             className={css.fieldset}
             label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
           />

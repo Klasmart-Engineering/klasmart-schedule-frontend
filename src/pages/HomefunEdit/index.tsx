@@ -3,13 +3,12 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { EntityOutcomeAttendanceMap } from "../../api/api.auto";
-import { UpdateAssessmentRequestData } from "../../api/type";
+import { EntityAssessHomeFunStudyArgs, EntityOutcomeAttendanceMap } from "../../api/api.auto";
+import { AssessmentStatus, UpdateAssessmentRequestData } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
-import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, onLoadHomefunDetail, updateAssessment } from "../../reducers/assessments";
 import { actSuccess, actWarning } from "../../reducers/notify";
 import { AssessmentHeader } from "../AssessmentEdit/AssessmentHeader";
 import LayoutPair from "../ContentEdit/Layout";
@@ -21,19 +20,20 @@ const useQuery = () => {
   const query = new URLSearchParams(search);
   const id = query.get("id");
   const editindex: number = Number(query.get("editindex") || 0);
-  const filterOutcomes = query.get("filterOutcomes") || "all";
-  return { id, filterOutcomes, editindex };
+  return { id, editindex };
 };
 
 function AssessmentsHomefunEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { id, editindex } = useQuery();
-  const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
-  const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
-  const { handleSubmit, reset } = formMethods;
-  const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
-  const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
+  const { homefunDetail, homefunFeedbacks, hasPermissionOfHomefun } = useSelector<RootState, RootState["assessments"]>(
+    (state) => state.assessments
+  );
+  console.log("homefunDetail, homefunFeedbacks, hasPermissionOfHomefun = ", homefunDetail, homefunFeedbacks, hasPermissionOfHomefun);
+  const formMethods = useForm<EntityAssessHomeFunStudyArgs>();
+  const { handleSubmit } = formMethods;
+  const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
@@ -81,15 +81,8 @@ function AssessmentsHomefunEditIner() {
     history.goBack();
   }, [history]);
   useEffect(() => {
-    if (id) {
-      dispatch(getAssessment({ id, metaLoading: true }));
-    }
+    id && dispatch(onLoadHomefunDetail({ id, metaLoading: true }));
   }, [dispatch, id, editindex]);
-  useEffect(() => {
-    if (assessmentDetail.id) {
-      reset(ModelAssessment.toRequest(assessmentDetail));
-    }
-  }, [assessmentDetail, reset]);
 
   return (
     <>
@@ -98,12 +91,11 @@ function AssessmentsHomefunEditIner() {
         onSave={handleAssessmentSave}
         onBack={handleGoBack}
         onComplete={handleAssessmentComplete}
-        assessmentDetail={assessmentDetail}
-        isMyAssessment={isMyAssessment}
+        editable={editable}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} isMyAssessment={isMyAssessment} />
-        <Assignment />
+        <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
+        <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} />
       </LayoutPair>
     </>
   );
@@ -112,4 +104,4 @@ export function AssessmentsHomefunEdit() {
   const { id, editindex } = useQuery();
   return <AssessmentsHomefunEditIner key={`${id}${editindex}`}></AssessmentsHomefunEditIner>;
 }
-AssessmentsHomefunEdit.routeBasePath = "/assessments/assessments-homefun-edit";
+AssessmentsHomefunEdit.routeBasePath = "/assessments/homefun-edit";

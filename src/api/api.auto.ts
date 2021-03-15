@@ -332,10 +332,10 @@ export interface EntityAge {
 
 export interface EntityAssessHomeFunStudyArgs {
   action?: "save" | "complete";
+  assess_comment?: string;
   assess_feedback_id?: string;
-  comment?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
   id?: string;
-  score?: 1 | 2 | 3 | 4 | 5;
 }
 
 export interface EntityAssessmentAttendanceView {
@@ -709,6 +709,23 @@ export interface EntityFolderShareRecord {
 
 export interface EntityFolderShareRecords {
   data?: EntityFolderShareRecord[];
+}
+
+export interface EntityGetHomeFunStudyResult {
+  assess_comment?: string;
+  assess_feedback_id?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  complete_at?: number;
+  due_at?: number;
+  id?: string;
+  schedule_id?: string;
+  student_id?: string;
+  student_name?: string;
+  teacher_names?: string[];
+  teacher_ids?: string[];
+  title?: string;
+  status?: string;
+  subject_name?: string;
 }
 
 export interface EntityGetStudentPerformanceH5PReportResponse {
@@ -2384,7 +2401,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getHomeFunStudy: (id: string, params?: RequestParams) =>
       this.request<
-        EntityListHomeFunStudiesResult,
+        EntityGetHomeFunStudyResult,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/home_fun_studies/${id}`, "GET", params),
 
