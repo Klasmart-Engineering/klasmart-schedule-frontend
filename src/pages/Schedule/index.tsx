@@ -81,7 +81,7 @@ function ScheduleContent() {
     resultInfo = ((await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof getSubjectByProgramId>
     >;
-    return !resultInfo.payload ? resultInfo.payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
+    return resultInfo.payload ? resultInfo.payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
   };
 
   const LinkageLessonPlan = async (content_id: string) => {

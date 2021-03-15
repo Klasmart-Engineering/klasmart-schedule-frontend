@@ -582,7 +582,7 @@ const { actions, reducer } = createSlice({
       state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
     },
     [getSubjectByProgramId.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleMockOptions.subjectList = !payload ? payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
+      state.scheduleMockOptions.subjectList = payload ? payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
     },
   },
 });
