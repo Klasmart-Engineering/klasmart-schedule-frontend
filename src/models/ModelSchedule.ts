@@ -19,7 +19,7 @@ export class modelSchedule {
     const reduceTemporaryStorage: { [id: string]: boolean } = {};
     return childItem.reduce<EntityScheduleShortInfo[]>((item, next) => {
       if (next !== null)
-        if (!reduceTemporaryStorage[next.id as string]) {
+        if (!reduceTemporaryStorage[next.id as string] && next.id) {
           item.push(next);
           reduceTemporaryStorage[next.id as string] = true;
         }
