@@ -426,6 +426,14 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
   }
 );
 
+type SubjectResourseResult = ReturnType<typeof api.subjects.getSubject>;
+export const getSubjectByProgramId = createAsyncThunk<SubjectResourseResult, { program_id: string } & LoadingMetaPayload>(
+  "getSubject",
+  async (program_id) => {
+    return api.subjects.getSubject(program_id);
+  }
+);
+
 /**
  * get participant
  */
@@ -573,8 +581,10 @@ const { actions, reducer } = createSlice({
     [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
       state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
     },
+    [getSubjectByProgramId.fulfilled.type]: (state, { payload }: any) => {
+      state.scheduleMockOptions.subjectList = payload;
+    },
   },
 });
-
 export const { resetScheduleDetial, resetParticipantList, changeParticipants } = actions;
 export default reducer;

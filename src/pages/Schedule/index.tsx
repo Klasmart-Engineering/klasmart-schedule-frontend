@@ -27,6 +27,7 @@ import {
   getClassesBySchool,
   changeParticipants,
   getSchoolInfo,
+  getSubjectByProgramId,
 } from "../../reducers/schedule";
 import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -72,19 +73,23 @@ function ScheduleContent() {
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
-  const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
 
-  const handleChangeProgramId = (programId: string) => {
-    setChangeProgram(programId);
+  const handleChangeProgramId = async (programId: string) => {
+    let resultInfo: any;
+    resultInfo = ((await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof getSubjectByProgramId>
+    >;
+    return resultInfo.payload;
   };
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
     resultInfo = ((await dispatch(
       onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>;
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    await dispatch(getSubjectByProgramId({ program_id: resultInfo.payload.contentDetail.program }));
     return {
       program_id: resultInfo.payload.contentDetail.program as string,
       subject_id: resultInfo.payload.contentDetail.subject![0] as string,
