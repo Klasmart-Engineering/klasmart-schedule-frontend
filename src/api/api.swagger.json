@@ -2198,6 +2198,45 @@
         }
       }
     },
+    "/contents_resources/{resource_id}/download": {
+      "get": {
+        "description": "get the path of a resource url",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getDownloadPath",
+        "operationId": "getDownloadPath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Resource id",
+            "name": "resource_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.DownloadPathResource"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/contents_review/approve": {
       "put": {
         "description": "approve content bulk",
@@ -7088,6 +7127,14 @@
           "type": "string"
         },
         "developmental_name": {
+          "type": "string"
+        }
+      }
+    },
+    "api.DownloadPathResource": {
+      "type": "object",
+      "properties": {
+        "path": {
           "type": "string"
         }
       }

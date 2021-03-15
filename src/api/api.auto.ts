@@ -36,6 +36,10 @@ export interface ApiDevelopmental {
   developmental_name?: string;
 }
 
+export interface ApiDownloadPathResource {
+  path?: string;
+}
+
 export interface ApiFolderItemsResponse {
   items?: EntityFolderItem[];
 }
@@ -328,6 +332,7 @@ export interface EntityAge {
 
 export interface EntityAssessHomeFunStudyArgs {
   action?: "save" | "complete";
+  assess_feedback_id?: string;
   comment?: string;
   id?: string;
   score?: 1 | 2 | 3 | 4 | 5;
@@ -434,8 +439,12 @@ export interface EntityAuthedContentRecordInfo {
   subject?: string[];
   subject_name?: string[];
   suggest_time?: number;
-  teacher_manual?: string;
-  teacher_manual_name?: string;
+
+  /**
+   * TeacherManual     []string `json:"teacher_manual"`
+   * TeacherManualName []string `json:"teacher_manual_name"`
+   */
+  teacher_manual_batch?: EntityTeacherManualFile[];
   thumbnail?: string;
   updated_at?: number;
   version?: number;
@@ -522,8 +531,12 @@ export interface EntityContentInfoWithDetails {
   subject?: string[];
   subject_name?: string[];
   suggest_time?: number;
-  teacher_manual?: string;
-  teacher_manual_name?: string;
+
+  /**
+   * TeacherManual     []string `json:"teacher_manual"`
+   * TeacherManualName []string `json:"teacher_manual_name"`
+   */
+  teacher_manual_batch?: EntityTeacherManualFile[];
   thumbnail?: string;
   updated_at?: number;
   version?: number;
@@ -559,8 +572,12 @@ export interface EntityCreateContentRequest {
   source_type?: string;
   subject?: string[];
   suggest_time?: number;
-  teacher_manual?: string;
-  teacher_manual_name?: string;
+
+  /**
+   * TeacherManual     string `json:"teacher_manual"`
+   * TeacherManualName string `json:"teacher_manual_name"`
+   */
+  teacher_manual_batch?: EntityTeacherManualFile[];
   thumbnail?: string;
 }
 
@@ -953,7 +970,7 @@ export interface EntityScheduleDetailsView {
   program?: EntityScheduleShortInfo;
   real_time_status?: EntityScheduleRealTimeView;
   repeat?: EntityRepeatOptions;
-  role_type?: string;
+  role_type?: "Student" | "Teacher" | "Unknown";
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   student_count?: number;
@@ -1155,6 +1172,11 @@ export interface EntitySubject {
   number?: number;
   updateAt?: number;
   updateID?: string;
+}
+
+export interface EntityTeacherManualFile {
+  name?: string;
+  id?: string;
 }
 
 export interface EntityTeacherReport {
@@ -1948,6 +1970,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "GET",
         params
       ),
+
+    /**
+     * @tags content
+     * @name getDownloadPath
+     * @summary getDownloadPath
+     * @request GET:/contents_resources/{resource_id}/download
+     * @description get the path of a resource url
+     */
+    getDownloadPath: (resource_id: string, params?: RequestParams) =>
+      this.request<ApiDownloadPathResource, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_resources/${resource_id}/download`,
+        "GET",
+        params
+      ),
   };
   contentsReview = {
     /**
@@ -2360,7 +2396,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description assess home fun study
      */
     assessHomeFunStudy: (id: string, assess_home_fun_study_args: EntityAssessHomeFunStudyArgs, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/home_fun_studies/${id}/assess`,
         "PUT",
         params,
@@ -2966,7 +3002,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule newest feedback by operator
      */
     getScheduleNewestFeedbackByOperator: (schedule_id: string, params?: RequestParams) =>
-      this.request<ApiIDResponse, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityScheduleFeedbackView, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/operator/newest_feedback`,
         "GET",
         params

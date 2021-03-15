@@ -1,9 +1,7 @@
 import { Box, Checkbox, Chip, FormControlLabel, Grid, InputAdornment, TextField } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { CloudDownloadOutlined } from "@material-ui/icons";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { d, t } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -277,7 +275,7 @@ export function Detail(props: ContentPreviewProps) {
           ),
         }}
       ></TextField>
-      {contentPreview.content_type === ContentType.plan && (
+      {/* {contentPreview.content_type === ContentType.plan && (
         <Box style={{ position: "relative" }}>
           <TextField
             disabled
@@ -291,7 +289,7 @@ export function Detail(props: ContentPreviewProps) {
             {contentPreview.teacher_manual && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px", color: "#000" }} />}
           </a>
         </Box>
-      )}
+      )} */}
     </>
   );
 }

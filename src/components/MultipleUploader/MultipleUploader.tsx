@@ -40,10 +40,10 @@ function BaseUploader(props: BaseUploaderProps) {
   const isUploading =
     index === undefined || index === -1
       ? false
-      : index === 0 || index === (batch?.items?.length ?? 1) - 1
+      : index === (batch?.items?.length ?? 1) - 1
       ? uploadingItem?.completed > 0 && uploadingItem?.completed < 100
       : true;
-  console.log("batch, uploadingItem, isUploading = ", batch, uploadingItem, isUploading);
+  // console.log("isUploading, index, uploadingItem?.completed, uploadingItem = ", isUploading, index, uploadingItem?.completed, uploadingItem);
   useBatchAddListener((batch) => {
     batchRef.current = batch;
   });
@@ -138,7 +138,7 @@ export const MultipleUploader = forwardRef<HTMLDivElement, MultipleUploaderProps
         }
       },
       [UPLOADER_EVENTS.BATCH_FINISH](batch: Batch) {
-        console.log("BATCH_FINISH = ", batch);
+        // console.log("BATCH_FINISH = ", batch);
         // const targetItem = itemWithResourceIdsRef.current.find(item => item.id === finishedItem.id);
         const itemWithIds = itemWithResourceIdsRef.current.map((item) => ({ id: item.resourceId, name: item.file.name }));
         if (onChange) onChange(value?.concat(itemWithIds));

@@ -8,6 +8,7 @@ import {
   FormControl,
   FormControlLabel,
   InputLabel,
+  LinearProgress,
   makeStyles,
   MenuItem,
   OutlinedInput,
@@ -17,22 +18,25 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import { AccessTime, CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useQueryCms } from ".";
-import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
+import { FileSizeUnit, MultipleUploader } from "../../components/MultipleUploader";
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
-import { d, t } from "../../locale/LocaleManager";
+import { d, reportMiss, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
+import { actWarning } from "../../reducers/notify";
 import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
@@ -75,17 +79,47 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
   iconField: {
     position: "absolute",
-    top: "56%",
+    bottom: "26%",
     cursor: "pointer",
+    fontSize: 25,
+    right: 10,
   },
   progress: {
-    width: 36,
-    height: 36,
+    width: 24,
+    height: 24,
   },
-  label: {
-    zIndex: 1,
-    marginTop: -10,
+  iconLeft: {
     marginLeft: 10,
+  },
+  fileItem: {
+    display: "flex",
+    alignItems: "center",
+  },
+  teacherManualBox: {
+    width: "100%",
+    minHeight: 56,
+    padding: "15px 40px 15px 14px ",
+    [breakpoints.down("sm")]: {
+      minHeight: 40,
+      padding: "10.5px 40px 10.5px 14px",
+    },
+    boxSizing: "border-box",
+    marginTop: 32,
+    position: "relative",
+    border: "1px solid rgba(0, 0, 0, 0.23)",
+    borderRadius: 4,
+  },
+  cancel: {
+    color: "rgba(102,102,102,1)",
+    marginLeft: 10,
+    cursor: "pointer",
+  },
+  valueColor: {
+    color: "rgba(0, 0, 0, 0.54)",
+  },
+  linearProcess: {
+    width: 32,
+    margin: "0 10px",
   },
 }));
 
@@ -93,7 +127,7 @@ export function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
   return (
     <Box position="relative" display="inline-flex" alignItems="center">
-      <CircularProgress className={css.thumbnailImg} variant="static" {...props} />
+      <CircularProgress className={css.thumbnailImg} variant="determinate" {...props} />
       <Box className={css.thumbnailProgressText}>
         <Typography variant="caption" component="div" color="textSecondary">
           {`${Math.round(props.value || 0)}%`}
@@ -173,7 +207,6 @@ export default function Details(props: DetailsProps) {
     formMethods: {
       control,
       errors,
-      setValue,
       watch,
       formState: { isDirty },
     },
@@ -190,6 +223,7 @@ export default function Details(props: DetailsProps) {
   const { lesson } = useParams();
   const { id } = useQueryCms();
   const defaultTheme = useTheme();
+  const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
@@ -211,21 +245,13 @@ export default function Details(props: DetailsProps) {
     if (reson_remark && remark) reson_remark.push(remark);
     return reson_remark ? reson_remark : remark && [remark];
   };
-  const handleDeleteManual = useCallback(() => {
-    setValue("teacher_manual", "", { shouldDirty: true });
-    setValue("teacher_manual_name", "", { shouldDirty: true });
-  }, [setValue]);
-  const handleChangeTeacherManualName = useMemo(
-    () => (filename?: string) => {
-      setValue("teacher_manual_name", filename, { shouldDirty: true });
-    },
-    [setValue]
-  );
   const teacherInfo = (
     <div style={{ color: "#000" }}>
       <span style={{ fontWeight: 700 }}>{d("Max Size").t("library_label_max_size")}</span>: 500MB
       <br />
-      <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf
+      <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf,mp3,wav
+      <br />
+      <span style={{ fontWeight: 700 }}>{reportMiss("File Number", "library_label_file_number")}</span>: 5
     </div>
   );
   const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
@@ -619,52 +645,70 @@ export default function Details(props: DetailsProps) {
           className={css.fieldset}
           label={d("Keywords").t("library_label_keywords")}
           disabled={permission}
-          helperText=""
         />
         {lesson === "plan" && (
           <Controller
             control={control}
-            name="teacher_manual"
-            defaultValue={allDefaultValueAndKey.teacher_manual?.value}
-            key={allDefaultValueAndKey.teacher_manual?.key}
+            name="teacher_manual_batch"
+            defaultValue={allDefaultValueAndKey.teacher_manual_batch?.value}
+            key={allDefaultValueAndKey.teacher_manual_batch?.key}
             render={({ ref, ...props }) => (
-              <SingleUploader
+              <MultipleUploader
                 ref={ref}
-                onChangeFile={(file) => handleChangeTeacherManualName(file?.name)}
                 partition="teacher_manual"
-                accept=".pdf"
+                accept=".pdf,.mp3,.wav"
                 {...props}
-                render={({ btnRef, value, isUploading, item }) => (
-                  <Box style={{ position: "relative" }}>
-                    <Controller
-                      control={control}
-                      name="teacher_manual_name"
-                      defaultValue={allDefaultValueAndKey.teacher_manual_name?.value}
-                      key={allDefaultValueAndKey.teacher_manual_name?.key}
-                      render={(props) => (
-                        <FormControl className={css.fieldset}>
-                          <InputLabel htmlFor="teacherManual" className={css.label}>
-                            <div style={{ alignItems: "center", display: value ? "none" : "flex" }}>
-                              {d("Teacher Manual").t("library_label_teacher_manual")}
-                              <HtmlTooltip title={teacherInfo}>
-                                <InfoOutlined style={{ color: "darkgrey" }} />
-                              </HtmlTooltip>
-                            </div>
-                          </InputLabel>
-                          <OutlinedInput id="teacherManual" multiline value={props.value} disabled></OutlinedInput>
-                        </FormControl>
-                      )}
-                    />
-                    {isUploading ? (
-                      <Box style={{ right: "10px", position: "absolute", top: "47%" }}>
-                        <ProgressWithText value={item?.completed} className={css.progress} />
-                      </Box>
-                    ) : (
-                      <>
-                        <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />
-                        {value && <CancelRounded className={css.iconField} style={{ right: "40px" }} onClick={handleDeleteManual} />}{" "}
-                      </>
-                    )}
+                maxAmount={5}
+                maxSize={500 * FileSizeUnit.M}
+                onError={(error) => Promise.reject(dispatch(actWarning(error.type)))}
+                render={({ btnRef, value, isUploading, batch }) => (
+                  <Box className={css.teacherManualBox}>
+                    <div>
+                      {value?.map((file) => (
+                        <div key={file.id} className={css.fileItem}>
+                          <Typography component="div" noWrap variant="body1" style={{ color: "rgba(51,51,51,1)" }}>
+                            {file.name}{" "}
+                          </Typography>
+                          <CancelRounded
+                            className={css.cancel}
+                            onClick={() => props.onChange(props.value.filter((v: EntityTeacherManualFile) => v.id !== file.id))}
+                          />
+                        </div>
+                      ))}
+                      {isUploading &&
+                        batch?.items?.map((item) => (
+                          <div key={item.id} className={css.fileItem}>
+                            <Typography component="div" noWrap variant="body1">
+                              {item.file.name}
+                            </Typography>
+                            {item.completed === 100 ? (
+                              ""
+                            ) : item.completed === 0 ? (
+                              <AccessTime className={css.iconLeft} />
+                            ) : (
+                              <div className={css.fileItem}>
+                                <LinearProgress className={css.linearProcess} variant="determinate" value={item.completed} />
+                                <Typography variant="caption" component="span" color="textSecondary">
+                                  {`${Math.round(item.completed || 0)}%`}
+                                </Typography>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                    <div
+                      style={{
+                        alignItems: "center",
+                        color: "rgba(0, 0, 0, 0.54)",
+                        display: props.value?.length > 0 || isUploading ? "none" : "flex",
+                      }}
+                    >
+                      {d("Teacher Manual").t("library_label_teacher_manual")}
+                      <HtmlTooltip title={teacherInfo}>
+                        <InfoOutlined style={{ color: "darkgrey" }} className={css.iconLeft} />
+                      </HtmlTooltip>
+                    </div>
+                    <CloudUploadOutlined className={css.iconField} ref={btnRef as any} />
                   </Box>
                 )}
               />
