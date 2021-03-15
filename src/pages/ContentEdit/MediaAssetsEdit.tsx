@@ -1,4 +1,4 @@
-import { Box, CircularProgress, CircularProgressProps, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Box, IconButton, makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
@@ -10,6 +10,7 @@ import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
+import { ProgressWithText } from "./Details";
 import { DragItem, mapDropSegmentPropsReturn } from "./PlanComposeGraphic";
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -37,21 +38,6 @@ const useStyles = makeStyles(({ palette }) => ({
     color: "#000000",
     fontSize: "18px",
     fontWeight: 500,
-  },
-
-  thumbnailImg: {
-    width: 260,
-    height: 132,
-  },
-  thumbnailProgressText: {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    position: "absolute",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
   },
   assetPreviewBox: {
     marginBottom: "5%",
@@ -83,20 +69,6 @@ export const fileFormat = {
   audio: [".mp3", ".wav"],
   pdf: [".pdf"],
 };
-
-function ProgressWithText(props: CircularProgressProps) {
-  const css = useStyles();
-  return (
-    <Box position="relative" display="inline-flex" alignItems="center">
-      <CircularProgress className={css.thumbnailImg} variant="static" {...props} />
-      <Box className={css.thumbnailProgressText}>
-        <Typography variant="caption" component="div" color="textSecondary">
-          {`${Math.round(props.value || 0)}%`}
-        </Typography>
-      </Box>
-    </Box>
-  );
-}
 
 const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
   canDrop: monitor.canDrop(),

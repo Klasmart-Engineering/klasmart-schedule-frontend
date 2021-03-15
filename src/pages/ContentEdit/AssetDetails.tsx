@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  CircularProgressProps,
-  createMuiTheme,
-  makeStyles,
-  MenuItem,
-  TextField,
-  ThemeProvider,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
 import React from "react";
 import { Controller, FieldError, UseFormMethods } from "react-hook-form";
@@ -24,6 +11,7 @@ import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions } from "../../reducers/content";
+import { ProgressWithText } from "./Details";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   fieldset: {
@@ -67,20 +55,6 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     boxShadow: shadows[3],
   },
 }));
-
-function ProgressWithText(props: CircularProgressProps) {
-  const css = useStyles();
-  return (
-    <Box position="relative" display="inline-flex" alignItems="center">
-      <CircularProgress className={css.thumbnailImg} variant="static" {...props} />
-      <Box className={css.thumbnailProgressText}>
-        <Typography variant="caption" component="div" color="textSecondary">
-          {`${Math.round(props.value || 0)}%`}
-        </Typography>
-      </Box>
-    </Box>
-  );
-}
 
 interface AssetDetailsProps {
   allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;

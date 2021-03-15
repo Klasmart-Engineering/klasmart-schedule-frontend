@@ -1,7 +1,9 @@
-import { Box, Checkbox, Chip, FormControlLabel, Grid, InputAdornment, TextField } from "@material-ui/core";
+import { Box, Checkbox, Chip, FormControlLabel, Grid, InputAdornment, TextField, Typography } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { CloudDownloadOutlined } from "@material-ui/icons";
 import React from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { d, t } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -32,10 +34,27 @@ const useStyles = makeStyles(() => ({
       display: "none",
     },
   },
+
+  teacherManualBox: {
+    width: "100%",
+    minHeight: 56,
+    padding: "15px 14px ",
+    boxSizing: "border-box",
+    marginTop: 32,
+    marginBottom: 32,
+    position: "relative",
+    border: "1px solid rgba(0, 0, 0, 0.23)",
+    borderRadius: 4,
+  },
+  fileItem: {
+    display: "flex",
+    alignItems: "center",
+  },
   iconField: {
-    position: "absolute",
-    top: "40%",
     cursor: "pointer",
+    fontSize: 25,
+    marginLeft: 10,
+    color: "rgba(0, 0, 0, 0.87)",
   },
 }));
 interface ContentPreviewProps {
@@ -275,21 +294,34 @@ export function Detail(props: ContentPreviewProps) {
           ),
         }}
       ></TextField>
-      {/* {contentPreview.content_type === ContentType.plan && (
-        <Box style={{ position: "relative" }}>
-          <TextField
-            disabled
-            className={css.fieldset}
-            value={contentPreview.teacher_manual_name}
-            label={d("Teacher Manual").t("library_label_teacher_manual")}
-            fullWidth
-            multiline
-          ></TextField>
-          <a href={apiResourcePathById(contentPreview.teacher_manual)} target="_blank" rel="noopener noreferrer">
-            {contentPreview.teacher_manual && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px", color: "#000" }} />}
-          </a>
+      {contentPreview.content_type === ContentType.plan && (
+        <Box className={css.teacherManualBox}>
+          {contentPreview.teacher_manual_batch?.map((file, index) => (
+            <div key={file.id} className={css.fileItem}>
+              <Typography component="div" noWrap variant="body1" style={{ color: "rgba(51,51,51,1)" }}>
+                {file.name}{" "}
+              </Typography>
+              <a
+                href={apiResourcePathById(contentPreview.teacher_manual_batch && contentPreview.teacher_manual_batch[index]?.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <CloudDownloadOutlined className={css.iconField} />
+              </a>
+            </div>
+          ))}
+
+          <div
+            style={{
+              alignItems: "center",
+              color: "rgba(0, 0, 0, 0.54)",
+              display: contentPreview.teacher_manual_batch && contentPreview.teacher_manual_batch?.length > 0 ? "none" : "flex",
+            }}
+          >
+            {d("Teacher Manual").t("library_label_teacher_manual")}
+          </div>
         </Box>
-      )} */}
+      )}
     </>
   );
 }

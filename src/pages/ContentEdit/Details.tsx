@@ -251,7 +251,7 @@ export default function Details(props: DetailsProps) {
       <br />
       <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf,mp3,wav
       <br />
-      <span style={{ fontWeight: 700 }}>{reportMiss("File Number", "library_label_file_number")}</span>: 5
+      <span style={{ fontWeight: 700 }}>{reportMiss("Max File Number", "library_label_max_file_number")}</span>: 5
     </div>
   );
   const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
@@ -708,7 +708,7 @@ export default function Details(props: DetailsProps) {
                         <InfoOutlined style={{ color: "darkgrey" }} className={css.iconLeft} />
                       </HtmlTooltip>
                     </div>
-                    <CloudUploadOutlined className={css.iconField} ref={btnRef as any} />
+                    {!isUploading && <CloudUploadOutlined className={css.iconField} ref={btnRef as any} />}
                   </Box>
                 )}
               />
