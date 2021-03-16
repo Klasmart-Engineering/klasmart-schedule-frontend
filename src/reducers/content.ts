@@ -838,6 +838,11 @@ type IQueryH5pEventResult = AsyncReturnType<typeof api.h5P.createH5PEvent>;
 export const h5pEvent = createAsyncThunk<IQueryH5pEventResult, IQueryH5pEventParams>("content/h5pEvent", async (h5pSegment) => {
   return await api.h5P.createH5PEvent(h5pSegment);
 });
+type IGetDownloadPathParams = Parameters<typeof api.contentsResources.getDownloadPath>[0];
+type IGetDownloadPathResult = AsyncReturnType<typeof api.contentsResources.getDownloadPath>;
+export const getDownloadPath = createAsyncThunk<IGetDownloadPathResult, IGetDownloadPathParams>("content/getDownloadPath", (query) => {
+  return api.contentsResources.getDownloadPath(query);
+});
 
 const { actions, reducer } = createSlice({
   name: "content",

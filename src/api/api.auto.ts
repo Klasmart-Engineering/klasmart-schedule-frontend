@@ -14,6 +14,9 @@ export interface ApiAge {
   age_id?: string;
   age_name?: string;
 }
+export interface ApiDownloadPathResource {
+  path?: string;
+}
 
 export type ApiBadRequestResponse = ApiResponse;
 
@@ -439,11 +442,6 @@ export interface EntityAuthedContentRecordInfo {
   subject?: string[];
   subject_name?: string[];
   suggest_time?: number;
-
-  /**
-   * TeacherManual     []string `json:"teacher_manual"`
-   * TeacherManualName []string `json:"teacher_manual_name"`
-   */
   teacher_manual_batch?: EntityTeacherManualFile[];
   thumbnail?: string;
   updated_at?: number;
@@ -532,10 +530,6 @@ export interface EntityContentInfoWithDetails {
   subject_name?: string[];
   suggest_time?: number;
 
-  /**
-   * TeacherManual     []string `json:"teacher_manual"`
-   * TeacherManualName []string `json:"teacher_manual_name"`
-   */
   teacher_manual_batch?: EntityTeacherManualFile[];
   thumbnail?: string;
   updated_at?: number;
@@ -1987,7 +1981,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "GET",
         params
       ),
-
     /**
      * @tags content
      * @name getDownloadPath

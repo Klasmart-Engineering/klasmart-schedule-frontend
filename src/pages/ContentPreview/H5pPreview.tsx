@@ -5,20 +5,14 @@ import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutli
 import clsx from "clsx";
 import React, { useState } from "react";
 import { EntityContentInfoWithDetails, EntityScheduleDetailsView } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
 import { ContentFileType, ContentType, H5pSub } from "../../api/type";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
 import { Thumbnail } from "../../components/Thumbnail";
-import AssetAudio from "../../components/UIAssetPreview/AssetPreview/AssetAudio";
-import AssetFile from "../../components/UIAssetPreview/AssetPreview/AssetFile";
-import AssetImg from "../../components/UIAssetPreview/AssetPreview/AssetImg";
-import AssetPdf from "../../components/UIAssetPreview/AssetPreview/AssetPdf";
-import AssetVideo from "../../components/UIAssetPreview/AssetPreview/AssetVideo";
+import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
 import { formLiteFileType } from "../../models/ModelH5pSchema";
 import ContentH5p from "../ContentEdit/ContentH5p";
 import { H5pPlayer } from "../ContentEdit/H5pPlayer";
-import { fileFormat } from "../ContentEdit/MediaAssetsEdit";
 import { PreviewBaseProps } from "./type";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -128,13 +122,8 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
   iconCon: {
     width: "100%",
-    // [breakpoints.down("sm")]: {
-    //   width: 120,
-    // },
-    // display: "flex",
-    // justifyContent: "center",
     position: "absolute",
-    top: "50%",
+    top: "45%",
     transform: "translateY(-50%)",
   },
 
@@ -233,6 +222,11 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     marginBottom: "auto",
     color: "#fff",
   },
+  assetPreview: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 }));
 
 function EmptyContent() {
@@ -287,22 +281,22 @@ export function H5pPreview(props: H5pPreview) {
     h5pItem = h5pArray[currIndex];
   };
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
-  const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
+  // const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
   const isNewH5p = h5pItem ? formLiteFileType(h5pItem.id, parsedData.file_type, parsedData.input_source)?.isNewH5p : false;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
-  const showAssets = () => {
-    if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-      return <AssetImg src={path} />;
-    } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-      return <AssetVideo src={path} />;
-    } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-      return <AssetAudio src={path} />;
-    } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-      return <AssetFile src={parsedData.source} />;
-    } else if (fileFormat.pdf.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-      return <AssetPdf src={path} />;
-    }
-  };
+  // const showAssets = () => {
+  //   if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+  //     return <AssetImg src={path} />;
+  //   } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+  //     return <AssetVideo src={path} />;
+  //   } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+  //     return <AssetAudio src={path} />;
+  //   } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+  //     return <AssetFile src={parsedData.source} />;
+  //   } else if (fileFormat.pdf.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
+  //     return <AssetPdf src={path} />;
+  //   }
+  // };
 
   return (
     <Box className={css.previewContainer}>
@@ -319,7 +313,8 @@ export function H5pPreview(props: H5pPreview) {
               <ContentH5p sub={H5pSub.view} value={parsedData.source} />
             )
           ) : (
-            showAssets()
+            // showAssets()
+            <AssetPreview resourceId={parsedData} isHideFileType={true} className={css.assetPreview} />
           )}
           {h5pArray.length > 1 && (
             <Box className={css.iconCon}>

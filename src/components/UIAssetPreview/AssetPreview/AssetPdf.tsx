@@ -3,8 +3,8 @@ import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
-    minHeight: "554px",
-    width: "80%",
+    height: "100%",
+    width: "90%",
   },
 }));
 
