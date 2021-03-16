@@ -719,13 +719,13 @@ export interface EntityGetHomeFunStudyResult {
   due_at?: number;
   id?: string;
   schedule_id?: string;
+  status?: string;
   student_id?: string;
   student_name?: string;
-  teacher_names?: string[];
-  teacher_ids?: string[];
-  title?: string;
-  status?: string;
   subject_name?: string;
+  teacher_ids?: string[];
+  teacher_names?: string[];
+  title?: string;
 }
 
 export interface EntityGetStudentPerformanceH5PReportResponse {
