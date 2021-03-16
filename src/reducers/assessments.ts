@@ -1,6 +1,6 @@
 import { cloneDeep } from "@apollo/client/utilities";
 import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import api, { gqlapi } from "../api";
+import api, { ExtendedRequestParams, gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
@@ -138,7 +138,7 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
     const hasPermissionOfHomefun =
       !!detail.teacher_ids?.includes(myUserId) && hasPermissionOfMe(PermissionType.edit_in_progress_assessment_439, meInfo.me);
     const content = d("A new version of the assignment has been submitted, please refresh").t("assess_msg_new_version");
-    if (detail.assess_feedback_id !== feedbacks[0]?.id) await dispatch(actAsyncConfirm({ content }));
+    if (detail.assess_feedback_id !== feedbacks[0]?.id) await dispatch(actAsyncConfirm({ content, hideCancel: true }));
     return { detail, feedbacks, hasPermissionOfHomefun };
   }
 );
@@ -151,7 +151,10 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
     const {
       assessment: { homefunFeedbacks },
     } = getState();
-    return api.homeFunStudies.assessHomeFunStudy(id, { ...params, assess_feedback_id: homefunFeedbacks[0]?.id });
+    const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content, hideCancel: true }));
+    return api.homeFunStudies.assessHomeFunStudy(id, { ...params, assess_feedback_id: homefunFeedbacks[0]?.id }, {
+      onError,
+    } as ExtendedRequestParams);
   }
 );
 
