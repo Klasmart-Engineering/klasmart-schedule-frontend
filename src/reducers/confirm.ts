@@ -14,7 +14,9 @@ export interface ConfirmRequest {
   type?: ConfirmDialogType;
   label?: string;
   confirmText?: string;
+  hideConfirm?: boolean;
   cancelText?: string;
+  hideCancel?: boolean;
   placeholder?: string;
   rules?: ControllerProps<"input">["rules"];
   defaultValue?: string;

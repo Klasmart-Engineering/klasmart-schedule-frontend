@@ -43,10 +43,20 @@ const REJECT_REASON_VALUES = () => [
 ];
 
 export function ConfirmDialog() {
-  const { open, title, content, type, label, confirmText, cancelText, rules, placeholder, defaultValue } = useSelector<
-    RootState,
-    RootState["confirm"]
-  >((state) => state.confirm);
+  const {
+    open,
+    title,
+    content,
+    type,
+    label,
+    confirmText,
+    cancelText,
+    rules,
+    placeholder,
+    defaultValue,
+    hideConfirm,
+    hideCancel,
+  } = useSelector<RootState, RootState["confirm"]>((state) => state.confirm);
   const dispatch = useDispatch();
   const { control, setError, errors, watch, handleSubmit } = useForm({
     mode: "onSubmit",
@@ -203,12 +213,16 @@ export function ConfirmDialog() {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCancel} color="primary" autoFocus>
-          {cancelText || d("Cancel").t("library_label_cancel")}
-        </Button>
-        <Button onClick={handleConfirm} color="primary" disabled={disableConfirm}>
-          {confirmText || d("OK").t("library_label_ok")}
-        </Button>
+        {!hideCancel && (
+          <Button onClick={handleCancel} color="primary" autoFocus>
+            {cancelText || d("Cancel").t("library_label_cancel")}
+          </Button>
+        )}
+        {!hideConfirm && (
+          <Button onClick={handleConfirm} color="primary" disabled={disableConfirm}>
+            {confirmText || d("OK").t("library_label_ok")}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
