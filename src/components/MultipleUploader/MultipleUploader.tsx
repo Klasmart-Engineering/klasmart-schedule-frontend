@@ -1,18 +1,19 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Batch, BatchItem, FileLike } from "@rpldy/shared";
-import { PreSendData, useBatchAddListener, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
+import { PreSendData, useBatchAddListener, useBatchFinishListener, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
 import { UPLOADER_EVENTS } from "@rpldy/uploader";
 import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
 import intersection from "lodash/intersection";
-import React, { forwardRef, ReactNode, useContext, useEffect, useMemo, useRef } from "react";
+import React, { forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../../api";
 import { AsyncTrunkReturned, getContentResourceUploadPath } from "../../reducers/content";
 import { SingleUploaderControl } from "../SingleUploader";
 
-interface MultipleUploaderControl extends Omit<SingleUploaderControl, "value"> {
+interface MultipleUploaderControl extends Omit<SingleUploaderControl, "value" | "item"> {
   value?: FileLikeWithId[];
   batch?: Batch;
+  item?: BatchItem;
 }
 
 interface BaseUploaderProps {
@@ -22,30 +23,29 @@ interface BaseUploaderProps {
 function BaseUploader(props: BaseUploaderProps) {
   const { value, render } = props;
   const uploady = useContext(UploadyContext);
+  const [isUploading, setIsUploading] = useState(false);
+  const [index, setIndex] = useState(0);
   // useBatchProgressListener 接口有问题，需要手动更新状态
   const batchRef = useRef<Batch>();
-  const uploadingItem = useItemProgressListener();
-  const index = batchRef.current?.items.findIndex((item) => item.id === uploadingItem.id) ?? 0;
+  const progressItem = useItemProgressListener();
+  const indexedItem = batchRef.current?.items[index];
+  const uploadingItem = indexedItem?.id === progressItem?.id ? progressItem : indexedItem;
   const batch = !batchRef.current
     ? undefined
+    : !uploadingItem || index === undefined
+    ? batchRef.current
     : {
         ...batchRef.current,
-        items: batchRef.current?.items
-          ?.slice(0, index)
-          .concat(uploadingItem)
-          .concat(batchRef.current?.items?.slice(index + 1)),
+        items: [uploadingItem].concat(batchRef.current?.items?.slice(index + 1)),
       };
-  batchRef.current = batch;
   const btnRef = useRef<HTMLButtonElement>(null);
-  const isUploading =
-    index === undefined || index === -1
-      ? false
-      : index === (batch?.items?.length ?? 1) - 1
-      ? uploadingItem?.completed > 0 && uploadingItem?.completed < 100
-      : true;
-  // console.log("isUploading, index, uploadingItem?.completed, uploadingItem = ", isUploading, index, uploadingItem?.completed, uploadingItem);
-  useBatchAddListener((batch) => {
+  useBatchAddListener((batch: Batch) => {
     batchRef.current = batch;
+    setIsUploading(true);
+    setIndex(0);
+  });
+  useBatchFinishListener(() => {
+    setIsUploading(false);
   });
   useEffect(() => {
     const handleClick = () => uploady.showFileUpload();
@@ -54,6 +54,17 @@ function BaseUploader(props: BaseUploaderProps) {
     return () => btn?.removeEventListener("click", handleClick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploady, btnRef.current]);
+  // useItemFinish 时序有问题，需要在 uploady 上绑定
+  useEffect(() => {
+    const handleItemFinish = (finishedItem: BatchItem) => {
+      const idx = batchRef.current?.items.findIndex((item) => item?.id === finishedItem?.id);
+      if (idx !== undefined && idx !== -1) setIndex(idx + 1);
+    };
+    uploady.on(UPLOADER_EVENTS.ITEM_FINISH, handleItemFinish);
+    return () => {
+      uploady.off(UPLOADER_EVENTS.ITEM_FINISH, handleItemFinish);
+    };
+  }, [uploady]);
   return <>{render({ uploady, batch, item: uploadingItem, btnRef, value, isUploading })}</>;
 }
 
@@ -97,11 +108,11 @@ export interface MultipleUploaderProps extends BaseUploaderProps, UploadyProps {
 export const MultipleUploader = forwardRef<HTMLDivElement, MultipleUploaderProps>((props, ref) => {
   const { value, onChange, render, partition, onError, maxAmount, maxSize, ...uploadyProps } = props;
   const dispatch = useDispatch();
-  const itemWithResourceIdsRef = useRef<BatchItemWithResourceId[]>([]);
+  const itemWithResourceIdMap = useRef<Record<string, BatchItemWithResourceId>>({});
   const listeners = useMemo(
     () => ({
       async [UPLOADER_EVENTS.BATCH_ADD](batch: Batch) {
-        itemWithResourceIdsRef.current = [];
+        itemWithResourceIdMap.current = {};
         const files = batch?.items?.map((item) => item.file) ?? [];
         if (maxAmount !== undefined && (value?.length ?? 0) + files.length > maxAmount) {
           onError && onError({ type: MultipleUploaderErrorType.MaxAmountError });
@@ -131,17 +142,15 @@ export const MultipleUploader = forwardRef<HTMLDivElement, MultipleUploaderProps
           >;
           const { path, resource_id } = payload;
           const extendedItem = { ...items[0], resourceId: resource_id };
-          itemWithResourceIdsRef.current.push(extendedItem);
+          itemWithResourceIdMap.current[extendedItem.id] = extendedItem;
           return { options: { destination: { url: path } }, items: [extendedItem, ...items.slice(1)] };
         } catch (err) {
           return false;
         }
       },
-      [UPLOADER_EVENTS.BATCH_FINISH](batch: Batch) {
-        // console.log("BATCH_FINISH = ", batch);
-        // const targetItem = itemWithResourceIdsRef.current.find(item => item.id === finishedItem.id);
-        const itemWithIds = itemWithResourceIdsRef.current.map((item) => ({ id: item.resourceId, name: item.file.name }));
-        if (onChange) onChange(value?.concat(itemWithIds));
+      [UPLOADER_EVENTS.ITEM_FINISH](item: BatchItem) {
+        const extendedItem = itemWithResourceIdMap.current[item.id];
+        if (onChange) onChange(value?.concat({ id: extendedItem.id, name: extendedItem.file.name }));
       },
     }),
     [maxAmount, value, maxSize, onError, dispatch, partition, onChange]
