@@ -25,7 +25,7 @@ import {
   SvgIconComponent,
 } from "@material-ui/icons";
 import React, { createElement } from "react";
-import { Controller, UseFormMethods } from "_react-hook-form@6.11.5@react-hook-form";
+import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";

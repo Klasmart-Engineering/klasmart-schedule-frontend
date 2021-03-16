@@ -16,6 +16,7 @@ import ContentEdit from "./pages/ContentEdit/index";
 import ContentPreview from "./pages/ContentPreview";
 import { H5pDemo } from "./pages/H5pDemo";
 import { H5pEditor } from "./pages/H5pEditor";
+import { HomeFunAssessmentList } from "./pages/HomeFunAssessmentList";
 import Live from "./pages/Live";
 import MyContentList from "./pages/MyContentList/index";
 import { default as CreateOutcome, default as CreateOutcomings } from "./pages/OutcomeEdit";
@@ -60,6 +61,9 @@ function App() {
                   </Route>
                   <Route path={AssessmentList.routeBasePath}>
                     <AssessmentList />
+                  </Route>
+                  <Route path={HomeFunAssessmentList.routeBasePath}>
+                    <HomeFunAssessmentList />
                   </Route>
                   <Route path={Schedule.routeMatchPath}>
                     <Schedule />

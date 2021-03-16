@@ -143,3 +143,16 @@ export enum FolderFileTyoe {
 }
 
 export type ContentTypeList = AsyncReturnType<typeof apiGetContentTypeList>;
+
+export enum HomeFunAssessmentOrderBy {
+  latest_feedback_at = "latest_feedback_at",
+  _latest_feedback_at = "-latest_feedback_at",
+  complete_at = "complete_at",
+  _complete_at = "-complete_at",
+}
+
+export enum HomeFunAssessmentStatus {
+  all = "all",
+  in_progress = "in_progress",
+  complete = "complete",
+}

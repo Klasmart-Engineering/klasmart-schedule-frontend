@@ -2,7 +2,12 @@ import { cloneDeep } from "@apollo/client/utilities";
 import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
-import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../api/api.auto";
+import {
+  EntityAssessHomeFunStudyArgs,
+  EntityGetHomeFunStudyResult,
+  EntityListHomeFunStudiesResultItem,
+  EntityScheduleFeedbackView,
+} from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -20,6 +25,7 @@ export interface IAssessmentState {
   homefunDetail: EntityGetHomeFunStudyResult;
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
+  homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
 }
 
 interface RootState {
@@ -29,6 +35,7 @@ interface RootState {
 const initialState: IAssessmentState = {
   total: 0,
   assessmentList: [],
+  homeFunAssessmentList: [],
   assessmentDetail: {
     id: "",
     title: "",
@@ -77,6 +84,16 @@ export const actAssessmentList = createAsyncThunk<ListAssessmentResult, IQueryAs
   "assessments/assessmentList",
   async ({ metaLoading, ...query }) => {
     const { items, total } = await api.assessments.listAssessment(query);
+    return { items, total };
+  }
+);
+
+type IQueryHomeFunAssessmentListParams = Parameters<typeof api.homeFunStudies.listHomeFunStudies>[0] & LoadingMetaPayload;
+type IQueryHomeFunAssessmentListResult = AsyncReturnType<typeof api.homeFunStudies.listHomeFunStudies>;
+export const actHomeFunAssessmentList = createAsyncThunk<IQueryHomeFunAssessmentListResult, IQueryHomeFunAssessmentListParams>(
+  "homeFunStudies/actHomeFunAssessmentList",
+  async ({ metaLoading, ...query }) => {
+    const { items, total } = await api.homeFunStudies.listHomeFunStudies(query);
     return { items, total };
   }
 );

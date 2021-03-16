@@ -8,7 +8,7 @@ import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { d, reportMiss } from "../../locale/LocaleManager";
-import { AssessmentQueryCondition, AssessmentQueryConditionBaseProps } from "./types";
+import { HomeFunAssessmentQueryCondition, HomeFunAssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,13 +93,13 @@ const menuItemList = (list: options[]) =>
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<AssessmentQueryCondition["teacher_name"]>();
+  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
-      searchText ? (draft.teacher_name = searchText) : delete draft.teacher_name;
+      searchText ? (draft.query = searchText) : delete draft.query;
     });
     onChange({ ...newValue, page: 1 });
   };
@@ -133,16 +133,16 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   );
 }
 
-export interface SecondSearchHeaderProps extends AssessmentQueryConditionBaseProps {
+export interface SecondSearchHeaderProps extends HomeFunAssessmentQueryConditionBaseProps {
   onChangeAssessmentType: (assessmentType: AssessmentType) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssessmentType } = props;
-  const [searchText, setSearchText] = useState<AssessmentQueryCondition["teacher_name"]>();
+  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
-      searchText ? (draft.teacher_name = searchText) : delete draft.teacher_name;
+      searchText ? (draft.query = searchText) : delete draft.query;
     });
     onChange({ ...newValue, page: 1 });
   };
@@ -167,7 +167,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={d("Search").t("assess_label_search")}
-                defaultValue={value.teacher_name}
+                defaultValue={value.query}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("assess_label_search")}
@@ -177,7 +177,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 size="small"
                 onChange={handleChangeAssessmentType}
                 // label={d("Content Type").t("library")}
-                defaultValue={AssessmentType.classLive}
+                defaultValue={AssessmentType.homeFun}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
