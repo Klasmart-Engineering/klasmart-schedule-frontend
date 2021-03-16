@@ -17,8 +17,7 @@ import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { d, reportMiss } from "../../locale/LocaleManager";
-
+import { d } from "../../locale/LocaleManager";
 const useStyles = makeStyles(({ breakpoints }) => ({
   searchField: {
     flexGrow: 1,
@@ -40,7 +39,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     [breakpoints.down(1690)]: {
       marginRight: 10,
     },
-
     [breakpoints.down("md")]: {
       marginRight: 100,
     },
@@ -90,7 +88,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     boxSizing: "border-box",
   },
 }));
-
 export interface SearchItems {
   value?: string;
   exactSerch?: string;
@@ -102,7 +99,6 @@ export interface SearchcmsListProps extends SearchItems {
   lesson?: string;
   onSearch: (query: SearchItems) => any;
 }
-
 export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
   const { searchType, lesson, onSearch, exactSerch = "all", value, assumed, isShare } = props;
@@ -110,9 +106,11 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   const handleClickSearch = useCallback(() => {
     onSearch(getValues());
   }, [getValues, onSearch]);
+
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
+
   return (
     <Box>
       <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
@@ -204,7 +202,12 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search style={{ cursor: "pointer" }} onClick={handleClickSearch} />
+                  <Search
+                    style={{
+                      cursor: "pointer",
+                    }}
+                    onClick={handleClickSearch}
+                  />
                 </InputAdornment>
               ),
             }}
@@ -252,12 +255,12 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                   <FormControlLabel
                     value="org"
                     control={<Radio size="small" color="primary" />}
-                    label={<Typography variant="body2">{reportMiss("Org", "library_label_org")}</Typography>}
+                    label={<Typography variant="body2">{d("Org").t("library_label_org")}</Typography>}
                   />
                   <FormControlLabel
                     value="badanamu"
                     control={<Radio size="small" color="primary" />}
-                    label={<Typography variant="body2">{reportMiss("Badanamu", "library_label_Badanamu")}</Typography>}
+                    label={<Typography variant="body2">{d("Badanamu").t("library_label_badanamu")}</Typography>}
                   />
                 </RadioGroup>
               )}
@@ -283,12 +286,12 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                 <FormControlLabel
                   value="org"
                   control={<Radio size="small" color="primary" />}
-                  label={<Typography variant="body2">{reportMiss("Org", "library_label_org")}</Typography>}
+                  label={<Typography variant="body2">{d("Org").t("library_label_org")}</Typography>}
                 />
                 <FormControlLabel
                   value="badanamu"
                   control={<Radio size="small" color="primary" />}
-                  label={<Typography variant="body2">{reportMiss("Badanamu", "library_label_Badanamu")}</Typography>}
+                  label={<Typography variant="body2">{d("Badanamu").t("library_label_badanamu")}</Typography>}
                 />
               </RadioGroup>
             )}

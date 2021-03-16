@@ -9,7 +9,7 @@ const g = chalk.bold.green;
 
 const localeSpreadSheets = {
   key: '1hNmEwxyOkBvpICyFeRjJRzjXtwMQx_lvwFfzPQELjVA',
-  gids: ['0', '1481075788', '1270100120', '2004441755', '1280969073', '109007851'],
+  gids: ['0', '1481075788', '1270100120', '2004441755', '1280969073', '109007851', "24833723"],
 }
 
 const missSpreadSheet = {

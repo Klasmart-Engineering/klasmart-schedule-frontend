@@ -9,9 +9,8 @@ import React from "react";
 import { apiIsEnableReport } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -73,7 +72,6 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-
 export enum Category {
   archived = "archived",
   learningOutcomes = "learningOutcomes",
@@ -86,7 +84,9 @@ export interface FirstSearchHeaderProps {
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();
   const { value, onChange } = props;
+
   const createHandleClick = (category: Category) => () => onChange(category);
+
   const isEnableReport = apiIsEnableReport();
   return (
     <div className={css.root}>
@@ -101,7 +101,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                   <Grid container direction="row" justify="flex-end" alignItems="center" item md={9} lg={7} xl={5}>
                     <Button
                       onClick={createHandleClick(Category.archived)}
-                      className={clsx(css.nav, { [css.actives]: value === Category.archived })}
+                      className={clsx(css.nav, {
+                        [css.actives]: value === Category.archived,
+                      })}
                       startIcon={value === Category.archived ? <SaBlueIcon /> : <SaIcon />}
                     >
                       {d("Student Achievement").t("report_label_student_achievement")}
@@ -109,7 +111,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                     {true && (
                       <Button
                         onClick={createHandleClick(Category.learningOutcomes)}
-                        className={clsx(css.nav, { [css.actives]: value === Category.learningOutcomes })}
+                        className={clsx(css.nav, {
+                          [css.actives]: value === Category.learningOutcomes,
+                        })}
                         startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
                       >
                         {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
@@ -118,10 +122,12 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                     {isEnableReport && (
                       <Button
                         onClick={createHandleClick(Category.studentPerformance)}
-                        className={clsx(css.nav, { [css.actives]: value === Category.studentPerformance })}
+                        className={clsx(css.nav, {
+                          [css.actives]: value === Category.studentPerformance,
+                        })}
                         startIcon={<ShowChartIcon />}
                       >
-                        {reportMiss("Student Performance", "report_label_student_performance")}
+                        {d("Student Performance").t("report_label_student_performance")}
                       </Button>
                     )}
                   </Grid>
@@ -134,13 +140,14 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
     </div>
   );
 }
-
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+
   const handleChange = (event: React.ChangeEvent<{}>, category: Category) => {
     onChange(category);
   };
+
   const isEnableReport = apiIsEnableReport();
   return (
     <div className={classes.root}>
@@ -175,7 +182,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                       {isEnableReport && (
                         <Tab
                           value={Category.studentPerformance}
-                          label={reportMiss("Student Performance", "report_label_student_performance")}
+                          label={d("Student Performance").t("report_label_student_performance")}
                           className={classes.capitalize}
                         />
                       )}

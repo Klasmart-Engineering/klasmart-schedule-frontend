@@ -3,14 +3,12 @@ import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { ContentTypeList } from "../../api/type";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { MockData } from "./types/index";
-
 const useStyles = makeStyles((theme) => ({
   header_container: {
     borderBottom: "1px solid #eee",
-    paddingBottom: "20px",
-    // paddingLeft: "20px",
+    paddingBottom: "20px", // paddingLeft: "20px",
     // paddingRight: "10px",
   },
   selectButton: {
@@ -39,8 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   activeLink: {
     textDecoration: "underline",
-    border: "1px solid #1a93f4",
-    // fontWeight: 700,
+    border: "1px solid #1a93f4", // fontWeight: 700,
   },
   searchBox: {
     width: "100%",
@@ -89,17 +86,14 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateY(-50%)",
   },
 }));
-
 interface H5pHeaderProps {
   contentTypeList: (ContentTypeList[0] | MockData)[];
   sortList: (type: string) => void;
   searchChange: (value: string) => void;
 }
-
 export default function H5pHeader(props: H5pHeaderProps) {
   const { contentTypeList, sortList, searchChange } = props;
   const [activeOption, setActiveOption] = React.useState("");
-
   const css = useStyles();
 
   const handleSelect = (type: string) => {
@@ -109,11 +103,19 @@ export default function H5pHeader(props: H5pHeaderProps) {
 
   return (
     <div className={css.header_container}>
-      <Grid container style={{ width: "100%" }} className={css.back_searchBox}>
+      <Grid
+        container
+        style={{
+          width: "100%",
+        }}
+        className={css.back_searchBox}
+      >
         <Paper className={css.searchBox}>
           <InputBase
-            placeholder={reportMiss("Search for Content Types", "h5p_content_types")}
-            inputProps={{ "aria-label": "search for Content Types" }}
+            placeholder={d("Search for Content Types").t("h5p_label_content_types")}
+            inputProps={{
+              "aria-label": "search for Content Types",
+            }}
             className={css.searchInput}
             onChange={(e) => searchChange(e.target.value)}
           />
@@ -124,22 +126,22 @@ export default function H5pHeader(props: H5pHeaderProps) {
       </Grid>
       <Grid container alignItems="center" className={css.all_content_types}>
         <Grid item>
-          <Typography variant="h6">{reportMiss("All Content Types", "h5p_all_content_types")}</Typography>
+          <Typography variant="h6">{d("All Content Types").t("h5p_label_all_content_types")}</Typography>
         </Grid>
         <Grid item>
-          ({contentTypeList && contentTypeList.length} {reportMiss("results", "h5p_results")})
+          ({contentTypeList && contentTypeList.length} {d("Results").t("h5p_label_results")})
         </Grid>
       </Grid>
       <Grid container spacing={5} alignItems="center" className={css.box_selected}>
         <Grid item xs={2} sm={2} md={2} lg={2} xl={2} className={css.firstChild}>
-          {reportMiss("show", "h5p_show")}:{" "}
+          {d("Show").t("h5p_label_show")}:{" "}
         </Grid>
         <Grid item xs={4} sm={3} md={3} lg={3} xl={3}>
           <Button
             className={clsx(css.selectButton, activeOption === "popularFirst" ? css.activeLink : "")}
             onClick={() => handleSelect("popularFirst")}
           >
-            {reportMiss("Popular First", "h5p_popular_first")}
+            {d("Popular First").t("h5p_label_popular_first")}
           </Button>
         </Grid>
         <Grid item xs={4} sm={3} md={3} lg={3} xl={3}>
@@ -147,12 +149,12 @@ export default function H5pHeader(props: H5pHeaderProps) {
             className={clsx(css.selectButton, activeOption === "NewestFirst" ? css.activeLink : "")}
             onClick={() => handleSelect("NewestFirst")}
           >
-            {reportMiss("Newest First", "h5p_newest_first")}
+            {d("Newest First").t("h5p_label_newest_first")}
           </Button>
         </Grid>
         <Grid item xs={2} sm={3} md={3} lg={3} xl={3}>
           <Button className={clsx(css.selectButton, activeOption === "aToZ" ? css.activeLink : "")} onClick={() => handleSelect("aToZ")}>
-            {reportMiss("A to Z", "h5p_a_to_z")}
+            {d("A to Z").t("h5p_label_a_to_z")}
           </Button>
         </Grid>
       </Grid>

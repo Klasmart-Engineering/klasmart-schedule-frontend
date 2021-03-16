@@ -1,7 +1,7 @@
 import { Box, createStyles, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 const useStyles = makeStyles(() =>
   createStyles({
     colorPart: {
@@ -41,7 +41,6 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-
 export function LegendTip() {
   const css = useStyles();
   return (
@@ -65,7 +64,6 @@ export function LegendTip() {
     </>
   );
 }
-
 export function LegendTip2() {
   const css = useStyles();
   return (
@@ -73,11 +71,11 @@ export function LegendTip2() {
       <div className={clsx(css.rightContainer, css.container)}>
         <Box className={clsx(css.rightContainer)}>
           <div className={clsx(css.colorPart, css.deepBlue)}></div>
-          <span>{reportMiss("Total duration", "label_report_total_duration")}</span>
+          <span>{d("Total Duration").t("report_label_total_duration")}</span>
         </Box>
         <Box className={clsx(css.rightContainer)}>
           <div className={clsx(css.colorPart, css.green)}></div>
-          <span>{reportMiss("Avg duration", "label_report_avg_duration")}</span>
+          <span>{d("Avg Duration").t("report_label_avg_duration")}</span>
         </Box>
       </div>
     </>
