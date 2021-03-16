@@ -1,15 +1,15 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { EntityAssessHomeFunStudyArgs, EntityOutcomeAttendanceMap } from "../../api/api.auto";
-import { AssessmentStatus, UpdateAssessmentRequestData } from "../../api/type";
+import { EntityAssessHomeFunStudyArgs } from "../../api/api.auto";
+import { AssessmentStatus, AssessmentUpdateAction } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
-import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, onLoadHomefunDetail, updateAssessment } from "../../reducers/assessments";
-import { actSuccess, actWarning } from "../../reducers/notify";
+import { AppDispatch, RootState } from "../../reducers";
+import { onLoadHomefunDetail, updateHomefun, UpdateHomefunAction, UpdateHomefunParams } from "../../reducers/assessments";
+import { actSuccess } from "../../reducers/notify";
 import { AssessmentHeader } from "../AssessmentEdit/AssessmentHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import { Assignment } from "./Assignment";
@@ -25,7 +25,7 @@ const useQuery = () => {
 
 function AssessmentsHomefunEditIner() {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { id, editindex } = useQuery();
   const { homefunDetail, homefunFeedbacks, hasPermissionOfHomefun } = useSelector<RootState, RootState["assessments"]>(
     (state) => state.assessments
@@ -34,46 +34,16 @@ function AssessmentsHomefunEditIner() {
   const formMethods = useForm<EntityAssessHomeFunStudyArgs>();
   const { handleSubmit } = formMethods;
   const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
-  const handleAssessmentSave = useMemo(
-    () =>
+  const handleAssessmentSaveOrComplete = useMemo(
+    () => (action: AssessmentUpdateAction, message: string) =>
       handleSubmit(async (value) => {
-        if (id) {
-          const data: UpdateAssessmentRequestData = { ...value, action: "save" };
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
-            AsyncTrunkReturned<typeof updateAssessment>
-          >;
-          if (payload) {
-            dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
-            history.replace({
-              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-            });
-          }
-        }
-      }),
-    [handleSubmit, id, dispatch, history, editindex]
-  );
-  const handleAssessmentComplete = useMemo(
-    () =>
-      handleSubmit(async (value) => {
-        if (id) {
-          const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
-          const errorlist: EntityOutcomeAttendanceMap[] | undefined =
-            data.outcome_attendance_maps &&
-            data.outcome_attendance_maps.filter(
-              (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
-            );
-          if (data.action === "complete" && errorlist && errorlist.length > 0)
-            return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
-            AsyncTrunkReturned<typeof updateAssessment>
-          >;
-          if (payload) {
-            dispatch(actSuccess(d("Complete Successfully.").t("assess_msg_compete_successfully")));
-            history.replace({
-              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-            });
-          }
-        }
+        if (!id) return;
+        const data: UpdateHomefunParams = { ...value, id, action };
+        await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
+        dispatch(actSuccess(message));
+        history.replace({
+          search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
+        });
       }),
     [handleSubmit, id, dispatch, history, editindex]
   );
@@ -88,9 +58,12 @@ function AssessmentsHomefunEditIner() {
     <>
       <AssessmentHeader
         name={d("Assessment Details").t("assess_assessment_details")}
-        onSave={handleAssessmentSave}
+        onSave={handleAssessmentSaveOrComplete(AssessmentUpdateAction.save, d("Save Successfully.").t("assess_msg_save_successfully"))}
+        onComplete={handleAssessmentSaveOrComplete(
+          AssessmentUpdateAction.complete,
+          d("Complete Successfully.").t("assess_msg_compete_successfully")
+        )}
         onBack={handleGoBack}
-        onComplete={handleAssessmentComplete}
         editable={editable}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>

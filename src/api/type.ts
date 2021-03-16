@@ -80,6 +80,11 @@ export enum AssessmentStatus {
   complete = "complete",
 }
 
+export enum AssessmentUpdateAction {
+  save = "save",
+  complete = "complete",
+}
+
 export enum AssessmentOrderBy {
   class_end_time = "class_end_time",
   _class_end_time = "-class_end_time",
