@@ -110,7 +110,7 @@ export const isUnpublish = (value: QueryCondition): boolean => {
 export interface FirstSearchHeaderProps extends QueryConditionBaseProps {
   onChangeAssets: (contentType: string, scope: string) => any;
   onCreateContent: () => any;
-  onNewFolder: () => any;
+  onNewFolder: LButtonProps["onClick"];
 }
 export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const css = useStyles();

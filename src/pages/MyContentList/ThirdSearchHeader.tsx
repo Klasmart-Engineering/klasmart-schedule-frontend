@@ -265,7 +265,6 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
   onBulkDelete: (type: Action) => any;
   onBulkMove: () => any;
-  onAddFolder: () => any;
   actionObj: { folder: boolean; notFolder: boolean; bothHave: boolean } | undefined;
   onBulkDeleteFolder: () => any;
   onBulkApprove: () => any;

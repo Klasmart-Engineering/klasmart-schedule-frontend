@@ -411,7 +411,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const contentNameValue = exect_search === ExectSearch.name ? name : "";
     const isExectSearch = exect_search === ExectSearch.name;
     const parent_id = path?.split("/").pop();
-    if (parent_id && page === 1) dispatch(getFolderItemById(parent_id));
+    if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
     const params = {
@@ -687,6 +687,36 @@ export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRen
       .then(unwrapResult)
       .then(unwrapConfirm);
     return "";
+  }
+);
+
+type IQueryAddFolderParams1 = { content_type?: string; parent_id: string; name: string; remark: string; keywords: string };
+type IQueryAddFolderResult1 = AsyncReturnType<typeof api.folders.createFolder>;
+export const addFolder1 = createAsyncThunk<IQueryAddFolderResult1, IQueryAddFolderParams1>(
+  "content/addFolder",
+  async ({ content_type, parent_id, name, remark, keywords }, { dispatch }) => {
+    const partition =
+      content_type === SearchContentsRequestContentType.assetsandfolder ? FolderPartition.assets : FolderPartition.plansAndMaterials;
+    return api.folders.createFolder({ name, remark, keywords, owner_type: 1, parent_id, partition });
+    // .then(() => true)
+    // .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
+  }
+);
+
+type IQueryRenameFolderParams1 = {
+  item_id: Parameters<typeof api.folders.updateFolderItem>[0];
+  // defaultName: string;
+  name: string;
+  remark: string;
+  keywords: string;
+};
+type IQueryRenameFolderResult1 = AsyncReturnType<typeof api.folders.updateFolderItem>;
+export const renameFolder1 = createAsyncThunk<IQueryRenameFolderResult1, IQueryRenameFolderParams1>(
+  "content/renameFolder",
+  async ({ item_id, name, remark, keywords }, { dispatch }) => {
+    return api.folders.updateFolderItem(item_id, { name, remark, keywords });
+    // .then(() => true)
+    // .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
   }
 );
 

@@ -15,7 +15,7 @@ import { excludeFolderOfTree } from "../../models/ModelFolderTree";
 import { excludeMyOrg, orgs2id } from "../../models/ModelOrgProperty";
 import { AppDispatch, RootState } from "../../reducers";
 import {
-  addFolder,
+  addFolder1,
   approveContent,
   bulkApprove,
   bulkDeleteContent,
@@ -29,7 +29,7 @@ import {
   onLoadContentList,
   publishContent,
   rejectContent,
-  renameFolder,
+  renameFolder1,
   searchOrgFolderItems,
   setUserSetting,
   shareFolders,
@@ -39,7 +39,7 @@ import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { FolderForm, useFolderForm } from "./folderForm";
+import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
@@ -112,7 +112,7 @@ export default function MyContentList() {
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const conditionFormMethods = useForm<ContentListForm>();
-  const { watch, reset, getValues } = conditionFormMethods;
+  const { watch, reset, getValues, handleSubmit } = conditionFormMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
     RootState,
@@ -135,6 +135,8 @@ export default function MyContentList() {
     setShareFolder,
   } = useOrganizationList<OrgInfoProps[]>();
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
+  const [folderForm, setFolderForm] = useState<EntityFolderContent>();
+  const [parentId, setParentId] = useState<string>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -223,18 +225,19 @@ export default function MyContentList() {
     }
   };
 
-  const handleRenameFolder: ContentCardListProps["onRenameFolder"] = (content) => {
-    return refreshWithDispatch(
-      dispatch(renameFolder({ item_id: content?.id as string, defaultName: content?.name as string })).then(unwrapResult)
-    );
+  const handleClickRenameFolder = (content: EntityFolderContent) => {
+    setFolderForm(content);
+    openFolderForm();
   };
   const handleAddFolder: FolderTreeProps["onAddFolder"] = async (parent_id) => {
-    await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
-    await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
-  };
-  const handlePageAddFolder = async () => {
-    // const parent_id = (condition.path || "").split("/").pop() || "";
+    setParentId(parent_id);
+    setFolderForm({});
+    openFolderForm();
     // await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
+    // await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
+  };
+  const handleClickAddFolderBtn: ContentCardListProps["onRenameFolder"] = async () => {
+    setFolderForm({});
     openFolderForm();
   };
   const handleDeleteFolder: ContentCardListProps["onDeleteFolder"] = (id) => {
@@ -293,7 +296,34 @@ export default function MyContentList() {
     await dispatch(shareFolders({ shareFolder: shareFolder, org_ids: org_ids, metaLoading: true }));
     closeOrganizationList();
   };
-  const handleSubmitFolderForm = () => {};
+  const handleAddFolderFormItem = useMemo(
+    () =>
+      handleSubmit(async (value: ContentListForm) => {
+        const { FOLDER_NAME: name, REMARK: remark, KEYWORDS: keywords } = value;
+        const parent_id = (condition.path || "").split("/").pop() || "";
+        await refreshWithDispatch(
+          dispatch(
+            addFolder1({ content_type: condition.content_type, parent_id: parentId ? parentId : parent_id, name, remark, keywords })
+          ).then(unwrapResult)
+        );
+        if (parentId) {
+          await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
+        }
+        closeFolderForm();
+      }),
+    [closeFolderForm, condition.content_type, condition.path, dispatch, handleSubmit, parentId, refreshWithDispatch]
+  );
+  const handleRenameFolderItem = useMemo(
+    () =>
+      handleSubmit(async (value: ContentListForm) => {
+        const { FOLDER_NAME: name, REMARK: remark, KEYWORDS: keywords } = value;
+        await refreshWithDispatch(
+          dispatch(renameFolder1({ item_id: folderForm?.id as string, name, remark, keywords })).then(unwrapResult)
+        );
+        closeFolderForm();
+      }),
+    [closeFolderForm, dispatch, folderForm, handleSubmit, refreshWithDispatch]
+  );
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {
       const page = 1;
@@ -326,7 +356,7 @@ export default function MyContentList() {
           onChange={handleChangeTab}
           onChangeAssets={handleChangeAssets}
           onCreateContent={handleCreateContent}
-          onNewFolder={handlePageAddFolder}
+          onNewFolder={handleClickAddFolderBtn}
         />
       )}
       {!condition.program_group && (
@@ -335,7 +365,7 @@ export default function MyContentList() {
           onChange={handleChangeTab}
           onChangeAssets={handleChangeAssets}
           onCreateContent={handleCreateContent}
-          onNewFolder={handlePageAddFolder}
+          onNewFolder={handleClickAddFolderBtn}
         />
       )}
       <SecondSearchHeader
@@ -343,21 +373,20 @@ export default function MyContentList() {
         onChange={handleChange}
         onCreateContent={handleCreateContent}
         conditionFormMethods={conditionFormMethods}
-        onNewFolder={handlePageAddFolder}
+        onNewFolder={handleClickAddFolderBtn}
       />
       <SecondSearchHeaderMb
         value={condition}
         onChange={handleChange}
         onCreateContent={handleCreateContent}
         conditionFormMethods={conditionFormMethods}
-        onNewFolder={handlePageAddFolder}
+        onNewFolder={handleClickAddFolderBtn}
       />
       <ThirdSearchHeader
         value={condition}
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={() => handlePageAddFolder()}
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
         onBulkDeleteFolder={handleBulkDeleteFolder}
@@ -373,7 +402,6 @@ export default function MyContentList() {
         onChange={handleChange}
         onBulkPublish={handleBulkPublish}
         onBulkDelete={handleBulkDelete}
-        onAddFolder={() => handlePageAddFolder()}
         onBulkMove={handleClickBulkMove}
         actionObj={actionObj}
         onBulkDeleteFolder={handleBulkDeleteFolder}
@@ -408,7 +436,7 @@ export default function MyContentList() {
                 onPublish={handlePublish}
                 onDelete={handleDelete}
                 onClickMoveBtn={handleClickMoveBtn}
-                onRenameFolder={handleRenameFolder}
+                onRenameFolder={handleClickRenameFolder}
                 onDeleteFolder={handleDeleteFolder}
                 onGoBack={handleGoback}
                 parentFolderInfo={parentFolderInfo}
@@ -420,7 +448,7 @@ export default function MyContentList() {
               (condition.publish_status === PublishStatus.published ||
                 condition.content_type === SearchContentsRequestContentType.assetsandfolder) ? (
               <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-                <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} />
+                <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} onRenameFolder={handleClickRenameFolder} />
               </LayoutBox>
             ) : (
               emptyTip
@@ -448,7 +476,14 @@ export default function MyContentList() {
         key={organizationListShowIndex}
         orgProperty={orgProperty}
       />
-      <FolderForm onClose={closeFolderForm} open={folderFormActive} onAddFolder={handleSubmitFolderForm} />
+      <FolderForm
+        onClose={closeFolderForm}
+        open={folderFormActive}
+        onAddFolder={handleAddFolderFormItem}
+        onRenameFolder={handleRenameFolderItem}
+        folderForm={folderForm}
+        formMethods={conditionFormMethods}
+      />
     </div>
   );
 }

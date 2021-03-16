@@ -1,5 +1,5 @@
 import api from "../../../api";
-import { ApiContentBulkOperateRequest } from "../../../api/api.auto";
+import { ApiContentBulkOperateRequest, EntityCreateFolderRequest } from "../../../api/api.auto";
 
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
@@ -16,12 +16,18 @@ export enum ContentListFormKey {
   CHECKED_CONTENT_IDS = "CHECKED_CONTENT_IDS",
   SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY",
   EXECT_SEARCH = "EXECT_SEARCH",
+  FOLDER_NAME = "FOLDER_NAME",
+  REMARK = "REMARK",
+  KEYWORDS = "KEYWORDS",
 }
 
 export interface ContentListForm {
   [ContentListFormKey.CHECKED_CONTENT_IDS]: NonNullable<ApiContentBulkOperateRequest["id"]>;
   [ContentListFormKey.SEARCH_TEXT_KEY]: string;
   [ContentListFormKey.EXECT_SEARCH]: string;
+  [ContentListFormKey.FOLDER_NAME]: NonNullable<EntityCreateFolderRequest["name"]>;
+  [ContentListFormKey.REMARK]: NonNullable<EntityCreateFolderRequest["remark"]>;
+  [ContentListFormKey.KEYWORDS]: NonNullable<EntityCreateFolderRequest["keywords"]>;
 }
 
 export enum PublishScope {

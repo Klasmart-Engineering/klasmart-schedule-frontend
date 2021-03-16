@@ -592,6 +592,8 @@ export interface EntityCreateFolderRequest {
   parent_id?: string;
   partition?: string;
   thumbnail?: string;
+  remark?: string;
+  keywords?: string;
 }
 
 export interface EntityCreateH5PEventRequest {
@@ -634,6 +636,7 @@ export interface EntityFolderContent {
   publish_status?: string;
   thumbnail?: string;
   update_at?: number;
+  remark?: string;
 }
 
 export interface EntityFolderContentInfoWithDetailsResponse {
@@ -686,6 +689,8 @@ export interface EntityFolderItemInfo {
   partition?: string;
   thumbnail?: string;
   update_at?: number;
+  keywords?: string;
+  remark?: string;
 }
 
 export interface EntityFolderShareRecord {
@@ -1168,6 +1173,8 @@ export interface EntityUpdateFolderRequest {
   keywords?: string[];
   name?: string;
   thumbnail?: string;
+  remark?: string;
+  keywords?: string;
 }
 
 export interface EntityUserSettingJsonContent {

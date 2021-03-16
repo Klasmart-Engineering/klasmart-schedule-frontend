@@ -1,7 +1,20 @@
-import { Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField } from "@material-ui/core";
+import {
+  Button,
+  createStyles,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  makeStyles,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import React, { useMemo, useState } from "react";
-import { LButton } from "../../components/LButton";
-import { d } from "../../locale/LocaleManager";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { EntityFolderContent } from "../../api/api.auto";
+import { LButton, LButtonProps } from "../../components/LButton";
+import { d, reportMiss } from "../../locale/LocaleManager";
+import { ContentListForm, ContentListFormKey } from "./types";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -12,38 +25,119 @@ const useStyles = makeStyles((theme) =>
       width: "100%",
       padding: "16px 22px",
       display: "flex",
+      justifyContent: "flex-end",
     },
     okBtn: {
       marginLeft: 40,
     },
+    dialogContent: {
+      textAlign: "center",
+      borderBottom: 0,
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      margin: "auto",
+      width: "90%",
+    },
+    inputCon: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      marginBottom: 30,
+    },
+    typography: {
+      flex: 1,
+      marginRight: 30,
+      textAlign: "right",
+    },
+    textField: {
+      width: "75%",
+      flex: 3,
+    },
+    star: {
+      color: "#d32f2f",
+      position: "absolute",
+      left: "25%",
+      fontSize: 24,
+    },
   })
 );
-
+// const FOLDER_NAME = "FOLDER_NAME";
+const REMARK = "REMARK";
+const KEYWORDS = "KEYWORDS";
 export interface FolderFormProps {
   open: boolean;
   onClose: () => any;
-  onAddFolder: () => any;
+  onAddFolder: LButtonProps["onClick"];
+  onRenameFolder: LButtonProps["onClick"];
+  folderForm?: EntityFolderContent;
+  formMethods: UseFormMethods<ContentListForm>;
 }
 export function FolderForm(props: FolderFormProps) {
   const css = useStyles();
-  const { open, onClose, onAddFolder } = props;
+  const { open, onClose, onAddFolder, onRenameFolder, folderForm, formMethods } = props;
+  const { control, errors } = formMethods;
   return (
-    <Dialog open={open}>
-      <DialogTitle>{d("New Folder").t("library_label_new_folder")}</DialogTitle>
-      <DialogContent dividers>
-        <form noValidate autoComplete="off">
-          <TextField id="standard-basic" label="Standard" />
-          <TextField id="filled-basic" label="Filled" variant="filled" />
-          <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-        </form>
+    <Dialog open={open} fullWidth={true} className={css.dialog}>
+      <DialogTitle>
+        {folderForm?.name ? reportMiss("Edit Folder", "library_label_edit_folder") : d("New Folder").t("library_label_new_folder")}
+      </DialogTitle>
+      <DialogContent dividers className={css.dialogContent}>
+        <div className={css.form}>
+          <div className={css.inputCon} style={{ position: "relative" }}>
+            <Typography className={css.typography}>{d("Folder Name").t("library_label_folder_name")}</Typography>
+            <Typography className={css.star}>*</Typography>
+            <Controller
+              name={ContentListFormKey.FOLDER_NAME}
+              control={control}
+              as={TextField}
+              defaultValue={folderForm?.name || ""}
+              className={css.textField}
+              required
+              rules={{
+                required: true,
+              }}
+              error={errors.FOLDER_NAME ? true : false}
+              fullWidth
+              variant="outlined"
+            />
+          </div>
+          <div className={css.inputCon}>
+            <Typography className={css.typography}>{d("Description").t("library_label_description")}</Typography>
+            <Controller
+              name={REMARK}
+              control={control}
+              as={TextField}
+              defaultValue={folderForm?.remark || ""}
+              className={css.textField}
+              fullWidth
+              variant="outlined"
+            />
+          </div>
+          <div className={css.inputCon}>
+            <Typography className={css.typography}>{d("Keywords").t("library_label_keywords")}</Typography>
+            <Controller
+              name={KEYWORDS}
+              control={control}
+              as={TextField}
+              defaultValue={folderForm?.keywords || ""}
+              className={css.textField}
+              fullWidth
+              variant="outlined"
+            />
+          </div>
+        </div>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" variant="outlined" onClick={onClose}>
-          {d("Cancel").t("library_label_cancel")}
-        </Button>
-        <LButton color="primary" variant="contained" className={css.okBtn} onClick={onAddFolder}>
-          {d("OK").t("library_label_ok")}
-        </LButton>
+        <div className={css.dialogActions}>
+          <Button color="primary" variant="outlined" onClick={onClose}>
+            {d("Cancel").t("library_label_cancel")}
+          </Button>
+          <LButton color="primary" variant="contained" className={css.okBtn} onClick={folderForm?.name ? onRenameFolder : onAddFolder}>
+            {d("OK").t("library_label_ok")}
+          </LButton>
+        </div>
       </DialogActions>
     </Dialog>
   );
