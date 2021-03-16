@@ -2,7 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { Prompt, PromptProps, useHistory, useLocation } from "react-router-dom";
 import { EntityAssessHomeFunStudyArgs } from "../../api/api.auto";
 import { AssessmentStatus, AssessmentUpdateAction } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
@@ -30,9 +30,11 @@ function AssessmentsHomefunEditIner() {
   const { homefunDetail, homefunFeedbacks, hasPermissionOfHomefun } = useSelector<RootState, RootState["assessments"]>(
     (state) => state.assessments
   );
-  console.log("homefunDetail, homefunFeedbacks, hasPermissionOfHomefun = ", homefunDetail, homefunFeedbacks, hasPermissionOfHomefun);
   const formMethods = useForm<EntityAssessHomeFunStudyArgs>();
-  const { handleSubmit } = formMethods;
+  const {
+    handleSubmit,
+    formState: { isDirty },
+  } = formMethods;
   const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
   const handleAssessmentSaveOrComplete = useMemo(
     () => (action: AssessmentUpdateAction, message: string) =>
@@ -46,6 +48,12 @@ function AssessmentsHomefunEditIner() {
         });
       }),
     [handleSubmit, id, dispatch, history, editindex]
+  );
+  const handleLeave = useMemo<PromptProps["message"]>(
+    () => (location) => {
+      return location.pathname === AssessmentsHomefunEdit.routeBasePath ? false : d("Discard unsaved changes?").t("assess_msg_discard");
+    },
+    []
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -70,6 +78,7 @@ function AssessmentsHomefunEditIner() {
         <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
         <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} />
       </LayoutPair>
+      <Prompt message={handleLeave} when={isDirty} />
     </>
   );
 }

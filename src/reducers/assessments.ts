@@ -7,8 +7,8 @@ import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
-import mockHomefunStudies from "../mocks/home_fun_studies_by_id.json";
-import mockFeedbacks from "../mocks/scheduleFeedbacks.json";
+// import mockHomefunStudies from "../mocks/home_fun_studies_by_id.json";
+// import mockFeedbacks from "../mocks/scheduleFeedbacks.json";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
@@ -118,12 +118,12 @@ interface onLoadHomefunDetailResult {
 export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, { id: string } & LoadingMetaPayload>(
   "assessments/onLoadHomefunDetail",
   async ({ id }, { dispatch }) => {
-    if (true)
-      return {
-        detail: mockHomefunStudies as EntityGetHomeFunStudyResult,
-        feedbacks: mockFeedbacks as EntityScheduleFeedbackView[],
-        hasPermissionOfHomefun: true,
-      };
+    // if (true)
+    //   return {
+    //     detail: mockHomefunStudies as EntityGetHomeFunStudyResult,
+    //     feedbacks: mockFeedbacks as EntityScheduleFeedbackView[],
+    //     hasPermissionOfHomefun: true,
+    //   };
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
       query: QeuryMeDocument,
