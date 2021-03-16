@@ -7,7 +7,7 @@ import { AsyncTrunkReturned, getDownloadPath } from "../../../reducers/content";
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
     height: "100%",
-    width: "80%",
+    width: "90%",
   },
 }));
 
@@ -19,14 +19,19 @@ export default function AssetFile(props: file) {
   const css = useStyles();
   const dispatch = useDispatch();
   const [path, setPath] = useState<string | undefined>("");
-  const getResource = async () => {
-    const { payload } = ((await dispatch(getDownloadPath(props.src as string))) as unknown) as PayloadAction<
-      AsyncTrunkReturned<typeof getDownloadPath>
-    >;
-    payload && setPath(payload.path);
-  };
+
   useEffect(() => {
+    let isUnmount = false;
+    const getResource = async () => {
+      const { payload } = ((await dispatch(getDownloadPath(props.src as string))) as unknown) as PayloadAction<
+        AsyncTrunkReturned<typeof getDownloadPath>
+      >;
+      payload && !isUnmount && setPath(payload.path);
+    };
     props.src && getResource();
+    return () => {
+      isUnmount = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.src]);
   return path ? (
