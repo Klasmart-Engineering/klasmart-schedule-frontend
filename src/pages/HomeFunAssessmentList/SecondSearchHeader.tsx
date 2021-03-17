@@ -7,7 +7,7 @@ import { Search } from "@material-ui/icons";
 import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
 import LayoutBox from "../../components/LayoutBox";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { HomeFunAssessmentQueryCondition, HomeFunAssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -80,8 +80,8 @@ export interface options {
 }
 export const assessmentTypes = () => {
   return [
-    { label: reportMiss("Class/Live", "assessments_label_class_live"), value: AssessmentType.classLive },
-    { label: reportMiss("Study-Home Fun", "assessments_label_study_home_fun"), value: AssessmentType.homeFun },
+    { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
+    { label: d("Study-Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
   ];
 };
 const menuItemList = (list: options[]) =>
