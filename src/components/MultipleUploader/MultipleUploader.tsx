@@ -4,24 +4,46 @@ import { PreSendData, useBatchAddListener, useBatchFinishListener, useItemProgre
 import { UPLOADER_EVENTS } from "@rpldy/uploader";
 import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
 import intersection from "lodash/intersection";
-import React, { forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../../api";
 import { AsyncTrunkReturned, getContentResourceUploadPath } from "../../reducers/content";
 import { SingleUploaderControl } from "../SingleUploader";
 
-interface MultipleUploaderControl extends Omit<SingleUploaderControl, "value" | "item"> {
+interface CleanableCallback<P extends unknown[]> {
+  (...arg: P): () => any;
+}
+function useCleanableCallback<P extends unknown[]>(cleanableCallback: CleanableCallback<P>, deps: any[]) {
+  const cleanupRef = useRef<() => any>();
+  const callback = useCallback(
+    (...args: P): any => {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = undefined;
+      }
+      cleanupRef.current = cleanableCallback(...args);
+    },
+    [cleanableCallback]
+  );
+
+  return callback;
+}
+
+interface MultipleUploaderControl extends Omit<SingleUploaderControl, "value" | "item" | "btnRef"> {
   value?: FileLikeWithId[];
   batch?: Batch;
   item?: BatchItem;
+  btnRef: (node: HTMLButtonElement) => any;
 }
 
 interface BaseUploaderProps {
   value?: FileLikeWithId[];
   render: (control: MultipleUploaderControl) => ReactNode;
+  // 为了同步 UPLOADER_EVENTS.BATCH_ADD 事件与 useBatchAddListener 接口时序而特意添加
+  onBatchAdd: (batch: Batch) => boolean | void;
 }
 function BaseUploader(props: BaseUploaderProps) {
-  const { value, render } = props;
+  const { value, render, onBatchAdd } = props;
   const uploady = useContext(UploadyContext);
   const [isUploading, setIsUploading] = useState(false);
   const [index, setIndex] = useState(0);
@@ -38,8 +60,17 @@ function BaseUploader(props: BaseUploaderProps) {
         ...batchRef.current,
         items: [uploadingItem].concat(batchRef.current?.items?.slice(index + 1)),
       };
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useCleanableCallback(
+    (btn: HTMLButtonElement) => {
+      const handleClick = () => uploady.showFileUpload();
+      btn?.addEventListener("click", handleClick);
+      return () => btn?.removeEventListener("click", handleClick);
+    },
+    [uploady]
+  );
+
   useBatchAddListener((batch: Batch) => {
+    if (onBatchAdd(batch) === false) return false;
     batchRef.current = batch;
     setIsUploading(true);
     setIndex(0);
@@ -47,13 +78,6 @@ function BaseUploader(props: BaseUploaderProps) {
   useBatchFinishListener(() => {
     setIsUploading(false);
   });
-  useEffect(() => {
-    const handleClick = () => uploady.showFileUpload();
-    const btn = btnRef.current;
-    btn?.addEventListener("click", handleClick);
-    return () => btn?.removeEventListener("click", handleClick);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploady, btnRef.current]);
   // useItemFinish 时序有问题，需要在 uploady 上绑定
   useEffect(() => {
     const handleItemFinish = (finishedItem: BatchItem) => {
@@ -97,7 +121,7 @@ interface MultipleUploaderError {
 }
 
 type FetchUploadUrlResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
-export interface MultipleUploaderProps extends BaseUploaderProps, UploadyProps {
+export interface MultipleUploaderProps extends Omit<BaseUploaderProps, "onBatchAdd">, UploadyProps {
   partition: NonNullable<Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0]>["partition"];
   value?: Pick<FileLikeWithId, "id" | "name">[];
   maxAmount?: number;
@@ -109,29 +133,29 @@ export const MultipleUploader = forwardRef<HTMLDivElement, MultipleUploaderProps
   const { value, onChange, render, partition, onError, maxAmount, maxSize, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const itemWithResourceIdMap = useRef<Record<string, BatchItemWithResourceId>>({});
+  const onBatchAdd = (batch: Batch) => {
+    itemWithResourceIdMap.current = {};
+    const files = batch?.items?.map((item) => item.file) ?? [];
+    if (maxAmount !== undefined && (value?.length ?? 0) + files.length > maxAmount) {
+      onError && onError({ type: MultipleUploaderErrorType.MaxAmountError });
+      return false;
+    }
+    if (maxSize !== undefined && files.some((file) => file.size > maxSize)) {
+      onError && onError({ type: MultipleUploaderErrorType.MaxSizeError });
+      return false;
+    }
+    if (
+      intersection(
+        files.map((file) => file.name),
+        value?.map((file) => file.name)
+      ).length > 0
+    ) {
+      onError && onError({ type: MultipleUploaderErrorType.DuplicateFileError });
+      return false;
+    }
+  };
   const listeners = useMemo(
     () => ({
-      async [UPLOADER_EVENTS.BATCH_ADD](batch: Batch) {
-        itemWithResourceIdMap.current = {};
-        const files = batch?.items?.map((item) => item.file) ?? [];
-        if (maxAmount !== undefined && (value?.length ?? 0) + files.length > maxAmount) {
-          onError && onError({ type: MultipleUploaderErrorType.MaxAmountError });
-          return false;
-        }
-        if (maxSize !== undefined && files.some((file) => file.size > maxSize)) {
-          onError && onError({ type: MultipleUploaderErrorType.MaxSizeError });
-          return false;
-        }
-        if (
-          intersection(
-            files.map((file) => file.name),
-            value?.map((file) => file.name)
-          ).length > 0
-        ) {
-          onError && onError({ type: MultipleUploaderErrorType.DuplicateFileError });
-          return false;
-        }
-      },
       async [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>> {
         const { items } = props;
         try {
@@ -150,15 +174,15 @@ export const MultipleUploader = forwardRef<HTMLDivElement, MultipleUploaderProps
       },
       [UPLOADER_EVENTS.ITEM_FINISH](item: BatchItem) {
         const extendedItem = itemWithResourceIdMap.current[item.id];
-        if (onChange) onChange(value?.concat({ id: extendedItem.id, name: extendedItem.file.name }));
+        if (onChange) onChange(value?.concat({ id: extendedItem.resourceId, name: extendedItem.file.name }));
       },
     }),
-    [maxAmount, value, maxSize, onError, dispatch, partition, onChange]
+    [value, dispatch, partition, onChange]
   );
   return (
     <div ref={ref}>
       <Uploady {...uploadyProps} method="PUT" sendWithFormData={false} listeners={listeners}>
-        <BaseUploader {...{ value, onChange, render }} />
+        <BaseUploader {...{ value, onChange, render, onBatchAdd }} />
       </Uploady>
     </div>
   );
