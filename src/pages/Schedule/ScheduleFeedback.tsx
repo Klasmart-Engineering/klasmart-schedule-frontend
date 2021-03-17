@@ -1,13 +1,15 @@
-import { Box, Button, TextField } from "@material-ui/core";
+import { Box, Button, LinearProgress, TextField, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
-import { CloudUploadOutlined, HighlightOff, InfoOutlined } from "@material-ui/icons";
+import { AccessTime, CloudUploadOutlined, HighlightOff, InfoOutlined } from "@material-ui/icons";
 import { HtmlTooltip } from "./ScheduleAttachment";
-import { SingleUploader } from "../../components/SingleUploader";
 import { saveScheduleFeedback } from "../../reducers/schedule";
 import { EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
 import { useDispatch } from "react-redux";
+import { FileLikeWithId, FileSizeUnit, MultipleUploader } from "../../components/MultipleUploader";
+import { actWarning } from "../../reducers/notify";
+import { BatchItem } from "@rpldy/shared";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -58,39 +60,67 @@ const useStyles = makeStyles(({ shadows }) =>
         fontSize: "15px",
       },
     },
+    fileItem: {
+      display: "flex",
+      alignItems: "center",
+    },
+    iconLeft: {
+      marginLeft: 10,
+    },
+    linearProcess: {
+      width: 32,
+      margin: "0 10px",
+    },
   })
 );
 
 interface FileDataProps {
-  name: string;
-  btnRef: any;
   handleFileData: (name: string, type: string) => void;
-  fileName: string[];
+  fileName?: Pick<FileLikeWithId, "id" | "name">[] | undefined;
+  status: "finish" | "progress";
+  batch?: BatchItem[];
 }
 
 function FileDataTemplate(props: FileDataProps) {
-  const { fileName, btnRef, name, handleFileData } = props;
+  const { fileName, handleFileData, status, batch } = props;
   const css = useStyles();
-  React.useEffect(() => {
-    if (name) handleFileData(name, "insert");
-  }, [name, handleFileData]);
-  return fileName.length > 0 ? (
+  return (
     <Box className={css.participantSaveBox}>
-      {fileName.map((item: string) => (
-        <div className={css.pathBox}>
-          <span>{item}</span>{" "}
-          <HighlightOff
-            onClick={() => {
-              handleFileData(item, "delete");
-            }}
-            className={css.iconField}
-          />
-        </div>
-      ))}
-      <CloudUploadOutlined className={css.iconField} style={{ right: "10px", position: "absolute", bottom: "8px" }} ref={btnRef as any} />
+      {status === "finish" &&
+        fileName?.map((item) => (
+          <div className={css.pathBox}>
+            <span>{item.name}</span>{" "}
+            <HighlightOff
+              onClick={() => {
+                handleFileData(item.id!, "delete");
+              }}
+              className={css.iconField}
+            />
+          </div>
+        ))}
+      {status === "progress" &&
+        batch?.map((item) => (
+          <div key={item.id} className={css.fileItem}>
+            <Typography component="div" noWrap variant="body1">
+              <div className={css.pathBox}>
+                <span>{item.file.name}</span>
+              </div>
+            </Typography>
+            {item.completed === 100 ? (
+              ""
+            ) : item.completed === 0 ? (
+              <AccessTime className={css.iconLeft} />
+            ) : (
+              <div className={css.fileItem}>
+                <LinearProgress className={css.linearProcess} variant="determinate" value={item.completed} />
+                <Typography variant="caption" component="span" color="textSecondary">
+                  {`${Math.round(item.completed || 0)}%`}
+                </Typography>
+              </div>
+            )}
+          </div>
+        ))}
     </Box>
-  ) : (
-    <></>
   );
 }
 
@@ -135,14 +165,10 @@ function FeedbackTemplate(props: FeedbackProps) {
   const css = useStyles();
   const { schedule_id, changeModalDate, teacher, className, due_date } = props;
   const [comment, seComment] = React.useState("");
-  const [fileName, setFileName] = React.useState<string[]>([]);
+  const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
   const dispatch = useDispatch();
-  const handleOnChange = (value: string | undefined): void => {
-    const fileData = [];
-    fileData.push(value);
-    console.log(fileData);
-    /*    fileName.push(value as string)
-    setFileName(fileName)*/
+  const handleOnChange = (value: Pick<FileLikeWithId, "id" | "name">[] | undefined): void => {
+    setFileName(value);
   };
 
   const getTipsText = () => {
@@ -166,6 +192,10 @@ function FeedbackTemplate(props: FeedbackProps) {
   };
 
   const NoticeTemplate = () => {
+    if (fileName!.length < 1) {
+      dispatch(actWarning("请填写附件上传"));
+      return;
+    }
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
@@ -186,15 +216,11 @@ function FeedbackTemplate(props: FeedbackProps) {
   };
 
   const feedBackSubmit = () => {
+    const assignments = fileName?.map((item: Pick<FileLikeWithId, "id" | "name">, index: number) => {
+      return { name: item.name, number: index, url: item.id };
+    });
     const data: EntityScheduleFeedbackAddInput = {
-      assignments: [
-        {
-          name: "list.pdf",
-          number: 1,
-          url:
-            "https://cdk-kl2-test-kl2-s3resources.s3-accelerate.amazonaws.com/schedule_attachment/6049cdee1a2bf67c50bf18bc.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAXGKUAYT2IVSWPCOR%2F20210311%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Date=20210311T075942Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGAaDmFwLW5vcnRoZWFzdC0yIkcwRQIhALvjdvQDcK9hEXyFGLPk6EDYxAfmlOt%2BH40NVDYXzByZAiA24XYC9SdFmhDB2zVKr9huaM35zGyNOZfV6DrPJ%2BGq%2ByrVAQiJ%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDQ5NDYzNDMyMTE0MCIMlQ3Pa4pHN0lIWytaKqkBi%2BX3TYQC0cOa04oyTV892OpW%2F1fRY8V480eiPhG1PoTCoJsAZUXdHfcLqLpbgvsR8t8T%2FJBwgDGoVyUg3LLNuV9jxpv4OJIQ%2BqvB5XL4AvbfXAHxEN8DnlxcV5dt6esWOSeINKc7pXek%2B42JZR6%2FhF2SWHfhx2ZKEb7dhKj6Cfp3dgzIk202ENQfIaa5mQpSXxFkeWLNWKjWBgt8rFQ94c0Njhfi4DITazDakqeCBjrgASfJ5aZadUSwZ0ky2qAL4dNyG1iQc25K4gM8tk8hB0AI4laCqcY0ICjoLKNwwTqvqFtuoGZx%2FBvgVPWwypSjP5AHvVVrmi77xbW7%2B1O%2F6glGN8BuPMwSH8bYeoAn1GarVkDJ9xH9yMynXoYnhuhq3mi7bpLGLbRbdq%2FJkolKd7M%2F0Xk3C0Cwy7uuJmpqGiMTkNX%2BKrn%2Fp69QEV8WyOgIbNfWROYA9Vqsaj8NQCFb7yXaDPL1mX6pUjmruCbUB%2FL02Sp%2F29YF%2BqEn4k3JhU4HZ1Qel9HOtYBbLqYtRTHYTBzt&X-Amz-SignedHeaders=host&X-Amz-Signature=66b25ba5300bea7606e86385cf2f4d704b61850bf1a08709d5d40a9f4422071e",
-        },
-      ],
+      assignments: assignments,
       comment: comment,
       schedule_id: schedule_id,
     };
@@ -204,12 +230,12 @@ function FeedbackTemplate(props: FeedbackProps) {
     });
   };
 
-  const handleFileData = (name: string, type: string) => {
+  const handleFileData = (id: string, type: string) => {
     if (type === "delete") {
-      fileName.splice(fileName.indexOf(name), 1);
-      setFileName([...fileName]);
-    } else {
-      setFileName([...fileName, name]);
+      fileName?.map((item: Pick<FileLikeWithId, "id" | "name">, index: number) => {
+        if (item.id === id) fileName.splice(index, 1);
+      });
+      setFileName([...fileName!]);
     }
   };
 
@@ -223,13 +249,20 @@ function FeedbackTemplate(props: FeedbackProps) {
         onChange={(e) => seComment(e.target.value as string)}
         label={d("Comment").t("schedule_detail_comment")}
       ></TextField>
-      <SingleUploader
+      <MultipleUploader
         partition="schedule_attachment"
-        onChange={handleOnChange}
-        render={({ uploady, item, btnRef, value, isUploading }) => (
+        accept="*"
+        {...props}
+        maxAmount={3}
+        onChange={(value) => handleOnChange(value)}
+        value={fileName}
+        maxSize={100 * FileSizeUnit.M}
+        onError={(error) => Promise.reject(dispatch(actWarning(error.type)))}
+        render={({ btnRef, value, isUploading, batch }) => (
           <>
-            <FileDataTemplate btnRef={btnRef} name={item?.file.name} fileName={fileName} handleFileData={handleFileData} />
-            {!fileName.length && (
+            {value!.length > 0 && <FileDataTemplate fileName={fileName} handleFileData={handleFileData} status="finish" />}
+            {isUploading && <FileDataTemplate batch={batch?.items} handleFileData={handleFileData} status="progress" />}
+            {!batch?.items && (
               <Box style={{ position: "relative" }}>
                 <TextField
                   disabled
@@ -240,16 +273,16 @@ function FeedbackTemplate(props: FeedbackProps) {
                 <HtmlTooltip title={getTipsText()}>
                   <InfoOutlined className={css.iconField} style={{ left: "110px", position: "absolute", top: "36px" }} />
                 </HtmlTooltip>
-                <CloudUploadOutlined
-                  className={css.iconField}
-                  style={{ right: "10px", position: "absolute", bottom: "38px" }}
-                  ref={btnRef as any}
-                />
                 <span style={{ color: "#999999", fontSize: "12px" }}>
                   {d("You can upload no more than three attachments. ").t("schedule_msg_three_attachment")}
                 </span>
               </Box>
             )}
+            <CloudUploadOutlined
+              className={css.iconField}
+              style={{ right: "10px", position: "absolute", bottom: "90px" }}
+              ref={btnRef as any}
+            />
           </>
         )}
       />
