@@ -62,6 +62,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     display: "flex",
     flexDirection: "row",
     flexWrap: "nowrap",
+    justifyContent: "center",
   },
   buttonMinWidth: {
     minWidth: 90,
@@ -87,6 +88,30 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     borderRadius: 4,
     boxSizing: "border-box",
   },
+  selectRadioInline: {
+    display: "block",
+    [breakpoints.down("sm")]: {
+      display: "none",
+    },
+    [breakpoints.up(1280)]: {
+      display: "none",
+    },
+    [breakpoints.up(1690)]: {
+      display: "block",
+    },
+  },
+  selectRadioWrap: {
+    display: "none",
+    [breakpoints.down("sm")]: {
+      display: "block",
+    },
+    [breakpoints.up(1280)]: {
+      display: "block",
+    },
+    [breakpoints.up(1690)]: {
+      display: "none",
+    },
+  },
 }));
 export interface SearchItems {
   value?: string;
@@ -110,36 +135,89 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
-
+  const selectRadio = searchType === "searchMedia" && lesson === "plan" && (
+    <Controller
+      name="isShare"
+      control={control}
+      defaultValue={isShare || "org"}
+      render={(isShareProps) => (
+        <RadioGroup
+          value={isShareProps.value}
+          onChange={(e) => {
+            isShareProps.onChange(e.target.value);
+            handleClickSearch();
+          }}
+          className={css.radioGroup}
+        >
+          <FormControlLabel
+            value="org"
+            control={<Radio size="small" color="primary" />}
+            label={<Typography variant="body2">{d("Org").t("library_label_org")}</Typography>}
+          />
+          <FormControlLabel
+            value="badanamu"
+            control={<Radio size="small" color="primary" />}
+            label={<Typography variant="body2">{d("Badanamu").t("library_label_badanamu")}</Typography>}
+          />
+        </RadioGroup>
+      )}
+    />
+  );
   return (
     <Box>
       <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
         {searchType === "searchOutcome" && (
-          <Hidden smDown>
-            <Controller
-              as={TextField}
-              control={control}
-              onKeyPress={handleKeyPress}
-              name="value"
-              defaultValue={value}
-              size="small"
-              className={clsx(css.fieldset, css.searchField)}
-              placeholder={d("Search").t("library_label_search")}
-            />
-            <Button
-              color="primary"
-              variant="contained"
-              size="small"
-              className={clsx(css.buttonMinWidth, css.fieldset)}
-              startIcon={<Search />}
-              onClick={handleClickSearch}
-            >
-              {d("Search").t("library_label_search")}
-            </Button>
-          </Hidden>
+          <>
+            <Hidden smDown>
+              <Controller
+                as={TextField}
+                control={control}
+                onKeyPress={handleKeyPress}
+                name="value"
+                defaultValue={value}
+                size="small"
+                className={clsx(css.fieldset, css.searchField)}
+                placeholder={d("Search").t("library_label_search")}
+              />
+              <Button
+                color="primary"
+                variant="contained"
+                size="small"
+                className={clsx(css.buttonMinWidth, css.fieldset)}
+                startIcon={<Search />}
+                onClick={handleClickSearch}
+              >
+                {d("Search").t("library_label_search")}
+              </Button>
+            </Hidden>
+            <Hidden mdUp>
+              <Controller
+                as={TextField}
+                control={control}
+                onKeyPress={handleKeyPress}
+                name="value"
+                defaultValue={value}
+                size="small"
+                className={clsx(css.fieldset, css.searchField)}
+                placeholder={d("Search").t("library_label_search")}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        onClick={handleClickSearch}
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Hidden>
+          </>
         )}
         {searchType === "searchMedia" && (
-          <Hidden smDown>
+          <>
             <Controller
               control={control}
               name="value"
@@ -187,32 +265,9 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
             >
               {d("Search").t("library_label_search")}
             </Button>
-          </Hidden>
+          </>
         )}
-        <Hidden mdUp>
-          <Controller
-            as={TextField}
-            control={control}
-            onKeyPress={handleKeyPress}
-            name="value"
-            defaultValue={value}
-            size="small"
-            className={clsx(css.fieldset, css.searchField)}
-            placeholder={d("Search").t("library_label_search")}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search
-                    style={{
-                      cursor: "pointer",
-                    }}
-                    onClick={handleClickSearch}
-                  />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Hidden>
+
         {searchType === "searchOutcome" && (
           <Controller
             name="assumed"
@@ -237,67 +292,9 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
           />
         )}
 
-        {searchType === "searchMedia" && lesson === "plan" && (
-          <Hidden smDown>
-            <Controller
-              name="isShare"
-              control={control}
-              defaultValue={isShare || "org"}
-              render={(isShareProps) => (
-                <RadioGroup
-                  value={isShareProps.value}
-                  onChange={(e) => {
-                    isShareProps.onChange(e.target.value);
-                    handleClickSearch();
-                  }}
-                  className={css.radioGroup}
-                >
-                  <FormControlLabel
-                    value="org"
-                    control={<Radio size="small" color="primary" />}
-                    label={<Typography variant="body2">{d("Org").t("library_label_org")}</Typography>}
-                  />
-                  <FormControlLabel
-                    value="badanamu"
-                    control={<Radio size="small" color="primary" />}
-                    label={<Typography variant="body2">{d("Badanamu").t("library_label_badanamu")}</Typography>}
-                  />
-                </RadioGroup>
-              )}
-            />
-          </Hidden>
-        )}
+        <div className={css.selectRadioInline}>{selectRadio}</div>
       </Box>
-      <Hidden mdUp>
-        {searchType === "searchMedia" && lesson === "plan" && (
-          <Controller
-            name="isShare"
-            control={control}
-            defaultValue={isShare || "org"}
-            render={(isShareProps) => (
-              <RadioGroup
-                value={isShareProps.value}
-                onChange={(e) => {
-                  isShareProps.onChange(e.target.value);
-                  handleClickSearch();
-                }}
-                className={css.radioGroup}
-              >
-                <FormControlLabel
-                  value="org"
-                  control={<Radio size="small" color="primary" />}
-                  label={<Typography variant="body2">{d("Org").t("library_label_org")}</Typography>}
-                />
-                <FormControlLabel
-                  value="badanamu"
-                  control={<Radio size="small" color="primary" />}
-                  label={<Typography variant="body2">{d("Badanamu").t("library_label_badanamu")}</Typography>}
-                />
-              </RadioGroup>
-            )}
-          />
-        )}
-      </Hidden>
+      <div className={css.selectRadioWrap}>{selectRadio}</div>
     </Box>
   );
 };
