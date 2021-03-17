@@ -801,16 +801,43 @@ export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult
   return orgProperty;
 });
 
-export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload>(
-  "content/getOrgList",
-  async (folder_ids, { dispatch }) => {
+// export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload>(
+//   "content/getOrgList",
+//   async (folder_ids, { dispatch }) => {
+//     const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
+//       query: OrganizationsDocument,
+//     });
+//     await dispatch(getFoldersSharedRecords(folder_ids));
+//     return data.organizations;
+//   }
+// );
+
+enum Region {
+  vn = "vn",
+  global = "global",
+}
+type IQueryGetOrgListResult = AsyncReturnType<typeof api.organizationsRegion.getOrganizationByHeadquarterForDetails>["orgs"];
+export const getOrgList = createAsyncThunk<
+  IQueryGetOrgListResult,
+  IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload,
+  { state: RootState }
+>("content/getOrgList", async (folder_ids, { getState, dispatch }) => {
+  const {
+    content: { orgProperty },
+  } = getState();
+  let orgs: IQueryGetOrgListResult = [];
+  if (orgProperty.region && orgProperty.region === Region.vn) {
+    const data = await api.organizationsRegion.getOrganizationByHeadquarterForDetails();
+    orgs = data.orgs;
+  } else {
     const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
       query: OrganizationsDocument,
     });
-    await dispatch(getFoldersSharedRecords(folder_ids));
-    return data.organizations;
+    orgs = data.organizations as IQueryGetOrgListResult;
   }
-);
+  await dispatch(getFoldersSharedRecords(folder_ids));
+  return orgs;
+});
 
 type IQueryShareFoldersParams = {
   shareFolder: EntityFolderContent | undefined;
