@@ -28,10 +28,10 @@ import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "../../api
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
-import { FileSizeUnit, MultipleUploader } from "../../components/MultipleUploader";
+import { FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
-import { d, reportMiss, t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
@@ -122,7 +122,6 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     margin: "0 10px",
   },
 }));
-
 export function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
   return (
@@ -136,13 +135,11 @@ export function ProgressWithText(props: CircularProgressProps) {
     </Box>
   );
 }
-
 type NeedTransilationMenuItem =
   | "library_label_visibility_school"
   | "library_label_visibility_organization"
   | "library_label_test"
   | "library_label_not_test";
-
 interface SuggestTimeProps {
   value?: number;
   onChange?: (value: SuggestTimeProps["value"]) => any;
@@ -187,7 +184,6 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
     />
   );
 });
-
 export interface DetailsProps {
   allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
   contentDetail: EntityContentInfoWithDetails;
@@ -218,13 +214,13 @@ export default function Details(props: DetailsProps) {
     // onDrawingActivity,
     permission,
   } = props;
-
   const css = useStyles();
   const { lesson } = useParams();
   const { id } = useQueryCms();
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
+
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -232,6 +228,7 @@ export default function Details(props: DetailsProps) {
         {item.name}
       </MenuItem>
     ));
+
   const NeedTransilationMenuItemList = (list: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -245,13 +242,39 @@ export default function Details(props: DetailsProps) {
     if (reson_remark && remark) reson_remark.push(remark);
     return reson_remark ? reson_remark : remark && [remark];
   };
+
   const teacherInfo = (
-    <div style={{ color: "#000" }}>
-      <span style={{ fontWeight: 700 }}>{d("Max Size").t("library_label_max_size")}</span>: 500MB
+    <div
+      style={{
+        color: "#000",
+      }}
+    >
+      <span
+        style={{
+          fontWeight: 700,
+        }}
+      >
+        {d("Max Size").t("library_label_max_size")}
+      </span>
+      : 500MB
       <br />
-      <span style={{ fontWeight: 700 }}>{d("Supported Format").t("library_label_supported_format")}</span>: pdf,mp3,wav
+      <span
+        style={{
+          fontWeight: 700,
+        }}
+      >
+        {d("Supported Format").t("library_label_supported_format")}
+      </span>
+      : pdf,mp3,wav
       <br />
-      <span style={{ fontWeight: 700 }}>{reportMiss("Max File Number", "library_label_max_file_number")}</span>: 5
+      <span
+        style={{
+          fontWeight: 700,
+        }}
+      >
+        {d("Max File Number").t("library_label_max_file_number")}
+      </span>
+      : 5
     </div>
   );
   const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
@@ -660,13 +683,30 @@ export default function Details(props: DetailsProps) {
                 {...props}
                 maxAmount={5}
                 maxSize={500 * FileSizeUnit.M}
-                onError={(error) => Promise.reject(dispatch(actWarning(error.type)))}
+                onError={(error) =>
+                  Promise.reject(
+                    dispatch(
+                      actWarning(
+                        error.type === MultipleUploaderErrorType.MaxAmountError
+                          ? d("Failed to upload as total files number excceeds limitation 5").t("library_error_excceed_max_file_number")
+                          : d("Cannot excceed max size 500 MB").t("library_error_excceed_max_size")
+                      )
+                    )
+                  )
+                }
                 render={({ btnRef, value, isUploading, batch }) => (
                   <Box className={css.teacherManualBox}>
                     <div>
                       {value?.map((file) => (
                         <div key={file.id} className={css.fileItem}>
-                          <Typography component="div" noWrap variant="body1" style={{ color: "rgba(51,51,51,1)" }}>
+                          <Typography
+                            component="div"
+                            noWrap
+                            variant="body1"
+                            style={{
+                              color: "rgba(51,51,51,1)",
+                            }}
+                          >
                             {file.name}{" "}
                           </Typography>
                           <CancelRounded
@@ -705,13 +745,20 @@ export default function Details(props: DetailsProps) {
                     >
                       {d("Teacher Manual").t("library_label_teacher_manual")}
                       <HtmlTooltip title={teacherInfo}>
-                        <InfoOutlined style={{ color: "darkgrey" }} className={css.iconLeft} />
+                        <InfoOutlined
+                          style={{
+                            color: "darkgrey",
+                          }}
+                          className={css.iconLeft}
+                        />
                       </HtmlTooltip>
                     </div>
                     <CloudUploadOutlined
                       className={css.iconField}
                       ref={btnRef as any}
-                      style={{ display: isUploading ? "none" : "inline-block" }}
+                      style={{
+                        display: isUploading ? "none" : "inline-block",
+                      }}
                     />
                   </Box>
                 )}

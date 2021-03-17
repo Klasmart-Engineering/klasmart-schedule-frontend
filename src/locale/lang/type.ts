@@ -180,6 +180,13 @@ type LangRecord<T = string> =
   | { id: "library_label_all_organizations"; description: "All"; values: undefined }
   | { id: "library_label_org"; description: "Org"; values: undefined }
   | { id: "library_label_badanamu"; description: "Badanamu"; values: undefined }
+  | { id: "library_label_max_file_number"; description: "Max File Number"; values: undefined }
+  | { id: "library_error_excceed_max_size"; description: "Cannot excceed max size 500 MB"; values: undefined }
+  | {
+      id: "library_error_excceed_max_file_number";
+      description: "Failed to upload as total files number excceeds limitation 5";
+      values: undefined;
+    }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -251,6 +258,8 @@ type LangRecord<T = string> =
   | { id: "assess_leave_a_comment_here"; description: "Leave a comment here"; values: undefined }
   | { id: "assess_submission_history"; description: "Submission History"; values: undefined }
   | { id: "assess_msg_new_version"; description: "A new version of the assignment has been submitted, please refresh"; values: undefined }
+  | { id: "assess_submit_new_old"; description: "Submit Time (New-Old)"; values: undefined }
+  | { id: "assess_submit_old_new"; description: "Submit Time (Old-New)"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }

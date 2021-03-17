@@ -3,7 +3,6 @@ import { Batch, BatchItem, FileLike } from "@rpldy/shared";
 import { PreSendData, useBatchAddListener, useBatchFinishListener, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
 import { UPLOADER_EVENTS } from "@rpldy/uploader";
 import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
-import intersection from "lodash/intersection";
 import React, { forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../../api";
@@ -108,7 +107,6 @@ interface BatchItemWithResourceId extends BatchItem {
 export enum MultipleUploaderErrorType {
   MaxAmountError = "MaxAmountError",
   MaxSizeError = "MaxSizeError",
-  DuplicateFileError = "DuplicateFileError",
 }
 
 export enum FileSizeUnit {
@@ -144,15 +142,15 @@ export const MultipleUploader = forwardRef<HTMLDivElement, MultipleUploaderProps
       onError && onError({ type: MultipleUploaderErrorType.MaxSizeError });
       return false;
     }
-    if (
-      intersection(
-        files.map((file) => file.name),
-        value?.map((file) => file.name)
-      ).length > 0
-    ) {
-      onError && onError({ type: MultipleUploaderErrorType.DuplicateFileError });
-      return false;
-    }
+    // if (
+    //   intersection(
+    //     files.map((file) => file.name),
+    //     value?.map((file) => file.name)
+    //   ).length > 0
+    // ) {
+    //   onError && onError({ type: MultipleUploaderErrorType.DuplicateFileError });
+    //   return false;
+    // }
   };
   const listeners = useMemo(
     () => ({
