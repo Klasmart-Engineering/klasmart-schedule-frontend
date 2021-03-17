@@ -708,7 +708,11 @@ export default function Details(props: DetailsProps) {
                         <InfoOutlined style={{ color: "darkgrey" }} className={css.iconLeft} />
                       </HtmlTooltip>
                     </div>
-                    {!isUploading && <CloudUploadOutlined className={css.iconField} ref={btnRef as any} />}
+                    <CloudUploadOutlined
+                      className={css.iconField}
+                      ref={btnRef as any}
+                      style={{ display: isUploading ? "none" : "inline-block" }}
+                    />
                   </Box>
                 )}
               />
