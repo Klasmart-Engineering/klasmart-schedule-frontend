@@ -812,7 +812,7 @@ export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult
 //   }
 // );
 
-enum Region {
+export enum Region {
   vn = "vn",
   global = "global",
 }

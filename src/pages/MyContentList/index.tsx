@@ -432,6 +432,7 @@ export default function MyContentList() {
         open={organizationListActive}
         onShareFolder={handleShareFolder}
         key={organizationListShowIndex}
+        orgProperty={orgProperty}
       />
     </div>
   );

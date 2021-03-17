@@ -9,6 +9,8 @@ export function excludeMyOrg(orgs: OrgInfoProps[], id: string): OrgInfoProps[] {
   if (!orgs.length || !id) return orgs;
   const index = id ? orgs.findIndex((item) => item.organization_id === id) : -1;
   const newOrgs = cloneDeep(orgs);
-  newOrgs.splice(index, 1);
+  if (index >= 0) {
+    newOrgs.splice(index, 1);
+  }
   return newOrgs;
 }
