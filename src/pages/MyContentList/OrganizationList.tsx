@@ -17,7 +17,7 @@ import {
 import { InfoOutlined } from "@material-ui/icons";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { EntityFolderContent } from "../../api/api.auto";
+import { EntityFolderContent, EntityOrganizationProperty } from "../../api/api.auto";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
