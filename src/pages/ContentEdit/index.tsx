@@ -153,7 +153,7 @@ function ContentEditForm() {
   const handlePublish = useCallback(async () => {
     if (lesson === "assets") await handleSave();
     if (!id) return;
-    if (watch("isOnlyMaterial") === "assetAndMaterial") {
+    if (watch("publishType") === "assetslib") {
       await dispatch(publishWidthAssets(id));
     } else {
       await dispatch(publish(id));

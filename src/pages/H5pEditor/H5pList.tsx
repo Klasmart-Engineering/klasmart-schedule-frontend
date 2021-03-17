@@ -20,10 +20,9 @@ import H5pAudio from "../../assets/icons/h5p_audio.svg";
 import H5pPdf from "../../assets/icons/h5p_file.svg";
 import H5pPicture from "../../assets/icons/h5p_picture.svg";
 import H5pVideo from "../../assets/icons/h5p_video.svg";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { h5plibId2Name } from "../../models/ModelH5pSchema";
 import { MockData } from "./types/index";
-
 const useStyles = makeStyles(({ palette }) => ({
   listItem: {
     borderBottom: "1px solid #ececec",
@@ -248,9 +247,7 @@ export const assetsData: MockData[] = [
       patch: 0,
     },
     popularity: 0,
-  },
-
-  // {
+  }, // {
   //   title: "Document",
   //   id: ContentFileType.doc,
   //   icon: H5pFile,
@@ -262,7 +259,6 @@ export const assetsData: MockData[] = [
   //   screenshots: [],
   // },
 ];
-
 interface H5pListProps {
   libraryId?: string;
   assetLibraryId?: ContentFileType | string;
@@ -275,7 +271,6 @@ interface H5pListProps {
   setH5pId: (value: string | ContentFileType) => void;
   setMockData: (value: ContentTypeList[0] | MockData) => void;
 }
-
 export default function H5pList(props: H5pListProps) {
   const {
     contentTypeList,
@@ -300,11 +295,13 @@ export default function H5pList(props: H5pListProps) {
       handleClickAsset(item);
       return;
     }
+
     if (libraryId || assetLibraryId) {
       setTempItem(h5plibId2Name(`${item.id}-${item.version.major}.${item.version.minor}`));
       setOpen(true);
       return;
     }
+
     onChange(h5plibId2Name(`${item.id}-${item.version.major}.${item.version.minor}`));
     onExpand(!expand);
   };
@@ -315,6 +312,7 @@ export default function H5pList(props: H5pListProps) {
       setOpen(true);
       return;
     }
+
     setTempItem(item.id);
     onChangeAssetLibraryId && onChangeAssetLibraryId(item.id as ContentFileType);
     onExpand(!expand);
@@ -322,10 +320,12 @@ export default function H5pList(props: H5pListProps) {
 
   const getDetails = (e: React.KeyboardEvent | React.MouseEvent, item: ContentTypeList[0] | MockData) => {
     e.stopPropagation();
+
     if (typeof item.id === "number") {
       getMockDetails(item);
       return;
     }
+
     setShow("info");
     setH5pId(item.id);
   };
@@ -337,11 +337,13 @@ export default function H5pList(props: H5pListProps) {
   const handleConfirm = () => {
     setOpen(false);
     if (!tempItem) return;
+
     if (typeof tempItem === "string") {
       onChange(tempItem);
     } else {
       onChangeAssetLibraryId && onChangeAssetLibraryId(tempItem);
     }
+
     onExpand(!expand);
   };
 
@@ -364,23 +366,36 @@ export default function H5pList(props: H5pListProps) {
                 item.id === "H5P.ImagePair" ||
                 item.id === ContentFileType.image ||
                 item.id === ContentFileType.video ||
-                item.id === ContentFileType.audio ||
-                // item.id === ContentFileType.pdf ||
+                item.id === ContentFileType.audio || // item.id === ContentFileType.pdf ||
                 item.id === ContentFileType.pdf
             )
             .map((item) => {
               return (
                 <ListItem key={item.id} button className={css.listItem} onClick={() => handleClick(item)}>
-                  <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
+                  <Box
+                    className={css.imgBox}
+                    style={{
+                      height: sm ? "50px" : "70px",
+                    }}
+                  >
                     <img src={item.icon} alt="aaa" />
                   </Box>
-                  <Box style={{ width: sm ? "40%" : "80%" }}>
+                  <Box
+                    style={{
+                      width: sm ? "40%" : "80%",
+                    }}
+                  >
                     <h3>{item.title}</h3>
                     <p>{item.summary}</p>
                   </Box>
-                  <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
+                  <Box
+                    className={css.itemButton}
+                    style={{
+                      right: sm ? "20px" : "50px",
+                    }}
+                  >
                     <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item)}>
-                      {reportMiss("Detail", "h5p_detail")}
+                      {d("Detail").t("h5p_label_detail")}
                     </Button>
                   </Box>
                 </ListItem>
@@ -401,16 +416,30 @@ export default function H5pList(props: H5pListProps) {
             .map((item) => {
               return (
                 <ListItem key={item.id} className={clsx(css.listItem, css.disableBackground)}>
-                  <Box className={css.imgBox} style={{ height: sm ? "50px" : "70px" }}>
+                  <Box
+                    className={css.imgBox}
+                    style={{
+                      height: sm ? "50px" : "70px",
+                    }}
+                  >
                     <img src={item.icon} alt="aaa" />
                   </Box>
-                  <Box style={{ width: sm ? "40%" : "80%" }}>
+                  <Box
+                    style={{
+                      width: sm ? "40%" : "80%",
+                    }}
+                  >
                     <h3>{item.title}</h3>
                     <p>{item.summary}</p>
                   </Box>
-                  <Box className={css.itemButton} style={{ right: sm ? "20px" : "50px" }}>
+                  <Box
+                    className={css.itemButton}
+                    style={{
+                      right: sm ? "20px" : "50px",
+                    }}
+                  >
                     <Button variant="contained" color="primary" onClick={(e) => getDetails(e, item)}>
-                      {reportMiss("Detail", "h5p_detail")}
+                      {d("Detail").t("h5p_label_detail")}
                     </Button>
                   </Box>
                 </ListItem>
@@ -418,21 +447,20 @@ export default function H5pList(props: H5pListProps) {
             })}
       </List>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{reportMiss("Change content type?", "h5p_change_content_type")}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{d("Change Content Type?").t("h5p_label_change_content_type")}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {reportMiss(
-              "By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?",
-              "h5p_dialog_content"
+            {d("By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?").t(
+              "h5p_label_dialog_content"
             )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            {reportMiss("cancelLabel", "h5p_cancel")}
+            {d("Cancel").t("h5p_label_cancel")}
           </Button>
           <Button onClick={handleConfirm} variant="contained" color="primary" startIcon={<Check />}>
-            {reportMiss("confirmLabel", "h5p_confirm")}
+            {d("Confirm").t("h5p_label_confirm")}
           </Button>
         </DialogActions>
       </Dialog>

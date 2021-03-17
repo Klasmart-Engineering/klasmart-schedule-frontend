@@ -2,8 +2,7 @@ import { IconButton, makeStyles } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import React from "react";
 import imgUrl from "../../assets/icons/h5p_icon.png";
-import { reportMiss } from "../../locale/LocaleManager";
-
+import { d } from "../../locale/LocaleManager";
 const useStyles = makeStyles(() => ({
   navBar: {
     height: "70px",
@@ -30,13 +29,11 @@ const useStyles = makeStyles(() => ({
     color: "#000",
   },
 }));
-
 interface H5pHeaderNavbarProps {
   title: string;
   onExpand: (value: boolean) => void;
   expand: boolean;
 }
-
 export default function H5pHeaderNavbar(props: H5pHeaderNavbarProps) {
   const { title, onExpand, expand } = props;
   const css = useStyles();
@@ -48,7 +45,7 @@ export default function H5pHeaderNavbar(props: H5pHeaderNavbarProps) {
   return (
     <div className={css.navBar} onClick={handleClick}>
       <img src={imgUrl} alt="" />
-      {title ? title : reportMiss("Select content type", "h5p_select_content_type")}
+      {title ? title : d("Select Content Type").t("h5p_label_select_content_type")}
       <IconButton className={css.downIcon} type="submit" aria-label="search">
         <ExpandMore />
       </IconButton>

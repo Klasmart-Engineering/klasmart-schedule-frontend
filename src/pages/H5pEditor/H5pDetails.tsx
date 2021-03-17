@@ -31,7 +31,7 @@ import {
 } from "../../components/H5pElement";
 import { widgetElements } from "../../components/H5pWidget";
 import { useH5pFormReducer } from "../../hooks/useH5pFormReducer";
-import { localeManager, reportMiss } from "../../locale/LocaleManager";
+import { d, localeManager } from "../../locale/LocaleManager";
 import {
   H5pFormErrors,
   H5PItemHelper,
@@ -45,8 +45,7 @@ import {
   isH5pParentError,
   MapHandler,
 } from "../../models/ModelH5pSchema";
-import commonOptions from "./commonOptions.json";
-// import { RichTextInput } from "../../components/RichTextInput";
+import commonOptions from "./commonOptions.json"; // import { RichTextInput } from "../../components/RichTextInput";
 
 const useStyles = makeStyles(({ palette }) =>
   createStyles({
@@ -150,6 +149,7 @@ interface H5PFormCombinedNode {
   common: JSX.Element[];
   uncommon: JSX.Element | undefined;
 }
+
 const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandler<H5PFormCombinedNode> => {
   return function combinedNodeMapHandler(props) {
     const { itemHelper, children, context } = props;
@@ -159,35 +159,83 @@ const makeCombinedNodeMapHandler = (handler: MapHandler<JSX.Element>): MapHandle
     children.forEach((child) => {
       commonInline.push(...child.commonInline);
       common.push(...child.common);
-    });
-    // library 元素的场景
+    }); // library 元素的场景
+
     if (isH5pLibraryItemInfo(itemHelper)) {
       // library 的 common 值不能为真
-      const uncommon = handler({ itemHelper, children: uncommonList, context });
-      if (commonInline.length === 0) return { uncommon, commonInline, common };
+      const uncommon = handler({
+        itemHelper,
+        children: uncommonList,
+        context,
+      });
+      if (commonInline.length === 0)
+        return {
+          uncommon,
+          commonInline,
+          common,
+        };
       const commonItemHelper: H5PItemHelper = {
         ...itemHelper,
         semantics: {
           ...itemHelper.semantics,
-          extra: { isRenderCommon: true },
+          extra: {
+            isRenderCommon: true,
+          },
         },
       };
-      common.unshift(handler({ itemHelper: commonItemHelper, children: commonInline, context }));
-      return { uncommon, common, commonInline: [] };
-    }
-    // common 元素的场景
+      common.unshift(
+        handler({
+          itemHelper: commonItemHelper,
+          children: commonInline,
+          context,
+        })
+      );
+      return {
+        uncommon,
+        common,
+        commonInline: [],
+      };
+    } // common 元素的场景
+
     if (itemHelper.semantics.common) {
-      commonInline.unshift(handler({ itemHelper, children: uncommonList, context }));
-      return { uncommon: undefined, commonInline, common };
-    }
-    // 非 common 元素的场景
-    const uncommon = handler({ itemHelper, children: uncommonList, context });
-    return { uncommon, commonInline, common };
+      commonInline.unshift(
+        handler({
+          itemHelper,
+          children: uncommonList,
+          context,
+        })
+      );
+      return {
+        uncommon: undefined,
+        commonInline,
+        common,
+      };
+    } // 非 common 元素的场景
+
+    const uncommon = handler({
+      itemHelper,
+      children: uncommonList,
+      context,
+    });
+    return {
+      uncommon,
+      commonInline,
+      common,
+    };
   };
 };
 
-const pipe = <P, R>(f1: { (x: P): R }, f2: { (x: R): any }) => (x: P) => f2(f1(x));
+const pipe = <P, R>(
+  f1: {
+    (x: P): R;
+  },
+  f2: {
+    (x: R): any;
+  }
+) => (x: P) => f2(f1(x));
+
 const noop = (value: H5PLibraryContent) => {};
+
 interface H5pDetailsProps {
   defaultValue: H5PLibraryContent;
   onChange?: (value: H5PLibraryContent) => any;
@@ -206,9 +254,11 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
   const libraryInfo: H5PLibraryInfo = {
     path: "",
     content: form,
-    semantics: { name: H5P_ROOT_NAME, type: H5PItemType.library },
+    semantics: {
+      name: H5P_ROOT_NAME,
+      type: H5PItemType.library,
+    },
   };
-
   if (!schema) return null;
   const {
     result: { common, uncommon },
@@ -222,7 +272,12 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
         (semantics.type === H5PItemType.list && semantics.widgets?.[0].name) ||
         undefined;
       const Widget = widget && widgetElements[widget];
-      let elementProps = { itemHelper, children, context } as H5pElementProps;
+      let elementProps = {
+        itemHelper,
+        children,
+        context,
+      } as H5pElementProps;
+
       if (
         isH5pElementText(elementProps) ||
         isH5pElementNumber(elementProps) ||
@@ -317,6 +372,7 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
         };
         elementProps = extendedProps;
       }
+
       itemHelper.node = Widget ? <Widget {...elementProps} key={path} /> : <H5pElement {...elementProps} key={path} />;
       return itemHelper.node;
     })
@@ -327,22 +383,35 @@ export const H5pDetails = forwardRef<HTMLDivElement, H5pDetailsProps>((props, re
         {uncommon}
         <div className={css.section} key="h5p-common-group">
           <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />} classes={{ root: css.sectionSummary }}>
-              {reportMiss("Text overrides and translations", "h5p_label_commonFields")}
+            <AccordionSummary
+              expandIcon={<ExpandMore />}
+              classes={{
+                root: css.sectionSummary,
+              }}
+            >
+              {d("Text overrides and translations").t("h5p_label_commonFields")}
             </AccordionSummary>
             <AccordionDetails className={css.sectionDetails}>
               <div className={css.commonDescription}>
-                {reportMiss("Here you can edit settings or translate texts used in this content.", "h5p_label_commonFieldsDescription")}
+                {d("Here you can edit settings or translate texts used in this content.").t("h5p_label_commonFieldsDescription")}
                 <TextField
                   select
-                  label={reportMiss("Language", "h5p_label_language")}
+                  label={d("Language").t("h5p_label_language")}
                   value={form?.metadata?.defaultLanguage ?? localeManager.intl?.locale ?? ""}
                   className={clsx(css.languageInput, css.h5pItemHalf)}
                   onChange={(e) =>
                     pipe(
                       dispatchChange,
                       onChange
-                    )({ ...libraryInfo, content: { library: "", metadata: { defaultLanguage: e.target.value } } })
+                    )({
+                      ...libraryInfo,
+                      content: {
+                        library: "",
+                        metadata: {
+                          defaultLanguage: e.target.value,
+                        },
+                      },
+                    })
                   }
                 >
                   {commonOptions.map(({ value, label }) => (

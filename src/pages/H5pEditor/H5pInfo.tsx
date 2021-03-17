@@ -3,9 +3,8 @@ import { ArrowBack, ArrowForward, Close, ExpandMore, Search } from "@material-ui
 import clsx from "clsx";
 import React from "react";
 import { ContentFileType, ContentTypeList } from "../../api/type";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { MockData } from "./types";
-
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
     paddingBottom: "20px",
@@ -153,7 +152,6 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     textAlign: "center",
     width: "60%",
-
     [theme.breakpoints.down("md")]: {
       width: "80%",
     },
@@ -189,14 +187,12 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "18px",
   },
 }));
-
 interface H5pInfoProps {
   contentTypeList: ContentTypeList;
   h5pId: string | ContentFileType;
   setShow: (value: string) => any;
   mockData: ContentTypeList[0] | MockData;
 }
-
 export default function H5pInfo(props: H5pInfoProps) {
   const { contentTypeList, h5pId, setShow, mockData } = props;
   const h5pInfo = h5pId ? contentTypeList.filter((item) => item.id === h5pId)[0] : mockData;
@@ -257,11 +253,18 @@ export default function H5pInfo(props: H5pInfoProps) {
 
   return (
     <div className={css.infoContainer}>
-      <Grid container style={{ width: "98%" }}>
+      <Grid
+        container
+        style={{
+          width: "98%",
+        }}
+      >
         <Paper className={css.searchBox}>
           <InputBase
             placeholder="Search for Content Types"
-            inputProps={{ "aria-label": "search for Content Types" }}
+            inputProps={{
+              "aria-label": "search for Content Types",
+            }}
             className={css.searchInput}
           />
           <IconButton className={css.searchButton} type="submit" aria-label="search">
@@ -282,17 +285,18 @@ export default function H5pInfo(props: H5pInfoProps) {
               <h2>{h5pInfo.title}</h2>
               <div>{h5pInfo.owner}</div>
               <p>{h5pInfo.description}</p>
-              {h5pId && (
-                <a href={h5pInfo.example} className={css.demo} target="_blank" rel="noopener noreferrer">
-                  {reportMiss("Content Demo", "h5p_content_demo")}
-                </a>
-              )}
             </Grid>
           </Grid>
           {h5pId && (
             <div className={css.outerBox}>
               <div className={css.navBox}>
-                <Grid container className={css.imagesContainer} style={{ marginLeft: `${leftPosition}%` }}>
+                <Grid
+                  container
+                  className={css.imagesContainer}
+                  style={{
+                    marginLeft: `${leftPosition}%`,
+                  }}
+                >
                   {h5pInfo.screenshots.length > 0 &&
                     h5pInfo.screenshots.map((item, index) => {
                       return (
@@ -308,7 +312,9 @@ export default function H5pInfo(props: H5pInfoProps) {
                   fontSize="large"
                   className={clsx(css.arrowPrev, css.arrowCommon)}
                   onClick={prevImage}
-                  style={{ cursor: leftPosition === 0 ? "not-allowed" : "pointer" }}
+                  style={{
+                    cursor: leftPosition === 0 ? "not-allowed" : "pointer",
+                  }}
                 />
               </div>
               <div>
@@ -328,8 +334,13 @@ export default function H5pInfo(props: H5pInfoProps) {
           )}
           <div className={css.license}>
             <Accordion defaultExpanded={false}>
-              <AccordionSummary expandIcon={<ExpandMore />} classes={{ root: css.sectionSummary }}>
-                {reportMiss("License", "h5p_license")}
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                classes={{
+                  root: css.sectionSummary,
+                }}
+              >
+                {d("License").t("h5p_label_license")}
               </AccordionSummary>
               {h5pId && (
                 <AccordionDetails>
@@ -357,14 +368,18 @@ export default function H5pInfo(props: H5pInfoProps) {
                   <div
                     className={clsx(css.leftButton, css.dialogCommonButton)}
                     onClick={dialogPrev}
-                    style={{ cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
+                    style={{
+                      cursor: currentIndex === 0 ? "not-allowed" : "pointer",
+                    }}
                   >
                     <ArrowBack fontSize="large" />
                   </div>
                   <div
                     className={clsx(css.rightButton, css.dialogCommonButton)}
                     onClick={dialogNext}
-                    style={{ cursor: currentIndex === h5pInfo.screenshots.length - 1 ? "not-allowed" : "pointer" }}
+                    style={{
+                      cursor: currentIndex === h5pInfo.screenshots.length - 1 ? "not-allowed" : "pointer",
+                    }}
                   >
                     <ArrowForward fontSize="large" />
                   </div>
