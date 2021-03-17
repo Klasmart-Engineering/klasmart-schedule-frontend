@@ -218,6 +218,10 @@ const { reducer } = createSlice({
     [onLoadHomefunDetail.rejected.type]: (state, { error }: any) => {
       throw error;
     },
+    [actHomeFunAssessmentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof actHomeFunAssessmentList>>) => {
+      state.homeFunAssessmentList = payload.items || [];
+      state.total = payload.total || 0;
+    },
   },
 });
 
