@@ -821,6 +821,10 @@ export interface EntityProgram {
   updateAt?: number;
   updateID?: string;
 }
+export interface EntityRegionOrganizationInfo {
+  organization_id?: string;
+  organization_name?: string;
+}
 
 export interface EntityRemoveItemBulk {
   folder_ids?: string[];
