@@ -625,9 +625,9 @@ export interface EntityDevelopmental {
 }
 
 export interface EntityFeedbackAssignmentView {
-  name?: string;
+  attachment_id?: string;
+  attachment_name?: string;
   number?: number;
-  url?: string;
 }
 
 export interface EntityFolderContent {
@@ -777,6 +777,7 @@ export interface EntityListHomeFunStudiesResultItem {
   status?: string;
   student_name?: string;
   teacher_names?: string[];
+  title?: string;
 }
 
 export interface EntityListStudentsPerformanceH5PReportResponse {
@@ -826,6 +827,8 @@ export interface EntityOutcome {
   created_at?: number;
   deleted_at?: number;
   description?: string;
+
+  /** Category */
   developmental?: string;
   extra?: number;
   grade?: string;
@@ -840,6 +843,8 @@ export interface EntityOutcome {
   publish_status?: string;
   reject_reason?: string;
   shortcode?: string;
+
+  /** SubCategory */
   skills?: string;
   source_id?: string;
   subject?: string;
@@ -968,12 +973,15 @@ export interface EntityScheduleDetailsView {
   description?: string;
   due_at?: number;
   end_at?: number;
+  exist_feedback?: boolean;
   id?: string;
   is_all_day?: boolean;
   is_hidden?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
   lesson_plan?: EntityScheduleShortInfo;
+
+  /** Members        []*ScheduleShortInfo        `json:"teachers"` */
   member_teachers?: EntityScheduleShortInfo[];
   org_id?: string;
   participants_students?: EntityScheduleAccessibleUserView[];
@@ -1002,6 +1010,7 @@ export interface EntityScheduleFeedbackView {
   comment?: string;
   create_at?: number;
   id?: string;
+  is_allow_submit?: boolean;
   schedule_id?: string;
   user_id?: string;
 }
@@ -1225,6 +1234,37 @@ export interface EntityVisibilitySetting {
   number?: number;
   updateAt?: number;
   updateID?: string;
+}
+
+export interface ExternalAge {
+  id?: string;
+  name?: string;
+}
+
+export interface ExternalCategory {
+  id?: string;
+  name?: string;
+}
+
+export interface ExternalGrade {
+  id?: string;
+  name?: string;
+}
+
+export interface ExternalProgram {
+  group_name?: string;
+  id?: string;
+  name?: string;
+}
+
+export interface ExternalSubCategory {
+  id?: string;
+  name?: string;
+}
+
+export interface ExternalSubject {
+  id?: string;
+  name?: string;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -1981,6 +2021,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "GET",
         params
       ),
+
     /**
      * @tags content
      * @name getDownloadPath
@@ -2896,21 +2937,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/teachers/${id}`, "GET", params),
   };
-  scheduleFeedbacks = {
-    /**
-     * @tags scheduleFeedback
-     * @name queryFeedback
-     * @summary queryFeedback
-     * @request GET:/schedule_feedbacks
-     * @description query feedback list
-     */
-    queryFeedback: (query?: { schedule_id?: string; user_id?: string }, params?: RequestParams) =>
-      this.request<EntityScheduleFeedbackView[], ApiInternalServerErrorResponse>(
-        `/schedule_feedbacks${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-  };
   schedules = {
     /**
      * @tags schedule
@@ -3061,6 +3087,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
   };
   schedulesFeedbacks = {
+    /**
+     * @tags scheduleFeedback
+     * @name queryFeedback
+     * @summary queryFeedback
+     * @request GET:/schedules_feedbacks
+     * @description query feedback list
+     */
+    queryFeedback: (query?: { schedule_id?: string; user_id?: string }, params?: RequestParams) =>
+      this.request<EntityScheduleFeedbackView[], ApiInternalServerErrorResponse>(
+        `/schedules_feedbacks${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
     /**
      * @tags scheduleFeedback
      * @name addScheduleFeedback

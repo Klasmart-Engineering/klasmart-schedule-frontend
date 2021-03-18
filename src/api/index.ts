@@ -64,6 +64,9 @@ class Api extends AutoApi {
 
 export default new Api({
   baseUrl: process.env.REACT_APP_BASE_API,
+  baseApiParams: {
+    credentials: "include",
+  }
 });
 
 export const gqlapi = new ApolloClient({

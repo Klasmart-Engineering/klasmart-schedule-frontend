@@ -6,7 +6,7 @@ import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
-  EntityScheduleFeedbackView,
+  EntityScheduleFeedbackView
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
@@ -151,11 +151,11 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
     const myUserId = meInfo.me?.user_id ?? "";
     const detail = await api.homeFunStudies.getHomeFunStudy(id);
     const { schedule_id, student_id: user_id } = detail;
-    const feedbacks = await api.scheduleFeedbacks.queryFeedback({ schedule_id, user_id });
+    const feedbacks = await api.schedulesFeedbacks.queryFeedback({ schedule_id, user_id });
     const hasPermissionOfHomefun =
       !!detail.teacher_ids?.includes(myUserId) && hasPermissionOfMe(PermissionType.edit_in_progress_assessment_439, meInfo.me);
     const content = d("A new version of the assignment has been submitted, please refresh").t("assess_msg_new_version");
-    if (detail.assess_feedback_id !== feedbacks[0]?.id) await dispatch(actAsyncConfirm({ content, hideCancel: true }));
+    if (detail.assess_feedback_id && detail.assess_feedback_id !== feedbacks[0]?.id) dispatch(actAsyncConfirm({ content, hideCancel: true }));
     return { detail, feedbacks, hasPermissionOfHomefun };
   }
 );

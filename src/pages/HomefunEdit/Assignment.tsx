@@ -14,7 +14,7 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import {
   GetApp,
@@ -22,11 +22,12 @@ import {
   SentimentSatisfiedOutlined,
   SentimentVeryDissatisfiedOutlined,
   SentimentVerySatisfiedOutlined,
-  SvgIconComponent,
+  SvgIconComponent
 } from "@material-ui/icons";
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../../api/api.auto";
+import { apiResourcePathById } from "../../api/extra";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
@@ -105,7 +106,6 @@ interface ScoreInputProps {
 function ScoreInput(props: ScoreInputProps) {
   const css = useStyle();
   const { optionColors, optionNames, optionIcons, optionValues, value, onChange } = props;
-  console.log("value = ", value);
   const radioList = optionNames.map((name, index) => (
     <FormControlLabel
       key={optionValues[index]}
@@ -160,7 +160,7 @@ function AssignmentTable(props: AssignmentTableProps) {
     <TableRow key={id}>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
         {assignments?.map((assignment) => (
-          <AssignmentDownloadRow name={assignment.name} url={assignment.url} key={assignment.name} />
+          <AssignmentDownloadRow name={assignment.attachment_name} url={apiResourcePathById(assignment.attachment_id)} key={assignment.attachment_id} />
         ))}
       </TableCell>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
@@ -204,7 +204,6 @@ interface AssignmentProps {
 
 export function Assignment(props: AssignmentProps) {
   const { detail, feedbacks, formMethods } = props;
-  console.log("detail.assess_score = ", detail.assess_score);
   const css = useStyle();
   const { control } = formMethods;
   return (

@@ -37,19 +37,15 @@ function AssessmentsHomefunEditIner() {
     formState: { isDirty },
   } = formMethods;
   const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
-  const handleAssessmentSaveOrComplete = useMemo(
-    () => (action: AssessmentUpdateAction, message: string) =>
-      handleSubmit(async (value) => {
-        if (!id) return;
-        const data: UpdateHomefunParams = { ...value, id, action };
-        await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
-        dispatch(actSuccess(message));
-        history.replace({
-          search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
-        });
-      }),
-    [handleSubmit, id, dispatch, history, editindex]
-  );
+  const handleAssessmentSaveOrComplete = (action: AssessmentUpdateAction, message: string) => handleSubmit(async (value) => {
+    if (!id) return;
+    const data: UpdateHomefunParams = { ...value, id, action };
+    await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
+    dispatch(actSuccess(message));
+    history.replace({
+      search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
+    });
+  });
   const handleLeave = useMemo<PromptProps["message"]>(
     () => (location) => {
       return location.pathname === AssessmentsHomefunEdit.routeBasePath ? false : d("Discard unsaved changes?").t("assess_msg_discard");
