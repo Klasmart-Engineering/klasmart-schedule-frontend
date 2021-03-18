@@ -169,7 +169,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   <>
                     {isSelf ? (
                       <Permission
-                        value={PermissionType.delete_my_unpublished_learninng_outcome_444}
+                        value={PermissionType.delete_my_unpublished_learning_outcome_444}
                         render={(value) =>
                           value && (
                             <Button variant="outlined" endIcon={<Delete />} className={clsx(css.deleteButton)} onClick={handleDelete}>
@@ -181,7 +181,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                     ) : (
                       <PermissionOr
                         value={[
-                          PermissionType.delete_my_unpublished_learninng_outcome_444,
+                          PermissionType.delete_my_unpublished_learning_outcome_444,
                           PermissionType.delete_org_unpublished_learning_outcome_445,
                         ]}
                         render={(value) =>
@@ -452,7 +452,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                   <>
                     {isSelf ? (
                       <Permission
-                        value={PermissionType.delete_my_unpublished_learninng_outcome_444}
+                        value={PermissionType.delete_my_unpublished_learning_outcome_444}
                         render={(value) =>
                           value && (
                             <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handleDelete}>
@@ -464,7 +464,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                     ) : (
                       <PermissionOr
                         value={[
-                          PermissionType.delete_my_unpublished_learninng_outcome_444,
+                          PermissionType.delete_my_unpublished_learning_outcome_444,
                           PermissionType.delete_org_unpublished_learning_outcome_445,
                         ]}
                         render={(value) =>

@@ -51,7 +51,7 @@ export enum PermissionType {
   edit_published_learning_outcome_436 = "edit_published_learning_outcome_436",
   edit_attendance_for_in_progress_assessment_438 = "edit_attendance_for_in_progress_assessment_438",
   edit_in_progress_assessment_439 = "edit_in_progress_assessment_439",
-  delete_my_unpublished_learninng_outcome_444 = "delete_my_unpublished_learninng_outcome_444",
+  delete_my_unpublished_learning_outcome_444 = "delete_my_unpublished_learning_outcome_444",
   delete_org_unpublished_learning_outcome_445 = "delete_org_unpublished_learning_outcome_445",
   delete_my_pending_learning_outcome_446 = "delete_my_pending_learning_outcome_446",
   delete_org_pending_learning_outcome_447 = "delete_org_pending_learning_outcome_447",

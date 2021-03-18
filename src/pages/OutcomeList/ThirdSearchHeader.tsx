@@ -133,7 +133,7 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
       }
       return res;
     default:
-      return perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learninng_outcome_444
+      return perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learning_outcome_444
         ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }]
         : [];
   }
@@ -162,7 +162,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     PermissionType.delete_org_pending_learning_outcome_447,
     PermissionType.delete_my_pending_learning_outcome_446,
     PermissionType.delete_org_unpublished_learning_outcome_445,
-    PermissionType.delete_my_unpublished_learninng_outcome_444,
+    PermissionType.delete_my_unpublished_learning_outcome_444,
     PermissionType.approve_pending_learning_outcome_481,
     PermissionType.reject_pending_learning_outcome_482,
   ]);
@@ -250,7 +250,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     PermissionType.delete_org_pending_learning_outcome_447,
     PermissionType.delete_my_pending_learning_outcome_446,
     PermissionType.delete_org_unpublished_learning_outcome_445,
-    PermissionType.delete_my_unpublished_learninng_outcome_444,
+    PermissionType.delete_my_unpublished_learning_outcome_444,
     PermissionType.approve_pending_learning_outcome_481,
     PermissionType.reject_pending_learning_outcome_482,
   ]);
