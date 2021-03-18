@@ -7,12 +7,12 @@ import {
   ApiOutcomeCreateView,
   ApiOutcomeIDList,
   ApiOutcomeView,
-  EntityAge,
-  EntityDevelopmental,
-  EntityGrade,
-  EntityProgram,
-  EntitySkill,
-  EntitySubject,
+  // EntityAge,
+  // EntityDevelopmental,
+  // EntityGrade,
+  // EntityProgram,
+  // EntitySkill,
+  // EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { OutcomePublishStatus } from "../api/type";
@@ -21,6 +21,7 @@ import { d } from "../locale/LocaleManager";
 import { isUnpublish } from "../pages/OutcomeList/FirstSearchHeader";
 import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
+import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 import { IPermissionState } from "./type";
@@ -125,12 +126,12 @@ interface ParamsGetNewOptions {
   program_id?: string | undefined;
 }
 export interface ResultGetNewOptions {
-  program: EntityProgram[];
-  subject: EntitySubject[];
-  developmental: EntityDevelopmental[];
-  age: EntityAge[];
-  grade: EntityGrade[];
-  skills: EntitySkill[];
+  program: LinkedMockOptionsItem[];
+  subject: LinkedMockOptionsItem[];
+  developmental: LinkedMockOptionsItem[];
+  age: LinkedMockOptionsItem[];
+  grade: LinkedMockOptionsItem[];
+  skills: LinkedMockOptionsItem[];
   user_id: string | undefined;
 }
 const PAGE_SIZE = 20;

@@ -37,17 +37,17 @@ import {
   ApiSuccessRequestResponse,
   EntityClassType,
   EntityContentInfoWithDetails,
-  EntityProgram,
+  // EntityProgram,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleFeedbackAddInput,
   EntityScheduleListView,
   EntityScheduleSearchView,
-  EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
+import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 
@@ -425,8 +425,8 @@ export interface getScheduleParticipantsMockOptionsResponse {
 
 export interface getScheduleMockOptionsResponse {
   teacherList: TeachersByOrgnizationQuery;
-  subjectList: EntitySubject[];
-  programList: EntityProgram[];
+  subjectList: LinkedMockOptionsItem[];
+  programList: LinkedMockOptionsItem[];
   classTypeList: EntityClassType[];
 }
 interface GetScheduleMockOptionsPayLoad {

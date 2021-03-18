@@ -1,9 +1,10 @@
 import { Box, Checkbox, CheckboxProps, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ApiOutcomeView, EntityProgram } from "../../api/api.auto";
+import { ApiOutcomeView } from "../../api/api.auto";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { d } from "../../locale/LocaleManager";
+import { LinkedMockOptionsItem } from "../../reducers/content";
 import { ResultGetNewOptions } from "../../reducers/outcome";
 
 const useStyles = makeStyles(() => ({
@@ -62,7 +63,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
   } = props;
   const classes = useStyles();
 
-  const getItems = (list: EntityProgram[]) =>
+  const getItems = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
