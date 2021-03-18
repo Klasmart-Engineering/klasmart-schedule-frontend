@@ -41,6 +41,7 @@ import {
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleFeedbackAddInput,
+  EntityScheduleFeedbackView,
   EntityScheduleListView,
   EntityScheduleSearchView,
 } from "../api/api.auto";
@@ -92,6 +93,7 @@ export interface ScheduleState {
   participantsIds: ParticipantsShortInfo;
   classRosterIds: ParticipantsShortInfo;
   mySchoolId: string;
+  feedbackData: EntityScheduleFeedbackView;
 }
 
 interface Rootstate {
@@ -187,6 +189,15 @@ const initialState: ScheduleState = {
   participantsIds: { student: [], teacher: [] },
   classRosterIds: { student: [], teacher: [] },
   mySchoolId: "",
+  feedbackData: {
+    assignments: [],
+    comment: "",
+    create_at: 0,
+    id: "",
+    schedule_id: "",
+    user_id: "",
+    is_allow_submit: false,
+  },
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -201,32 +212,37 @@ export const getSearchScheduleList = createAsyncThunk<querySchedulesResult, quer
   return api.schedules.querySchedule(data);
 });
 
-export const saveScheduleData = createAsyncThunk<EntityScheduleAddView, EntityScheduleAddView & LoadingMetaPayload, { state: Rootstate }>(
-  "schedule/save",
-  async (payload, { getState }) => {
-    let {
-      schedule: {
-        scheduleDetial: { id },
-      },
-    } = getState();
-    if (!id) {
-      const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
-      // @ts-ignore
-      if (!result.data?.id) return result;
-      // @ts-ignore
-      id = result.data?.id;
-    } else {
-      // @ts-ignore
-      const result = await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label));
-      // @ts-ignore
-      if (!result.data?.id) return result;
-      // @ts-ignore
-      id = result.data?.id;
-    }
+type SaveStatusResourseParams = {
+  payload: EntityScheduleAddView;
+  is_new_schedule: boolean;
+};
+export const saveScheduleData = createAsyncThunk<
+  EntityScheduleAddView,
+  SaveStatusResourseParams & LoadingMetaPayload,
+  { state: Rootstate }
+>("schedule/save", async ({ payload, is_new_schedule }, { getState }) => {
+  let {
+    schedule: {
+      scheduleDetial: { id },
+    },
+  } = getState();
+  if (!id || is_new_schedule) {
+    const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
     // @ts-ignore
-    return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
+    if (!result.data?.id) return result;
+    // @ts-ignore
+    id = result.data?.id;
+  } else {
+    // @ts-ignore
+    const result = await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label));
+    // @ts-ignore
+    if (!result.data?.id) return result;
+    // @ts-ignore
+    id = result.data?.id;
   }
-);
+  // @ts-ignore
+  return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
+});
 
 export interface viewSchedulesResultResponse {
   scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
@@ -336,6 +352,15 @@ export const getSchoolInfo = createAsyncThunk("getSchoolInfo", async () => {
     },
   });
 });
+
+type feedbackSchedulesParams = Parameters<typeof api.schedules.getScheduleNewestFeedbackByOperator>[0];
+type feedbackSchedulesResult = ReturnType<typeof api.schedules.getScheduleNewestFeedbackByOperator>;
+export const getScheduleNewetFeedback = createAsyncThunk<feedbackSchedulesResult, feedbackSchedulesParams>(
+  "schedule/feedback",
+  (schedule_id) => {
+    return api.schedules.getScheduleNewestFeedbackByOperator(schedule_id);
+  }
+);
 
 type deleteSchedulesParams = {
   schedule_id: Parameters<typeof api.schedules.deleteSchedule>[0];
@@ -614,6 +639,10 @@ const { actions, reducer } = createSlice({
     },
     [scheduleShowOption.fulfilled.type]: (state, { payload }: any) => {
       console.log(payload);
+    },
+    [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
+      console.log(payload);
+      state.feedbackData = payload;
     },
   },
 });

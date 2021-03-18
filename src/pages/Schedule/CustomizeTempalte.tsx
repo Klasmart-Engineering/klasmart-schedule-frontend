@@ -95,13 +95,15 @@ interface InfoProps {
   toLive: () => void;
   changeModalDate: (data: object) => void;
   checkLessonPlan: boolean;
+  handleChangeHidden: (is_hidden: boolean) => void;
+  isHidden: boolean;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive, checkLessonPlan } = props;
+  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive, checkLessonPlan, handleChangeHidden, isHidden } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -182,6 +184,8 @@ export default function CustomizeTempalte(props: InfoProps) {
                     toLive={toLive}
                     changeModalDate={changeModalDate}
                     checkLessonPlan={checkLessonPlan}
+                    handleChangeHidden={handleChangeHidden}
+                    isHidden={isHidden}
                   />
                 ),
                 openStatus: true,

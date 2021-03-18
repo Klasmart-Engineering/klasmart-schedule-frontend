@@ -59,7 +59,18 @@ const localizer = momentLocalizer(moment);
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear, scheduleTimeViewYearData } = props;
+  const {
+    modelView,
+    timesTamp,
+    changeTimesTamp,
+    toLive,
+    changeModalDate,
+    setSpecificStatus,
+    modelYear,
+    scheduleTimeViewYearData,
+    isHidden,
+    handleChangeHidden,
+  } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -81,10 +92,6 @@ function MyCalendar(props: CalendarProps) {
             time_zone_offset: -new Date().getTimezoneOffset() * 60,
           })
         );
-        /*        changeTimesTamp({
-          start: Math.floor(new Date().getTime() / 1000),
-          end: Math.floor(new Date().getTime() / 1000),
-        });*/
         history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       }
     },
@@ -317,6 +324,8 @@ function MyCalendar(props: CalendarProps) {
           toLive={toLive}
           changeModalDate={changeModalDate}
           checkLessonPlan={checkLessonPlan.payload.lesson_plan_is_auth}
+          handleChangeHidden={handleChangeHidden}
+          isHidden={isHidden}
         />
       ),
       openStatus: true,
@@ -392,10 +401,23 @@ interface CalendarProps {
   setSpecificStatus: (value: boolean) => void;
   modelYear: boolean;
   scheduleTimeViewYearData: [];
+  handleChangeHidden: (is_hidden: boolean) => void;
+  isHidden: boolean;
 }
 
 export default function KidsCalendar(props: CalendarProps) {
-  const { modelView, timesTamp, changeTimesTamp, toLive, changeModalDate, setSpecificStatus, modelYear, scheduleTimeViewYearData } = props;
+  const {
+    modelView,
+    timesTamp,
+    changeTimesTamp,
+    toLive,
+    changeModalDate,
+    setSpecificStatus,
+    modelYear,
+    scheduleTimeViewYearData,
+    handleChangeHidden,
+    isHidden,
+  } = props;
 
   return (
     <MyCalendar
@@ -407,6 +429,8 @@ export default function KidsCalendar(props: CalendarProps) {
       setSpecificStatus={setSpecificStatus}
       modelYear={modelYear}
       scheduleTimeViewYearData={scheduleTimeViewYearData}
+      handleChangeHidden={handleChangeHidden}
+      isHidden={isHidden}
     />
   );
 }

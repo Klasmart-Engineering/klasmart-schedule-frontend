@@ -75,6 +75,11 @@ function ScheduleContent() {
   const [, setChangeProgram] = React.useState<string>("");
   const [modelYear, setModelYear] = React.useState<boolean>(false);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const [isHidden, setIsHidden] = React.useState<boolean>(false);
+
+  const handleChangeHidden = (is_hidden: boolean) => {
+    setIsHidden(is_hidden);
+  };
 
   const handleChangeProgramId = (programId: string) => {
     setChangeProgram(programId);
@@ -272,6 +277,8 @@ function ScheduleContent() {
               handleChangeParticipants={handleChangeParticipants}
               ParticipantsData={ParticipantsData}
               getParticipantsData={getParticipants}
+              handleChangeHidden={handleChangeHidden}
+              isHidden={isHidden}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>
@@ -285,6 +292,8 @@ function ScheduleContent() {
                 setSpecificStatus={setSpecificStatus}
                 modelYear={modelYear}
                 scheduleTimeViewYearData={scheduleTimeViewYearData}
+                handleChangeHidden={handleChangeHidden}
+                isHidden={isHidden}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}

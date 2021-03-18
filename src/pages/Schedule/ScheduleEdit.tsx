@@ -299,6 +299,8 @@ function EditBox(props: CalendarStateProps) {
     getParticipantsData,
     LinkageLessonPlan,
     contentPreview,
+    isHidden,
+    handleChangeHidden,
   } = props;
   const { scheduleDetial, contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>(
     (state) => state.schedule
@@ -309,7 +311,6 @@ function EditBox(props: CalendarStateProps) {
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
-  const [isHidden, setIsHidden] = React.useState<boolean>(false);
   const [, setTeacherItem] = React.useState<any[] | undefined>([]);
   const [, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
@@ -460,7 +461,6 @@ function EditBox(props: CalendarStateProps) {
     setTeacherItem([]);
     setScheduleList(newData);
     setInitScheduleList(newData);
-    setIsHidden(false);
     dispatch(resetScheduleDetial(initScheduleDetial));
     dispatch(resetParticipantList());
     dispatch(changeParticipants({ type: "classRoster", data: { student: [], teacher: [] } }));
@@ -512,7 +512,6 @@ function EditBox(props: CalendarStateProps) {
       setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
-      setIsHidden(scheduleDetial.is_hidden as boolean);
 
       const getClassOptionsItem = (item: ClassOptionsItem[]) => {
         const items = item?.map((item: any) => {
@@ -774,7 +773,11 @@ function EditBox(props: CalendarStateProps) {
   /**
    * save schedule data
    */
-  const saveSchedule = async (repeat_edit_options: repeatOptionsType = "only_current", is_force: boolean = true) => {
+  const saveSchedule = async (
+    repeat_edit_options: repeatOptionsType = "only_current",
+    is_force: boolean = true,
+    is_new_schedule: boolean = false
+  ) => {
     if (!validatorFun()) return;
     changeModalDate({
       OpenStatus: false,
@@ -789,7 +792,6 @@ function EditBox(props: CalendarStateProps) {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
       }
-
       if (
         (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") &&
         timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime
@@ -887,9 +889,9 @@ function EditBox(props: CalendarStateProps) {
     });
 
     let resultInfo: any;
-    resultInfo = ((await dispatch(saveScheduleData({ ...scheduleList, ...addData, metaLoading: true }))) as unknown) as PayloadAction<
-      AsyncTrunkReturned<typeof saveScheduleData>
-    >;
+    resultInfo = ((await dispatch(
+      saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -972,6 +974,67 @@ function EditBox(props: CalendarStateProps) {
     return scheduleId ? scheduleDetial.status !== "NotStart" || perm.attend_live_class_as_a_student_187 : false;
   };
 
+  const isLimit = (): boolean => {
+    const is_submit = scheduleDetial.exist_feedback;
+    const is_expire = Date.now() > (scheduleDetial.due_at as number) * 1000;
+    return is_submit || is_expire || isHidden;
+  };
+
+  const feedBackNoticeEdit = () => {
+    changeModalDate({
+      title: "",
+      text: d("Students have already submitted assignments, a new event will be created.").t("schedule_msg_assignment_new"),
+      openStatus: true,
+      enableCustomization: false,
+      buttons: [
+        {
+          label: d("CANCEL").t("schedule_button_cancel"),
+          event: () => {
+            changeModalDate({
+              openStatus: false,
+            });
+          },
+        },
+        {
+          label: d("OK").t("schedule_button_ok"),
+          event: () => {
+            saveSchedule("only_current", true, true);
+          },
+        },
+      ],
+    });
+  };
+
+  const feedBackNoticeDelete = () => {
+    changeModalDate({
+      title: "",
+      text: d("This event cannot be deleted because assignments have already been uploaded. Do you want to hide it instead?").t(
+        "schedule_msg_hide"
+      ),
+      openStatus: true,
+      enableCustomization: false,
+      buttons: [
+        {
+          label: d("CANCEL").t("schedule_button_cancel"),
+          event: () => {
+            changeModalDate({
+              openStatus: false,
+            });
+          },
+        },
+        {
+          label: d("OK").t("schedule_button_ok"),
+          event: () => {
+            handleHide();
+          },
+        },
+      ],
+      handleClose: () => {
+        changeModalDate({ openStatus: false, enableCustomization: false });
+      },
+    });
+  };
+
   const isStudent = (): boolean => {
     return perm.attend_live_class_as_a_student_187;
   };
@@ -992,6 +1055,10 @@ function EditBox(props: CalendarStateProps) {
 
   const saveTheTest = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (scheduleDetial.exist_feedback) {
+      feedBackNoticeEdit();
+      return;
+    }
     if (
       scheduleId &&
       scheduleDetial &&
@@ -1168,8 +1235,14 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
-  const handleHide = () => {
-    dispatch(scheduleShowOption({ schedule_id: scheduleId as string, show_option: { show_option: isHidden ? "visible" : "hidden" } }));
+  const handleHide = async () => {
+    await dispatch(
+      scheduleShowOption({ schedule_id: scheduleId as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
+    );
+    handleChangeHidden(!isHidden);
+    changeModalDate({
+      openStatus: false,
+    });
   };
 
   /**
@@ -1178,6 +1251,10 @@ function EditBox(props: CalendarStateProps) {
 
   const handleDelete = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
+    if (scheduleDetial.exist_feedback) {
+      feedBackNoticeDelete();
+      return;
+    }
     if (scheduleDetial.class_type === "Homework" || scheduleDetial.class_type === "Task") {
       if (scheduleDetial.due_at && scheduleDetial.due_at !== 0 && scheduleDetial.due_at < currentTime) {
         changeModalDate({
@@ -1455,14 +1532,16 @@ function EditBox(props: CalendarStateProps) {
                   textAlign: "right",
                 }}
               >
-                <DeleteOutlineOutlined
-                  style={{
-                    color: "#D74040",
-                    visibility: scheduleId ? "visible" : "hidden",
-                  }}
-                  className={css.toolset}
-                  onClick={handleDelete}
-                />
+                {!checkedStatus.homeFunCheck && !scheduleDetial.exist_feedback && (
+                  <DeleteOutlineOutlined
+                    style={{
+                      color: "#D74040",
+                      visibility: scheduleId ? "visible" : "hidden",
+                    }}
+                    className={css.toolset}
+                    onClick={handleDelete}
+                  />
+                )}
                 {!isHidden && (
                   <VisibilityOff
                     style={{
@@ -1495,7 +1574,7 @@ function EditBox(props: CalendarStateProps) {
           error={validator.class_type}
           select
           required
-          disabled={isScheduleExpired()}
+          disabled={isScheduleExpired() || scheduleDetial.exist_feedback}
         >
           {menuItemListClassType(scheduleMockOptions.classTypeList)}
         </TextField>
@@ -1503,7 +1582,7 @@ function EditBox(props: CalendarStateProps) {
           <Box>
             <FormGroup row>
               <FormControlLabel
-                disabled={isScheduleExpired()}
+                disabled={isScheduleExpired() || isLimit()}
                 control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
@@ -1520,7 +1599,7 @@ function EditBox(props: CalendarStateProps) {
             value={scheduleList.title}
             onChange={(e) => handleTopicListChange(e, "title")}
             required
-            disabled={isScheduleExpired()}
+            disabled={isScheduleExpired() || isLimit()}
           ></TextField>
           <FileCopyOutlined className={css.iconField} />
         </Box>
@@ -1532,7 +1611,7 @@ function EditBox(props: CalendarStateProps) {
             autocompleteChange(newValue, "class_id");
           }}
           value={classItem}
-          disabled={isScheduleExpired() || scheduleDetial?.class?.enable === false}
+          disabled={isScheduleExpired() || scheduleDetial?.class?.enable === false || isLimit()}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -1738,7 +1817,7 @@ function EditBox(props: CalendarStateProps) {
               autocompleteChange(newValue, "lesson_plan_id");
             }}
             value={lessonPlan}
-            disabled={isScheduleExpired()}
+            disabled={isScheduleExpired() || isLimit()}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -1768,7 +1847,7 @@ function EditBox(props: CalendarStateProps) {
                     required
                     error={validator.start_at}
                     value={timestampToTime(scheduleList.start_at)}
-                    disabled={isScheduleExpired() || checkedStatus.allDayCheck}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
                     onChange={(e) => handleTopicListChange(e, "start_at")}
                   />
                 </Grid>
@@ -1784,7 +1863,7 @@ function EditBox(props: CalendarStateProps) {
                     required
                     error={validator.end_at}
                     value={timestampToTime(scheduleList.end_at)}
-                    disabled={isScheduleExpired() || checkedStatus.allDayCheck}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
                     onChange={(e) => handleTopicListChange(e, "end_at")}
                   />
                 </Grid>
@@ -1796,12 +1875,12 @@ function EditBox(props: CalendarStateProps) {
           <Box>
             <FormGroup row>
               <FormControlLabel
-                disabled={isScheduleExpired()}
+                disabled={isScheduleExpired() || isLimit()}
                 control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
                 label={d("All day").t("schedule_detail_all_day")}
               />
               <FormControlLabel
-                disabled={isScheduleExpired()}
+                disabled={isScheduleExpired() || isLimit()}
                 control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
                 label={d("Repeat").t("schedule_detail_repeat")}
               />
@@ -1835,7 +1914,7 @@ function EditBox(props: CalendarStateProps) {
                     autocompleteChange(newValue, "program_id");
                   }}
                   value={programItem}
-                  disabled={isScheduleExpired()}
+                  disabled={isScheduleExpired() || isLimit()}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -1858,7 +1937,7 @@ function EditBox(props: CalendarStateProps) {
                     autocompleteChange(newValue, "subject_id");
                   }}
                   value={subjectItem}
-                  disabled={isScheduleExpired()}
+                  disabled={isScheduleExpired() || isLimit()}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -1866,7 +1945,7 @@ function EditBox(props: CalendarStateProps) {
                       label={d("Subject").t("assess_label_subject")}
                       variant="outlined"
                       value={scheduleList.subject_id}
-                      disabled={isScheduleExpired()}
+                      disabled={isScheduleExpired() || isLimit()}
                     />
                   )}
                 />
@@ -1883,7 +1962,7 @@ function EditBox(props: CalendarStateProps) {
             <Grid container justify="space-between" alignItems="center">
               <Grid item xs={5}>
                 <FormControlLabel
-                  disabled={isScheduleExpired()}
+                  disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
                   label={d("Due Date").t("schedule_detail_due_date")}
                 />
@@ -1900,7 +1979,7 @@ function EditBox(props: CalendarStateProps) {
                     "aria-label": "change date",
                   }}
                   value={selectedDueDate}
-                  disabled={isScheduleExpired()}
+                  disabled={isScheduleExpired() || isLimit()}
                   onChange={handleDueDateChange}
                 />
               </Grid>
@@ -1915,7 +1994,7 @@ function EditBox(props: CalendarStateProps) {
           rows={4}
           variant="outlined"
           value={scheduleList.description}
-          disabled={isScheduleExpired()}
+          disabled={isScheduleExpired() || isLimit()}
           onChange={(e) => handleTopicListChange(e, "description")}
         />
         <ScheduleAttachment
@@ -2023,6 +2102,8 @@ interface CalendarStateProps {
   getParticipantsData?: (is_org: boolean) => void;
   LinkageLessonPlan: (content_id: string) => void;
   contentPreview: EntityContentInfoWithDetails;
+  handleChangeHidden: (is_hidden: boolean) => void;
+  isHidden: boolean;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2052,6 +2133,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     ParticipantsData,
     LinkageLessonPlan,
     contentPreview,
+    handleChangeHidden,
+    isHidden,
   } = props;
 
   const template = (
@@ -2076,6 +2159,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeParticipants={handleChangeParticipants}
           LinkageLessonPlan={LinkageLessonPlan}
           contentPreview={contentPreview}
+          handleChangeHidden={handleChangeHidden}
+          isHidden={isHidden}
         />
       </Box>
       <Box
@@ -2105,6 +2190,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           ParticipantsData={ParticipantsData}
           LinkageLessonPlan={LinkageLessonPlan}
           contentPreview={contentPreview}
+          handleChangeHidden={handleChangeHidden}
+          isHidden={isHidden}
         />
       </Box>
     </>

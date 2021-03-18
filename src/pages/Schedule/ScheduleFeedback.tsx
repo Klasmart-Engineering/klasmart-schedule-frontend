@@ -4,12 +4,13 @@ import React from "react";
 import { d } from "../../locale/LocaleManager";
 import { AccessTime, CloudUploadOutlined, HighlightOff, InfoOutlined } from "@material-ui/icons";
 import { HtmlTooltip } from "./ScheduleAttachment";
-import { saveScheduleFeedback } from "../../reducers/schedule";
-import { EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
-import { useDispatch } from "react-redux";
+import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
+import { EntityFeedbackAssignmentView, EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
+import { useDispatch, useSelector } from "react-redux";
 import { FileLikeWithId, FileSizeUnit, MultipleUploader } from "../../components/MultipleUploader";
-import { actWarning } from "../../reducers/notify";
+import { actSuccess, actWarning } from "../../reducers/notify";
 import { BatchItem } from "@rpldy/shared";
+import { RootState } from "../../reducers";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -170,6 +171,21 @@ function FeedbackTemplate(props: FeedbackProps) {
   const handleOnChange = (value: Pick<FileLikeWithId, "id" | "name">[] | undefined): void => {
     setFileName(value);
   };
+  const { feedbackData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+
+  React.useEffect(() => {
+    if (feedbackData.schedule_id) {
+      seComment(feedbackData.comment as string);
+      const feedbackDataAssembly = feedbackData?.assignments?.map((item: EntityFeedbackAssignmentView) => {
+        return { name: item.attachment_name, id: item.attachment_id };
+      });
+      setFileName(feedbackDataAssembly);
+    }
+  }, [feedbackData]);
+
+  React.useEffect(() => {
+    if (schedule_id) dispatch(getScheduleNewetFeedback(schedule_id));
+  }, [dispatch, schedule_id]);
 
   const getTipsText = () => {
     return (
@@ -192,6 +208,10 @@ function FeedbackTemplate(props: FeedbackProps) {
   };
 
   const NoticeTemplate = () => {
+    if (feedbackData.is_allow_submit) {
+      dispatch(actWarning(d("You cannot submit again because your assignment has already been assessed.").t("schedule_msg_cannot_submit")));
+      return;
+    }
     if (fileName!.length < 1) {
       dispatch(actWarning("请填写附件上传"));
       return;
@@ -215,16 +235,17 @@ function FeedbackTemplate(props: FeedbackProps) {
     });
   };
 
-  const feedBackSubmit = () => {
+  const feedBackSubmit = async () => {
     const assignments = fileName?.map((item: Pick<FileLikeWithId, "id" | "name">, index: number) => {
-      return { name: item.name, number: index, url: item.id };
+      return { attachment_name: item.name, number: index, attachment_id: item.id };
     });
     const data: EntityScheduleFeedbackAddInput = {
       assignments: assignments,
       comment: comment,
       schedule_id: schedule_id,
     };
-    dispatch(saveScheduleFeedback(data));
+    await dispatch(saveScheduleFeedback(data));
+    dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
     changeModalDate({
       openStatus: false,
     });
@@ -239,6 +260,10 @@ function FeedbackTemplate(props: FeedbackProps) {
     }
   };
 
+  const IsExpired = (due_date: string): boolean => {
+    return new Date(due_date).toDateString() === new Date().toDateString();
+  };
+
   return (
     <Box className={css.fieldBox}>
       <div className={css.linkTop}></div>
@@ -246,7 +271,9 @@ function FeedbackTemplate(props: FeedbackProps) {
       <TextField
         className={css.fieldset}
         value={comment}
-        onChange={(e) => seComment(e.target.value as string)}
+        onChange={(e) => {
+          if (e.target.value.length <= 100) seComment(e.target.value as string);
+        }}
         label={d("Comment").t("schedule_detail_comment")}
       ></TextField>
       <MultipleUploader
@@ -257,12 +284,14 @@ function FeedbackTemplate(props: FeedbackProps) {
         onChange={(value) => handleOnChange(value)}
         value={fileName}
         maxSize={100 * FileSizeUnit.M}
-        onError={(error) => Promise.reject(dispatch(actWarning(error.type)))}
+        onError={(error) =>
+          Promise.reject(dispatch(actWarning(d("The attachment you uploaded does not meet the requirement.").t("schedule_msg_attachment"))))
+        }
         render={({ btnRef, value, isUploading, batch }) => (
           <>
             {value!.length > 0 && <FileDataTemplate fileName={fileName} handleFileData={handleFileData} status="finish" />}
             {isUploading && <FileDataTemplate batch={batch?.items} handleFileData={handleFileData} status="progress" />}
-            {!batch?.items && (
+            {!batch?.items && value!.length < 1 && (
               <Box style={{ position: "relative" }}>
                 <TextField
                   disabled
@@ -294,11 +323,11 @@ function FeedbackTemplate(props: FeedbackProps) {
           onClick={() => {
             setFileName([]);
           }}
-          disabled={due_date ? true : false}
+          disabled={IsExpired(due_date)}
         >
           {d("Cancel").t("assess_button_cancel")}
         </Button>
-        <Button variant="contained" color="primary" style={{ width: "45%" }} onClick={NoticeTemplate} disabled={due_date ? true : false}>
+        <Button variant="contained" color="primary" style={{ width: "45%" }} onClick={NoticeTemplate} disabled={IsExpired(due_date)}>
           {d("Submit").t("schedule_button_submit")}
         </Button>
       </Box>
