@@ -1,7 +1,7 @@
 import { Box, Checkbox, CheckboxProps, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ApiOutcomeView, EntityProgram } from "../../api/api.auto";
+import { ApiOutcomeView, ExternalProgram } from "../../api/api.auto";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { d } from "../../locale/LocaleManager";
 import { ResultGetNewOptions } from "../../reducers/outcome";
@@ -62,7 +62,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
   } = props;
   const classes = useStyles();
 
-  const getItems = (list: EntityProgram[]) =>
+  const getItems = (list: ExternalProgram[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
