@@ -7,12 +7,12 @@ import {
   ApiOutcomeCreateView,
   ApiOutcomeIDList,
   ApiOutcomeView,
-  ExternalAge,
-  ExternalCategory,
-  ExternalGrade,
-  ExternalProgram,
-  ExternalSubCategory,
-  ExternalSubject,
+  EntityAge,
+  EntityDevelopmental,
+  EntityGrade,
+  EntityProgram,
+  EntitySkill,
+  EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { OutcomePublishStatus } from "../api/type";
@@ -125,12 +125,12 @@ interface ParamsGetNewOptions {
   program_id?: string | undefined;
 }
 export interface ResultGetNewOptions {
-  program: ExternalProgram; //EntityProgram[];
-  subject: ExternalSubject[];
-  developmental: ExternalCategory[];
-  age: ExternalAge[];
-  grade: ExternalGrade[];
-  skills: ExternalSubCategory[];
+  program: EntityProgram[];
+  subject: EntitySubject[];
+  developmental: EntityDevelopmental[];
+  age: EntityAge[];
+  grade: EntityGrade[];
+  skills: EntitySkill[];
   user_id: string | undefined;
 }
 const PAGE_SIZE = 20;
