@@ -76,6 +76,10 @@ export interface ApiLoginResponse {
 
 export type ApiNotFoundResponse = ApiResponse;
 
+export interface ApiOrganizationRegionInfoResponse {
+  orgs?: EntityRegionOrganizationInfo[];
+}
+
 export interface ApiOutcomeBulkRejectRequest {
   outcome_ids?: string[];
   reject_reason?: string;
