@@ -754,6 +754,7 @@ export interface EntityOrganizationInfo {
 
 export interface EntityOrganizationProperty {
   id?: string;
+  region?: "global" | "vn";
   type?: "normal" | "headquarters";
 }
 
@@ -2438,6 +2439,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getOrganizationPropertyById: (id: string, params?: RequestParams) =>
       this.request<EntityOrganizationProperty, ApiInternalServerErrorResponse>(`/organizations_propertys/${id}`, "GET", params),
+  };
+  organizationsRegion = {
+    /**
+     * @tags organizationProperty
+     * @name getOrganizationByHeadquarterForDetails
+     * @summary getOrganizationByHeadquarterForDetails
+     * @request GET:/organizations_region
+     * @description get organization region by user org
+     */
+    getOrganizationByHeadquarterForDetails: (params?: RequestParams) =>
+      this.request<ApiOrganizationRegionInfoResponse, ApiInternalServerErrorResponse>(`/organizations_region`, "GET", params),
   };
   pendingLearningOutcomes = {
     /**
