@@ -6,7 +6,7 @@ import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
-  EntityScheduleFeedbackView
+  EntityScheduleFeedbackView,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
@@ -29,7 +29,7 @@ export interface IAssessmentState {
 }
 
 interface RootState {
-  assessment: IAssessmentState;
+  assessments: IAssessmentState;
 }
 
 const initialState: IAssessmentState = {
@@ -155,7 +155,8 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
     const hasPermissionOfHomefun =
       !!detail.teacher_ids?.includes(myUserId) && hasPermissionOfMe(PermissionType.edit_in_progress_assessment_439, meInfo.me);
     const content = d("A new version of the assignment has been submitted, please refresh").t("assess_msg_new_version");
-    if (detail.assess_feedback_id && detail.assess_feedback_id !== feedbacks[0]?.id) dispatch(actAsyncConfirm({ content, hideCancel: true }));
+    if (detail.assess_feedback_id && detail.assess_feedback_id !== feedbacks[0]?.id)
+      dispatch(actAsyncConfirm({ content, hideCancel: true }));
     return { detail, feedbacks, hasPermissionOfHomefun };
   }
 );
@@ -166,7 +167,7 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   "assessments/updateHomefun",
   async ({ id, ...params }, { dispatch, getState }) => {
     const {
-      assessment: { homefunFeedbacks },
+      assessments: { homefunFeedbacks },
     } = getState();
     const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content, hideCancel: true }));
     return api.homeFunStudies.assessHomeFunStudy(id, { ...params, assess_feedback_id: homefunFeedbacks[0]?.id }, {
@@ -221,6 +222,10 @@ const { reducer } = createSlice({
     [actHomeFunAssessmentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof actHomeFunAssessmentList>>) => {
       state.homeFunAssessmentList = payload.items || [];
       state.total = payload.total || 0;
+    },
+    [updateHomefun.rejected.type]: (state, { error }: any) => {
+      console.error(error);
+      throw error;
     },
   },
 });
