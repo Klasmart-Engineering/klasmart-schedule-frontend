@@ -8,7 +8,7 @@ import { HomeFunAssessmentOrderBy, HomeFunAssessmentStatus } from "../../api/typ
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { HomeFunAssessmentQueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,8 +76,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const sortOptions = () => [
-  { label: reportMiss("Submit time (New-Old)", "assess_submit_time_new_old"), value: HomeFunAssessmentOrderBy._latest_feedback_at },
-  { label: reportMiss("Submit time (Old-New)", "assess_submit_time_old_new"), value: HomeFunAssessmentOrderBy.latest_feedback_at },
+  { label: d("Submit Time (New-Old)").t("assess_submit_new_old"), value: HomeFunAssessmentOrderBy._latest_feedback_at },
+  { label: d("Submit Time (Old-New)").t("assess_submit_old_new"), value: HomeFunAssessmentOrderBy.latest_feedback_at },
   { label: d("Complete Time (New-Old)").t("assess_complete_time_new_old"), value: HomeFunAssessmentOrderBy._complete_at },
   { label: d("Complete Time (Old-New)").t("assess_complete_time_old_new"), value: HomeFunAssessmentOrderBy.complete_at },
 ];

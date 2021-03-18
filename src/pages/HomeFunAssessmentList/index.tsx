@@ -9,7 +9,7 @@ import { AssessmentsHomefunEdit } from "../HomefunEdit";
 import { OutcomeList } from "../OutcomeList";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
 import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
+import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { HomeFunAssessmentQueryCondition } from "./types";
 
@@ -45,7 +45,7 @@ export function HomeFunAssessmentList() {
   const { homeFunAssessmentList, total } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
+  const handleChangeAssessmentType = () => {
     history.push(`/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`);
   };
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) => {
@@ -82,4 +82,4 @@ export function HomeFunAssessmentList() {
 }
 
 HomeFunAssessmentList.routeBasePath = "/assessments/home-fun";
-HomeFunAssessmentList.routeRedirectDefault = `/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`;
+HomeFunAssessmentList.routeRedirectDefault = `/assessments/home-fun?status=${HomeFunAssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`;

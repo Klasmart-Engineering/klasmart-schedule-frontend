@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Pagination } from "@material-ui/lab";
 import React from "react";
 import { EntityListHomeFunStudiesResultItem } from "../../api/api.auto";
-import { AssessmentStatus } from "../../api/type";
+import { HomeFunAssessmentStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) =>
 );
 
 const mapStatus = (status: string | undefined) => {
-  if (status === AssessmentStatus.complete) return "Complete";
-  if (status === AssessmentStatus.in_progress) return "In Progress";
+  if (status === HomeFunAssessmentStatus.complete) return "Complete";
+  if (status === HomeFunAssessmentStatus.in_progress) return "In Progress";
 };
 
 interface AssessmentProps {
@@ -51,11 +51,12 @@ function AssessmentRow(props: AssessmentProps) {
   const { assessment, onClickAssessment } = props;
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
-      <TableCell align="center">{assessment.id}</TableCell>
+      <TableCell align="center">{assessment.title}</TableCell>
       <TableCell align="center">{assessment.teacher_names?.join(" ,")}</TableCell>
       <TableCell align="center">{assessment.student_name}</TableCell>
       <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
-      <TableCell align="center">{formattedTime(assessment.due_at)}</TableCell>
+      <TableCell align="center">{assessment.due_at ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}</TableCell>
+      <TableCell align="center">{formattedTime(assessment.latest_feedback_at)}</TableCell>
       <TableCell align="center">{assessment.assess_score}</TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>
     </TableRow>
@@ -85,9 +86,9 @@ export function AssessmentTable(props: AssessmentTableProps) {
               <TableCell align="center">{d("Teacher").t("assess_column_teacher")}</TableCell>
               <TableCell align="center">{d("Student").t("schedule_time_conflict_student")}</TableCell>
               <TableCell align="center">{d("Status").t("assess_filter_column_status")}</TableCell>
-              <TableCell align="center">{"Due Date"}</TableCell>
-              <TableCell align="center">{"Submit Time"}</TableCell>
-              <TableCell align="center">{"Assessment Score"}</TableCell>
+              <TableCell align="center">{d("Due Date").t("assess_column_due_date")}</TableCell>
+              <TableCell align="center">{d("Submit Time").t("assess_column_submit_time")}</TableCell>
+              <TableCell align="center">{d("Assessment Score").t("assess_column_assessment_score")}</TableCell>
               <TableCell align="center">{d("Complete Time").t("assess_column_complete_time")}</TableCell>
             </TableRow>
           </TableHead>
