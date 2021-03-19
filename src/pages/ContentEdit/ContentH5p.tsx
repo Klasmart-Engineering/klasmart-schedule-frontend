@@ -14,7 +14,6 @@ export interface ContentH5pProps {
 
 const useStyles = makeStyles({
   iframe: {
-    border: "1px dashed red",
     width: "100%",
     height: "calc(100% - 80px)",
   },
