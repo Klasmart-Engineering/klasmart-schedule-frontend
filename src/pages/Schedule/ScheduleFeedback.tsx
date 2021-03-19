@@ -215,7 +215,7 @@ function FeedbackTemplate(props: FeedbackProps) {
   };
 
   const NoticeTemplate = () => {
-    if (feedbackData.is_allow_submit) {
+    if (!feedbackData.is_allow_submit) {
       dispatch(actWarning(d("You cannot submit again because your assignment has already been assessed.").t("schedule_msg_cannot_submit")));
       return;
     }
