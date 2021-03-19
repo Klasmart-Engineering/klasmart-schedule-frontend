@@ -9,10 +9,9 @@ import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionOr, PermissionType, usePermission } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
-
 export const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5",
@@ -100,7 +99,6 @@ const useStyles = makeStyles((theme) => ({
     color: "#0E78D5 !important",
   },
 }));
-
 export const isUnpublish = (value: QueryCondition): boolean => {
   return (
     (value.publish_status === PublishStatus.pending && value.author === Author.self) ||
@@ -108,7 +106,6 @@ export const isUnpublish = (value: QueryCondition): boolean => {
     value.publish_status === PublishStatus.rejected
   );
 };
-
 export interface FirstSearchHeaderProps extends QueryConditionBaseProps {
   onChangeAssets: (contentType: string, scope: string) => any;
   onCreateContent: () => any;
@@ -119,10 +116,13 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
   const { value, onChange, onCreateContent, onNewFolder } = props;
   const unpublish = isUnpublish(value);
   const [anchorCreate, setAnchorCreate] = React.useState<null | HTMLElement>(null);
+
   const handleClickCreate = (event: any) => {
     setAnchorCreate(event?.currentTarget);
   };
+
   const handleCreateClose = () => setAnchorCreate(null);
+
   const createHandleClick = (publish_status: QueryCondition["publish_status"]) => () =>
     onChange({
       publish_status,
@@ -132,7 +132,12 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
     });
 
   const assetsHandleClick = (content_type: QueryCondition["content_type"]) => () =>
-    onChange({ content_type, order_by: OrderBy._updated_at, page: 1 });
+    onChange({
+      content_type,
+      order_by: OrderBy._updated_at,
+      page: 1,
+    });
+
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -151,7 +156,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 </Button>
               </PermissionOr>
               <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
-                <MenuItem onClick={onCreateContent}>{reportMiss("New Content", "library_label_new_content")}</MenuItem>
+                <MenuItem onClick={onCreateContent}>{d("New Content").t("library_label_new_content")}</MenuItem>
                 {(value.publish_status === PublishStatus.published ||
                   value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
                   <Permission value={PermissionType.create_folder_289}>
@@ -164,7 +169,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Permission value={PermissionType.published_content_page_204}>
                 <Button
                   onClick={createHandleClick(PublishStatus.published)}
-                  className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.published })}
+                  className={clsx(css.nav, {
+                    [css.actives]: value?.publish_status === PublishStatus.published,
+                  })}
                   startIcon={<PublishOutlined />}
                 >
                   {d("Published").t("library_label_published")}
@@ -186,7 +193,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Permission value={PermissionType.unpublished_content_page_202}>
                 <Button
                   onClick={createHandleClick(PublishStatus.draft)}
-                  className={clsx(css.nav, { [css.actives]: unpublish })}
+                  className={clsx(css.nav, {
+                    [css.actives]: unpublish,
+                  })}
                   startIcon={unpublish ? <UnPubBlueIcon /> : <UnPubIcon />}
                 >
                   {d("Unpublished").t("library_label_unpublished")}
@@ -196,7 +205,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Permission value={PermissionType.archived_content_page_205}>
                 <Button
                   onClick={createHandleClick(PublishStatus.archive)}
-                  className={clsx(css.nav, { [css.actives]: value?.publish_status === PublishStatus.archive })}
+                  className={clsx(css.nav, {
+                    [css.actives]: value?.publish_status === PublishStatus.archive,
+                  })}
                   startIcon={<ArchiveOutlined />}
                 >
                   {d("Archived").t("library_label_archived")}
@@ -205,7 +216,9 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
               <Permission value={PermissionType.create_asset_page_301}>
                 <Button
                   onClick={assetsHandleClick(SearchContentsRequestContentType.assetsandfolder)}
-                  className={clsx(css.nav, { [css.actives]: value?.content_type === SearchContentsRequestContentType.assetsandfolder })}
+                  className={clsx(css.nav, {
+                    [css.actives]: value?.content_type === SearchContentsRequestContentType.assetsandfolder,
+                  })}
                   startIcon={<PermMediaOutlined />}
                 >
                   {d("Assets").t("library_label_assets")}
@@ -218,7 +231,6 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
     </div>
   );
 }
-
 export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssets } = props;
@@ -229,6 +241,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     PermissionType.archived_content_page_205,
     PermissionType.create_asset_page_301,
   ]);
+
   const handleChange = (
     event: React.ChangeEvent<{}>,
     publish_status: QueryCondition["publish_status"] | SearchContentsRequestContentType.assetsandfolder
@@ -236,6 +249,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
     if (publish_status === SearchContentsRequestContentType.assetsandfolder) {
       return onChangeAssets(SearchContentsRequestContentType.assetsandfolder, "default");
     }
+
     onChange({
       publish_status,
       order_by: OrderBy._updated_at,
@@ -243,6 +257,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
       content_type: SearchContentsRequestContentType.materialandplan,
     });
   };
+
   return (
     <div className={classes.root}>
       <Hidden only={["md", "lg", "xl"]}>
@@ -264,7 +279,9 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                   <Tab
                     value={PublishStatus.pending}
                     label={d("Pending").t("library_label_pending")}
-                    classes={{ selected: classes.selectedTab }}
+                    classes={{
+                      selected: classes.selectedTab,
+                    }}
                     className={clsx(classes.capitalize, classes.selectedTab, {
                       [classes.active]: value?.publish_status === PublishStatus.pending && value?.author !== Author.self,
                     })}

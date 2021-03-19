@@ -54,7 +54,7 @@ type LangRecord<T = string> =
   | { id: "library_label_empty"; description: "Empty"; values: undefined }
   | { id: "library_label_search"; description: "Search"; values: undefined }
   | { id: "library_msg_no_results_found"; description: "No results found"; values: undefined }
-  | { id: "library_label_my_only"; description: "Only Mine"; values: undefined }
+  | { id: "library_label_my_only"; description: "My Only"; values: undefined }
   | { id: "library_label_bulk_actions"; description: "Bulk Actions"; values: undefined }
   | { id: "library_label_remove"; description: "Remove"; values: undefined }
   | { id: "library_msg_remove_content"; description: "Are you sure you want to remove this content?"; values: undefined }
@@ -185,6 +185,13 @@ type LangRecord<T = string> =
   | {
       id: "library_error_excceed_max_file_number";
       description: "Failed to upload as total files number excceeds limitation 5";
+      values: undefined;
+    }
+  | { id: "library_label_new_content"; description: "New Content"; values: undefined }
+  | { id: "library_msg_only_publish_lesson_plan"; description: "Only publish a Lesson plan"; values: undefined }
+  | {
+      id: "library_msg_publish_lesson_plan_and asset";
+      description: "Publish a lesson plan, and add teacher manuals to assets library";
       values: undefined;
     }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
