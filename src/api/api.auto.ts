@@ -2918,14 +2918,19 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year";
-        time_at: number;
-        time_zone_offset: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
+        time_at?: number;
+        time_zone_offset?: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
+        class_types?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+        due_at_eq?: number;
+        start_at_ge?: number;
+        end_at_le?: number;
+        filter_option?: "any_time" | "only_mine";
       },
       params?: RequestParams
     ) =>
