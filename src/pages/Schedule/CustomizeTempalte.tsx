@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { DeleteOutlined, EditOutlined } from "@material-ui/icons";
+import { DeleteOutlined, EditOutlined, Visibility, VisibilityOff } from "@material-ui/icons";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -8,7 +8,7 @@ import { apiLivePath } from "../../api/extra";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
-import { scheduleUpdateStatus } from "../../reducers/schedule";
+import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
 
 const useStyles = makeStyles({
@@ -64,17 +64,6 @@ const useStyles = makeStyles({
   },
 });
 
-// type scheduleInfoProps = {
-//   end: Date;
-//   id: string;
-//   start: Date;
-//   title: string;
-//   lesson_plan_id: string;
-//   status: string;
-//   class_type: string;
-//   class_id: string;
-// };
-
 interface scheduleInfoProps {
   end: Date;
   id: string;
@@ -86,6 +75,7 @@ interface scheduleInfoProps {
   class_type: string;
   class_id: string;
   due_at: number;
+  exist_feedback: boolean;
 }
 
 interface InfoProps {
@@ -208,6 +198,16 @@ export default function CustomizeTempalte(props: InfoProps) {
     window.open(apiLivePath(liveToken));
   };
 
+  const handleHide = async () => {
+    await dispatch(
+      scheduleShowOption({ schedule_id: scheduleInfo.id as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
+    );
+    handleChangeHidden(!isHidden);
+    changeModalDate({
+      openStatus: false,
+    });
+  };
+
   return (
     <div className={classes.previewContainer}>
       {!checkLessonPlan && scheduleInfo.class_type !== "Task" && (
@@ -228,8 +228,14 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       <div className={classes.iconPart}>
         <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
-        {scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
-        {scheduleInfo.status === "NotStart" && (
+        {scheduleInfo.exist_feedback && !isHidden && (
+          <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
+        )}
+        {scheduleInfo.exist_feedback && isHidden && (
+          <Visibility style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
+        )}
+        {!scheduleInfo.exist_feedback && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+        {!scheduleInfo.exist_feedback && scheduleInfo.status === "NotStart" && (
           <Permission
             value={PermissionType.delete_event_540}
             render={(value) =>

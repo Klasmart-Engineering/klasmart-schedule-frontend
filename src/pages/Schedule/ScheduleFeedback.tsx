@@ -11,6 +11,7 @@ import { FileLikeWithId, FileSizeUnit, MultipleUploader } from "../../components
 import { actSuccess, actWarning } from "../../reducers/notify";
 import { BatchItem } from "@rpldy/shared";
 import { RootState } from "../../reducers";
+import { apiResourcePathById } from "../../api/extra";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -49,9 +50,10 @@ const useStyles = makeStyles(({ shadows }) =>
     pathBox: {
       padding: "8px 8px 8px 8px",
       display: "flex",
-      "& span": {
+      "& a": {
         color: "#B6B6B6",
         marginRight: "10px",
+        textDecoration: "none",
       },
     },
     submitTemplate: {
@@ -85,12 +87,17 @@ interface FileDataProps {
 function FileDataTemplate(props: FileDataProps) {
   const { fileName, handleFileData, status, batch } = props;
   const css = useStyles();
+  const sourceDownload = (attachmentId?: string) => {
+    return apiResourcePathById(attachmentId);
+  };
   return (
     <Box className={css.participantSaveBox}>
       {status === "finish" &&
         fileName?.map((item) => (
           <div className={css.pathBox}>
-            <span>{item.name}</span>{" "}
+            <a href={sourceDownload(item.id)} target="_blank" rel="noopener noreferrer">
+              {item.name}
+            </a>{" "}
             <HighlightOff
               onClick={() => {
                 handleFileData(item.id!, "delete");
@@ -126,7 +133,7 @@ function FileDataTemplate(props: FileDataProps) {
 }
 
 interface SubmitProps {
-  due_date: string;
+  due_date?: number;
   className: string;
   teacher?: EntityScheduleAccessibleUserView[];
   handleClose: () => void;
@@ -260,8 +267,8 @@ function FeedbackTemplate(props: FeedbackProps) {
     }
   };
 
-  const IsExpired = (due_date: string): boolean => {
-    return new Date(due_date).toDateString() === new Date().toDateString();
+  const IsExpired = (due_date?: number): boolean => {
+    return Date.now() > (due_date as number) * 1000;
   };
 
   return (
@@ -338,7 +345,7 @@ function FeedbackTemplate(props: FeedbackProps) {
 interface FeedbackProps {
   schedule_id?: string;
   changeModalDate: (data: object) => void;
-  due_date: string;
+  due_date?: number;
   className: string;
   teacher?: EntityScheduleAccessibleUserView[];
 }

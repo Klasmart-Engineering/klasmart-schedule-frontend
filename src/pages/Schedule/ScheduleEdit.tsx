@@ -977,7 +977,7 @@ function EditBox(props: CalendarStateProps) {
   const isLimit = (): boolean => {
     const is_submit = scheduleDetial.exist_feedback;
     const is_expire = Date.now() > (scheduleDetial.due_at as number) * 1000;
-    return is_submit || is_expire || isHidden;
+    return scheduleId ? is_submit || is_expire || isHidden : false;
   };
 
   const feedBackNoticeEdit = () => {
@@ -1532,7 +1532,7 @@ function EditBox(props: CalendarStateProps) {
                   textAlign: "right",
                 }}
               >
-                {!checkedStatus.homeFunCheck && !scheduleDetial.exist_feedback && (
+                {!scheduleDetial.exist_feedback && (
                   <DeleteOutlineOutlined
                     style={{
                       color: "#D74040",
@@ -1542,25 +1542,11 @@ function EditBox(props: CalendarStateProps) {
                     onClick={handleDelete}
                   />
                 )}
-                {!isHidden && (
-                  <VisibilityOff
-                    style={{
-                      color: "#D74040",
-                      visibility: scheduleId ? "visible" : "hidden",
-                    }}
-                    onClick={handleHide}
-                    className={css.toolset}
-                  />
+                {scheduleDetial.exist_feedback && !isHidden && (
+                  <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={css.toolset} />
                 )}
-                {isHidden && (
-                  <Visibility
-                    style={{
-                      color: "#D74040",
-                      visibility: scheduleId ? "visible" : "hidden",
-                    }}
-                    onClick={handleHide}
-                    className={css.toolset}
-                  />
+                {scheduleDetial.exist_feedback && isHidden && (
+                  <Visibility style={{ color: "#000000" }} onClick={handleHide} className={css.toolset} />
                 )}
               </Grid>
             )}
@@ -2011,7 +1997,7 @@ function EditBox(props: CalendarStateProps) {
             schedule_id={scheduleId}
             changeModalDate={changeModalDate}
             className={scheduleDetial.title as string}
-            due_date={timestampToTime(scheduleDetial.due_at, "defaults") as string}
+            due_date={scheduleDetial.due_at}
             teacher={scheduleDetial?.class_roster_teachers?.concat(scheduleDetial?.participants_teachers!)}
           />
         )}

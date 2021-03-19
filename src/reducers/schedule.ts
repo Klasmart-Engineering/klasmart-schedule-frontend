@@ -64,6 +64,7 @@ interface scheduleViewData {
   class_type: string;
   class_id: string;
   due_at: number;
+  exist_feedback: boolean;
 }
 
 interface classOptionsProp {
@@ -641,7 +642,6 @@ const { actions, reducer } = createSlice({
       console.log(payload);
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
-      console.log(payload);
       state.feedbackData = payload;
     },
   },

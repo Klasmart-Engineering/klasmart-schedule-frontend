@@ -31,6 +31,7 @@ interface scheduleInfoProps {
   class_type: string;
   class_id: string;
   due_at: number;
+  exist_feedback: boolean;
 }
 
 const useStyles = makeStyles(({ shadows }) => ({
