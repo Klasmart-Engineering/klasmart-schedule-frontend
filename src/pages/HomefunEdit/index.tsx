@@ -73,7 +73,7 @@ function AssessmentsHomefunEditIner() {
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
-        <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} />
+        <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} editable={editable}/>
       </LayoutPair>
       <Prompt message={handleLeave} when={isDirty} />
     </>

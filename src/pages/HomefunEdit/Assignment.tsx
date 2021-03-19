@@ -102,10 +102,11 @@ interface ScoreInputProps {
   optionValues: number[];
   value?: number;
   onChange?: RadioGroupProps["onChange"];
+  disabled?: boolean;
 }
 function ScoreInput(props: ScoreInputProps) {
   const css = useStyle();
-  const { optionColors, optionNames, optionIcons, optionValues, value, onChange } = props;
+  const { optionColors, optionNames, optionIcons, optionValues, value, onChange, disabled } = props;
   const radioList = optionNames.map((name, index) => (
     <FormControlLabel
       key={optionValues[index]}
@@ -118,7 +119,7 @@ function ScoreInput(props: ScoreInputProps) {
         </div>
       }
       labelPlacement="top"
-      control={<Radio color="primary" />}
+      control={<Radio color="primary" disabled={disabled}/>}
     />
   ));
   return (
@@ -197,13 +198,14 @@ function AssignmentTable(props: AssignmentTableProps) {
 }
 
 interface AssignmentProps {
+  editable?: boolean;
   detail: EntityGetHomeFunStudyResult;
   feedbacks: EntityScheduleFeedbackView[];
   formMethods: UseFormMethods<EntityAssessHomeFunStudyArgs>;
 }
 
 export function Assignment(props: AssignmentProps) {
-  const { detail, feedbacks, formMethods } = props;
+  const { detail, feedbacks, formMethods, editable } = props;
   const css = useStyle();
   const { control } = formMethods;
   return (
@@ -222,6 +224,7 @@ export function Assignment(props: AssignmentProps) {
         key={`assess_score:${detail.assess_score}`}
         render={({ value, onChange }) => (
           <ScoreInput
+            disabled={!editable}
             optionNames={[
               d("Poor").t("assess_score_poor"),
               d("Fair").t("assess_score_fair"),
@@ -245,6 +248,7 @@ export function Assignment(props: AssignmentProps) {
       />
       <Controller
         as={TextField}
+        disabled={!editable}
         name="assess_comment"
         control={control}
         defaultValue={detail.assess_comment}
