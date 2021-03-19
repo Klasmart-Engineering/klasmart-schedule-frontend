@@ -685,8 +685,8 @@ function EditBox(props: CalendarStateProps) {
     }
 
     if (name === "program_id") {
-      handleChangeProgramId(value.id);
-      setSubjectItem(defaults);
+      const LinkageProgramData: any = await handleChangeProgramId(value.id);
+      setSubjectItem(LinkageProgramData[0] ?? defaults);
       setProgramItem(value);
     }
 
@@ -1929,9 +1929,7 @@ function EditBox(props: CalendarStateProps) {
                 />
                 <Autocomplete
                   id="combo-box-demo"
-                  options={modelSchedule.Deduplication(
-                    modelSchedule.LinkageLessonPlan(contentPreview).subject.concat(scheduleMockOptions.subjectList).concat(subjectItem!)
-                  )}
+                  options={modelSchedule.Deduplication(scheduleMockOptions.subjectList.concat(subjectItem!))}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
                     autocompleteChange(newValue, "subject_id");
