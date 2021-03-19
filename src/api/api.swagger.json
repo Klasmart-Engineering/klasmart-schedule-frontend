@@ -5,6 +5,7 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
+    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -3765,6 +3766,28 @@
         }
       }
     },
+    "/organizations_region": {
+      "get": {
+        "description": "get organization region by user org",
+        "tags": ["organizationProperty"],
+        "summary": "getOrganizationByHeadquarterForDetails",
+        "operationId": "getOrganizationByHeadquarterForDetails",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OrganizationRegionInfoResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/pending_learning_outcomes": {
       "get": {
         "description": "search pending learning outcomes",
@@ -4500,47 +4523,6 @@
         }
       }
     },
-    "/schedule_feedbacks": {
-      "get": {
-        "description": "query feedback list",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["scheduleFeedback"],
-        "summary": "queryFeedback",
-        "operationId": "queryFeedback",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "schedule id",
-            "name": "schedule_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "user id",
-            "name": "user_id",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ScheduleFeedbackView"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/schedules": {
       "get": {
         "description": "query schedule",
@@ -5077,6 +5059,45 @@
       }
     },
     "/schedules_feedbacks": {
+      "get": {
+        "description": "query feedback list",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["scheduleFeedback"],
+        "summary": "queryFeedback",
+        "operationId": "queryFeedback",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "schedule id",
+            "name": "schedule_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "user id",
+            "name": "user_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleFeedbackView"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
       "post": {
         "description": "add ScheduleFeedback",
         "consumes": ["application/json"],
@@ -5646,9 +5667,7 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "409": {
-            "description": ""
-          },
+          "409": {},
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -5678,9 +5697,7 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": {},
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -5816,9 +5833,7 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": {},
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -5854,9 +5869,7 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": {},
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -5967,16 +5980,7 @@
       }
     },
     "api.BadRequestResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.Response"
     },
     "api.CheckAccountResponse": {
       "type": "object",
@@ -5987,16 +5991,7 @@
       }
     },
     "api.ConflictResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.Response"
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -6059,16 +6054,7 @@
       }
     },
     "api.ForbiddenResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.Response"
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -6104,16 +6090,7 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.Response"
     },
     "api.LoginRequest": {
       "type": "object",
@@ -6138,14 +6115,16 @@
       }
     },
     "api.NotFoundResponse": {
+      "$ref": "#/definitions/api.Response"
+    },
+    "api.OrganizationRegionInfoResponse": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
+        "orgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.RegionOrganizationInfo"
+          }
         }
       }
     },
@@ -6559,6 +6538,18 @@
         }
       }
     },
+    "api.Response": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
+    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -6601,16 +6592,7 @@
       }
     },
     "api.SuccessRequestResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.Response"
     },
     "api.TokenResponse": {
       "type": "object",
@@ -6621,16 +6603,7 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
+      "$ref": "#/definitions/api.Response"
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -6891,6 +6864,7 @@
           "type": "string"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.AssessmentSubject"
         },
         "teachers": {
@@ -6917,12 +6891,14 @@
           "type": "string"
         },
         "program": {
+          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
           "type": "string"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.AssessmentSubject"
         },
         "teachers": {
@@ -8185,6 +8161,10 @@
         "id": {
           "type": "string"
         },
+        "region": {
+          "type": "string",
+          "enum": ["global", "vn"]
+        },
         "type": {
           "type": "string",
           "enum": ["normal", "headquarters"]
@@ -8325,6 +8305,17 @@
         }
       }
     },
+    "entity.RegionOrganizationInfo": {
+      "type": "object",
+      "properties": {
+        "organization_id": {
+          "type": "string"
+        },
+        "organization_name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.RemoveItemBulk": {
       "type": "object",
       "properties": {
@@ -8340,6 +8331,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -8366,6 +8358,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -8392,9 +8385,11 @@
       "type": "object",
       "properties": {
         "daily": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -8402,9 +8397,11 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -8413,6 +8410,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -8431,6 +8429,7 @@
       "type": "object",
       "properties": {
         "end": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -8478,9 +8477,9 @@
     },
     "entity.ScheduleAddView": {
       "type": "object",
-      "required": ["title"],
       "properties": {
         "attachment": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -8545,6 +8544,7 @@
           "type": "string"
         },
         "repeat": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -8568,9 +8568,11 @@
       "type": "object",
       "properties": {
         "attachment": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "class_roster_students": {
@@ -8617,6 +8619,7 @@
           "type": "boolean"
         },
         "lesson_plan": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -8641,12 +8644,15 @@
           }
         },
         "program": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "real_time_status": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleRealTimeView"
         },
         "repeat": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "role_type": {
@@ -8664,6 +8670,7 @@
           "type": "integer"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "teachers": {
@@ -8767,6 +8774,9 @@
         "end_at": {
           "type": "integer"
         },
+        "exist_feedback": {
+          "type": "boolean"
+        },
         "id": {
           "type": "string"
         },
@@ -8823,6 +8833,7 @@
       "type": "object",
       "properties": {
         "class": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "end_at": {
@@ -8832,6 +8843,7 @@
           "type": "string"
         },
         "lesson_plan": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -8841,6 +8853,7 @@
           }
         },
         "program": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -8850,6 +8863,7 @@
           "type": "integer"
         },
         "subject": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "teachers": {
@@ -8876,9 +8890,9 @@
     },
     "entity.ScheduleUpdateView": {
       "type": "object",
-      "required": ["title"],
       "properties": {
         "attachment": {
+          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -8946,6 +8960,7 @@
           "type": "string"
         },
         "repeat": {
+          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {
@@ -9062,15 +9077,19 @@
       "type": "object",
       "properties": {
         "activity_flash_cards": {
+          "type": "object",
           "$ref": "#/definitions/entity.ActivityFlashCards"
         },
         "activity_image_pair": {
+          "type": "object",
           "$ref": "#/definitions/entity.ActivityImagePair"
         },
         "activity_image_sequencing": {
+          "type": "object",
           "$ref": "#/definitions/entity.ActivityImageSequencing"
         },
         "activity_memory_game": {
+          "type": "object",
           "$ref": "#/definitions/entity.ActivityMemoryGame"
         },
         "activity_type": {

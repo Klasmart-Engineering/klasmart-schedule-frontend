@@ -15,19 +15,13 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -55,10 +49,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -75,10 +66,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -90,10 +78,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -233,6 +218,11 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -252,19 +242,13 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -859,19 +843,6 @@ export interface EntityOutcomeAttendanceMapView {
   skip?: boolean;
 }
 
-export interface EntityProgram {
-  createAt?: number;
-  createID?: string;
-  deleteAt?: number;
-  deleteID?: string;
-  group_name?: string;
-  id?: string;
-  name?: string;
-  number?: number;
-  org_type?: string;
-  updateAt?: number;
-  updateID?: string;
-}
 export interface EntityRegionOrganizationInfo {
   organization_id?: string;
   organization_name?: string;
@@ -955,7 +926,7 @@ export interface EntityScheduleAddView {
   start_at?: number;
   subject_id?: string;
   time_zone_offset?: number;
-  title: string;
+  title?: string;
   version?: number;
 }
 
@@ -975,8 +946,6 @@ export interface EntityScheduleDetailsView {
   is_home_fun?: boolean;
   is_repeat?: boolean;
   lesson_plan?: EntityScheduleShortInfo;
-
-  /** Members        []*ScheduleShortInfo        `json:"teachers"` */
   member_teachers?: EntityScheduleShortInfo[];
   org_id?: string;
   participants_students?: EntityScheduleAccessibleUserView[];
@@ -1026,6 +995,7 @@ export interface EntityScheduleListView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   due_at?: number;
   end_at?: number;
+  exist_feedback?: boolean;
   id?: string;
   is_hidden?: boolean;
   is_repeat?: boolean;
@@ -1089,7 +1059,7 @@ export interface EntityScheduleUpdateView {
   start_at?: number;
   subject_id?: string;
   time_zone_offset?: number;
-  title: string;
+  title?: string;
   version?: number;
 }
 
@@ -2948,9 +2918,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
-        time_at?: number;
-        time_zone_offset?: number;
+        view_type: "day" | "work_week" | "week" | "month" | "year";
+        time_at: number;
+        time_zone_offset: number;
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
