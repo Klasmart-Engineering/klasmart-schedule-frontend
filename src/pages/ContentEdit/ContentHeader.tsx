@@ -30,7 +30,7 @@ import { ContentInputSourceType } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -115,7 +115,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     fontWeight: 700,
   },
 }));
-
 interface HeaderProps {
   lesson: string;
   onChangeLesson: (lesson: string) => any;
@@ -129,7 +128,6 @@ interface HeaderProps {
   id: string | null;
   inputSourceWatch: ContentInputSourceType;
 }
-
 export function ContentHeader(props: HeaderProps) {
   const { lesson, onChangeLesson, contentDetail, formMethods, onCancel, onPublish, onSave, onBack, onDelete, id, inputSourceWatch } = props;
   const css = useStyles();
@@ -145,8 +143,7 @@ export function ContentHeader(props: HeaderProps) {
   const radioTypography = sm ? (xs ? "caption" : "subtitle2") : "h6";
   const [open, toggle] = useReducer((open) => {
     return !open;
-  }, false);
-  // const handleOk = useCallback(async() => {
+  }, false); // const handleOk = useCallback(async() => {
   //   toggle();
   //   onPublish();
   // }, [onPublish]);
@@ -370,7 +367,7 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
           <Typography variant={radioTypography}>
             {lesson === "material"
               ? d("Only publish as a lesson material").t("library_msg_only_publish_lesson_material")
-              : reportMiss("Only publish a Lesson plan", "library_msg_only_publish_lesson_plan")}
+              : d("Only publish a Lesson plan").t("library_msg_only_publish_lesson_plan")}
           </Typography>
         }
       />
@@ -381,14 +378,13 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
           <Typography variant={radioTypography}>
             {lesson === "material"
               ? d("Publish as a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")
-              : reportMiss("Publish a lesson plan, and add teacher manuals to assets library", "library_msg_publish_lesson_plan_and asset")}
+              : d("Publish a lesson plan, and add teacher manuals to assets library").t("library_msg_publish_lesson_plan_and asset")}
           </Typography>
         }
       />
     </RadioGroup>
   );
 }
-
 interface SelectLessonProps {
   lesson: string;
   onChangeLesson: (value: string) => any;
@@ -410,7 +406,12 @@ export function SelectLesson(props: SelectLessonProps) {
         disabled={disabled}
         value={lesson}
         onChange={(e) => onChangeLesson(e.target.value)}
-        InputProps={{ style: { fontSize: 20, fontWeight: 700 } }}
+        InputProps={{
+          style: {
+            fontSize: 20,
+            fontWeight: 700,
+          },
+        }}
       >
         {(create_asset || create_content) && (
           <MenuItem value="assets" className={css.selectLessonItem}>
@@ -433,7 +434,6 @@ export function SelectLesson(props: SelectLessonProps) {
     </Box>
   );
 }
-
 interface SelectH5PRadioProps {
   value?: number;
   onChange?: (value: SelectH5PRadioProps["value"]) => any;
@@ -449,12 +449,21 @@ export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((p
   const size = xs ? "small" : "medium";
   const radioTypography = xs ? "subtitle2" : "h6";
   return (
-    <Box display="flex" mb={3} justifyContent={sm ? "center" : "start"} {...{ ref }}>
+    <Box
+      display="flex"
+      mb={3}
+      justifyContent={sm ? "center" : "start"}
+      {...{
+        ref,
+      }}
+    >
       <RadioGroup
         className={css.radioGroup}
         value={value}
         onChange={(e) => {
-          formMethods.setValue("data.source", "", { shouldDirty: true });
+          formMethods.setValue("data.source", "", {
+            shouldDirty: true,
+          });
           onChange && onChange(Number(e.target.value));
         }}
       >

@@ -11,10 +11,9 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { StyledMenu } from "./FirstSearchHeader";
 import { ContentListForm, QueryCondition, QueryConditionBaseProps } from "./types";
-
 export const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 export const EXECT_SEARCH = "EXECT_SEARCH";
 const useStyles = makeStyles((theme) => ({
@@ -97,9 +96,8 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: "border-box",
     verticalAlign: "top",
   },
-}));
+})); //todo接口
 
-//todo接口
 export interface options {
   label?: string;
   value?: string;
@@ -107,19 +105,41 @@ export interface options {
 export const filterOptions = (value: QueryCondition) => {
   if (value.publish_status === PublishStatus.published) {
     return [
-      { label: d("All").t("report_label_all"), value: SearchContentsRequestContentType.materialandplan },
-      { label: d("Folder").t("library_label_folder"), value: SearchContentsRequestContentType.folder },
-      { label: d("Lesson Plan").t("library_label_lesson_plan"), value: SearchContentsRequestContentType.plan },
-      { label: d("Lesson Material").t("library_label_lesson_material"), value: SearchContentsRequestContentType.material },
+      {
+        label: d("All").t("report_label_all"),
+        value: SearchContentsRequestContentType.materialandplan,
+      },
+      {
+        label: d("Folder").t("library_label_folder"),
+        value: SearchContentsRequestContentType.folder,
+      },
+      {
+        label: d("Lesson Plan").t("library_label_lesson_plan"),
+        value: SearchContentsRequestContentType.plan,
+      },
+      {
+        label: d("Lesson Material").t("library_label_lesson_material"),
+        value: SearchContentsRequestContentType.material,
+      },
     ];
   } else {
     return [
-      { label: d("All").t("report_label_all"), value: SearchContentsRequestContentType.materialandplan },
-      { label: d("Lesson Plan").t("library_label_lesson_plan"), value: SearchContentsRequestContentType.plan },
-      { label: d("Lesson Material").t("library_label_lesson_material"), value: SearchContentsRequestContentType.material },
+      {
+        label: d("All").t("report_label_all"),
+        value: SearchContentsRequestContentType.materialandplan,
+      },
+      {
+        label: d("Lesson Plan").t("library_label_lesson_plan"),
+        value: SearchContentsRequestContentType.plan,
+      },
+      {
+        label: d("Lesson Material").t("library_label_lesson_material"),
+        value: SearchContentsRequestContentType.material,
+      },
     ];
   }
 };
+
 const menuItemList = (list: options[]) =>
   list.map((item) => (
     <MenuItem key={item.label} value={item.value}>
@@ -131,31 +151,45 @@ export enum ExectSearch {
   all = "{all}",
   name = "name",
 }
+
 const getExectSearch = () => {
   return [
-    { label: "All", value: ExectSearch.all },
-    { label: "Name", value: ExectSearch.name },
+    {
+      label: "All",
+      value: ExectSearch.all,
+    },
+    {
+      label: "Name",
+      value: ExectSearch.name,
+    },
   ];
 };
+
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onCreateContent, conditionFormMethods, onNewFolder } = props;
   const { control, reset } = conditionFormMethods;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [anchorCreate, setAnchorCreate] = React.useState<null | HTMLElement>(null);
+
   const handleClickCreate = (event: any) => {
     setAnchorCreate(event?.currentTarget);
   };
+
   const handleCreateClose = () => setAnchorCreate(null);
+
   const handleClickSearch = () => {
     onChange({ ...value, page: 1 });
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleClickIconMyonly: MouseEventHandler<SVGSVGElement & HTMLElement> = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleItemClick = (event: any) => {
     setAnchorEl(null);
     const author = value.author === Author.self ? undefined : Author.self;
@@ -165,6 +199,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
       })
     );
   };
+
   useEffect(() => {
     reset();
   }, [value.name, reset]);
@@ -186,7 +221,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 </Button>
               </PermissionOr>
               <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
-                <MenuItem onClick={onCreateContent}>{reportMiss("New Content", "library_label_new_content")}</MenuItem>
+                <MenuItem onClick={onCreateContent}>{d("New Content").t("library_label_new_content")}</MenuItem>
                 {(value.publish_status === PublishStatus.published ||
                   value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
                   <Permission value={PermissionType.create_folder_289}>
@@ -195,7 +230,17 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 )}
               </StyledMenu>
             </Grid>
-            <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
+            <Grid
+              container
+              item
+              xs={4}
+              sm={4}
+              justify="flex-end"
+              alignItems="center"
+              style={{
+                fontSize: "24px",
+              }}
+            >
               {value.publish_status === PublishStatus.published ||
               value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
                 <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
@@ -204,11 +249,19 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               )}
               <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem selected={value.author === Author.self} onClick={handleItemClick}>
-                  {d("Only Mine").t("library_label_my_only")}
+                  {d("My Only").t("library_label_my_only")}
                 </MenuItem>
               </Menu>
             </Grid>
-            <Grid item xs={12} sm={12} style={{ textAlign: "center", padding: 0 }}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              style={{
+                textAlign: "center",
+                padding: 0,
+              }}
+            >
               <div className={classes.searchCon}>
                 <TextField
                   name={EXECT_SEARCH}
@@ -216,12 +269,21 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                   size="small"
                   defaultValue={value.exect_search || ExectSearch.all}
                   select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  SelectProps={{
+                    MenuProps: {
+                      transformOrigin: {
+                        vertical: -40,
+                        horizontal: "left",
+                      },
+                    },
+                  }}
                 >
                   {menuItemList(getExectSearch())}
                 </TextField>
                 <Controller
-                  style={{ borderLeft: 0 }}
+                  style={{
+                    borderLeft: 0,
+                  }}
                   as={TextField}
                   name={SEARCH_TEXT_KEY}
                   control={control}
@@ -241,7 +303,6 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
     </div>
   );
 }
-
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
   onCreateContent: () => any;
   conditionFormMethods: UseFormMethods<ContentListForm>;
@@ -251,6 +312,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, conditionFormMethods } = props;
   const { control, reset } = conditionFormMethods;
+
   const handleClickSearch = () => {
     onChange({ ...value, page: 1 });
   };
@@ -263,9 +325,11 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
       })
     );
   };
+
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
+
   const handleChangeFilterOption = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = produce(value, (draft) => {
       const content_type = event.target.value;
@@ -273,6 +337,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     });
     onChange({ ...newValue });
   };
+
   useEffect(() => {
     reset();
   }, [value.name, value.exect_search, reset]);
@@ -280,7 +345,13 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
-          <Grid container spacing={3} style={{ marginTop: "6px" }}>
+          <Grid
+            container
+            spacing={3}
+            style={{
+              marginTop: "6px",
+            }}
+          >
             <Grid item md={10} lg={8} xl={8}>
               <div className={classes.searchCon}>
                 <Controller
@@ -291,12 +362,21 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                   size="small"
                   defaultValue={value.exect_search || ExectSearch.all}
                   select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  SelectProps={{
+                    MenuProps: {
+                      transformOrigin: {
+                        vertical: -40,
+                        horizontal: "left",
+                      },
+                    },
+                  }}
                 >
                   {menuItemList(getExectSearch())}
                 </Controller>
                 <Controller
-                  style={{ borderLeft: 0 }}
+                  style={{
+                    borderLeft: 0,
+                  }}
                   as={TextField}
                   name={SEARCH_TEXT_KEY}
                   control={control}
@@ -312,13 +392,22 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </Button>
               {value.content_type !== SearchContentsRequestContentType.assetsandfolder && !value.program_group && (
                 <TextField
-                  style={{ width: 160, marginLeft: 10 }}
+                  style={{
+                    width: 160,
+                    marginLeft: 10,
+                  }}
                   size="small"
-                  onChange={handleChangeFilterOption}
-                  // label={d("Content Type").t("library")}
+                  onChange={handleChangeFilterOption} // label={d("Content Type").t("library")}
                   value={value.content_type}
                   select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  SelectProps={{
+                    MenuProps: {
+                      transformOrigin: {
+                        vertical: -40,
+                        horizontal: "left",
+                      },
+                    },
+                  }}
                 >
                   {menuItemList(filterOptions(value))}
                 </TextField>
@@ -330,7 +419,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}
-                  label={d("Only Mine").t("library_label_my_only")}
+                  label={d("My Only").t("library_label_my_only")}
                   labelPlacement="end"
                 />
               ) : (
