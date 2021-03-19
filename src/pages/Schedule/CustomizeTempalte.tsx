@@ -76,6 +76,7 @@ interface scheduleInfoProps {
   class_id: string;
   due_at: number;
   exist_feedback: boolean;
+  is_home_fun: boolean;
 }
 
 interface InfoProps {
@@ -210,7 +211,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   return (
     <div className={classes.previewContainer}>
-      {!checkLessonPlan && scheduleInfo.class_type !== "Task" && (
+      {!checkLessonPlan && scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
         <p className={classes.checkPlan}>
           {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
         </p>

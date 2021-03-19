@@ -366,7 +366,7 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
         label={
           <Typography variant={radioTypography}>
             {lesson === "material"
-              ? d("Only publish as a lesson material").t("library_msg_only_publish_lesson_material")
+              ? d("Only publish a lesson material").t("library_msg_only_publish_lesson_material")
               : d("Only publish a Lesson plan").t("library_msg_only_publish_lesson_plan")}
           </Typography>
         }
@@ -377,7 +377,7 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
         label={
           <Typography variant={radioTypography}>
             {lesson === "material"
-              ? d("Publish as a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")
+              ? d("Publish a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")
               : d("Publish a lesson plan, and add teacher manuals to assets library").t("library_msg_publish_lesson_plan_and asset")}
           </Typography>
         }

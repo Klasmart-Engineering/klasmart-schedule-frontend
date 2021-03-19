@@ -116,10 +116,10 @@ type LangRecord<T = string> =
   | { id: "library_label_upload_from_device"; description: "Upload from Device"; values: undefined }
   | { id: "library_label_preview"; description: "Preview"; values: undefined }
   | { id: "library_msg_publish_lesson_material"; description: "How would you like to publish?"; values: undefined }
-  | { id: "library_msg_only_publish_lesson_material"; description: "Only publish as a lesson material"; values: undefined }
+  | { id: "library_msg_only_publish_lesson_material"; description: "Only publish a lesson material"; values: undefined }
   | {
       id: "library_msg_publish_lesson_material_and_asset";
-      description: "Publish as a lesson material, and add to assets library";
+      description: "Publish a lesson material, and add to assets library";
       values: undefined;
     }
   | { id: "library_label_lesson_type"; description: "Lesson Type"; values: undefined }
@@ -580,6 +580,7 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_see_more"; description: "See More"; values: undefined }
   | { id: "schedule_msg_hidden"; description: "This event has been hidden"; values: undefined }
   | { id: "schedule_msg_three_attachment"; description: "You can upload no more than three attachments. "; values: undefined }
+  | { id: "schedule_msg_one_attachment"; description: "You need to upload at least one attachment."; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

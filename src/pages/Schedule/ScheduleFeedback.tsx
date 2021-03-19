@@ -7,8 +7,8 @@ import { HtmlTooltip } from "./ScheduleAttachment";
 import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
 import { EntityFeedbackAssignmentView, EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
 import { useDispatch, useSelector } from "react-redux";
-import { FileLikeWithId, FileSizeUnit, MultipleUploader } from "../../components/MultipleUploader";
-import { actSuccess, actWarning } from "../../reducers/notify";
+import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
+import { actError, actSuccess, actWarning } from "../../reducers/notify";
 import { BatchItem } from "@rpldy/shared";
 import { RootState } from "../../reducers";
 import { apiResourcePathById } from "../../api/extra";
@@ -198,7 +198,7 @@ function FeedbackTemplate(props: FeedbackProps) {
     return (
       <div style={{ paddingBottom: "8px" }}>
         <div style={{ color: "#000000", fontWeight: "bold" }}>
-          <p>{d("Max").t("schedule_detail_max")}: 100MB</p>
+          <p>{d("Max").t("schedule_detail_max")}: 100MB/each</p>
           <span>{d("Support files in").t("schedule_detail_support_files_in")}:</span>
         </div>
         <div style={{ color: "#666666" }}>
@@ -220,7 +220,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       return;
     }
     if (fileName!.length < 1) {
-      dispatch(actWarning("请填写附件上传"));
+      dispatch(actWarning(d("You need to upload at least one attachment.").t("schedule_msg_one_attachment")));
       return;
     }
     changeModalDate({
@@ -287,12 +287,20 @@ function FeedbackTemplate(props: FeedbackProps) {
         partition="schedule_attachment"
         accept="*"
         {...props}
-        maxAmount={3}
+        maxAmount={4 - fileName!.length}
         onChange={(value) => handleOnChange(value)}
         value={fileName}
         maxSize={100 * FileSizeUnit.M}
         onError={(error) =>
-          Promise.reject(dispatch(actWarning(d("The attachment you uploaded does not meet the requirement.").t("schedule_msg_attachment"))))
+          Promise.reject(
+            dispatch(
+              actError(
+                error.type === MultipleUploaderErrorType.MaxAmountError
+                  ? d("You can upload no more than three attachments. ").t("schedule_msg_three_attachment")
+                  : d("The attachment you uploaded does not meet the requirement.").t("schedule_msg_attachment")
+              )
+            )
+          )
         }
         render={({ btnRef, value, isUploading, batch }) => (
           <>

@@ -32,6 +32,7 @@ interface scheduleInfoProps {
   class_id: string;
   due_at: number;
   exist_feedback: boolean;
+  is_home_fun: boolean;
 }
 
 const useStyles = makeStyles(({ shadows }) => ({
@@ -306,11 +307,12 @@ function MyCalendar(props: CalendarProps) {
     ) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
-
     let checkLessonPlan: any;
-    checkLessonPlan = ((await dispatch(
-      getScheduleRealTimeStatusPath({ schedule_id: event.id, metaLoading: true })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleRealTimeStatusPath>>;
+    if (!event.is_home_fun) {
+      checkLessonPlan = ((await dispatch(
+        getScheduleRealTimeStatusPath({ schedule_id: event.id, metaLoading: true })
+      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleRealTimeStatusPath>>;
+    }
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -324,7 +326,7 @@ function MyCalendar(props: CalendarProps) {
           scheduleInfo={event}
           toLive={toLive}
           changeModalDate={changeModalDate}
-          checkLessonPlan={checkLessonPlan.payload.lesson_plan_is_auth}
+          checkLessonPlan={checkLessonPlan?.payload.lesson_plan_is_auth}
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
         />
