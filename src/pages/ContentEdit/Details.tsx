@@ -36,7 +36,7 @@ import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetai
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
-import { actWarning } from "../../reducers/notify";
+import { actError } from "../../reducers/notify";
 import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
@@ -686,7 +686,7 @@ export default function Details(props: DetailsProps) {
                 onError={(error) =>
                   Promise.reject(
                     dispatch(
-                      actWarning(
+                      actError(
                         error.type === MultipleUploaderErrorType.MaxAmountError
                           ? d("Failed to upload as total files number excceeds limitation 5").t("library_error_excceed_max_file_number")
                           : d("Cannot excceed max size 500 MB").t("library_error_excceed_max_size")
