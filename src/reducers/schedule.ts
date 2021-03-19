@@ -485,6 +485,14 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
   }
 );
 
+type SubjectResourseResult = ReturnType<typeof api.subjects.getSubject>;
+export const getSubjectByProgramId = createAsyncThunk<SubjectResourseResult, { program_id: string } & LoadingMetaPayload>(
+  "getSubject",
+  async (program_id) => {
+    return api.subjects.getSubject(program_id);
+  }
+);
+
 /**
  * get participant
  */
@@ -644,8 +652,10 @@ const { actions, reducer } = createSlice({
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;
     },
+    [getSubjectByProgramId.fulfilled.type]: (state, { payload }: any) => {
+      state.scheduleMockOptions.subjectList = payload ? payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
+    },
   },
 });
-
 export const { resetScheduleDetial, resetParticipantList, changeParticipants } = actions;
 export default reducer;

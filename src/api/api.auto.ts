@@ -95,6 +95,10 @@ export interface ApiNotFoundResponse {
   label?: string;
 }
 
+export interface ApiOrganizationRegionInfoResponse {
+  orgs?: EntityRegionOrganizationInfo[];
+}
+
 export interface ApiOutcomeBulkRejectRequest {
   outcome_ids?: string[];
   reject_reason?: string;
@@ -801,6 +805,7 @@ export interface EntityOrganizationInfo {
 
 export interface EntityOrganizationProperty {
   id?: string;
+  region?: "global" | "vn";
   type?: "normal" | "headquarters";
 }
 
@@ -852,6 +857,24 @@ export interface EntityOutcomeAttendanceMapView {
   outcome_id?: string;
   outcome_name?: string;
   skip?: boolean;
+}
+
+export interface EntityProgram {
+  createAt?: number;
+  createID?: string;
+  deleteAt?: number;
+  deleteID?: string;
+  group_name?: string;
+  id?: string;
+  name?: string;
+  number?: number;
+  org_type?: string;
+  updateAt?: number;
+  updateID?: string;
+}
+export interface EntityRegionOrganizationInfo {
+  organization_id?: string;
+  organization_name?: string;
 }
 
 export interface EntityRemoveItemBulk {
@@ -2454,6 +2477,17 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getOrganizationPropertyById: (id: string, params?: RequestParams) =>
       this.request<EntityOrganizationProperty, ApiInternalServerErrorResponse>(`/organizations_propertys/${id}`, "GET", params),
+  };
+  organizationsRegion = {
+    /**
+     * @tags organizationProperty
+     * @name getOrganizationByHeadquarterForDetails
+     * @summary getOrganizationByHeadquarterForDetails
+     * @request GET:/organizations_region
+     * @description get organization region by user org
+     */
+    getOrganizationByHeadquarterForDetails: (params?: RequestParams) =>
+      this.request<ApiOrganizationRegionInfoResponse, ApiInternalServerErrorResponse>(`/organizations_region`, "GET", params),
   };
   pendingLearningOutcomes = {
     /**
