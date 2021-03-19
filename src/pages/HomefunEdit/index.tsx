@@ -31,20 +31,18 @@ function AssessmentsHomefunEditIner() {
     (state) => state.assessments
   );
   const formMethods = useForm<EntityAssessHomeFunStudyArgs>();
-  const {
-    handleSubmit,
-    formState: { isDirty },
-  } = formMethods;
+  const { handleSubmit } = formMethods;
   const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
-  const handleAssessmentSaveOrComplete = (action: AssessmentUpdateAction, message: string) => handleSubmit(async (value) => {
-    if (!id) return;
-    const data: UpdateHomefunParams = { ...value, id, action };
-    await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
-    dispatch(actSuccess(message));
-    history.replace({
-      search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
+  const handleAssessmentSaveOrComplete = (action: AssessmentUpdateAction, message: string) =>
+    handleSubmit(async (value) => {
+      if (!id) return;
+      const data: UpdateHomefunParams = { ...value, id, action };
+      await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
+      dispatch(actSuccess(message));
+      history.replace({
+        search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
+      });
     });
-  });
   // const handleLeave = useMemo<PromptProps["message"]>(
   //   () => (location) => {
   //     return location.pathname === AssessmentsHomefunEdit.routeBasePath ? false : d("Discard unsaved changes?").t("assess_msg_discard");
@@ -72,7 +70,7 @@ function AssessmentsHomefunEditIner() {
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
-        <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} editable={editable}/>
+        <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} editable={editable} />
       </LayoutPair>
       {/* <Prompt message={handleLeave} when={isDirty} /> */}
     </>
