@@ -1,9 +1,8 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { PromptProps } from "react-router";
-import { Prompt, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { EntityAssessHomeFunStudyArgs } from "../../api/api.auto";
 import { AssessmentStatus, AssessmentUpdateAction } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
@@ -46,12 +45,12 @@ function AssessmentsHomefunEditIner() {
       search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
     });
   });
-  const handleLeave = useMemo<PromptProps["message"]>(
-    () => (location) => {
-      return location.pathname === AssessmentsHomefunEdit.routeBasePath ? false : d("Discard unsaved changes?").t("assess_msg_discard");
-    },
-    []
-  );
+  // const handleLeave = useMemo<PromptProps["message"]>(
+  //   () => (location) => {
+  //     return location.pathname === AssessmentsHomefunEdit.routeBasePath ? false : d("Discard unsaved changes?").t("assess_msg_discard");
+  //   },
+  //   []
+  // );
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -75,7 +74,7 @@ function AssessmentsHomefunEditIner() {
         <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
         <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} editable={editable}/>
       </LayoutPair>
-      <Prompt message={handleLeave} when={isDirty} />
+      {/* <Prompt message={handleLeave} when={isDirty} /> */}
     </>
   );
 }
