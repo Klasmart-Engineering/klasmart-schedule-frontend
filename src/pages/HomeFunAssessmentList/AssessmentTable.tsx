@@ -57,7 +57,7 @@ function AssessmentRow(props: AssessmentProps) {
       <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
       <TableCell align="center">{assessment.due_at ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}</TableCell>
       <TableCell align="center">{formattedTime(assessment.latest_feedback_at)}</TableCell>
-      <TableCell align="center">{assessment.assess_score}</TableCell>
+      <TableCell align="center">{assessment.status === HomeFunAssessmentStatus.complete ? assessment.assess_score : ""}</TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>
     </TableRow>
   );
