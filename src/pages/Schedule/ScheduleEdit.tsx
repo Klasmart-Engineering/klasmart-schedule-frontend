@@ -688,6 +688,7 @@ function EditBox(props: CalendarStateProps) {
       const LinkageProgramData: any = await handleChangeProgramId(value.id);
       setSubjectItem(LinkageProgramData[0] ?? defaults);
       setProgramItem(value);
+      scheduleList.subject_id = LinkageProgramData[0] ? LinkageProgramData[0].id : "";
     }
 
     if (name === "lesson_plan_id") {
@@ -2008,7 +2009,7 @@ function EditBox(props: CalendarStateProps) {
                 justifyContent: "center",
               }}
             >
-              <Button variant="contained" color="primary" style={{ width: "80%" }} onClick={saveTheTest}>
+              <Button variant="contained" color="primary" style={{ width: "80%" }} disabled={isLimit()} onClick={saveTheTest}>
                 {d("Click to Schedule").t("schedule_button_click_to schedule")}
               </Button>
             </Box>
