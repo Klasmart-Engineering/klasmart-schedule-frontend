@@ -12,6 +12,9 @@ import { actError, actSuccess, actWarning } from "../../reducers/notify";
 import { BatchItem } from "@rpldy/shared";
 import { RootState } from "../../reducers";
 import { apiResourcePathById } from "../../api/extra";
+import { useHistory } from "react-router";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { AsyncTrunkReturned } from "../../reducers/content";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -61,6 +64,7 @@ const useStyles = makeStyles(({ shadows }) =>
       "& p": {
         color: "#ADADAD",
         fontSize: "15px",
+        fontWeight: "bold",
       },
     },
     fileItem: {
@@ -90,13 +94,16 @@ function FileDataTemplate(props: FileDataProps) {
   const sourceDownload = (attachmentId?: string) => {
     return apiResourcePathById(attachmentId);
   };
+  const textEllipsis = (value: string | undefined) => {
+    return value && value.length > 30 ? `${value.substring(0, 30)} ....` : value;
+  };
   return (
     <Box className={css.participantSaveBox}>
       {status === "finish" &&
         fileName?.map((item) => (
           <div className={css.pathBox}>
             <a href={sourceDownload(item.id)} target="_blank" rel="noopener noreferrer">
-              {item.name}
+              {textEllipsis(item.name)}
             </a>{" "}
             <HighlightOff
               onClick={() => {
@@ -111,7 +118,7 @@ function FileDataTemplate(props: FileDataProps) {
           <div key={item.id} className={css.fileItem}>
             <Typography component="div" noWrap variant="body1">
               <div className={css.pathBox}>
-                <span>{item.file.name}</span>
+                <span>{textEllipsis(item.file.name)}</span>
               </div>
             </Typography>
             {item.completed === 100 ? (
@@ -138,9 +145,10 @@ interface SubmitProps {
   teacher?: EntityScheduleAccessibleUserView[];
   handleClose: () => void;
   feedBackSubmit: () => void;
+  due_time?: string;
 }
 function SubmitTemplate(props: SubmitProps) {
-  const { due_date, teacher, className, handleClose, feedBackSubmit } = props;
+  const { teacher, className, handleClose, feedBackSubmit, due_time } = props;
   const css = useStyles();
   return (
     <Box className={css.submitTemplate}>
@@ -155,7 +163,7 @@ function SubmitTemplate(props: SubmitProps) {
         ))}
       </p>
       <p>
-        {d("Due Date").t("schedule_detail_due_date")}: {due_date}
+        {d("Due Date").t("schedule_detail_due_date")}: {due_time}
       </p>
       <Box style={{ textAlign: "right" }}>
         <Button color="primary" onClick={handleClose}>
@@ -171,10 +179,11 @@ function SubmitTemplate(props: SubmitProps) {
 
 function FeedbackTemplate(props: FeedbackProps) {
   const css = useStyles();
-  const { schedule_id, changeModalDate, teacher, className, due_date } = props;
+  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time } = props;
   const [comment, seComment] = React.useState("");
   const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
   const dispatch = useDispatch();
+  const history = useHistory();
   const handleOnChange = (value: Pick<FileLikeWithId, "id" | "name">[] | undefined): void => {
     setFileName(value);
   };
@@ -198,7 +207,9 @@ function FeedbackTemplate(props: FeedbackProps) {
     return (
       <div style={{ paddingBottom: "8px" }}>
         <div style={{ color: "#000000", fontWeight: "bold" }}>
-          <p>{d("Max").t("schedule_detail_max")}: 100MB/each</p>
+          <p>
+            {d("Max").t("schedule_detail_max")}: 100MB/{d("each").t("schedule_attachment_size_each")}
+          </p>
           <span>{d("Support files in").t("schedule_detail_support_files_in")}:</span>
         </div>
         <div style={{ color: "#666666" }}>
@@ -235,7 +246,7 @@ function FeedbackTemplate(props: FeedbackProps) {
           }}
           feedBackSubmit={feedBackSubmit}
           className={className}
-          due_date={due_date}
+          due_time={due_time}
           teacher={teacher}
         />
       ),
@@ -251,11 +262,17 @@ function FeedbackTemplate(props: FeedbackProps) {
       comment: comment,
       schedule_id: schedule_id,
     };
-    await dispatch(saveScheduleFeedback(data));
-    dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
-    changeModalDate({
-      openStatus: false,
-    });
+    let resultInfo: any;
+    resultInfo = ((await dispatch(saveScheduleFeedback(data))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof saveScheduleFeedback>
+    >;
+    if (resultInfo.payload) {
+      dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
+      history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+      changeModalDate({
+        openStatus: false,
+      });
+    }
   };
 
   const handleFileData = (id: string, type: string) => {
@@ -287,7 +304,7 @@ function FeedbackTemplate(props: FeedbackProps) {
         partition="schedule_attachment"
         accept="*"
         {...props}
-        maxAmount={4 - fileName!.length}
+        maxAmount={3}
         onChange={(value) => handleOnChange(value)}
         value={fileName}
         maxSize={100 * FileSizeUnit.M}
@@ -306,7 +323,7 @@ function FeedbackTemplate(props: FeedbackProps) {
           <>
             {value!.length > 0 && <FileDataTemplate fileName={fileName} handleFileData={handleFileData} status="finish" />}
             {isUploading && <FileDataTemplate batch={batch?.items} handleFileData={handleFileData} status="progress" />}
-            {!batch?.items && value!.length < 1 && (
+            {!isUploading && value!.length < 1 && (
               <Box style={{ position: "relative" }}>
                 <TextField
                   disabled
@@ -315,7 +332,7 @@ function FeedbackTemplate(props: FeedbackProps) {
                   required
                 ></TextField>
                 <HtmlTooltip title={getTipsText()}>
-                  <InfoOutlined className={css.iconField} style={{ left: "110px", position: "absolute", top: "36px" }} />
+                  <InfoOutlined className={css.iconField} style={{ left: "168px", position: "absolute", top: "36px" }} />
                 </HtmlTooltip>
                 <span style={{ color: "#999999", fontSize: "12px" }}>
                   {d("You can upload no more than three attachments. ").t("schedule_msg_three_attachment")}
@@ -356,17 +373,21 @@ interface FeedbackProps {
   due_date?: number;
   className: string;
   teacher?: EntityScheduleAccessibleUserView[];
+  includeTable?: boolean;
+  due_time?: string;
 }
 
 export default function ScheduleFeedback(props: FeedbackProps) {
-  const { schedule_id, changeModalDate, due_date, className, teacher } = props;
+  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time } = props;
   return (
     <FeedbackTemplate
       schedule_id={schedule_id}
       changeModalDate={changeModalDate}
       className={className}
       due_date={due_date}
+      due_time={due_time}
       teacher={teacher}
+      includeTable={includeTable}
     />
   );
 }

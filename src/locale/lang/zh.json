@@ -483,6 +483,7 @@
   "schedule_msg_hidden": "该事件已被隐藏",
   "schedule_msg_three_attachment": "您最多只能上传三份文件",
   "schedule_msg_one_attachment": "您需要至少上传一份文件",
+  "schedule_attachment_size_each": "每个",
   "report_label_student_achievement": "学习表现",
   "report_label_teacher": "老师",
   "report_label_class": "班级",

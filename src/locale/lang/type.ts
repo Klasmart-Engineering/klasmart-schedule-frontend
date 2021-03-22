@@ -581,6 +581,7 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_hidden"; description: "This event has been hidden"; values: undefined }
   | { id: "schedule_msg_three_attachment"; description: "You can upload no more than three attachments. "; values: undefined }
   | { id: "schedule_msg_one_attachment"; description: "You need to upload at least one attachment."; values: undefined }
+  | { id: "schedule_attachment_size_each"; description: "each"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

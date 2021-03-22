@@ -461,10 +461,17 @@ interface GetScheduleMockOptionsPayLoad {
   teacher_id?: string;
 }
 
+export interface getScheduleMockOptionsAllSettledResponse {
+  teacherList: TeachersByOrgnizationQuery;
+  subjectList: PromiseSettledResult<LinkedMockOptionsItem[]>;
+  programList: PromiseSettledResult<LinkedMockOptionsItem[]>;
+  classTypeList: PromiseSettledResult<EntityClassType[]>;
+}
+
 /**
  * get schedule option
  */
-export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsResponse, GetScheduleMockOptionsPayLoad>(
+export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAllSettledResponse, GetScheduleMockOptionsPayLoad>(
   "getClassesList",
   async () => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
@@ -477,7 +484,7 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsRes
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
 
-    const [subjectList, programList, classTypeList] = await Promise.all([
+    const [subjectList, programList, classTypeList] = await Promise.allSettled([
       api.subjects.getSubject(),
       api.programs.getProgram(),
       api.classTypes.getClassType(),
@@ -607,7 +614,10 @@ const { actions, reducer } = createSlice({
       state.mockOptions = payload;
     },
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
-      state.scheduleMockOptions = payload;
+      state.scheduleMockOptions.classTypeList = payload.classTypeList.status === "fulfilled" ? payload.classTypeList.value : [];
+      state.scheduleMockOptions.subjectList = payload.subjectList.status === "fulfilled" ? payload.subjectList.value : [];
+      state.scheduleMockOptions.programList = payload.programList.status === "fulfilled" ? payload.programList.value : [];
+      state.scheduleMockOptions.teacherList = payload.teacherList;
     },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.participantMockOptions = payload;

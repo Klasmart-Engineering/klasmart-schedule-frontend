@@ -644,6 +644,8 @@ function EditBox(props: CalendarStateProps) {
       }
     } else if (type === "all_day_end") {
       return timestampInt(new Date(Y, date.getMonth(), date.getDate(), 23, 59, 59).getTime() / 1000);
+    } else if (type === "feedback") {
+      return `${Y}-${M}-${D}`;
     } else {
       return `${Y}-${M}-${D}T${h}:${m}`;
     }
@@ -1608,7 +1610,8 @@ function EditBox(props: CalendarStateProps) {
             />
           )}
         />
-        {(menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
+        {!isStudent &&
+          (menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
           !rosterSaveStatus && (
             <Box style={{ position: "relative" }}>
               <span className={css.rosterNotice}>
@@ -1658,7 +1661,7 @@ function EditBox(props: CalendarStateProps) {
               </Box>
             </Box>
           )}
-        {menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
+        {!isStudent && menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
           <Box style={{ position: "relative" }}>
             <span className={css.rosterNotice}>
               {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
@@ -1756,7 +1759,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </>
         )}
-        {menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
+        {!isStudent && menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
           <Box style={{ position: "relative" }}>
             <span className={css.rosterNotice}>
               {d("Add Participants").t("schedule_detail_participants")} <span style={{ color: "#D32F2F" }}>*</span>
@@ -1773,7 +1776,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </Box>
         )}
-        {arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
+        {!isStudent && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
               className={css.fieldset}
@@ -1999,6 +2002,8 @@ function EditBox(props: CalendarStateProps) {
             className={scheduleDetial.title as string}
             due_date={scheduleDetial.due_at}
             teacher={scheduleDetial?.class_roster_teachers?.concat(scheduleDetial?.participants_teachers!)}
+            includeTable={includeTable}
+            due_time={timestampToTime(scheduleDetial.due_at, "feedback") as string}
           />
         )}
         {!isScheduleExpired() &&
