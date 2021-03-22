@@ -42,6 +42,14 @@ const mapStatus = (status: string | undefined) => {
   if (status === HomeFunAssessmentStatus.complete) return "Complete";
   if (status === HomeFunAssessmentStatus.in_progress) return "In Progress";
 };
+const mapScore = (score: number | undefined) => {
+  if (!score) return "";
+  if (score === 1) return `1-${d("Poor").t("assess_score_poor")}`;
+  if (score === 2) return `2-${d("Fair").t("assess_score_fair")}`;
+  if (score === 3) return `3-${d("Average").t("assess_score_average")}`;
+  if (score === 4) return `4-${d("Good").t("assess_score_good")}`;
+  if (score === 5) return `5-${d("Excellent").t("assess_score_excellent")}`;
+};
 
 interface AssessmentProps {
   assessment: EntityListHomeFunStudiesResultItem;
@@ -57,7 +65,9 @@ function AssessmentRow(props: AssessmentProps) {
       <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
       <TableCell align="center">{assessment.due_at ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}</TableCell>
       <TableCell align="center">{formattedTime(assessment.latest_feedback_at)}</TableCell>
-      <TableCell align="center">{assessment.status === HomeFunAssessmentStatus.complete ? assessment.assess_score : ""}</TableCell>
+      <TableCell align="center">
+        {assessment.status === HomeFunAssessmentStatus.complete ? mapScore(assessment.assess_score) : ""}
+      </TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>
     </TableRow>
   );
