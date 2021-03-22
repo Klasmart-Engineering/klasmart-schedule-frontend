@@ -137,7 +137,10 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
       order_by: OrderBy._updated_at,
       page: 1,
     });
-
+  const handleClickNewFolder = () => {
+    setAnchorCreate(null);
+    onNewFolder();
+  };
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -160,7 +163,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                 {(value.publish_status === PublishStatus.published ||
                   value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
                   <Permission value={PermissionType.create_folder_289}>
-                    <MenuItem onClick={onNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
+                    <MenuItem onClick={handleClickNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
                   </Permission>
                 )}
               </StyledMenu>

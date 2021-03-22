@@ -199,7 +199,10 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
       })
     );
   };
-
+  const handleClickNewFolder = () => {
+    setAnchorCreate(null);
+    onNewFolder();
+  };
   useEffect(() => {
     reset();
   }, [value.name, reset]);
@@ -225,7 +228,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 {(value.publish_status === PublishStatus.published ||
                   value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
                   <Permission value={PermissionType.create_folder_289}>
-                    <MenuItem onClick={onNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
+                    <MenuItem onClick={handleClickNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
                   </Permission>
                 )}
               </StyledMenu>
