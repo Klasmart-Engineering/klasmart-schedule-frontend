@@ -24,7 +24,7 @@ import shadows from "@material-ui/core/styles/shadows";
 import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, Fragment, useReducer } from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
+import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentInputSourceType } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
@@ -115,13 +115,17 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     fontWeight: 700,
   },
 }));
+export enum PublishAsAssetsType {
+  onlyMaterialOrPlan = "onlyMaterialOrPlan",
+  assetslib = "assetslib",
+}
 interface HeaderProps {
   lesson: string;
   contentDetail?: EntityContentInfoWithDetails;
   formMethods: UseFormMethods<ContentDetailForm>;
   onCancel: ButtonProps["onClick"];
   onSave: LButtonProps["onClick"];
-  onPublish: () => any;
+  onPublish: (isAsAssets?: boolean) => any;
   onBack: ButtonProps["onClick"];
   onDelete: ButtonProps["onClick"];
   id: string | null;
@@ -145,9 +149,9 @@ export function ContentHeader(props: HeaderProps) {
   const css = useStyles();
   const { breakpoints } = useTheme();
   const {
-    control,
     formState: { isDirty },
   } = formMethods;
+  const { control, watch } = useForm<{ publishType: PublishAsAssetsType }>();
   const isShowToggle = inputSourceWatch === ContentInputSourceType.fromFile || Number(teacherManualBatchLengthWatch) > 0;
   const sm = useMediaQuery(breakpoints.down("sm"));
   const [open, toggle] = useReducer((open) => {
@@ -262,7 +266,7 @@ export function ContentHeader(props: HeaderProps) {
                 as={IconButton}
                 className={clsx(css.iconButton, css.greenButton)}
                 color="primary"
-                onClick={onPublish}
+                onClick={onPublish as any}
                 replace
                 disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
               >
@@ -295,7 +299,13 @@ export function ContentHeader(props: HeaderProps) {
           {d("How would you like to publish?").t("library_msg_publish_lesson_material")}
         </DialogTitle>
         <DialogContent dividers className={css.dialogContentRemoveborder}>
-          <Controller name="publishType" as={SelectPublishType} lesson={lesson} control={control} defaultValue="onlyMaterialOrPlan" />
+          <Controller
+            name="publishType"
+            as={SelectPublishType}
+            lesson={lesson}
+            control={control}
+            defaultValue={PublishAsAssetsType.onlyMaterialOrPlan}
+          />
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
@@ -304,7 +314,7 @@ export function ContentHeader(props: HeaderProps) {
           <Button
             onClick={() => {
               toggle();
-              onPublish();
+              onPublish(watch("publishType") === PublishAsAssetsType.assetslib);
             }}
             color="primary"
           >
@@ -322,7 +332,7 @@ interface SelectPublishTypeProps {
 }
 export function SelectPublishType(props: SelectPublishTypeProps) {
   const { onChange, lesson } = props;
-  const value = props.value ?? "onlyMaterialOrPlan";
+  const value = props.value ?? PublishAsAssetsType.onlyMaterialOrPlan;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -339,7 +349,7 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
     >
       <FormControlLabel
         color="primary"
-        control={<Radio size={size} color="primary" value="onlyMaterialOrPlan" />}
+        control={<Radio size={size} color="primary" value={PublishAsAssetsType.onlyMaterialOrPlan} />}
         label={
           <Typography variant={radioTypography}>
             {lesson === "material"
@@ -350,7 +360,7 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
       />
       <FormControlLabel
         color="primary"
-        control={<Radio size={size} color="primary" value="assetslib" />}
+        control={<Radio size={size} color="primary" value={PublishAsAssetsType.assetslib} />}
         label={
           <Typography variant={radioTypography}>
             {lesson === "material"

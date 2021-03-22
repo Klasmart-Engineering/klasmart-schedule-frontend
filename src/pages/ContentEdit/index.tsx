@@ -151,16 +151,19 @@ function ContentEditForm() {
       }),
     [handleSubmit, content_type, lesson, dispatch, history, editindex]
   );
-  const handlePublish = useCallback(async () => {
-    if (lesson === "assets") await handleSave();
-    if (!id) return;
-    if (watch("publishType") === "assetslib") {
-      await dispatch(publishWidthAssets(id));
-    } else {
-      await dispatch(publish(id));
-    }
-    history.replace("/ ");
-  }, [lesson, handleSave, id, watch, history, dispatch]);
+  const handlePublish = useMemo(
+    () => async (isAsAssets?: boolean) => {
+      if (lesson === "assets") await handleSave();
+      if (!id) return;
+      if (isAsAssets) {
+        await dispatch(publishWidthAssets(id));
+      } else {
+        await dispatch(publish(id));
+      }
+      history.replace("/ ");
+    },
+    [lesson, handleSave, id, history, dispatch]
+  );
 
   const handleDelete = useCallback(async () => {
     if (!id) return;
