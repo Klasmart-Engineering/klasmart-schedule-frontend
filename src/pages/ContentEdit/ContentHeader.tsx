@@ -117,7 +117,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 }));
 interface HeaderProps {
   lesson: string;
-  onChangeLesson: (lesson: string) => any;
   contentDetail?: EntityContentInfoWithDetails;
   formMethods: UseFormMethods<ContentDetailForm>;
   onCancel: ButtonProps["onClick"];
@@ -127,26 +126,33 @@ interface HeaderProps {
   onDelete: ButtonProps["onClick"];
   id: string | null;
   inputSourceWatch: ContentInputSourceType;
+  teacherManualBatchLengthWatch?: number;
 }
 export function ContentHeader(props: HeaderProps) {
-  const { lesson, onChangeLesson, contentDetail, formMethods, onCancel, onPublish, onSave, onBack, onDelete, id, inputSourceWatch } = props;
+  const {
+    lesson,
+    contentDetail,
+    formMethods,
+    onCancel,
+    onPublish,
+    onSave,
+    onBack,
+    onDelete,
+    id,
+    inputSourceWatch,
+    teacherManualBatchLengthWatch,
+  } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const {
     control,
     formState: { isDirty },
   } = formMethods;
-  const isShowToggle = inputSourceWatch === ContentInputSourceType.fromFile;
+  const isShowToggle = inputSourceWatch === ContentInputSourceType.fromFile || Number(teacherManualBatchLengthWatch) > 0;
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const xs = useMediaQuery(breakpoints.down("xs"));
-  const size = sm ? "small" : "medium";
-  const radioTypography = sm ? (xs ? "caption" : "subtitle2") : "h6";
   const [open, toggle] = useReducer((open) => {
     return !open;
-  }, false); // const handleOk = useCallback(async() => {
-  //   toggle();
-  //   onPublish();
-  // }, [onPublish]);
+  }, false);
 
   return (
     <Fragment>
@@ -283,36 +289,7 @@ export function ContentHeader(props: HeaderProps) {
           )}
         </Box>
       </Hidden>
-      {false && (
-        <Box display="flex" justifyContent="center">
-          <RadioGroup
-            className={css.radioGroup}
-            value={lesson}
-            onChange={(e) => {
-              onChangeLesson(e.target.value);
-            }}
-          >
-            <FormControlLabel
-              className={css.radio}
-              color="primary"
-              control={<Radio size={size} color="primary" value="assets" />}
-              label={<Typography variant={radioTypography}>{d("Assets").t("library_label_assets")}</Typography>}
-            />
-            <FormControlLabel
-              className={css.radio}
-              color="primary"
-              control={<Radio size={size} color="primary" value="material" />}
-              label={<Typography variant={radioTypography}>{d("Lesson Material").t("library_label_lesson_material")}</Typography>}
-            />
-            <FormControlLabel
-              className={css.radio}
-              color="primary"
-              control={<Radio size={size} color="primary" value="plan" />}
-              label={<Typography variant={radioTypography}>{d("Lesson Plan").t("library_label_lesson_plan")}</Typography>}
-            />
-          </RadioGroup>
-        </Box>
-      )}
+
       <Dialog open={open} onClose={toggle}>
         <DialogTitle className={css.dialogContentRemoveborder}>
           {d("How would you like to publish?").t("library_msg_publish_lesson_material")}

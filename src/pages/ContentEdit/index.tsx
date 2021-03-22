@@ -105,6 +105,7 @@ function ContentEditForm() {
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
   const { program, developmental } = watch(["program", "developmental"]);
   const inputSource: ContentInputSourceType = watch("data.input_source");
+  const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
   const allDefaultValueAndKey = ModelMockOptions.createAllDefaultValueAndKey(
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental }
@@ -492,7 +493,6 @@ function ContentEditForm() {
         contentDetail={contentDetail}
         formMethods={formMethods}
         lesson={lesson}
-        onChangeLesson={handleChangeLesson}
         onCancel={handleGoBack}
         onSave={handleSave}
         onPublish={handlePublish}
@@ -500,6 +500,7 @@ function ContentEditForm() {
         onDelete={handleDelete}
         id={id}
         inputSourceWatch={inputSource}
+        teacherManualBatchLengthWatch={teacherManualBatchLengthWatch}
       />
       <PermissionOr
         value={[
