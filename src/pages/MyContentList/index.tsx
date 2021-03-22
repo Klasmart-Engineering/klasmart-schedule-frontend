@@ -39,11 +39,23 @@ import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { FolderForm, useFolderForm } from "./FolderForm";
+import { FolderForm, useFolderForm } from "./FolderForm1";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
+<<<<<<< HEAD
 import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { ExectSearch, EXECT_SEARCH, SEARCH_TEXT_KEY, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
+=======
+import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
+import {
+  ExectSearch,
+  EXECT_SEARCH,
+  SEARCH_TEXT_KEY,
+  SecondSearchHeader,
+  SecondSearchHeaderMb,
+  SecondSearchHeaderProps,
+} from "./SecondSearchHeader";
+>>>>>>> feat(NKL-535): folder 弹框逻辑
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -112,7 +124,7 @@ export default function MyContentList() {
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const conditionFormMethods = useForm<ContentListForm>();
-  const { watch, reset, getValues, handleSubmit } = conditionFormMethods;
+  const { watch, reset, getValues, handleSubmit, setError } = conditionFormMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
     RootState,
@@ -236,7 +248,7 @@ export default function MyContentList() {
     // await refreshWithDispatch(dispatch(addFolder({ content_type: condition.content_type, parent_id: parent_id })).then(unwrapResult));
     // await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
   };
-  const handleClickAddFolderBtn: ContentCardListProps["onRenameFolder"] = async () => {
+  const handleClickAddFolderBtn: SecondSearchHeaderProps["onNewFolder"] = async () => {
     setFolderForm({});
     openFolderForm();
   };
@@ -300,6 +312,11 @@ export default function MyContentList() {
     () =>
       handleSubmit(async (value: ContentListForm) => {
         const { FOLDER_NAME: name, REMARK: remark, KEYWORDS: keywords } = value;
+        if (!name) {
+          return setError(ContentListFormKey.FOLDER_NAME, {
+            message: "请输入文件名",
+          });
+        }
         const parent_id = (condition.path || "").split("/").pop() || "";
         await refreshWithDispatch(
           dispatch(
@@ -311,7 +328,7 @@ export default function MyContentList() {
         }
         closeFolderForm();
       }),
-    [closeFolderForm, condition.content_type, condition.path, dispatch, handleSubmit, parentId, refreshWithDispatch]
+    [closeFolderForm, condition.content_type, condition.path, dispatch, handleSubmit, parentId, refreshWithDispatch, setError]
   );
   const handleRenameFolderItem = useMemo(
     () =>

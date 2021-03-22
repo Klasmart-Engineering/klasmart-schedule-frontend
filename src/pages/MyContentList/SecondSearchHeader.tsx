@@ -316,7 +316,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 export interface SecondSearchHeaderProps extends QueryConditionBaseProps {
   onCreateContent: () => any;
   conditionFormMethods: UseFormMethods<ContentListForm>;
-  onNewFolder: LButtonProps["onClick"];
+  onNewFolder: () => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();

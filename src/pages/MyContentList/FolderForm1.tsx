@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useMemo, useState } from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
+import { Controller, ControllerProps, UseFormMethods } from "react-hook-form";
 import { EntityFolderContent } from "../../api/api.auto";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d, reportMiss } from "../../locale/LocaleManager";
@@ -73,10 +73,11 @@ export interface FolderFormProps {
   onRenameFolder: LButtonProps["onClick"];
   folderForm?: EntityFolderContent;
   formMethods: UseFormMethods<ContentListForm>;
+  rules?: ControllerProps<"input">["rules"];
 }
 export function FolderForm(props: FolderFormProps) {
   const css = useStyles();
-  const { open, onClose, onAddFolder, onRenameFolder, folderForm, formMethods } = props;
+  const { open, onClose, onAddFolder, onRenameFolder, folderForm, formMethods, rules } = props;
   const { control, errors } = formMethods;
   return (
     <Dialog open={open} fullWidth={true} className={css.dialog}>
@@ -90,17 +91,19 @@ export function FolderForm(props: FolderFormProps) {
             <Typography className={css.star}>*</Typography>
             <Controller
               name={ContentListFormKey.FOLDER_NAME}
-              control={control}
               as={TextField}
+              control={control}
               defaultValue={folderForm?.name || ""}
               className={css.textField}
-              required
+              autoFocus={true}
               rules={{
-                required: true,
+                // required: d("Server request failed").t("general_error_unknown"),
+                ...rules,
               }}
               error={errors.FOLDER_NAME ? true : false}
               fullWidth
               variant="outlined"
+              helperText={errors["FOLDER_NAME"]?.message}
             />
           </div>
           <div className={css.inputCon}>
