@@ -1610,7 +1610,7 @@ function EditBox(props: CalendarStateProps) {
             />
           )}
         />
-        {!isStudent &&
+        {!isStudent() &&
           (menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
           !rosterSaveStatus && (
             <Box style={{ position: "relative" }}>
@@ -1661,7 +1661,7 @@ function EditBox(props: CalendarStateProps) {
               </Box>
             </Box>
           )}
-        {!isStudent && menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
+        {!isStudent() && menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
           <Box style={{ position: "relative" }}>
             <span className={css.rosterNotice}>
               {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
@@ -1759,7 +1759,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </>
         )}
-        {!isStudent && menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
+        {!isStudent() && menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
           <Box style={{ position: "relative" }}>
             <span className={css.rosterNotice}>
               {d("Add Participants").t("schedule_detail_participants")} <span style={{ color: "#D32F2F" }}>*</span>
@@ -1776,7 +1776,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </Box>
         )}
-        {!isStudent && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
+        {!isStudent() && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
               className={css.fieldset}
