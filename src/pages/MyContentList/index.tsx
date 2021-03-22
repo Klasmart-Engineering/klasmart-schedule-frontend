@@ -39,7 +39,7 @@ import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
-import { FolderForm, useFolderForm } from "./FolderForm1";
+import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
 <<<<<<< HEAD
@@ -124,7 +124,7 @@ export default function MyContentList() {
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const conditionFormMethods = useForm<ContentListForm>();
-  const { watch, reset, getValues, handleSubmit, setError } = conditionFormMethods;
+  const { watch, reset, getValues, handleSubmit } = conditionFormMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
   const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
     RootState,
@@ -312,15 +312,17 @@ export default function MyContentList() {
     () =>
       handleSubmit(async (value: ContentListForm) => {
         const { FOLDER_NAME: name, REMARK: remark, KEYWORDS: keywords } = value;
-        if (!name) {
-          return setError(ContentListFormKey.FOLDER_NAME, {
-            message: "请输入文件名",
-          });
-        }
         const parent_id = (condition.path || "").split("/").pop() || "";
         await refreshWithDispatch(
           dispatch(
-            addFolder1({ content_type: condition.content_type, parent_id: parentId ? parentId : parent_id, name, remark, keywords })
+            addFolder1({
+              content_type: condition.content_type,
+              parent_id: parentId ? parentId : parent_id,
+              name,
+              remark,
+              keywords,
+              conditionFormMethods,
+            })
           ).then(unwrapResult)
         );
         if (parentId) {
@@ -328,7 +330,7 @@ export default function MyContentList() {
         }
         closeFolderForm();
       }),
-    [closeFolderForm, condition.content_type, condition.path, dispatch, handleSubmit, parentId, refreshWithDispatch, setError]
+    [closeFolderForm, condition.content_type, condition.path, conditionFormMethods, dispatch, handleSubmit, parentId, refreshWithDispatch]
   );
   const handleRenameFolderItem = useMemo(
     () =>

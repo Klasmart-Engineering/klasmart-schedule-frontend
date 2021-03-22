@@ -1,4 +1,5 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
 import {
@@ -27,7 +28,7 @@ import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
 import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
-import { QueryCondition } from "../pages/MyContentList/types";
+import { ContentListForm, ContentListFormKey, QueryCondition } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -690,16 +691,24 @@ export const renameFolder = createAsyncThunk<IQueryRenameFolderResult, IQueryRen
   }
 );
 
-type IQueryAddFolderParams1 = { content_type?: string; parent_id: string; name: string; remark: string; keywords: string };
+type IQueryAddFolderParams1 = {
+  content_type?: string;
+  parent_id: string;
+  name: string;
+  remark: string;
+  keywords: string;
+  conditionFormMethods: UseFormMethods<ContentListForm>;
+};
 type IQueryAddFolderResult1 = AsyncReturnType<typeof api.folders.createFolder>;
 export const addFolder1 = createAsyncThunk<IQueryAddFolderResult1, IQueryAddFolderParams1>(
   "content/addFolder",
-  async ({ content_type, parent_id, name, remark, keywords }, { dispatch }) => {
+  async ({ content_type, parent_id, name, remark, keywords, conditionFormMethods }, { dispatch }) => {
     const partition =
       content_type === SearchContentsRequestContentType.assetsandfolder ? FolderPartition.assets : FolderPartition.plansAndMaterials;
-    return api.folders.createFolder({ name, remark, keywords, owner_type: 1, parent_id, partition });
-    // .then(() => true)
-    // .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
+    return api.folders.createFolder({ name, remark, keywords, owner_type: 1, parent_id, partition }).catch((err) => {
+      conditionFormMethods.setError(ContentListFormKey.FOLDER_NAME, { message: t(err.label || UNKNOW_ERROR_LABEL) });
+      throw err;
+    });
   }
 );
 
