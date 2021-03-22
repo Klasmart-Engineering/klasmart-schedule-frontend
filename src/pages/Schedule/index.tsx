@@ -68,6 +68,7 @@ function ScheduleContent() {
     ParticipantsData,
     classRosterIds,
     participantsIds,
+    scheduleDetial,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -198,6 +199,10 @@ function ScheduleContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, dispatch]);
 
+  React.useEffect(() => {
+    if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
+  }, [dispatch, scheduleDetial, scheduleId]);
+
   const getOrgByClass = usePermission(PermissionType.create_event_520);
   const getOrgBySchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
 
@@ -284,6 +289,7 @@ function ScheduleContent() {
               getParticipantsData={getParticipants}
               handleChangeHidden={handleChangeHidden}
               isHidden={isHidden}
+              scheduleDetial={scheduleDetial}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

@@ -17,7 +17,6 @@ import {
   ExpandMoreOutlined,
   FileCopyOutlined,
   PermIdentity,
-  Visibility,
   VisibilityOff,
 } from "@material-ui/icons";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
@@ -301,10 +300,9 @@ function EditBox(props: CalendarStateProps) {
     contentPreview,
     isHidden,
     handleChangeHidden,
+    scheduleDetial,
   } = props;
-  const { scheduleDetial, contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>(
-    (state) => state.schedule
-  );
+  const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -1242,6 +1240,11 @@ function EditBox(props: CalendarStateProps) {
       scheduleShowOption({ schedule_id: scheduleId as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
     );
     handleChangeHidden(!isHidden);
+    dispatch(
+      actSuccess(
+        isHidden ? d("This event is visible again.").t("schedule_msg_visible") : d("This event has been hidden").t("schedule_msg_hidden")
+      )
+    );
     changeModalDate({
       openStatus: false,
     });
@@ -1534,7 +1537,7 @@ function EditBox(props: CalendarStateProps) {
                   textAlign: "right",
                 }}
               >
-                {!scheduleDetial.exist_feedback && (
+                {!isHidden && (
                   <DeleteOutlineOutlined
                     style={{
                       color: "#D74040",
@@ -1544,11 +1547,8 @@ function EditBox(props: CalendarStateProps) {
                     onClick={handleDelete}
                   />
                 )}
-                {scheduleDetial.exist_feedback && !isHidden && (
-                  <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={css.toolset} />
-                )}
                 {scheduleDetial.exist_feedback && isHidden && (
-                  <Visibility style={{ color: "#000000" }} onClick={handleHide} className={css.toolset} />
+                  <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={css.toolset} />
                 )}
               </Grid>
             )}
@@ -2095,6 +2095,7 @@ interface CalendarStateProps {
   contentPreview: EntityContentInfoWithDetails;
   handleChangeHidden: (is_hidden: boolean) => void;
   isHidden: boolean;
+  scheduleDetial: EntityScheduleDetailsView;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2126,6 +2127,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     contentPreview,
     handleChangeHidden,
     isHidden,
+    scheduleDetial,
   } = props;
 
   const template = (
@@ -2152,6 +2154,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           contentPreview={contentPreview}
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
+          scheduleDetial={scheduleDetial}
         />
       </Box>
       <Box
@@ -2183,6 +2186,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           contentPreview={contentPreview}
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
+          scheduleDetial={scheduleDetial}
         />
       </Box>
     </>

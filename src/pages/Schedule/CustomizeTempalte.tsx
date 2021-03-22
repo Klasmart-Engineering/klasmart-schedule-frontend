@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { DeleteOutlined, EditOutlined, Visibility, VisibilityOff } from "@material-ui/icons";
+import { DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -10,6 +10,7 @@ import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
+import { actSuccess } from "../../reducers/notify";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -199,11 +200,50 @@ export default function CustomizeTempalte(props: InfoProps) {
     window.open(apiLivePath(liveToken));
   };
 
+  const deleteHandle = () => {
+    if (scheduleInfo.exist_feedback) {
+      changeModalDate({
+        title: "",
+        text: d("This event cannot be deleted because assignments have already been uploaded. Do you want to hide it instead?").t(
+          "schedule_msg_hide"
+        ),
+        openStatus: true,
+        enableCustomization: false,
+        buttons: [
+          {
+            label: d("CANCEL").t("schedule_button_cancel"),
+            event: () => {
+              changeModalDate({
+                openStatus: false,
+              });
+            },
+          },
+          {
+            label: d("OK").t("schedule_button_ok"),
+            event: () => {
+              handleHide();
+            },
+          },
+        ],
+        handleClose: () => {
+          changeModalDate({ openStatus: false, enableCustomization: false });
+        },
+      });
+    } else {
+      handleDelete(scheduleInfo);
+    }
+  };
+
   const handleHide = async () => {
     await dispatch(
       scheduleShowOption({ schedule_id: scheduleInfo.id as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
     );
     handleChangeHidden(!isHidden);
+    dispatch(
+      actSuccess(
+        isHidden ? d("This event is visible again.").t("schedule_msg_visible") : d("This event has been hidden").t("schedule_msg_hidden")
+      )
+    );
     changeModalDate({
       openStatus: false,
     });
@@ -229,14 +269,11 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       <div className={classes.iconPart}>
         <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
-        {scheduleInfo.exist_feedback && !isHidden && (
+        {scheduleInfo.exist_feedback && isHidden && (
           <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
         )}
-        {scheduleInfo.exist_feedback && isHidden && (
-          <Visibility style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
-        )}
-        {!scheduleInfo.exist_feedback && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
-        {!scheduleInfo.exist_feedback && scheduleInfo.status === "NotStart" && (
+        {!isHidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+        {!isHidden && scheduleInfo.status === "NotStart" && (
           <Permission
             value={PermissionType.delete_event_540}
             render={(value) =>
@@ -244,7 +281,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                 <DeleteOutlined
                   className={classes.lastIcon}
                   onClick={() => {
-                    handleDelete(scheduleInfo);
+                    deleteHandle();
                   }}
                 />
               )
