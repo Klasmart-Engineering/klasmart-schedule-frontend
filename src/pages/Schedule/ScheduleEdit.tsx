@@ -1875,20 +1875,22 @@ function EditBox(props: CalendarStateProps) {
         )}
         {scheduleList.class_type !== "Task" && (
           <>
-            <span
-              style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
-              onClick={() => {
-                setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
-              }}
-            >
-              {d("See More").t("schedule_detail_see_more")}{" "}
-              {linkageLessonPlanOpen ? (
-                <ExpandLessOutlined style={{ position: "absolute" }} />
-              ) : (
-                <ExpandMoreOutlined style={{ position: "absolute" }} />
-              )}
-            </span>
-            <Collapse in={linkageLessonPlanOpen}>
+            {!checkedStatus.homeFunCheck && (
+              <span
+                style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
+                onClick={() => {
+                  setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
+                }}
+              >
+                {d("See More").t("schedule_detail_see_more")}{" "}
+                {linkageLessonPlanOpen ? (
+                  <ExpandLessOutlined style={{ position: "absolute" }} />
+                ) : (
+                  <ExpandMoreOutlined style={{ position: "absolute" }} />
+                )}
+              </span>
+            )}
+            <Collapse in={linkageLessonPlanOpen || checkedStatus.homeFunCheck}>
               <Paper elevation={0} className={css.paper}>
                 <Autocomplete
                   id="combo-box-demo"
