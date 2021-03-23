@@ -3,13 +3,15 @@ import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { ExtendedRequestParams } from "../../api";
 import { EntityAssessHomeFunStudyArgs } from "../../api/api.auto";
 import { AssessmentStatus, AssessmentUpdateAction } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { onLoadHomefunDetail, updateHomefun, UpdateHomefunAction, UpdateHomefunParams } from "../../reducers/assessments";
-import { actSuccess } from "../../reducers/notify";
+import { actAsyncConfirm } from "../../reducers/confirm";
+import { actError, actSuccess } from "../../reducers/notify";
 import { AssessmentHeader } from "../AssessmentEdit/AssessmentHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import { Assignment } from "./Assignment";
@@ -36,7 +38,16 @@ function AssessmentsHomefunEditIner() {
   const handleAssessmentSaveOrComplete = (action: AssessmentUpdateAction, message: string) =>
     handleSubmit(async (value) => {
       if (!id) return;
-      const data: UpdateHomefunParams = { ...value, id, action };
+      const onError: ExtendedRequestParams["onError"] = async (content) => {
+        if (content === d('A new version of the assignment has been submitted, please refresh').t('assess_msg_new_version')) {
+          await dispatch(actAsyncConfirm({ content, hideCancel: true }));
+          return history.replace({
+            search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
+          });
+        }
+        dispatch(actError(content))
+      };
+      const data: UpdateHomefunParams = { ...value, id, action, onError };
       await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
       dispatch(actSuccess(message));
       history.replace({

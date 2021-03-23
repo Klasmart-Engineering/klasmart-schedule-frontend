@@ -225,6 +225,7 @@
   "assess_msg_new_version": "A new version of the assignment has been submitted, please refresh",
   "assess_submit_new_old": "Submit Time (New-Old)",
   "assess_submit_old_new": "Submit Time (Old-New)",
+  "assess_new_version_comment": "We update to get this student's newest assignment, please assess again. ",
   "assess_label_create": "Create",
   "assess_label_for_organizations": "For Organizations",
   "assess_label_cancel": "Cancel",

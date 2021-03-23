@@ -225,6 +225,7 @@
   "assess_msg_new_version": "学生上传了新的版本，请刷新重试",
   "assess_submit_new_old": "提交日期（新到旧）",
   "assess_submit_old_new": "提交日期（旧到新）",
+  "assess_new_version_comment": "您看到的是学生上传的最新版本，请再次批改。",
   "assess_label_create": "新建",
   "assess_label_for_organizations": "机构",
   "assess_label_cancel": "取消",

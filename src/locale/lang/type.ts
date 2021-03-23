@@ -267,6 +267,11 @@ type LangRecord<T = string> =
   | { id: "assess_msg_new_version"; description: "A new version of the assignment has been submitted, please refresh"; values: undefined }
   | { id: "assess_submit_new_old"; description: "Submit Time (New-Old)"; values: undefined }
   | { id: "assess_submit_old_new"; description: "Submit Time (Old-New)"; values: undefined }
+  | {
+      id: "assess_new_version_comment";
+      description: "We update to get this student's newest assignment, please assess again. ";
+      values: undefined;
+    }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }

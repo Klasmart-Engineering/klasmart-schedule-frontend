@@ -6,16 +6,14 @@ import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
-  EntityScheduleFeedbackView,
+  EntityScheduleFeedbackView
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
-// import mockHomefunStudies from "../mocks/home_fun_studies_by_id.json";
-// import mockFeedbacks from "../mocks/scheduleFeedbacks.json";
-import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { actInfo } from "./notify";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -154,22 +152,21 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
     const feedbacks = await api.schedulesFeedbacks.queryFeedback({ schedule_id, user_id });
     const hasPermissionOfHomefun =
       !!detail.teacher_ids?.includes(myUserId) && hasPermissionOfMe(PermissionType.edit_in_progress_assessment_439, meInfo.me);
-    const content = d("A new version of the assignment has been submitted, please refresh").t("assess_msg_new_version");
     if (detail.assess_feedback_id && detail.assess_feedback_id !== feedbacks[0]?.id)
-      dispatch(actAsyncConfirm({ content, hideCancel: true }));
+      dispatch(actInfo(d("We update to get this student's newest assignment, please assess again. ").t("assess_new_version_comment")));
     return { detail, feedbacks, hasPermissionOfHomefun };
   }
 );
 
 export type UpdateHomefunAction = AsyncThunkAction<string, UpdateHomefunParams, {}>;
-export type UpdateHomefunParams = Omit<EntityAssessHomeFunStudyArgs, "assess_feedback_id" | "id"> & { id: string };
+export type UpdateHomefunParams = Omit<EntityAssessHomeFunStudyArgs, "assess_feedback_id" | "id"> & { id: string, onError: ExtendedRequestParams["onError"] };
 export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { state: RootState }>(
   "assessments/updateHomefun",
-  async ({ id, ...params }, { dispatch, getState }) => {
+  async ({ id, onError, ...params }, { dispatch, getState }) => {
     const {
       assessments: { homefunFeedbacks },
     } = getState();
-    const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content, hideCancel: true }));
+    // const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content, hideCancel: true }));
     return api.homeFunStudies.assessHomeFunStudy(id, { ...params, assess_feedback_id: homefunFeedbacks[0]?.id }, {
       onError,
     } as ExtendedRequestParams);
