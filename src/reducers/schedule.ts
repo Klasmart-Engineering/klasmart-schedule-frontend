@@ -47,27 +47,19 @@ import {
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
-import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
+import {
+  ChangeParticipants,
+  ClassesData,
+  ParticipantsData,
+  ParticipantsShortInfo,
+  RolesData,
+  scheduleInfoViewProps,
+} from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 
 const MOCK = false;
-interface scheduleViewData {
-  end: Date;
-  id: string;
-  start: Date;
-  title: string;
-  is_repeat: boolean;
-  lesson_plan_id: string;
-  status: "NotStart" | "Started" | "Closed";
-  class_type: string;
-  class_id: string;
-  due_at: number;
-  exist_feedback: boolean;
-  is_home_fun: boolean;
-  is_hidden: boolean;
-}
 
 interface classOptionsProp {
   classListOrg: ClassesByOrganizationQuery;
@@ -80,7 +72,7 @@ export interface ScheduleState {
   searchScheduleList: EntityScheduleSearchView[];
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
-  scheduleTimeViewData: scheduleViewData[];
+  scheduleTimeViewData: scheduleInfoViewProps[];
   scheduleTimeViewYearData: [];
   attachement_id: string;
   attachment_path: string;
@@ -252,7 +244,7 @@ export interface viewSchedulesResultResponse {
   scheduleTimeViewYearData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
 }
 
-type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeView>[0] & LoadingMetaPayload;
+type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduledDates>[0] & LoadingMetaPayload;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(
   "schedule/schedules_time_view",
   async (query) => {

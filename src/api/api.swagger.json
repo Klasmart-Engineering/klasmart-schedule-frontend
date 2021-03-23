@@ -8783,6 +8783,9 @@
         "is_hidden": {
           "type": "boolean"
         },
+        "is_home_fun": {
+          "type": "boolean"
+        },
         "is_repeat": {
           "type": "boolean"
         },

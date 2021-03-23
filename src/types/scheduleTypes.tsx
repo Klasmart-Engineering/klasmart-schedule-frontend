@@ -140,3 +140,19 @@ export interface ChangeParticipants {
   type: string;
   data: ParticipantsShortInfo;
 }
+
+export interface scheduleInfoViewProps {
+  end: Date;
+  id: string;
+  start: Date;
+  title: string;
+  is_repeat: boolean;
+  lesson_plan_id: string;
+  status: string;
+  class_type: string;
+  class_id: string;
+  due_at: number;
+  exist_feedback: boolean;
+  is_home_fun: boolean;
+  is_hidden: boolean;
+}

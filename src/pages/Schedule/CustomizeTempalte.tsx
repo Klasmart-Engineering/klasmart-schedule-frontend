@@ -10,6 +10,7 @@ import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
+import { scheduleInfoViewProps } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -64,26 +65,10 @@ const useStyles = makeStyles({
   },
 });
 
-interface scheduleInfoProps {
-  end: Date;
-  id: string;
-  start: Date;
-  title: string;
-  is_repeat: boolean;
-  lesson_plan_id: string;
-  status: string;
-  class_type: string;
-  class_id: string;
-  due_at: number;
-  exist_feedback: boolean;
-  is_home_fun: boolean;
-  is_hidden: boolean;
-}
-
 interface InfoProps {
-  handleDelete: (scheduleInfo: scheduleInfoProps) => void;
+  handleDelete: (scheduleInfo: scheduleInfoViewProps) => void;
   handleClose: () => void;
-  scheduleInfo: scheduleInfoProps;
+  scheduleInfo: scheduleInfoViewProps;
   toLive: () => void;
   changeModalDate: (data: object) => void;
   checkLessonPlan: boolean;
@@ -126,7 +111,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
 
-  const handleEditSchedule = (scheduleInfo: scheduleInfoProps): void => {
+  const handleEditSchedule = (scheduleInfo: scheduleInfoViewProps): void => {
     const currentTime = Math.floor(new Date().getTime());
     if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
       if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
@@ -155,7 +140,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
   };
 
-  const handleGoLive = (scheduleInfo: scheduleInfoProps) => {
+  const handleGoLive = (scheduleInfo: scheduleInfoViewProps) => {
     const currentTime = Math.floor(new Date().getTime());
     if (permissionShowLive && scheduleInfo.class_type === "Homework") {
       handleClose();

@@ -16,25 +16,9 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleRealTimeStatusPath, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
-import { modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
+import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
-
-interface scheduleInfoProps {
-  end: Date;
-  id: string;
-  start: Date;
-  title: string;
-  is_repeat: boolean;
-  lesson_plan_id: string;
-  status: string;
-  class_type: string;
-  class_id: string;
-  due_at: number;
-  exist_feedback: boolean;
-  is_home_fun: boolean;
-  is_hidden: boolean;
-}
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -80,7 +64,7 @@ function MyCalendar(props: CalendarProps) {
   const dispatch = useDispatch();
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const deleteScheduleByid = useCallback(
-    async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoProps) => {
+    async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
       const { payload } = ((await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
@@ -223,7 +207,7 @@ function MyCalendar(props: CalendarProps) {
    * close Customization template && show delete templates
    */
   const handleDelete = useCallback(
-    (scheduleInfo: scheduleInfoProps) => {
+    (scheduleInfo: scheduleInfoViewProps) => {
       const currentTime = Math.floor(new Date().getTime());
       if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
@@ -314,7 +298,7 @@ function MyCalendar(props: CalendarProps) {
    * click current schedule
    * @param event
    */
-  const scheduleSelected = async (event: scheduleInfoProps) => {
+  const scheduleSelected = async (event: scheduleInfoViewProps) => {
     const currentTime = Math.floor(new Date().getTime());
     if (
       ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
