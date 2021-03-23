@@ -197,6 +197,8 @@ function FeedbackTemplate(props: FeedbackProps) {
         return { name: item.attachment_name, id: item.attachment_id };
       });
       setFileName(feedbackDataAssembly);
+    } else {
+      setFileName([]);
     }
   }, [feedbackData]);
 

@@ -977,7 +977,7 @@ function EditBox(props: CalendarStateProps) {
 
   const isLimit = (): boolean => {
     const is_expire = Date.now() > (scheduleDetial.due_at as number) * 1000;
-    return scheduleId ? is_expire || isHidden : false;
+    return scheduleId && checkedStatus.homeFunCheck ? is_expire || isHidden : false;
   };
 
   const feedBackNoticeEdit = () => {
