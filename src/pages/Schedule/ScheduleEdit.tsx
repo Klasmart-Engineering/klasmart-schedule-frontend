@@ -847,7 +847,11 @@ function EditBox(props: CalendarStateProps) {
 
     addData["is_force"] = isForce ?? is_force;
 
-    if (scheduleList.class_type === "Homework") addData["is_home_fun"] = checkedStatus.homeFunCheck;
+    if (scheduleList.class_type === "Homework") {
+      addData["is_home_fun"] = checkedStatus.homeFunCheck;
+    } else {
+      addData["is_home_fun"] = false;
+    }
 
     if (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") addData["is_force"] = true;
 
@@ -1804,7 +1808,7 @@ function EditBox(props: CalendarStateProps) {
             />
           </Box>
         )}
-        {scheduleList.class_type !== "Task" && !checkedStatus.homeFunCheck && (
+        {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
           <Autocomplete
             id="combo-box-demo"
             freeSolo
