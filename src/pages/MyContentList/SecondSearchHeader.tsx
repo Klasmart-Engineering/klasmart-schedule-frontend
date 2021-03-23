@@ -4,6 +4,7 @@ import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField";
 import { Search } from "@material-ui/icons";
+import ArrowDropDownOutlinedIcon from "@material-ui/icons/ArrowDropDownOutlined";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
@@ -219,8 +220,14 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                   PermissionType.create_lesson_plan_221,
                 ]}
               >
-                <Button variant="contained" color="primary" className={classes.createBtn} onClick={handleClickCreate}>
-                  {d("Create").t("library_label_create")} +
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.createBtn}
+                  onClick={handleClickCreate}
+                  endIcon={<ArrowDropDownOutlinedIcon />}
+                >
+                  {d("Create").t("library_label_create")}
                 </Button>
               </PermissionOr>
               <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>

@@ -114,6 +114,9 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   h5pRadio: {
     fontWeight: 700,
   },
+  formControlLabel: {
+    marginTop: 20,
+  },
 }));
 export enum PublishAsAssetsType {
   onlyMaterialOrPlan = "onlyMaterialOrPlan",
@@ -253,7 +256,7 @@ export function ContentHeader(props: HeaderProps) {
             </LButton>
           )}
           {!(lesson === "assets" && id) &&
-            (inputSourceWatch === ContentInputSourceType.fromFile ? (
+            (isShowToggle ? (
               <IconButton
                 className={clsx(css.iconButton, css.greenButton)}
                 onClick={toggle}
@@ -335,10 +338,8 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
   const value = props.value ?? PublishAsAssetsType.onlyMaterialOrPlan;
   const css = useStyles();
   const { breakpoints } = useTheme();
-  const sm = useMediaQuery(breakpoints.down("sm"));
   const xs = useMediaQuery(breakpoints.down("xs"));
-  const size = sm ? "small" : "medium";
-  const radioTypography = xs ? "subtitle2" : "h6";
+  const size = xs ? "small" : "medium";
   return (
     <RadioGroup
       className={css.radioGroup}
@@ -349,9 +350,16 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
     >
       <FormControlLabel
         color="primary"
-        control={<Radio size={size} color="primary" value={PublishAsAssetsType.onlyMaterialOrPlan} />}
+        control={
+          <Radio
+            size={size}
+            color="primary"
+            value={PublishAsAssetsType.onlyMaterialOrPlan}
+            style={{ paddingTop: 0, paddingBottom: 0, alignSelf: "flex-start" }}
+          />
+        }
         label={
-          <Typography variant={radioTypography}>
+          <Typography style={{ fontSize: xs ? "0.875rem" : "1.25rem", lineHeight: xs ? "20px" : "24px" }}>
             {lesson === "material"
               ? d("Only publish a lesson material").t("library_msg_only_publish_lesson_material")
               : d("Only publish a Lesson plan").t("library_msg_only_publish_lesson_plan")}
@@ -359,10 +367,18 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
         }
       />
       <FormControlLabel
+        className={css.formControlLabel}
         color="primary"
-        control={<Radio size={size} color="primary" value={PublishAsAssetsType.assetslib} />}
+        control={
+          <Radio
+            size={size}
+            color="primary"
+            value={PublishAsAssetsType.assetslib}
+            style={{ paddingTop: 0, paddingBottom: 0, alignSelf: "flex-start" }}
+          />
+        }
         label={
-          <Typography variant={radioTypography}>
+          <Typography style={{ fontSize: xs ? "0.875rem" : "1.25rem", lineHeight: xs ? "20px" : "24px" }}>
             {lesson === "material"
               ? d("Publish a lesson material, and add to assets library").t("library_msg_publish_lesson_material_and_asset")
               : d("Publish a lesson plan, and add teacher manuals to assets library").t("library_msg_publish_lesson_plan_and asset")}
