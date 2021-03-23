@@ -79,7 +79,10 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
   iconField: {
     position: "absolute",
-    bottom: "26%",
+    bottom: 15,
+    [breakpoints.down("sm")]: {
+      bottom: 9,
+    },
     cursor: "pointer",
     fontSize: 25,
     right: 10,
