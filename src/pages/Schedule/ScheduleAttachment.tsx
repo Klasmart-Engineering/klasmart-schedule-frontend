@@ -1,13 +1,14 @@
 import { Box, TextField } from "@material-ui/core";
 import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import { CloseOutlined, CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { apiResourcePathById } from "../../api/extra";
 import ModalBox from "../../components/ModalBox";
 import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
+import CancelIcon from "@material-ui/icons/Cancel";
 
 const useStyles = makeStyles(() => ({
   fieldset: {
@@ -195,10 +196,14 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
               <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
             </HtmlTooltip>
             <input type="file" style={{ display: "none" }} />
-            {!isStudent && <CloudUploadOutlined className={css.iconField} style={{ right: "10px" }} ref={btnRef as any} />}
-            {attachmentName && !isStudent && <CloseOutlined className={css.iconField} style={{ right: "85px" }} onClick={deleteItem} />}
+            {!isStudent && (
+              <CloudUploadOutlined className={css.iconField} style={{ right: attachmentName ? "50px" : "10px" }} ref={btnRef as any} />
+            )}
+            {attachmentName && !isStudent && (
+              <CancelIcon className={css.iconField} style={{ right: "85px", color: "#666666" }} onClick={deleteItem} />
+            )}
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-              {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "50px" }} />}
+              {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />}
             </a>
           </Box>
         )}

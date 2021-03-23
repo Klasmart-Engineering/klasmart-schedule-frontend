@@ -2,7 +2,7 @@ import { Box, Button, LinearProgress, TextField, Typography } from "@material-ui
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
-import { AccessTime, CloudUploadOutlined, HighlightOff, InfoOutlined } from "@material-ui/icons";
+import { AccessTime, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import { HtmlTooltip } from "./ScheduleAttachment";
 import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
 import { EntityFeedbackAssignmentView, EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
@@ -15,6 +15,7 @@ import { apiResourcePathById } from "../../api/extra";
 import { useHistory } from "react-router";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AsyncTrunkReturned } from "../../reducers/content";
+import CancelIcon from "@material-ui/icons/Cancel";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -85,12 +86,12 @@ const useStyles = makeStyles(({ shadows }) =>
 interface FileDataProps {
   handleFileData: (name: string, type: string) => void;
   fileName?: Pick<FileLikeWithId, "id" | "name">[] | undefined;
-  status: "finish" | "progress";
   batch?: BatchItem[];
+  isUploading?: boolean;
 }
 
 function FileDataTemplate(props: FileDataProps) {
-  const { fileName, handleFileData, status, batch } = props;
+  const { fileName, handleFileData, batch, isUploading } = props;
   const css = useStyles();
   const sourceDownload = (attachmentId?: string) => {
     return apiResourcePathById(attachmentId);
@@ -100,21 +101,21 @@ function FileDataTemplate(props: FileDataProps) {
   };
   return (
     <Box className={css.participantSaveBox}>
-      {status === "finish" &&
-        fileName?.map((item) => (
-          <div className={css.pathBox}>
-            <a href={sourceDownload(item.id)} target="_blank" rel="noopener noreferrer">
-              {textEllipsis(item.name)}
-            </a>{" "}
-            <HighlightOff
-              onClick={() => {
-                handleFileData(item.id!, "delete");
-              }}
-              className={css.iconField}
-            />
-          </div>
-        ))}
-      {status === "progress" &&
+      {fileName?.map((item) => (
+        <div className={css.pathBox}>
+          <a href={sourceDownload(item.id)} target="_blank" rel="noopener noreferrer">
+            {textEllipsis(item.name)}
+          </a>{" "}
+          <CancelIcon
+            style={{ color: "#666666" }}
+            onClick={() => {
+              handleFileData(item.id!, "delete");
+            }}
+            className={css.iconField}
+          />
+        </div>
+      ))}
+      {isUploading &&
         batch?.map((item) => (
           <div key={item.id} className={css.fileItem}>
             <Typography component="div" noWrap variant="body1">
@@ -142,7 +143,7 @@ function FileDataTemplate(props: FileDataProps) {
 
 interface SubmitProps {
   due_date?: number;
-  className: string;
+  className?: EntityScheduleAccessibleUserView;
   teacher?: EntityScheduleAccessibleUserView[];
   handleClose: () => void;
   feedBackSubmit: () => void;
@@ -155,7 +156,7 @@ function SubmitTemplate(props: SubmitProps) {
     <Box className={css.submitTemplate}>
       <p>{d("Your assignment will be submitted for assessment.").t("schedule_msg_submit")}</p>
       <p>
-        {d("Class").t("report_label_class")}: {className}
+        {d("Class").t("report_label_class")}: {className?.name ?? d("No Class").t("schedule_assignment_no_class")}
       </p>
       <p>
         {d("Teacher").t("assess_column_teacher")}:{" "}
@@ -328,8 +329,9 @@ function FeedbackTemplate(props: FeedbackProps) {
         }
         render={({ btnRef, value, isUploading, batch }) => (
           <>
-            {value!.length > 0 && <FileDataTemplate fileName={fileName} handleFileData={handleFileData} status="finish" />}
-            {isUploading && <FileDataTemplate batch={batch?.items} handleFileData={handleFileData} status="progress" />}
+            {(value!.length > 0 || isUploading) && (
+              <FileDataTemplate fileName={fileName} batch={batch?.items} isUploading={isUploading} handleFileData={handleFileData} />
+            )}
             {!isUploading && value!.length < 1 && (
               <Box style={{ position: "relative" }}>
                 <TextField
@@ -378,7 +380,7 @@ interface FeedbackProps {
   schedule_id?: string;
   changeModalDate: (data: object) => void;
   due_date?: number;
-  className: string;
+  className?: EntityScheduleAccessibleUserView;
   teacher?: EntityScheduleAccessibleUserView[];
   includeTable?: boolean;
   due_time?: string;

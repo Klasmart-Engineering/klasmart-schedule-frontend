@@ -824,6 +824,8 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
+    if (scheduleList.class_type === "Homework" && checkedStatus.homeFunCheck) addData["lesson_plan_id"] = "";
+
     const participant: any = participantMockOptions.participantList;
     const participantSet = participant.class.teachers.concat(participant.class.students);
     let ids: any[] = [];
@@ -977,7 +979,7 @@ function EditBox(props: CalendarStateProps) {
 
   const isLimit = (): boolean => {
     const is_expire = Date.now() > (scheduleDetial.due_at as number) * 1000;
-    return scheduleId && checkedStatus.homeFunCheck ? is_expire || isHidden : false;
+    return scheduleId && checkedStatus.homeFunCheck && scheduleDetial.class_type === "Homework" ? is_expire || isHidden : false;
   };
 
   const feedBackNoticeEdit = () => {
@@ -1885,7 +1887,7 @@ function EditBox(props: CalendarStateProps) {
         )}
         {scheduleList.class_type !== "Task" && (
           <>
-            {!checkedStatus.homeFunCheck && (
+            {!(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
               <span
                 style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
                 onClick={() => {
@@ -1900,7 +1902,7 @@ function EditBox(props: CalendarStateProps) {
                 )}
               </span>
             )}
-            <Collapse in={linkageLessonPlanOpen || checkedStatus.homeFunCheck}>
+            <Collapse in={linkageLessonPlanOpen || (checkedStatus.homeFunCheck && scheduleList.class_type === "Homework")}>
               <Paper elevation={0} className={css.paper}>
                 <Autocomplete
                   id="combo-box-demo"
@@ -2006,7 +2008,7 @@ function EditBox(props: CalendarStateProps) {
           <ScheduleFeedback
             schedule_id={scheduleId}
             changeModalDate={changeModalDate}
-            className={scheduleDetial.title as string}
+            className={scheduleDetial.class}
             due_date={scheduleDetial.due_at}
             teacher={(scheduleDetial?.class_roster_teachers ?? []).concat(scheduleDetial?.participants_teachers ?? [])}
             includeTable={includeTable}

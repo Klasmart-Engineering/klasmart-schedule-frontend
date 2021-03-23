@@ -485,6 +485,7 @@
   "schedule_msg_three_attachment": "You can upload no more than three attachments. ",
   "schedule_msg_one_attachment": "You need to upload at least one attachment.",
   "schedule_attachment_size_each": "each",
+  "schedule_assignment_no_class": "No Class",
   "report_label_student_achievement": "Student Achievement",
   "report_label_teacher": "Teacher",
   "report_label_class": "Class",
