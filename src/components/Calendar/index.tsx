@@ -33,6 +33,7 @@ interface scheduleInfoProps {
   due_at: number;
   exist_feedback: boolean;
   is_home_fun: boolean;
+  is_hidden: boolean;
 }
 
 const useStyles = makeStyles(({ shadows }) => ({
@@ -99,6 +100,20 @@ function MyCalendar(props: CalendarProps) {
     },
     [changeModalDate, dispatch, history, modelView, timesTamp]
   );
+  const refreshView = useCallback(
+    async (template: string) => {
+      dispatch(actSuccess(template));
+      dispatch(
+        getScheduleTimeViewData({
+          view_type: modelView,
+          time_at: timesTamp.start,
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+        })
+      );
+    },
+    [dispatch, modelView, timesTamp]
+  );
+
   const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   /**
@@ -329,6 +344,7 @@ function MyCalendar(props: CalendarProps) {
           checkLessonPlan={checkLessonPlan?.payload.lesson_plan_is_auth}
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
+          refreshView={refreshView}
         />
       ),
       openStatus: true,

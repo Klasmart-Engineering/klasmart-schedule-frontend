@@ -10,7 +10,6 @@ import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
-import { actSuccess } from "../../reducers/notify";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -78,6 +77,7 @@ interface scheduleInfoProps {
   due_at: number;
   exist_feedback: boolean;
   is_home_fun: boolean;
+  is_hidden: boolean;
 }
 
 interface InfoProps {
@@ -89,13 +89,24 @@ interface InfoProps {
   checkLessonPlan: boolean;
   handleChangeHidden: (is_hidden: boolean) => void;
   isHidden: boolean;
+  refreshView: (template: string) => void;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { handleDelete, handleClose, scheduleInfo, changeModalDate, toLive, checkLessonPlan, handleChangeHidden, isHidden } = props;
+  const {
+    handleDelete,
+    handleClose,
+    scheduleInfo,
+    changeModalDate,
+    toLive,
+    checkLessonPlan,
+    handleChangeHidden,
+    isHidden,
+    refreshView,
+  } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -178,6 +189,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                     checkLessonPlan={checkLessonPlan}
                     handleChangeHidden={handleChangeHidden}
                     isHidden={isHidden}
+                    refreshView={refreshView}
                   />
                 ),
                 openStatus: true,
@@ -236,13 +248,16 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleHide = async () => {
     await dispatch(
-      scheduleShowOption({ schedule_id: scheduleInfo.id as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
+      scheduleShowOption({
+        schedule_id: scheduleInfo.id as string,
+        show_option: { show_option: scheduleInfo.is_hidden ? "visible" : "hidden" },
+      })
     );
-    handleChangeHidden(!isHidden);
-    dispatch(
-      actSuccess(
-        isHidden ? d("This event is visible again.").t("schedule_msg_visible") : d("This event has been hidden").t("schedule_msg_hidden")
-      )
+    handleChangeHidden(!scheduleInfo.is_hidden);
+    refreshView(
+      scheduleInfo.is_hidden
+        ? d("This event is visible again.").t("schedule_msg_visible")
+        : d("This event has been hidden").t("schedule_msg_hidden")
     );
     changeModalDate({
       openStatus: false,
@@ -269,11 +284,11 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       <div className={classes.iconPart}>
         <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
-        {scheduleInfo.exist_feedback && isHidden && (
+        {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && (
           <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
         )}
-        {!isHidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
-        {!isHidden && scheduleInfo.status === "NotStart" && (
+        {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+        {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
           <Permission
             value={PermissionType.delete_event_540}
             render={(value) =>
@@ -289,7 +304,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           />
         )}
       </div>
-      {scheduleInfo.class_type !== "Task" && (
+      {scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
         <div className={classes.buttonPart}>
           <Button
             color="primary"

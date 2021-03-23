@@ -66,6 +66,7 @@ interface scheduleViewData {
   due_at: number;
   exist_feedback: boolean;
   is_home_fun: boolean;
+  is_hidden: boolean;
 }
 
 interface classOptionsProp {

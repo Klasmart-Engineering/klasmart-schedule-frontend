@@ -179,7 +179,7 @@ function SubmitTemplate(props: SubmitProps) {
 
 function FeedbackTemplate(props: FeedbackProps) {
   const css = useStyles();
-  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time } = props;
+  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time, is_hidden } = props;
   const [comment, seComment] = React.useState("");
   const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
   const dispatch = useDispatch();
@@ -226,6 +226,10 @@ function FeedbackTemplate(props: FeedbackProps) {
   };
 
   const NoticeTemplate = () => {
+    if (is_hidden) {
+      dispatch(actWarning(d("This event has been hidden").t("schedule_msg_hidden")));
+      return;
+    }
     if (!feedbackData.is_allow_submit) {
       dispatch(actWarning(d("You cannot submit again because your assignment has already been assessed.").t("schedule_msg_cannot_submit")));
       return;
@@ -302,7 +306,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       ></TextField>
       <MultipleUploader
         partition="schedule_attachment"
-        accept="*"
+        accept=".avi,.mov,.mp4,.mp3,.wav,.jpg,.jpeg,.png,.gif,.bmp,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf"
         {...props}
         maxAmount={3}
         onChange={(value) => handleOnChange(value)}
@@ -375,10 +379,12 @@ interface FeedbackProps {
   teacher?: EntityScheduleAccessibleUserView[];
   includeTable?: boolean;
   due_time?: string;
+  is_hidden?: boolean;
 }
 
 export default function ScheduleFeedback(props: FeedbackProps) {
-  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time } = props;
+  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time, is_hidden } = props;
+  console.log(teacher);
   return (
     <FeedbackTemplate
       schedule_id={schedule_id}
@@ -388,6 +394,7 @@ export default function ScheduleFeedback(props: FeedbackProps) {
       due_time={due_time}
       teacher={teacher}
       includeTable={includeTable}
+      is_hidden={is_hidden}
     />
   );
 }

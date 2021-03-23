@@ -1241,6 +1241,13 @@ function EditBox(props: CalendarStateProps) {
     );
     handleChangeHidden(!isHidden);
     dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start,
+        time_zone_offset: -new Date().getTimezoneOffset() * 60,
+      })
+    );
+    dispatch(
       actSuccess(
         isHidden ? d("This event is visible again.").t("schedule_msg_visible") : d("This event has been hidden").t("schedule_msg_hidden")
       )
@@ -2001,9 +2008,10 @@ function EditBox(props: CalendarStateProps) {
             changeModalDate={changeModalDate}
             className={scheduleDetial.title as string}
             due_date={scheduleDetial.due_at}
-            teacher={scheduleDetial?.class_roster_teachers?.concat(scheduleDetial?.participants_teachers!)}
+            teacher={(scheduleDetial?.class_roster_teachers ?? []).concat(scheduleDetial?.participants_teachers ?? [])}
             includeTable={includeTable}
             due_time={timestampToTime(scheduleDetial.due_at, "feedback") as string}
+            is_hidden={isHidden}
           />
         )}
         {!isScheduleExpired() &&
@@ -2020,7 +2028,7 @@ function EditBox(props: CalendarStateProps) {
               </Button>
             </Box>
           )}
-        {scheduleList.class_type !== "Task" && (
+        {scheduleList.class_type !== "Task" && !checkedStatus.homeFunCheck && (
           <Box
             className={css.fieldset}
             style={{
