@@ -37,7 +37,8 @@ import {
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
-import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./ContentCardList";
+import { BackToPrevPage } from "./BackToPrevPage";
+import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";

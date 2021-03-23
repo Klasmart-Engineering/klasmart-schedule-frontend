@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardActions,
@@ -10,7 +9,6 @@ import {
   createStyles,
   FormControl,
   Grid,
-  Hidden,
   IconButton,
   MenuItem,
   Select,
@@ -33,14 +31,13 @@ import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityFolderContent, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
 import { Author, ContentType, PublishStatus } from "../../api/type";
-import folderIconUrl from "../../assets/icons/foldericon.svg";
-import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
+import { BackToPrevPage } from "./BackToPrevPage";
 import { isUnpublish } from "./FirstSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
@@ -242,14 +239,18 @@ const useStyles = makeStyles((theme) =>
       textAlign: "right",
       flex: 1,
       lineHeight: "22px",
+      [theme.breakpoints.down("sm")]: {
+        fontSize: 14,
+      },
     },
     infoWord: {
       fontSize: 22,
       flex: 3,
       marginLeft: 5,
       lineHeight: "22px",
-      [theme.breakpoints.down("md")]: {
-        fontSize: 16,
+      color: "#000000",
+      [theme.breakpoints.down("sm")]: {
+        fontSize: 18,
       },
     },
     folderInfoCon: {
@@ -669,89 +670,89 @@ export function ContentCardList(props: ContentCardListProps) {
   );
 }
 
-interface BackToPrevePageProps {
-  onGoBack: () => any;
-  parentFolderInfo: EntityFolderItemInfo;
-  onRenameFolder: (content: NonNullable<EntityFolderContent>) => any;
-}
-export function BackToPrevPage(props: BackToPrevePageProps) {
-  const css = useStyles();
-  const { onGoBack, parentFolderInfo, onRenameFolder } = props;
-  const folderInfo = () => {
-    return (
-      <>
-        <div className={css.folderInfoCon}>
-          <Typography className={css.despWord}>{"Created by"}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo.editor}</Typography>
-        </div>
-        <div className={css.folderInfoCon}>
-          <Typography className={css.despWord}>{d("Keywords").t("library_label_keywords")}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo.keywords}</Typography>
-        </div>
-        <div className={css.folderInfoCon}>
-          <Typography className={css.despWord}>{d("Description").t("library_label_description")}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo.remark}</Typography>
-        </div>
-        <div className={css.folderInfoCon}>
-          <Typography className={css.despWord}>{"Contain"}:</Typography>
-          <Typography className={css.infoWord}>
-            ({parentFolderInfo.items_count} {d("items").t("library_label_items")}. {parentFolderInfo.available}{" "}
-            {d("visible").t("library_label_visible")})
-          </Typography>
-        </div>
-      </>
-    );
-  };
-  return (
-    <>
-      <Grid container spacing={2} style={{ borderBottom: "1px solid #e0e0e0", marginBottom: 10 }}>
-        <Hidden only={["xs"]}>
-          <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-            <div className={css.card}>
-              <div className={css.cardMedia} style={{ marginTop: 10, cursor: "pointer" }} onClick={onGoBack}>
-                <img className={css.prevImg} src={prevPageUrl} alt="" />
-              </div>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm container justify="center" direction="column">
-            <Grid item>
-              <div className={css.folderName}>
-                <img src={folderIconUrl} alt="" style={{ width: 48, height: 48 }} />
-                <Typography variant="h6" className={css.infoWord}>
-                  {parentFolderInfo.name}
-                </Typography>
-              </div>
-            </Grid>
-            <Grid item container>
-              {folderInfo()}
-            </Grid>
-            <Grid item container justify="flex-end">
-              <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
-                {d("Edit").t("library_label_edit")}
-              </Button>
-            </Grid>
-          </Grid>
-        </Hidden>
-        <Hidden only={["sm", "md", "lg", "xl"]}>
-          <Grid item style={{ width: "100%" }}>
-            <div className={css.titleCon}>
-              <img style={{ width: 48, height: 48, cursor: "pointer" }} src={prevPageUrl} alt="" onClick={onGoBack} />
-              <div className={css.folderName}>
-                <img src={folderIconUrl} alt="" style={{ width: 24, height: 24 }} />
-                <Typography variant="h6" className={css.infoWord}>
-                  {parentFolderInfo.name}
-                </Typography>
-              </div>
-            </div>
-            {folderInfo()}
-            <div className={css.mbBtnCon}>
-              <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
-                {d("Edit").t("library_label_edit")}
-              </Button>
-            </div>
-          </Grid>
-        </Hidden>
-      </Grid>
-    </>
-  );
-}
+// interface BackToPrevePageProps {
+//   onGoBack: () => any;
+//   parentFolderInfo: EntityFolderItemInfo;
+//   onRenameFolder: (content: NonNullable<EntityFolderContent>) => any;
+// }
+// export function BackToPrevPage(props: BackToPrevePageProps) {
+//   const css = useStyles();
+//   const { onGoBack, parentFolderInfo, onRenameFolder } = props;
+//   const folderInfo = () => {
+//     return (
+//       <>
+//         <div className={css.folderInfoCon}>
+//           <Typography className={css.despWord}>{"Created by"}:</Typography>
+//           <Typography className={css.infoWord}>{parentFolderInfo.editor}</Typography>
+//         </div>
+//         <div className={css.folderInfoCon}>
+//           <Typography className={css.despWord}>{d("Keywords").t("library_label_keywords")}:</Typography>
+//           <Typography className={css.infoWord}>{parentFolderInfo.keywords}</Typography>
+//         </div>
+//         <div className={css.folderInfoCon}>
+//           <Typography className={css.despWord}>{d("Description").t("library_label_description")}:</Typography>
+//           <Typography className={css.infoWord}>{parentFolderInfo.remark}</Typography>
+//         </div>
+//         <div className={css.folderInfoCon}>
+//           <Typography className={css.despWord}>{"Contain"}:</Typography>
+//           <Typography className={css.infoWord}>
+//             ({parentFolderInfo.items_count} {d("items").t("library_label_items")}. {parentFolderInfo.available}{" "}
+//             {d("visible").t("library_label_visible")})
+//           </Typography>
+//         </div>
+//       </>
+//     );
+//   };
+//   return (
+//     <>
+//       <Grid container spacing={2} style={{ borderBottom: "1px solid #e0e0e0", marginBottom: 10 }}>
+//         <Hidden only={["xs"]}>
+//           <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+//             <div className={css.card}>
+//               <div className={css.cardMedia} style={{ marginTop: 10, cursor: "pointer" }} onClick={onGoBack}>
+//                 <img className={css.prevImg} src={prevPageUrl} alt="" />
+//               </div>
+//             </div>
+//           </Grid>
+//           <Grid item xs={12} sm container justify="center" direction="column">
+//             <Grid item>
+//               <div className={css.folderName}>
+//                 <img src={folderIconUrl} alt="" style={{ width: 48, height: 48 }} />
+//                 <Typography variant="h6" className={css.infoWord}>
+//                   {parentFolderInfo.name}
+//                 </Typography>
+//               </div>
+//             </Grid>
+//             <Grid item container>
+//               {folderInfo()}
+//             </Grid>
+//             <Grid item container justify="flex-end">
+//               <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
+//                 {d("Edit").t("library_label_edit")}
+//               </Button>
+//             </Grid>
+//           </Grid>
+//         </Hidden>
+//         <Hidden only={["sm", "md", "lg", "xl"]}>
+//           <Grid item style={{ width: "100%" }}>
+//             <div className={css.titleCon}>
+//               <img style={{ width: 48, height: 48, cursor: "pointer" }} src={prevPageUrl} alt="" onClick={onGoBack} />
+//               <div className={css.folderName}>
+//                 <img src={folderIconUrl} alt="" style={{ width: 24, height: 24 }} />
+//                 <Typography variant="h6" className={css.infoWord}>
+//                   {parentFolderInfo.name}
+//                 </Typography>
+//               </div>
+//             </div>
+//             {folderInfo()}
+//             <div className={css.mbBtnCon}>
+//               <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
+//                 {d("Edit").t("library_label_edit")}
+//               </Button>
+//             </div>
+//           </Grid>
+//         </Hidden>
+//       </Grid>
+//     </>
+//   );
+// }
