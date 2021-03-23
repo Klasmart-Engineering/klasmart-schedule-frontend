@@ -199,6 +199,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       });
       setFileName(feedbackDataAssembly);
     } else {
+      seComment("");
       setFileName([]);
     }
   }, [feedbackData]);
