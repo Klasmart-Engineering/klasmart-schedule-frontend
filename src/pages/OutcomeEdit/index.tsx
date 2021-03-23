@@ -77,7 +77,6 @@ export default function CreateOutcomings() {
     () => ([developmental_id]: string[]) => {
       setCondition("development");
       const [program_id] = getValues("program");
-      console.log(program_id);
       dispatch(getSpecialSkills({ developmental_id, metaLoading: true, program_id }));
     },
     [dispatch, getValues]

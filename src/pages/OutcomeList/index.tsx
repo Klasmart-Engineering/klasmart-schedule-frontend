@@ -115,7 +115,6 @@ export function OutcomeList() {
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
 
   const handleBulkApprove: ThirdSearchHeaderProps["onBulkApprove"] = () => {
-    console.log(ids);
     return refreshWithDispatch(dispatch(bulkApprove(ids)));
   };
   const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {

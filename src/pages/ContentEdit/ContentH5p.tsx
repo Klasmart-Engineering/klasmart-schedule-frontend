@@ -37,7 +37,6 @@ export default function ContentH5p(props: ContentH5pProps) {
   const src = useH5pSrc(sub, valueSource);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log("h5p iframe message event.data = ", event.data);
       const { contentId } = event.data;
       const source_type = event.data.source_type ?? "";
       if (!contentId) return;

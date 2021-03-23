@@ -336,13 +336,6 @@ export function FlashCard(props: FlashCardProps) {
               >
                 <div className={clsx(css.imagePart, "imagePart")} style={{ backgroundColor: getColor(index) }}></div>
                 <div className={css.questionPart}>
-                  {console.log(
-                    value &&
-                      value[0] &&
-                      value[0].data &&
-                      JSON.parse(value[0].data).content &&
-                      JSON.parse(JSON.parse(value[0].data).content).params
-                  )}
                   <p className={css.number}>
                     {value &&
                       value[0] &&

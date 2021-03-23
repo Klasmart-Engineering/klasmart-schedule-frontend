@@ -48,7 +48,6 @@ const createTagMap = (unstyledTag: UnstyledTag) =>
   } as const);
 
 const styleToHTML: IConvertToHTMLConfig["styleToHTML"] = (style) => {
-  console.log("style = ", style);
   const [token, value] = style.split("-");
   switch (token) {
     case "fontsize":
@@ -67,7 +66,6 @@ const styleToHTML: IConvertToHTMLConfig["styleToHTML"] = (style) => {
 };
 
 const entityToHTML: IConvertToHTMLConfig["entityToHTML"] = (entity, originalText) => {
-  console.log("entity = ", entity);
   if (entity.type === "LINK") {
     /* eslint-disable-next-line jsx-a11y/anchor-has-content */
     return <a href={entity.data.url} target={entity.data.targetOption} />;
@@ -80,7 +78,6 @@ const createConvertOption = (unstyledTag: UnstyledTag): IConvertToHTMLConfig => 
     styleToHTML,
     entityToHTML,
     blockToHTML: (((block: RawDraftContentBlock) => {
-      console.log("block = ", block);
       const Tag = tagMap[block.type as keyof typeof tagMap] ?? "div";
       const textAlign = block.data && (block.data["text-align"] as CSSProperties["textAlign"]);
       const nest = block.type === "unordered-list-item" ? <ul /> : block.type === "ordered-list-item" ? <ol /> : undefined;
@@ -126,7 +123,6 @@ export function RichTextInput(props: RichTextInputProps) {
     setFocus(false);
     if (!onBlur) return;
     const html = convertToHTML(convertOption)(editorState.getCurrentContent()) ?? "";
-    console.log("html = ", html);
     onBlur(html);
   };
   const { detectBlurByLink } = useFixLinkBlurBug(handleBlur);
@@ -134,7 +130,6 @@ export function RichTextInput(props: RichTextInputProps) {
     detectBlurByLink(editorState);
     if (!onChange) return;
     const html = convertToHTML({})(editorState.getCurrentContent()) ?? "";
-    console.log("html = ", html);
     onChange(html);
   };
   return (

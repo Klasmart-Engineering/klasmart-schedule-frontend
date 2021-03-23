@@ -27,12 +27,6 @@ fetchIntercept.register({
     response
       .clone()
       .json()
-      // .then((result) => {
-      //   const { msg, label, data } = result;
-      //   if (!msg && !label) return;
-      //   console.log('api success emit result = ', result);
-      //   apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { msg, label, data });
-      // })
       .catch(async (e) => {
         const errorLabel: LangRecordId = "general_error_unknown";
         console.error(e);

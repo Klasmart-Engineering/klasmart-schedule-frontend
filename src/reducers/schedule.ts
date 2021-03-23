@@ -593,9 +593,6 @@ const { actions, reducer } = createSlice({
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.participantMockOptions = payload;
     },
-    [scheduleUpdateStatus.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof scheduleUpdateStatus>>) => {
-      console.log(payload);
-    },
     [getContentsAuthed.fulfilled.type]: (state, { payload }: any) => {
       state.contentsAuthList = payload.list;
     },
@@ -608,12 +605,7 @@ const { actions, reducer } = createSlice({
     [getClassesBySchool.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListSchool = payload.data;
     },
-    [saveScheduleFeedback.fulfilled.type]: (state, { payload }: any) => {
-      console.log(saveScheduleFeedback);
-    },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
-      // console.log(payload)
-      // state.ParticipantsData = payload;
       let teachers: RolesData[] = [];
       let students: RolesData[] = [];
       payload.classes.forEach((item: ClassesData) => {
@@ -624,12 +616,6 @@ const { actions, reducer } = createSlice({
     },
     [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
       state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
-    },
-    [getScheduleNewestFeedback.fulfilled.type]: (state, { payload }: any) => {
-      console.log(payload);
-    },
-    [scheduleShowOption.fulfilled.type]: (state, { payload }: any) => {
-      console.log(payload);
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;
