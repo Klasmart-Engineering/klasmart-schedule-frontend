@@ -40,7 +40,7 @@ const useStyles = makeStyles(({ shadows }) =>
     },
     participantSaveBox: {
       width: "100%",
-      height: "120px",
+      minHeight: "120px",
       border: "1px solid rgba(0, 0, 0, 0.23)",
       marginTop: "20px",
       borderRadius: "5px",
@@ -51,6 +51,7 @@ const useStyles = makeStyles(({ shadows }) =>
       cursor: "pointer",
     },
     pathBox: {
+      wordBreak: "break-all",
       padding: "8px 8px 8px 8px",
       display: "flex",
       "& a": {
@@ -345,7 +346,7 @@ function FeedbackTemplate(props: FeedbackProps) {
             )}
             <CloudUploadOutlined
               className={css.iconField}
-              style={{ right: "10px", position: "absolute", bottom: "90px" }}
+              style={{ right: "10px", position: "absolute", bottom: value!.length > 0 ? "66px" : "90px" }}
               ref={btnRef as any}
             />
           </>
@@ -384,7 +385,6 @@ interface FeedbackProps {
 
 export default function ScheduleFeedback(props: FeedbackProps) {
   const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time, is_hidden } = props;
-  console.log(teacher);
   return (
     <FeedbackTemplate
       schedule_id={schedule_id}
