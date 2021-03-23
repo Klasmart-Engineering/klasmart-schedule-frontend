@@ -19,6 +19,7 @@ import { getScheduleLiveToken, getScheduleRealTimeStatusPath, getScheduleTimeVie
 import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
+import { EntityScheduleListView } from "../../api/api.auto";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -99,6 +100,21 @@ function MyCalendar(props: CalendarProps) {
   );
 
   const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
+
+  const scheduleTimeViewDataFormat = (data: EntityScheduleListView[]): scheduleInfoViewProps[] => {
+    const newViewData: any = [];
+    if (data.length > 0) {
+      data.forEach((item: EntityScheduleListView) => {
+        if (!item) return;
+        newViewData.push({
+          ...item,
+          end: new Date(Number(item.end_at) * 1000),
+          start: new Date(Number(item.start_at) * 1000),
+        });
+      });
+    }
+    return newViewData;
+  };
 
   /**
    * rander data
@@ -380,7 +396,7 @@ function MyCalendar(props: CalendarProps) {
           popup={true}
           selectable={true}
           localizer={localizer}
-          events={scheduleTimeViewData}
+          events={scheduleTimeViewDataFormat(scheduleTimeViewData)}
           startAccessor="start"
           endAccessor="end"
           toolbar={false}

@@ -47,14 +47,7 @@ import {
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
-import {
-  ChangeParticipants,
-  ClassesData,
-  ParticipantsData,
-  ParticipantsShortInfo,
-  RolesData,
-  scheduleInfoViewProps,
-} from "../types/scheduleTypes";
+import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
@@ -72,7 +65,7 @@ export interface ScheduleState {
   searchScheduleList: EntityScheduleSearchView[];
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
-  scheduleTimeViewData: scheduleInfoViewProps[];
+  scheduleTimeViewData: EntityScheduleListView[];
   scheduleTimeViewYearData: [];
   attachement_id: string;
   attachment_path: string;
@@ -531,21 +524,6 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
   return apiGetMockOptions();
 });
 
-const scheduleTimeViewDataFormat = (data: EntityScheduleListView[]) => {
-  const newViewData: any = [];
-  if (data.length > 0) {
-    data.forEach((item: EntityScheduleListView) => {
-      if (!item) return;
-      newViewData.push({
-        ...item,
-        end: new Date(Number(item.end_at) * 1000),
-        start: new Date(Number(item.start_at) * 1000),
-      });
-    });
-  }
-  return newViewData;
-};
-
 const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
@@ -581,7 +559,7 @@ const { actions, reducer } = createSlice({
       state.errorLable = error.message;
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleTimeViewData = scheduleTimeViewDataFormat(payload.scheduleTimeViewData);
+      state.scheduleTimeViewData = payload.scheduleTimeViewData;
       state.scheduleTimeViewYearData = payload.scheduleTimeViewYearData;
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
