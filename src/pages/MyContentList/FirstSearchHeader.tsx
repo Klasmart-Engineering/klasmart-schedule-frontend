@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { ArchiveOutlined, PermMediaOutlined, PublishOutlined } from "@material-ui/icons";
+import ArrowDropDownOutlinedIcon from "@material-ui/icons/ArrowDropDownOutlined";
 import clsx from "clsx";
 import React from "react";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
@@ -154,8 +155,14 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                   PermissionType.create_lesson_plan_221,
                 ]}
               >
-                <Button onClick={handleClickCreate} variant="contained" color="primary" className={css.createBtn}>
-                  {d("Create").t("library_label_create")} +
+                <Button
+                  onClick={handleClickCreate}
+                  variant="contained"
+                  color="primary"
+                  className={css.createBtn}
+                  endIcon={<ArrowDropDownOutlinedIcon />}
+                >
+                  {d("Create").t("library_label_create")}
                 </Button>
               </PermissionOr>
               <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
