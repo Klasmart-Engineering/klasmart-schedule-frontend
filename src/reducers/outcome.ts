@@ -7,12 +7,6 @@ import {
   ApiOutcomeCreateView,
   ApiOutcomeIDList,
   ApiOutcomeView,
-  // EntityAge,
-  // EntityDevelopmental,
-  // EntityGrade,
-  // EntityProgram,
-  // EntitySkill,
-  // EntitySubject,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { OutcomePublishStatus } from "../api/type";
@@ -522,7 +516,6 @@ const { reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getNewOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getNewOptions>>) => {
-      // console.log(payload, 111);
       state.newOptions = payload;
     },
     [getSpecialSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSpecialSkills>>) => {
@@ -530,20 +523,18 @@ const { reducer } = createSlice({
     },
     [onLoadOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.permission[assess_msg_no_permission] = undefined;
+      state.user_id = payload.user_id;
       if (payload.pendingRes) {
         state.outcomeList = payload.pendingRes.list;
         state.total = payload.pendingRes.total;
-        state.user_id = payload.pendingRes.user_id;
       }
       if (payload.privateRes) {
         state.outcomeList = payload.privateRes.list;
         state.total = payload.privateRes.total;
-        state.user_id = payload.privateRes.user_id;
       }
       if (payload.outcomeRes) {
         state.outcomeList = payload.outcomeRes.list;
         state.total = payload.outcomeRes.total;
-        state.user_id = payload.outcomeRes.user_id;
       }
     },
     [onLoadOutcomeList.rejected.type]: (state, { error }: any) => {
