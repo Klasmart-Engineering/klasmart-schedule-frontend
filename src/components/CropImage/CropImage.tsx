@@ -109,10 +109,10 @@ export function CropImage(props: CropImageProps) {
         </DialogContent>
         <DialogActions classes={{ root: css.dialogActions }}>
           <Button className={css.button} variant="contained" onClick={handleConfirm} color="primary">
-            {d("Ok").t("assess_button_ok")}
+            {d("OK").t("general_button_OK")}
           </Button>
           <Button className={css.button} variant="contained" onClick={handleCancel} color="primary">
-            {d("Cancel").t("library_label_cancel")}
+            {d("CANCEL").t("general_button_CANCEL")}
           </Button>
         </DialogActions>
       </Dialog>

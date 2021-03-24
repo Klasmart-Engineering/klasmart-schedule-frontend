@@ -1,21 +1,21 @@
 import { Box, Button, LinearProgress, TextField, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import React from "react";
-import { d } from "../../locale/LocaleManager";
 import { AccessTime, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
-import { HtmlTooltip } from "./ScheduleAttachment";
-import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
-import { EntityFeedbackAssignmentView, EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
-import { useDispatch, useSelector } from "react-redux";
-import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
-import { actError, actSuccess, actWarning } from "../../reducers/notify";
-import { BatchItem } from "@rpldy/shared";
-import { RootState } from "../../reducers";
-import { apiResourcePathById } from "../../api/extra";
-import { useHistory } from "react-router";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { AsyncTrunkReturned } from "../../reducers/content";
 import CancelIcon from "@material-ui/icons/Cancel";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { BatchItem } from "@rpldy/shared";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { EntityFeedbackAssignmentView, EntityScheduleAccessibleUserView, EntityScheduleFeedbackAddInput } from "../../api/api.auto";
+import { apiResourcePathById } from "../../api/extra";
+import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
+import { d } from "../../locale/LocaleManager";
+import { RootState } from "../../reducers";
+import { AsyncTrunkReturned } from "../../reducers/content";
+import { actError, actSuccess, actWarning } from "../../reducers/notify";
+import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
+import { HtmlTooltip } from "./ScheduleAttachment";
 
 const useStyles = makeStyles(({ shadows }) =>
   createStyles({
@@ -169,10 +169,10 @@ function SubmitTemplate(props: SubmitProps) {
       </p>
       <Box style={{ textAlign: "right" }}>
         <Button color="primary" onClick={handleClose}>
-          {d("Cancel").t("library_label_cancel")}
+          {d("CANCEL").t("general_button_CANCEL")}
         </Button>
         <Button color="primary" onClick={feedBackSubmit}>
-          {d("Ok").t("assess_button_ok")}
+          {d("OK").t("general_button_OK")}
         </Button>
       </Box>
     </Box>
