@@ -26,7 +26,7 @@ import {
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
+import { apiDownloadPageUrlById } from "../../api/extra";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
@@ -140,7 +140,7 @@ function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
   return (
     <div className={css.assignmentDownloadRow}>
       <span>{name}</span>
-      <a href={url} download={name}>
+      <a href={url} target="_blank" rel="noopener noreferrer">
         <IconButton size="small">
           <GetApp fontSize="inherit" />
         </IconButton>
@@ -162,7 +162,7 @@ function AssignmentTable(props: AssignmentTableProps) {
         {assignments?.map((assignment) => (
           <AssignmentDownloadRow
             name={assignment.attachment_name}
-            url={apiResourcePathById(assignment.attachment_id)}
+            url={apiDownloadPageUrlById(assignment.attachment_id)}
             key={assignment.attachment_id}
           />
         ))}
