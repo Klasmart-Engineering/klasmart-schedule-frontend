@@ -29,7 +29,7 @@ import {
   getSchoolInfo,
   getSubjectByProgramId,
 } from "../../reducers/schedule";
-import { AlertDialogProps, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
+import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -168,6 +168,21 @@ function ScheduleContent() {
     setTimesTamp(times);
   };
 
+  const isAdmin = usePermission(PermissionType.create_event_520);
+  const isSchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
+  const isTeacher = usePermission(PermissionType.create_my_schedule_events_521);
+  const isStudent = usePermission(PermissionType.attend_live_class_as_a_student_187);
+
+  const privilegedMembers = (member: memberType): boolean => {
+    const permissions = {
+      Admin: isAdmin,
+      School: !isAdmin && isSchool,
+      Teacher: !isAdmin && !isSchool && isTeacher,
+      Student: !isAdmin && !isSchool && !isTeacher && isStudent,
+    };
+    return permissions[member];
+  };
+
   const toLive = () => {
     dispatch(scheduleUpdateStatus({ schedule_id: scheduleId, status: { status: "Started" } }));
     if (liveToken) window.open(apiLivePath(liveToken));
@@ -203,9 +218,6 @@ function ScheduleContent() {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
   }, [dispatch, scheduleDetial, scheduleId]);
 
-  const getOrgByClass = usePermission(PermissionType.create_event_520);
-  const getOrgBySchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
-
   React.useEffect(() => {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
@@ -213,18 +225,18 @@ function ScheduleContent() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(getParticipantsData(getOrgByClass));
-  }, [dispatch, getOrgByClass]);
+    dispatch(getParticipantsData(isAdmin));
+  }, [dispatch, isAdmin]);
 
   React.useEffect(() => {
-    if (getOrgByClass) {
+    if (isAdmin) {
       dispatch(getClassesByOrg());
-    } else if (getOrgBySchool) {
+    } else if (isSchool) {
       dispatch(getClassesBySchool());
     } else {
       dispatch(getClassesByTeacher());
     }
-  }, [dispatch, getOrgByClass, getOrgBySchool]);
+  }, [dispatch, isAdmin, isSchool]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));
@@ -290,6 +302,7 @@ function ScheduleContent() {
               handleChangeHidden={handleChangeHidden}
               isHidden={isHidden}
               scheduleDetial={scheduleDetial}
+              privilegedMembers={privilegedMembers}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9}>

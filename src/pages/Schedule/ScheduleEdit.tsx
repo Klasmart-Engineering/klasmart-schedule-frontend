@@ -59,6 +59,7 @@ import {
   ClassOptionsItem,
   EntityLessonPlanShortInfo,
   FilterQueryTypeProps,
+  memberType,
   modeViewType,
   ParticipantsData,
   ParticipantsShortInfo,
@@ -301,6 +302,7 @@ function EditBox(props: CalendarStateProps) {
     isHidden,
     handleChangeHidden,
     scheduleDetial,
+    privilegedMembers,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -978,7 +980,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const isScheduleExpired = (): boolean => {
-    return scheduleId ? scheduleDetial.status !== "NotStart" || perm.attend_live_class_as_a_student_187 : false;
+    return scheduleId ? scheduleDetial.status !== "NotStart" || privilegedMembers("Student") : false;
   };
 
   const isLimit = (): boolean => {
@@ -1039,10 +1041,6 @@ function EditBox(props: CalendarStateProps) {
         changeModalDate({ openStatus: false, enableCustomization: false });
       },
     });
-  };
-
-  const isStudent = (): boolean => {
-    return perm.attend_live_class_as_a_student_187;
   };
 
   const getClassOption = (): any => {
@@ -1623,7 +1621,7 @@ function EditBox(props: CalendarStateProps) {
             />
           )}
         />
-        {!isStudent() &&
+        {!privilegedMembers("Student") &&
           (menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
           !rosterSaveStatus && (
             <Box style={{ position: "relative" }}>
@@ -1674,7 +1672,7 @@ function EditBox(props: CalendarStateProps) {
               </Box>
             </Box>
           )}
-        {!isStudent() && menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
+        {!privilegedMembers("Student") && menuItemListClassKr("roster").length > 0 && rosterSaveStatus && (
           <Box style={{ position: "relative" }}>
             <span className={css.rosterNotice}>
               {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
@@ -1772,7 +1770,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </>
         )}
-        {!isStudent() && menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
+        {!privilegedMembers("Student") && menuItemListClassKr("teacher").length > 0 && participantSaveStatus && (
           <Box style={{ position: "relative" }}>
             <span className={css.rosterNotice}>
               {d("Add Participants").t("schedule_detail_participants")} <span style={{ color: "#D32F2F" }}>*</span>
@@ -1789,7 +1787,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </Box>
         )}
-        {!isStudent() && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
+        {!privilegedMembers("Student") && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
               className={css.fieldset}
@@ -2006,9 +2004,9 @@ function EditBox(props: CalendarStateProps) {
           setAttachmentName={setAttachmentName}
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
-          isStudent={isStudent()}
+          isStudent={privilegedMembers("Student")}
         />
-        {scheduleId && isStudent() && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
+        {scheduleId && privilegedMembers("Student") && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
           <ScheduleFeedback
             schedule_id={scheduleId}
             changeModalDate={changeModalDate}
@@ -2060,11 +2058,11 @@ function EditBox(props: CalendarStateProps) {
               disabled={
                 scheduleDetial.status === "Closed" ||
                 !scheduleDetial.real_time_status?.lesson_plan_is_auth ||
-                (!perm.attend_live_class_as_a_student_187 && scheduleList.class_type === "Homework")
+                (!privilegedMembers("Student") && scheduleList.class_type === "Homework")
               }
               style={{
                 width: "45%",
-                visibility: perm.attend_live_class_as_a_student_187 && scheduleList.class_type === "OfflineClass" ? "hidden" : "visible",
+                visibility: privilegedMembers("Student") && scheduleList.class_type === "OfflineClass" ? "hidden" : "visible",
               }}
               onClick={() => handleGoLive(scheduleDetial)}
             >
@@ -2110,6 +2108,7 @@ interface CalendarStateProps {
   handleChangeHidden: (is_hidden: boolean) => void;
   isHidden: boolean;
   scheduleDetial: EntityScheduleDetailsView;
+  privilegedMembers: (member: memberType) => boolean;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2142,6 +2141,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     handleChangeHidden,
     isHidden,
     scheduleDetial,
+    privilegedMembers,
   } = props;
 
   const template = (
@@ -2169,6 +2169,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
           scheduleDetial={scheduleDetial}
+          privilegedMembers={privilegedMembers}
         />
       </Box>
       <Box
@@ -2201,6 +2202,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
           scheduleDetial={scheduleDetial}
+          privilegedMembers={privilegedMembers}
         />
       </Box>
     </>

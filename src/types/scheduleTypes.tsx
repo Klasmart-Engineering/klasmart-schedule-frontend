@@ -16,6 +16,8 @@ export type repeatOptionsType = "only_current" | "with_following";
 
 export type FilterType = "Schools" | "Teacher" | "Classes" | "Subjects" | "Programs";
 
+export type memberType = "Admin" | "School" | "Teacher" | "Student";
+
 type endType = {
   type: string;
   after_count: number;
