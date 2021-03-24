@@ -407,9 +407,9 @@
   "schedule_button_delete": "删除",
   "schedule_button_cancel": "取消",
   "schedule_msg_discard": "确定不保存吗？",
-  "schedule_button_discard": "确定",
+  "schedule_button_discard": "不保存",
   "schedule_msg_two_year": "您不能预约两年以后的重复课程。",
-  "schedule_button_ok": "确认",
+  "schedule_button_ok": "确定",
   "schedule_msg_overlap": "您在这个时间段已经有课程，确定还要继续排课吗？",
   "schedule_button_confirm": "确定",
   "schedule_msg_edit_recurring": "编辑重复事件",
@@ -513,5 +513,13 @@
   "report_label_avg_duration": "平均时长",
   "general_error_unauthorized": "用户未登录，请先登录",
   "general_error_no_organization": "用户没有机构信息",
-  "general_error_unknown": "服务器请求失败"
+  "general_error_unknown": "服务器请求失败",
+  "general_button_CANCEL": "取消",
+  "general_button_SAVE": "保存",
+  "general_button_OK": "确定",
+  "general_button_DISCARD": "不保存",
+  "general_button_CONFIRM": "确定",
+  "general_button_NO ": "否",
+  "general_button_YES": "是",
+  "general_button_DELETE": "删除"
 }

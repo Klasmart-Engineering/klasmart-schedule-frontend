@@ -225,7 +225,7 @@ type LangRecord<T = string> =
   | { id: "assess_detail_number_lo"; description: "Number of Learning Outcomes"; values: undefined }
   | { id: "assess_detail_assessment_complete_time"; description: "Assessment Complete Time"; values: undefined }
   | { id: "assess_popup_edit_attendance"; description: "Edit Attendance"; values: undefined }
-  | { id: "assess_button_ok"; description: "Ok"; values: undefined }
+  | { id: "assess_button_ok"; description: "OK"; values: undefined }
   | { id: "assess_filter_assumed"; description: "Assumed"; values: undefined }
   | { id: "assess_filter_unassumed"; description: "Unassumed"; values: undefined }
   | { id: "assess_column_lo"; description: "Learning Outcomes"; values: undefined }
@@ -616,6 +616,14 @@ type LangRecord<T = string> =
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
+  | { id: "general_button_CANCEL"; description: "CANCEL"; values: undefined }
+  | { id: "general_button_SAVE"; description: "SAVE"; values: undefined }
+  | { id: "general_button_OK"; description: "OK"; values: undefined }
+  | { id: "general_button_DISCARD"; description: "DISCARD"; values: undefined }
+  | { id: "general_button_CONFIRM"; description: "CONFIRM"; values: undefined }
+  | { id: "general_button_NO "; description: "NO"; values: undefined }
+  | { id: "general_button_YES"; description: "YES"; values: undefined }
+  | { id: "general_button_DELETE"; description: "DELETE"; values: undefined }
   | { id: "h5p_label_commonFields"; description: "Text overrides and translations"; values: undefined }
   | {
       id: "h5p_label_commonFieldsDescription";
