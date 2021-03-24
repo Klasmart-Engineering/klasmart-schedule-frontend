@@ -3,7 +3,6 @@ import {
   FormControl,
   FormControlLabel,
   IconButton,
-  Link,
   makeStyles,
   Radio,
   RadioGroup,
@@ -14,7 +13,7 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import {
   GetApp,
@@ -22,7 +21,7 @@ import {
   SentimentSatisfiedOutlined,
   SentimentVeryDissatisfiedOutlined,
   SentimentVerySatisfiedOutlined,
-  SvgIconComponent
+  SvgIconComponent,
 } from "@material-ui/icons";
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
@@ -119,7 +118,7 @@ function ScoreInput(props: ScoreInputProps) {
         </div>
       }
       labelPlacement="top"
-      control={<Radio color="primary" disabled={disabled}/>}
+      control={<Radio color="primary" disabled={disabled} />}
     />
   ));
   return (
@@ -141,11 +140,11 @@ function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
   return (
     <div className={css.assignmentDownloadRow}>
       <span>{name}</span>
-      <Link href={url} download={name} target="_blank">
+      <a href={url} download={name}>
         <IconButton size="small">
           <GetApp fontSize="inherit" />
         </IconButton>
-      </Link>
+      </a>
     </div>
   );
 }
@@ -161,7 +160,11 @@ function AssignmentTable(props: AssignmentTableProps) {
     <TableRow key={id}>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
         {assignments?.map((assignment) => (
-          <AssignmentDownloadRow name={assignment.attachment_name} url={apiResourcePathById(assignment.attachment_id)} key={assignment.attachment_id} />
+          <AssignmentDownloadRow
+            name={assignment.attachment_name}
+            url={apiResourcePathById(assignment.attachment_id)}
+            key={assignment.attachment_id}
+          />
         ))}
       </TableCell>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
