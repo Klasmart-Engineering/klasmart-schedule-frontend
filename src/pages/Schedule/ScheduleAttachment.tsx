@@ -174,8 +174,20 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
     }
   }, [setAttachmentName, specificStatus]);
 
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
   const textEllipsis = (value: string) => {
-    return value && value.length > 30 ? `${value.substring(0, 30)} ....` : value;
+    const CharacterCount = 30;
+    return value ? reBytesStr(value, CharacterCount) : "";
   };
 
   return (
