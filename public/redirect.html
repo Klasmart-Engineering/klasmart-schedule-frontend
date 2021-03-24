@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+  <header>
+    <title>Kidsloop Redirect Download</title>
+    <script>
+      (function main() {
+        const search = new URLSearchParams(location.search);
+        const redirect = search.get('redirect');
+        if (!redirect) return;
+        window.location = redirect;
+      }())
+    </script>
+  </header>
+</html>

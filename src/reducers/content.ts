@@ -871,6 +871,14 @@ export const getDownloadPath = createAsyncThunk<IGetDownloadPathResult, IGetDown
   return api.contentsResources.getDownloadPath(query);
 });
 
+interface ActCreateDownoadParams extends LoadingMetaPayload {
+  resourceId: string;
+}
+export const actCreateDownload = createAsyncThunk<IGetDownloadPathResult, ActCreateDownoadParams>(
+  "content/actCreateDownload",
+  ({ resourceId }) => api.contentsResources.getDownloadPath(resourceId)
+);
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,

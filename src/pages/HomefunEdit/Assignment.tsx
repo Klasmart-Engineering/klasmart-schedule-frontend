@@ -26,7 +26,7 @@ import {
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../../api/api.auto";
-import { apiDownloadPageUrlById } from "../../api/extra";
+import { DownloadButton } from "../../components/DownloadButton";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 
@@ -132,19 +132,19 @@ function ScoreInput(props: ScoreInputProps) {
 
 interface AssignmentDownloadRowProps {
   name?: string;
-  url?: string;
+  resourceId?: string;
 }
 function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
-  const { name, url } = props;
+  const { name, resourceId } = props;
   const css = useStyle();
   return (
     <div className={css.assignmentDownloadRow}>
       <span>{name}</span>
-      <a href={url} target="_blank" rel="noopener noreferrer">
+      <DownloadButton resourceId={resourceId} fileName={name}>
         <IconButton size="small">
           <GetApp fontSize="inherit" />
         </IconButton>
-      </a>
+      </DownloadButton>
     </div>
   );
 }
@@ -160,11 +160,7 @@ function AssignmentTable(props: AssignmentTableProps) {
     <TableRow key={id}>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
         {assignments?.map((assignment) => (
-          <AssignmentDownloadRow
-            name={assignment.attachment_name}
-            url={apiDownloadPageUrlById(assignment.attachment_id)}
-            key={assignment.attachment_id}
-          />
+          <AssignmentDownloadRow name={assignment.attachment_name} resourceId={assignment.attachment_id} key={assignment.attachment_id} />
         ))}
       </TableCell>
       <TableCell align="center" className={css.assignmentTableBodyItem}>

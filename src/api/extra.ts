@@ -72,12 +72,12 @@ export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: str
   }
 };
 
-export const apiDownloadPageUrlById = (resource_id?: string, fileName?: string) => {
-  const href = apiResourcePathById(resource_id);
+export const apiDownloadPageUrl = (href?: string, fileName?: string) => {
   if (!href) return;
-  return `${process.env.REACT_APP_RESOURCE_API}/download.html?download=${encodeURIComponent(fileName ?? "")}&href=${encodeURIComponent(
-    href
-  )}`;
+  const downloadUrl = `${process.env.REACT_APP_RESOURCE_API}/download.html?download=${encodeURIComponent(
+    fileName ?? ""
+  )}&href=${encodeURIComponent(href)}`;
+  return `/redirect.html?redirect=${encodeURIComponent(downloadUrl)}`;
 };
 
 export const apiOrganizationOfPage = () => {
