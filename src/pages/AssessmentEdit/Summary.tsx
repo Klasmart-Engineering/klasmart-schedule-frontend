@@ -173,10 +173,10 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
-            {d("Cancel").t("assess_label_cancel")}
+            {d("CANCEL").t("general_button_CANCEL")}
           </Button>
           <Button onClick={handleOk} color="primary">
-            {d("OK").t("assess_label_ok")}
+            {d("OK").t("general_button_OK")}
           </Button>
         </DialogActions>
       </Dialog>

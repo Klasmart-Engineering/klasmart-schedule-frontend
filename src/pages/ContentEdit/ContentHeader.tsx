@@ -312,7 +312,7 @@ export function ContentHeader(props: HeaderProps) {
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary">
-            {d("Cancel").t("assess_label_cancel")}
+            {d("CANCEL").t("general_button_CANCEL")}
           </Button>
           <Button
             onClick={() => {
@@ -321,7 +321,7 @@ export function ContentHeader(props: HeaderProps) {
             }}
             color="primary"
           >
-            {d("OK").t("assess_label_ok")}
+            {d("OK").t("general_button_OK")}
           </Button>
         </DialogActions>
       </Dialog>

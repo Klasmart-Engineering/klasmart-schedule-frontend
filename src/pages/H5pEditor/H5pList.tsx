@@ -457,10 +457,10 @@ export default function H5pList(props: H5pListProps) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            {d("Cancel").t("h5p_label_cancel")}
+            {d("CANCEL").t("general_button_CANCEL")}
           </Button>
           <Button onClick={handleConfirm} variant="contained" color="primary" startIcon={<Check />}>
-            {d("Confirm").t("h5p_label_confirm")}
+            {d("CONFIRM").t("general_button_CONFIRM")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -215,12 +215,12 @@ export function ConfirmDialog() {
       <DialogActions>
         {!hideCancel && (
           <Button onClick={handleCancel} color="primary" autoFocus>
-            {cancelText || d("Cancel").t("library_label_cancel")}
+            {cancelText || d("CANCEL").t("general_button_CANCEL")}
           </Button>
         )}
         {!hideConfirm && (
           <Button onClick={handleConfirm} color="primary" disabled={disableConfirm}>
-            {confirmText || d("OK").t("library_label_ok")}
+            {confirmText || d("OK").t("general_button_OK")}
           </Button>
         )}
       </DialogActions>

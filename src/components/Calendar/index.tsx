@@ -292,13 +292,13 @@ function MyCalendar(props: CalendarProps) {
           text: d("Are you sure you want to delete this event?").t("schedule_msg_delete"),
           buttons: [
             {
-              label: d("Cancel").t("assess_label_cancel"),
+              label: d("CANCEL").t("general_button_CANCEL"),
               event: () => {
                 changeModalDate({ openStatus: false, enableCustomization: false });
               },
             },
             {
-              label: d("Delete").t("assess_label_delete"),
+              label: d("DELETE").t("general_button_DELETE"),
               event: () => {
                 deleteScheduleByid("only_current", scheduleInfo);
               },

@@ -111,10 +111,10 @@ export function FolderTree(props: FolderTreeProps) {
             </Button>
           </Permission>
           <Button color="primary" variant="outlined" onClick={onClose}>
-            {d("Cancel").t("library_label_cancel")}
+            {d("CANCEL").t("general_button_CANCEL")}
           </Button>
           <LButton color="primary" variant="contained" className={css.okBtn} onClick={() => onMove(value)}>
-            {d("OK").t("library_label_ok")}
+            {d("OK").t("general_button_OK")}
           </LButton>
         </div>
       </DialogActions>
