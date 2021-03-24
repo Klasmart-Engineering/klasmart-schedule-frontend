@@ -958,7 +958,6 @@ export interface EntityScheduleDetailsView {
   status?: "NotStart" | "Started" | "Closed";
   student_count?: number;
   subject?: EntityScheduleShortInfo;
-  teachers?: EntityScheduleShortInfo[];
   title?: string;
   version?: number;
 }

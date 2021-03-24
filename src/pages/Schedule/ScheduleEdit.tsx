@@ -75,6 +75,8 @@ import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import ScheduleFeedback from "./ScheduleFeedback";
+import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import { Maybe, User } from "../../api/api-ko-schema.auto";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -312,8 +314,6 @@ function EditBox(props: CalendarStateProps) {
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
-  const [, setTeacherItem] = React.useState<any[] | undefined>([]);
-  const [, setContentsListSelect] = React.useState<EntityScheduleShortInfo[]>([defaults]);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
@@ -330,12 +330,12 @@ function EditBox(props: CalendarStateProps) {
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
   const rosterSelectAll = () => {
-    const participant: any = participantMockOptions.participantList;
-    const student = participant.class.students.map((item: any, key: number) => {
-      return { id: item.user_id, name: item.user_name };
+    const participant: ParticipantsByClassQuery = participantMockOptions.participantList;
+    const student = participant?.class?.students?.map((item) => {
+      return { id: item?.user_id, name: item?.user_name };
     });
-    const teacher = participant.class.teachers.map((item: any, key: number) => {
-      return { id: item.user_id, name: item.user_name };
+    const teacher = participant?.class?.teachers?.map((item) => {
+      return { id: item?.user_id, name: item?.user_name };
     });
     handleChangeParticipants("classRoster", { student, teacher } as ParticipantsShortInfo);
     setIsForce(false);
@@ -393,8 +393,8 @@ function EditBox(props: CalendarStateProps) {
     setIsForce(false);
   };
 
-  const rosterIsExist = (item: any) => {
-    const rosterItem = [{ id: item.user_id, name: item.user_name }];
+  const rosterIsExist = (item: Maybe<{ __typename?: "User" | undefined } & Pick<User, "user_id" | "user_name">>) => {
+    const rosterItem = [{ id: item?.user_id, name: item?.user_name }];
     return classRosterIds?.teacher
       .concat(classRosterIds?.student)
       .some((item) => JSON.stringify({ id: item.id, name: item.name }) === JSON.stringify(rosterItem[0])) as boolean;
@@ -409,20 +409,7 @@ function EditBox(props: CalendarStateProps) {
       setAttachmentId("");
     }
   }, [scheduleDetial, scheduleDetial.attachment, scheduleId]);
-  React.useEffect(() => {
-    const newContentsData: EntityScheduleShortInfo[] = [];
 
-    if (contentsList.length > 0) {
-      contentsList.forEach((item: EntityScheduleShortInfo) => {
-        newContentsData.push({
-          id: item.id,
-          name: item.name,
-        });
-      });
-    }
-
-    setContentsListSelect(newContentsData);
-  }, [contentsList]);
   React.useEffect(() => {
     const defaults: EntityScheduleShortInfo = {
       id: "",
@@ -459,7 +446,6 @@ function EditBox(props: CalendarStateProps) {
     setLessonPlan(defaults);
     setSubjectItem(defaults);
     setProgramItem(defaults);
-    setTeacherItem([]);
     setScheduleList(newData);
     setInitScheduleList(newData);
     dispatch(resetScheduleDetial(initScheduleDetial));
@@ -469,15 +455,6 @@ function EditBox(props: CalendarStateProps) {
     setRosterSaveStatus(false);
     setParticipantSaveStatus(false);
   }, [dispatch, timesTamp, scheduleRestNum]);
-
-  const formatTeahcerId = (teacherIds: any) => {
-    if (!teacherIds) return;
-    let ids: string[] = [];
-    teacherIds.forEach((val: EntityScheduleShortInfo | any) => {
-      ids.push(val.id.toString());
-    });
-    return ids;
-  };
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) {
@@ -496,7 +473,6 @@ function EditBox(props: CalendarStateProps) {
         repeat: {},
         start_at: scheduleDetial.start_at || (scheduleDetial.due_at as number),
         subject_id: scheduleDetial.subject?.id || "",
-        participants_student_ids: formatTeahcerId(scheduleDetial.teachers),
         title: scheduleDetial.title || "",
         is_home_fun: scheduleDetial.is_home_fun,
       };
@@ -510,12 +486,11 @@ function EditBox(props: CalendarStateProps) {
       setLessonPlan(scheduleDetial.lesson_plan);
       setSubjectItem(scheduleDetial.subject);
       setProgramItem(scheduleDetial.program);
-      setTeacherItem(scheduleDetial.teachers);
       setScheduleList(newData);
       setInitScheduleList(newData);
 
       const getClassOptionsItem = (item: ClassOptionsItem[]) => {
-        const items = item?.map((item: any) => {
+        const items = item?.map((item: ClassOptionsItem) => {
           return { id: item.id, name: item.name, enable: item.enable };
         });
         return items ?? [];
@@ -658,21 +633,20 @@ function EditBox(props: CalendarStateProps) {
    */
 
   const autocompleteChange = async (value: any | null, name: string) => {
-    let ids: any[] = [];
-
+    let ids: string[] = [];
     ids = value ? value["id"] : "";
     if (name === "class_id") {
       let resultInfo: any;
-      const getClassOptionsItem = (item: ClassOptionsItem[]) => {
-        const items = item?.map((item: any) => {
-          return { id: item.user_id, name: item.user_name, enable: true };
+      const getClassOptionsItem = (item: Maybe<{ __typename?: "User" | undefined } & Pick<User, "user_id" | "user_name">>[]) => {
+        const items = item?.map((val) => {
+          return { id: val?.user_id, name: val?.user_name, enable: true };
         });
         return items ?? [];
       };
       resultInfo = await getParticipantOptions(value["id"]);
       handleChangeParticipants("classRoster", {
-        student: getClassOptionsItem(resultInfo.payload.participantList.class.students as ClassOptionsItem[]),
-        teacher: getClassOptionsItem(resultInfo.payload.participantList.class.teachers as ClassOptionsItem[]),
+        student: getClassOptionsItem(resultInfo.payload.participantList.class.students),
+        teacher: getClassOptionsItem(resultInfo.payload.participantList.class.teachers),
       } as ParticipantsShortInfo);
       if (resultInfo.payload.participantList.class.students.length || resultInfo.payload.participantList.class.teachers.length) {
         setRosterChecked("all");
@@ -1452,27 +1426,29 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const menuItemListClassKrParticipants = (type: string) => {
-    const participant: any = participantMockOptions.participantList;
-    const participantSet = type === "teacher" ? participant.class.teachers : participant.class.students;
-    return participantSet.map((item: any, key: number) => (
-      <Tooltip title={item.user_name} placement="right-start">
-        <FormControlLabel
-          className={css.participantText}
-          control={
-            <Checkbox
-              checked={rosterIsExist(item)}
-              name={item.user_name}
-              color="primary"
-              value={item.user_id}
-              onChange={(e) => {
-                handleRosterChangeBox(e, type);
-              }}
+    const participant: ParticipantsByClassQuery = participantMockOptions.participantList;
+    const participantSet = type === "teacher" ? participant?.class?.teachers : participant?.class?.students;
+    return participantSet
+      ? participantSet?.map((item) => (
+          <Tooltip title={item?.user_name as string} placement="right-start">
+            <FormControlLabel
+              className={css.participantText}
+              control={
+                <Checkbox
+                  checked={rosterIsExist(item)}
+                  name={item?.user_name as string}
+                  color="primary"
+                  value={item?.user_id}
+                  onChange={(e) => {
+                    handleRosterChangeBox(e, type);
+                  }}
+                />
+              }
+              label={item?.user_name}
             />
-          }
-          label={item.user_name}
-        />
-      </Tooltip>
-    ));
+          </Tooltip>
+        ))
+      : [];
   };
 
   const handleGoLive = (scheduleDetial: EntityScheduleDetailsView) => {
@@ -1604,6 +1580,95 @@ function EditBox(props: CalendarStateProps) {
             disabled={isScheduleExpired() || isLimit()}
           ></TextField>
           <FileCopyOutlined className={css.iconField} />
+        </Box>
+        {scheduleList.class_type !== "Homework" && (
+          <Box>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Grid container justify="space-between" alignItems="center">
+                <Grid item xs={12}>
+                  <TextField
+                    id="datetime-local"
+                    label={d("Start Time").t("schedule_detail_start_time")}
+                    type="datetime-local"
+                    className={css.fieldset}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    required
+                    error={validator.start_at}
+                    value={timestampToTime(scheduleList.start_at)}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
+                    onChange={(e) => handleTopicListChange(e, "start_at")}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    id="datetime-local"
+                    label={d("End Time").t("schedule_detail_end_time")}
+                    type="datetime-local"
+                    className={css.fieldset}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    required
+                    error={validator.end_at}
+                    value={timestampToTime(scheduleList.end_at)}
+                    disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
+                    onChange={(e) => handleTopicListChange(e, "end_at")}
+                  />
+                </Grid>
+              </Grid>
+            </MuiPickersUtilsProvider>
+          </Box>
+        )}
+        {scheduleList.class_type !== "Homework" && (
+          <Box>
+            <FormGroup row>
+              <FormControlLabel
+                disabled={isScheduleExpired() || isLimit()}
+                control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
+                label={d("All day").t("schedule_detail_all_day")}
+              />
+              <FormControlLabel
+                disabled={isScheduleExpired() || isLimit()}
+                control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
+                label={d("Repeat").t("schedule_detail_repeat")}
+              />
+            </FormGroup>
+          </Box>
+        )}
+        <Box
+          style={{
+            display: scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework" ? "block" : "none",
+          }}
+        >
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="space-between" alignItems="center">
+              <Grid item xs={5}>
+                <FormControlLabel
+                  disabled={isScheduleExpired() || isLimit()}
+                  control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
+                  label={d("Due Date").t("schedule_detail_due_date")}
+                />
+              </Grid>
+              <Grid item xs={7}>
+                <KeyboardDatePicker
+                  disableToolbar
+                  variant="inline"
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  id="date-picker-inline"
+                  label={d("Pick Time").t("schedule_detail_pick_time")}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                  value={selectedDueDate}
+                  disabled={isScheduleExpired() || isLimit()}
+                  onChange={handleDueDateChange}
+                />
+              </Grid>
+            </Grid>
+          </MuiPickersUtilsProvider>
         </Box>
         <Autocomplete
           id="combo-box-demo"
@@ -1834,62 +1899,6 @@ function EditBox(props: CalendarStateProps) {
             )}
           />
         )}
-        {scheduleList.class_type !== "Homework" && (
-          <Box>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Grid container justify="space-between" alignItems="center">
-                <Grid item xs={12}>
-                  <TextField
-                    id="datetime-local"
-                    label={d("Start Time").t("schedule_detail_start_time")}
-                    type="datetime-local"
-                    className={css.fieldset}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    required
-                    error={validator.start_at}
-                    value={timestampToTime(scheduleList.start_at)}
-                    disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
-                    onChange={(e) => handleTopicListChange(e, "start_at")}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    id="datetime-local"
-                    label={d("End Time").t("schedule_detail_end_time")}
-                    type="datetime-local"
-                    className={css.fieldset}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    required
-                    error={validator.end_at}
-                    value={timestampToTime(scheduleList.end_at)}
-                    disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
-                    onChange={(e) => handleTopicListChange(e, "end_at")}
-                  />
-                </Grid>
-              </Grid>
-            </MuiPickersUtilsProvider>
-          </Box>
-        )}
-        {scheduleList.class_type !== "Homework" && (
-          <Box>
-            <FormGroup row>
-              <FormControlLabel
-                disabled={isScheduleExpired() || isLimit()}
-                control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
-                label={d("All day").t("schedule_detail_all_day")}
-              />
-              <FormControlLabel
-                disabled={isScheduleExpired() || isLimit()}
-                control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
-                label={d("Repeat").t("schedule_detail_repeat")}
-              />
-            </FormGroup>
-          </Box>
-        )}
         {scheduleList.class_type !== "Task" && (
           <>
             {!(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
@@ -1956,39 +1965,6 @@ function EditBox(props: CalendarStateProps) {
             </Collapse>
           </>
         )}
-        <Box
-          style={{
-            display: scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework" ? "block" : "none",
-          }}
-        >
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-between" alignItems="center">
-              <Grid item xs={5}>
-                <FormControlLabel
-                  disabled={isScheduleExpired() || isLimit()}
-                  control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
-                  label={d("Due Date").t("schedule_detail_due_date")}
-                />
-              </Grid>
-              <Grid item xs={7}>
-                <KeyboardDatePicker
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="date-picker-inline"
-                  label={d("Pick Time").t("schedule_detail_pick_time")}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                  value={selectedDueDate}
-                  disabled={isScheduleExpired() || isLimit()}
-                  onChange={handleDueDateChange}
-                />
-              </Grid>
-            </Grid>
-          </MuiPickersUtilsProvider>
-        </Box>
         <TextField
           id="outlined-multiline-static"
           className={css.fieldset}

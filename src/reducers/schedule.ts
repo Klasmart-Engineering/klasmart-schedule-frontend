@@ -93,7 +93,6 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
   title: "",
   class: {},
   lesson_plan: {},
-  teachers: [],
   start_at: 0,
   end_at: 0,
   repeat: {},
