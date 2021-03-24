@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<header>
+  <meta charset="UTF-8">
+  <title>Kidsloop Download Resource</title>
+</header>
+<body>
+  <script>
+    (function main(){
+      const search = new URLSearchParams(location.search);
+      const download = search.get('download');
+      const href = search.get('href');
+      function creatLink() {
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = download;
+        document.body.appendChild(link);
+        return link;
+      }
+      if (!href) return;
+      const link = creatLink();
+      link.click();
+    }());
+  </script>
+</body>
+</html>
