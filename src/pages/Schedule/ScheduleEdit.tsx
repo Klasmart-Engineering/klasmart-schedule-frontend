@@ -58,6 +58,7 @@ import theme from "../../theme";
 import {
   ClassOptionsItem,
   EntityLessonPlanShortInfo,
+  EntityScheduleClassInfo,
   FilterQueryTypeProps,
   memberType,
   modeViewType,
@@ -1043,18 +1044,20 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
-  const getClassOption = (): any => {
-    let lists: any;
+  const getClassOption = (): EntityScheduleShortInfo[] => {
+    let lists: EntityScheduleClassInfo[];
     if (perm.create_event_520) {
-      lists = classOptions.classListOrg.organization?.classes;
+      lists = classOptions.classListOrg.organization?.classes as EntityScheduleClassInfo[];
     } else if (perm.create_my_schools_schedule_events_522) {
-      lists = classOptions.classListSchool.school?.classes;
+      lists = classOptions.classListSchool.school?.classes as EntityScheduleClassInfo[];
     } else {
-      lists = classOptions.classListTeacher.user?.classesTeaching;
+      lists = classOptions.classListTeacher.user?.classesTeaching as EntityScheduleClassInfo[];
     }
-    return lists?.map((item: any) => {
-      return { id: item.class_id, name: item.class_name };
+    const classResult: EntityScheduleShortInfo[] = [];
+    lists?.forEach((item: EntityScheduleClassInfo) => {
+      if (item.status === "active") classResult.push({ id: item.class_id, name: item.class_name });
     });
+    return classResult;
   };
 
   const saveTheTest = () => {

@@ -75,6 +75,11 @@ export type Query = {
   class?: Maybe<Class>;
   school?: Maybe<School>;
   age_range?: Maybe<AgeRange>;
+  grade?: Maybe<Grade>;
+  category?: Maybe<Category>;
+  subcategory?: Maybe<Subcategory>;
+  subject?: Maybe<Subject>;
+  program?: Maybe<Program>;
 };
 
 export type QueryUserArgs = {
@@ -141,6 +146,26 @@ export type QueryAge_RangeArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryGradeArgs = {
+  id: Scalars["ID"];
+};
+
+export type QueryCategoryArgs = {
+  id: Scalars["ID"];
+};
+
+export type QuerySubcategoryArgs = {
+  id: Scalars["ID"];
+};
+
+export type QuerySubjectArgs = {
+  id: Scalars["ID"];
+};
+
+export type QueryProgramArgs = {
+  id: Scalars["ID"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   me?: Maybe<User>;
@@ -155,6 +180,11 @@ export type Mutation = {
   class?: Maybe<Class>;
   school?: Maybe<School>;
   age_range?: Maybe<AgeRange>;
+  grade?: Maybe<Grade>;
+  category?: Maybe<Category>;
+  subcategory?: Maybe<Subcategory>;
+  subject?: Maybe<Subject>;
+  program?: Maybe<Program>;
   createOrUpateSystemEntities?: Maybe<Scalars["Boolean"]>;
 };
 
@@ -167,6 +197,9 @@ export type MutationUserArgs = {
   avatar?: Maybe<Scalars["String"]>;
   date_of_birth?: Maybe<Scalars["String"]>;
   username?: Maybe<Scalars["String"]>;
+  alternate_email?: Maybe<Scalars["String"]>;
+  alternate_phone?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
 };
 
 export type MutationNewUserArgs = {
@@ -177,6 +210,7 @@ export type MutationNewUserArgs = {
   avatar?: Maybe<Scalars["String"]>;
   date_of_birth?: Maybe<Scalars["String"]>;
   username?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
 };
 
 export type MutationSwitch_UserArgs = {
@@ -208,6 +242,26 @@ export type MutationAge_RangeArgs = {
   id: Scalars["ID"];
 };
 
+export type MutationGradeArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationCategoryArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationSubcategoryArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationSubjectArgs = {
+  id: Scalars["ID"];
+};
+
+export type MutationProgramArgs = {
+  id: Scalars["ID"];
+};
+
 export type MutationCreateOrUpateSystemEntitiesArgs = {
   _?: Maybe<Scalars["Int"]>;
 };
@@ -225,6 +279,10 @@ export type User = {
   date_of_birth?: Maybe<Scalars["String"]>;
   avatar?: Maybe<Scalars["String"]>;
   username?: Maybe<Scalars["String"]>;
+  primary?: Maybe<Scalars["Boolean"]>;
+  alternate_email?: Maybe<Scalars["String"]>;
+  alternate_phone?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
   /**
    * 'my_organization' is the Organization that this user has created
    * @deprecated Use `organization_ownerships`.
@@ -244,6 +302,7 @@ export type User = {
   merge?: Maybe<User>;
   addOrganization?: Maybe<OrganizationMembership>;
   addSchool?: Maybe<OrganizationMembership>;
+  setPrimary?: Maybe<Scalars["Boolean"]>;
 };
 
 export type UserMembershipArgs = {
@@ -267,7 +326,12 @@ export type UserSetArgs = {
   family_name?: Maybe<Scalars["String"]>;
   email?: Maybe<Scalars["String"]>;
   phone?: Maybe<Scalars["String"]>;
+  username?: Maybe<Scalars["String"]>;
+  date_of_birth?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
   avatar?: Maybe<Scalars["String"]>;
+  alternate_email?: Maybe<Scalars["String"]>;
+  alternate_phone?: Maybe<Scalars["String"]>;
 };
 
 export type UserCreateOrganizationArgs = {
@@ -289,6 +353,10 @@ export type UserAddOrganizationArgs = {
 
 export type UserAddSchoolArgs = {
   school_id: Scalars["ID"];
+};
+
+export type UserSetPrimaryArgs = {
+  _?: Maybe<Scalars["Int"]>;
 };
 
 export type Organization = {
@@ -313,6 +381,11 @@ export type Organization = {
   schools?: Maybe<Array<Maybe<School>>>;
   classes?: Maybe<Array<Maybe<Class>>>;
   ageRanges?: Maybe<Array<AgeRange>>;
+  grades?: Maybe<Array<Grade>>;
+  categories?: Maybe<Array<Category>>;
+  subcategories?: Maybe<Array<Subcategory>>;
+  subjects?: Maybe<Array<Subject>>;
+  programs?: Maybe<Array<Program>>;
   membersWithPermission?: Maybe<Array<Maybe<OrganizationMembership>>>;
   findMembers?: Maybe<Array<Maybe<OrganizationMembership>>>;
   set?: Maybe<Organization>;
@@ -324,6 +397,11 @@ export type Organization = {
   createSchool?: Maybe<School>;
   createClass?: Maybe<Class>;
   createOrUpdateAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
+  createOrUpdateGrades?: Maybe<Array<Maybe<Grade>>>;
+  createOrUpdateCategories?: Maybe<Array<Maybe<Category>>>;
+  createOrUpdateSubcategories?: Maybe<Array<Maybe<Subcategory>>>;
+  createOrUpdateSubjects?: Maybe<Array<Maybe<Subject>>>;
+  createOrUpdatePrograms?: Maybe<Array<Maybe<Program>>>;
   delete?: Maybe<Scalars["Boolean"]>;
 };
 
@@ -350,6 +428,7 @@ export type OrganizationSetPrimaryContactArgs = {
 
 export type OrganizationAddUserArgs = {
   user_id: Scalars["ID"];
+  shortcode?: Maybe<Scalars["String"]>;
 };
 
 export type OrganizationInviteUserArgs = {
@@ -359,9 +438,13 @@ export type OrganizationInviteUserArgs = {
   family_name?: Maybe<Scalars["String"]>;
   date_of_birth?: Maybe<Scalars["String"]>;
   username?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
   organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
   school_ids?: Maybe<Array<Scalars["ID"]>>;
   school_role_ids?: Maybe<Array<Scalars["ID"]>>;
+  alternate_email?: Maybe<Scalars["String"]>;
+  alternate_phone?: Maybe<Scalars["String"]>;
 };
 
 export type OrganizationEditMembershipArgs = {
@@ -371,9 +454,13 @@ export type OrganizationEditMembershipArgs = {
   family_name?: Maybe<Scalars["String"]>;
   date_of_birth?: Maybe<Scalars["String"]>;
   username?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
   organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
   school_ids?: Maybe<Array<Scalars["ID"]>>;
   school_role_ids?: Maybe<Array<Scalars["ID"]>>;
+  alternate_email?: Maybe<Scalars["String"]>;
+  alternate_phone?: Maybe<Scalars["String"]>;
 };
 
 export type OrganizationCreateRoleArgs = {
@@ -383,14 +470,36 @@ export type OrganizationCreateRoleArgs = {
 
 export type OrganizationCreateSchoolArgs = {
   school_name?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
 };
 
 export type OrganizationCreateClassArgs = {
   class_name?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
 };
 
 export type OrganizationCreateOrUpdateAgeRangesArgs = {
   age_ranges: Array<Maybe<AgeRangeDetail>>;
+};
+
+export type OrganizationCreateOrUpdateGradesArgs = {
+  grades: Array<Maybe<GradeDetail>>;
+};
+
+export type OrganizationCreateOrUpdateCategoriesArgs = {
+  categories: Array<Maybe<CategoryDetail>>;
+};
+
+export type OrganizationCreateOrUpdateSubcategoriesArgs = {
+  subcategories: Array<Maybe<SubcategoryDetail>>;
+};
+
+export type OrganizationCreateOrUpdateSubjectsArgs = {
+  subjects: Array<Maybe<SubjectDetail>>;
+};
+
+export type OrganizationCreateOrUpdateProgramsArgs = {
+  programs: Array<Maybe<ProgramDetail>>;
 };
 
 export type OrganizationDeleteArgs = {
@@ -408,6 +517,7 @@ export type OrganizationMembership = {
   __typename?: "OrganizationMembership";
   user_id: Scalars["ID"];
   organization_id: Scalars["ID"];
+  shortcode?: Maybe<Scalars["String"]>;
   join_timestamp?: Maybe<Scalars["Date"]>;
   status?: Maybe<Status>;
   organization?: Maybe<Organization>;
@@ -520,13 +630,16 @@ export type School = {
   __typename?: "School";
   school_id: Scalars["ID"];
   school_name?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
   status?: Maybe<Status>;
   organization?: Maybe<Organization>;
   memberships?: Maybe<Array<Maybe<SchoolMembership>>>;
   membership?: Maybe<SchoolMembership>;
   classes?: Maybe<Array<Maybe<Class>>>;
+  programs?: Maybe<Array<Program>>;
   set?: Maybe<School>;
   addUser?: Maybe<SchoolMembership>;
+  editPrograms?: Maybe<Array<Maybe<Program>>>;
   delete?: Maybe<Scalars["Boolean"]>;
 };
 
@@ -536,10 +649,15 @@ export type SchoolMembershipArgs = {
 
 export type SchoolSetArgs = {
   school_name?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
 };
 
 export type SchoolAddUserArgs = {
   user_id: Scalars["ID"];
+};
+
+export type SchoolEditProgramsArgs = {
+  program_ids?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type SchoolDeleteArgs = {
@@ -587,10 +705,15 @@ export type Class = {
   class_id: Scalars["ID"];
   class_name?: Maybe<Scalars["String"]>;
   status?: Maybe<Status>;
+  shortcode?: Maybe<Scalars["String"]>;
   organization?: Maybe<Organization>;
   schools?: Maybe<Array<Maybe<School>>>;
   teachers?: Maybe<Array<Maybe<User>>>;
   students?: Maybe<Array<Maybe<User>>>;
+  programs?: Maybe<Array<Program>>;
+  age_ranges?: Maybe<Array<AgeRange>>;
+  grades?: Maybe<Array<Grade>>;
+  subjects?: Maybe<Array<Subject>>;
   eligibleTeachers?: Maybe<Array<Maybe<User>>>;
   eligibleStudents?: Maybe<Array<Maybe<User>>>;
   set?: Maybe<Class>;
@@ -602,12 +725,17 @@ export type Class = {
   removeStudent?: Maybe<Scalars["Boolean"]>;
   editSchools?: Maybe<Array<Maybe<School>>>;
   addSchool?: Maybe<School>;
+  editPrograms?: Maybe<Array<Maybe<Program>>>;
+  editAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
+  editGrades?: Maybe<Array<Maybe<Grade>>>;
+  editSubjects?: Maybe<Array<Maybe<Subject>>>;
   removeSchool?: Maybe<Scalars["Boolean"]>;
   delete?: Maybe<Scalars["Boolean"]>;
 };
 
 export type ClassSetArgs = {
   class_name?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
 };
 
 export type ClassAddTeacherArgs = {
@@ -642,6 +770,22 @@ export type ClassAddSchoolArgs = {
   school_id: Scalars["ID"];
 };
 
+export type ClassEditProgramsArgs = {
+  program_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type ClassEditAgeRangesArgs = {
+  age_range_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type ClassEditGradesArgs = {
+  grade_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type ClassEditSubjectsArgs = {
+  subject_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type ClassRemoveSchoolArgs = {
   school_id: Scalars["ID"];
 };
@@ -670,6 +814,44 @@ export type AgeRangeDetail = {
   system?: Maybe<Scalars["Boolean"]>;
 };
 
+export type CategoryDetail = {
+  id?: Maybe<Scalars["ID"]>;
+  name?: Maybe<Scalars["String"]>;
+  subcategories?: Maybe<Array<Scalars["ID"]>>;
+  system?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GradeDetail = {
+  id?: Maybe<Scalars["ID"]>;
+  name?: Maybe<Scalars["String"]>;
+  progress_from_grade_id?: Maybe<Scalars["ID"]>;
+  progress_to_grade_id?: Maybe<Scalars["ID"]>;
+  system?: Maybe<Scalars["Boolean"]>;
+};
+
+export type SubcategoryDetail = {
+  id?: Maybe<Scalars["ID"]>;
+  name?: Maybe<Scalars["String"]>;
+  system?: Maybe<Scalars["Boolean"]>;
+};
+
+export type SubjectDetail = {
+  id?: Maybe<Scalars["ID"]>;
+  name?: Maybe<Scalars["String"]>;
+  categories?: Maybe<Array<Scalars["ID"]>>;
+  system?: Maybe<Scalars["Boolean"]>;
+};
+
+export type ProgramDetail = {
+  id?: Maybe<Scalars["ID"]>;
+  name?: Maybe<Scalars["String"]>;
+  system?: Maybe<Scalars["Boolean"]>;
+  age_ranges?: Maybe<Array<Scalars["ID"]>>;
+  grades?: Maybe<Array<Scalars["ID"]>>;
+  subjects?: Maybe<Array<Scalars["ID"]>>;
+  status?: Maybe<Status>;
+};
+
 export type AgeRange = {
   __typename?: "AgeRange";
   id: Scalars["ID"];
@@ -684,6 +866,99 @@ export type AgeRange = {
 };
 
 export type AgeRangeDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
+export type Category = {
+  __typename?: "Category";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  subcategories?: Maybe<Array<Subcategory>>;
+  system: Scalars["Boolean"];
+  status?: Maybe<Status>;
+  editSubcategories?: Maybe<Array<Maybe<Subcategory>>>;
+  delete?: Maybe<Scalars["Boolean"]>;
+};
+
+export type CategoryEditSubcategoriesArgs = {
+  subcategory_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type CategoryDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
+export type Grade = {
+  __typename?: "Grade";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  progress_from_grade?: Maybe<Grade>;
+  progress_to_grade?: Maybe<Grade>;
+  system: Scalars["Boolean"];
+  status?: Maybe<Status>;
+  delete?: Maybe<Scalars["Boolean"]>;
+};
+
+export type GradeDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
+export type Subcategory = {
+  __typename?: "Subcategory";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  system: Scalars["Boolean"];
+  status?: Maybe<Status>;
+  delete?: Maybe<Scalars["Boolean"]>;
+};
+
+export type SubcategoryDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
+export type Program = {
+  __typename?: "Program";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  system: Scalars["Boolean"];
+  status?: Maybe<Status>;
+  age_ranges?: Maybe<Array<AgeRange>>;
+  grades?: Maybe<Array<Grade>>;
+  subjects?: Maybe<Array<Subject>>;
+  editAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
+  editGrades?: Maybe<Array<Maybe<Grade>>>;
+  editSubjects?: Maybe<Array<Maybe<Subject>>>;
+  delete?: Maybe<Scalars["Boolean"]>;
+};
+
+export type ProgramEditAgeRangesArgs = {
+  age_range_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type ProgramEditGradesArgs = {
+  grade_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type ProgramEditSubjectsArgs = {
+  subject_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type ProgramDeleteArgs = {
+  _?: Maybe<Scalars["Int"]>;
+};
+
+export type Subject = {
+  __typename?: "Subject";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  categories?: Maybe<Array<Category>>;
+  subcategories?: Maybe<Array<Subcategory>>;
+  system: Scalars["Boolean"];
+  status?: Maybe<Status>;
+  delete?: Maybe<Scalars["Boolean"]>;
+};
+
+export type SubjectDeleteArgs = {
   _?: Maybe<Scalars["Int"]>;
 };
 

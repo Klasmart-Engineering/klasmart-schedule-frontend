@@ -69,7 +69,7 @@ export type ClassesByOrganizationQueryVariables = Types.Exact<{
 export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">>>>;
     }
   >;
 };
@@ -199,7 +199,7 @@ export type ClassesBySchoolQueryVariables = Types.Exact<{
 export type ClassesBySchoolQuery = { __typename?: "Query" } & {
   school?: Types.Maybe<
     { __typename?: "School" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">>>>;
     }
   >;
 };
@@ -308,7 +308,9 @@ export type ClassesTeachingQueryQuery = { __typename?: "Query" } & {
     { __typename?: "User" } & {
       membership?: Types.Maybe<
         { __typename?: "OrganizationMembership" } & {
-          classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
+          classesTeaching?: Types.Maybe<
+            Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">>>
+          >;
         }
       >;
     }
@@ -455,6 +457,7 @@ export const ClassesByOrganizationDocument = gql`
       classes {
         class_id
         class_name
+        status
       }
     }
   }
@@ -738,6 +741,7 @@ export const ClassesBySchoolDocument = gql`
       classes {
         class_id
         class_name
+        status
       }
     }
   }
@@ -925,6 +929,7 @@ export const ClassesTeachingQueryDocument = gql`
         classesTeaching {
           class_id
           class_name
+          status
         }
       }
     }

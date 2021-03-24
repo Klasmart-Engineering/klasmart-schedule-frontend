@@ -131,6 +131,12 @@ export interface EntityScheduleShortInfo {
   name?: string;
 }
 
+export interface EntityScheduleClassInfo {
+  class_id?: string;
+  class_name?: string;
+  status: string;
+}
+
 export interface ConflictsData {
   class_roster_teachers: EntityScheduleShortInfo[];
   class_roster_students: EntityScheduleShortInfo[];
