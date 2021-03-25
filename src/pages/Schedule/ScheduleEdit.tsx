@@ -37,7 +37,7 @@ import {
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { d, t } from "../../locale/LocaleManager";
+import { d, t, localeManager } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
@@ -77,6 +77,7 @@ import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import { zhCN, enAU, vi, ko, id } from "date-fns/esm/locale";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -252,9 +253,11 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id };
+
   return (
     <Box className={css.smallCalendarBox}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
