@@ -1,22 +1,19 @@
-import { Checkbox, FormControlLabel, Grid, InputAdornment, Menu, MenuItem } from "@material-ui/core";
+import { Checkbox, FormControlLabel, Grid, Menu, MenuItem } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField";
-import { Search } from "@material-ui/icons";
 import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm, UseFormMethods } from "react-hook-form";
 import { Author } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import CreateOutcomings from "../OutcomeEdit";
 import { isPending } from "./FirstSearchHeader";
-import { OutcomeQueryConditionBaseProps } from "./types";
-
-const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
+import { ListSearch } from "./ListSearch";
+import { BulkListForm, OutcomeListExectSearch, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,9 +53,6 @@ const useStyles = makeStyles((theme) => ({
   navigation: {
     padding: "20px 0px 10px 0px",
   },
-  searchText: {
-    width: "34%",
-  },
   actives: {
     color: "#0E78D5",
   },
@@ -79,17 +73,45 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const getOutcomeListExectSearch = () => {
+  return [
+    {
+      label: "All",
+      value: OutcomeListExectSearch.all,
+    },
+    {
+      label: "Learning Outcome Name",
+      value: OutcomeListExectSearch.loName,
+    },
+    {
+      label: "Short Code",
+      value: OutcomeListExectSearch.shortCode,
+    },
+    {
+      label: "Author",
+      value: OutcomeListExectSearch.author,
+    },
+    {
+      label: "Learning Outcome Set",
+      value: OutcomeListExectSearch.loSet,
+    },
+    {
+      label: "Keywords",
+      value: OutcomeListExectSearch.keyWord,
+    },
+    {
+      label: "Description",
+      value: OutcomeListExectSearch.description,
+    },
+  ];
+};
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
-  const { control, reset, getValues } = useForm();
+  const { value, onChange, formMethods } = props;
+  const { reset } = useForm();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClickSearch = () => {
-    const newValue = produce(value, (draft) => {
-      const searchText = getValues()[SEARCH_TEXT_KEY];
-      searchText ? (draft.search_key = searchText) : delete draft.search_key;
-    });
-    onChange({ ...newValue, page: 1 });
+    onChange({ ...value, page: 1 });
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -100,7 +122,6 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const handleItemClick = (event: any) => {
     setAnchorEl(null);
     const author_name = value.author_name === Author.self ? undefined : Author.self;
-    // onChange({ ...value, author_name });
     onChange(
       produce(value, (draft) => {
         author_name ? (draft.author_name = author_name) : delete draft.author_name;
@@ -135,23 +156,12 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               )}
             </Grid>
             <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
-              <Controller
-                as={TextField}
-                name={SEARCH_TEXT_KEY}
-                control={control}
-                style={{ width: "100%", height: "100%" }}
-                onBlur={handleClickSearch}
-                label={d("Search").t("assess_label_search")}
-                variant="outlined"
-                size="small"
-                defaultValue={value.search_key || ""}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search style={{ cursor: "pointer" }} onClick={handleClickSearch} />
-                    </InputAdornment>
-                  ),
-                }}
+              <ListSearch
+                searchFieldList={getOutcomeListExectSearch()}
+                searchFieldDefaultValue={value.exect_search || OutcomeListExectSearch.all}
+                searchTextDefaultValue={value.search_key || ""}
+                onSearch={handleClickSearch}
+                formMethods={formMethods}
               />
             </Grid>
           </Grid>
@@ -161,17 +171,15 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   );
 }
 
-export interface SecondSearchHeaderProps extends OutcomeQueryConditionBaseProps {}
+export interface SecondSearchHeaderProps extends OutcomeQueryConditionBaseProps {
+  formMethods: UseFormMethods<BulkListForm>;
+}
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
-  const { control, reset, getValues } = useForm();
+  const { value, onChange, formMethods } = props;
+  const { reset } = useForm();
   const handleClickSearch = () => {
-    const newValue = produce(value, (draft) => {
-      const searchText = getValues()[SEARCH_TEXT_KEY];
-      searchText ? (draft.search_key = searchText) : delete draft.search_key;
-    });
-    onChange({ ...newValue, page: 1 });
+    onChange({ ...value, page: 1 });
   };
 
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
@@ -182,9 +190,6 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
       })
     );
   };
-  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
-    if (event.key === "Enter") handleClickSearch();
-  };
   useEffect(() => {
     reset();
   }, [value.search_key, reset]);
@@ -194,19 +199,13 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <Controller
-                as={TextField}
-                name={SEARCH_TEXT_KEY}
-                control={control}
-                size="small"
-                className={classes.searchText}
-                onKeyPress={handleKeyPress}
-                defaultValue={value.search_key || ""}
-                placeholder={d("Search").t("assess_label_search")}
+              <ListSearch
+                searchFieldList={getOutcomeListExectSearch()}
+                searchFieldDefaultValue={value.exect_search || OutcomeListExectSearch.all}
+                searchTextDefaultValue={value.search_key || ""}
+                onSearch={handleClickSearch}
+                formMethods={formMethods}
               />
-              <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
-                <Search /> {d("Search").t("assess_label_search")}
-              </Button>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
               {!isPending(value) ? (

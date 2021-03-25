@@ -13,7 +13,7 @@ import { OutcomePublishStatus } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
 import { isUnpublish } from "../pages/OutcomeList/FirstSearchHeader";
-import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
+import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -244,37 +244,27 @@ export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult,
       },
     });
     resObj.user_id = meInfo.me?.user_id;
-    const { search_key, publish_status, author_name, page, order_by, is_unpub } = query;
+    const { search_key, publish_status, author_name, page, order_by, is_unpub, exect_search } = query;
+    const params: OutcomeQueryCondition = {
+      publish_status,
+      author_name,
+      page,
+      order_by,
+      page_size: PAGE_SIZE,
+      assumed: -1,
+    };
+    if (exect_search === OutcomeListExectSearch.all) params["search_key"] = search_key;
+    if (exect_search === OutcomeListExectSearch.loName) params.outcome_name = search_key;
+    if (exect_search === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
+    if (exect_search === OutcomeListExectSearch.author) params.author_name = search_key;
+    if (exect_search === OutcomeListExectSearch.keyWord) params.keywords = search_key;
+    if (exect_search === OutcomeListExectSearch.description) params.description = search_key;
     if (publish_status === OutcomePublishStatus.pending && !is_unpub) {
-      resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes({
-        search_key,
-        publish_status,
-        author_name,
-        page,
-        order_by,
-        page_size: PAGE_SIZE,
-        assumed: -1,
-      });
+      resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(params);
     } else if (isUnpublish({ ...query })) {
-      resObj.privateRes = await api.privateLearningOutcomes.searchPrivateLearningOutcomes({
-        search_key,
-        publish_status,
-        author_name,
-        page,
-        order_by,
-        page_size: PAGE_SIZE,
-        assumed: -1,
-      });
+      resObj.privateRes = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(params);
     } else {
-      resObj.outcomeRes = await api.learningOutcomes.searchLearningOutcomes({
-        search_key,
-        publish_status,
-        author_name,
-        page,
-        order_by,
-        page_size: PAGE_SIZE,
-        assumed: -1,
-      });
+      resObj.outcomeRes = await api.learningOutcomes.searchLearningOutcomes(params);
     }
     return resObj;
   }

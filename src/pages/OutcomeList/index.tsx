@@ -1,4 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
+import produce from "immer";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +24,7 @@ import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
-import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
+import { BulkListForm, BulkListFormKey, OutcomeListExectSearch, OutcomeQueryCondition } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -42,7 +43,8 @@ const useQuery = (): OutcomeQueryCondition => {
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const is_unpub = query.get("is_unpub");
-    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub });
+    const exect_search = query.get("exect_search") || OutcomeListExectSearch.all;
+    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub, exect_search });
   }, [search]);
 };
 
@@ -82,7 +84,7 @@ export function OutcomeList() {
   const history = useHistory();
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const formMethods = useForm<BulkListForm>();
-  const { watch, reset } = formMethods;
+  const { watch, reset, getValues } = formMethods;
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
   const {
     outcomeList,
@@ -111,7 +113,15 @@ export function OutcomeList() {
       pathname: CreateOutcomings.routeBasePath,
       search: toQueryString(clearNull({ outcome_id, is_unpub: condition.is_unpub })),
     });
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(clearNull(value)) });
+  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+    const newValue = produce(value, (draft) => {
+      const searchText = getValues()[BulkListFormKey.SEARCH_TEXT_KEY];
+      searchText ? (draft.search_key = searchText) : delete draft.search_key;
+      const exect_search = getValues()[BulkListFormKey.EXECT_SEARCH];
+      draft.exect_search = exect_search;
+    });
+    history.push({ search: toQueryString(clearNull(newValue)) });
+  };
   const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
 
   const handleBulkApprove: ThirdSearchHeaderProps["onBulkApprove"] = () => {
@@ -146,8 +156,8 @@ export function OutcomeList() {
     <div>
       <FirstSearchHeader value={condition} onChange={handleChange} onChangeCategory={handleChangeCategory} />
       <FirstSearchHeaderMb value={condition} onChange={handleChange} onChangeCategory={handleChangeCategory} />
-      <SecondSearchHeader value={condition} onChange={handleChange} />
-      <SecondSearchHeaderMb value={condition} onChange={handleChange} />
+      <SecondSearchHeader formMethods={formMethods} value={condition} onChange={handleChange} />
+      <SecondSearchHeaderMb formMethods={formMethods} value={condition} onChange={handleChange} />
       <ThirdSearchHeader
         value={condition}
         onChange={handleChange}
@@ -164,34 +174,25 @@ export function OutcomeList() {
         onBulkApprove={handleBulkApprove}
         onBulkReject={handleBulkReject}
       />
-      {
-        assess_msg_no_permission === false ? (
-          permissionTip
-        ) : outcomeList && outcomeList.length > 0 ? (
-          <OutcomeTable
-            formMethods={formMethods}
-            list={outcomeList}
-            total={total}
-            userId={user_id}
-            queryCondition={condition}
-            onChangePage={handleChangePage}
-            onClickOutcome={handleClickOutcome}
-            onPublish={handlePublish}
-            onDelete={handleDelete}
-            onApprove={handleApprove}
-            onReject={handleReject}
-          />
-        ) : (
-          emptyTip
-        )
-        //   <div style={{ margin: "0 auto", textAlign: "center" }}>
-        //     <img src={emptyIconUrl} alt="" />
-        //     <Typography variant="body1" color="textSecondary">
-        //       Empty...
-        //     </Typography>
-        //   </div>
-        // )
-      }
+      {assess_msg_no_permission === false ? (
+        permissionTip
+      ) : outcomeList && outcomeList.length > 0 ? (
+        <OutcomeTable
+          formMethods={formMethods}
+          list={outcomeList}
+          total={total}
+          userId={user_id}
+          queryCondition={condition}
+          onChangePage={handleChangePage}
+          onClickOutcome={handleClickOutcome}
+          onPublish={handlePublish}
+          onDelete={handleDelete}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
+      ) : (
+        emptyTip
+      )}
     </div>
   );
 }
