@@ -63,7 +63,20 @@ function MyCalendar(props: CalendarProps) {
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
-  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const monthArr = [
+    d("Jan").t("schedule_calendar_jan"),
+    d("Feb").t("schedule_calendar_feb"),
+    d("Mar").t("schedule_calendar_mar"),
+    d("Apr").t("schedule_calendar_apr"),
+    d("May").t("schedule_calendar_may"),
+    d("Jun").t("schedule_calendar_jun"),
+    d("Jul").t("schedule_calendar_jul"),
+    d("Aug").t("schedule_calendar_aug"),
+    d("Sep").t("schedule_calendar_sep"),
+    d("Oct").t("schedule_calendar_oct"),
+    d("Nov").t("schedule_calendar_nov"),
+    d("Dec").t("schedule_calendar_dec"),
+  ];
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
