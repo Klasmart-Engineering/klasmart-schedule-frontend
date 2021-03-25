@@ -37,7 +37,7 @@ import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
 import { isUnpublish } from "./FirstSearchHeader";
@@ -257,6 +257,10 @@ enum OrgType {
   normal = "normal",
   headquarters = "headquarters",
 }
+enum OrgOrigin {
+  global = "global",
+  vn = "vn",
+}
 function ContentCard(props: ContentProps) {
   const css = useStyles();
   const expand = useExpand();
@@ -276,6 +280,15 @@ function ContentCard(props: ContentProps) {
     onClickShareBtn,
   } = props;
   let file_type: number = 0;
+  const perm = usePermission([
+    PermissionType.publish_featured_content_for_all_hub_79000,
+    PermissionType.publish_featured_content_for_all_orgs_79002,
+    PermissionType.publish_featured_content_for_specific_orgs_79001,
+  ]);
+  const isShowShareButton =
+    orgProperty.region === OrgOrigin.global
+      ? perm.publish_featured_content_for_all_hub_79000 && perm.publish_featured_content_for_all_orgs_79002
+      : perm.publish_featured_content_for_specific_orgs_79001;
   if (content?.content_type === ContentType.assets) {
     file_type = JSON.parse(content.data || "").file_type;
   }
@@ -354,17 +367,16 @@ function ContentCard(props: ContentProps) {
             content?.publish_status === PublishStatus.published &&
             content?.content_type === ContentType.folder &&
             orgProperty.type === OrgType.headquarters &&
-            (!queryCondition.path || (queryCondition.path && queryCondition.path === "/")) && (
-              <Permission value={PermissionType.publish_featured_content_for_all_hub_79000}>
-                <LButton
-                  as={IconButton}
-                  replace
-                  className={clsx(css.shareColor, css.MuiIconButtonRoot)}
-                  onClick={() => onClickShareBtn(content)}
-                >
-                  <ShareIcon />
-                </LButton>
-              </Permission>
+            (!queryCondition.path || (queryCondition.path && queryCondition.path === "/")) &&
+            isShowShareButton && (
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.shareColor, css.MuiIconButtonRoot)}
+                onClick={() => onClickShareBtn(content)}
+              >
+                <ShareIcon />
+              </LButton>
             )}
           {!queryCondition.program_group &&
             (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
@@ -542,6 +554,7 @@ export function ContentCardList(props: ContentCardListProps) {
     orgProperty,
   } = props;
   const { control } = formMethods;
+  console.log("orgProperty = ", orgProperty);
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   const handleChangePageSize = (event: React.ChangeEvent<{ value: unknown }>) => {
     onChangePageSize(event.target.value as number);
