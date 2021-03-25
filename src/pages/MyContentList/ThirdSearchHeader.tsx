@@ -14,7 +14,7 @@ import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
@@ -89,6 +89,11 @@ const useStyles = makeStyles((theme) => ({
     height: 40,
     marginLeft: 30,
     boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)",
+  },
+  selectAll: {
+    color: "#666",
+    marginRight: 30,
+    fontSize: 14,
   },
 }));
 
@@ -353,6 +358,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
+              <span className={classes.selectAll}>{reportMiss("( {value} files selected )", "library_label_files_selected")}</span>
               {bulkOptions.length > 0 && (
                 <TextField
                   style={{ width: 160 }}
@@ -499,6 +505,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
+              <span className={classes.selectAll}>{reportMiss("( {value} files selected )", "library_label_files_selected")}</span>
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={3} xs={3}>

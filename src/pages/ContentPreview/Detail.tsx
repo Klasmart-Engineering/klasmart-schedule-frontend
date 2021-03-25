@@ -77,6 +77,7 @@ export function Detail(props: ContentPreviewProps) {
         variant="outlined"
         InputProps={{
           readOnly: true,
+          style: { color: "rgba(0,0,0,1)" },
         }}
         value={contentPreview.description}
       />
@@ -88,7 +89,7 @@ export function Detail(props: ContentPreviewProps) {
             disabled={true}
             variant="outlined"
             InputProps={{
-              readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={formattedTime(contentPreview.updated_at)}
           />
@@ -101,6 +102,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.author_name}
           />
@@ -113,6 +115,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.program_name}
           />
@@ -125,6 +128,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.subject_name}
           />
@@ -137,6 +141,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.developmental_name?.join(",")}
           />
@@ -149,6 +154,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.skills_name}
           />
@@ -161,6 +167,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.publish_scope_name}
           />
@@ -173,6 +180,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.suggest_time}
           />
@@ -185,6 +193,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.age_name?.join(",")}
           />
@@ -197,6 +206,7 @@ export function Detail(props: ContentPreviewProps) {
             variant="outlined"
             InputProps={{
               readOnly: true,
+              style: { color: "rgba(0,0,0,1)" },
             }}
             value={contentPreview.grade_name?.join(",")}
           />
@@ -212,6 +222,7 @@ export function Detail(props: ContentPreviewProps) {
           variant="outlined"
           InputProps={{
             readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
           }}
           value={contentPreview.lesson_type_name}
         />
@@ -277,6 +288,7 @@ export function Detail(props: ContentPreviewProps) {
         variant="outlined"
         InputProps={{
           readOnly: true,
+          style: { color: "rgba(0,0,0,1)" },
           startAdornment: (
             <InputAdornment position="start" className={css.chipCon}>
               {contentPreview.keywords?.map((value, index) => (
