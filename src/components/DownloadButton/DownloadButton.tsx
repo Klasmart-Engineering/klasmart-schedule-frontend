@@ -15,7 +15,7 @@ const createDownloadIframe = (containerRef: RefObject<HTMLDivElement>, src?: str
   if (!src) return;
   const iframe = document.createElement("iframe");
   iframe.src = src;
-  iframe.style.visibility = "hidden";
+  iframe.style.display = "none";
   containerRef.current?.appendChild(iframe);
   return iframe;
 };
