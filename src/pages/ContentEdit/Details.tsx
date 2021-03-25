@@ -691,7 +691,7 @@ export default function Details(props: DetailsProps) {
                     dispatch(
                       actError(
                         error.type === MultipleUploaderErrorType.MaxAmountError
-                          ? d("Failed to upload as total files number excceeds limitation 5").t("library_error_excceed_max_file_number")
+                          ? d("Failed to upload as total files number exceeds limitation 5").t("library_error_excceed_max_file_number")
                           : d("Cannot excceed max size 500 MB").t("library_error_excceed_max_size")
                       )
                     )

@@ -184,7 +184,7 @@ type LangRecord<T = string> =
   | { id: "library_error_excceed_max_size"; description: "Cannot excceed max size 500 MB"; values: undefined }
   | {
       id: "library_error_excceed_max_file_number";
-      description: "Failed to upload as total files number excceeds limitation 5";
+      description: "Failed to upload as total files number exceeds limitation 5";
       values: undefined;
     }
   | { id: "library_label_new_content"; description: "New Content"; values: undefined }
@@ -588,6 +588,13 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_one_attachment"; description: "You need to upload at least one attachment."; values: undefined }
   | { id: "schedule_attachment_size_each"; description: "each"; values: undefined }
   | { id: "schedule_assignment_no_class"; description: "No Class"; values: undefined }
+  | { id: "schedule_filter_all_my_schools"; description: "All My Schools"; values: undefined }
+  | { id: "schedule_filter_others"; description: "Others"; values: undefined }
+  | { id: "schedule_filter_undefined"; description: "Undefined"; values: undefined }
+  | { id: "schedule_filter_class_types"; description: "Class Types"; values: undefined }
+  | { id: "schedule_filter_only_mine"; description: "Only MIne"; values: undefined }
+  | { id: "schedule_filter_view_any_time_study"; description: "View Any Time Study"; values: undefined }
+  | { id: "schedule_filter_all"; description: "All"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
