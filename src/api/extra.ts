@@ -74,10 +74,9 @@ export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: str
 
 export const apiDownloadPageUrl = (href?: string, fileName?: string) => {
   if (!href) return;
-  const downloadUrl = `${process.env.REACT_APP_RESOURCE_API}/download.html?download=${encodeURIComponent(
-    fileName ?? ""
-  )}&href=${encodeURIComponent(href)}`;
-  return `/redirect.html?redirect=${encodeURIComponent(downloadUrl)}`;
+  const { origin } = new URL(href);
+  const downloadUrl = `${origin}/download.html?download=${encodeURIComponent(fileName ?? "")}&href=${encodeURIComponent(href)}`;
+  return downloadUrl;
 };
 
 export const apiOrganizationOfPage = () => {
@@ -175,11 +174,7 @@ export async function apiCreateContentTypeSchema<T extends Record<string, unknow
   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
   }
-  const result = merge(schema, schemaLanguages);
-  console.log("schemaLanguages = ", schemaLanguages);
-  console.log("schema = ", schema);
-  console.log("mergedSchema = ", result);
-  return result;
+  return merge(schema, schemaLanguages);
 }
 
 export async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {

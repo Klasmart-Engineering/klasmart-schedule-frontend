@@ -1,5 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import React, { DOMAttributes, ReactNode } from "react";
+import React, { DOMAttributes, ReactNode, RefObject, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { apiDownloadPageUrl } from "../../api/extra";
 import { AppDispatch } from "../../reducers";
@@ -11,17 +11,27 @@ interface DownloadButtonProps {
   children: ReactNode;
 }
 
+const createDownloadIframe = (containerRef: RefObject<HTMLDivElement>, src?: string) => {
+  if (!src) return;
+  const iframe = document.createElement("iframe");
+  iframe.src = src;
+  iframe.style.visibility = "hidden";
+  containerRef.current?.appendChild(iframe);
+  return iframe;
+};
+
 export function DownloadButton(props: DownloadButtonProps) {
   const { resourceId, fileName, children } = props;
+  const btnRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const hanldeClick: DOMAttributes<HTMLDivElement>["onClick"] = async (e) => {
     if (!resourceId) return;
     const { path } = await dispatch(actCreateDownload({ resourceId, metaLoading: true })).then(unwrapResult);
     const pageUrl = apiDownloadPageUrl(path, fileName);
-    pageUrl && window.open(pageUrl, "_blank");
+    createDownloadIframe(btnRef, pageUrl);
   };
   return (
-    <div className="downloadButton" onClick={hanldeClick}>
+    <div className="downloadButton" onClick={hanldeClick} ref={btnRef}>
       {children}
     </div>
   );
