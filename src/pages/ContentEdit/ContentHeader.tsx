@@ -205,7 +205,7 @@ export function ContentHeader(props: HeaderProps) {
                 variant="contained"
                 endIcon={<Publish />}
                 className={clsx(css.headerButton, css.greenButton)}
-                onClick={onPublish as any}
+                onClick={() => onPublish(false)}
                 disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
               >
                 {d("Publish").t("library_label_publish")}
@@ -269,7 +269,7 @@ export function ContentHeader(props: HeaderProps) {
                 as={IconButton}
                 className={clsx(css.iconButton, css.greenButton)}
                 color="primary"
-                onClick={onPublish as any}
+                onClick={() => onPublish(false)}
                 replace
                 disabled={!(contentDetail?.publish_status === "draft" && !isDirty) && lesson !== "assets"}
               >
