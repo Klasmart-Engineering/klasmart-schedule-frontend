@@ -26,6 +26,8 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { Maybe, User } from "../../api/api-ko-schema.auto";
+import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityScheduleAddView,
@@ -72,11 +74,9 @@ import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import ScheduleFeedback from "./ScheduleFeedback";
-import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
-import { Maybe, User } from "../../api/api-ko-schema.auto";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -1702,7 +1702,7 @@ function EditBox(props: CalendarStateProps) {
                     control={
                       <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
                     }
-                    label="Select All"
+                    label={d("Select All").t("schedule_detail_select_all")}
                   />
                   <FormControlLabel
                     control={
@@ -1714,7 +1714,7 @@ function EditBox(props: CalendarStateProps) {
                         onChange={handleRosterChange}
                       />
                     }
-                    label="Unselect All"
+                    label={d("Unselect All").t("schedule_detail_unselect_all")}
                   />
                 </div>
                 <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
