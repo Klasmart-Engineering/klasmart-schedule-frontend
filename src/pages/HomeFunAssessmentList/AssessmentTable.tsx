@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) =>
 );
 
 const mapStatus = (status: string | undefined) => {
-  if (status === HomeFunAssessmentStatus.complete) return "Complete";
-  if (status === HomeFunAssessmentStatus.in_progress) return "In Progress";
+  if (status === HomeFunAssessmentStatus.complete) return d("Complete").t("assess_filter_complete");
+  if (status === HomeFunAssessmentStatus.in_progress) return d("In Progress").t("assess_filter_in_progress");
 };
 const mapScore = (score: number | undefined) => {
   if (!score) return "";
