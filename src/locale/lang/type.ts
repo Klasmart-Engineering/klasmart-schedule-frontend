@@ -184,7 +184,7 @@ type LangRecord<T = string> =
   | { id: "library_error_excceed_max_size"; description: "Cannot excceed max size 500 MB"; values: undefined }
   | {
       id: "library_error_excceed_max_file_number";
-      description: "Failed to upload as total files number excceeds limitation 5";
+      description: "Failed to upload as total files number exceeds limitation 5";
       values: undefined;
     }
   | { id: "library_label_new_content"; description: "New Content"; values: undefined }
@@ -272,6 +272,27 @@ type LangRecord<T = string> =
       description: "We update to get this student's newest assignment, please assess again. ";
       values: undefined;
     }
+  | { id: "assess_detail_room_id"; description: "Room ID"; values: undefined }
+  | { id: "assess_detail_class_name"; description: "Class Name"; values: undefined }
+  | { id: "assess_detail_lesson_name"; description: "Lesson Name"; values: undefined }
+  | { id: "assess_detail_date_of_class"; description: "Date of Class"; values: undefined }
+  | { id: "assess_detail_teacher_list"; description: "Teacher List"; values: undefined }
+  | { id: "assess_detail_student_list"; description: "Student List"; values: undefined }
+  | { id: "assess_detail_edit_student"; description: "Edit Student"; values: undefined }
+  | { id: "assess_detail_see_more"; description: "See More"; values: undefined }
+  | { id: "assess_detail_see_less"; description: "See Less"; values: undefined }
+  | { id: "assess_detail_lesson_materials_exposure"; description: "Lesson Materials Exposure"; values: undefined }
+  | { id: "assess_detail_edit_exposure"; description: "Edit Exposure"; values: undefined }
+  | { id: "assess_detail_edit_student_list"; description: "Edit Student List"; values: undefined }
+  | { id: "assess_detail_students"; description: "Students"; values: undefined }
+  | { id: "assess_detail_lesson_materials_exposed"; description: "Lesson Materials Exposed"; values: undefined }
+  | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
+  | {
+      id: "assess_msg_blocked_learning_outcome";
+      description: "The selected learning outcome is still in approval process, you cannot do bulk action for now.";
+      values: undefined;
+    }
+  | { id: "assess_msg_one_exposed"; description: "At least one lesson material needs to be selected as exposed."; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -331,6 +352,17 @@ type LangRecord<T = string> =
   | { id: "assess_error_no_network_connection"; description: "No network connection"; values: undefined }
   | { id: "assess_error_unknown_error"; description: "Unknown error"; values: undefined }
   | { id: "assess_bulk_approval"; description: "Are you sure you want to approve these learning outcomes?"; values: undefined }
+  | { id: "assess_set_learning_outcome_set"; description: "Learning Outcome Set"; values: undefined }
+  | { id: "assess_set_add_more_sets"; description: "Add more sets"; values: undefined }
+  | { id: "assess_set_create_set"; description: "Create '{setname}'"; values: { setname: string | number } }
+  | { id: "assess_set_add_to_set"; description: "Add to Set"; values: undefined }
+  | { id: "assess_set_select_create"; description: "Select or create a new one"; values: undefined }
+  | { id: "assess_search_all"; description: "All"; values: undefined }
+  | { id: "assess_search_name"; description: "Name"; values: undefined }
+  | { id: "assess_search_code"; description: "Code"; values: undefined }
+  | { id: "assess_search_set"; description: "Set"; values: undefined }
+  | { id: "assess_msg_exist_short_code"; description: "This short code already exists, please enter again."; values: undefined }
+  | { id: "assess_msg_short_code_error"; description: "The short code needs to be five characters long, 0-9, A-Z."; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
@@ -588,6 +620,16 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_one_attachment"; description: "You need to upload at least one attachment."; values: undefined }
   | { id: "schedule_attachment_size_each"; description: "each"; values: undefined }
   | { id: "schedule_assignment_no_class"; description: "No Class"; values: undefined }
+  | { id: "schedule_filter_all_my_schools"; description: "All My Schools"; values: undefined }
+  | { id: "schedule_filter_others"; description: "Others"; values: undefined }
+  | { id: "schedule_filter_undefined"; description: "Undefined"; values: undefined }
+  | { id: "schedule_filter_class_types"; description: "Class Types"; values: undefined }
+  | { id: "schedule_filter_only_mine"; description: "Only MIne"; values: undefined }
+  | { id: "schedule_filter_view_any_time_study"; description: "View Any Time Study"; values: undefined }
+  | { id: "schedule_filter_all"; description: "All"; values: undefined }
+  | { id: "schedule_any_anytime_study"; description: "Any Time Study"; values: undefined }
+  | { id: "schedule_detail_see_less"; description: "See Less"; values: undefined }
+  | { id: "schedule_detail_students"; description: "Students"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

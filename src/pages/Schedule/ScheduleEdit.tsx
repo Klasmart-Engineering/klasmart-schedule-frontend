@@ -1719,12 +1719,12 @@ function EditBox(props: CalendarStateProps) {
                 </div>
                 <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Students</span>
+                    <span className={css.participantTitle}>{d("Students").t("assess_detail_students")}</span>
                     {menuItemListClassKrParticipants("students")}
                   </div>
                   <div className={css.splitLine}></div>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Teachers</span>
+                    <span className={css.participantTitle}>{d("Teachers").t("schedule_filter_teachers")}</span>
                     {menuItemListClassKrParticipants("teacher")}
                   </div>
                 </div>
@@ -1769,7 +1769,7 @@ function EditBox(props: CalendarStateProps) {
               <Box className={css.participantBox}>
                 <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Students</span>
+                    <span className={css.participantTitle}>{d("Students").t("assess_detail_students")}</span>
                     {participantsIds?.student.map((item: ClassOptionsItem) => {
                       return (
                         <Tooltip title={item.name as string} placement="right-start">
@@ -1795,7 +1795,7 @@ function EditBox(props: CalendarStateProps) {
                   </div>
                   <div className={css.splitLine}></div>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Teachers</span>
+                    <span className={css.participantTitle}>{d("Teachers").t("schedule_filter_teachers")}</span>
                     {participantsIds?.teacher.map((item: ClassOptionsItem) => {
                       return (
                         <Tooltip title={item.name as string} placement="right-start">
@@ -1908,11 +1908,14 @@ function EditBox(props: CalendarStateProps) {
                   setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
                 }}
               >
-                {d("See More").t("schedule_detail_see_more")}{" "}
                 {linkageLessonPlanOpen ? (
-                  <ExpandLessOutlined style={{ position: "absolute" }} />
+                  <>
+                    {d("See Less").t("assess_detail_see_less")} <ExpandLessOutlined style={{ position: "absolute" }} />
+                  </>
                 ) : (
-                  <ExpandMoreOutlined style={{ position: "absolute" }} />
+                  <>
+                    {d("See More").t("schedule_detail_see_more")} <ExpandMoreOutlined style={{ position: "absolute" }} />
+                  </>
                 )}
               </span>
             )}
