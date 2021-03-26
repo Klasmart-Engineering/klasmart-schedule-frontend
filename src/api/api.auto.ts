@@ -585,6 +585,8 @@ export interface EntityCreateFolderItemRequest {
 }
 
 export interface EntityCreateFolderRequest {
+  description?: string;
+  keywords?: string[];
   name?: string;
   owner_type?: number;
   parent_id?: string;
@@ -647,11 +649,13 @@ export interface EntityFolderIdWithFileType {
 export interface EntityFolderItem {
   create_at?: number;
   creator?: string;
+  description?: string;
   dir_path?: string;
   editor?: string;
   id?: string;
   item_type?: number;
   items_count?: number;
+  keywords?: string;
   link?: string;
   name?: string;
   owner?: string;
@@ -666,12 +670,14 @@ export interface EntityFolderItemInfo {
   available?: number;
   create_at?: number;
   creator?: string;
+  description?: string;
   dir_path?: string;
   editor?: string;
   id?: string;
   item_type?: number;
   items?: EntityFolderItem[];
   items_count?: number;
+  keywords?: string;
   link?: string;
   name?: string;
   owner?: string;
@@ -958,6 +964,7 @@ export interface EntityScheduleDetailsView {
   status?: "NotStart" | "Started" | "Closed";
   student_count?: number;
   subject?: EntityScheduleShortInfo;
+  teachers?: EntityScheduleShortInfo[];
   title?: string;
   version?: number;
 }
@@ -1157,6 +1164,8 @@ export interface EntityUpdateAssessmentCommand {
 }
 
 export interface EntityUpdateFolderRequest {
+  description?: string;
+  keywords?: string[];
   name?: string;
   thumbnail?: string;
 }
@@ -1180,32 +1189,44 @@ export interface EntityVisibilitySetting {
 export interface ExternalAge {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalCategory {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalGrade {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalProgram {
   group_name?: string;
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalSubCategory {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalSubject {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -2539,6 +2560,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get program
      */
     getProgram: (params?: RequestParams) => this.request<ExternalProgram[], ApiInternalServerErrorResponse>(`/programs`, "GET", params),
+  };
+  programsGroups = {
+    /**
+     * @tags program
+     * @name getProgramGroup
+     * @summary getProgramGroup
+     * @request GET:/programs_groups
+     * @description get program groups
+     */
+    getProgramGroup: (params?: RequestParams) => this.request<string[], ApiInternalServerErrorResponse>(`/programs_groups`, "GET", params),
   };
   reports = {
     /**

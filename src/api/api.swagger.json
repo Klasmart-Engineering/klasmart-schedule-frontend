@@ -4063,6 +4063,33 @@
         }
       }
     },
+    "/programs_groups": {
+      "get": {
+        "description": "get program groups",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["program"],
+        "summary": "getProgramGroup",
+        "operationId": "getProgramGroup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/performance/h5p/students": {
       "get": {
         "description": "list student performance h5p report",
@@ -7598,6 +7625,15 @@
     "entity.CreateFolderRequest": {
       "type": "object",
       "properties": {
+        "description": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -7761,6 +7797,9 @@
         "creator": {
           "type": "string"
         },
+        "description": {
+          "type": "string"
+        },
         "dir_path": {
           "type": "string"
         },
@@ -7775,6 +7814,9 @@
         },
         "items_count": {
           "type": "integer"
+        },
+        "keywords": {
+          "type": "string"
         },
         "link": {
           "type": "string"
@@ -7814,6 +7856,9 @@
         "creator": {
           "type": "string"
         },
+        "description": {
+          "type": "string"
+        },
         "dir_path": {
           "type": "string"
         },
@@ -7834,6 +7879,9 @@
         },
         "items_count": {
           "type": "integer"
+        },
+        "keywords": {
+          "type": "string"
         },
         "link": {
           "type": "string"
@@ -9280,6 +9328,15 @@
     "entity.UpdateFolderRequest": {
       "type": "object",
       "properties": {
+        "description": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -9337,6 +9394,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "system": {
+          "type": "boolean"
         }
       }
     },
@@ -9348,6 +9411,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "system": {
+          "type": "boolean"
         }
       }
     },
@@ -9359,6 +9428,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "system": {
+          "type": "boolean"
         }
       }
     },
@@ -9373,6 +9448,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "system": {
+          "type": "boolean"
         }
       }
     },
@@ -9384,6 +9465,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "system": {
+          "type": "boolean"
         }
       }
     },
@@ -9395,6 +9482,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "system": {
+          "type": "boolean"
         }
       }
     }
