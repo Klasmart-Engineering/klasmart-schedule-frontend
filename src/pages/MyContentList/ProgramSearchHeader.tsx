@@ -74,8 +74,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 export enum ProgramGroup {
   badaEsl = "BadaESL",
-  badasteam = "BadaSTEAM",
+  badaSteam = "BadaSTEAM",
   more = "More",
+  moreFeaturedContent = "MoreFeaturedContent",
 }
 export interface ProgramSearchHeaderProps extends QueryConditionBaseProps {}
 export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
@@ -106,9 +107,9 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
                 {d("Badanamu ESL").t("library_label_program_esl")}
               </Button>
               <Button
-                onClick={createHandleClick(ProgramGroup.badasteam)}
+                onClick={createHandleClick(ProgramGroup.badaSteam)}
                 className={clsx(css.nav, {
-                  [css.actives]: value?.program_group === ProgramGroup.badasteam,
+                  [css.actives]: value?.program_group === ProgramGroup.badaSteam,
                 })}
                 startIcon={<WidgetsOutlinedIcon />}
               >
@@ -157,7 +158,11 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
                 textColor="primary"
               >
                 <Tab value={ProgramGroup.badaEsl} label={d("Badanamu ESL").t("library_label_program_esl")} className={classes.capitalize} />
-                <Tab value={ProgramGroup.badasteam} label={d("Bada Math").t("library_label_program_math")} className={classes.capitalize} />
+                <Tab
+                  value={ProgramGroup.badaSteam}
+                  label={d("Bada STEAM").t("library_label_program_steam")}
+                  className={classes.capitalize}
+                />
                 <Tab value={ProgramGroup.more} label={reportMiss("More", "library_label_more")} className={classes.capitalize} />
               </Tabs>
             </AppBar>

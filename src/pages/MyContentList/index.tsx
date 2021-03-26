@@ -41,7 +41,7 @@ import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./Content
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
-import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
+import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { ExectSearch, EXECT_SEARCH, SEARCH_TEXT_KEY, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -65,10 +65,9 @@ const useQuery = (): QueryCondition => {
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
     const program_group = query.get("program_group");
-    const more_feature = query.get("more_feature");
     const path = query.get("path") || "";
     const exect_search = query.get("exect_search") || ExectSearch.all;
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path, exect_search, more_feature });
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path, exect_search });
   }, [search]);
 };
 
@@ -311,8 +310,12 @@ export default function MyContentList() {
 
   return (
     <div>
-      {condition.program_group && <ProgramSearchHeader value={condition} onChange={handleChangeTab} />}
-      {condition.program_group && <ProgramSearchHeaderMb value={condition} onChange={handleChangeTab} />}
+      {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (
+        <ProgramSearchHeader value={condition} onChange={handleChangeTab} />
+      )}
+      {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (
+        <ProgramSearchHeaderMb value={condition} onChange={handleChangeTab} />
+      )}
       {!condition.program_group && (
         <FirstSearchHeader
           value={condition}
