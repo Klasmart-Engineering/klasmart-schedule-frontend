@@ -41,7 +41,7 @@ import { BackToPrevPage, ContentCardList, ContentCardListProps } from "./Content
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
-import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
+import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import { ExectSearch, EXECT_SEARCH, SEARCH_TEXT_KEY, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -310,8 +310,12 @@ export default function MyContentList() {
 
   return (
     <div>
-      {condition.program_group && <ProgramSearchHeader value={condition} onChange={handleChangeTab} />}
-      {condition.program_group && <ProgramSearchHeaderMb value={condition} onChange={handleChangeTab} />}
+      {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (
+        <ProgramSearchHeader value={condition} onChange={handleChangeTab} />
+      )}
+      {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (
+        <ProgramSearchHeaderMb value={condition} onChange={handleChangeTab} />
+      )}
       {!condition.program_group && (
         <FirstSearchHeader
           value={condition}
