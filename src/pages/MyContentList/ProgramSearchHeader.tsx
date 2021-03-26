@@ -2,12 +2,13 @@ import { AppBar, Grid, Tab, Tabs } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
+import { NotesOutlined } from "@material-ui/icons";
 import WidgetsOutlinedIcon from "@material-ui/icons/WidgetsOutlined";
 import clsx from "clsx";
 import React from "react";
 import { OrderBy } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { BadaEslBlueIcon, BadaEslIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
@@ -74,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
 export enum ProgramGroup {
   badaEsl = "BadaESL",
   badasteam = "BadaSTEAM",
+  more = "More",
 }
 export interface ProgramSearchHeaderProps extends QueryConditionBaseProps {}
 export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
@@ -112,6 +114,15 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
               >
                 {d("Bada STEAM").t("library_label_program_steam")}
               </Button>
+              <Button
+                onClick={createHandleClick(ProgramGroup.more)}
+                className={clsx(css.nav, {
+                  [css.actives]: value?.program_group === ProgramGroup.more,
+                })}
+                startIcon={<NotesOutlined />}
+              >
+                {reportMiss("More", "library_label_more")}
+              </Button>
             </Grid>
           </Grid>
         </Hidden>
@@ -123,9 +134,9 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
 
-  const handleChange = (event: React.ChangeEvent<{}>, program: QueryCondition["program"]) => {
+  const handleChange = (event: React.ChangeEvent<{}>, program_group: QueryCondition["program_group"]) => {
     onChange({
-      program,
+      program_group,
       order_by: OrderBy._updated_at,
       page: 1,
     });
@@ -147,6 +158,7 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
               >
                 <Tab value={ProgramGroup.badaEsl} label={d("Badanamu ESL").t("library_label_program_esl")} className={classes.capitalize} />
                 <Tab value={ProgramGroup.badasteam} label={d("Bada Math").t("library_label_program_math")} className={classes.capitalize} />
+                <Tab value={ProgramGroup.more} label={reportMiss("More", "library_label_more")} className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>

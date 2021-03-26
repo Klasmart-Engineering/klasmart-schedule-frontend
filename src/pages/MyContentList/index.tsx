@@ -65,9 +65,10 @@ const useQuery = (): QueryCondition => {
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const content_type = query.get("content_type");
     const program_group = query.get("program_group");
+    const more_feature = query.get("more_feature");
     const path = query.get("path") || "";
     const exect_search = query.get("exect_search") || ExectSearch.all;
-    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path, exect_search });
+    return clearNull({ name, publish_status, author, page, order_by, content_type, program_group, path, exect_search, more_feature });
   }, [search]);
 };
 
