@@ -12,7 +12,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, reportMiss } from "../../locale/LocaleManager";
 import { StyledMenu } from "./FirstSearchHeader";
 import { ContentListForm, QueryCondition, QueryConditionBaseProps } from "./types";
 export const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     // width: "98px",
     height: "40px",
     backgroundColor: "#0E78D5",
-    marginLeft: "20px",
+    marginLeft: "10px",
   },
   formControl: {
     minWidth: 136,
@@ -404,10 +404,11 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 <TextField
                   style={{
                     width: 160,
-                    marginLeft: 10,
+                    marginLeft: 20,
                   }}
                   size="small"
-                  onChange={handleChangeFilterOption} // label={d("Content Type").t("library")}
+                  onChange={handleChangeFilterOption}
+                  label={reportMiss("Content Type", "library_label_contentType")}
                   value={value.content_type}
                   select
                   SelectProps={{
