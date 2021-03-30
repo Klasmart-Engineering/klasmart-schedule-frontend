@@ -7712,7 +7712,7 @@
         }
       }
     },
-    "entity.FolderContent": {
+    "entity.FolderContentData": {
       "type": "object",
       "properties": {
         "author": {
@@ -7746,7 +7746,10 @@
           "type": "integer"
         },
         "keywords": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "name": {
           "type": "string"
@@ -7768,7 +7771,7 @@
         "list": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.FolderContent"
+            "$ref": "#/definitions/entity.FolderContentData"
           }
         },
         "total": {

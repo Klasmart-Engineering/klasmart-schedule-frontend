@@ -618,7 +618,7 @@ export interface EntityFeedbackAssignmentView {
   number?: number;
 }
 
-export interface EntityFolderContent {
+export interface EntityFolderContentData {
   author?: string;
   author_name?: string;
   content_type?: number;
@@ -637,7 +637,7 @@ export interface EntityFolderContent {
 }
 
 export interface EntityFolderContentInfoWithDetailsResponse {
-  list?: EntityFolderContent[];
+  list?: EntityFolderContentData[];
   total?: number;
 }
 
