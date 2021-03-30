@@ -702,7 +702,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
-              <span className={classes.selectAll}>{d("( {value} files selected )").t("library_label_files_selected")}</span>
+              <span className={classes.selectAll}>{t("library_label_files_selected", { value: ids.length.toString() })}</span>
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={3} xs={3}>

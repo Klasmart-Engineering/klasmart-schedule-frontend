@@ -26,7 +26,7 @@ export interface ContentListForm {
   [ContentListFormKey.SEARCH_TEXT_KEY]: string;
   [ContentListFormKey.EXECT_SEARCH]: string;
   [ContentListFormKey.FOLDER_NAME]: NonNullable<EntityCreateFolderRequest["name"]>;
-  [ContentListFormKey.REMARK]: NonNullable<EntityCreateFolderRequest["remark"]>;
+  [ContentListFormKey.REMARK]: NonNullable<EntityCreateFolderRequest["description"]>;
   [ContentListFormKey.KEYWORDS]: NonNullable<EntityCreateFolderRequest["keywords"]>;
 }
 
