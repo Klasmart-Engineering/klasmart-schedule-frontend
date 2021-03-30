@@ -41,11 +41,11 @@ export interface ApiDownloadPathResource {
 }
 
 export interface ApiFolderItemsResponse {
-  items?: EntityFolderItem[];
+  items?: EntityFolderItemInfo[];
 }
 
 export interface ApiFolderItemsResponseWithTotal {
-  items?: EntityFolderItem[];
+  items?: EntityFolderItemInfo[];
   total?: number;
 }
 
@@ -592,7 +592,6 @@ export interface EntityCreateFolderRequest {
   parent_id?: string;
   partition?: string;
   thumbnail?: string;
-  remark?: string;
 }
 
 export interface EntityCreateH5PEventRequest {
@@ -635,7 +634,6 @@ export interface EntityFolderContent {
   publish_status?: string;
   thumbnail?: string;
   update_at?: number;
-  remark?: string;
 }
 
 export interface EntityFolderContentInfoWithDetailsResponse {
@@ -648,26 +646,6 @@ export interface EntityFolderIdWithFileType {
   id?: string;
 }
 
-export interface EntityFolderItem {
-  create_at?: number;
-  creator?: string;
-  description?: string;
-  dir_path?: string;
-  editor?: string;
-  id?: string;
-  item_type?: number;
-  items_count?: number;
-  keywords?: string;
-  link?: string;
-  name?: string;
-  owner?: string;
-  owner_type?: number;
-  parent_id?: string;
-  partition?: string;
-  thumbnail?: string;
-  update_at?: number;
-}
-
 export interface EntityFolderItemInfo {
   available?: number;
   create_at?: number;
@@ -677,9 +655,9 @@ export interface EntityFolderItemInfo {
   editor?: string;
   id?: string;
   item_type?: number;
-  items?: EntityFolderItem[];
+  items?: EntityFolderItemInfo[];
   items_count?: number;
-  keywords?: string;
+  keywords?: string[];
   link?: string;
   name?: string;
   owner?: string;
@@ -688,8 +666,6 @@ export interface EntityFolderItemInfo {
   partition?: string;
   thumbnail?: string;
   update_at?: number;
-  keywords?: string;
-  remark?: string;
 }
 
 export interface EntityFolderShareRecord {
@@ -1172,7 +1148,6 @@ export interface EntityUpdateFolderRequest {
   keywords?: string[];
   name?: string;
   thumbnail?: string;
-  remark?: string;
 }
 
 export interface EntityUserSettingJsonContent {

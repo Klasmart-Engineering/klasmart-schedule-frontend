@@ -6061,7 +6061,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.FolderItem"
+            "$ref": "#/definitions/entity.FolderItemInfo"
           }
         }
       }
@@ -6072,7 +6072,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.FolderItem"
+            "$ref": "#/definitions/entity.FolderItemInfo"
           }
         },
         "total": {
@@ -7788,62 +7788,6 @@
         }
       }
     },
-    "entity.FolderItem": {
-      "type": "object",
-      "properties": {
-        "create_at": {
-          "type": "integer"
-        },
-        "creator": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "dir_path": {
-          "type": "string"
-        },
-        "editor": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "item_type": {
-          "type": "integer"
-        },
-        "items_count": {
-          "type": "integer"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "link": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "owner_type": {
-          "type": "integer"
-        },
-        "parent_id": {
-          "type": "string"
-        },
-        "partition": {
-          "type": "string"
-        },
-        "thumbnail": {
-          "type": "string"
-        },
-        "update_at": {
-          "type": "integer"
-        }
-      }
-    },
     "entity.FolderItemInfo": {
       "type": "object",
       "properties": {
@@ -7874,14 +7818,17 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.FolderItem"
+            "$ref": "#/definitions/entity.FolderItemInfo"
           }
         },
         "items_count": {
           "type": "integer"
         },
         "keywords": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "link": {
           "type": "string"
