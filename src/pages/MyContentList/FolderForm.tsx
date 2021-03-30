@@ -113,7 +113,7 @@ export function FolderForm(props: FolderFormProps) {
               name={REMARK}
               control={control}
               as={TextField}
-              defaultValue={folderForm?.remark || ""}
+              defaultValue={folderForm?.description || ""}
               className={css.textField}
               fullWidth
               variant="outlined"
