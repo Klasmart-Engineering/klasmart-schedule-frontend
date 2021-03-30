@@ -1,10 +1,19 @@
-import { Button, createStyles, Grid, Hidden, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Button, createStyles, Grid, Hidden, Tooltip, Typography } from "@material-ui/core";
+import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import React from "react";
 import { EntityFolderContentData, EntityFolderItemInfo } from "../../api/api.auto";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { d } from "../../locale/LocaleManager";
+const LightTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    boxShadow: theme.shadows[1],
+    fontSize: 12,
+  },
+}))(Tooltip);
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     //
@@ -54,6 +63,12 @@ const useStyles = makeStyles((theme) =>
       marginLeft: 5,
       lineHeight: "22px",
       color: "#000000",
+      overflow: "hidden",
+      display: "-webkit-box",
+      textOverflow: "ellipsis",
+      WebkitBoxOrient: "vertical",
+      WebkitLineClamp: 3,
+      wordBreak: "break-word",
       [theme.breakpoints.down("sm")]: {
         fontSize: 18,
       },
@@ -85,20 +100,25 @@ interface BackToPrevePageProps {
 export function BackToPrevPage(props: BackToPrevePageProps) {
   const css = useStyles();
   const { onGoBack, parentFolderInfo, onRenameFolder } = props;
+  const keywords = parentFolderInfo.keywords ? parentFolderInfo.keywords.join(",") : "";
   const folderInfo = () => {
     return (
       <>
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{"Created by"}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo.editor}</Typography>
+          <Typography className={css.infoWord}>{parentFolderInfo.creator_name}</Typography>
         </div>
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{d("Keywords").t("library_label_keywords")}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo?.keywords ? parentFolderInfo?.keywords.join(",") : ""}</Typography>
+          <LightTooltip placement="top" title={keywords}>
+            <Typography className={css.infoWord}>{keywords}</Typography>
+          </LightTooltip>
         </div>
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{d("Description").t("library_label_description")}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo.description}</Typography>
+          <LightTooltip placement="top" title={parentFolderInfo.description || ""}>
+            <Typography className={css.infoWord}>{parentFolderInfo.description}</Typography>
+          </LightTooltip>
         </div>
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{"Contain"}:</Typography>
