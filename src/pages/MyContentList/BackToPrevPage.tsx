@@ -123,8 +123,8 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{"Contain"}:</Typography>
           <Typography className={css.infoWord}>
-            ({parentFolderInfo.items_count} {d("items").t("library_label_items")}. {parentFolderInfo.available}{" "}
-            {d("visible").t("library_label_visible")})
+            {parentFolderInfo.items_count} {d("items").t("library_label_items")}. {parentFolderInfo.available}{" "}
+            {d("visible").t("library_label_visible")}
           </Typography>
         </div>
       </>
