@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import React, { useMemo, useState } from "react";
 import { Controller, ControllerProps, UseFormMethods } from "react-hook-form";
-import { EntityFolderContent } from "../../api/api.auto";
+import { EntityFolderContentData } from "../../api/api.auto";
 import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
@@ -71,7 +71,7 @@ export interface FolderFormProps {
   onClose: () => any;
   onAddFolder: LButtonProps["onClick"];
   onRenameFolder: LButtonProps["onClick"];
-  folderForm?: EntityFolderContent;
+  folderForm?: EntityFolderContentData;
   formMethods: UseFormMethods<ContentListForm>;
   rules?: ControllerProps<"input">["rules"];
 }

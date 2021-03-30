@@ -17,7 +17,7 @@ import {
 import { InfoOutlined } from "@material-ui/icons";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { EntityFolderContent, EntityOrganizationProperty } from "../../api/api.auto";
+import { EntityFolderContentData, EntityOrganizationProperty } from "../../api/api.auto";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
@@ -183,7 +183,7 @@ export function OrganizationList(props: OrganizationListProps) {
 export function useOrganizationList<T>() {
   const [active, setActive] = useState(false);
   const [organizationListShowIndex, setOrganizationListShowInex] = useState(100);
-  const [shareFolder, setShareFolder] = useState<EntityFolderContent>();
+  const [shareFolder, setShareFolder] = useState<EntityFolderContentData>();
   return useMemo(
     () => ({
       organizationListShowIndex,

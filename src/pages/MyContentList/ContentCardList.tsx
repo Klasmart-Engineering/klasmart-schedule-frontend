@@ -29,7 +29,7 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityFolderContent, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
+import { EntityFolderContentData, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
 import { Author, ContentType, PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
@@ -285,7 +285,7 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   transform: props.open ? "rotate(180deg)" : "none",
 }));
 interface ContentProps extends ContentActionProps {
-  content: EntityFolderContent;
+  content: EntityFolderContentData;
   queryCondition: QueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
   orgProperty: EntityOrganizationProperty;
@@ -545,27 +545,27 @@ function ContentCard(props: ContentProps) {
 }
 
 interface ContentActionProps {
-  onPublish: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
-  onDelete: (id: NonNullable<EntityFolderContent["id"]>, type: string) => ReturnType<LButtonProps["onClick"]>;
-  onClickMoveBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
-  onRenameFolder: (content: NonNullable<EntityFolderContent>) => any;
-  onDeleteFolder: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
-  onApprove: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
-  onReject: (id: NonNullable<EntityFolderContent["id"]>) => ReturnType<LButtonProps["onClick"]>;
-  onClickShareBtn: (content: NonNullable<EntityFolderContent>) => ReturnType<LButtonProps["onClick"]>;
+  onPublish: (id: NonNullable<EntityFolderContentData["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onDelete: (id: NonNullable<EntityFolderContentData["id"]>, type: string) => ReturnType<LButtonProps["onClick"]>;
+  onClickMoveBtn: (content: NonNullable<EntityFolderContentData>) => ReturnType<LButtonProps["onClick"]>;
+  onRenameFolder: (content: NonNullable<EntityFolderContentData>) => any;
+  onDeleteFolder: (id: NonNullable<EntityFolderContentData["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onApprove: (id: NonNullable<EntityFolderContentData["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onReject: (id: NonNullable<EntityFolderContentData["id"]>) => ReturnType<LButtonProps["onClick"]>;
+  onClickShareBtn: (content: NonNullable<EntityFolderContentData>) => ReturnType<LButtonProps["onClick"]>;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
   formMethods: UseFormMethods<ContentListForm>;
   total: number;
   amountPerPage: number;
-  list: EntityFolderContent[];
+  list: EntityFolderContentData[];
   queryCondition: QueryCondition;
   onChangePage: (page: number) => void;
   onClickContent: (
-    id: EntityFolderContent["id"],
-    content_type: EntityFolderContent["content_type"],
-    dir_path: EntityFolderContent["dir_path"]
+    id: EntityFolderContentData["id"],
+    content_type: EntityFolderContentData["content_type"],
+    dir_path: EntityFolderContentData["dir_path"]
   ) => any;
   onChangePageSize: (page_size: number) => void;
   onGoBack: () => any;

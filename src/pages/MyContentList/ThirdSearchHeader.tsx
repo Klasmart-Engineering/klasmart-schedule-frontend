@@ -9,7 +9,7 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent, useMemo } from "react";
 import { UseFormMethods } from "react-hook-form";
-import { EntityFolderContent } from "../../api/api.auto";
+import { EntityFolderContentData } from "../../api/api.auto";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
@@ -425,7 +425,7 @@ export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkReject: () => any;
   onExportCSV: ExportCSVBtnProps["onClick"];
   ids?: string[];
-  contentList: EntityFolderContent[];
+  contentList: EntityFolderContentData[];
   conditionFormMethods: UseFormMethods<ContentListForm>;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {

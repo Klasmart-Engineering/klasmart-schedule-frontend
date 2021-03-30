@@ -16,7 +16,7 @@ import {
   ApiOutcomeView,
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
-  EntityFolderContent,
+  EntityFolderContentData,
   EntityFolderItemInfo,
   EntityOrganizationInfo,
   EntityOrganizationProperty,
@@ -39,7 +39,7 @@ interface IContentState {
   mediaList: EntityContentInfoWithDetails[];
   outcomeList: ApiOutcomeView[];
   total: number;
-  contentsList: EntityFolderContent[];
+  contentsList: EntityFolderContentData[];
   contentPreview: EntityContentInfoWithDetails;
   mediaListTotal: number;
   OutcomesListTotal: number;
@@ -744,7 +744,7 @@ export const moveFolder = createAsyncThunk<IQueryMoveFolderResult, IQueryMOveFol
 
 type IQueryBulkMoveFolderParams = {
   dist: string;
-  contents?: EntityFolderContent[];
+  contents?: EntityFolderContentData[];
   content_type?: string;
 };
 type IQueryBulkMoveFolderResult = AsyncReturnType<typeof api.folders.moveFolderItemBulk>;
@@ -883,7 +883,7 @@ export const getOrgList = createAsyncThunk<
 });
 
 type IQueryShareFoldersParams = {
-  shareFolder: EntityFolderContent | undefined;
+  shareFolder: EntityFolderContentData | undefined;
   org_ids: Parameters<typeof api.folders.shareFolders>[0]["org_ids"];
 } & LoadingMetaPayload;
 type IQueryShareFolderResult = AsyncReturnType<typeof api.folders.shareFolders>;

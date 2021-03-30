@@ -1,15 +1,15 @@
-import { EntityFolderContent, EntityFolderIdWithFileType } from "../api/api.auto";
+import { EntityFolderContentData, EntityFolderIdWithFileType } from "../api/api.auto";
 import { ContentType, FolderFileTyoe } from "../api/type";
 import { Segment } from "./ModelLessonPlan";
 
-function toHash(contents: EntityFolderContent[]): Partial<Record<string, EntityFolderContent>> {
+function toHash(contents: EntityFolderContentData[]): Partial<Record<string, EntityFolderContentData>> {
   return contents.reduce((result, content) => {
     result[content.id as string] = content;
     return result;
-  }, {} as Record<string, EntityFolderContent>);
+  }, {} as Record<string, EntityFolderContentData>);
 }
 
-export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[]) {
+export function ids2removeOrDelete(contents: EntityFolderContentData[], ids: string[]) {
   const obj = {
     folder: false,
     notFolder: false,
@@ -34,12 +34,12 @@ export function ids2removeOrDelete(contents: EntityFolderContent[], ids: string[
   return obj;
 }
 
-export function ids2Content(contents: EntityFolderContent[], ids: string[]): EntityFolderContent[] {
+export function ids2Content(contents: EntityFolderContentData[], ids: string[]): EntityFolderContentData[] {
   const hash = toHash(contents);
-  return ids.reduce((result, id) => result.concat(hash[id] ?? []), [] as EntityFolderContent[]);
+  return ids.reduce((result, id) => result.concat(hash[id] ?? []), [] as EntityFolderContentData[]);
 }
 
-export function content2FileType(contents: EntityFolderContent[] | undefined): EntityFolderIdWithFileType[] {
+export function content2FileType(contents: EntityFolderContentData[] | undefined): EntityFolderIdWithFileType[] {
   if (!contents) return [];
   return contents.map((item) => {
     return {
@@ -56,7 +56,7 @@ export function segment2Ids(segment: Segment, content_ids: string[]) {
   }
 }
 
-export function content2ids(contents: EntityFolderContent[], ids?: string[]) {
+export function content2ids(contents: EntityFolderContentData[], ids?: string[]) {
   if (!ids) return [];
   const contentsArr = ids2Content(contents, ids);
   const content_ids: string[] = [];

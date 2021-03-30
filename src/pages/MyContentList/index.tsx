@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
-import { EntityFolderContent } from "../../api/api.auto";
+import { EntityFolderContentData } from "../../api/api.auto";
 import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
@@ -130,7 +130,7 @@ export default function MyContentList() {
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
-    EntityFolderContent[]
+    EntityFolderContentData[]
   >();
   const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
   const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
@@ -143,7 +143,7 @@ export default function MyContentList() {
     setShareFolder,
   } = useOrganizationList<OrgInfoProps[]>();
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
-  const [folderForm, setFolderForm] = useState<EntityFolderContent>();
+  const [folderForm, setFolderForm] = useState<EntityFolderContentData>();
   const [parentId, setParentId] = useState<string>();
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
@@ -233,7 +233,7 @@ export default function MyContentList() {
     }
   };
 
-  const handleClickRenameFolder = (content: EntityFolderContent) => {
+  const handleClickRenameFolder = (content: EntityFolderContentData) => {
     console.log(content);
     setFolderForm(content);
     openFolderForm();

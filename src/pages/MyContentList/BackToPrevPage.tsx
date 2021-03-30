@@ -1,7 +1,7 @@
 import { Button, createStyles, Grid, Hidden, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
-import { EntityFolderContent, EntityFolderItemInfo } from "../../api/api.auto";
+import { EntityFolderContentData, EntityFolderItemInfo } from "../../api/api.auto";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
 import { d } from "../../locale/LocaleManager";
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) =>
 interface BackToPrevePageProps {
   onGoBack: () => any;
   parentFolderInfo: EntityFolderItemInfo;
-  onRenameFolder: (content: NonNullable<EntityFolderContent>) => any;
+  onRenameFolder: (content: NonNullable<EntityFolderContentData>) => any;
 }
 export function BackToPrevPage(props: BackToPrevePageProps) {
   const css = useStyles();
