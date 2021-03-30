@@ -7,7 +7,7 @@ import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { d, t } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({ palette }) => ({
   textFiled: {
     height: "112px",
     marginBottom: 20,
@@ -56,6 +56,9 @@ const useStyles = makeStyles(() => ({
     marginLeft: 10,
     color: "rgba(0, 0, 0, 0.87)",
   },
+  fontColor: {
+    color: palette.common.black,
+  },
 }));
 interface ContentPreviewProps {
   contentPreview: EntityContentInfoWithDetails;
@@ -71,7 +74,7 @@ export function Detail(props: ContentPreviewProps) {
         margin="normal"
         fullWidth
         multiline
-        disabled={true}
+        disabled
         rows={2}
         label={d("Description").t("library_label_description")}
         variant="outlined"
@@ -86,7 +89,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Created On").t("library_label_created_on")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               style: { color: "rgba(0,0,0,1)" },
@@ -98,7 +101,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Author").t("library_label_author")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -111,7 +114,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Program").t("library_label_program")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -124,7 +127,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Subject").t("library_label_subject")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -137,7 +140,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Category").t("library_label_category")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -150,7 +153,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Subcategory").t("library_label_subcategory")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -163,7 +166,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Visibility Settings").t("library_label_visibility_settings")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -176,7 +179,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={t("library_label_duration")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -189,7 +192,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Age").t("library_label_age")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -202,7 +205,7 @@ export function Detail(props: ContentPreviewProps) {
           <TextField
             label={d("Grade").t("library_label_grade")}
             fullWidth
-            disabled={true}
+            disabled
             variant="outlined"
             InputProps={{
               readOnly: true,
@@ -216,7 +219,7 @@ export function Detail(props: ContentPreviewProps) {
         <TextField
           margin="normal"
           fullWidth
-          disabled={true}
+          disabled
           rows={2}
           label={d("Lesson Type").t("library_label_lesson_type")}
           variant="outlined"
@@ -245,10 +248,7 @@ export function Detail(props: ContentPreviewProps) {
               color="primary"
             />
           }
-          label={d("Suitable for Self Study").t("library_label_self_study")}
-          style={{
-            color: "rgba(0,0,0,0.6)",
-          }}
+          label={<span className={css.fontColor}>{d("Suitable for Self Study").t("library_label_self_study")}</span>}
           labelPlacement="start"
         />
       </Box>
@@ -271,10 +271,7 @@ export function Detail(props: ContentPreviewProps) {
                 color="primary"
               />
             }
-            label={d("Drawing Activity").t("library_label_drawing_activity")}
-            style={{
-              color: "rgba(0,0,0,0.6)",
-            }}
+            label={<span className={css.fontColor}>{d("Drawing Activity").t("library_label_drawing_activity")}</span>}
             labelPlacement="start"
           />
         </Box>
@@ -283,7 +280,7 @@ export function Detail(props: ContentPreviewProps) {
         className={css.keyword}
         margin="normal"
         fullWidth
-        disabled={true}
+        disabled
         label={d("Keywords").t("library_label_keywords")}
         variant="outlined"
         InputProps={{
