@@ -695,17 +695,17 @@ type IQueryAddFolderParams1 = {
   content_type?: string;
   parent_id: string;
   name: string;
-  remark: string;
-  keywords: string;
+  description: string;
+  keywords: string[];
   conditionFormMethods: UseFormMethods<ContentListForm>;
 };
 type IQueryAddFolderResult1 = AsyncReturnType<typeof api.folders.createFolder>;
 export const addFolder1 = createAsyncThunk<IQueryAddFolderResult1, IQueryAddFolderParams1>(
   "content/addFolder",
-  async ({ content_type, parent_id, name, remark, keywords, conditionFormMethods }, { dispatch }) => {
+  async ({ content_type, parent_id, name, description, keywords, conditionFormMethods }, { dispatch }) => {
     const partition =
       content_type === SearchContentsRequestContentType.assetsandfolder ? FolderPartition.assets : FolderPartition.plansAndMaterials;
-    return api.folders.createFolder({ name, remark, keywords, owner_type: 1, parent_id, partition }).catch((err) => {
+    return api.folders.createFolder({ name, description, keywords, owner_type: 1, parent_id, partition }).catch((err) => {
       conditionFormMethods.setError(ContentListFormKey.FOLDER_NAME, { message: t(err.label || UNKNOW_ERROR_LABEL) });
       throw err;
     });
@@ -716,14 +716,18 @@ type IQueryRenameFolderParams1 = {
   item_id: Parameters<typeof api.folders.updateFolderItem>[0];
   // defaultName: string;
   name: string;
-  remark: string;
-  keywords: string;
+  description: string;
+  keywords: string[];
+  conditionFormMethods: UseFormMethods<ContentListForm>;
 };
 type IQueryRenameFolderResult1 = AsyncReturnType<typeof api.folders.updateFolderItem>;
 export const renameFolder1 = createAsyncThunk<IQueryRenameFolderResult1, IQueryRenameFolderParams1>(
   "content/renameFolder",
-  async ({ item_id, name, remark, keywords }, { dispatch }) => {
-    return api.folders.updateFolderItem(item_id, { name, remark, keywords });
+  async ({ item_id, name, description, keywords, conditionFormMethods }, { dispatch }) => {
+    return api.folders.updateFolderItem(item_id, { name, description, keywords }).catch((err) => {
+      conditionFormMethods.setError(ContentListFormKey.FOLDER_NAME, { message: t(err.label || UNKNOW_ERROR_LABEL) });
+      throw err;
+    });
     // .then(() => true)
     // .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
   }

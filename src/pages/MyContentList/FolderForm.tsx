@@ -12,6 +12,7 @@ import {
 import React, { useMemo, useState } from "react";
 import { Controller, ControllerProps, UseFormMethods } from "react-hook-form";
 import { EntityFolderContent } from "../../api/api.auto";
+import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d, reportMiss } from "../../locale/LocaleManager";
 import { ContentListForm, ContentListFormKey } from "./types";
@@ -123,11 +124,12 @@ export function FolderForm(props: FolderFormProps) {
             <Controller
               name={KEYWORDS}
               control={control}
-              as={TextField}
+              as={FormattedTextField}
+              decode={decodeArray}
               defaultValue={folderForm?.keywords || ""}
               className={css.textField}
               fullWidth
-              variant="outlined"
+              // variant="outlined"
             />
           </div>
         </div>

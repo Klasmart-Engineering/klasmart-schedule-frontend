@@ -43,10 +43,6 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
-<<<<<<< HEAD
-import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
-import { ExectSearch, EXECT_SEARCH, SEARCH_TEXT_KEY, SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
-=======
 import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import {
   ExectSearch,
@@ -56,7 +52,6 @@ import {
   SecondSearchHeaderMb,
   SecondSearchHeaderProps,
 } from "./SecondSearchHeader";
->>>>>>> feat(NKL-535): folder 弹框逻辑
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -239,6 +234,7 @@ export default function MyContentList() {
   };
 
   const handleClickRenameFolder = (content: EntityFolderContent) => {
+    console.log(content);
     setFolderForm(content);
     openFolderForm();
   };
@@ -312,7 +308,7 @@ export default function MyContentList() {
   const handleAddFolderFormItem = useMemo(
     () =>
       handleSubmit(async (value: ContentListForm) => {
-        const { FOLDER_NAME: name, REMARK: remark, KEYWORDS: keywords } = value;
+        const { FOLDER_NAME: name, REMARK: description, KEYWORDS: keywords } = value;
         const parent_id = (condition.path || "").split("/").pop() || "";
         await refreshWithDispatch(
           dispatch(
@@ -320,7 +316,7 @@ export default function MyContentList() {
               content_type: condition.content_type,
               parent_id: parentId ? parentId : parent_id,
               name,
-              remark,
+              description,
               keywords,
               conditionFormMethods,
             })
@@ -336,13 +332,15 @@ export default function MyContentList() {
   const handleRenameFolderItem = useMemo(
     () =>
       handleSubmit(async (value: ContentListForm) => {
-        const { FOLDER_NAME: name, REMARK: remark, KEYWORDS: keywords } = value;
+        const { FOLDER_NAME: name, REMARK: description, KEYWORDS: keywords } = value;
         await refreshWithDispatch(
-          dispatch(renameFolder1({ item_id: folderForm?.id as string, name, remark, keywords })).then(unwrapResult)
+          dispatch(renameFolder1({ item_id: folderForm?.id as string, name, description, keywords, conditionFormMethods })).then(
+            unwrapResult
+          )
         );
         closeFolderForm();
       }),
-    [closeFolderForm, dispatch, folderForm, handleSubmit, refreshWithDispatch]
+    [closeFolderForm, dispatch, folderForm, handleSubmit, refreshWithDispatch, conditionFormMethods]
   );
   useEffect(() => {
     if (contentsList?.length === 0 && total > 0) {

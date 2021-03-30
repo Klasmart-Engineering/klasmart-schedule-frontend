@@ -593,7 +593,6 @@ export interface EntityCreateFolderRequest {
   partition?: string;
   thumbnail?: string;
   remark?: string;
-  keywords?: string;
 }
 
 export interface EntityCreateH5PEventRequest {
@@ -1174,7 +1173,6 @@ export interface EntityUpdateFolderRequest {
   name?: string;
   thumbnail?: string;
   remark?: string;
-  keywords?: string;
 }
 
 export interface EntityUserSettingJsonContent {
