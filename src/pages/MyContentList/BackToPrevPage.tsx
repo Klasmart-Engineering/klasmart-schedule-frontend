@@ -94,7 +94,7 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
         </div>
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{d("Keywords").t("library_label_keywords")}:</Typography>
-          <Typography className={css.infoWord}>{parentFolderInfo.keywords}</Typography>
+          <Typography className={css.infoWord}>{parentFolderInfo?.keywords ? parentFolderInfo?.keywords.join(",") : ""}</Typography>
         </div>
         <div className={css.folderInfoCon}>
           <Typography className={css.despWord}>{d("Description").t("library_label_description")}:</Typography>

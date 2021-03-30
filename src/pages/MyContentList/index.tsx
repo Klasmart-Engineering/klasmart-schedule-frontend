@@ -43,7 +43,7 @@ import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "
 import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
 import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
-import ProgramSearchHeader, { ProgramSearchHeaderMb } from "./ProgramSearchHeader";
+import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import {
   ExectSearch,
   EXECT_SEARCH,

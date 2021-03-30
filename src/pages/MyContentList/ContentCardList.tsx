@@ -596,7 +596,6 @@ export function ContentCardList(props: ContentCardListProps) {
     orgProperty,
   } = props;
   const { control } = formMethods;
-  console.log("orgProperty = ", orgProperty);
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   const handleChangePageSize = (event: React.ChangeEvent<{ value: unknown }>) => {
     onChangePageSize(event.target.value as number);

@@ -357,7 +357,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
-              {/* <span className={classes.selectAll}>{reportMiss("( {value} files selected )", "library_label_files_selected")}</span> */}
+              <span className={classes.selectAll}>{reportMiss("( {value} files selected )", "library_label_files_selected")}</span>
               {bulkOptions.length > 0 && (
                 <TextField
                   style={{ width: 160 }}
