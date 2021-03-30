@@ -194,6 +194,10 @@ type LangRecord<T = string> =
       description: "Publish a lesson plan, and add teacher manuals to assets library";
       values: undefined;
     }
+  | { id: "library_label_edit_folder"; description: "Edit Folder"; values: undefined }
+  | { id: "library_label_contentType"; description: "Content Type"; values: undefined }
+  | { id: "library_label_files_selected"; description: "( {value} files selected )"; values: { value: string | number } }
+  | { id: "library_label_more"; description: "More"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -630,6 +634,7 @@ type LangRecord<T = string> =
   | { id: "schedule_any_anytime_study"; description: "Any Time Study"; values: undefined }
   | { id: "schedule_detail_see_less"; description: "See Less"; values: undefined }
   | { id: "schedule_detail_students"; description: "Students"; values: undefined }
+  | { id: "schedule_calendar_more"; description: "More"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

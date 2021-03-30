@@ -12,7 +12,7 @@ import { Controller, UseFormMethods } from "react-hook-form";
 import { Author, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { StyledMenu } from "./FirstSearchHeader";
 import { ContentListForm, QueryCondition, QueryConditionBaseProps } from "./types";
 export const SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
@@ -200,10 +200,12 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
       })
     );
   };
+
   const handleClickNewFolder = () => {
     setAnchorCreate(null);
     onNewFolder();
   };
+
   useEffect(() => {
     reset();
   }, [value.name, reset]);
@@ -408,7 +410,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                   }}
                   size="small"
                   onChange={handleChangeFilterOption}
-                  label={reportMiss("Content Type", "library_label_contentType")}
+                  label={d("Content Type").t("library_label_contentType")}
                   value={value.content_type}
                   select
                   SelectProps={{

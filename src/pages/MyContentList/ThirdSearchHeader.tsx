@@ -14,13 +14,12 @@ import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from
 import { ExportCSVBtn, ExportCSVBtnProps } from "../../components/ExportCSVBtn";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionResult, PermissionType, usePermission } from "../../components/Permission";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { content2ids } from "../../models/ModelEntityFolderContent";
 import { Action } from "../../reducers/content";
 import { isUnpublish } from "./FirstSearchHeader";
 import { filterOptions } from "./SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, QueryConditionBaseProps } from "./types";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -100,12 +99,15 @@ const useStyles = makeStyles((theme) => ({
 function SubUnpublished(props: QueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+
   const handleChange = (e: ChangeEvent<{}>, publish_status: QueryCondition["publish_status"]) => {
     if (publish_status === PublishStatus.pending) {
       return onChange({ ...value, publish_status, author: Author.self });
     }
+
     onChange({ ...value, publish_status, author: undefined });
   };
+
   return (
     <Tabs
       className={classes.tabs}
@@ -132,7 +134,6 @@ export enum BulkAction {
   reject = "reject",
   exportCsv = "exportCsv",
 }
-
 interface BulkActionOption {
   label: string;
   value: BulkAction;
@@ -144,128 +145,281 @@ function getBulkAction(
   actionObj: ThirdSearchHeaderProps["actionObj"]
 ): BulkActionOption[] {
   const unpublish = isUnpublish(condition);
+
   if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
     let res = [
-      { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-      { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-      { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
+      {
+        label: d("Move to").t("library_label_move"),
+        value: BulkAction.move,
+      },
+      {
+        label: d("Delete Folder").t("library_label_delete_folder"),
+        value: BulkAction.deleteFolder,
+      },
+      {
+        label: d("Delete").t("library_label_delete"),
+        value: BulkAction.delete,
+      },
     ];
+
     if (perm.delete_asset_340 && actionObj?.notFolder) {
       res = [
-        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-        { label: d("Delete").t("library_label_delete"), value: BulkAction.delete },
+        {
+          label: d("Move to").t("library_label_move"),
+          value: BulkAction.move,
+        },
+        {
+          label: d("Delete").t("library_label_delete"),
+          value: BulkAction.delete,
+        },
       ];
     }
+
     if (actionObj?.folder) {
       res = [
-        { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-        { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+        {
+          label: d("Move to").t("library_label_move"),
+          value: BulkAction.move,
+        },
+        {
+          label: d("Delete Folder").t("library_label_delete_folder"),
+          value: BulkAction.deleteFolder,
+        },
       ];
     }
-    if (actionObj?.bothHave) res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+
+    if (actionObj?.bothHave)
+      res = [
+        {
+          label: d("Move to").t("library_label_move"),
+          value: BulkAction.move,
+        },
+      ];
     return res;
   }
+
   switch (condition.publish_status) {
     case PublishStatus.published:
       let res: BulkActionOption[] = [];
+
       if (perm.create_folder_289 && perm.archive_published_content_273) {
         res = [
-          { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          {
+            label: d("Remove").t("library_label_remove"),
+            value: BulkAction.remove,
+          },
+          {
+            label: d("Move to").t("library_label_move"),
+            value: BulkAction.move,
+          },
+          {
+            label: d("Delete Folder").t("library_label_delete_folder"),
+            value: BulkAction.deleteFolder,
+          },
+          {
+            label: d("Export as CSV").t("library_label_export_as_csv"),
+            value: BulkAction.exportCsv,
+          },
         ];
       } else if (perm.create_folder_289 && !perm.archive_published_content_273) {
         res = [
-          { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-          { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
-          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          {
+            label: d("Move to").t("library_label_move"),
+            value: BulkAction.move,
+          },
+          {
+            label: d("Delete Folder").t("library_label_delete_folder"),
+            value: BulkAction.deleteFolder,
+          },
+          {
+            label: d("Export as CSV").t("library_label_export_as_csv"),
+            value: BulkAction.exportCsv,
+          },
         ];
       } else if (!perm.create_folder_289 && perm.archive_published_content_273) {
         res = [
-          { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-          { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+          {
+            label: d("Remove").t("library_label_remove"),
+            value: BulkAction.remove,
+          },
+          {
+            label: d("Export as CSV").t("library_label_export_as_csv"),
+            value: BulkAction.exportCsv,
+          },
         ];
       } else {
-        res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
+        res = [
+          {
+            label: d("Export as CSV").t("library_label_export_as_csv"),
+            value: BulkAction.exportCsv,
+          },
+        ];
       }
+
       if (actionObj?.folder) {
         if (perm.create_folder_289) {
           res = [
-            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-            { label: d("Delete Folder").t("library_label_delete_folder"), value: BulkAction.deleteFolder },
+            {
+              label: d("Move to").t("library_label_move"),
+              value: BulkAction.move,
+            },
+            {
+              label: d("Delete Folder").t("library_label_delete_folder"),
+              value: BulkAction.deleteFolder,
+            },
           ];
         } else {
           res = [];
         }
       }
+
       if (actionObj?.notFolder) {
         if (perm.archive_published_content_273 && perm.create_folder_289) {
           res = [
-            { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+            {
+              label: d("Remove").t("library_label_remove"),
+              value: BulkAction.remove,
+            },
+            {
+              label: d("Move to").t("library_label_move"),
+              value: BulkAction.move,
+            },
+            {
+              label: d("Export as CSV").t("library_label_export_as_csv"),
+              value: BulkAction.exportCsv,
+            },
           ];
         } else if (!perm.archive_published_content_273 && perm.create_folder_289) {
           res = [
-            { label: d("Move to").t("library_label_move"), value: BulkAction.move },
-            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+            {
+              label: d("Move to").t("library_label_move"),
+              value: BulkAction.move,
+            },
+            {
+              label: d("Export as CSV").t("library_label_export_as_csv"),
+              value: BulkAction.exportCsv,
+            },
           ];
         } else if (!perm.create_folder_289 && perm.archive_published_content_273) {
           res = [
-            { label: d("Remove").t("library_label_remove"), value: BulkAction.remove },
-            { label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv },
+            {
+              label: d("Remove").t("library_label_remove"),
+              value: BulkAction.remove,
+            },
+            {
+              label: d("Export as CSV").t("library_label_export_as_csv"),
+              value: BulkAction.exportCsv,
+            },
           ];
         } else {
-          res = [{ label: d("Export as CSV").t("library_label_export_as_csv"), value: BulkAction.exportCsv }];
+          res = [
+            {
+              label: d("Export as CSV").t("library_label_export_as_csv"),
+              value: BulkAction.exportCsv,
+            },
+          ];
         }
       }
+
       if (actionObj?.bothHave) {
         if (perm.create_folder_289) {
-          res = [{ label: d("Move to").t("library_label_move"), value: BulkAction.move }];
+          res = [
+            {
+              label: d("Move to").t("library_label_move"),
+              value: BulkAction.move,
+            },
+          ];
         } else {
           res = [];
         }
       }
+
       return res;
+
     case PublishStatus.pending:
       const pendingRes = [];
+
       if (unpublish) {
-        pendingRes.push({ label: d("Delete").t("library_label_delete"), value: BulkAction.delete });
+        pendingRes.push({
+          label: d("Delete").t("library_label_delete"),
+          value: BulkAction.delete,
+        });
       } else {
         if (perm.approve_pending_content_271) {
-          pendingRes.push({ label: d("Approve").t("library_label_approve"), value: BulkAction.approve });
+          pendingRes.push({
+            label: d("Approve").t("library_label_approve"),
+            value: BulkAction.approve,
+          });
         }
+
         if (perm.reject_pending_content_272) {
-          pendingRes.push({ label: d("Reject").t("library_label_reject"), value: BulkAction.reject });
+          pendingRes.push({
+            label: d("Reject").t("library_label_reject"),
+            value: BulkAction.reject,
+          });
         }
       }
+
       return pendingRes;
+
     case PublishStatus.archive:
       const result = [];
       if (perm.republish_archived_content_274)
-        result.push({ label: d("Republish").t("library_label_republish"), value: BulkAction.publish });
-      if (perm.delete_archived_content_275) result.push({ label: d("Delete").t("library_label_delete"), value: BulkAction.remove });
+        result.push({
+          label: d("Republish").t("library_label_republish"),
+          value: BulkAction.publish,
+        });
+      if (perm.delete_archived_content_275)
+        result.push({
+          label: d("Delete").t("library_label_delete"),
+          value: BulkAction.remove,
+        });
       return result;
+
     case PublishStatus.draft:
     case PublishStatus.rejected:
-      return [{ label: d("Delete").t("library_label_delete"), value: BulkAction.delete }];
+      return [
+        {
+          label: d("Delete").t("library_label_delete"),
+          value: BulkAction.delete,
+        },
+      ];
+
     default:
       return [];
   }
 }
 
 const sortOptions = () => [
-  { label: d("Content Name (A-Z)").t("library_label_content_name_atoz"), value: OrderBy.content_name },
-  { label: d("Content Name (Z-A)").t("library_label_content_name_ztoa"), value: OrderBy._content_name },
-  { label: d("Created On (New-Old)").t("library_label_created_on_newtoold"), value: OrderBy._updated_at },
-  { label: d("Created On (Old-New)").t("library_label_created_on_oldtonew"), value: OrderBy.updated_at },
+  {
+    label: d("Content Name (A-Z)").t("library_label_content_name_atoz"),
+    value: OrderBy.content_name,
+  },
+  {
+    label: d("Content Name (Z-A)").t("library_label_content_name_ztoa"),
+    value: OrderBy._content_name,
+  },
+  {
+    label: d("Created On (New-Old)").t("library_label_created_on_newtoold"),
+    value: OrderBy._updated_at,
+  },
+  {
+    label: d("Created On (Old-New)").t("library_label_created_on_oldtonew"),
+    value: OrderBy.updated_at,
+  },
 ];
+
 export interface ThirdSearchHeaderProps extends QueryConditionBaseProps {
   onBulkPublish: () => any;
   onBulkDelete: (type: Action) => any;
   onBulkMove: () => any;
-  actionObj: { folder: boolean; notFolder: boolean; bothHave: boolean } | undefined;
+  actionObj:
+    | {
+        folder: boolean;
+        notFolder: boolean;
+        bothHave: boolean;
+      }
+    | undefined;
   onBulkDeleteFolder: () => any;
   onBulkApprove: () => any;
   onBulkReject: () => any;
@@ -302,6 +456,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     PermissionType.create_folder_289,
   ]);
   const unpublish = isUnpublish(value);
+
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
     if (event.target.value === BulkAction.delete) onBulkDelete(Action.delete);
@@ -309,10 +464,11 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.move) onBulkMove();
     if (event.target.value === BulkAction.deleteFolder) onBulkDeleteFolder();
     if (event.target.value === BulkAction.approve) onBulkApprove();
-    if (event.target.value === BulkAction.reject) onBulkReject();
-    // if (event.target.value === BulkAction.exportCsv) onExportCSV();
+    if (event.target.value === BulkAction.reject) onBulkReject(); // if (event.target.value === BulkAction.exportCsv) onExportCSV();
   };
+
   const { setValue } = conditionFormMethods;
+
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OrderBy | undefined;
     onChange(
@@ -321,6 +477,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       })
     );
   };
+
   const bulkOptions = getBulkAction(value, perm, actionObj).map((item) => (
     <MenuItem key={item.label} value={item.value}>
       {item.value !== BulkAction.exportCsv ? (
@@ -340,7 +497,14 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["xs", "sm"]}>
           <Divider />
-          <Grid container spacing={3} alignItems="center" style={{ marginTop: "6px" }}>
+          <Grid
+            container
+            spacing={3}
+            alignItems="center"
+            style={{
+              marginTop: "6px",
+            }}
+          >
             <Grid item sm={unpublish ? 3 : 6} xs={unpublish ? 3 : 6} md={unpublish ? 3 : 6}>
               <FormControlLabel
                 control={
@@ -357,16 +521,25 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
-              <span className={classes.selectAll}>{reportMiss("( {value} files selected )", "library_label_files_selected")}</span>
+              <span className={classes.selectAll}>{t("library_label_files_selected", { value: ids.length.toString() })}</span>
               {bulkOptions.length > 0 && (
                 <TextField
-                  style={{ width: 160 }}
+                  style={{
+                    width: 160,
+                  }}
                   size="small"
                   onChange={handleChangeBulkAction}
                   label={d("Bulk Actions").t("library_label_bulk_actions")}
                   value=""
                   select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                  SelectProps={{
+                    MenuProps: {
+                      transformOrigin: {
+                        vertical: -40,
+                        horizontal: "left",
+                      },
+                    },
+                  }}
                 >
                   {bulkOptions}
                 </TextField>
@@ -389,12 +562,21 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             >
               <TextField
                 size="small"
-                style={{ width: 200 }}
+                style={{
+                  width: 200,
+                }}
                 onChange={handleChangeOrder}
                 label={d("Sort By").t("library_label_sort_by")}
                 value={value.order_by}
                 select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+                SelectProps={{
+                  MenuProps: {
+                    transformOrigin: {
+                      vertical: -40,
+                      horizontal: "left",
+                    },
+                  },
+                }}
               >
                 {orderbyOptions}
               </TextField>
@@ -405,7 +587,6 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     </div>
   );
 }
-
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const {
@@ -438,9 +619,11 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
   const [anchorFilter, setAnchorFilter] = React.useState<null | HTMLElement>(null);
   const { setValue } = conditionFormMethods;
+
   const handleClickBulkActionButton = (event: any) => {
     setAnchorElLeft(event.currentTarget);
   };
+
   const handleClickActionItem = (event: any, bulkaction: BulkAction) => {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
@@ -449,15 +632,17 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     if (bulkaction === BulkAction.move) onBulkMove();
     if (bulkaction === BulkAction.deleteFolder) onBulkDeleteFolder();
     if (bulkaction === BulkAction.approve) onBulkApprove();
-    if (bulkaction === BulkAction.reject) onBulkReject();
-    // if (bulkaction === BulkAction.exportCsv) onExportCSV();
+    if (bulkaction === BulkAction.reject) onBulkReject(); // if (bulkaction === BulkAction.exportCsv) onExportCSV();
   };
+
   const handleClose = () => {
     setAnchorElLeft(null);
   };
+
   const showSort = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClickOrderbyItem = (event: any, order_by: OrderBy | undefined) => {
     setAnchorEl(null);
     onChange(
@@ -466,13 +651,17 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
       })
     );
   };
+
   const handleSortClose = () => {
     setAnchorEl(null);
   };
+
   const actions = getBulkAction(value, perm, actionObj);
+
   const handleClickFilterIcon = (event: any) => {
     setAnchorFilter(event?.currentTarget);
   };
+
   const handleClickFilterItem = (event: any, content_type: SearchContentsRequestContentType) => {
     setAnchorFilter(null);
     onChange(
@@ -481,13 +670,22 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
       })
     );
   };
+
   const handleFilterClose = () => setAnchorFilter(null);
+
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["md", "lg", "xl"]}>
           <Divider />
-          <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
+          <Grid
+            container
+            alignItems="center"
+            style={{
+              marginTop: "6px",
+              position: "relative",
+            }}
+          >
             <Grid item sm={9} xs={9}>
               <FormControlLabel
                 control={
@@ -504,7 +702,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                 }
                 label={d("Select All").t("schedule_detail_select_all")}
               />
-              <span className={classes.selectAll}>{reportMiss("( {value} files selected )", "library_label_files_selected")}</span>
+              <span className={classes.selectAll}>{d("( {value} files selected )").t("library_label_files_selected")}</span>
               {unpublish && <SubUnpublished value={value} onChange={onChange} />}
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={3} xs={3}>

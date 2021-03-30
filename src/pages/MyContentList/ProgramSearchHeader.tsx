@@ -8,7 +8,7 @@ import clsx from "clsx";
 import React from "react";
 import { OrderBy } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { BadaEslBlueIcon, BadaEslIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
@@ -122,7 +122,7 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
                 })}
                 startIcon={<NotesOutlined />}
               >
-                {reportMiss("More", "library_label_more")}
+                {d("More").t("library_label_more")}
               </Button>
             </Grid>
           </Grid>
@@ -163,7 +163,7 @@ export function ProgramSearchHeaderMb(props: ProgramSearchHeaderProps) {
                   label={d("Bada STEAM").t("library_label_program_steam")}
                   className={classes.capitalize}
                 />
-                <Tab value={ProgramGroup.more} label={reportMiss("More", "library_label_more")} className={classes.capitalize} />
+                <Tab value={ProgramGroup.more} label={d("More").t("library_label_more")} className={classes.capitalize} />
               </Tabs>
             </AppBar>
           </Grid>

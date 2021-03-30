@@ -14,9 +14,8 @@ import { Controller, ControllerProps, UseFormMethods } from "react-hook-form";
 import { EntityFolderContent } from "../../api/api.auto";
 import { decodeArray, FormattedTextField } from "../../components/FormattedTextField";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { ContentListForm, ContentListFormKey } from "./types";
-
 const useStyles = makeStyles((theme) =>
   createStyles({
     dialog: {
@@ -63,8 +62,8 @@ const useStyles = makeStyles((theme) =>
       fontSize: 24,
     },
   })
-);
-// const FOLDER_NAME = "FOLDER_NAME";
+); // const FOLDER_NAME = "FOLDER_NAME";
+
 const REMARK = "REMARK";
 const KEYWORDS = "KEYWORDS";
 export interface FolderFormProps {
@@ -83,11 +82,16 @@ export function FolderForm(props: FolderFormProps) {
   return (
     <Dialog open={open} fullWidth={true} className={css.dialog}>
       <DialogTitle>
-        {folderForm?.name ? reportMiss("Edit Folder", "library_label_edit_folder") : d("New Folder").t("library_label_new_folder")}
+        {folderForm?.name ? d("Edit Folder").t("library_label_edit_folder") : d("New Folder").t("library_label_new_folder")}
       </DialogTitle>
       <DialogContent dividers className={css.dialogContent}>
         <div className={css.form}>
-          <div className={css.inputCon} style={{ position: "relative" }}>
+          <div
+            className={css.inputCon}
+            style={{
+              position: "relative",
+            }}
+          >
             <Typography className={css.typography}>{d("Folder Name").t("library_label_folder_name")}</Typography>
             <Typography className={css.star}>*</Typography>
             <Controller
@@ -128,8 +132,7 @@ export function FolderForm(props: FolderFormProps) {
               decode={decodeArray}
               defaultValue={folderForm?.keywords || ""}
               className={css.textField}
-              fullWidth
-              // variant="outlined"
+              fullWidth // variant="outlined"
             />
           </div>
         </div>
@@ -147,7 +150,6 @@ export function FolderForm(props: FolderFormProps) {
     </Dialog>
   );
 }
-
 export function useFolderForm<T>() {
   const [active, setActive] = useState(false);
   const [folderFormShowIndex, setFolderFormShowIndex] = useState(2);
