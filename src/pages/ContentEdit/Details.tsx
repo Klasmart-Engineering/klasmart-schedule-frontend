@@ -181,9 +181,9 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
       label={lesson === "plan" ? t("library_label_plan_duration") : t("library_label_duration")}
       disabled={permission}
       value={suggestTime}
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(String(Math.ceil(Number(e.target.value))))}
       onBlur={handleBlur}
-      onFocus={(e) => SetSuggestTime(String(Number(e.target.value) || ""))}
+      onFocus={(e) => SetSuggestTime(String(Math.ceil(Number(e.target.value)) || ""))}
     />
   );
 });

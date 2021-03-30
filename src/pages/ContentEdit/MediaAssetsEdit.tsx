@@ -55,12 +55,13 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-const useUploadBoxStyles = makeStyles({
+const useUploadBoxStyles = makeStyles(({ shadows }) => ({
   uploadBox: (props: AssetEditProps) => ({
     height: props.isAsset ? "calc(100% - 36px)" : "calc(100% - 116px)",
     padding: "6px 20px 30px 20px",
+    boxShadow: shadows[3],
   }),
-});
+}));
 
 export const fileFormat = {
   video: [".avi", ".mov", ".mp4"],
@@ -142,9 +143,9 @@ function AssetEdit(props: AssetEditProps) {
     } else return `image/*,audio/*,video/*,${fileFormat.document.join()}, ${fileFormat.pdf.join()}`;
   };
   return (
-    <Box className={uploadCss.uploadBox} boxShadow={3}>
+    <div ref={fileRef} className={uploadCss.uploadBox}>
       {previewHeader}
-      <div ref={fileRef} className={clsx(css.uploadTool, { [css.canDropFile]: canDropfile })}>
+      <div className={clsx(css.uploadTool, { [css.canDropFile]: canDropfile })}>
         <div className={css.uploadBtn}>
           <SingleUploader
             partition="assets"
@@ -172,7 +173,7 @@ function AssetEdit(props: AssetEditProps) {
           />
         </div>
       </div>
-    </Box>
+    </div>
   );
 }
 

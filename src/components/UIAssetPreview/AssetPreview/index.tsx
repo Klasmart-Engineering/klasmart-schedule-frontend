@@ -24,11 +24,11 @@ export function AssetPreview(props: PreviewProps) {
   };
   return (
     <Box display="flex" flexDirection="column" alignItems="center" className={className} width="100%" height="100%">
-      {fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetImg src={path} />}
-      {fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetVideo src={path} />}
-      {fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetAudio src={path} />}
+      {fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetImg key={source} src={path} />}
+      {fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetVideo key={source} src={path} />}
+      {fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetAudio key={source} src={path} />}
       {fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetFile key={source} src={source} />}
-      {fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetPdf src={path} />}
+      {fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetPdf key={source} src={path} />}
       {!isHideFileType && (
         <Typography variant="body1" style={{ marginTop: "20px" }}>
           {d("File Type").t("library_label_file_type")} : {getSuffix(source)}
