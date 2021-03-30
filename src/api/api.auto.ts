@@ -629,7 +629,7 @@ export interface EntityFolderContent {
   dir_path?: string;
   id?: string;
   items_count?: number;
-  keywords?: string;
+  keywords?: string[];
   name?: string;
   publish_status?: string;
   thumbnail?: string;
