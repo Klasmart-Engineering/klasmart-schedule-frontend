@@ -4,7 +4,7 @@ import merge from "lodash/merge";
 import api from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
-import { EntityFolderItem } from "./api.auto";
+import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
@@ -112,7 +112,7 @@ export const apiWaitForOrganizationOfPage = () => {
 };
 
 type recursiveListFolderItemsProps = NonNullable<Parameters<typeof api.folders.searchOrgFolderItems>[0]>;
-export interface RecursiveFolderItem extends EntityFolderItem {
+export interface RecursiveFolderItem extends EntityFolderItemInfo {
   next: RecursiveFolderItem[];
 }
 export const recursiveListFolderItems = async ({
@@ -126,7 +126,7 @@ export const recursiveListFolderItems = async ({
     if (base.slice(-1)[0] === "/") return `${base}${path}`;
     return `${base}/${path}`;
   }
-  async function forEachFolder(folders: EntityFolderItem[]): Promise<RecursiveFolderItem[]> {
+  async function forEachFolder(folders: EntityFolderItemInfo[]): Promise<RecursiveFolderItem[]> {
     return Promise.all(
       folders.map(async (folder) => {
         const { item_type, dir_path, id } = folder;
