@@ -7803,6 +7803,9 @@
         "creator": {
           "type": "string"
         },
+        "creator_name": {
+          "type": "string"
+        },
         "description": {
           "type": "string"
         },
@@ -7810,6 +7813,9 @@
           "type": "string"
         },
         "editor": {
+          "type": "string"
+        },
+        "editor_name": {
           "type": "string"
         },
         "id": {

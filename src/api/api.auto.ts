@@ -650,9 +650,11 @@ export interface EntityFolderItemInfo {
   available?: number;
   create_at?: number;
   creator?: string;
+  creator_name?: string;
   description?: string;
   dir_path?: string;
   editor?: string;
+  editor_name?: string;
   id?: string;
   item_type?: number;
   items?: EntityFolderItemInfo[];
