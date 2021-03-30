@@ -156,6 +156,7 @@
   "library_label_contentType": "内容类型",
   "library_label_files_selected": "( 已选中 {value} 个项目 )",
   "library_label_more": "更多",
+  "library_error_plan_duration": "课件的时长必须大于课件素材的总和",
   "assess_tab_assessments": "学习评估",
   "assess_button_search": "搜索",
   "assess_text_search teacher": "搜索老师",

@@ -198,6 +198,7 @@ type LangRecord<T = string> =
   | { id: "library_label_contentType"; description: "Content Type"; values: undefined }
   | { id: "library_label_files_selected"; description: "( {value} files selected )"; values: { value: string | number } }
   | { id: "library_label_more"; description: "More"; values: undefined }
+  | { id: "library_error_plan_duration"; description: "Plan's duration should be greater than lesson materials' sum"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -635,7 +636,7 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_see_less"; description: "See Less"; values: undefined }
   | { id: "schedule_detail_students"; description: "Students"; values: undefined }
   | { id: "schedule_calendar_more"; description: "More"; values: undefined }
-  | { id: "report_label_student_achievement"; description: "Student Achievement"; values: undefined }
+  | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
   | { id: "report_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
@@ -652,7 +653,7 @@ type LangRecord<T = string> =
   | { id: "report_error_no_permissions"; description: "You have no permission."; values: undefined }
   | { id: "report_error_no_network_connection"; description: "No network connection"; values: undefined }
   | { id: "report_error_unknown_error"; description: "Unknown error"; values: undefined }
-  | { id: "report_label_lo_in_categories"; description: "Learning Outcomes in Categories"; values: undefined }
+  | { id: "report_label_lo_in_categories"; description: "Skill Coverage"; values: undefined }
   | { id: "report_label_lo"; description: "LOs"; values: undefined }
   | { id: "report_label_student_performance"; description: "Student Performance"; values: undefined }
   | { id: "report_label_learning_outcome_completion"; description: "Learning Outcome Completion"; values: undefined }
