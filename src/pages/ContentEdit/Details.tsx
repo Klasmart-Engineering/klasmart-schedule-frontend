@@ -138,7 +138,7 @@ export function ProgressWithText(props: CircularProgressProps) {
     </Box>
   );
 }
-type NeedTransilationMenuItem =
+export type NeedTransilationMenuItem =
   | "library_label_visibility_school"
   | "library_label_visibility_organization"
   | "library_label_test"

@@ -7,6 +7,7 @@ import { apiResourcePathById } from "../../api/extra";
 import { ContentType } from "../../api/type";
 import { d, t } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { NeedTransilationMenuItem } from "../ContentEdit/Details";
 const useStyles = makeStyles(({ palette }) => ({
   textFiled: {
     height: "112px",
@@ -227,7 +228,7 @@ export function Detail(props: ContentPreviewProps) {
             readOnly: true,
             style: { color: "rgba(0,0,0,1)" },
           }}
-          value={contentPreview.lesson_type_name}
+          value={t(contentPreview.lesson_type_name as NeedTransilationMenuItem)}
         />
       )}
       <Box
