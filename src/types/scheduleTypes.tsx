@@ -131,10 +131,16 @@ export interface EntityScheduleShortInfo {
   name?: string;
 }
 
+export interface EntityScheduleSchoolsInfo {
+  school_id: string;
+  school_name: string;
+}
+
 export interface EntityScheduleClassInfo {
   class_id?: string;
   class_name?: string;
   status: string;
+  schools: EntityScheduleSchoolsInfo[];
 }
 
 export interface ConflictsData {
@@ -163,4 +169,12 @@ export interface scheduleInfoViewProps {
   exist_feedback: boolean;
   is_home_fun: boolean;
   is_hidden: boolean;
+}
+
+export interface FilterDataItemsProps {
+  id: string;
+  name: string;
+  isCheck: boolean;
+  isOnlyMine: boolean;
+  child: FilterDataItemsProps[];
 }

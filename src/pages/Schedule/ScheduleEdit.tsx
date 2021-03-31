@@ -228,7 +228,7 @@ const useStyles = makeStyles(({ shadows }) => ({
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp, modelView, mockOptions, scheduleMockOptions } = props;
+  const { timesTamp, changeTimesTamp, modelView, mockOptions, scheduleMockOptions, handleChangeShowAnyTime } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
@@ -265,6 +265,7 @@ function SmallCalendar(props: CalendarStateProps) {
           handleChangeLoadScheduleView={handleChangeLoadScheduleView}
           mockOptions={mockOptions}
           scheduleMockOptions={scheduleMockOptions}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -2094,6 +2095,7 @@ interface CalendarStateProps {
   isHidden: boolean;
   scheduleDetial: EntityScheduleDetailsView;
   privilegedMembers: (member: memberType) => boolean;
+  handleChangeShowAnyTime: (is_show: boolean) => void;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2127,6 +2129,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     isHidden,
     scheduleDetial,
     privilegedMembers,
+    handleChangeShowAnyTime,
   } = props;
 
   const template = (
@@ -2155,6 +2158,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           isHidden={isHidden}
           scheduleDetial={scheduleDetial}
           privilegedMembers={privilegedMembers}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
         />
       </Box>
       <Box
@@ -2188,6 +2192,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           isHidden={isHidden}
           scheduleDetial={scheduleDetial}
           privilegedMembers={privilegedMembers}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
         />
       </Box>
     </>

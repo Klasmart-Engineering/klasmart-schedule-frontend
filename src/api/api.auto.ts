@@ -15,13 +15,19 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export type ApiBadRequestResponse = ApiResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export type ApiConflictResponse = ApiResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -49,7 +55,10 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -66,7 +75,10 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -78,7 +90,10 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export type ApiNotFoundResponse = ApiResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -218,11 +233,6 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
-export interface ApiResponse {
-  data?: object;
-  label?: string;
-}
-
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -242,13 +252,19 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export type ApiSuccessRequestResponse = ApiResponse;
+export interface ApiSuccessRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export type ApiUnAuthorizedResponse = ApiResponse;
+export interface ApiUnAuthorizedResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -2849,6 +2865,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   schedulesFilter = {
     /**
      * @tags schedule
+     * @name getClassTypesInScheduleFilter
+     * @summary get schedule filter classTypes
+     * @request GET:/schedules_filter/class_types
+     * @description get schedule filter classTypes
+     */
+    getClassTypesInScheduleFilter: (params?: RequestParams) =>
+      this.request<string[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
+
+    /**
+     * @tags schedule
      * @name getScheduleFilterClasses
      * @summary get schedule filter classes
      * @request GET:/schedules_filter/classes
@@ -2863,6 +2889,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags schedule
+     * @name getProgramsInScheduleFilter
+     * @summary get schedule filter programs
+     * @request GET:/schedules_filter/programs
+     * @description get schedule filter programs
+     */
+    getProgramsInScheduleFilter: (params?: RequestParams) =>
+      this.request<EntityScheduleShortInfo[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_filter/programs`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
      * @name getScheduleFilterSchool
      * @summary get schedule filter schools
      * @request GET:/schedules_filter/schools
@@ -2871,6 +2911,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getScheduleFilterSchool: (params?: RequestParams) =>
       this.request<EntityScheduleFilterSchool[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_filter/schools`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name getSubjectsInScheduleFilter
+     * @summary get schedule filter subjects
+     * @request GET:/schedules_filter/subjects
+     * @description get schedule filter subjects
+     */
+    getSubjectsInScheduleFilter: (query: { program_id: string }, params?: RequestParams) =>
+      this.request<EntityScheduleShortInfo[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_filter/subjects${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -2931,7 +2985,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year";
+        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
         time_at: number;
         time_zone_offset: number;
         school_ids?: string;

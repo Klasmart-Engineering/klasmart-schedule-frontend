@@ -7,9 +7,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
-  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
+  Date: any;
+};
+
+export type File = {
+  __typename?: "File";
+  filename: Scalars["String"];
+  mimetype: Scalars["String"];
+  encoding: Scalars["String"];
 };
 
 export type UserConnection = {
@@ -297,6 +303,7 @@ export type User = {
   classesStudying?: Maybe<Array<Maybe<Class>>>;
   organizationsWithPermission?: Maybe<Array<Maybe<OrganizationMembership>>>;
   schoolsWithPermission?: Maybe<Array<Maybe<SchoolMembership>>>;
+  subjectsTeaching?: Maybe<Array<Maybe<Subject>>>;
   set?: Maybe<User>;
   createOrganization?: Maybe<Organization>;
   merge?: Maybe<User>;

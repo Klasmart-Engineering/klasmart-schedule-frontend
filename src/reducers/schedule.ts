@@ -37,13 +37,13 @@ import {
   ApiSuccessRequestResponse,
   EntityClassType,
   EntityContentInfoWithDetails,
-  // EntityProgram,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleFeedbackAddInput,
   EntityScheduleFeedbackView,
   EntityScheduleListView,
   EntityScheduleSearchView,
+  EntityScheduleShortInfo,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
@@ -60,12 +60,19 @@ interface classOptionsProp {
   classListSchool: ClassesBySchoolQuery;
 }
 
+interface filterOptionItem {
+  classType: string[];
+  programs: EntityScheduleShortInfo[];
+  subject: EntityScheduleShortInfo[];
+}
+
 export interface ScheduleState {
   total: number;
   searchScheduleList: EntityScheduleSearchView[];
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
   scheduleTimeViewData: EntityScheduleListView[];
+  scheduleAnyTimeViewData: EntityScheduleListView[];
   scheduleTimeViewYearData: [];
   attachement_id: string;
   attachment_path: string;
@@ -82,6 +89,7 @@ export interface ScheduleState {
   classRosterIds: ParticipantsShortInfo;
   mySchoolId: string;
   feedbackData: EntityScheduleFeedbackView;
+  filterOption: filterOptionItem;
 }
 
 interface Rootstate {
@@ -114,6 +122,7 @@ const initialState: ScheduleState = {
   searchScheduleList: [],
   scheduleDetial: initScheduleDetial,
   scheduleTimeViewData: [],
+  scheduleAnyTimeViewData: [],
   scheduleTimeViewYearData: [],
   attachement_id: "",
   attachment_path: "",
@@ -185,6 +194,11 @@ const initialState: ScheduleState = {
     user_id: "",
     is_allow_submit: false,
   },
+  filterOption: {
+    classType: [],
+    programs: [],
+    subject: [],
+  },
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -245,6 +259,15 @@ export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultRespo
       api.schedulesTimeView.getScheduledDates({ ...query }),
     ]);
     return { scheduleTimeViewData, scheduleTimeViewYearData };
+  }
+);
+
+type viewSchedulesAnyTimeResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
+type viewSchedulesAnTimeParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeView>[0] & LoadingMetaPayload;
+export const getScheduleAnyTimeViewData = createAsyncThunk<viewSchedulesAnyTimeResultResponse, viewSchedulesAnTimeParams>(
+  "schedule/schedules_any_time_view",
+  async (query) => {
+    return api.schedulesTimeView.getScheduleTimeView({ ...query });
   }
 );
 
@@ -425,6 +448,25 @@ export const scheduleUpdateStatus = createAsyncThunk<UpdateStatusResourseResult,
   "content/getContentResourceUploadPath",
   ({ schedule_id, status }) => {
     return api.schedules.updateStatus(schedule_id, status);
+  }
+);
+
+export const ScheduleFilterPrograms = createAsyncThunk("schedule/filterPrograms", () => {
+  return api.schedulesFilter.getProgramsInScheduleFilter();
+});
+
+export const ScheduleFilterClassTypes = createAsyncThunk("schedule/filterClassType", () => {
+  return api.schedulesFilter.getClassTypesInScheduleFilter();
+});
+
+type ScheduleFilterSubjectParams = {
+  program_id: string;
+};
+type ScheduleFilterSubjectResult = ReturnType<typeof api.schedulesFilter.getSubjectsInScheduleFilter>;
+export const ScheduleFilterSubject = createAsyncThunk<ScheduleFilterSubjectResult, ScheduleFilterSubjectParams>(
+  "schedule/filterClassType",
+  ({ program_id }) => {
+    return api.schedulesFilter.getSubjectsInScheduleFilter({ program_id: program_id });
   }
 );
 
@@ -621,6 +663,18 @@ const { actions, reducer } = createSlice({
     },
     [getSubjectByProgramId.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleMockOptions.subjectList = payload ? payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
+    },
+    [ScheduleFilterPrograms.fulfilled.type]: (state, { payload }: any) => {
+      state.filterOption.programs = payload;
+    },
+    [ScheduleFilterSubject.fulfilled.type]: (state, { payload }: any) => {
+      state.filterOption.subject.push(payload);
+    },
+    [ScheduleFilterClassTypes.fulfilled.type]: (state, { payload }: any) => {
+      state.filterOption.classType = payload;
+    },
+    [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
+      state.scheduleAnyTimeViewData = payload;
     },
   },
 });

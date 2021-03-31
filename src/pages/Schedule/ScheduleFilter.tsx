@@ -1,70 +1,171 @@
-import { Grid } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
-import clsx from "clsx";
-import React from "react";
-import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
+import { MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { d, t } from "../../locale/LocaleManager";
-import { getScheduleMockOptionsResponse } from "../../reducers/schedule";
-import { EntityScheduleClassInfo, FilterQueryTypeProps, FilterType, ScheduleFilterProps } from "../../types/scheduleTypes";
-import { useSelector } from "react-redux";
+import { d } from "../../locale/LocaleManager";
+import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
+import { EntityScheduleClassInfo, FilterQueryTypeProps, FilterDataItemsProps, EntityScheduleSchoolsInfo } from "../../types/scheduleTypes";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
+import React from "react";
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
+import Typography from "@material-ui/core/Typography";
+import { TreeView } from "@material-ui/lab";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { AsyncTrunkReturned } from "../../reducers/content";
 
-const useStyles = makeStyles(({ shadows }) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    fliterRouter: {
-      width: "94%",
-      margin: "0 auto",
-      borderTop: "1px solid #eeeeee",
+    root: {
+      padding: "0px 6px 0px 6px",
     },
-    fliterTitleSpan: {
-      fontWeight: 500,
-    },
-    fliterRowSpan: {
-      marginTop: "10px",
-      float: "left",
-      overflowWrap: "break-word",
-      width: "80%",
-    },
-    fliterRowChange: {
-      float: "left",
-    },
-    fliterRowDivChild: {
-      maxHeight: "46px",
-      transition: "max-height .3s",
-      overflow: "hidden",
-    },
-    fliterDivChild: {
-      paddingLeft: "20px",
-      marginTop: "6px",
-      minHeight: "36px",
-      display: "flex",
+    containerRoot: {
+      flexGrow: 1,
+      padding: "0px 10px 20px 10px;",
     },
     filterArrow: {
       float: "left",
       marginRight: "8px",
       cursor: "pointer",
     },
-    emptyFliterRowSpan: {
-      marginTop: "10px",
-      float: "left",
-      fontSize: "14px",
-      marginLeft: "30px",
+    content: {
+      padding: "6px",
     },
-    disabledFliterRowSpan: {
-      color: "#cccccc",
-      cursor: "not-allowed",
+    group: {
+      marginLeft: 0,
+      "& $content": {
+        paddingLeft: theme.spacing(2),
+      },
+    },
+    expanded: {},
+    selected: {},
+    label: {
+      fontWeight: "inherit",
+      height: "18px",
+      padding: "10px 0px 10px 8px;",
+      borderRadius: "16px",
+      fontSize: "15px",
+      overflowWrap: "break-word",
+    },
+    labelRoot: {
+      marginTop: "-10px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    labelIcon: {
+      marginRight: theme.spacing(1),
+    },
+    labelText: {
+      fontWeight: "inherit",
+      flexGrow: 1,
+      overflowWrap: "break-word",
+    },
+    subsets: {
+      fontWeight: "bold",
+      height: "20px",
+      padding: "10px 0px 10px 8px;",
+      borderRadius: "16px",
+      fontSize: "15px",
+    },
+    maxlabel: {
+      fontWeight: "inherit",
+      height: "18px",
+      padding: "10px 0px 10px 8px;",
+      borderRadius: "16px",
+      fontSize: "16px",
+      overflowWrap: "break-word",
+    },
+    fliterRouter: {
+      width: "94%",
+      margin: "0 auto",
+      borderTop: "1px solid #eeeeee",
     },
   })
 );
 
+type StyledTreeItemProps = TreeItemProps & {
+  bgColor?: string;
+  color?: string;
+  labelIcon?: React.ElementType<SvgIconProps>;
+  labelInfo?: string;
+  labelText?: string;
+  handleChangeShowAnyTime: (is_show: boolean, class_id: string) => void;
+};
+
+interface InterfaceSubject extends EntityScheduleShortInfo {
+  program_id: string;
+}
+
+function StyledTreeItem(props: StyledTreeItemProps) {
+  const classes = useStyles();
+  const { labelText, labelIcon: LabelIcon, labelInfo, color, bgColor, handleChangeShowAnyTime, ...other } = props;
+  const minimumDom = Array.isArray(props.children) && (props.children as []).length < 1;
+  const maxDom = ["School+1", "Others+1", "Programs+1", "ClassTypes+1"].includes(props.nodeId);
+  const rgb = Math.floor(Math.random() * 256);
+  const nodeValue = props.nodeId.split("+");
+
+  console.log(nodeValue);
+
+  return (
+    <TreeItem
+      label={
+        <div className={classes.labelRoot}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {LabelIcon && <LabelIcon color="inherit" className={classes.labelIcon} />}
+            <Typography variant="body2" className={Array.isArray(props.children) && !props.children ? classes.subsets : classes.label}>
+              {labelText}
+            </Typography>
+          </div>
+          {labelText === "School 1" && (
+            <Typography variant="caption" color="inherit">
+              <FormControlLabel
+                control={<Checkbox name="Only Mine" color="primary" />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                label="Only Mine"
+                style={{ transform: "scale(0.7)", marginRight: "0px" }}
+              />
+            </Typography>
+          )}
+          {minimumDom && ["class", "other"].includes(nodeValue[0]) && (
+            <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
+              <div style={{ width: "12px", height: "12px", backgroundColor: `rgb(${rgb},${rgb},${rgb})`, borderRadius: "20px" }} />{" "}
+              <MoreVertIcon
+                onClick={() => {
+                  handleChangeShowAnyTime(true, nodeValue[1]);
+                }}
+              />
+            </Typography>
+          )}
+        </div>
+      }
+      classes={{
+        root: classes.root,
+        content: classes.content,
+        expanded: classes.expanded,
+        selected: classes.selected,
+        group: classes.group,
+        label: minimumDom ? (maxDom ? classes.maxlabel : classes.label) : classes.subsets,
+      }}
+      {...other}
+    />
+  );
+}
+
 function FilterTemplate(props: FilterProps) {
   const css = useStyles();
-  const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
+  const dispatch = useDispatch();
+  const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
+  const { classOptions, filterOption } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { handleChangeShowAnyTime } = props;
 
   const perm = usePermission([
     PermissionType.view_my_calendar_510,
@@ -73,28 +174,14 @@ function FilterTemplate(props: FilterProps) {
     PermissionType.create_my_schools_schedule_events_522,
   ]);
 
-  const { classOptions } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const subDataStructures = (id?: string, name?: string, parentName?: string) => {
+    return { id: parentName ? `${parentName}+${id}` : (id as string), name: name as string, isCheck: false, child: [], isOnlyMine: false };
+  };
 
-  const [activeStatus, setActiveStatus] = React.useState({
-    Schools: false,
-    Teacher: false,
-    Classes: false,
-    Subjects: false,
-    Programs: false,
-  });
-
-  const [activeAll, setActiveAll] = React.useState<boolean>(true);
-
-  const [activeGather, setActiveGather] = React.useState<any>({
-    Schools: [],
-    Teacher: [],
-    Classes: [],
-    Subjects: [],
-    Programs: [],
-  });
-
-  const getClassOption = (): EntityScheduleShortInfo[] => {
-    let lists: EntityScheduleClassInfo[];
+  const getClassBySchool = (): FilterDataItemsProps[] => {
+    let lists: EntityScheduleClassInfo[] = [];
+    const classResult: FilterDataItemsProps[] = [];
+    const otherClass: FilterDataItemsProps[] = [];
     if (perm.create_event_520) {
       lists = classOptions.classListOrg.organization?.classes as EntityScheduleClassInfo[];
     } else if (perm.create_my_schools_schedule_events_522) {
@@ -102,165 +189,117 @@ function FilterTemplate(props: FilterProps) {
     } else {
       lists = classOptions.classListTeacher.user?.classesTeaching as EntityScheduleClassInfo[];
     }
-    const classResult: EntityScheduleShortInfo[] = [];
     lists?.forEach((item: EntityScheduleClassInfo) => {
-      if (item.status === "active") classResult.push({ id: item.class_id, name: item.class_name });
+      if (item.schools?.length > 0) {
+        item.schools?.forEach((school: EntityScheduleSchoolsInfo) => {
+          let filterData = { is: false, index: 0 };
+          classResult.forEach((result: FilterDataItemsProps, index: number) => {
+            if (result.id === school.school_id) filterData = { is: result.id === school.school_id, index: index };
+          });
+          if (filterData.is) {
+            classResult[filterData.index].child.push(subDataStructures(item.class_id, item.class_name, "class"));
+          } else {
+            classResult.push({
+              id: `${school.school_id}`,
+              name: school.school_name,
+              isCheck: false,
+              child: [subDataStructures(item.class_id, item.class_name, "class")],
+              isOnlyMine: false,
+            });
+          }
+        });
+      } else {
+        otherClass.push(subDataStructures(item.class_id, item.class_name, "class"));
+      }
     });
     return classResult;
   };
 
-  const getTeacherOption = (list: any) => {
-    const teachers = list.teachers || [];
-    return teachers.map((item: any) => {
-      return { id: item.user_id, name: item.user_name };
+  const getClassTypeByFilter = () => {
+    return filterOption.classType.map((val: string) => {
+      return subDataStructures(val, val, "classType");
     });
   };
 
-  const [, setSubject] = React.useState<MockOptionsItem[]>([]);
-
-  const myGather: ScheduleFilterProps[] = [
-    { name: "Classes", label: "schedule_filter_classes", child: getClassOption() },
-    { name: "Programs", label: "schedule_filter_programs", child: scheduleMockOptions.programList },
-    { name: "Subjects", label: "schedule_filter_subjects", child: scheduleMockOptions.subjectList },
-  ];
-
-  const schoolGather: ScheduleFilterProps[] = [
-    {
-      name: "Schools",
-      label: "schedule_filter_schools",
-      child: [
-        { id: "School-1", name: "School-1" },
-        { id: "School-2", name: "School-2" },
-      ],
-    },
-    { name: "Teacher", label: "schedule_filter_teachers", child: getTeacherOption(scheduleMockOptions.teacherList.organization) },
-  ];
-
-  const filterGather = perm.view_school_calendar_512 ? schoolGather.concat(myGather) : myGather;
-
-  const changeFilterRow = (type: FilterType) => {
-    if (isDisabledFliterRowSpan(type)) return;
-    setActiveStatus({ ...activeStatus, [type]: !activeStatus[type] });
-  };
-
-  const checkGather = (event: React.ChangeEvent<HTMLInputElement>, id: string, group: string) => {
-    if (event.target.checked && activeGather[group].indexOf(id) < 0) {
-      activeGather[group].push(id);
-    } else {
-      activeGather[group].splice(activeGather[group].indexOf(id), 1);
-    }
-    if (group === "Programs") {
-      const subjectResult: MockOptionsItem[] = [];
-      mockOptions?.map((item: MockOptionsOptionsItem) => {
-        if (activeGather[group].indexOf(item.program.id) > -1) subjectResult.push(item.subject[0]);
+  const getProgramByfilter = () => {
+    const program: FilterDataItemsProps[] = [];
+    filterOption.programs.forEach((val) => {
+      program.push(subDataStructures(val.id, val.name, "program"));
+      const subject: FilterDataItemsProps[] = [];
+      stateSubject.forEach((v: InterfaceSubject) => {
+        if (v.program_id === val.id) subject.push(subDataStructures(v.id, v.name, "subjectSub"));
       });
-      setSubject(subjectResult);
-    }
-    const filterQuery: FilterQueryTypeProps = {
-      org_ids: getConnectionStr(activeGather.Schools),
-      teacher_ids: getConnectionStr(activeGather.Teacher),
-      class_ids: getConnectionStr(activeGather.Classes),
-      subject_ids: getConnectionStr(activeGather.Subjects),
-      program_ids: getConnectionStr(activeGather.Programs),
-    };
-    handleChangeLoadScheduleView(filterQuery);
-    setActiveGather(activeGather);
-    setActiveAll(false);
-    if (activeGather.Schools.length < 1 && perm.view_school_calendar_512) {
-      setActiveStatus({ ...activeStatus, Teacher: false, Classes: false });
-      if (activeGather.Programs.length < 1) setActiveStatus({ ...activeStatus, Teacher: false, Classes: false, Subjects: false });
-    } else if (activeGather.Programs.length < 1) setActiveStatus({ ...activeStatus, Subjects: false });
-  };
-
-  const getConnectionStr = (item: []) => {
-    let str = "";
-    item.forEach((val: string) => {
-      str = `${str},${val}`;
+      const subjectSet = { id: `subject+${val.id}`, name: "Subject", isCheck: false, child: subject, isOnlyMine: false };
+      if (subject.length > 0) program.push(subjectSet);
     });
-    return str.substr(1);
+    return program;
   };
 
-  const handleActiveAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setActiveAll(event.target.checked);
-    const filterQuery: FilterQueryTypeProps = {
-      org_ids: getConnectionStr(activeGather.Schools),
-      teacher_ids: getConnectionStr(activeGather.Teacher),
-      class_ids: getConnectionStr(activeGather.Classes),
-      subject_ids: getConnectionStr(activeGather.Subjects),
-      program_ids: getConnectionStr(activeGather.Programs),
-    };
-    handleChangeLoadScheduleView(event.target.checked ? [] : filterQuery);
+  const handleToggle = (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
+    console.log((event.target as HTMLInputElement).checked, 888, nodeIds);
   };
 
-  const isDisabledFliterRowSpan = (type: FilterType) => {
-    return (
-      (["Teacher", "Classes"].indexOf(type) > -1 && activeGather.Schools.length < 1 && perm.view_school_calendar_512) ||
-      ("Subjects" === type && activeGather.Programs.length < 1)
-    );
+  const handleSelect = async (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
+    const checked = (event.target as HTMLInputElement).checked;
+    const nodeValue = nodeIds[0].split("+");
+    if (nodeValue[0] === "program" && checked) {
+      let resultInfo: any;
+      resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: nodeValue[1] }))) as unknown) as PayloadAction<
+        AsyncTrunkReturned<typeof ScheduleFilterSubject>
+      >;
+      if (resultInfo.payload.length > 0) {
+        const subjectData = resultInfo.payload.map((val: EntityScheduleShortInfo) => {
+          return { program_id: nodeValue[1], name: val.name, id: val.id };
+        });
+        setStateSubject([...stateSubject, ...subjectData]);
+      }
+    }
+    if (nodeValue[0] === "program" && !checked) {
+      stateSubject.forEach((v: InterfaceSubject, index: number) => {
+        if (v.program_id === nodeValue[1]) stateSubject.splice(index, 1);
+      });
+      setStateSubject([...stateSubject]);
+    }
+  };
+
+  const filterData: FilterDataItemsProps[] = [
+    {
+      id: "School+1",
+      name: d("All My Schools").t("schedule_filter_all_my_schools"),
+      isCheck: false,
+      child: getClassBySchool(),
+      isOnlyMine: false,
+    },
+    { id: "Others+1", name: "Others", isCheck: false, child: [subDataStructures("fas", "subject", "other")], isOnlyMine: false },
+    { id: "Programs+1", name: "Programs", isCheck: false, child: getProgramByfilter(), isOnlyMine: false },
+    { id: "ClassTypes+1", name: "ClassTypes", isCheck: false, child: getClassTypeByFilter(), isOnlyMine: false },
+  ];
+  const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {
+    return treeItem.map((item: FilterDataItemsProps) => {
+      return (
+        <>
+          {["School+1", "Programs+1"].includes(item.id) && <div className={css.fliterRouter}></div>}
+          <StyledTreeItem nodeId={item.id} labelText={item.name} handleChangeShowAnyTime={handleChangeShowAnyTime}>
+            {item.child && styledTreeItemTemplate(item.child)}
+          </StyledTreeItem>
+        </>
+      );
+    });
   };
 
   return (
-    <Grid container spacing={2} className={css.fliterRouter}>
-      <Grid item xs={12} style={{ paddingLeft: "0px" }}>
-        <Checkbox
-          color="primary"
-          inputProps={{ "aria-label": "secondary checkbox" }}
-          className={css.fliterRowChange}
-          checked={activeAll}
-          onChange={(e) => {
-            handleActiveAll(e);
-          }}
-        />
-        <span className={clsx(css.fliterRowSpan, css.fliterTitleSpan)}>{d("My Schedule").t("scheudule_filter_all_my_schedule")}</span>
-      </Grid>
-      {filterGather.map((gather: ScheduleFilterProps, key: number) => (
-        <Grid
-          item
-          xs={12}
-          className={css.fliterRowDivChild}
-          style={{
-            maxHeight: activeStatus[gather.name] ? "5000px" : "46px",
-            paddingLeft:
-              (perm.view_school_calendar_512 ? ["Teacher", "Classes", "Subjects"] : ["Subjects"]).indexOf(gather.name) > -1
-                ? "34px"
-                : "8px",
-          }}
-          key={key}
-        >
-          <div className={isDisabledFliterRowSpan(gather.name) ? css.disabledFliterRowSpan : ""} style={{ height: "32px" }}>
-            {!activeStatus[gather.name] && (
-              <KeyboardArrowDownOutlinedIcon
-                className={css.filterArrow}
-                style={{ cursor: isDisabledFliterRowSpan(gather.name) ? "not-allowed" : "pointer" }}
-                onClick={() => changeFilterRow(gather.name)}
-              />
-            )}
-            {activeStatus[gather.name] && (
-              <KeyboardArrowUpOutlinedIcon className={css.filterArrow} onClick={() => changeFilterRow(gather.name)} />
-            )}
-            <span className={css.fliterTitleSpan}>{t(gather.label)}</span>
-          </div>
-          {gather.child.map((item: MockOptionsItem, index: number) => (
-            <div className={css.fliterDivChild} key={index}>
-              <Checkbox
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                className={css.fliterRowChange}
-                onChange={(e) => {
-                  checkGather(e, item.id as string, gather.name);
-                }}
-              />
-              <span className={css.fliterRowSpan}>{item.name}</span>
-            </div>
-          ))}
-          {gather.child.length === 0 && (
-            <div className={css.fliterDivChild}>
-              <span className={css.emptyFliterRowSpan}>{d("No Data").t("schedule_filter_no_data")}</span>
-            </div>
-          )}
-        </Grid>
-      ))}
-    </Grid>
+    <TreeView
+      className={css.containerRoot}
+      defaultExpanded={["1"]}
+      defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+      defaultExpandIcon={<KeyboardArrowDownOutlinedIcon className={css.filterArrow} style={{ cursor: "pointer" }} />}
+      defaultEndIcon={<Checkbox color="primary" inputProps={{ "aria-label": "primary checkbox" }} />}
+      onNodeToggle={handleToggle}
+      onNodeSelect={handleSelect}
+      multiSelect
+    >
+      {styledTreeItemTemplate(filterData)}
+    </TreeView>
   );
 }
 
@@ -268,15 +307,17 @@ interface FilterProps {
   handleChangeLoadScheduleView: (filterQuery: FilterQueryTypeProps | []) => void;
   mockOptions: MockOptionsOptionsItem[] | undefined;
   scheduleMockOptions: getScheduleMockOptionsResponse;
+  handleChangeShowAnyTime: (is_show: boolean) => void;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
-  const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions } = props;
+  const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions, handleChangeShowAnyTime } = props;
   return (
     <FilterTemplate
       handleChangeLoadScheduleView={handleChangeLoadScheduleView}
       mockOptions={mockOptions}
       scheduleMockOptions={scheduleMockOptions}
+      handleChangeShowAnyTime={handleChangeShowAnyTime}
     />
   );
 }

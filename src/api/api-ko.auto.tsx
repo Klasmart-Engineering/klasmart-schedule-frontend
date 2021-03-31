@@ -69,7 +69,15 @@ export type ClassesByOrganizationQueryVariables = Types.Exact<{
 export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">>>>;
+      classes?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
+                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+              }
+          >
+        >
+      >;
     }
   >;
 };
@@ -199,7 +207,15 @@ export type ClassesBySchoolQueryVariables = Types.Exact<{
 export type ClassesBySchoolQuery = { __typename?: "Query" } & {
   school?: Types.Maybe<
     { __typename?: "School" } & {
-      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">>>>;
+      classes?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
+                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+              }
+          >
+        >
+      >;
     }
   >;
 };
@@ -309,7 +325,13 @@ export type ClassesTeachingQueryQuery = { __typename?: "Query" } & {
       membership?: Types.Maybe<
         { __typename?: "OrganizationMembership" } & {
           classesTeaching?: Types.Maybe<
-            Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">>>
+            Array<
+              Types.Maybe<
+                { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
+                    schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+                  }
+              >
+            >
           >;
         }
       >;
@@ -458,6 +480,10 @@ export const ClassesByOrganizationDocument = gql`
         class_id
         class_name
         status
+        schools {
+          school_id
+          school_name
+        }
       }
     }
   }
@@ -742,6 +768,10 @@ export const ClassesBySchoolDocument = gql`
         class_id
         class_name
         status
+        schools {
+          school_id
+          school_name
+        }
       }
     }
   }
@@ -930,6 +960,10 @@ export const ClassesTeachingQueryDocument = gql`
           class_id
           class_name
           status
+          schools {
+            school_id
+            school_name
+          }
         }
       }
     }

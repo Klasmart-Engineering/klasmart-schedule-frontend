@@ -39,6 +39,10 @@ query classesByOrganization($organization_id: ID!) {
       class_id
       class_name
       status
+      schools {
+        school_id
+        school_name
+      }
     }
   }
 }
@@ -125,6 +129,10 @@ query classesBySchool($school_id: ID!) {
       class_id
       class_name
       status
+      schools {
+        school_id
+        school_name
+      }
     }
   }
 }
@@ -186,6 +194,10 @@ query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
                 class_id
                 class_name
                 status
+                schools {
+                  school_id
+                  school_name
+               }
             }
         }
     }

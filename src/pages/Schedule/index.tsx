@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { apiLivePath } from "../../api/extra";
 import KidsCalendar from "../../components/Calendar";
+import ScheduleAnyTime from "./ScheduleAnyTime";
 import LayoutBox from "../../components/LayoutBox";
 import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
@@ -28,6 +29,9 @@ import {
   changeParticipants,
   getSchoolInfo,
   getSubjectByProgramId,
+  ScheduleFilterPrograms,
+  ScheduleFilterClassTypes,
+  getScheduleAnyTimeViewData,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -35,6 +39,8 @@ import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
 import { PermissionType, usePermission } from "../../components/Permission";
+import Paper from "@material-ui/core/Paper";
+import Zoom from "@material-ui/core/Zoom";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -69,6 +75,7 @@ function ScheduleContent() {
     classRosterIds,
     participantsIds,
     scheduleDetial,
+    scheduleAnyTimeViewData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -77,6 +84,7 @@ function ScheduleContent() {
   const [modelYear, setModelYear] = React.useState<boolean>(false);
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [isHidden, setIsHidden] = React.useState<boolean>(false);
+  const [isShowAnyTime, setIsShowAnyTime] = React.useState<boolean>(false);
 
   const handleChangeHidden = (is_hidden: boolean) => {
     setIsHidden(is_hidden);
@@ -104,6 +112,11 @@ function ScheduleContent() {
 
   const handleChangeParticipants = (type: string, data: ParticipantsShortInfo) => {
     dispatch(changeParticipants({ type: type, data: data }));
+  };
+
+  const handleChangeShowAnyTime = async (is_show: boolean, class_id?: string) => {
+    if (class_id) await dispatch(getScheduleAnyTimeViewData({ view_type: "full_view", filter_option: "any_time", class_ids: class_id }));
+    setIsShowAnyTime(is_show);
   };
 
   const initModalDate: AlertDialogProps = {
@@ -222,6 +235,8 @@ function ScheduleContent() {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
     dispatch(getSchoolInfo());
+    dispatch(ScheduleFilterClassTypes());
+    dispatch(ScheduleFilterPrograms());
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -303,9 +318,19 @@ function ScheduleContent() {
               isHidden={isHidden}
               scheduleDetial={scheduleDetial}
               privilegedMembers={privilegedMembers}
+              handleChangeShowAnyTime={handleChangeShowAnyTime}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={8} lg={9}>
+          <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
+            <Zoom in={isShowAnyTime}>
+              <Paper elevation={4}>
+                <ScheduleAnyTime
+                  timesTamp={timesTamp}
+                  handleChangeShowAnyTime={handleChangeShowAnyTime}
+                  scheduleAnyTimeViewData={scheduleAnyTimeViewData}
+                />
+              </Paper>
+            </Zoom>
             {includeTable && (
               <KidsCalendar
                 modelView={modelView}
