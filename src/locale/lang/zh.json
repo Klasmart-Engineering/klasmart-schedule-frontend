@@ -248,6 +248,7 @@
   "assess_msg_existing_set": "您输入的标签已存在，请重试。",
   "assess_msg_blocked_learning_outcome": "您选择的学习成果正在审批中，您无法对它进行任何批量操作。",
   "assess_msg_one_exposed": "您需要选择至少一个讲过的课件素材。",
+  "assess_detail_student": "学生",
   "assess_label_create": "新建",
   "assess_label_for_organizations": "机构",
   "assess_label_cancel": "取消",

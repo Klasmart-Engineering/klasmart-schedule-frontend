@@ -77,10 +77,10 @@ export function Summary(props: SummaryProps) {
           <TextField
             fullWidth
             disabled
-            name="subject_name"
-            value={detail.subject_name ?? ""}
+            name="student_name"
+            value={detail.student_name ?? ""}
             className={css.fieldset}
-            label={d("Subject").t("library_label_subject")}
+            label={d("Student").t("assess_detail_student")}
           />
           <TextField
             fullWidth

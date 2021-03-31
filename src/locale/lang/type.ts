@@ -298,6 +298,7 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "assess_msg_one_exposed"; description: "At least one lesson material needs to be selected as exposed."; values: undefined }
+  | { id: "assess_detail_student"; description: "Student"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }

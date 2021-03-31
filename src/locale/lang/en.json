@@ -248,6 +248,7 @@
   "assess_msg_existing_set": "This set already exists in the system, please try again. ",
   "assess_msg_blocked_learning_outcome": "The selected learning outcome is still in approval process, you cannot do bulk action for now.",
   "assess_msg_one_exposed": "At least one lesson material needs to be selected as exposed.",
+  "assess_detail_student": "Student",
   "assess_label_create": "Create",
   "assess_label_for_organizations": "For Organizations",
   "assess_label_cancel": "Cancel",
