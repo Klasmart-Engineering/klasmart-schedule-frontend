@@ -228,7 +228,7 @@ export function Detail(props: ContentPreviewProps) {
             readOnly: true,
             style: { color: "rgba(0,0,0,1)" },
           }}
-          value={t(contentPreview.lesson_type_name as NeedTransilationMenuItem)}
+          value={contentPreview.lesson_type_name ? t(contentPreview.lesson_type_name as NeedTransilationMenuItem) : ""}
         />
       )}
       <Box
