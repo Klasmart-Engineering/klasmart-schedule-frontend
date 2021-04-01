@@ -130,7 +130,7 @@ export function FolderForm(props: FolderFormProps) {
               control={control}
               as={FormattedTextField}
               decode={decodeArray}
-              defaultValue={folderForm?.keywords || ""}
+              defaultValue={folderForm?.keywords || []}
               className={css.textField}
               fullWidth // variant="outlined"
             />
