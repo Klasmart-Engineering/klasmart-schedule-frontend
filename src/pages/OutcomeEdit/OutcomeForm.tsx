@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 16,
     margin: theme.spacing(0.5),
   },
+  chipCon: {
+    width: "100%",
+  },
 }));
 
 export interface OutcomeFormProps {

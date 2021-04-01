@@ -253,7 +253,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
                           onChange={selectedContentGroupContext.registerAllChange}
                         />
                       </TableCell>
-                      <TableCell className={clsx(css.tableCell)}>{d("Learning Outcome").t("assess_label_learning_outcome")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Short Code").t("assess_label_short_code")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Program").t("assess_label_program")}</TableCell>
                       {/* <TableCell className={clsx(css.tableCell)}>{d("Subject").t("assess_label_subject")}</TableCell> */}

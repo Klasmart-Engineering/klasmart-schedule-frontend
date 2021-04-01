@@ -13,6 +13,12 @@ const useStyles = makeStyles((theme) =>
     dialogContent: {
       minHeight: 360,
     },
+    title: {
+      "& .MuiTypography-root": {
+        fontSize: "24px !important",
+        fontWeight: 700,
+      },
+    },
   })
 );
 export interface AddSetProps {
@@ -46,7 +52,7 @@ export function AddSet(props: AddSetProps) {
   };
   return (
     <Dialog maxWidth={"sm"} fullWidth={true} open={open}>
-      <DialogTitle>Add to Set</DialogTitle>
+      <DialogTitle className={css.title}>{d("Add to Set").t("assess_set_add_to_set")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <OutcomeSet
           title={d("Select or create a new one").t("assess_set_select_create")}

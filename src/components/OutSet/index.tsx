@@ -42,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
   itemSet: {
     fontSize: 16,
     cursor: "pointer",
+    overflow: "hidden",
+    wordBreak: "break-all",
   },
   createCon: {
     color: "#0e78d5",
@@ -113,6 +115,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
   };
   const handleClickCreate = () => {
     const set_name = getValues()["OUTCOME_SET_NAME"];
+    if (!set_name) return;
     onCreateOutcomeSet(set_name);
   };
   const handleDelete = (set_id: string) => {
@@ -130,6 +133,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
           size="small"
           placeholder={d("Search").t("assess_label_search")}
           defaultValue={""}
+          inputProps={{ maxLength: 36 }}
         />
         <Button variant="contained" color="primary" className={css.searchBtn} onClick={handleClickSearch}>
           <Search /> {d("Search").t("assess_label_search")}
@@ -158,6 +162,8 @@ export function OutcomeSet(props: OutcomeSetProps) {
                         <FormControlLabel
                           style={{
                             display: "block",
+                            overflow: "hidden",
+                            wordBreak: "break-all",
                             background: selecedOutcomesetsContext.hashValue[item.set_id as string] ? "#ccc" : "",
                           }}
                           control={
