@@ -199,12 +199,14 @@ function ContentEditForm() {
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => ({ value = "", assumed }) => {
+    () => ({ value = "", exactSerch = "all", assumed }) => {
       history.replace({
         search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
       });
+      console.log(exactSerch);
       dispatch(
         searchOutcomeList({
+          exactSerch,
           metaLoading: true,
           search_key: value,
           assumed: assumed ? 1 : -1,

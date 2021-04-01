@@ -29,6 +29,7 @@ import { content2FileType } from "../models/ModelEntityFolderContent";
 import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "../pages/MyContentList/types";
+import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -466,16 +467,26 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
   }
 );
 // contentEdit搜索outcomeListist
-type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryOutcomeListParams = { exactSerch: string } & Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] &
+  LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "content/searchOutcomeList",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.learningOutcomes.searchLearningOutcomes({
+    const { exactSerch, search_key, assumed } = query;
+    const params: OutcomeQueryCondition = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
-      ...query,
-    });
+      assumed,
+    };
+    if (exactSerch === OutcomeListExectSearch.all) params.search_key = search_key;
+    if (exactSerch === OutcomeListExectSearch.loName) params.outcome_name = search_key;
+    if (exactSerch === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
+    if (exactSerch === OutcomeListExectSearch.author) params.author_name = search_key;
+    if (exactSerch === OutcomeListExectSearch.keyWord) params.keywords = search_key;
+    if (exactSerch === OutcomeListExectSearch.description) params.description = search_key;
+    if (exactSerch === OutcomeListExectSearch.loSet) params.set_name = search_key;
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(params);
     return { list, total };
   }
 );

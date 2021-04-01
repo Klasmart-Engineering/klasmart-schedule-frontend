@@ -3,8 +3,6 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  Hidden,
-  InputAdornment,
   makeStyles,
   MenuItem,
   Radio,
@@ -168,7 +166,59 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
       <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
         {searchType === "searchOutcome" && (
           <>
-            <Hidden smDown>
+            <Controller
+              control={control}
+              name="value"
+              defaultValue={value}
+              render={(valueProps) => (
+                <Controller
+                  name="exactSerch"
+                  control={control}
+                  defaultValue={exactSerch}
+                  render={(exactSerchProps) => (
+                    <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
+                      <TextField
+                        defaultValue={exactSerchProps.value}
+                        onChange={(e) => {
+                          exactSerchProps.onChange(e.target.value);
+                          handleClickSearch();
+                        }}
+                        select
+                        className={css.exactSerch}
+                        size="small"
+                      >
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="loName">Name</MenuItem>
+                        <MenuItem value="shortCode">Code</MenuItem>
+                        <MenuItem value="author">Author</MenuItem>
+                        <MenuItem value="loSet">Set</MenuItem>
+                        <MenuItem value="keyWord">Keywords</MenuItem>
+                        <MenuItem value="description">Description</MenuItem>
+                      </TextField>
+                      <TextField
+                        {...valueProps}
+                        size="small"
+                        fullWidth
+                        className={css.searchText}
+                        onKeyPress={handleKeyPress}
+                        placeholder={d("Search").t("library_label_search")}
+                      />
+                    </div>
+                  )}
+                />
+              )}
+            />
+            <Button
+              color="primary"
+              variant="contained"
+              size="small"
+              className={clsx(css.buttonMinWidth, css.fieldset)}
+              startIcon={<Search />}
+              onClick={handleClickSearch}
+            >
+              {d("Search").t("library_label_search")}
+            </Button>
+            {/* <Hidden smDown>
               <Controller
                 as={TextField}
                 control={control}
@@ -213,7 +263,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                   ),
                 }}
               />
-            </Hidden>
+            </Hidden> */}
           </>
         )}
         {searchType === "searchMedia" && (

@@ -258,12 +258,13 @@ export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult,
       page_size: PAGE_SIZE,
       assumed: -1,
     };
-    if (exect_search === OutcomeListExectSearch.all) params["search_key"] = search_key;
+    if (exect_search === OutcomeListExectSearch.all) params.search_key = search_key;
     if (exect_search === OutcomeListExectSearch.loName) params.outcome_name = search_key;
     if (exect_search === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
     if (exect_search === OutcomeListExectSearch.author) params.author_name = search_key;
     if (exect_search === OutcomeListExectSearch.keyWord) params.keywords = search_key;
     if (exect_search === OutcomeListExectSearch.description) params.description = search_key;
+    if (exect_search === OutcomeListExectSearch.loSet) params.set_name = search_key;
     if (publish_status === OutcomePublishStatus.pending && !is_unpub) {
       resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(params);
     } else if (isUnpublish({ ...query })) {
