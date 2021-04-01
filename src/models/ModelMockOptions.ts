@@ -99,7 +99,8 @@ export class ModelMockOptions {
     const { regulation, contentDetail, linkedMockOptions } = props;
     if (regulation === Regulation.ByContentDetail) return contentDetail[name] || [];
     const options = linkedMockOptions[name] || [];
-    if (name !== "subject" && options.length === 1) return [options[0].id as string];
+    if (name === "subject" && options.length > 0) return [options[0].id as string];
+    if (options.length === 1) return [options[0].id as string];
     return [];
   }
 

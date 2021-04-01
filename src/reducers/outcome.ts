@@ -145,7 +145,7 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
     const program = await api.programs.getProgram();
     const programId = program_id ? program_id : program[0].id;
     const subject = await api.subjects.getSubject({ program_id: programId });
-    const subject_ids = program_id ? default_subject_ids : "";
+    const subject_ids = default_subject_ids ? default_subject_ids : subject[0].id;
     const [developmental, age, grade] = await Promise.all([
       api.developmentals.getDevelopmental({ program_id: programId, subject_ids }),
       api.ages.getAge({ program_id: programId }),
