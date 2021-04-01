@@ -353,6 +353,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
           default_developmental_id: contentDetail.developmental && contentDetail.developmental[0],
+          default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
     ]);

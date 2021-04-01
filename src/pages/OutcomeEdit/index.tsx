@@ -274,7 +274,7 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     if (outcome_id) {
       const program_id = outcomeDetail.program && outcomeDetail.program[0] && outcomeDetail.program[0].program_id;
-      const subject_id = outcomeDetail.subject && outcomeDetail.subject[0] && outcomeDetail.subject[0].subject_id;
+      const subject_id = outcomeDetail.subject && outcomeDetail.subject.map((item) => item.subject_id).join(",");
       const development_id =
         outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
       if (program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
