@@ -15,10 +15,7 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -29,10 +26,7 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -60,10 +54,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -80,10 +71,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -95,10 +83,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -250,6 +235,11 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -273,19 +263,13 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -2901,7 +2885,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter classTypes
      */
     getClassTypesInScheduleFilter: (params?: RequestParams) =>
-      this.request<string[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
+      this.request<string[], ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
 
     /**
      * @tags schedule
@@ -2925,11 +2909,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter programs
      */
     getProgramsInScheduleFilter: (params?: RequestParams) =>
-      this.request<EntityScheduleShortInfo[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/schedules_filter/programs`,
-        "GET",
-        params
-      ),
+      this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(`/schedules_filter/programs`, "GET", params),
 
     /**
      * @tags schedule
@@ -2950,20 +2930,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getSubjectsInScheduleFilter: (query: { program_id: string }, params?: RequestParams) =>
       this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(
-        `/schedules_filter/subjects${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags schedule
-     * @name getSubjectsInScheduleFilter
-     * @summary get schedule filter subjects
-     * @request GET:/schedules_filter/subjects
-     * @description get schedule filter subjects
-     */
-    getSubjectsInScheduleFilter: (query: { program_id: string }, params?: RequestParams) =>
-      this.request<EntityScheduleShortInfo[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_filter/subjects${this.addQueryParams(query)}`,
         "GET",
         params
@@ -3025,7 +2991,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
+        view_type: "day" | "work_week" | "week" | "month" | "year";
         time_at: number;
         time_zone_offset: number;
         school_ids?: string;
