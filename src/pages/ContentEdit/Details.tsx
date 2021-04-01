@@ -469,6 +469,7 @@ export default function Details(props: DetailsProps) {
                   value.length > 0 && props.onChange(value);
                 }}
                 fullWidth={sm}
+                required
               >
                 {menuItemList(linkedMockOptions.subject || [])}
               </TextField>

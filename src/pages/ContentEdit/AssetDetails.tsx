@@ -224,6 +224,7 @@ export default function AssetsDetails(props: AssetDetailsProps) {
                   value.length > 0 && onChangeSubject(value);
                   value.length > 0 && props.onChange(value);
                 }}
+                required
               >
                 {menuItemList(flattenedMockOptions.subject || [])}
               </TextField>

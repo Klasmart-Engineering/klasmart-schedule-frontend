@@ -74,10 +74,10 @@ export default function CreateOutcomings() {
     [dispatch]
   );
   const handleChangeSubject = React.useMemo(
-    () => (default_subject_ids?: string) => {
+    () => (default_subject_ids: string[]) => {
       setCondition("subject");
       const [program_id] = getValues("program");
-      dispatch(getNewOptions({ program_id, default_subject_ids, metaLoading: true }));
+      dispatch(getNewOptions({ program_id, default_subject_ids: default_subject_ids.join(","), metaLoading: true }));
     },
     [dispatch, getValues]
   );
