@@ -7,13 +7,14 @@ import {
   ApiOutcomeCreateView,
   ApiOutcomeIDList,
   ApiOutcomeView,
+  ApiPullOutcomeSetResponse,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { OutcomePublishStatus } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
 import { isUnpublish } from "../pages/OutcomeList/FirstSearchHeader";
-import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
+import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -29,6 +30,7 @@ interface IOutcomeState extends IPermissionState {
   mockOptions: MockOptions;
   newOptions: ResultGetNewOptions;
   user_id: string;
+  outcomeSetList: ApiPullOutcomeSetResponse["sets"];
 }
 
 interface RootState {
@@ -106,6 +108,7 @@ export const initialState: IOutcomeState = {
     user_id: "",
   },
   user_id: "",
+  outcomeSetList: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -246,37 +249,27 @@ export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult,
       },
     });
     resObj.user_id = meInfo.me?.user_id;
-    const { search_key, publish_status, author_name, page, order_by, is_unpub } = query;
+    const { search_key, publish_status, author_name, page, order_by, is_unpub, exect_search } = query;
+    const params: OutcomeQueryCondition = {
+      publish_status,
+      author_name,
+      page,
+      order_by,
+      page_size: PAGE_SIZE,
+      assumed: -1,
+    };
+    if (exect_search === OutcomeListExectSearch.all) params["search_key"] = search_key;
+    if (exect_search === OutcomeListExectSearch.loName) params.outcome_name = search_key;
+    if (exect_search === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
+    if (exect_search === OutcomeListExectSearch.author) params.author_name = search_key;
+    if (exect_search === OutcomeListExectSearch.keyWord) params.keywords = search_key;
+    if (exect_search === OutcomeListExectSearch.description) params.description = search_key;
     if (publish_status === OutcomePublishStatus.pending && !is_unpub) {
-      resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes({
-        search_key,
-        publish_status,
-        author_name,
-        page,
-        order_by,
-        page_size: PAGE_SIZE,
-        assumed: -1,
-      });
+      resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(params);
     } else if (isUnpublish({ ...query })) {
-      resObj.privateRes = await api.privateLearningOutcomes.searchPrivateLearningOutcomes({
-        search_key,
-        publish_status,
-        author_name,
-        page,
-        order_by,
-        page_size: PAGE_SIZE,
-        assumed: -1,
-      });
+      resObj.privateRes = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(params);
     } else {
-      resObj.outcomeRes = await api.learningOutcomes.searchLearningOutcomes({
-        search_key,
-        publish_status,
-        author_name,
-        page,
-        order_by,
-        page_size: PAGE_SIZE,
-        assumed: -1,
-      });
+      resObj.outcomeRes = await api.learningOutcomes.searchLearningOutcomes(params);
     }
     return resObj;
   }
@@ -420,6 +413,34 @@ export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, Required<Api
   }
 );
 
+type IQueryPullOutcomeSetParams = Parameters<typeof api.sets.pullOutcomeSet>[0];
+type IQueryPullOutcomeSetResult = AsyncReturnType<typeof api.sets.pullOutcomeSet>;
+export const pullOutcomeSet = createAsyncThunk<IQueryPullOutcomeSetResult, IQueryPullOutcomeSetParams>(
+  "sets/pullOutcomeset",
+  async (query) => {
+    return api.sets.pullOutcomeSet(query);
+  }
+);
+
+type IQueryCreateOutcomeSetParams = Parameters<typeof api.sets.createOutcomeSet>[0];
+type IQueryCreateOutcomeSetResult = AsyncReturnType<typeof api.sets.createOutcomeSet>;
+export const createOutcomeSet = createAsyncThunk<IQueryCreateOutcomeSetResult, IQueryCreateOutcomeSetParams>(
+  "sets/createOutcomeSet",
+  async (params) => {
+    return api.sets.createOutcomeSet(params);
+  }
+);
+type IQueryBulkBindOutcomeSetParams = Parameters<typeof api.sets.bulkBindOutcomeSet>[0];
+type IQueryBulkBindOutcomeSetResult = AsyncReturnType<typeof api.sets.bulkBindOutcomeSet>;
+export const bulkBindOutcomeSet = createAsyncThunk<IQueryBulkBindOutcomeSetResult, IQueryBulkBindOutcomeSetParams>(
+  "sets/bulkBindOutcomeSet",
+  async ({ outcome_ids, set_ids }, { dispatch }) => {
+    if (!set_ids || !set_ids.length)
+      return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    return api.sets.bulkBindOutcomeSet({ outcome_ids, set_ids });
+  }
+);
+
 const { reducer } = createSlice({
   name: "outcome",
   initialState,
@@ -550,6 +571,9 @@ const { reducer } = createSlice({
     },
     [bulkReject.rejected.type]: (state, { error }: any) => {
       throw error;
+    },
+    [pullOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof pullOutcomeSet>>) => {
+      state.outcomeSetList = payload.sets;
     },
   },
 });

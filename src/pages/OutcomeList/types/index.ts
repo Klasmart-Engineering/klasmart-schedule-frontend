@@ -8,6 +8,7 @@ type NonNullRecordValue<T> = {
 
 export type OutcomeQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0]>> & {
   is_unpub?: string;
+  exect_search?: string;
 };
 export type OutcomeQueryConditionChangeHandler = (value: OutcomeQueryCondition) => any;
 export type OutcomeQueryConditionBaseProps = {
@@ -24,13 +25,27 @@ export type AssesmentQueryConditionBaseProps = {
 
 export enum BulkListFormKey {
   CHECKED_BULK_IDS = "CHECKED_BULK_IDS",
+  SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY",
+  EXECT_SEARCH = "EXECT_SEARCH",
 }
 
 export interface BulkListForm {
   [BulkListFormKey.CHECKED_BULK_IDS]: NonNullable<ApiOutcomeIDList["outcome_ids"]>;
+  [BulkListFormKey.SEARCH_TEXT_KEY]: string;
+  [BulkListFormKey.EXECT_SEARCH]: string;
 }
 
 export enum HeaderCategory {
   assessment = "assessments",
   outcome = "outcome",
+}
+
+export enum OutcomeListExectSearch {
+  all = "all",
+  loName = "loName",
+  shortCode = "shortCode",
+  author = "author",
+  loSet = "loSet",
+  keyWord = "keyWord",
+  description = "description",
 }

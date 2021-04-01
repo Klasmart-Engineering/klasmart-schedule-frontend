@@ -15,19 +15,18 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
+export type ApiBadRequestResponse = ApiResponse;
+
+export interface ApiBulkBindOutcomeSetRequest {
+  outcome_ids?: string[];
+  set_ids?: string[];
 }
 
 export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -55,10 +54,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -75,10 +71,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -90,10 +83,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -144,6 +134,8 @@ export interface ApiOutcomeCreateView {
   outcome_id?: string;
   outcome_name?: string;
   program?: string[];
+  sets?: ApiOutcomeSetCreateView[];
+  shortcode?: string;
   skills?: string[];
   subject?: string[];
 }
@@ -159,6 +151,11 @@ export interface ApiOutcomeRejectReq {
 export interface ApiOutcomeSearchResponse {
   list?: ApiOutcomeView[];
   total?: number;
+}
+
+export interface ApiOutcomeSetCreateView {
+  set_id?: string;
+  set_name?: string;
 }
 
 export interface ApiOutcomeView {
@@ -183,6 +180,7 @@ export interface ApiOutcomeView {
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string;
+  sets?: ApiOutcomeSetCreateView[];
   shortcode?: string;
   skills?: ApiSkill[];
   source_id?: string;
@@ -201,6 +199,10 @@ export interface ApiPublishContentRequest {
 
 export interface ApiPublishOutcomeReq {
   scope?: string;
+}
+
+export interface ApiPullOutcomeSetResponse {
+  sets?: ApiOutcomeSetCreateView[];
 }
 
 export interface ApiRegisterRequest {
@@ -233,9 +235,18 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
+}
+
+export interface ApiShortcodeResponse {
+  shortcode?: string;
 }
 
 export interface ApiSignatureResponse {
@@ -252,19 +263,13 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -821,6 +826,7 @@ export interface EntityOutcome {
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string;
+  sets?: EntitySet[];
   shortcode?: string;
 
   /** SubCategory */
@@ -1066,6 +1072,15 @@ export interface EntityScheduleUpdateView {
   time_zone_offset?: number;
   title?: string;
   version?: number;
+}
+
+export interface EntitySet {
+  created_at?: number;
+  deleted_at?: number;
+  organization_id?: string;
+  set_id?: string;
+  set_name?: string;
+  updated_at?: number;
 }
 
 export interface EntityShareFoldersRequest {
@@ -2313,21 +2328,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/learning_outcomes${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
+      this.request<
+        ApiOutcomeSearchResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/learning_outcomes${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags learning_outcomes
      * @name createLearningOutcomes
-     * @summary createOutcome
+     * @summary createLearningOutcome
      * @request POST:/learning_outcomes
      * @description Create learning outcomes
      */
     createLearningOutcomes: (outcome: ApiOutcomeCreateView, params?: RequestParams) =>
-      this.request<ApiOutcomeCreateResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<ApiOutcomeCreateResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes`,
         "POST",
         params,
@@ -2356,7 +2370,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update learning outcomes by id
      */
     updateLearningOutcomes: (outcome_id: string, outcome: ApiOutcomeCreateView, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes/${outcome_id}`,
         "PUT",
         params,
@@ -2371,7 +2385,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description delete learning outcomes by id
      */
     deleteLearningOutcome: (outcome_id: string, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes/${outcome_id}`,
         "DELETE",
         params
@@ -2871,7 +2885,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter classTypes
      */
     getClassTypesInScheduleFilter: (params?: RequestParams) =>
-      this.request<string[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
+      this.request<string[], ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
 
     /**
      * @tags schedule
@@ -2881,7 +2895,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter classes
      */
     getScheduleFilterClasses: (query?: { school_id?: string }, params?: RequestParams) =>
-      this.request<EntityScheduleFilterClass[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityScheduleFilterClass[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/schedules_filter/classes${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2895,11 +2909,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter programs
      */
     getProgramsInScheduleFilter: (params?: RequestParams) =>
-      this.request<EntityScheduleShortInfo[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/schedules_filter/programs`,
-        "GET",
-        params
-      ),
+      this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(`/schedules_filter/programs`, "GET", params),
 
     /**
      * @tags schedule
@@ -2909,11 +2919,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get get schedule filter schools
      */
     getScheduleFilterSchool: (params?: RequestParams) =>
-      this.request<EntityScheduleFilterSchool[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/schedules_filter/schools`,
-        "GET",
-        params
-      ),
+      this.request<EntityScheduleFilterSchool[], ApiInternalServerErrorResponse>(`/schedules_filter/schools`, "GET", params),
 
     /**
      * @tags schedule
@@ -2923,7 +2929,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter subjects
      */
     getSubjectsInScheduleFilter: (query: { program_id: string }, params?: RequestParams) =>
-      this.request<EntityScheduleShortInfo[], ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(
         `/schedules_filter/subjects${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2985,7 +2991,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getScheduledDates: (
       query: {
-        view_type: "day" | "work_week" | "week" | "month" | "year" | "full_view";
+        view_type: "day" | "work_week" | "week" | "month" | "year";
         time_at: number;
         time_zone_offset: number;
         school_ids?: string;
@@ -2999,6 +3005,72 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       this.request<string[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view/dates${this.addQueryParams(query)}`,
         "GET",
+        params
+      ),
+  };
+  sets = {
+    /**
+     * @tags outcome_set
+     * @name pullOutcomeSet
+     * @summary getLearningOutcome
+     * @request GET:/sets
+     * @description learning outcomes info
+     */
+    pullOutcomeSet: (
+      query: {
+        set_name: string;
+        page?: number;
+        page_size?: number;
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<ApiPullOutcomeSetResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/sets${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags outcome_set
+     * @name createOutcomeSet
+     * @summary createOutcomeSet
+     * @request POST:/sets
+     * @description Create learning outcome sets
+     */
+    createOutcomeSet: (outcome: ApiOutcomeSetCreateView, params?: RequestParams) =>
+      this.request<
+        ApiOutcomeSetCreateView,
+        ApiBadRequestResponse | ApiUnAuthorizedResponse | ApiForbiddenResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/sets`, "POST", params, outcome),
+
+    /**
+     * @tags outcome_set
+     * @name bulkBindOutcomeSet
+     * @summary bind learning outcome set
+     * @request POST:/sets/bulk_bind
+     * @description bulk bind learning outcome
+     */
+    bulkBindOutcomeSet: (outcome: ApiBulkBindOutcomeSetRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/sets/bulk_bind`,
+        "POST",
+        params,
+        outcome
+      ),
+  };
+  shortcode = {
+    /**
+     * @tags learning_outcomes
+     * @name generateShortcode
+     * @summary generate Shortcode
+     * @request POST:/shortcode
+     * @description generate shortcode
+     */
+    generateShortcode: (params?: RequestParams) =>
+      this.request<ApiShortcodeResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/shortcode`,
+        "POST",
         params
       ),
   };

@@ -83,10 +83,11 @@ function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
   const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) => {
+    console.log(publish_status);
     if (publish_status === OutcomePublishStatus.pending) {
       return onChange({ ...value, publish_status, page: 1, is_unpub: UNPUB });
     }
-    onChange({ ...value, publish_status, page: 1, is_unpub: undefined });
+    onChange({ ...value, publish_status, page: 1, is_unpub: "" });
   };
   return (
     <Tabs
@@ -109,6 +110,7 @@ enum BulkAction {
   remove = "remove",
   approve = "approve",
   reject = "reject",
+  addSet = "addSet",
 }
 
 interface BulkActionOption {
@@ -119,23 +121,35 @@ interface BulkActionOption {
 function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<PermissionType[]>): BulkActionOption[] {
   switch (condition.publish_status) {
     case OutcomePublishStatus.published:
-      return perm.delete_published_learning_outcome_448 ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
+      const res1 = [];
+      if (perm.delete_published_learning_outcome_448) {
+        res1.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
+      }
+      if (perm.edit_published_learning_outcome_436) {
+        res1.push({ label: "Add to Set", value: BulkAction.addSet });
+      }
+      return res1;
     case OutcomePublishStatus.pending:
-      const res = [];
+      const res2 = [];
       if (perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446) {
-        res.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
+        res2.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
       }
       if (perm.approve_pending_learning_outcome_481 && !isUnpublish(condition)) {
-        res.push({ label: d("Approve").t("assess_label_approve"), value: BulkAction.approve });
+        res2.push({ label: d("Approve").t("assess_label_approve"), value: BulkAction.approve });
       }
       if (perm.reject_pending_learning_outcome_482 && !isUnpublish(condition)) {
-        res.push({ label: d("Reject").t("assess_label_reject"), value: BulkAction.reject });
+        res2.push({ label: d("Reject").t("assess_label_reject"), value: BulkAction.reject });
       }
-      return res;
+      return res2;
     default:
-      return perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learning_outcome_444
-        ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }]
-        : [];
+      const res3 = [];
+      if (perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learning_outcome_444) {
+        res3.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
+      }
+      if (perm.edit_my_unpublished_learning_outcome_430) {
+        res3.push({ label: "Add to Set", value: BulkAction.addSet });
+      }
+      return res3;
   }
 }
 
@@ -153,10 +167,11 @@ export interface ThirdSearchHeaderProps extends OutcomeQueryConditionBaseProps {
   onBulkDelete: () => any;
   onBulkApprove: () => any;
   onBulkReject: () => any;
+  onBulkAddSet: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject, onBulkAddSet } = props;
   const perm = usePermission([
     PermissionType.delete_published_learning_outcome_448,
     PermissionType.delete_org_pending_learning_outcome_447,
@@ -165,6 +180,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     PermissionType.delete_my_unpublished_learning_outcome_444,
     PermissionType.approve_pending_learning_outcome_481,
     PermissionType.reject_pending_learning_outcome_482,
+    PermissionType.edit_published_learning_outcome_436,
+    PermissionType.edit_my_unpublished_learning_outcome_430,
   ]);
   const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
@@ -172,6 +189,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.remove) onBulkDelete();
     if (event.target.value === BulkAction.approve) onBulkApprove();
     if (event.target.value === BulkAction.reject) onBulkReject();
+    if (event.target.value === BulkAction.addSet) onBulkAddSet();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OutcomeOrderBy | undefined;
@@ -244,7 +262,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject, onBulkAddSet } = props;
   const perm = usePermission([
     PermissionType.delete_published_learning_outcome_448,
     PermissionType.delete_org_pending_learning_outcome_447,
@@ -253,6 +271,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     PermissionType.delete_my_unpublished_learning_outcome_444,
     PermissionType.approve_pending_learning_outcome_481,
     PermissionType.reject_pending_learning_outcome_482,
+    PermissionType.edit_published_learning_outcome_436,
+    PermissionType.edit_my_unpublished_learning_outcome_430,
   ]);
   const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -264,8 +284,9 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
     if (bulkaction === BulkAction.remove) onBulkDelete();
-    if (event.target.value === BulkAction.approve) onBulkApprove();
-    if (event.target.value === BulkAction.reject) onBulkReject();
+    if (bulkaction === BulkAction.approve) onBulkApprove();
+    if (bulkaction === BulkAction.reject) onBulkReject();
+    if (bulkaction === BulkAction.addSet) onBulkAddSet();
   };
   const handleClose = () => {
     setAnchorElLeft(null);

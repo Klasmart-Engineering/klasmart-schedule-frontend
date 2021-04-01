@@ -92,12 +92,13 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{outcome.outcome_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.shortcode}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.program?.map((item) => item.program_name).join(",")}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.subject?.map((item) => item.subject_name).join(",")}</TableCell>
-      <TableCell className={clsx(css.tableCell)}></TableCell>
-      <TableCell className={clsx(css.tableCell)}></TableCell>
+      {/* <TableCell className={clsx(css.tableCell)}>{outcome.subject?.map((item) => item.subject_name).join(",")}</TableCell> */}
+      {/* <TableCell className={clsx(css.tableCell)}></TableCell> */}
+      {/* <TableCell className={clsx(css.tableCell)}></TableCell> */}
       <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? "Yes" : ""}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.sets?.map((item) => item.set_name).join(";")}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {outcome.publish_status === OutcomePublishStatus.published && (
           <Permission value={PermissionType.delete_published_learning_outcome_448}>
@@ -255,12 +256,15 @@ export function OutcomeTable(props: OutcomeTableProps) {
                       <TableCell className={clsx(css.tableCell)}>{d("Learning Outcome").t("assess_label_learning_outcome")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Short Code").t("assess_label_short_code")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Program").t("assess_label_program")}</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>{d("Subject").t("assess_label_subject")}</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>{d("Milestone").t("assess_label_milestone")}</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>{d("Standard").t("assess_label_Standard")}</TableCell>
+                      {/* <TableCell className={clsx(css.tableCell)}>{d("Subject").t("assess_label_subject")}</TableCell> */}
+                      {/* <TableCell className={clsx(css.tableCell)}>{d("Milestone").t("assess_label_milestone")}</TableCell> */}
+                      {/* <TableCell className={clsx(css.tableCell)}>{d("Standard").t("assess_label_Standard")}</TableCell> */}
                       <TableCell className={clsx(css.tableCell)}>{d("Assumed").t("assess_label_assumed")}</TableCell>
-                      <TableCell className={clsx(css.tableCell)}>{d("Created On").t("library_label_created_on")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Author").t("library_label_author")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Created On").t("library_label_created_on")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>
+                        {d("Learning Outcome Set").t("assess_set_learning_outcome_set")}
+                      </TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Actions").t("assess_label_actions")}</TableCell>
                     </TableRow>
                   </TableHead>
