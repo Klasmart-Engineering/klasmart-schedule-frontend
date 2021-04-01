@@ -43,6 +43,14 @@ query classesByOrganization($organization_id: ID!) {
         school_id
         school_name
       }
+        teachers {
+          user_id
+          username
+        }
+        students {
+          user_id
+          username
+        }
     }
   }
 }
@@ -133,6 +141,14 @@ query classesBySchool($school_id: ID!) {
         school_id
         school_name
       }
+        teachers {
+          user_id
+          username
+        }
+        students {
+          user_id
+          username
+        }
     }
   }
 }
@@ -197,6 +213,14 @@ query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
                 schools {
                   school_id
                   school_name
+               }
+               teachers {
+                 user_id
+                 username
+               }
+               students {
+                 user_id
+                 username
                }
             }
         }

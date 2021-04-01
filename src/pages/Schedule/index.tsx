@@ -30,8 +30,10 @@ import {
   getSchoolInfo,
   getSubjectByProgramId,
   ScheduleFilterPrograms,
-  ScheduleFilterClassTypes,
+  ScheduleClassTypesFilter,
   getScheduleAnyTimeViewData,
+  getScheduleFilterClasses,
+  getScheduleUserId,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -235,8 +237,10 @@ function ScheduleContent() {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
     dispatch(getSchoolInfo());
-    dispatch(ScheduleFilterClassTypes());
+    dispatch(ScheduleClassTypesFilter());
     dispatch(ScheduleFilterPrograms());
+    dispatch(getScheduleFilterClasses({ school_id: "-1" }));
+    dispatch(getScheduleUserId());
   }, [dispatch]);
 
   React.useEffect(() => {

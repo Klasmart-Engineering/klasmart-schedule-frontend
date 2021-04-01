@@ -44,6 +44,7 @@ import {
   EntityScheduleListView,
   EntityScheduleSearchView,
   EntityScheduleShortInfo,
+  EntityScheduleFilterClass,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
@@ -63,7 +64,7 @@ interface classOptionsProp {
 interface filterOptionItem {
   classType: string[];
   programs: EntityScheduleShortInfo[];
-  subject: EntityScheduleShortInfo[];
+  others: EntityScheduleFilterClass[];
 }
 
 export interface ScheduleState {
@@ -90,6 +91,7 @@ export interface ScheduleState {
   mySchoolId: string;
   feedbackData: EntityScheduleFeedbackView;
   filterOption: filterOptionItem;
+  user_id: string;
 }
 
 interface Rootstate {
@@ -197,8 +199,9 @@ const initialState: ScheduleState = {
   filterOption: {
     classType: [],
     programs: [],
-    subject: [],
+    others: [],
   },
+  user_id: "",
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -286,6 +289,16 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
     query: ClassesTeachingQueryDocument,
     variables: {
       user_id: meInfo.me?.user_id as string,
+      organization_id,
+    },
+  });
+});
+
+export const getScheduleUserId = createAsyncThunk("getScheduleUserId", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  return gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
       organization_id,
     },
   });
@@ -455,13 +468,9 @@ export const ScheduleFilterPrograms = createAsyncThunk("schedule/filterPrograms"
   return api.schedulesFilter.getProgramsInScheduleFilter();
 });
 
-export const ScheduleFilterClassTypes = createAsyncThunk("schedule/filterClassType", () => {
-  return api.schedulesFilter.getClassTypesInScheduleFilter();
-});
-
-type ScheduleFilterSubjectParams = {
+interface ScheduleFilterSubjectParams extends LoadingMetaPayload {
   program_id: string;
-};
+}
 type ScheduleFilterSubjectResult = ReturnType<typeof api.schedulesFilter.getSubjectsInScheduleFilter>;
 export const ScheduleFilterSubject = createAsyncThunk<ScheduleFilterSubjectResult, ScheduleFilterSubjectParams>(
   "schedule/filterClassType",
@@ -469,6 +478,10 @@ export const ScheduleFilterSubject = createAsyncThunk<ScheduleFilterSubjectResul
     return api.schedulesFilter.getSubjectsInScheduleFilter({ program_id: program_id });
   }
 );
+
+export const ScheduleClassTypesFilter = createAsyncThunk("schedule/filterClassType", () => {
+  return api.schedulesFilter.getClassTypesInScheduleFilter();
+});
 
 export interface getScheduleParticipantsPayLoad {
   class_id: string;
@@ -525,6 +538,14 @@ export const getSubjectByProgramId = createAsyncThunk<SubjectResourseResult, { p
   "getSubject",
   async (program_id) => {
     return api.subjects.getSubject(program_id);
+  }
+);
+
+type ClassResourseResult = ReturnType<typeof api.schedulesFilter.getScheduleFilterClasses>;
+export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { school_id: string } & LoadingMetaPayload>(
+  "getClass",
+  async (school_id) => {
+    return api.schedulesFilter.getScheduleFilterClasses(school_id);
   }
 );
 
@@ -667,14 +688,23 @@ const { actions, reducer } = createSlice({
     [ScheduleFilterPrograms.fulfilled.type]: (state, { payload }: any) => {
       state.filterOption.programs = payload;
     },
-    [ScheduleFilterSubject.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.subject.push(payload);
-    },
-    [ScheduleFilterClassTypes.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.classType = payload;
-    },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleAnyTimeViewData = payload;
+    },
+    [ScheduleClassTypesFilter.fulfilled.type]: (state, { payload }: any) => {
+      if (typeof payload[0] === "string") state.filterOption.classType = payload;
+    },
+    [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
+      state.filterOption.others = [
+        { id: "Undefined", name: "Undefined", operator_role_type: "Unknown" },
+        { id: "1", name: "班级一", operator_role_type: "Unknown" },
+        { id: "2", name: "班级二", operator_role_type: "Student" },
+        { id: "3", name: "班级三", operator_role_type: "Teacher" },
+        { id: "4", name: "班级四", operator_role_type: "Student" },
+      ];
+    },
+    [getScheduleUserId.fulfilled.type]: (state, { payload }: any) => {
+      state.user_id = payload.data.me.user_id;
     },
   },
 });

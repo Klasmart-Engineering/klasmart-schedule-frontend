@@ -74,6 +74,8 @@ export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                 schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
               }
           >
         >
@@ -212,6 +214,8 @@ export type ClassesBySchoolQuery = { __typename?: "Query" } & {
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                 schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
               }
           >
         >
@@ -329,6 +333,8 @@ export type ClassesTeachingQueryQuery = { __typename?: "Query" } & {
               Types.Maybe<
                 { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                     schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+                    teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                    students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
                   }
               >
             >
@@ -483,6 +489,14 @@ export const ClassesByOrganizationDocument = gql`
         schools {
           school_id
           school_name
+        }
+        teachers {
+          user_id
+          username
+        }
+        students {
+          user_id
+          username
         }
       }
     }
@@ -772,6 +786,14 @@ export const ClassesBySchoolDocument = gql`
           school_id
           school_name
         }
+        teachers {
+          user_id
+          username
+        }
+        students {
+          user_id
+          username
+        }
       }
     }
   }
@@ -963,6 +985,14 @@ export const ClassesTeachingQueryDocument = gql`
           schools {
             school_id
             school_name
+          }
+          teachers {
+            user_id
+            username
+          }
+          students {
+            user_id
+            username
           }
         }
       }

@@ -192,6 +192,8 @@ export type Mutation = {
   subject?: Maybe<Subject>;
   program?: Maybe<Program>;
   createOrUpateSystemEntities?: Maybe<Scalars["Boolean"]>;
+  uploadOrganizationsFromCSV?: Maybe<File>;
+  uploadUsersFromCSV?: Maybe<File>;
 };
 
 export type MutationUserArgs = {
@@ -270,6 +272,14 @@ export type MutationProgramArgs = {
 
 export type MutationCreateOrUpateSystemEntitiesArgs = {
   _?: Maybe<Scalars["Int"]>;
+};
+
+export type MutationUploadOrganizationsFromCsvArgs = {
+  file: Scalars["Upload"];
+};
+
+export type MutationUploadUsersFromCsvArgs = {
+  file: Scalars["Upload"];
 };
 
 export type User = {

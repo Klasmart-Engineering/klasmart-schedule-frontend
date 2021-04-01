@@ -88,8 +88,7 @@ export interface ScheduleFilterProps {
 }
 
 export interface FilterQueryTypeProps {
-  org_ids: string;
-  teacher_ids: string;
+  class_types: string;
   class_ids: string;
   subject_ids: string;
   program_ids: string;
@@ -136,7 +135,7 @@ export interface EntityScheduleSchoolsInfo {
   school_name: string;
 }
 
-export interface EntityScheduleClassInfo {
+export interface EntityScheduleClassInfo extends ClassesData {
   class_id?: string;
   class_name?: string;
   status: string;
@@ -177,4 +176,7 @@ export interface FilterDataItemsProps {
   isCheck: boolean;
   isOnlyMine: boolean;
   child: FilterDataItemsProps[];
+  showIcon?: boolean;
+  existData: string[];
+  isHide: boolean;
 }
