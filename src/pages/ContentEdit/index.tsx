@@ -252,6 +252,7 @@ function ContentEditForm() {
           page,
           search_key: searchOutcome,
           assumed: assumed ? 1 : -1,
+          exactSerch: "all",
         })
       );
     },
