@@ -2319,6 +2319,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         keywords?: string;
         shortcode?: string;
         author_name?: string;
+        set_name?: string;
         search_key?: string;
         assumed?: number;
         publish_status?: "draft" | "pending" | "published" | "rejected";

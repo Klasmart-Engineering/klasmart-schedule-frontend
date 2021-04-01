@@ -3208,6 +3208,12 @@
           },
           {
             "type": "string",
+            "description": "search by set_name",
+            "name": "set_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search by search_key",
             "name": "search_key",
             "in": "query"
@@ -5802,6 +5808,12 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
