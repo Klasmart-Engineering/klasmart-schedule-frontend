@@ -467,7 +467,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
   }
 );
 // contentEdit搜索outcomeListist
-type IQueryOutcomeListParams = { exactSerch: string } & Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] &
+type IQueryOutcomeListParams = { exactSerch?: string } & Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] &
   LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
