@@ -76,7 +76,7 @@ export enum ProgramGroup {
   badaEsl = "BadaESL",
   badaSteam = "BadaSTEAM",
   more = "More",
-  moreFeaturedContent = "MoreFeaturedContent",
+  moreFeaturedContent = "More Featured Content",
 }
 export interface ProgramSearchHeaderProps extends QueryConditionBaseProps {}
 export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
