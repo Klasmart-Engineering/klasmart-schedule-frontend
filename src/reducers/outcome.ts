@@ -7,6 +7,7 @@ import {
   ApiOutcomeCreateView,
   ApiOutcomeIDList,
   ApiOutcomeView,
+  ApiPullOutcomeSetResponse,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import { OutcomePublishStatus } from "../api/type";
@@ -29,6 +30,7 @@ interface IOutcomeState extends IPermissionState {
   mockOptions: MockOptions;
   newOptions: ResultGetNewOptions;
   user_id: string;
+  outcomeSetList: ApiPullOutcomeSetResponse["sets"];
 }
 
 interface RootState {
@@ -106,6 +108,7 @@ export const initialState: IOutcomeState = {
     user_id: "",
   },
   user_id: "",
+  outcomeSetList: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -408,6 +411,34 @@ export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, Required<Api
   }
 );
 
+type IQueryPullOutcomeSetParams = Parameters<typeof api.sets.pullOutcomeSet>[0];
+type IQueryPullOutcomeSetResult = AsyncReturnType<typeof api.sets.pullOutcomeSet>;
+export const pullOutcomeSet = createAsyncThunk<IQueryPullOutcomeSetResult, IQueryPullOutcomeSetParams>(
+  "sets/pullOutcomeset",
+  async (query) => {
+    return api.sets.pullOutcomeSet(query);
+  }
+);
+
+type IQueryCreateOutcomeSetParams = Parameters<typeof api.sets.createOutcomeSet>[0];
+type IQueryCreateOutcomeSetResult = AsyncReturnType<typeof api.sets.createOutcomeSet>;
+export const createOutcomeSet = createAsyncThunk<IQueryCreateOutcomeSetResult, IQueryCreateOutcomeSetParams>(
+  "sets/createOutcomeSet",
+  async (params) => {
+    return api.sets.createOutcomeSet(params);
+  }
+);
+type IQueryBulkBindOutcomeSetParams = Parameters<typeof api.sets.bulkBindOutcomeSet>[0];
+type IQueryBulkBindOutcomeSetResult = AsyncReturnType<typeof api.sets.bulkBindOutcomeSet>;
+export const bulkBindOutcomeSet = createAsyncThunk<IQueryBulkBindOutcomeSetResult, IQueryBulkBindOutcomeSetParams>(
+  "sets/bulkBindOutcomeSet",
+  async ({ outcome_ids, set_ids }, { dispatch }) => {
+    if (!set_ids || !set_ids.length)
+      return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    return api.sets.bulkBindOutcomeSet({ outcome_ids, set_ids });
+  }
+);
+
 const { reducer } = createSlice({
   name: "outcome",
   initialState,
@@ -538,6 +569,9 @@ const { reducer } = createSlice({
     },
     [bulkReject.rejected.type]: (state, { error }: any) => {
       throw error;
+    },
+    [pullOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof pullOutcomeSet>>) => {
+      state.outcomeSetList = payload.sets;
     },
   },
 });

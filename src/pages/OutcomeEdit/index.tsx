@@ -1,23 +1,27 @@
 import { Box, makeStyles } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep } from "lodash";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { ApiOutcomeSetCreateView } from "../../api/api.auto";
 import ModalBox from "../../components/ModalBox";
 import { d } from "../../locale/LocaleManager";
-import { modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
+import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
 import { actSuccess } from "../../reducers/notify";
 import {
   approve,
   AsyncTrunkReturned,
+  createOutcomeSet,
   deleteOutcome,
   getNewOptions,
   getOutcomeDetail,
   getSpecialSkills,
   lockOutcome,
   publishOutcome,
+  pullOutcomeSet,
   reject,
   save,
   updateOutcome,
@@ -51,12 +55,13 @@ export default function CreateOutcomings() {
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { outcomeDetail, newOptions } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeDetail, newOptions, outcomeSetList } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showEdit, setShowEdit] = React.useState(false);
   const [isAssumed, setIsAssumed] = React.useState(false);
   const [condition, setCondition] = React.useState("default");
   const [isSelf, setIsSelf] = React.useState(false);
-
+  const [showSetList, setShowSetList] = React.useState(false);
+  const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<ApiOutcomeSetCreateView[]>([]);
   const formMethods = useForm();
   const {
     handleSubmit,
@@ -144,7 +149,7 @@ export default function CreateOutcomings() {
     >;
     if (payload === "ok") {
       dispatch(actSuccess("Reject Success"));
-      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-created_at");
+      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at");
     }
     setOpenStatus(false);
   };
@@ -203,7 +208,7 @@ export default function CreateOutcomings() {
       AsyncTrunkReturned<typeof publishOutcome>
     >;
     if (payload === "ok") {
-      history.push("/assessments/outcome-list?publish_status=draft&page=1&order_by=-created_at");
+      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at");
     }
     // }
   };
@@ -211,7 +216,7 @@ export default function CreateOutcomings() {
   const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
       await dispatch(approve(outcome_id));
-      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-created_at");
+      history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at");
     }
   };
 
@@ -230,6 +235,31 @@ export default function CreateOutcomings() {
       shouldDirty: true,
     });
     setIsAssumed(event.target.checked);
+  };
+
+  const handleClickSearchOutcomSet: OutcomeFormProps["onSearchOutcomeSet"] = async (set_name) => {
+    if (!set_name) return;
+    await dispatch(pullOutcomeSet({ set_name }));
+    setShowSetList(true);
+  };
+  const handleClickCreateOutcomeSet: OutcomeFormProps["onCreateOutcomeSet"] = async (set_name) => {
+    await dispatch(createOutcomeSet({ set_name }));
+    await dispatch(pullOutcomeSet({ set_name }));
+  };
+  const handleClickOk: OutcomeFormProps["onSetOutcomeSet"] = (ids) => {
+    const newIds = excluedOutcomeSet(ids, selectedOutcomeSet);
+    const selectedSets = ids2OutcomeSet(newIds, outcomeSetList);
+    const newSets = selectedOutcomeSet.concat(selectedSets);
+    setSelectedOutcomeSet(newSets || []);
+    setValue("sets", newSets, { shouldDirty: true });
+    setShowSetList(false);
+  };
+
+  const handleClickDelete: OutcomeFormProps["onDeleteSet"] = (set_id: string) => {
+    const index = findSetIndex(set_id, selectedOutcomeSet);
+    let newSets = cloneDeep(selectedOutcomeSet);
+    newSets.splice(index, 1);
+    setSelectedOutcomeSet(newSets);
   };
 
   React.useEffect(() => {
@@ -260,6 +290,7 @@ export default function CreateOutcomings() {
       assumed: true,
     };
     if (outcome_id) {
+      setSelectedOutcomeSet(outcomeDetail.sets || []);
       if (condition === "program") {
         setValue("subject", []);
         setValue("developmental", nextValue.developmental);
@@ -333,6 +364,13 @@ export default function CreateOutcomings() {
         handleCheckBoxChange={handleCheckBoxChange}
         isAssumed={isAssumed}
         newOptions={newOptions}
+        showSetList={showSetList}
+        onSearchOutcomeSet={handleClickSearchOutcomSet}
+        onCreateOutcomeSet={handleClickCreateOutcomeSet}
+        onSetOutcomeSet={handleClickOk}
+        selectedOutcomeSet={selectedOutcomeSet}
+        outcomeSetList={outcomeSetList}
+        onDeleteSet={handleClickDelete}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

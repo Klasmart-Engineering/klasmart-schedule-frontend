@@ -1,4 +1,4 @@
-import { ApiOutcomeView } from "../api/api.auto";
+import { ApiOutcomeSetCreateView, ApiOutcomeView, ApiPullOutcomeSetResponse } from "../api/api.auto";
 
 export const modelOutcomeDetail = (outcomeDetail: ApiOutcomeView) => {
   const afterData = JSON.parse(JSON.stringify(outcomeDetail));
@@ -28,4 +28,26 @@ export const modelOutcomeDetail = (outcomeDetail: ApiOutcomeView) => {
     afterData.grade = afterData.grade.filter((item: string) => item);
   }
   return afterData;
+};
+
+export const ids2OutcomeSet = (ids: string[], outComeSets: ApiPullOutcomeSetResponse["sets"]): ApiOutcomeSetCreateView[] => {
+  if (!ids || !ids.length || !outComeSets || !outComeSets.length) return [];
+  return outComeSets.filter((item) => ids.indexOf(item.set_id as string) >= 0);
+};
+
+export const findSetIndex = (id: string, outComeSets: ApiPullOutcomeSetResponse["sets"]): number => {
+  if (!id || !outComeSets || !outComeSets.length) return -1;
+  return outComeSets.findIndex((item) => item.set_id === id);
+};
+
+export const excluedOutcomeSet = (ids: string[], outComeSets: ApiPullOutcomeSetResponse["sets"]) => {
+  if (!ids || !ids.length || !outComeSets || !outComeSets.length) return ids;
+  const selectedIds = outComeSets.map((item) => item.set_id);
+  selectedIds.forEach((item) => {
+    const index = ids.indexOf(item as string);
+    if (index >= 0) {
+      ids.splice(index, 1);
+    }
+  });
+  return ids;
 };

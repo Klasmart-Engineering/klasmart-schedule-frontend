@@ -109,6 +109,7 @@ enum BulkAction {
   remove = "remove",
   approve = "approve",
   reject = "reject",
+  addSet = "addSet",
 }
 
 interface BulkActionOption {
@@ -119,7 +120,12 @@ interface BulkActionOption {
 function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<PermissionType[]>): BulkActionOption[] {
   switch (condition.publish_status) {
     case OutcomePublishStatus.published:
-      return perm.delete_published_learning_outcome_448 ? [{ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove }] : [];
+      return perm.delete_published_learning_outcome_448
+        ? [
+            { label: d("Delete").t("assess_label_delete"), value: BulkAction.remove },
+            { label: "Add to Set", value: BulkAction.addSet },
+          ]
+        : [];
     case OutcomePublishStatus.pending:
       const res = [];
       if (perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446) {
@@ -153,10 +159,11 @@ export interface ThirdSearchHeaderProps extends OutcomeQueryConditionBaseProps {
   onBulkDelete: () => any;
   onBulkApprove: () => any;
   onBulkReject: () => any;
+  onBulkAddSet: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject, onBulkAddSet } = props;
   const perm = usePermission([
     PermissionType.delete_published_learning_outcome_448,
     PermissionType.delete_org_pending_learning_outcome_447,
@@ -172,6 +179,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.remove) onBulkDelete();
     if (event.target.value === BulkAction.approve) onBulkApprove();
     if (event.target.value === BulkAction.reject) onBulkReject();
+    if (event.target.value === BulkAction.addSet) onBulkAddSet();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as OutcomeOrderBy | undefined;
@@ -244,7 +252,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject } = props;
+  const { value, onChange, onBulkDelete, onBulkPublish, onBulkApprove, onBulkReject, onBulkAddSet } = props;
   const perm = usePermission([
     PermissionType.delete_published_learning_outcome_448,
     PermissionType.delete_org_pending_learning_outcome_447,
@@ -264,8 +272,9 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.publish) onBulkPublish();
     if (bulkaction === BulkAction.remove) onBulkDelete();
-    if (event.target.value === BulkAction.approve) onBulkApprove();
-    if (event.target.value === BulkAction.reject) onBulkReject();
+    if (bulkaction === BulkAction.approve) onBulkApprove();
+    if (bulkaction === BulkAction.reject) onBulkReject();
+    if (bulkaction === BulkAction.addSet) onBulkAddSet();
   };
   const handleClose = () => {
     setAnchorElLeft(null);

@@ -3251,6 +3251,12 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not Found",
             "schema": {
@@ -3270,7 +3276,7 @@
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["learning_outcomes"],
-        "summary": "createOutcome",
+        "summary": "createLearningOutcome",
         "operationId": "createLearningOutcomes",
         "parameters": [
           {
@@ -3294,6 +3300,12 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -3387,6 +3399,12 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not Found",
             "schema": {
@@ -3428,6 +3446,12 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "404": {
@@ -5235,10 +5259,31 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_filter/programs": {
+      "get": {
+        "description": "get schedule filter programs",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "get schedule filter programs",
+        "operationId": "getProgramsInScheduleFilter",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleShortInfo"
+              }
             }
           },
           "500": {
@@ -5301,10 +5346,40 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "500": {
+            "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_filter/subjects": {
+      "get": {
+        "description": "get schedule filter subjects",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "get schedule filter subjects",
+        "operationId": "getSubjectsInScheduleFilter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ScheduleShortInfo"
+              }
             }
           },
           "500": {
@@ -5603,6 +5678,216 @@
               "items": {
                 "type": "string"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/sets": {
+      "get": {
+        "description": "learning outcomes info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["outcome_set"],
+        "summary": "getLearningOutcome",
+        "operationId": "pullOutcomeSet",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "set_name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.PullOutcomeSetResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create learning outcome sets",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["outcome_set"],
+        "summary": "createOutcomeSet",
+        "operationId": "createOutcomeSet",
+        "parameters": [
+          {
+            "description": "create outcome set",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeSetCreateView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.OutcomeSetCreateView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/api.UnAuthorizedResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/sets/bulk_bind": {
+      "post": {
+        "description": "bulk bind learning outcome",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["outcome_set"],
+        "summary": "bind learning outcome set",
+        "operationId": "bulkBindOutcomeSet",
+        "parameters": [
+          {
+            "description": "learning outcome",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.BulkBindOutcomeSetRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/shortcode": {
+      "post": {
+        "description": "generate shortcode",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "generate Shortcode",
+        "operationId": "generateShortcode",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.ShortcodeResponse"
             }
           },
           "400": {
@@ -6125,6 +6410,23 @@
         }
       }
     },
+    "api.BulkBindOutcomeSetRequest": {
+      "type": "object",
+      "properties": {
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "set_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "api.CheckAccountResponse": {
       "type": "object",
       "properties": {
@@ -6473,6 +6775,15 @@
             "type": "string"
           }
         },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.OutcomeSetCreateView"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
         "skills": {
           "type": "array",
           "items": {
@@ -6517,6 +6828,17 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "api.OutcomeSetCreateView": {
+      "type": "object",
+      "properties": {
+        "set_id": {
+          "type": "string"
+        },
+        "set_name": {
+          "type": "string"
         }
       }
     },
@@ -6601,6 +6923,12 @@
         "reject_reason": {
           "type": "string"
         },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.OutcomeSetCreateView"
+          }
+        },
         "shortcode": {
           "type": "string"
         },
@@ -6648,6 +6976,17 @@
       "properties": {
         "scope": {
           "type": "string"
+        }
+      }
+    },
+    "api.PullOutcomeSetResponse": {
+      "type": "object",
+      "properties": {
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.OutcomeSetCreateView"
+          }
         }
       }
     },
@@ -6724,6 +7063,14 @@
           "type": "string"
         },
         "mobile": {
+          "type": "string"
+        }
+      }
+    },
+    "api.ShortcodeResponse": {
+      "type": "object",
+      "properties": {
+        "shortcode": {
           "type": "string"
         }
       }
@@ -8397,6 +8744,12 @@
         "reject_reason": {
           "type": "string"
         },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.Set"
+          }
+        },
         "shortcode": {
           "type": "string"
         },
@@ -9119,6 +9472,29 @@
           "type": "string"
         },
         "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.Set": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "integer"
+        },
+        "deleted_at": {
+          "type": "integer"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "set_id": {
+          "type": "string"
+        },
+        "set_name": {
+          "type": "string"
+        },
+        "updated_at": {
           "type": "integer"
         }
       }
