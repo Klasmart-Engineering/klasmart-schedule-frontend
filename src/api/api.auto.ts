@@ -2020,7 +2020,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/developmentals
      * @description get developmental
      */
-    getDevelopmental: (query?: { program_id?: string }, params?: RequestParams) =>
+    getDevelopmental: (query?: { program_id?: string; subject_ids?: string }, params?: RequestParams) =>
       this.request<ExternalCategory[], ApiInternalServerErrorResponse>(`/developmentals${this.addQueryParams(query)}`, "GET", params),
   };
   folders = {

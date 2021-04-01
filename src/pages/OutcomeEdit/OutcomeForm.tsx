@@ -44,6 +44,7 @@ export interface OutcomeFormProps {
   outcomeDetail: ApiOutcomeView;
   onChangeProgram: (value: NonNullable<string[]>) => any;
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
+  onChangeSubject: (value?: string) => any;
   handleCheckBoxChange: CheckboxProps["onChange"];
   isAssumed: boolean;
   newOptions: ResultGetNewOptions;
@@ -58,6 +59,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onChangeProgram,
     onChangeDevelopmental,
     handleCheckBoxChange,
+    onChangeSubject,
     isAssumed,
     newOptions,
   } = props;
@@ -223,7 +225,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
+              {/* <Controller
                 as={TextField}
                 select
                 SelectProps={{ multiple: true }}
@@ -235,7 +237,29 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 fullWidth
               >
                 {getItems(newOptions.subject)}
-              </Controller>
+              </Controller> */}
+              <Controller
+                name="subject"
+                defaultValue={outcome_id ? outcomeDetail.subject : []}
+                control={control}
+                render={(props) => (
+                  <FormattedTextField
+                    select
+                    label={d("Subject").t("assess_label_subject")}
+                    encode={encodeOneItemArray}
+                    decode={decodeOneItemArray}
+                    {...props}
+                    onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                      onChangeSubject(value.join(","));
+                      props.onChange(value);
+                    }}
+                    fullWidth
+                    disabled={showEdit}
+                  >
+                    {getItems(newOptions.subject)}
+                  </FormattedTextField>
+                )}
+              />
             </Grid>
           </Grid>
           <Grid container justify="space-between">

@@ -197,6 +197,7 @@ export interface DetailsProps {
   visibility_settings: LinkedMockOptionsItem[];
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
+  onChangeSubject: (value?: string) => any;
   permission: boolean;
 }
 export default function Details(props: DetailsProps) {
@@ -214,7 +215,7 @@ export default function Details(props: DetailsProps) {
     lesson_types,
     onChangeDevelopmental,
     onChangeProgram,
-    // onDrawingActivity,
+    onChangeSubject,
     permission,
   } = props;
   const css = useStyles();
@@ -223,7 +224,6 @@ export default function Details(props: DetailsProps) {
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -449,21 +449,30 @@ export default function Details(props: DetailsProps) {
             )}
           />
           <Controller
-            as={TextField}
-            select
-            SelectProps={{
-              multiple: true,
-            }}
-            className={sm ? css.fieldset : css.halfFieldset}
-            label={d("Subject").t("library_label_subject")}
-            disabled={permission}
             name="subject"
             defaultValue={allDefaultValueAndKey.subject?.value}
             key={allDefaultValueAndKey.subject?.key}
             control={control}
-          >
-            {menuItemList(linkedMockOptions.subject || [])}
-          </Controller>
+            render={(props) => (
+              <TextField
+                select
+                SelectProps={{
+                  multiple: true,
+                }}
+                className={sm ? css.fieldset : css.halfFieldset}
+                label={d("Subject").t("library_label_subject")}
+                disabled={permission}
+                {...props}
+                onChange={(e) => {
+                  onChangeSubject(e.target.value);
+                  props.onChange(e.target.value);
+                }}
+                fullWidth={sm}
+              >
+                {menuItemList(linkedMockOptions.subject || [])}
+              </TextField>
+            )}
+          />
         </Box>
         <Box>
           <Controller

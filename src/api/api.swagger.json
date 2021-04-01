@@ -2277,6 +2277,12 @@
             "description": "program id",
             "name": "program_id",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "subject ids,separated by comma",
+            "name": "subject_ids",
+            "in": "query"
           }
         ],
         "responses": {
