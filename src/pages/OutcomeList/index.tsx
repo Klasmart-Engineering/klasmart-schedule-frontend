@@ -6,10 +6,10 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { ApiOutcomeSetCreateView } from "../../api/api.auto";
-import { OrderBy, OutcomeOrderBy } from "../../api/type";
+import { OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
-import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet } from "../../models/ModelOutcomeDetailForm";
+import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, isAllMineOutcome } from "../../models/ModelOutcomeDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
 import {
@@ -152,6 +152,9 @@ export function OutcomeList() {
   const handleBulkAddSet: ThirdSearchHeaderProps["onBulkAddSet"] = () => {
     if (!ids || !ids.length)
       return dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one")));
+    const isMy = isAllMineOutcome(ids, outcomeList, user_id);
+    if ((condition.publish_status === OutcomePublishStatus.draft || condition.publish_status === OutcomePublishStatus.rejected) && !isMy)
+      return dispatch(actWarning(d("You can only add sets to your own learning outcomes.").t("assess_msg_set_myonly")));
     setSelectedOutcomeSet([]);
     openAddSet();
   };

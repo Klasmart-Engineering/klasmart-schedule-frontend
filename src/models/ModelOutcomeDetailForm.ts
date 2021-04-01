@@ -51,3 +51,9 @@ export const excluedOutcomeSet = (ids: string[], outComeSets: ApiPullOutcomeSetR
   });
   return ids;
 };
+
+export const isAllMineOutcome = (ids: string[], outcomeList: ApiOutcomeView[], user_id: string) => {
+  const selectedOutcome = outcomeList.filter((item) => ids.indexOf(item.outcome_id as string) >= 0);
+  const index = selectedOutcome.findIndex((item) => item.author_id !== user_id);
+  return !(index >= 0);
+};
