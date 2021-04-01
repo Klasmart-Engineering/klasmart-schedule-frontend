@@ -63,7 +63,7 @@ interface AssetDetailsProps {
   contentDetail: EntityContentInfoWithDetails;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
-  onChangeSubject: (value: string) => any;
+  onChangeSubject: (value: string[]) => any;
 }
 export default function AssetsDetails(props: AssetDetailsProps) {
   const css = useStyles();
@@ -215,15 +215,15 @@ export default function AssetsDetails(props: AssetDetailsProps) {
                 SelectProps={{
                   multiple: true,
                 }}
-                className={sm ? css.fieldset : css.halfFieldset}
+                className={css.fieldset}
                 label={d("Subject").t("library_label_subject")}
                 disabled={isIdExist()}
                 {...props}
                 onChange={(e) => {
-                  onChangeSubject(e.target.value);
-                  props.onChange(e.target.value);
+                  const value = (e.target.value as unknown) as string[];
+                  value.length > 0 && onChangeSubject(value);
+                  value.length > 0 && props.onChange(value);
                 }}
-                fullWidth={sm}
               >
                 {menuItemList(flattenedMockOptions.subject || [])}
               </TextField>

@@ -279,6 +279,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     }}
                     fullWidth
                     disabled={showEdit}
+                    required
                   >
                     {getItems(newOptions.subject)}
                   </FormattedTextField>

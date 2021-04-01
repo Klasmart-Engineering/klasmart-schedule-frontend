@@ -197,7 +197,7 @@ export interface DetailsProps {
   visibility_settings: LinkedMockOptionsItem[];
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
-  onChangeSubject: (value?: string) => any;
+  onChangeSubject: (value: string[]) => any;
   permission: boolean;
 }
 export default function Details(props: DetailsProps) {
@@ -464,8 +464,9 @@ export default function Details(props: DetailsProps) {
                 disabled={permission}
                 {...props}
                 onChange={(e) => {
-                  onChangeSubject(e.target.value);
-                  props.onChange(e.target.value);
+                  const value = (e.target.value as unknown) as string[];
+                  value.length > 0 && onChangeSubject(value);
+                  value.length > 0 && props.onChange(value);
                 }}
                 fullWidth={sm}
               >

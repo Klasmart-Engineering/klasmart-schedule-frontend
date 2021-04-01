@@ -277,7 +277,7 @@ export default function CreateOutcomings() {
       const subject_id = outcomeDetail.subject && outcomeDetail.subject[0] && outcomeDetail.subject[0].subject_id;
       const development_id =
         outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
-      if (program_id && development_id && outcome_id === outcomeDetail.outcome_id) {
+      if (program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
         dispatch(getNewOptions({ program_id, development_id, default_subject_ids: subject_id, metaLoading: true }));
       }
     }
@@ -293,7 +293,7 @@ export default function CreateOutcomings() {
     const nextValue: any = {
       program: [newOptions.program[0]?.id],
       developmental: [newOptions.developmental[0]?.id],
-      subject: [],
+      subject: [newOptions.subject[0]?.id],
       skills: [newOptions.skills[0]?.id],
       age: [newOptions.age[0]?.id],
       grade: [newOptions.grade[0]?.id],
@@ -302,7 +302,7 @@ export default function CreateOutcomings() {
     if (outcome_id) {
       setSelectedOutcomeSet(outcomeDetail.sets || []);
       if (condition === "program") {
-        setValue("subject", []);
+        setValue("subject", nextValue.subject);
         setValue("developmental", nextValue.developmental);
         setValue("skills", []);
         setValue("age", []);
@@ -320,7 +320,7 @@ export default function CreateOutcomings() {
       reset(nextValue);
     }
     if (condition === "program") {
-      setValue("subject", []);
+      setValue("subject", nextValue.subject);
       setValue("developmental", nextValue.developmental);
       setValue("skills", []);
       setValue("age", []);

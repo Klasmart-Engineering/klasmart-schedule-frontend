@@ -272,9 +272,9 @@ function ContentEditForm() {
     [dispatch]
   );
   const handleChangeSubject = useMemo(
-    () => async (subject_ids?: string) => {
+    () => async (subject_ids: string[]) => {
       setRegulation(Regulation.ByOptionCount);
-      dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: program, default_subject_ids: subject_ids }));
+      dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: program, default_subject_ids: subject_ids.join(",") }));
     },
     [dispatch, program]
   );
