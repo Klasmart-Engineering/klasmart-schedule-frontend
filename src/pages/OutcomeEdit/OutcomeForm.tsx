@@ -51,7 +51,7 @@ export interface OutcomeFormProps {
   outcomeDetail: ApiOutcomeView;
   onChangeProgram: (value: NonNullable<string[]>) => any;
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
-  onChangeSubject: (value?: string) => any;
+  onChangeSubject: (value: string[]) => any;
   handleCheckBoxChange: CheckboxProps["onChange"];
   isAssumed: boolean;
   newOptions: ResultGetNewOptions;
@@ -267,22 +267,22 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 defaultValue={outcome_id ? outcomeDetail.subject : []}
                 control={control}
                 render={(props) => (
-                  <FormattedTextField
+                  <TextField
                     select
                     label={d("Subject").t("assess_label_subject")}
-                    encode={encodeOneItemArray}
-                    decode={decodeOneItemArray}
                     {...props}
-                    onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-                      onChangeSubject(value.join(","));
-                      props.onChange(value);
+                    onChange={(e) => {
+                      const value = (e.target.value as unknown) as string[];
+                      value.length > 0 && onChangeSubject(value);
+                      value.length > 0 && props.onChange(value);
                     }}
                     fullWidth
                     disabled={showEdit}
+                    SelectProps={{ multiple: true }}
                     required
                   >
                     {getItems(newOptions.subject)}
-                  </FormattedTextField>
+                  </TextField>
                 )}
               />
             </Grid>
