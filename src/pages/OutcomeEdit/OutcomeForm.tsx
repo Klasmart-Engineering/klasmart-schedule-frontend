@@ -42,8 +42,16 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 16,
     margin: theme.spacing(0.5),
   },
-  chipCon: {
-    width: "100%",
+  outcomesetCon: {
+    "& .MuiInputAdornment-root": {
+      display: "flex",
+      flexWrap: "wrap",
+      height: "auto",
+      maxHeight: "fit-content",
+    },
+    "& .MuiInputBase-input": {
+      width: 0,
+    },
   },
 }));
 
@@ -391,6 +399,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     <TextField
                       fullWidth
                       disabled={showEdit}
+                      className={classes.outcomesetCon}
                       label={d("Learning Outcome Set").t("assess_set_learning_outcome_set")}
                       InputProps={{
                         readOnly: true,
