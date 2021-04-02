@@ -92,9 +92,7 @@ function OutomeRow(props: OutcomeProps) {
       setIsDisable(true);
       return dispatch(
         actWarning(
-          d("The selected learning outcome is still in approval process, you cannot do bulk action for now.").t(
-            "assess_msg_blocked_learning_outcome"
-          )
+          d("The selected learning outcome is still in approval process, you cannot do bulk action for now.").t("assess_msg_locked_lo")
         )
       );
     }

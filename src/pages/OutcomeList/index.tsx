@@ -155,7 +155,7 @@ export function OutcomeList() {
       return dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one")));
     const isMy = isAllMineOutcome(ids, outcomeList, user_id);
     if ((condition.publish_status === OutcomePublishStatus.draft || condition.publish_status === OutcomePublishStatus.rejected) && !isMy)
-      return dispatch(actWarning(d("You can only add sets to your own learning outcomes.").t("assess_msg_set_myonly")));
+      return dispatch(actWarning(d("You can only do bulk action to your own learning outcomes.").t("assess_msg_set_myonly")));
     setSelectedOutcomeSet([]);
     openAddSet();
   };

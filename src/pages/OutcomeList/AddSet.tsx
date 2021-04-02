@@ -11,7 +11,9 @@ const useStyles = makeStyles((theme) =>
       marginLeft: "40px !important",
     },
     dialogContent: {
-      minHeight: 360,
+      height: 334,
+      boxSizing: "border-box",
+      borderBottom: "none",
     },
     title: {
       "& .MuiTypography-root": {

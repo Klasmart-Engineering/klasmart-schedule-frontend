@@ -1,6 +1,6 @@
 import { Button, Checkbox, Chip, FormControlLabel, makeStyles, TextField, Typography } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
-import ClearIcon from "@material-ui/icons/Clear";
+import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import clsx from "clsx";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -147,7 +147,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
       {showChipList && (
         <div className={css.selectedSetsCon}>
           {selectedOutcomeSet.map((item) => (
-            <Chip key={item.set_id} deleteIcon={<ClearIcon />} label={item.set_name} className={css.chip} onDelete={handleDelete} />
+            <Chip key={item.set_id} deleteIcon={<ClearRoundedIcon />} label={item.set_name} className={css.chip} onDelete={handleDelete} />
           ))}
         </div>
       )}

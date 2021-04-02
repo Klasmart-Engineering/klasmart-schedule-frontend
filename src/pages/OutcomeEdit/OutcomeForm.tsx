@@ -1,5 +1,5 @@
 import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, MenuItem, TextField } from "@material-ui/core";
-import ClearIcon from "@material-ui/icons/Clear";
+import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { ApiOutcomeSetCreateView, ApiOutcomeView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
@@ -408,7 +408,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                             {selectedOutcomeSet.map((item) => (
                               <Chip
                                 className={classes.chip}
-                                deleteIcon={<ClearIcon />}
+                                deleteIcon={<ClearRoundedIcon />}
                                 key={item.set_id}
                                 label={item.set_name}
                                 onDelete={(e) => handleDelete(item.set_id as string)}
