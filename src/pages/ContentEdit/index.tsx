@@ -60,7 +60,8 @@ export const useQueryCms = () => {
   const isShare = query.get("isShare") || "org";
   const editindex: number = Number(query.get("editindex") || 0);
   const back = query.get("back") || "";
-  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back };
+  const exactSerch = query.get("exactSerch") || "all";
+  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch };
 };
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
@@ -94,7 +95,7 @@ function ContentEditForm() {
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams<RouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
-  const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back } = useQueryCms();
+  const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
@@ -201,9 +202,8 @@ function ContentEditForm() {
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
     () => ({ value = "", exactSerch = "all", assumed }) => {
       history.replace({
-        search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
+        search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
       });
-      console.log(exactSerch);
       dispatch(
         searchOutcomeList({
           exactSerch,
@@ -252,11 +252,11 @@ function ContentEditForm() {
           page,
           search_key: searchOutcome,
           assumed: assumed ? 1 : -1,
-          exactSerch: "all",
+          exactSerch,
         })
       );
     },
-    [assumed, dispatch, searchOutcome]
+    [assumed, dispatch, exactSerch, searchOutcome]
   );
   const handleGoOutcomeDetail = useMemo(
     () => (id: ApiOutcomeView["outcome_id"]) => {

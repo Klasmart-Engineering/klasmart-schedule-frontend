@@ -474,11 +474,12 @@ type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searc
 export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "content/searchOutcomeList",
   async ({ metaLoading, ...query }) => {
-    const { exactSerch, search_key, assumed } = query;
+    const { exactSerch, search_key, assumed, page } = query;
     const params: OutcomeQueryCondition = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
       assumed,
+      page,
     };
     if (exactSerch === OutcomeListExectSearch.all) params.search_key = search_key;
     if (exactSerch === OutcomeListExectSearch.loName) params.outcome_name = search_key;
