@@ -11,7 +11,7 @@ import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
+import { AsyncTrunkReturned, contentLists, onLoadContentPreview, searchAuthContentLists } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
   getClassesByOrg,
@@ -84,9 +84,10 @@ function ScheduleContent() {
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [modelYear, setModelYear] = React.useState<boolean>(false);
-  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentPreview, mediaList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [isHidden, setIsHidden] = React.useState<boolean>(false);
   const [isShowAnyTime, setIsShowAnyTime] = React.useState<boolean>(false);
+  const [anyTimeName, setAnyTimeName] = React.useState<string>("");
 
   const handleChangeHidden = (is_hidden: boolean) => {
     setIsHidden(is_hidden);
@@ -116,9 +117,13 @@ function ScheduleContent() {
     dispatch(changeParticipants({ type: type, data: data }));
   };
 
-  const handleChangeShowAnyTime = async (is_show: boolean, class_id?: string) => {
-    if (class_id) await dispatch(getScheduleAnyTimeViewData({ view_type: "full_view", filter_option: "any_time", class_ids: class_id }));
+  const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string) => {
+    if (class_id)
+      await dispatch(
+        getScheduleAnyTimeViewData({ view_type: "full_view", filter_option: "any_time", class_ids: class_id, metaLoading: true })
+      );
     setIsShowAnyTime(is_show);
+    setAnyTimeName(name);
   };
 
   const initModalDate: AlertDialogProps = {
@@ -241,6 +246,13 @@ function ScheduleContent() {
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(getScheduleUserId());
+    dispatch(
+      searchAuthContentLists({
+        metaLoading: true,
+        program_group: "More+Featured+Content",
+        page_size: 1000,
+      })
+    );
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -312,6 +324,7 @@ function ScheduleContent() {
               setSpecificStatus={setSpecificStatus}
               specificStatus={specificStatus}
               contentPreview={contentPreview}
+              mediaList={mediaList}
               LinkageLessonPlan={LinkageLessonPlan}
               participantsIds={participantsIds}
               classRosterIds={classRosterIds}
@@ -329,9 +342,15 @@ function ScheduleContent() {
             <Zoom in={isShowAnyTime}>
               <Paper elevation={4}>
                 <ScheduleAnyTime
+                  anyTimeName={anyTimeName}
+                  modelView={modelView}
                   timesTamp={timesTamp}
                   handleChangeShowAnyTime={handleChangeShowAnyTime}
                   scheduleAnyTimeViewData={scheduleAnyTimeViewData}
+                  privilegedMembers={privilegedMembers}
+                  changeModalDate={changeModalDate}
+                  toLive={toLive}
+                  handleChangeHidden={handleChangeHidden}
                 />
               </Paper>
             </Zoom>

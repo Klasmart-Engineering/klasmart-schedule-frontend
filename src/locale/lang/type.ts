@@ -632,12 +632,13 @@ type LangRecord<T = string> =
   | { id: "schedule_filter_undefined"; description: "Undefined"; values: undefined }
   | { id: "schedule_filter_class_types"; description: "Class Types"; values: undefined }
   | { id: "schedule_filter_only_mine"; description: "Only MIne"; values: undefined }
-  | { id: "schedule_filter_view_any_time_study"; description: "View Any Time Study"; values: undefined }
+  | { id: "schedule_filter_view_any_time_study"; description: "View Anytime Study"; values: undefined }
   | { id: "schedule_filter_all"; description: "All"; values: undefined }
-  | { id: "schedule_any_anytime_study"; description: "Any Time Study"; values: undefined }
+  | { id: "schedule_any_anytime_study"; description: "Anytime Study"; values: undefined }
   | { id: "schedule_detail_see_less"; description: "See Less"; values: undefined }
   | { id: "schedule_detail_students"; description: "Students"; values: undefined }
   | { id: "schedule_calendar_more"; description: "More"; values: undefined }
+  | { id: "schedule_msg_no_available"; description: "No anytime study is available "; values: undefined }
   | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

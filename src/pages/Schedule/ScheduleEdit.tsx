@@ -310,6 +310,7 @@ function EditBox(props: CalendarStateProps) {
     handleChangeHidden,
     scheduleDetial,
     privilegedMembers,
+    mediaList,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -1502,6 +1503,13 @@ function EditBox(props: CalendarStateProps) {
         name: item.name,
       });
     });
+    mediaList.forEach((item: EntityContentInfoWithDetails) => {
+      newContentsData.push({
+        title: "More Featured Content",
+        id: item.id,
+        name: item.name,
+      });
+    });
     return newContentsData;
   };
 
@@ -2095,7 +2103,8 @@ interface CalendarStateProps {
   isHidden: boolean;
   scheduleDetial: EntityScheduleDetailsView;
   privilegedMembers: (member: memberType) => boolean;
-  handleChangeShowAnyTime: (is_show: boolean) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  mediaList: EntityContentInfoWithDetails[];
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2130,6 +2139,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     scheduleDetial,
     privilegedMembers,
     handleChangeShowAnyTime,
+    mediaList,
   } = props;
 
   const template = (
@@ -2159,6 +2169,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleDetial={scheduleDetial}
           privilegedMembers={privilegedMembers}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
+          mediaList={mediaList}
         />
       </Box>
       <Box
@@ -2193,6 +2204,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleDetial={scheduleDetial}
           privilegedMembers={privilegedMembers}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
+          mediaList={mediaList}
         />
       </Box>
     </>

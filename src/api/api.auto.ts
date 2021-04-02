@@ -2902,7 +2902,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule filter classTypes
      */
     getClassTypesInScheduleFilter: (params?: RequestParams) =>
-      this.request<string[], ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
+      this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
 
     /**
      * @tags schedule

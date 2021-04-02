@@ -3,7 +3,7 @@ import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownO
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
 import { MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
   EntityScheduleClassInfo,
@@ -121,7 +121,7 @@ type StyledTreeItemProps = TreeItemProps & {
   labelIcon?: React.ElementType<SvgIconProps>;
   labelInfo?: string;
   labelText?: string;
-  handleChangeShowAnyTime: (is_show: boolean, class_id: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id: string) => void;
   isShowIcon?: boolean;
   isOnlyMine?: boolean;
   item: FilterDataItemsProps;
@@ -184,7 +184,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
       <TreeItem
         label={
           <div className={classes.labelRoot}>
-            <div style={{ display: "flex", alignItems: "center", width: "100%" }} className={isOnlyMine ? classes.abbreviation : ""}>
+            <div style={{ display: "flex", alignItems: "center", width: "58%" }} className={isOnlyMine ? classes.abbreviation : ""}>
               {LabelIcon && isShowIcon && <LabelIcon color="inherit" className={classes.labelIcon} />}
               <Typography
                 variant="body2"
@@ -205,7 +205,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                     handleSetStateOnlySelectMine(item.id, (e.target as HTMLInputElement).checked);
                     e.stopPropagation();
                   }}
-                  label="Only Mine"
+                  label={d("Only MIne").t("schedule_filter_only_mine")}
                   style={{ transform: "scale(0.7)", marginRight: "0px" }}
                 />
               </Typography>
@@ -215,7 +215,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                 <div style={{ width: "12px", height: "12px", backgroundColor: `rgb(${rgb},${rgb},${rgb})`, borderRadius: "20px" }} />{" "}
                 <MoreVertIcon
                   onClick={() => {
-                    handleChangeShowAnyTime(true, nodeValue[1]);
+                    handleChangeShowAnyTime(true, item.name, nodeValue[1]);
                   }}
                 />
               </Typography>
@@ -402,9 +402,15 @@ function FilterTemplate(props: FilterProps) {
     return classResult;
   };
 
+  type classTypeLabel =
+    | "schedule_detail_online_class"
+    | "schedule_detail_offline_class"
+    | "schedule_detail_homework"
+    | "schedule_detail_task";
+
   const getClassTypeByFilter = () => {
     return filterOption.classType.map((val: string) => {
-      return subDataStructures(val, val, "classType");
+      return subDataStructures(val, t(val as classTypeLabel), "classType");
     });
   };
 
@@ -483,7 +489,7 @@ function FilterTemplate(props: FilterProps) {
     },
     {
       id: "Others+1",
-      name: "Others",
+      name: d("Others").t("schedule_filter_others"),
       isCheck: false,
       child: getOthersByFilter(),
       isOnlyMine: getOthersExistData().length > 0,
@@ -492,7 +498,7 @@ function FilterTemplate(props: FilterProps) {
     },
     {
       id: "Programs+1",
-      name: "Programs",
+      name: d("Programs").t("schedule_filter_programs"),
       isCheck: false,
       child: getProgramByFilter(),
       isOnlyMine: false,
@@ -501,7 +507,7 @@ function FilterTemplate(props: FilterProps) {
     },
     {
       id: "ClassTypes+1",
-      name: "ClassTypes",
+      name: d("Class Types").t("schedule_filter_class_types"),
       isCheck: false,
       child: getClassTypeByFilter(),
       isOnlyMine: false,
@@ -555,7 +561,7 @@ interface FilterProps {
   handleChangeLoadScheduleView: (filterQuery: FilterQueryTypeProps | []) => void;
   mockOptions: MockOptionsOptionsItem[] | undefined;
   scheduleMockOptions: getScheduleMockOptionsResponse;
-  handleChangeShowAnyTime: (is_show: boolean) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
