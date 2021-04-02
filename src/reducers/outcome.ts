@@ -579,6 +579,7 @@ const { reducer } = createSlice({
     },
     [pullOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof pullOutcomeSet>>) => {
       state.outcomeSetList = payload.sets;
+      state.defaultSelectOutcomeset = "";
     },
     [createOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof createOutcomeSet>>) => {
       state.outcomeSetList = payload.sets;

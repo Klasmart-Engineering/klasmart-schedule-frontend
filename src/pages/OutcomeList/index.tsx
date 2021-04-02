@@ -166,7 +166,10 @@ export function OutcomeList() {
   };
 
   const handleClickSearchOutcomSet: AddSetProps["onSearchOutcomeSet"] = async (set_name) => {
-    if (!set_name) return;
+    if (!set_name || !set_name.trim()) {
+      setShowSetList(false);
+      return;
+    }
     setShowSetList(true);
     await dispatch(pullOutcomeSet({ set_name }));
   };

@@ -62,7 +62,8 @@ const useStyles = makeStyles((theme) => ({
   },
   outComeSets: {
     width: "100%",
-    maxHeight: 109,
+    maxHeight: 145,
+    overflowY: "scroll",
   },
   chip: {
     borderRadius: "4px",
@@ -117,11 +118,20 @@ export function OutcomeSet(props: OutcomeSetProps) {
   };
   const handleClickCreate = () => {
     if (!search_key) return;
-    if (outcomeSetList && outcomeSetList.length > 0) return;
     onCreateOutcomeSet(search_key);
   };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
+  };
+  const showCreate = (search_key: string) => {
+    if (outcomeSetList && outcomeSetList.length > 0) {
+      const index = outcomeSetList.findIndex((set) => set.set_name === search_key);
+      if (index >= 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
   };
   useEffect(() => {
     setValue("outcomesets", [defaultSelectOutcomeset]);
@@ -189,9 +199,11 @@ export function OutcomeSet(props: OutcomeSetProps) {
               />
             )}
           />
-          <div className={clsx(css.itemSet, css.createCon)} onClick={handleClickCreate}>
-            {d("Create").t("assess_label_create")} {outcomeSetList && outcomeSetList.length > 0 ? "" : `"${search_key}"`}
-          </div>
+          {showCreate(search_key) && (
+            <div className={clsx(css.itemSet, css.createCon)} onClick={handleClickCreate}>
+              {d("Create").t("assess_label_create")} {`"${search_key}"`}
+            </div>
+          )}
           <div className={css.action}>
             <Button color="primary" variant="contained" onClick={handleClickOk}>
               {d("OK").t("general_button_OK")}
