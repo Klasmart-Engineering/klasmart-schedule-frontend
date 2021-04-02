@@ -488,7 +488,7 @@ function FilterTemplate(props: FilterProps) {
       child: getOthersByFilter(),
       isOnlyMine: getOthersExistData().length > 0,
       existData: getOthersExistData(),
-      isHide: getClassBySchool().length < 1,
+      isHide: getOthersByFilter().length < 1,
     },
     {
       id: "Programs+1",
@@ -497,7 +497,7 @@ function FilterTemplate(props: FilterProps) {
       child: getProgramByFilter(),
       isOnlyMine: false,
       existData: [],
-      isHide: getClassBySchool().length < 1,
+      isHide: getProgramByFilter().length < 1,
     },
     {
       id: "ClassTypes+1",
@@ -506,7 +506,7 @@ function FilterTemplate(props: FilterProps) {
       child: getClassTypeByFilter(),
       isOnlyMine: false,
       existData: [],
-      isHide: getClassBySchool().length < 1,
+      isHide: getClassTypeByFilter().length < 1,
     },
   ];
   const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {

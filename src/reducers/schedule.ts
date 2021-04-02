@@ -695,13 +695,7 @@ const { actions, reducer } = createSlice({
       if (typeof payload[0] === "string") state.filterOption.classType = payload;
     },
     [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.others = [
-        { id: "Undefined", name: "Undefined", operator_role_type: "Unknown" },
-        { id: "1", name: "班级一", operator_role_type: "Unknown" },
-        { id: "2", name: "班级二", operator_role_type: "Student" },
-        { id: "3", name: "班级三", operator_role_type: "Teacher" },
-        { id: "4", name: "班级四", operator_role_type: "Student" },
-      ];
+      state.filterOption.others = payload;
     },
     [getScheduleUserId.fulfilled.type]: (state, { payload }: any) => {
       state.user_id = payload.data.me.user_id;

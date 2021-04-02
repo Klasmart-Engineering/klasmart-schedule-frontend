@@ -4,6 +4,7 @@ import React from "react";
 import { timestampType } from "../../types/scheduleTypes";
 import CloseIcon from "@material-ui/icons/Close";
 import { EntityScheduleListView } from "../../api/api.auto";
+import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -118,6 +119,12 @@ function AnyTimeSchedule(props: SearchListProps) {
           }}
         />
       </p>
+      {anyTimeData.study.length < 1 && anyTimeData.homeFun.length < 1 && (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+          <img src={AnyTimeNoData} style={{ width: "50%" }} alt="" />
+          <span>No anytime study is available</span>
+        </div>
+      )}
       {anyTimeData.study.length > 0 && (
         <div className={classes.itemBox}>
           <p>Anytime Study</p>
