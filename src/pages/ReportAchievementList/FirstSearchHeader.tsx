@@ -9,7 +9,7 @@ import React from "react";
 import { apiIsEnableReport } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,7 +106,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                       })}
                       startIcon={value === Category.archived ? <SaBlueIcon /> : <SaIcon />}
                     >
-                      {d("Student Achievement").t("report_label_student_achievement")}
+                      {t("report_label_student_achievement")}
                     </Button>
                     {true && (
                       <Button
@@ -116,7 +116,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                         })}
                         startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
                       >
-                        {d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
+                        {t("report_label_lo_in_categories")}
                       </Button>
                     )}
                     {isEnableReport && (
@@ -167,17 +167,9 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                       indicatorColor="primary"
                       textColor="primary"
                     >
-                      <Tab
-                        value={Category.archived}
-                        label={d("Student Achievement").t("report_label_student_achievement")}
-                        className={classes.capitalize}
-                      />
+                      <Tab value={Category.archived} label={t("report_label_student_achievement")} className={classes.capitalize} />
                       {true && (
-                        <Tab
-                          value={Category.learningOutcomes}
-                          label={d("Learning Outcomes in Categories").t("report_label_lo_in_categories")}
-                          className={classes.capitalize}
-                        />
+                        <Tab value={Category.learningOutcomes} label={t("report_label_lo_in_categories")} className={classes.capitalize} />
                       )}
                       {isEnableReport && (
                         <Tab
