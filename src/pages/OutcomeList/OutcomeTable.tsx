@@ -55,6 +55,14 @@ const useStyles = makeStyles((theme) =>
       wordWrap: "break-word",
       wordBreak: "normal",
     },
+    outcomeSet: {
+      overflow: "hidden",
+      display: "-webkit-box",
+      textOverflow: "ellipsis",
+      WebkitBoxOrient: "vertical",
+      WebkitLineClamp: 3,
+      maxHeight: 93,
+    },
   })
 );
 
@@ -98,7 +106,9 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? "Yes" : ""}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{outcome.sets?.map((item) => item.set_name).join(";")}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>
+        <div className={css.outcomeSet}>{outcome.sets?.map((item) => item.set_name).join(";")}</div>
+      </TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {outcome.publish_status === OutcomePublishStatus.published && (
           <Permission value={PermissionType.delete_published_learning_outcome_448}>

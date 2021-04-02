@@ -55,7 +55,9 @@ export default function CreateOutcomings() {
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { outcomeDetail, newOptions, outcomeSetList } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeDetail, newOptions, outcomeSetList, defaultSelectOutcomeset } = useSelector<RootState, RootState["outcome"]>(
+    (state) => state.outcome
+  );
   const [showEdit, setShowEdit] = React.useState(false);
   const [isAssumed, setIsAssumed] = React.useState(false);
   const [condition, setCondition] = React.useState("default");
@@ -253,7 +255,6 @@ export default function CreateOutcomings() {
   };
   const handleClickCreateOutcomeSet: OutcomeFormProps["onCreateOutcomeSet"] = async (set_name) => {
     await dispatch(createOutcomeSet({ set_name }));
-    await dispatch(pullOutcomeSet({ set_name }));
   };
   const handleClickOk: OutcomeFormProps["onSetOutcomeSet"] = (ids) => {
     const newIds = excluedOutcomeSet(ids, selectedOutcomeSet);
@@ -382,6 +383,7 @@ export default function CreateOutcomings() {
         selectedOutcomeSet={selectedOutcomeSet}
         outcomeSetList={outcomeSetList}
         onDeleteSet={handleClickDelete}
+        defaultSelectOutcomeset={defaultSelectOutcomeset as string}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

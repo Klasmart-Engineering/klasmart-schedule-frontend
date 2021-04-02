@@ -32,6 +32,7 @@ export interface AddSetProps {
   selectedOutcomeSet: ApiOutcomeSetCreateView[];
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
+  defaultSelectOutcomeset: string;
 }
 export function AddSet(props: AddSetProps) {
   const css = useStyles();
@@ -46,6 +47,7 @@ export function AddSet(props: AddSetProps) {
     selectedOutcomeSet,
     outcomeSetList,
     onDeleteSet,
+    defaultSelectOutcomeset,
   } = props;
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
@@ -64,6 +66,7 @@ export function AddSet(props: AddSetProps) {
           selectedOutcomeSet={selectedOutcomeSet}
           outcomeSetList={outcomeSetList}
           onDeleteSet={handleDelete}
+          defaultSelectOutcomeset={defaultSelectOutcomeset}
         />
       </DialogContent>
       <DialogActions>
@@ -71,7 +74,7 @@ export function AddSet(props: AddSetProps) {
           {d("CANCEL").t("general_button_CANCEL")}
         </Button>
         <LButton color="primary" variant="contained" className={css.okBtn} onClick={onAddSet}>
-          {d("OK").t("general_button_OK")}
+          {d("CONFIRM").t("general_button_CONFIRM")}
         </LButton>
       </DialogActions>
     </Dialog>

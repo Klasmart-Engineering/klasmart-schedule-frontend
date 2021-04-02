@@ -31,6 +31,7 @@ interface IOutcomeState extends IPermissionState {
   newOptions: ResultGetNewOptions;
   user_id: string;
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
+  defaultSelectOutcomeset: string;
 }
 
 interface RootState {
@@ -109,6 +110,7 @@ export const initialState: IOutcomeState = {
   },
   user_id: "",
   outcomeSetList: [],
+  defaultSelectOutcomeset: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -425,10 +427,12 @@ export const pullOutcomeSet = createAsyncThunk<IQueryPullOutcomeSetResult, IQuer
 
 type IQueryCreateOutcomeSetParams = Parameters<typeof api.sets.createOutcomeSet>[0];
 type IQueryCreateOutcomeSetResult = AsyncReturnType<typeof api.sets.createOutcomeSet>;
-export const createOutcomeSet = createAsyncThunk<IQueryCreateOutcomeSetResult, IQueryCreateOutcomeSetParams>(
+export const createOutcomeSet = createAsyncThunk<IQueryPullOutcomeSetResult, IQueryCreateOutcomeSetParams>(
   "sets/createOutcomeSet",
   async (params) => {
-    return api.sets.createOutcomeSet(params);
+    const { set_name = "" } = params;
+    await api.sets.createOutcomeSet(params);
+    return api.sets.pullOutcomeSet({ set_name });
   }
 );
 type IQueryBulkBindOutcomeSetParams = Parameters<typeof api.sets.bulkBindOutcomeSet>[0];
@@ -575,6 +579,10 @@ const { reducer } = createSlice({
     },
     [pullOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof pullOutcomeSet>>) => {
       state.outcomeSetList = payload.sets;
+    },
+    [createOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof createOutcomeSet>>) => {
+      state.outcomeSetList = payload.sets;
+      state.defaultSelectOutcomeset = payload && payload.sets && payload.sets[0].set_id ? payload.sets[0].set_id : "";
     },
   },
 });

@@ -101,6 +101,7 @@ export function OutcomeList() {
     user_id,
     permission: { assess_msg_no_permission },
     outcomeSetList,
+    defaultSelectOutcomeset,
   } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showSetList, setShowSetList] = React.useState(false);
   const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<ApiOutcomeSetCreateView[]>([]);
@@ -171,7 +172,7 @@ export function OutcomeList() {
   };
   const handleClickCreateOutcomeSet: AddSetProps["onCreateOutcomeSet"] = async (set_name) => {
     await dispatch(createOutcomeSet({ set_name }));
-    await dispatch(pullOutcomeSet({ set_name }));
+    // await dispatch(pullOutcomeSet({ set_name }));
   };
   const handleClickOk: AddSetProps["onSetOutcomeSet"] = (ids) => {
     const newIds = excluedOutcomeSet(ids, selectedOutcomeSet);
@@ -256,6 +257,7 @@ export function OutcomeList() {
         selectedOutcomeSet={selectedOutcomeSet}
         outcomeSetList={outcomeSetList}
         onDeleteSet={handleClickDelete}
+        defaultSelectOutcomeset={defaultSelectOutcomeset}
       />
     </div>
   );

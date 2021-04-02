@@ -2,7 +2,7 @@ import { Button, Checkbox, Chip, FormControlLabel, makeStyles, TextField, Typogr
 import { Search } from "@material-ui/icons";
 import ClearIcon from "@material-ui/icons/Clear";
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ApiOutcomeSetCreateView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
@@ -89,6 +89,7 @@ export interface OutcomeSetProps {
   selectedOutcomeSet: ApiOutcomeSetCreateView[];
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
+  defaultSelectOutcomeset?: string;
 }
 export function OutcomeSet(props: OutcomeSetProps) {
   const css = useStyles();
@@ -102,25 +103,29 @@ export function OutcomeSet(props: OutcomeSetProps) {
     outcomeSetList,
     onDeleteSet,
     title,
+    defaultSelectOutcomeset,
   } = props;
   const formMethods = useForm();
-  const { control, getValues, watch } = formMethods;
+  const { control, getValues, watch, setValue } = formMethods;
+  const search_key = watch("OUTCOME_SET_NAME");
   const handleClickSearch = () => {
-    const set_name = getValues()["OUTCOME_SET_NAME"];
-    onSearchOutcomeSet(set_name);
+    onSearchOutcomeSet(search_key);
   };
   const handleClickOk = () => {
     const ids = getValues()["outcomesets"];
     onSetOutcomeSet(ids);
   };
   const handleClickCreate = () => {
-    const set_name = getValues()["OUTCOME_SET_NAME"];
-    if (!set_name) return;
-    onCreateOutcomeSet(set_name);
+    if (!search_key) return;
+    if (outcomeSetList && outcomeSetList.length > 0) return;
+    onCreateOutcomeSet(search_key);
   };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
+  useEffect(() => {
+    setValue("outcomesets", [defaultSelectOutcomeset]);
+  }, [defaultSelectOutcomeset, setValue]);
   return (
     <>
       <div>
@@ -151,14 +156,14 @@ export function OutcomeSet(props: OutcomeSetProps) {
           <Controller
             name={"outcomesets"}
             control={control}
-            defaultValue={[]}
+            defaultValue={[defaultSelectOutcomeset]}
             render={({ ref, ...props }) => (
               <CheckboxGroup
                 {...props}
                 render={(selecedOutcomesetsContext) => (
                   <div {...{ ref }} className={css.outComeSets}>
                     {outcomeSetList &&
-                      outcomeSetList.map((item) => (
+                      outcomeSetList.map((item, index) => (
                         <FormControlLabel
                           style={{
                             display: "block",
@@ -185,7 +190,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
             )}
           />
           <div className={clsx(css.itemSet, css.createCon)} onClick={handleClickCreate}>
-            {d("Create").t("assess_label_create")} "{watch("OUTCOME_SET_NAME")}"
+            {d("Create").t("assess_label_create")} {outcomeSetList && outcomeSetList.length > 0 ? "" : `"${search_key}"`}
           </div>
           <div className={css.action}>
             <Button color="primary" variant="contained" onClick={handleClickOk}>

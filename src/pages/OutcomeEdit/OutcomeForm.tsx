@@ -65,6 +65,7 @@ export interface OutcomeFormProps {
   selectedOutcomeSet: ApiOutcomeSetCreateView[];
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
+  defaultSelectOutcomeset: string;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -86,9 +87,9 @@ export function OutcomeForm(props: OutcomeFormProps) {
     selectedOutcomeSet,
     outcomeSetList,
     onDeleteSet,
+    defaultSelectOutcomeset,
   } = props;
   const classes = useStyles();
-
   const getItems = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -425,6 +426,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   selectedOutcomeSet={selectedOutcomeSet}
                   outcomeSetList={outcomeSetList}
                   onDeleteSet={handleDelete}
+                  defaultSelectOutcomeset={defaultSelectOutcomeset}
                 />
               </Grid>
             </Grid>
