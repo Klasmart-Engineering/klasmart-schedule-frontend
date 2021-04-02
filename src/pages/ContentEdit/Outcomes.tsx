@@ -103,6 +103,17 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   outcomeCursor: {
     cursor: "pointer",
   },
+  outcomeSet: {
+    overflow: "hidden",
+    display: "-webkit-box",
+    textOverflow: "ellipsis",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 3,
+    maxHeight: 93,
+    maxWidth: 210,
+    wordWrap: "break-word",
+    wordBreak: "normal",
+  },
 }));
 
 interface OutcomesTableProps {
@@ -147,7 +158,10 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         )}
         <TableCell>{item.shortcode}</TableCell>
         <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
-        <TableCell>{item.author_name}</TableCell>
+        {/* <TableCell>{item.author_name}</TableCell> */}
+        <TableCell>
+          <div className={css.outcomeSet}>{item.sets?.map((item) => item.set_name).join(";")}</div>
+        </TableCell>
         {isPermission && (
           <TableCell>
             {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
@@ -168,7 +182,8 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
               <TableCell>{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
               <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
               <TableCell>{d("Assumed").t("assess_label_assumed")}</TableCell>
-              <TableCell>{d("Author").t("library_label_author")}</TableCell>
+              {/* <TableCell>{d("Author").t("library_label_author")}</TableCell> */}
+              <TableCell>{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
