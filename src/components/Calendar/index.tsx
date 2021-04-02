@@ -9,7 +9,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { d } from "../../locale/LocaleManager";
+import { d, localeManager } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
@@ -20,6 +20,11 @@ import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps }
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
 import { EntityScheduleListView } from "../../api/api.auto";
+import "moment/locale/zh-cn";
+import "moment/locale/vi";
+import "moment/locale/ko";
+import "moment/locale/id";
+import "moment/locale/en-au";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -39,12 +44,6 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
 }));
 
-const views = { work_week: true, day: true, agenda: true, month: true, week: true };
-
-// Setup the localizer by providing the moment (or globalize) Object
-// to the correct localizer.
-const localizer = momentLocalizer(moment);
-
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
   const {
@@ -63,7 +62,30 @@ function MyCalendar(props: CalendarProps) {
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
   const { scheduleTimeViewData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
-  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const monthArr = [
+    d("Jan").t("schedule_calendar_jan"),
+    d("Feb").t("schedule_calendar_feb"),
+    d("Mar").t("schedule_calendar_mar"),
+    d("Apr").t("schedule_calendar_apr"),
+    d("May").t("schedule_calendar_may"),
+    d("Jun").t("schedule_calendar_jun"),
+    d("Jul").t("schedule_calendar_jul"),
+    d("Aug").t("schedule_calendar_aug"),
+    d("Sep").t("schedule_calendar_sep"),
+    d("Oct").t("schedule_calendar_oct"),
+    d("Nov").t("schedule_calendar_nov"),
+    d("Dec").t("schedule_calendar_dec"),
+  ];
+
+  const views = { work_week: true, day: true, agenda: true, month: true, week: true };
+
+  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id" };
+
+  // Setup the localizer by providing the moment (or globalize) Object
+  // to the correct localizer.
+  moment.locale(lang[localeManager.getLocale()!]);
+  const localizer = momentLocalizer(moment);
+
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));

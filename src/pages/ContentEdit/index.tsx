@@ -102,12 +102,12 @@ function ContentEditForm() {
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program, developmental } = watch(["program", "developmental"]);
+  const { program, developmental, subject } = watch(["program", "subject", "developmental"]);
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
   const allDefaultValueAndKey = ModelMockOptions.createAllDefaultValueAndKey(
     { regulation, contentDetail, linkedMockOptions },
-    { program, developmental }
+    { program, developmental, subject }
   );
   // 兼容现在的国际版专用变量
   const isEnableNewH5p = apiIsEnableNewH5p();
@@ -268,14 +268,26 @@ function ContentEditForm() {
     },
     [dispatch]
   );
+  const handleChangeSubject = useMemo(
+    () => async (subject_ids: string[]) => {
+      setRegulation(Regulation.ByOptionCount);
+      dispatch(getLinkedMockOptions({ metaLoading: true, default_program_id: program, default_subject_ids: subject_ids.join(",") }));
+    },
+    [dispatch, program]
+  );
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string[]) => {
       setRegulation(Regulation.ByOptionCount);
       dispatch(
-        getLinkedMockOptionsSkills({ metaLoading: true, default_program_id: program, default_developmental_id: developmental_id[0] })
+        getLinkedMockOptionsSkills({
+          metaLoading: true,
+          default_program_id: program,
+          default_subject_ids: subject?.join(","),
+          default_developmental_id: developmental_id[0],
+        })
       );
     },
-    [dispatch, program]
+    [dispatch, program, subject]
   );
   useEffect(() => {
     dispatch(
@@ -291,6 +303,7 @@ function ContentEditForm() {
       contentDetail={contentDetail}
       onChangeProgram={handleChangeProgram}
       onChangeDevelopmental={handleChangeDevelopmental}
+      onChangeSubject={handleChangeSubject}
     />
   );
   const contentTabs = (
@@ -314,6 +327,7 @@ function ContentEditForm() {
             lesson_types={lesson_types}
             onChangeProgram={handleChangeProgram}
             onChangeDevelopmental={handleChangeDevelopmental}
+            onChangeSubject={handleChangeSubject}
             permission={!value}
           />
         )}

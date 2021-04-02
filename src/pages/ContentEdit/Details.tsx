@@ -197,6 +197,7 @@ export interface DetailsProps {
   visibility_settings: LinkedMockOptionsItem[];
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
+  onChangeSubject: (value: string[]) => any;
   permission: boolean;
 }
 export default function Details(props: DetailsProps) {
@@ -214,7 +215,7 @@ export default function Details(props: DetailsProps) {
     lesson_types,
     onChangeDevelopmental,
     onChangeProgram,
-    // onDrawingActivity,
+    onChangeSubject,
     permission,
   } = props;
   const css = useStyles();
@@ -223,7 +224,6 @@ export default function Details(props: DetailsProps) {
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -449,21 +449,32 @@ export default function Details(props: DetailsProps) {
             )}
           />
           <Controller
-            as={TextField}
-            select
-            SelectProps={{
-              multiple: true,
-            }}
-            className={sm ? css.fieldset : css.halfFieldset}
-            label={d("Subject").t("library_label_subject")}
-            disabled={permission}
             name="subject"
             defaultValue={allDefaultValueAndKey.subject?.value}
             key={allDefaultValueAndKey.subject?.key}
             control={control}
-          >
-            {menuItemList(linkedMockOptions.subject || [])}
-          </Controller>
+            render={(props) => (
+              <TextField
+                select
+                SelectProps={{
+                  multiple: true,
+                }}
+                className={sm ? css.fieldset : css.halfFieldset}
+                label={d("Subject").t("library_label_subject")}
+                disabled={permission}
+                {...props}
+                onChange={(e) => {
+                  const value = (e.target.value as unknown) as string[];
+                  value.length > 0 && onChangeSubject(value);
+                  value.length > 0 && props.onChange(value);
+                }}
+                fullWidth={sm}
+                required
+              >
+                {menuItemList(linkedMockOptions.subject || [])}
+              </TextField>
+            )}
+          />
         </Box>
         <Box>
           <Controller
@@ -691,7 +702,7 @@ export default function Details(props: DetailsProps) {
                     dispatch(
                       actError(
                         error.type === MultipleUploaderErrorType.MaxAmountError
-                          ? d("Failed to upload as total files number excceeds limitation 5").t("library_error_excceed_max_file_number")
+                          ? d("Failed to upload as total files number exceeds limitation 5").t("library_error_excceed_max_file_number")
                           : d("Cannot excceed max size 500 MB").t("library_error_excceed_max_size")
                       )
                     )

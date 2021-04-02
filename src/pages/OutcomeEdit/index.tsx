@@ -73,6 +73,15 @@ export default function CreateOutcomings() {
     },
     [dispatch]
   );
+  const handleChangeSubject = React.useMemo(
+    () => (default_subject_ids: string[]) => {
+      setCondition("subject");
+      const [program_id] = getValues("program");
+      dispatch(getNewOptions({ program_id, default_subject_ids: default_subject_ids.join(","), metaLoading: true }));
+    },
+    [dispatch, getValues]
+  );
+
   const handleChangeDevelopmental = React.useMemo(
     () => ([developmental_id]: string[]) => {
       setCondition("development");
@@ -235,13 +244,14 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     if (outcome_id) {
       const program_id = outcomeDetail.program && outcomeDetail.program[0] && outcomeDetail.program[0].program_id;
+      const subject_id = outcomeDetail.subject && outcomeDetail.subject.map((item) => item.subject_id).join(",");
       const development_id =
         outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
-      if (program_id && development_id && outcome_id === outcomeDetail.outcome_id) {
-        dispatch(getNewOptions({ program_id, development_id, metaLoading: true }));
+      if (program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
+        dispatch(getNewOptions({ program_id, development_id, default_subject_ids: subject_id, metaLoading: true }));
       }
     }
-  }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcomeDetail.outcome_id, outcome_id]);
+  }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcomeDetail.outcome_id, outcome_id, outcomeDetail.subject]);
 
   React.useEffect(() => {
     if (!outcome_id) {
@@ -261,7 +271,7 @@ export default function CreateOutcomings() {
     };
     if (outcome_id) {
       if (condition === "program") {
-        setValue("subject", []);
+        setValue("subject", nextValue.subject);
         setValue("developmental", nextValue.developmental);
         setValue("skills", []);
         setValue("age", []);
@@ -279,7 +289,7 @@ export default function CreateOutcomings() {
       reset(nextValue);
     }
     if (condition === "program") {
-      setValue("subject", []);
+      setValue("subject", nextValue.subject);
       setValue("developmental", nextValue.developmental);
       setValue("skills", []);
       setValue("age", []);
@@ -330,6 +340,7 @@ export default function CreateOutcomings() {
         outcomeDetail={outcomeDetail}
         onChangeProgram={handleChangeProgram}
         onChangeDevelopmental={handleChangeDevelopmental}
+        onChangeSubject={handleChangeSubject}
         handleCheckBoxChange={handleCheckBoxChange}
         isAssumed={isAssumed}
         newOptions={newOptions}

@@ -15,13 +15,19 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export type ApiBadRequestResponse = ApiResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export type ApiConflictResponse = ApiResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -49,7 +55,10 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -66,7 +75,10 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -78,7 +90,10 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export type ApiNotFoundResponse = ApiResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -218,11 +233,6 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
-export interface ApiResponse {
-  data?: object;
-  label?: string;
-}
-
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -242,13 +252,19 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export type ApiSuccessRequestResponse = ApiResponse;
+export interface ApiSuccessRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export type ApiUnAuthorizedResponse = ApiResponse;
+export interface ApiUnAuthorizedResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -958,6 +974,7 @@ export interface EntityScheduleDetailsView {
   status?: "NotStart" | "Started" | "Closed";
   student_count?: number;
   subject?: EntityScheduleShortInfo;
+  teachers?: EntityScheduleShortInfo[];
   title?: string;
   version?: number;
 }
@@ -1180,32 +1197,44 @@ export interface EntityVisibilitySetting {
 export interface ExternalAge {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalCategory {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalGrade {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalProgram {
   group_name?: string;
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalSubCategory {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export interface ExternalSubject {
   id?: string;
   name?: string;
+  status?: string;
+  system?: boolean;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -2001,7 +2030,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/developmentals
      * @description get developmental
      */
-    getDevelopmental: (query?: { program_id?: string }, params?: RequestParams) =>
+    getDevelopmental: (query?: { program_id?: string; subject_ids?: string }, params?: RequestParams) =>
       this.request<ExternalCategory[], ApiInternalServerErrorResponse>(`/developmentals${this.addQueryParams(query)}`, "GET", params),
   };
   folders = {

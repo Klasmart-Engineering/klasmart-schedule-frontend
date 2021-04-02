@@ -4,6 +4,7 @@ import React from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { timestampType } from "../../types/scheduleTypes";
 import clsx from "clsx";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(() => ({
   weekDay: {
@@ -43,20 +44,28 @@ function MyCalendar(props: CalendarProps) {
   const { timesTamp, scheduleTimeViewYearData } = props;
   const css = useStyles();
 
-  const weekDay = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  const weekDay = [
+    d("Su").t("schedule_calendar_su"),
+    d("Mo").t("schedule_calendar_mo"),
+    d("Tu").t("schedule_calendar_tu"),
+    d("We").t("schedule_calendar_we"),
+    d("Th").t("schedule_calendar_th"),
+    d("Fr").t("schedule_calendar_fr"),
+    d("Sa").t("schedule_calendar_sa"),
+  ];
   const monthArr = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "Jul",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    d("January").t("schedule_calendar_january"),
+    d("February").t("schedule_calendar_february"),
+    d("March").t("schedule_calendar_march"),
+    d("April").t("schedule_calendar_april"),
+    d("May").t("schedule_calendar_may"),
+    d("June").t("schedule_calendar_june"),
+    d("July").t("schedule_calendar_july"),
+    d("August").t("schedule_calendar_august"),
+    d("September").t("schedule_calendar_september"),
+    d("October").t("schedule_calendar_october"),
+    d("November").t("schedule_calendar_november"),
+    d("December").t("schedule_calendar_december"),
   ];
 
   const getMonthView = (year: number, month: number) => {

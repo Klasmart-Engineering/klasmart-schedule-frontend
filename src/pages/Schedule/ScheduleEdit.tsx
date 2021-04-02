@@ -26,6 +26,8 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { Maybe, User } from "../../api/api-ko-schema.auto";
+import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityScheduleAddView,
@@ -35,7 +37,7 @@ import {
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { d, t } from "../../locale/LocaleManager";
+import { d, t, localeManager } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
@@ -72,11 +74,10 @@ import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import ScheduleFeedback from "./ScheduleFeedback";
-import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
-import { Maybe, User } from "../../api/api-ko-schema.auto";
+import { zhCN, enAU, vi, ko, id } from "date-fns/esm/locale";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -252,9 +253,11 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id };
+
   return (
     <Box className={css.smallCalendarBox}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
@@ -1702,7 +1705,7 @@ function EditBox(props: CalendarStateProps) {
                     control={
                       <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
                     }
-                    label="Select All"
+                    label={d("Select All").t("schedule_detail_select_all")}
                   />
                   <FormControlLabel
                     control={
@@ -1714,17 +1717,17 @@ function EditBox(props: CalendarStateProps) {
                         onChange={handleRosterChange}
                       />
                     }
-                    label="Unselect All"
+                    label={d("Unselect All").t("schedule_detail_unselect_all")}
                   />
                 </div>
                 <div className={css.scrollRoster} style={{ marginBottom: "10px" }}>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Students</span>
+                    <span className={css.participantTitle}>{d("Students").t("assess_detail_students")}</span>
                     {menuItemListClassKrParticipants("students")}
                   </div>
                   <div className={css.splitLine}></div>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Teachers</span>
+                    <span className={css.participantTitle}>{d("Teachers").t("schedule_filter_teachers")}</span>
                     {menuItemListClassKrParticipants("teacher")}
                   </div>
                 </div>
@@ -1769,7 +1772,7 @@ function EditBox(props: CalendarStateProps) {
               <Box className={css.participantBox}>
                 <div className={css.scrollRoster} style={{ marginTop: "20px", marginBottom: "10px" }}>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Students</span>
+                    <span className={css.participantTitle}>{d("Students").t("assess_detail_students")}</span>
                     {participantsIds?.student.map((item: ClassOptionsItem) => {
                       return (
                         <Tooltip title={item.name as string} placement="right-start">
@@ -1795,7 +1798,7 @@ function EditBox(props: CalendarStateProps) {
                   </div>
                   <div className={css.splitLine}></div>
                   <div style={{ textAlign: "center", width: "202px" }}>
-                    <span className={css.participantTitle}>Teachers</span>
+                    <span className={css.participantTitle}>{d("Teachers").t("schedule_filter_teachers")}</span>
                     {participantsIds?.teacher.map((item: ClassOptionsItem) => {
                       return (
                         <Tooltip title={item.name as string} placement="right-start">
@@ -1908,11 +1911,14 @@ function EditBox(props: CalendarStateProps) {
                   setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
                 }}
               >
-                {d("See More").t("schedule_detail_see_more")}{" "}
                 {linkageLessonPlanOpen ? (
-                  <ExpandLessOutlined style={{ position: "absolute" }} />
+                  <>
+                    {d("See Less").t("assess_detail_see_less")} <ExpandLessOutlined style={{ position: "absolute" }} />
+                  </>
                 ) : (
-                  <ExpandMoreOutlined style={{ position: "absolute" }} />
+                  <>
+                    {d("See More").t("schedule_detail_see_more")} <ExpandMoreOutlined style={{ position: "absolute" }} />
+                  </>
                 )}
               </span>
             )}

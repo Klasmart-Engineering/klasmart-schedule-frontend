@@ -116,8 +116,9 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 interface ParamsGetNewOptions {
-  development_id?: string | undefined;
-  program_id?: string | undefined;
+  development_id?: string;
+  program_id?: string;
+  default_subject_ids?: string;
 }
 export interface ResultGetNewOptions {
   program: LinkedMockOptionsItem[];
@@ -131,7 +132,7 @@ export interface ResultGetNewOptions {
 const PAGE_SIZE = 20;
 export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions & LoadingMetaPayload>(
   "getNewOptions",
-  async ({ development_id, program_id }) => {
+  async ({ development_id, default_subject_ids, program_id }) => {
     // if(!development_id && !program_id)
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
@@ -142,18 +143,19 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
       },
     });
     const program = await api.programs.getProgram();
-    const firstProgram_id = program[0].id;
-    const [subject, developmental, age, grade] = await Promise.all([
-      api.subjects.getSubject({ program_id: program_id ? program_id : firstProgram_id }),
-      api.developmentals.getDevelopmental({ program_id: program_id ? program_id : firstProgram_id }),
-      api.ages.getAge({ program_id: program_id ? program_id : firstProgram_id }),
-      api.grades.getGrade({ program_id: program_id ? program_id : firstProgram_id }),
+    const programId = program_id ? program_id : program[0].id;
+    const subject = await api.subjects.getSubject({ program_id: programId });
+    const subject_ids = default_subject_ids ? default_subject_ids : subject[0].id;
+    const [developmental, age, grade] = await Promise.all([
+      api.developmentals.getDevelopmental({ program_id: programId, subject_ids }),
+      api.ages.getAge({ program_id: programId }),
+      api.grades.getGrade({ program_id: programId }),
     ]);
     if (developmental[0] && developmental[0].id) {
       const firstDevelopment_id = developmental[0].id;
       const skills = await api.skills.getSkill({
         developmental_id: development_id ? development_id : firstDevelopment_id,
-        program_id: program_id ? program_id : firstProgram_id,
+        program_id: programId,
       });
       return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
     }

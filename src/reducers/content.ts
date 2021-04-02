@@ -271,18 +271,20 @@ export interface LinkedMockOptions {
 }
 export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
   default_program_id?: string;
+  default_subject_ids?: string;
   default_developmental_id?: string;
 }
 
 export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
   "content/",
-  async ({ metaLoading, default_program_id, default_developmental_id }) => {
+  async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
     const program = await api.programs.getProgram();
     const program_id = default_program_id ? default_program_id : program[0].id;
     if (program_id) {
-      const [subject, developmental, age, grade] = await Promise.all([
-        api.subjects.getSubject({ program_id }),
-        api.developmentals.getDevelopmental({ program_id }),
+      const subject = await api.subjects.getSubject({ program_id });
+      const subject_ids = default_subject_ids ? default_subject_ids : subject[0].id;
+      const [developmental, age, grade] = await Promise.all([
+        api.developmentals.getDevelopmental({ program_id, subject_ids }),
         api.ages.getAge({ program_id }),
         api.grades.getGrade({ program_id }),
       ]);
@@ -349,6 +351,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
           default_developmental_id: contentDetail.developmental && contentDetail.developmental[0],
+          default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
     ]);

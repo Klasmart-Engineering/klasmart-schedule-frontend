@@ -63,6 +63,7 @@ interface AssetDetailsProps {
   contentDetail: EntityContentInfoWithDetails;
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
+  onChangeSubject: (value: string[]) => any;
 }
 export default function AssetsDetails(props: AssetDetailsProps) {
   const css = useStyles();
@@ -72,6 +73,7 @@ export default function AssetsDetails(props: AssetDetailsProps) {
     contentDetail,
     onChangeProgram,
     onChangeDevelopmental,
+    onChangeSubject,
     allDefaultValueAndKey,
   } = props;
   const defaultTheme = useTheme();
@@ -188,7 +190,7 @@ export default function AssetsDetails(props: AssetDetailsProps) {
             )}
           />
 
-          <Controller
+          {/* <Controller
             as={TextField}
             select
             className={css.fieldset}
@@ -201,7 +203,33 @@ export default function AssetsDetails(props: AssetDetailsProps) {
             disabled={isIdExist()}
           >
             {menuItemList(flattenedMockOptions.subject || [])}
-          </Controller>
+          </Controller> */}
+          <Controller
+            name="subject"
+            defaultValue={allDefaultValueAndKey.subject?.value}
+            key={allDefaultValueAndKey.subject?.key}
+            control={control}
+            render={(props) => (
+              <TextField
+                select
+                SelectProps={{
+                  multiple: true,
+                }}
+                className={css.fieldset}
+                label={d("Subject").t("library_label_subject")}
+                disabled={isIdExist()}
+                {...props}
+                onChange={(e) => {
+                  const value = (e.target.value as unknown) as string[];
+                  value.length > 0 && onChangeSubject(value);
+                  value.length > 0 && props.onChange(value);
+                }}
+                required
+              >
+                {menuItemList(flattenedMockOptions.subject || [])}
+              </TextField>
+            )}
+          />
           <Box>
             <Controller
               name="developmental"
