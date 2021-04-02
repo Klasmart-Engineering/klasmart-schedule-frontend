@@ -6,8 +6,9 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import DoneIcon from "@material-ui/icons/Done";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { ApiOutcomeView } from "../../api/api.auto";
 import { OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
@@ -16,6 +17,8 @@ import { LButton } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { AppDispatch } from "../../reducers";
+import { actWarning } from "../../reducers/notify";
 import { isUnpublish } from "./FirstSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
@@ -80,8 +83,23 @@ interface OutcomeProps extends OutcomeActionProps {
 }
 function OutomeRow(props: OutcomeProps) {
   const css = useStyles();
+  const dispatch = useDispatch<AppDispatch>();
   const { outcome, queryCondition, selectedContentGroupContext, onDelete, onClickOutcome, userId, onApprove, onReject } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
+  const [isDisable, setIsDisable] = useState(false);
+  const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (outcome.locked_by) {
+      setIsDisable(true);
+      return dispatch(
+        actWarning(
+          d("The selected learning outcome is still in approval process, you cannot do bulk action for now.").t(
+            "assess_msg_blocked_learning_outcome"
+          )
+        )
+      );
+    }
+    registerChange(e);
+  };
   return (
     <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
       <TableCell align="center" padding="checkbox">
@@ -94,7 +112,8 @@ function OutomeRow(props: OutcomeProps) {
           value={outcome.outcome_id}
           checked={hashValue[outcome.outcome_id as string] || false}
           onClick={stopPropagation()}
-          onChange={registerChange}
+          onChange={handleChangeCheckbox}
+          disabled={isDisable}
         ></Checkbox>
       </TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.outcome_name}</TableCell>
@@ -234,7 +253,8 @@ export function OutcomeTable(props: OutcomeTableProps) {
     onReject,
   } = props;
   const amountPerPage = props.amountPerPage ?? 20;
-  const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
+  // const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
+  const allValue = useMemo(() => list.map((outcome) => (outcome.locked_by ? "" : (outcome.outcome_id as string))), [list]);
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
