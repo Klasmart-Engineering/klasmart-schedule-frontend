@@ -291,12 +291,6 @@ type LangRecord<T = string> =
   | { id: "assess_detail_edit_student_list"; description: "Edit Student List"; values: undefined }
   | { id: "assess_detail_students"; description: "Students"; values: undefined }
   | { id: "assess_detail_lesson_materials_exposed"; description: "Lesson Materials Exposed"; values: undefined }
-  | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
-  | {
-      id: "assess_msg_blocked_learning_outcome";
-      description: "The selected learning outcome is still in approval process, you cannot do bulk action for now.";
-      values: undefined;
-    }
   | { id: "assess_msg_one_exposed"; description: "At least one lesson material needs to be selected as exposed."; values: undefined }
   | { id: "assess_detail_student"; description: "Student"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
@@ -369,12 +363,13 @@ type LangRecord<T = string> =
   | { id: "assess_search_set"; description: "Set"; values: undefined }
   | { id: "assess_msg_exist_short_code"; description: "This short code already exists, please enter again."; values: undefined }
   | { id: "assess_msg_short_code_error"; description: "The short code needs to be five characters long, 0-9, A-Z."; values: undefined }
-  | { id: "assess_msg_set_myonly"; description: "You can only add sets to your own learning outcomes."; values: undefined }
+  | { id: "assess_msg_set_myonly"; description: "You can only do bulk action to your own learning outcomes."; values: undefined }
   | {
       id: "assess_msg_locked_lo";
       description: "The selected learning outcome is still in approval process, you cannot do bulk action for now.";
       values: undefined;
     }
+  | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }

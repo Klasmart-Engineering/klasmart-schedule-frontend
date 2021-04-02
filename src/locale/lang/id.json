@@ -239,8 +239,6 @@
   "assess_detail_edit_student_list": "Atur Daftar Pelajar",
   "assess_detail_students": "Pelajar",
   "assess_detail_lesson_materials_exposed": "Materi Pelajaran Terekspos",
-  "assess_msg_existing_set": "Set ini sudah ada di sistem",
-  "assess_msg_blocked_learning_outcome": "Hasil belajar yang dipilih masih dalam proses evaluasi, Anda tidak bisa melakukan aksi lain saat ini.",
   "assess_msg_one_exposed": "Setidaknya satu materi pelajaran harus terekspos.",
   "assess_label_create": "Membuat",
   "assess_label_for_organizations": "Untuk Organisasi",

@@ -239,8 +239,6 @@
   "assess_detail_edit_student_list": "Chỉnh sửa danh sách học sinh",
   "assess_detail_students": "Học sinh",
   "assess_detail_lesson_materials_exposed": "Học hiệu đã dùng",
-  "assess_msg_existing_set": "Nhóm này đã tồn tại trên hệ thống, vui lòng thử lại",
-  "assess_msg_blocked_learning_outcome": "Kết quả học tập đã chọn đang chờ phê duyệt, bạn không thể thực hiện hoạt động trên đó",
   "assess_msg_one_exposed": "Cần chọn ít nhất một học liệu đã dùng",
   "assess_label_create": "Tạo Mới",
   "assess_label_for_organizations": "Dành Cho Các Tổ Chức",
