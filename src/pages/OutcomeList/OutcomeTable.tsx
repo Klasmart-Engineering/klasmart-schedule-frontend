@@ -252,7 +252,10 @@ export function OutcomeTable(props: OutcomeTableProps) {
   } = props;
   const amountPerPage = props.amountPerPage ?? 20;
   // const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
-  const allValue = useMemo(() => list.map((outcome) => (outcome.locked_by ? "" : (outcome.outcome_id as string))), [list]);
+  const allValue = useMemo(
+    () => list.map((outcome) => (outcome.locked_by && outcome.locked_by !== "-" ? "" : (outcome.outcome_id as string))),
+    [list]
+  );
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
