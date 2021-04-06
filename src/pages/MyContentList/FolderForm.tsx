@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import clsx from "clsx";
 import React, { useMemo, useState } from "react";
 import { Controller, ControllerProps, UseFormMethods } from "react-hook-form";
 import { EntityFolderContentData } from "../../api/api.auto";
@@ -45,6 +46,12 @@ const useStyles = makeStyles((theme) =>
       display: "flex",
       alignItems: "center",
       marginBottom: 30,
+    },
+    textareaCon: {
+      alignItems: "start",
+    },
+    textareaLabel: {
+      marginTop: 10,
     },
     typography: {
       flex: 1,
@@ -111,8 +118,8 @@ export function FolderForm(props: FolderFormProps) {
               helperText={errors["FOLDER_NAME"]?.message}
             />
           </div>
-          <div className={css.inputCon}>
-            <Typography className={css.typography}>{d("Description").t("library_label_description")}</Typography>
+          <div className={clsx(css.inputCon, css.textareaCon)}>
+            <Typography className={clsx(css.typography, css.textareaLabel)}>{d("Description").t("library_label_description")}</Typography>
             <Controller
               name={REMARK}
               control={control}
@@ -120,6 +127,8 @@ export function FolderForm(props: FolderFormProps) {
               defaultValue={folderForm?.description || ""}
               className={css.textField}
               fullWidth
+              multiline
+              rows={4}
               variant="outlined"
             />
           </div>
