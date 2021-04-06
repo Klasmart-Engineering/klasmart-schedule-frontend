@@ -26,6 +26,7 @@ import {
   save,
   updateOutcome,
 } from "../../reducers/outcome";
+import { OutcomeList } from "../OutcomeList";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
 import CustomizeRejectTemplate from "./RejectTemplate";
@@ -205,7 +206,7 @@ export default function CreateOutcomings() {
   };
 
   const handleReset = () => {
-    history.push("/assessments/outcome-list");
+    history.push(OutcomeList.routeRedirectDefault);
   };
 
   const handelReject = (): void => {
