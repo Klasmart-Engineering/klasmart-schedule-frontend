@@ -202,7 +202,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
               />
             )}
           />
-          {showCreate(search_key) && (
+          {search_key && showCreate(search_key) && (
             <LButton className={clsx(css.itemSet, css.createCon)} onClick={handleClickCreate}>
               {d("Create").t("assess_label_create")} {`"${search_key}"`}
             </LButton>
