@@ -74,6 +74,7 @@ export interface OutcomeFormProps {
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset: string;
+  shortCode: string;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -96,6 +97,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     outcomeSetList,
     onDeleteSet,
     defaultSelectOutcomeset,
+    shortCode,
   } = props;
   const classes = useStyles();
   const getItems = (list: LinkedMockOptionsItem[]) =>
@@ -162,7 +164,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   name="shortcode"
                   as={TextField}
                   control={control}
-                  defaultValue={outcomeDetail.shortcode}
+                  defaultValue={outcomeDetail.shortcode || shortCode}
                   fullWidth
                   label={d("Short Code").t("assess_label_short_code")}
                   disabled

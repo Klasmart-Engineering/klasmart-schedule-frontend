@@ -32,6 +32,7 @@ interface IOutcomeState extends IPermissionState {
   user_id: string;
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   defaultSelectOutcomeset: string;
+  shortCode: string;
 }
 
 interface RootState {
@@ -111,6 +112,7 @@ export const initialState: IOutcomeState = {
   user_id: "",
   outcomeSetList: [],
   defaultSelectOutcomeset: "",
+  shortCode: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -446,6 +448,15 @@ export const bulkBindOutcomeSet = createAsyncThunk<IQueryBulkBindOutcomeSetResul
   }
 );
 
+type IQueryGenerateShortcodeParams = Parameters<typeof api.shortcode.generateShortcode>[0];
+type IQueryGenerateShortcodeResult = AsyncReturnType<typeof api.shortcode.generateShortcode>;
+export const generateShortcode = createAsyncThunk<IQueryGenerateShortcodeResult, IQueryGenerateShortcodeParams>(
+  "shortcode/generateShortcode",
+  async () => {
+    return api.shortcode.generateShortcode();
+  }
+);
+
 const { reducer } = createSlice({
   name: "outcome",
   initialState,
@@ -584,6 +595,9 @@ const { reducer } = createSlice({
     [createOutcomeSet.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof createOutcomeSet>>) => {
       state.outcomeSetList = payload.sets;
       state.defaultSelectOutcomeset = payload && payload.sets && payload.sets[0].set_id ? payload.sets[0].set_id : "";
+    },
+    [generateShortcode.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof generateShortcode>>) => {
+      state.shortCode = payload.shortcode || "";
     },
   },
 });

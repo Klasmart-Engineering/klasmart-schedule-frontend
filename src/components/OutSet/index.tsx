@@ -108,7 +108,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
   } = props;
   const formMethods = useForm();
   const { control, getValues, watch, setValue } = formMethods;
-  const search_key = watch("OUTCOME_SET_NAME");
+  const search_key = watch("OUTCOME_SET_NAME") ? watch("OUTCOME_SET_NAME").trim() : watch("OUTCOME_SET_NAME");
   const handleClickSearch = () => {
     onSearchOutcomeSet(search_key);
   };

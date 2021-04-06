@@ -55,7 +55,7 @@ export default function CreateOutcomings() {
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { outcomeDetail, newOptions, outcomeSetList, defaultSelectOutcomeset } = useSelector<RootState, RootState["outcome"]>(
+  const { outcomeDetail, newOptions, outcomeSetList, defaultSelectOutcomeset, shortCode } = useSelector<RootState, RootState["outcome"]>(
     (state) => state.outcome
   );
   const [showEdit, setShowEdit] = React.useState(false);
@@ -286,6 +286,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     if (!outcome_id) {
+      // dispatch(generateShortcode());
       dispatch(getNewOptions({ metaLoading: true }));
     }
   }, [outcome_id, dispatch]);
@@ -384,6 +385,7 @@ export default function CreateOutcomings() {
         outcomeSetList={outcomeSetList}
         onDeleteSet={handleClickDelete}
         defaultSelectOutcomeset={defaultSelectOutcomeset as string}
+        shortCode={shortCode}
       />
       <ModalBox modalDate={modalDate} />
     </Box>
