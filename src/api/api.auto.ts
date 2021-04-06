@@ -2990,6 +2990,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         start_at_ge?: number;
         end_at_le?: number;
         filter_option?: "any_time" | "only_mine";
+        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at";
       },
       params?: RequestParams
     ) =>

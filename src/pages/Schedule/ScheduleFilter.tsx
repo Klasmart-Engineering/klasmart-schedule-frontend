@@ -11,11 +11,13 @@ import {
   FilterDataItemsProps,
   EntityScheduleSchoolsInfo,
   RolesData,
+  timestampType,
+  modeViewType,
 } from "../../types/scheduleTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
-import React from "react";
+import React, { useCallback } from "react";
 import { SvgIconProps } from "@material-ui/core/SvgIcon";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
@@ -74,6 +76,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     labelIcon: {
       marginRight: theme.spacing(1),
+      position: "absolute",
+      top: "14px",
+      left: "-6px",
     },
     labelText: {
       fontWeight: "inherit",
@@ -200,11 +205,11 @@ function StyledTreeItem(props: StyledTreeItemProps) {
           style={{ position: "absolute", top: "5px", left: "10px" }}
         />
       )}
+      {LabelIcon && isShowIcon && <LabelIcon color="inherit" className={classes.labelIcon} />}
       <TreeItem
         label={
           <div className={classes.labelRoot}>
             <div style={{ display: "flex", alignItems: "center", width: "58%" }} className={isOnlyMine ? classes.abbreviation : ""}>
-              {LabelIcon && isShowIcon && <LabelIcon color="inherit" className={classes.labelIcon} />}
               <Typography
                 variant="body2"
                 className={clsx(
@@ -285,10 +290,9 @@ function FilterTemplate(props: FilterProps) {
   const css = useStyles();
   const dispatch = useDispatch();
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
-  const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
   const { classOptions, filterOption, user_id } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleChangeShowAnyTime, handleChangeLoadScheduleView } = props;
+  const { handleChangeShowAnyTime, handleChangeLoadScheduleView, stateOnlyMine, handleChangeOnlyMine, timesTamp, modelView } = props;
 
   const perm = usePermission([
     PermissionType.view_my_calendar_510,
@@ -328,35 +332,43 @@ function FilterTemplate(props: FilterProps) {
     return str.substr(1);
   };
 
-  const handleActiveAll = (data: any) => {
-    const filterQuery: FilterQueryTypeProps = {
-      class_types: getConnectionStr(
-        data.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "classType";
-        })
-      ),
-      class_ids: getConnectionStr(
-        data.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "class" || nodeValue[0] === "other";
-        })
-      ),
-      subject_ids: getConnectionStr(
-        data.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "subjectSub";
-        })
-      ),
-      program_ids: getConnectionStr(
-        data.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "program";
-        })
-      ),
-    };
-    handleChangeLoadScheduleView(filterQuery);
-  };
+  const handleActiveAll = useCallback(
+    async (data: any) => {
+      const filterQuery: FilterQueryTypeProps = {
+        class_types: getConnectionStr(
+          data.filter((v: string) => {
+            const nodeValue = v.split("+");
+            return nodeValue[0] === "classType";
+          })
+        ),
+        class_ids: getConnectionStr(
+          data.filter((v: string) => {
+            const nodeValue = v.split("+");
+            return nodeValue[0] === "class" || nodeValue[0] === "other";
+          })
+        ),
+        subject_ids: getConnectionStr(
+          data.filter((v: string) => {
+            const nodeValue = v.split("+");
+            return nodeValue[0] === "subjectSub";
+          })
+        ),
+        program_ids: getConnectionStr(
+          data.filter((v: string) => {
+            const nodeValue = v.split("+");
+            return nodeValue[0] === "program";
+          })
+        ),
+      };
+      handleChangeLoadScheduleView(filterQuery);
+    },
+    [handleChangeLoadScheduleView]
+  );
+
+  React.useEffect(() => {
+    if (stateOnlyMine.length < 1) return;
+    handleActiveAll(stateOnlyMine);
+  }, [handleActiveAll, modelView, timesTamp, stateOnlyMine, dispatch]);
 
   const handleChangeExits = async (data: string[], checked: boolean, node: string[]) => {
     let setData: any = [];
@@ -369,11 +381,11 @@ function FilterTemplate(props: FilterProps) {
         });
       }
       setData = [...onlyMineData.concat(data)];
-      setStateOnlyMine(setData);
+      handleChangeOnlyMine(setData);
     } else {
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
       setData = [...differenceSet];
-      setStateOnlyMine(setData);
+      handleChangeOnlyMine(setData);
     }
     if (node[0] === "program" && checked) {
       let resultInfo: any;
@@ -427,6 +439,7 @@ function FilterTemplate(props: FilterProps) {
           if (filterData.is) {
             classResult[filterData.index].child.push(subDataStructures(`${item.class_id}+${school.school_id}`, item.class_name, "class"));
             classResult[filterData.index].isOnlyMine = is_exist;
+            classResult[filterData.index].showIcon = is_exist;
             classResult[filterData.index].existData.push(`class+${item.class_id}+${school.school_id}` as string);
           } else {
             classResult.push({
@@ -600,16 +613,33 @@ interface FilterProps {
   mockOptions: MockOptionsOptionsItem[] | undefined;
   scheduleMockOptions: getScheduleMockOptionsResponse;
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  stateOnlyMine: string[];
+  handleChangeOnlyMine: (data: string[]) => void;
+  timesTamp: timestampType;
+  modelView: modeViewType;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
-  const { handleChangeLoadScheduleView, mockOptions, scheduleMockOptions, handleChangeShowAnyTime } = props;
+  const {
+    handleChangeLoadScheduleView,
+    mockOptions,
+    scheduleMockOptions,
+    handleChangeShowAnyTime,
+    stateOnlyMine,
+    handleChangeOnlyMine,
+    modelView,
+    timesTamp,
+  } = props;
   return (
     <FilterTemplate
       handleChangeLoadScheduleView={handleChangeLoadScheduleView}
       mockOptions={mockOptions}
       scheduleMockOptions={scheduleMockOptions}
       handleChangeShowAnyTime={handleChangeShowAnyTime}
+      stateOnlyMine={stateOnlyMine}
+      handleChangeOnlyMine={handleChangeOnlyMine}
+      modelView={modelView}
+      timesTamp={timesTamp}
     />
   );
 }

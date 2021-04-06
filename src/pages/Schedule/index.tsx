@@ -89,6 +89,11 @@ function ScheduleContent() {
   const [isHidden, setIsHidden] = React.useState<boolean>(false);
   const [isShowAnyTime, setIsShowAnyTime] = React.useState<boolean>(false);
   const [anyTimeName, setAnyTimeName] = React.useState<string>("");
+  const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
+
+  const handleChangeOnlyMine = (data: string[]) => {
+    setStateOnlyMine(data);
+  };
 
   const handleChangeHidden = (is_hidden: boolean) => {
     setIsHidden(is_hidden);
@@ -121,7 +126,13 @@ function ScheduleContent() {
   const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string) => {
     if (class_id)
       await dispatch(
-        getScheduleAnyTimeViewData({ view_type: "full_view", filter_option: "any_time", class_ids: class_id, metaLoading: true })
+        getScheduleAnyTimeViewData({
+          view_type: "full_view",
+          filter_option: "any_time",
+          class_ids: class_id,
+          order_by: "-create_at",
+          metaLoading: true,
+        })
       );
     setIsShowAnyTime(is_show);
     setAnyTimeName(name);
@@ -214,6 +225,7 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
+    if (stateOnlyMine.length > 0) return;
     if (teacherName) {
       const data = {
         teacher_name: teacherName,
@@ -231,9 +243,10 @@ function ScheduleContent() {
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
         })
       );
+      dispatch(ScheduleFilterPrograms());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelView, timesTamp, dispatch]);
+  }, [modelView, timesTamp, stateOnlyMine, dispatch]);
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
@@ -339,6 +352,8 @@ function ScheduleContent() {
               scheduleDetial={scheduleDetial}
               privilegedMembers={privilegedMembers}
               handleChangeShowAnyTime={handleChangeShowAnyTime}
+              stateOnlyMine={stateOnlyMine}
+              handleChangeOnlyMine={handleChangeOnlyMine}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

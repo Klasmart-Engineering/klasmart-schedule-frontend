@@ -228,7 +228,16 @@ const useStyles = makeStyles(({ shadows }) => ({
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
-  const { timesTamp, changeTimesTamp, modelView, mockOptions, scheduleMockOptions, handleChangeShowAnyTime } = props;
+  const {
+    timesTamp,
+    changeTimesTamp,
+    modelView,
+    mockOptions,
+    scheduleMockOptions,
+    handleChangeShowAnyTime,
+    stateOnlyMine,
+    handleChangeOnlyMine,
+  } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
@@ -266,6 +275,10 @@ function SmallCalendar(props: CalendarStateProps) {
           mockOptions={mockOptions}
           scheduleMockOptions={scheduleMockOptions}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
+          stateOnlyMine={stateOnlyMine}
+          handleChangeOnlyMine={handleChangeOnlyMine}
+          modelView={modelView}
+          timesTamp={timesTamp}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -964,7 +977,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const isLimit = (): boolean => {
-    const is_expire = Date.now() > (scheduleDetial.due_at as number) * 1000;
+    const is_expire = scheduleDetial.due_at && Date.now() > (scheduleDetial.due_at as number) * 1000;
     return scheduleId && checkedStatus.homeFunCheck && scheduleDetial.class_type === "Homework" ? is_expire || isHidden : false;
   };
 
@@ -1841,10 +1854,10 @@ function EditBox(props: CalendarStateProps) {
                   }}
                   className={css.participantButton}
                 >
-                  OK
+                  {d("OK").t("general_button_OK")}
                 </Button>
                 <Button variant="contained" onClick={addParticipants} className={css.participantButton}>
-                  Add
+                  {d("Add").t("schedule_participants_button_add")}
                 </Button>
               </Box>
             </Box>
@@ -2056,7 +2069,7 @@ function EditBox(props: CalendarStateProps) {
               }
               style={{
                 width: "45%",
-                visibility: privilegedMembers("Student") && scheduleList.class_type === "OfflineClass" ? "hidden" : "visible",
+                visibility: scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass" ? "hidden" : "visible",
               }}
               onClick={() => handleGoLive(scheduleDetial)}
             >
@@ -2105,6 +2118,8 @@ interface CalendarStateProps {
   privilegedMembers: (member: memberType) => boolean;
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
   mediaList: EntityContentInfoWithDetails[];
+  stateOnlyMine: string[];
+  handleChangeOnlyMine: (data: string[]) => void;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2140,6 +2155,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     privilegedMembers,
     handleChangeShowAnyTime,
     mediaList,
+    stateOnlyMine,
+    handleChangeOnlyMine,
   } = props;
 
   const template = (
@@ -2170,6 +2187,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           privilegedMembers={privilegedMembers}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
           mediaList={mediaList}
+          stateOnlyMine={stateOnlyMine}
+          handleChangeOnlyMine={handleChangeOnlyMine}
         />
       </Box>
       <Box
@@ -2205,6 +2224,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           privilegedMembers={privilegedMembers}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
           mediaList={mediaList}
+          stateOnlyMine={stateOnlyMine}
+          handleChangeOnlyMine={handleChangeOnlyMine}
         />
       </Box>
     </>

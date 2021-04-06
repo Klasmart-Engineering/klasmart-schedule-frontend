@@ -5520,6 +5520,13 @@
             "description": "get schedules by filter option",
             "name": "filter_option",
             "in": "query"
+          },
+          {
+            "enum": ["create_at", "-create_at", "start_at", "-start_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
           }
         ],
         "responses": {

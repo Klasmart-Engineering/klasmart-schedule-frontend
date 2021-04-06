@@ -305,7 +305,9 @@ export default function CustomizeTempalte(props: InfoProps) {
             variant="contained"
             autoFocus
             className={classes.lastButton}
-            style={{ visibility: permissionShowLive && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible" }}
+            style={{
+              visibility: scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible",
+            }}
             disabled={
               (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
               (!permissionShowLive && scheduleInfo.class_type === "Homework") ||

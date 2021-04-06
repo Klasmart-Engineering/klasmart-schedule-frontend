@@ -168,6 +168,7 @@ export interface scheduleInfoViewProps {
   exist_feedback: boolean;
   is_home_fun: boolean;
   is_hidden: boolean;
+  role_type: string;
 }
 
 export interface FilterDataItemsProps {
