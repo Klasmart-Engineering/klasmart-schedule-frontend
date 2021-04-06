@@ -59,7 +59,7 @@ export default function CreateOutcomings() {
     (state) => state.outcome
   );
   const [showEdit, setShowEdit] = React.useState(false);
-  const [isAssumed, setIsAssumed] = React.useState(false);
+  const [isAssumed, setIsAssumed] = React.useState(true);
   const [condition, setCondition] = React.useState("default");
   const [isSelf, setIsSelf] = React.useState(false);
   const [showSetList, setShowSetList] = React.useState(false);
@@ -332,7 +332,7 @@ export default function CreateOutcomings() {
     if (condition === "development") {
       setValue("skills", []);
     }
-    setIsAssumed(true);
+    // setIsAssumed(true);
   }, [
     condition,
     newOptions.age,
