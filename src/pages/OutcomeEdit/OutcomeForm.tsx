@@ -1,6 +1,6 @@
 import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
-import React from "react";
+import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { ApiOutcomeSetCreateView, ApiOutcomeView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
       flexWrap: "wrap",
       height: "auto",
       maxHeight: "fit-content",
+      padding: "8px 0",
     },
     "& .MuiInputBase-input": {
       width: 0,
@@ -106,6 +107,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
         {item.name}
       </MenuItem>
     ));
+  const sets = useMemo(() => {
+    if (outcomeDetail && outcomeDetail.sets && outcomeDetail.sets.length) {
+      return outcomeDetail.sets.map((set) => set.set_name).join(";");
+    } else {
+      return "";
+    }
+  }, [outcomeDetail]);
   const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
     const date = new Date(Number(timestamp) * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -379,11 +387,11 @@ export function OutcomeForm(props: OutcomeFormProps) {
               {showEdit && (
                 <TextField
                   label={d("Learning Outcome Set").t("assess_set_learning_outcome_set")}
-                  disabled
                   fullWidth
-                  multiline
+                  disabled
                   variant="outlined"
-                  value={outcomeDetail.sets?.map((set) => set.set_name).join(";")}
+                  multiline
+                  value={sets}
                 />
               )}
               {!showEdit && (

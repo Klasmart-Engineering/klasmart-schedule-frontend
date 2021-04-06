@@ -254,7 +254,7 @@ export default function CreateOutcomings() {
     setShowSetList(true);
   };
   const handleClickCreateOutcomeSet: OutcomeFormProps["onCreateOutcomeSet"] = async (set_name) => {
-    await dispatch(createOutcomeSet({ set_name }));
+    return await dispatch(createOutcomeSet({ set_name }));
   };
   const handleClickOk: OutcomeFormProps["onSetOutcomeSet"] = (ids) => {
     const newIds = excluedOutcomeSet(ids, selectedOutcomeSet);

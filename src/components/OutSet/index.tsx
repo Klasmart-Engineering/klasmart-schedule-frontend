@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ApiOutcomeSetCreateView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { CheckboxGroup } from "../CheckboxGroup";
+import { LButton } from "../LButton";
 const useStyles = makeStyles((theme) => ({
   addSetsCon: {
     fontSize: 18,
@@ -118,13 +119,13 @@ export function OutcomeSet(props: OutcomeSetProps) {
   };
   const handleClickCreate = () => {
     if (!search_key) return;
-    onCreateOutcomeSet(search_key);
+    return onCreateOutcomeSet(search_key);
   };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
   const showCreate = (search_key: string) => {
-    if (outcomeSetList && outcomeSetList.length > 0) {
+    if (outcomeSetList && outcomeSetList.length > 0 && search_key) {
       const index = outcomeSetList.findIndex((set) => set.set_name === search_key);
       if (index >= 0) {
         return false;
@@ -202,9 +203,9 @@ export function OutcomeSet(props: OutcomeSetProps) {
             )}
           />
           {showCreate(search_key) && (
-            <div className={clsx(css.itemSet, css.createCon)} onClick={handleClickCreate}>
+            <LButton className={clsx(css.itemSet, css.createCon)} onClick={handleClickCreate}>
               {d("Create").t("assess_label_create")} {`"${search_key}"`}
-            </div>
+            </LButton>
           )}
           <div className={css.action}>
             <Button color="primary" variant="contained" onClick={handleClickOk}>

@@ -174,8 +174,7 @@ export function OutcomeList() {
     await dispatch(pullOutcomeSet({ set_name }));
   };
   const handleClickCreateOutcomeSet: AddSetProps["onCreateOutcomeSet"] = async (set_name) => {
-    await dispatch(createOutcomeSet({ set_name }));
-    // await dispatch(pullOutcomeSet({ set_name }));
+    return await dispatch(createOutcomeSet({ set_name }));
   };
   const handleClickOk: AddSetProps["onSetOutcomeSet"] = (ids) => {
     const newIds = excluedOutcomeSet(ids, selectedOutcomeSet);
