@@ -106,7 +106,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
         {item.name}
       </MenuItem>
     ));
-
   const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
     const date = new Date(Number(timestamp) * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -378,15 +377,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
           <Grid container justify="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
               {showEdit && (
-                <Controller
-                  name="description"
-                  as={TextField}
-                  control={control}
-                  defaultValue={outcome_id ? outcomeDetail.sets?.map((item) => item.set_name).join(";") : ""}
+                <TextField
                   label={d("Learning Outcome Set").t("assess_set_learning_outcome_set")}
-                  disabled={showEdit}
+                  disabled
                   fullWidth
                   multiline
+                  variant="outlined"
+                  value={outcomeDetail.sets?.map((set) => set.set_name).join(";")}
                 />
               )}
               {!showEdit && (

@@ -270,6 +270,7 @@ export default function CreateOutcomings() {
     let newSets = cloneDeep(selectedOutcomeSet);
     newSets.splice(index, 1);
     setSelectedOutcomeSet(newSets);
+    setValue("sets", newSets, { shouldDirty: true });
   };
 
   React.useEffect(() => {
