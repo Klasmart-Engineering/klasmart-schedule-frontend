@@ -34,6 +34,7 @@ import {
   getScheduleAnyTimeViewData,
   getScheduleFilterClasses,
   getScheduleUserId,
+  getClassesByStudent,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -264,10 +265,12 @@ function ScheduleContent() {
       dispatch(getClassesByOrg());
     } else if (isSchool) {
       dispatch(getClassesBySchool());
-    } else {
+    } else if (isTeacher) {
       dispatch(getClassesByTeacher());
+    } else {
+      dispatch(getClassesByStudent());
     }
-  }, [dispatch, isAdmin, isSchool]);
+  }, [dispatch, isAdmin, isSchool, isTeacher]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));

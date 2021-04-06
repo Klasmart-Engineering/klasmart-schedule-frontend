@@ -8,6 +8,9 @@ import {
   ClassesBySchoolQuery,
   ClassesBySchoolQueryVariables,
   ClassesByTeacherQuery,
+  ClassesStudentQueryDocument,
+  ClassesStudentQueryQuery,
+  ClassesStudentQueryQueryVariables,
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
@@ -59,10 +62,11 @@ interface classOptionsProp {
   classListOrg: ClassesByOrganizationQuery;
   classListTeacher: ClassesByTeacherQuery;
   classListSchool: ClassesBySchoolQuery;
+  classListStudent: ClassesStudentQueryQuery;
 }
 
 interface filterOptionItem {
-  classType: string[];
+  classType: EntityScheduleShortInfo[];
   programs: EntityScheduleShortInfo[];
   others: EntityScheduleFilterClass[];
 }
@@ -170,6 +174,13 @@ const initialState: ScheduleState = {
     classListTeacher: {
       user: {
         classesTeaching: [],
+      },
+    },
+    classListStudent: {
+      user: {
+        membership: {
+          classes: [],
+        },
       },
     },
     classListSchool: {
@@ -287,6 +298,26 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
   });
   return gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
     query: ClassesTeachingQueryDocument,
+    variables: {
+      user_id: meInfo.me?.user_id as string,
+      organization_id,
+    },
+  });
+});
+
+/**
+ *  get class by student
+ */
+export const getClassesByStudent = createAsyncThunk("getClassesByStudent", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return gqlapi.query<ClassesStudentQueryQuery, ClassesStudentQueryQueryVariables>({
+    query: ClassesStudentQueryDocument,
     variables: {
       user_id: meInfo.me?.user_id as string,
       organization_id,
@@ -473,7 +504,7 @@ interface ScheduleFilterSubjectParams extends LoadingMetaPayload {
 }
 type ScheduleFilterSubjectResult = ReturnType<typeof api.schedulesFilter.getSubjectsInScheduleFilter>;
 export const ScheduleFilterSubject = createAsyncThunk<ScheduleFilterSubjectResult, ScheduleFilterSubjectParams>(
-  "schedule/filterClassType",
+  "schedule/filterSubject",
   ({ program_id }) => {
     return api.schedulesFilter.getSubjectsInScheduleFilter({ program_id: program_id });
   }
@@ -661,6 +692,9 @@ const { actions, reducer } = createSlice({
     [getClassesByTeacher.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListTeacher = { user: payload.data.user.membership };
     },
+    [getClassesByStudent.fulfilled.type]: (state, { payload }: any) => {
+      state.classOptions.classListStudent = { user: payload.data.user.membership };
+    },
     [getClassesByOrg.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListOrg = payload.data;
     },
@@ -692,7 +726,7 @@ const { actions, reducer } = createSlice({
       state.scheduleAnyTimeViewData = payload;
     },
     [ScheduleClassTypesFilter.fulfilled.type]: (state, { payload }: any) => {
-      if (typeof payload[0] === "string") state.filterOption.classType = payload;
+      state.filterOption.classType = payload;
     },
     [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
       state.filterOption.others = payload;

@@ -28,6 +28,7 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
 import clsx from "clsx";
 import { Box } from "@material-ui/core";
+import Popover from "@material-ui/core/Popover";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -112,6 +113,11 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: "nowrap",
       overflowWrap: "break-word",
     },
+    typography: {
+      padding: "10px",
+      fontSize: "12px",
+      cursor: "pointer",
+    },
   })
 );
 
@@ -167,6 +173,19 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     return filterResult.length > 0 ? !stateOnlyMine.includes(`${title}+${existId}`) : false;
   };
 
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   return (
     <Box style={{ position: "relative" }}>
       {minimumDom && (
@@ -211,14 +230,40 @@ function StyledTreeItem(props: StyledTreeItemProps) {
               </Typography>
             )}
             {minimumDom && ["class", "other"].includes(nodeValue[0]) && (
-              <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
-                <div style={{ width: "12px", height: "12px", backgroundColor: `rgb(${rgb},${rgb},${rgb})`, borderRadius: "20px" }} />{" "}
-                <MoreVertIcon
-                  onClick={() => {
-                    handleChangeShowAnyTime(true, item.name, nodeValue[1]);
+              <>
+                <Popover
+                  id={id}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
                   }}
-                />
-              </Typography>
+                  transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                >
+                  <Typography
+                    className={classes.typography}
+                    onClick={() => {
+                      handleChangeShowAnyTime(true, item.name, nodeValue[1]);
+                    }}
+                  >
+                    {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
+                  </Typography>
+                </Popover>
+                <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
+                  <div style={{ width: "12px", height: "12px", backgroundColor: `rgb(${rgb},${rgb},${rgb})`, borderRadius: "20px" }} />{" "}
+                  <MoreVertIcon
+                    aria-describedby={id}
+                    onClick={(e) => {
+                      handleClick(e as any);
+                    }}
+                  />
+                </Typography>
+              </>
             )}
           </div>
         }
@@ -343,18 +388,18 @@ function FilterTemplate(props: FilterProps) {
       }
     }
     if (node[0] === "program" && !checked) {
-      stateSubject.forEach((v: InterfaceSubject, index: number) => {
-        if (v.program_id === node[1]) stateSubject.splice(index, 1);
+      const deepSubject = stateSubject.filter((v: InterfaceSubject, index: number) => {
+        return v.program_id !== node[1];
       });
-      setStateSubject([...stateSubject]);
+      setStateSubject(deepSubject);
     }
     handleActiveAll(setData);
   };
 
   const getClassBySchool = (): FilterDataItemsProps[] => {
     let lists: EntityScheduleClassInfo[] = [];
-    const classResult: FilterDataItemsProps[] = [];
     const otherClass: FilterDataItemsProps[] = [];
+    const classResult: FilterDataItemsProps[] = [];
     if (perm.create_event_520) {
       lists = classOptions.classListOrg.organization?.classes as EntityScheduleClassInfo[];
     } else if (perm.create_my_schools_schedule_events_522) {
@@ -399,6 +444,16 @@ function FilterTemplate(props: FilterProps) {
         otherClass.push(subDataStructures(item.class_id, item.class_name, "class"));
       }
     });
+    if (classResult.length > 1)
+      classResult.unshift({
+        id: "All_My_Schools",
+        name: `${d("All My Schools").t("schedule_filter_all_my_schools")}`,
+        isCheck: false,
+        child: [],
+        isOnlyMine: false,
+        existData: [],
+        isHide: false,
+      });
     return classResult;
   };
 
@@ -409,8 +464,8 @@ function FilterTemplate(props: FilterProps) {
     | "schedule_detail_task";
 
   const getClassTypeByFilter = () => {
-    return filterOption.classType.map((val: string) => {
-      return subDataStructures(val, t(val as classTypeLabel), "classType");
+    return filterOption.classType.map((val: EntityScheduleShortInfo) => {
+      return subDataStructures(val.id, t(val.name as classTypeLabel), "classType");
     });
   };
 
@@ -449,24 +504,7 @@ function FilterTemplate(props: FilterProps) {
   const handleSelect = async (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
     const checked = (event.target as HTMLInputElement).checked;
     const nodeValue = nodeIds[0].split("+");
-    if (nodeValue[0] === "program" && checked) {
-      let resultInfo: any;
-      resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: nodeValue[1], metaLoading: true }))) as unknown) as PayloadAction<
-        AsyncTrunkReturned<typeof ScheduleFilterSubject>
-      >;
-      if (resultInfo.payload.length > 0) {
-        const subjectData = resultInfo.payload.map((val: EntityScheduleShortInfo) => {
-          return { program_id: nodeValue[1], name: val.name, id: val.id };
-        });
-        setStateSubject([...stateSubject, ...subjectData]);
-      }
-    }
-    if (nodeValue[0] === "program" && !checked) {
-      stateSubject.forEach((v: InterfaceSubject, index: number) => {
-        if (v.program_id === nodeValue[1]) stateSubject.splice(index, 1);
-      });
-      setStateSubject([...stateSubject]);
-    }
+    console.log(checked, nodeValue);
   };
 
   const getOthersExistData = (): string[] => {
