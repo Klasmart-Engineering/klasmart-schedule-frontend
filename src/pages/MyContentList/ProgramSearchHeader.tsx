@@ -2,7 +2,7 @@ import { AppBar, Grid, Tab, Tabs } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import { NotesOutlined } from "@material-ui/icons";
+import { Sort } from "@material-ui/icons";
 import WidgetsOutlinedIcon from "@material-ui/icons/WidgetsOutlined";
 import clsx from "clsx";
 import React from "react";
@@ -120,7 +120,7 @@ export default function ProgramSearchHeader(props: ProgramSearchHeaderProps) {
                 className={clsx(css.nav, {
                   [css.actives]: value?.program_group === ProgramGroup.more,
                 })}
-                startIcon={<NotesOutlined />}
+                startIcon={<Sort />}
               >
                 {d("More").t("library_label_more")}
               </Button>
