@@ -130,8 +130,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const shortCodeValidate = (value: string) => {
     const re = /^[0-9A-Z]+$/;
     const newValue = value.trim();
-    if (newValue.length < 5 || !re.test(newValue))
-      return d("The short code needs to be five characters long, 0-9, A-Z.").t("assess_msg_short_code_error");
+    if (newValue.length < 5 || !re.test(newValue)) return false;
   };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
@@ -183,7 +182,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 inputProps={{ maxLength: 5 }}
                 error={!!errors["shortcode"]}
                 rules={{ validate: shortCodeValidate }}
-                helperText={errors["shortcode"]?.message}
+                helperText={d("The short code needs to be five characters long, 0-9, A-Z.").t("assess_msg_short_code_error")}
               />
             </Grid>
             {/* )} */}
