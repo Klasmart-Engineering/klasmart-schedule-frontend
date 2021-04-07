@@ -469,6 +469,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 defaultValue={outcome_id ? outcomeDetail.estimated_time : 0}
                 fullWidth
                 disabled={showEdit}
+                inputProps={{ min: 0 }}
                 // rules={{ pattern: /^[0-9]*$ / }}
                 // error={errors.estimated_time ? true : false}
               />
