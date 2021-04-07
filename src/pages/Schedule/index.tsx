@@ -313,6 +313,7 @@ function ScheduleContent() {
       dispatch(getSchoolByUser());
     } else if (privilegedMembers("Student")) {
       dispatch(getClassesByStudent());
+      dispatch(getSchoolByUser());
     }
   }, [dispatch, privilegedMembers]);
 

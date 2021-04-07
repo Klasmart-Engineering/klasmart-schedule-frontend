@@ -454,9 +454,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       )}
       {anyTimeData.study.length > 0 && (
         <div className={classes.itemBox}>
-          <p>
-            {d("Anytime Study").t("schedule_any_anytime_study")} {d("Study").t("schedule_detail_homework")}
-          </p>
+          <p>{d("Anytime Study").t("schedule_any_anytime_study")}</p>
           <Box className={classes.scrollBox}>
             {anyTimeData.study.map((view: EntityScheduleListView) => {
               return (
@@ -472,8 +470,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       {anyTimeData.homeFun.length > 0 && (
         <div className={classes.itemBox}>
           <p>
-            {d("Anytime Study").t("schedule_any_anytime_study")} {d("Study").t("schedule_detail_homework")} -{" "}
-            {d("Home Fun").t("schedule_checkbox_home_fun")}
+            {d("Anytime Study").t("schedule_any_anytime_study")}- {d("Home Fun").t("schedule_checkbox_home_fun")}
           </p>
           <Box className={classes.scrollBox}>
             {anyTimeData.homeFun.map((view: EntityScheduleListView) => {

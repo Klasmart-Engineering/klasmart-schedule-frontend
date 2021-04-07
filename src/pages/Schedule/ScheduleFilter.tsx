@@ -430,18 +430,30 @@ function FilterTemplate(props: FilterProps) {
       let is_exists: boolean = false;
       const existData: string[] = [];
       const onLyMineData: string[] = [];
-      const classesChild = schoolItem.classes.map((classItem: EntityScheduleClassesInfo) => {
-        const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
-          return teacher.user_id === user_id;
-        });
-        const isExistStudent = classItem.students.filter((studen: RolesData) => {
-          return studen.user_id === user_id;
-        });
-        is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
-        existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-        AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-        if (is_exists) onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-        return subDataStructures(`${classItem.class_id}+${schoolItem.school_id}`, classItem.class_name, "class", false, [], onLyMineData);
+      const classesChild = [];
+      schoolItem.classes.forEach((classItem: EntityScheduleClassesInfo) => {
+        if (classItem.status === "active") {
+          const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
+            return teacher.user_id === user_id;
+          });
+          const isExistStudent = classItem.students.filter((studen: RolesData) => {
+            return studen.user_id === user_id;
+          });
+          is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
+          existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          if (is_exists) onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          classesChild.push(
+            subDataStructures(
+              `${classItem.class_id}+${schoolItem.school_id}`,
+              classItem.class_name,
+              "class",
+              isExistStudent.length > 0,
+              [],
+              onLyMineData
+            )
+          );
+        }
       });
       if (classesChild.length > 1) {
         classesChild.unshift(subDataStructures(`All+${schoolItem.school_id}`, d("All").t("assess_filter_all"), "class", false, existData));
@@ -453,7 +465,7 @@ function FilterTemplate(props: FilterProps) {
         name: schoolItem.school_name,
         isCheck: false,
         child: classesChild.length < 1 ? [subDataStructures(`nodata`, d("No Data").t("schedule_filter_no_data"), "class")] : classesChild,
-        isOnlyMine: is_exists,
+        isOnlyMine: false,
         existData: existData,
         isHide: false,
         onLyMineData: onLyMineData,

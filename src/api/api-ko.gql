@@ -164,6 +164,7 @@ query userSchoolIDs($user_id: ID!) {
 query participantsBySchool($school_id: ID!) {
    school(school_id: $school_id) {
      classes {
+        status
         teachers {
           user_id
           user_name,
@@ -184,6 +185,7 @@ query participantsBySchool($school_id: ID!) {
 
 query participantsByOrganization($organization_id: ID!) {
    organization(organization_id: $organization_id) {
+     status
      classes {
         teachers {
           user_id
