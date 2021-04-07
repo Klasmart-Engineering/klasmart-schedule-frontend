@@ -324,6 +324,8 @@ function EditBox(props: CalendarStateProps) {
     scheduleDetial,
     privilegedMembers,
     mediaList,
+    handleChangeShowAnyTime,
+    isShowAnyTime,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -941,6 +943,7 @@ function EditBox(props: CalendarStateProps) {
             };
       changeTimesTamp(timesTampCallback);
       setIsForce(false);
+      if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, scheduleDetial.class?.id as string);
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
@@ -1226,6 +1229,7 @@ function EditBox(props: CalendarStateProps) {
       changeModalDate({
         openStatus: false,
       });
+      if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, scheduleDetial.class?.id as string);
       history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       return;
     }
@@ -2120,6 +2124,7 @@ interface CalendarStateProps {
   mediaList: EntityContentInfoWithDetails[];
   stateOnlyMine: string[];
   handleChangeOnlyMine: (data: string[]) => void;
+  isShowAnyTime: boolean;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2157,6 +2162,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     mediaList,
     stateOnlyMine,
     handleChangeOnlyMine,
+    isShowAnyTime,
   } = props;
 
   const template = (
@@ -2189,6 +2195,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           mediaList={mediaList}
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
+          isShowAnyTime={isShowAnyTime}
         />
       </Box>
       <Box
@@ -2226,6 +2233,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           mediaList={mediaList}
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
+          isShowAnyTime={isShowAnyTime}
         />
       </Box>
     </>

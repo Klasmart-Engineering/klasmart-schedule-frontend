@@ -96,6 +96,7 @@ interface SearchListProps {
   handleChangeHidden: (is_hidden: boolean) => void;
   modelView: modeViewType;
   anyTimeName: string;
+  stateCurrentCid: string;
 }
 
 interface AnyTimeData {
@@ -115,6 +116,7 @@ function AnyTimeSchedule(props: SearchListProps) {
     timesTamp,
     modelView,
     anyTimeName,
+    stateCurrentCid,
   } = props;
   const [anyTimeData, setAnyTimeData] = React.useState<AnyTimeData>({ homeFun: [], study: [] });
   const dispatch = useDispatch();
@@ -184,10 +186,11 @@ function AnyTimeSchedule(props: SearchListProps) {
             time_zone_offset: -new Date().getTimezoneOffset() * 60,
           })
         );
+        await handleChangeShowAnyTime(true, anyTimeName, stateCurrentCid);
         history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       }
     },
-    [changeModalDate, dispatch, history, modelView, timesTamp]
+    [handleChangeShowAnyTime, anyTimeName, stateCurrentCid, changeModalDate, dispatch, history, modelView, timesTamp]
   );
 
   /**
@@ -502,6 +505,7 @@ export default function ScheduleAnyTime(props: SearchListProps) {
     modelView,
     timesTamp,
     anyTimeName,
+    stateCurrentCid,
   } = props;
   const classes = useStyles();
   return (
@@ -517,6 +521,7 @@ export default function ScheduleAnyTime(props: SearchListProps) {
         handleChangeHidden={handleChangeHidden}
         modelView={modelView}
         anyTimeName={anyTimeName}
+        stateCurrentCid={stateCurrentCid}
       />
     </>
   );

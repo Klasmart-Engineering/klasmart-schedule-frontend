@@ -102,6 +102,7 @@ function ScheduleContent() {
   const [isShowAnyTime, setIsShowAnyTime] = React.useState<boolean>(false);
   const [anyTimeName, setAnyTimeName] = React.useState<string>("");
   const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
+  const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -146,6 +147,7 @@ function ScheduleContent() {
           metaLoading: true,
         })
       );
+    if (class_id) setStateCurrentCid(class_id);
     setIsShowAnyTime(is_show);
     setAnyTimeName(name);
   };
@@ -386,6 +388,7 @@ function ScheduleContent() {
               handleChangeShowAnyTime={handleChangeShowAnyTime}
               stateOnlyMine={stateOnlyMine}
               handleChangeOnlyMine={handleChangeOnlyMine}
+              isShowAnyTime={isShowAnyTime}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
@@ -401,6 +404,7 @@ function ScheduleContent() {
                   changeModalDate={changeModalDate}
                   toLive={toLive}
                   handleChangeHidden={handleChangeHidden}
+                  stateCurrentCid={stateCurrentCid}
                 />
               </Paper>
             </Zoom>
