@@ -35,8 +35,19 @@ import {
   getScheduleFilterClasses,
   getScheduleUserId,
   getClassesByStudent,
+  getSchoolByUser,
+  getSchoolByOrg,
 } from "../../reducers/schedule";
-import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
+import {
+  AlertDialogProps,
+  EntityScheduleClassesInfo,
+  EntityScheduleSchoolInfo,
+  memberType,
+  modeViewType,
+  ParticipantsShortInfo,
+  RouteParams,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -79,6 +90,7 @@ function ScheduleContent() {
     participantsIds,
     scheduleDetial,
     scheduleAnyTimeViewData,
+    schoolByOrgOrUserData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -205,15 +217,18 @@ function ScheduleContent() {
   const isTeacher = usePermission(PermissionType.create_my_schedule_events_521);
   const isStudent = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
-  const privilegedMembers = (member: memberType): boolean => {
-    const permissions = {
-      Admin: isAdmin,
-      School: !isAdmin && isSchool,
-      Teacher: !isAdmin && !isSchool && isTeacher,
-      Student: !isAdmin && !isSchool && !isTeacher && isStudent,
-    };
-    return permissions[member];
-  };
+  const privilegedMembers = useCallback(
+    (member: memberType): boolean => {
+      const permissions = {
+        Admin: isAdmin,
+        School: !isAdmin && isSchool,
+        Teacher: !isAdmin && !isSchool && isTeacher,
+        Student: !isAdmin && !isSchool && !isTeacher && isStudent,
+      };
+      return permissions[member];
+    },
+    [isAdmin, isSchool, isTeacher, isStudent]
+  );
 
   const toLive = () => {
     dispatch(scheduleUpdateStatus({ schedule_id: scheduleId, status: { status: "Started" } }));
@@ -274,16 +289,32 @@ function ScheduleContent() {
   }, [dispatch, isAdmin]);
 
   React.useEffect(() => {
-    if (isAdmin) {
+    if (schoolByOrgOrUserData) {
+      const existData: string[] = [];
+      schoolByOrgOrUserData?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
+        schoolItem.classes?.forEach((classItem: EntityScheduleClassesInfo) => {
+          existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+        });
+        if (schoolItem.classes.length > 0) existData.push(`class+All+${schoolItem.school_id}`);
+      });
+      setStateOnlyMine([...existData, "All_My_Schools"]);
+    }
+  }, [schoolByOrgOrUserData]);
+
+  React.useEffect(() => {
+    if (privilegedMembers("Admin")) {
       dispatch(getClassesByOrg());
-    } else if (isSchool) {
+      dispatch(getSchoolByOrg());
+    } else if (privilegedMembers("School")) {
       dispatch(getClassesBySchool());
-    } else if (isTeacher) {
+      dispatch(getSchoolByUser());
+    } else if (privilegedMembers("Teacher")) {
       dispatch(getClassesByTeacher());
-    } else {
+      dispatch(getSchoolByUser());
+    } else if (privilegedMembers("Student")) {
       dispatch(getClassesByStudent());
     }
-  }, [dispatch, isAdmin, isSchool, isTeacher]);
+  }, [dispatch, privilegedMembers]);
 
   React.useEffect(() => {
     dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));

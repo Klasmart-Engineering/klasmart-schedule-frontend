@@ -29,6 +29,12 @@ import {
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
+  SchoolByOrgQueryDocument,
+  SchoolByOrgQueryQuery,
+  SchoolByOrgQueryQueryVariables,
+  SchoolByUserQueryDocument,
+  SchoolByUserQueryQuery,
+  SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
@@ -51,7 +57,14 @@ import {
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
-import { ChangeParticipants, ClassesData, ParticipantsData, ParticipantsShortInfo, RolesData } from "../types/scheduleTypes";
+import {
+  ChangeParticipants,
+  ClassesData,
+  EntityScheduleSchoolInfo,
+  ParticipantsData,
+  ParticipantsShortInfo,
+  RolesData,
+} from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
@@ -96,6 +109,7 @@ export interface ScheduleState {
   feedbackData: EntityScheduleFeedbackView;
   filterOption: filterOptionItem;
   user_id: string;
+  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
 }
 
 interface Rootstate {
@@ -213,6 +227,7 @@ const initialState: ScheduleState = {
     others: [],
   },
   user_id: "",
+  schoolByOrgOrUserData: [],
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -617,6 +632,33 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
   return apiGetMockOptions();
 });
 
+export const getSchoolByUser = createAsyncThunk("getSchoolByUser", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return gqlapi.query<SchoolByUserQueryQuery, SchoolByUserQueryQueryVariables>({
+    query: SchoolByUserQueryDocument,
+    variables: {
+      user_id: meInfo.me?.user_id as string,
+      organization_id: organization_id,
+    },
+  });
+});
+
+export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  return gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
+    query: SchoolByOrgQueryDocument,
+    variables: {
+      organization_id: organization_id,
+    },
+  });
+});
+
 const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
@@ -733,6 +775,14 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleUserId.fulfilled.type]: (state, { payload }: any) => {
       state.user_id = payload.data.me.user_id;
+    },
+    [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
+      state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
+        return item.school;
+      });
+    },
+    [getSchoolByOrg.fulfilled.type]: (state, { payload }: any) => {
+      state.schoolByOrgOrUserData = payload.data.organization?.schools;
     },
   },
 });

@@ -2,17 +2,16 @@ import Checkbox from "@material-ui/core/Checkbox";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
 import { MockOptionsOptionsItem } from "../../api/extra";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { d, t } from "../../locale/LocaleManager";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
-  EntityScheduleClassInfo,
   FilterQueryTypeProps,
   FilterDataItemsProps,
-  EntityScheduleSchoolsInfo,
   RolesData,
   timestampType,
   modeViewType,
+  EntityScheduleSchoolInfo,
+  EntityScheduleClassesInfo,
 } from "../../types/scheduleTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -136,7 +135,7 @@ type StyledTreeItemProps = TreeItemProps & {
   isShowIcon?: boolean;
   isOnlyMine?: boolean;
   item: FilterDataItemsProps;
-  handleChangeExits: (data: string[], checked: boolean, node: string[]) => void;
+  handleChangeExits: (data: string[], checked: boolean, node: string[], existData: string[]) => void;
   stateOnlyMine: string[];
   handleSetStateOnlySelectMine: (mine: string, is_check: boolean) => void;
   stateOnlySelectMine: string[];
@@ -187,18 +186,16 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   return (
     <Box style={{ position: "relative" }}>
-      {minimumDom && (
+      {minimumDom && nodeValue[1] !== "nodata" && (
         <Checkbox
           color="primary"
           inputProps={{ "aria-label": "primary checkbox" }}
           onClick={(e) => {
-            handleChangeExits([item.id], (e.target as HTMLInputElement).checked, nodeValue);
+            handleChangeExits([item.id], (e.target as HTMLInputElement).checked, nodeValue, item.existData);
           }}
           checked={stateOnlyMine.includes(item.id)}
           disabled={isDisable(nodeValue[0], nodeValue[1])}
@@ -225,7 +222,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                 <FormControlLabel
                   control={<Checkbox name="Only Mine" color="primary" />}
                   onClick={(e) => {
-                    handleChangeExits(item.existData, (e.target as HTMLInputElement).checked, nodeValue);
+                    handleChangeExits(item.existData, (e.target as HTMLInputElement).checked, nodeValue, item.existData);
                     handleSetStateOnlySelectMine(item.id, (e.target as HTMLInputElement).checked);
                     e.stopPropagation();
                   }}
@@ -234,7 +231,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                 />
               </Typography>
             )}
-            {minimumDom && ["class", "other"].includes(nodeValue[0]) && (
+            {minimumDom && nodeValue[1] !== "nodata" && ["class", "other"].includes(nodeValue[0]) && (
               <>
                 <Popover
                   id={id}
@@ -291,17 +288,10 @@ function FilterTemplate(props: FilterProps) {
   const dispatch = useDispatch();
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
-  const { classOptions, filterOption, user_id } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { filterOption, user_id, schoolByOrgOrUserData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { handleChangeShowAnyTime, handleChangeLoadScheduleView, stateOnlyMine, handleChangeOnlyMine, timesTamp, modelView } = props;
 
-  const perm = usePermission([
-    PermissionType.view_my_calendar_510,
-    PermissionType.view_school_calendar_512,
-    PermissionType.create_event_520,
-    PermissionType.create_my_schools_schedule_events_522,
-  ]);
-
-  const subDataStructures = (id?: string, name?: string, parentName?: string, isShowIcon: boolean = false) => {
+  const subDataStructures = (id?: string, name?: string, parentName?: string, isShowIcon: boolean = false, existData?: string[]) => {
     return {
       id: parentName ? `${parentName}+${id}` : (id as string),
       name: name as string,
@@ -309,7 +299,7 @@ function FilterTemplate(props: FilterProps) {
       child: [],
       isOnlyMine: false,
       showIcon: isShowIcon,
-      existData: [],
+      existData: existData ?? [],
       isHide: false,
     };
   };
@@ -367,10 +357,10 @@ function FilterTemplate(props: FilterProps) {
 
   React.useEffect(() => {
     if (stateOnlyMine.length < 1) return;
-    handleActiveAll(stateOnlyMine);
+    // handleActiveAll(stateOnlyMine);
   }, [handleActiveAll, modelView, timesTamp, stateOnlyMine, dispatch]);
 
-  const handleChangeExits = async (data: string[], checked: boolean, node: string[]) => {
+  const handleChangeExits = async (data: string[], checked: boolean, node: string[], existData: string[]) => {
     let setData: any = [];
     let onlyMineData = stateOnlyMine;
     if (checked) {
@@ -380,9 +370,15 @@ function FilterTemplate(props: FilterProps) {
           return nodeValue[0] !== "other";
         });
       }
+      if (node[0] === "All_My_Schools" || node[1] === "All") {
+        onlyMineData = onlyMineData.concat(existData);
+      }
       setData = [...onlyMineData.concat(data)];
       handleChangeOnlyMine(setData);
     } else {
+      if (node[0] === "All_My_Schools" || node[1] === "All") {
+        data = data.concat(existData);
+      }
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
       setData = [...differenceSet];
       handleChangeOnlyMine(setData);
@@ -409,53 +405,34 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const getClassBySchool = (): FilterDataItemsProps[] => {
-    let lists: EntityScheduleClassInfo[] = [];
-    const otherClass: FilterDataItemsProps[] = [];
     const classResult: FilterDataItemsProps[] = [];
-    if (perm.create_event_520) {
-      lists = classOptions.classListOrg.organization?.classes as EntityScheduleClassInfo[];
-    } else if (perm.create_my_schools_schedule_events_522) {
-      lists = classOptions.classListSchool.school?.classes as EntityScheduleClassInfo[];
-    } else {
-      lists = classOptions.classListTeacher.user?.classesTeaching as EntityScheduleClassInfo[];
-    }
-    lists?.forEach((item: EntityScheduleClassInfo) => {
-      if (item.schools?.length > 0) {
-        // const user_id = "59bc75ea-e5c4-508d-8781-2b5ec0a1dbd3"
-        console.log(user_id);
-        const isExistTeacher = item.teachers.filter((teacher: RolesData) => {
+    const AllExistData: string[] = [];
+    schoolByOrgOrUserData?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
+      let is_exists: boolean = false;
+      const existData: string[] = [];
+      const classesChild = schoolItem.classes.map((classItem: EntityScheduleClassesInfo) => {
+        const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
           return teacher.user_id === user_id;
         });
-        const isExistStudent = item.students.filter((studen: RolesData) => {
+        const isExistStudent = classItem.students.filter((studen: RolesData) => {
           return studen.user_id === user_id;
         });
-        const is_exist = isExistTeacher.length > 0 || isExistStudent.length > 0;
-
-        item.schools?.forEach((school: EntityScheduleSchoolsInfo) => {
-          let filterData = { is: false, index: 0 };
-          classResult.forEach((result: FilterDataItemsProps, index: number) => {
-            if (result.id === school.school_id) filterData = { is: result.id === school.school_id, index: index };
-          });
-          if (filterData.is) {
-            classResult[filterData.index].child.push(subDataStructures(`${item.class_id}+${school.school_id}`, item.class_name, "class"));
-            classResult[filterData.index].isOnlyMine = is_exist;
-            classResult[filterData.index].showIcon = is_exist;
-            classResult[filterData.index].existData.push(`class+${item.class_id}+${school.school_id}` as string);
-          } else {
-            classResult.push({
-              id: `${school.school_id}`,
-              name: school.school_name,
-              isCheck: false,
-              child: [subDataStructures(`${item.class_id}+${school.school_id}`, item.class_name, "class")],
-              isOnlyMine: is_exist,
-              existData: [`class+${item.class_id}+${school.school_id}` as string],
-              isHide: false,
-            });
-          }
-        });
-      } else {
-        otherClass.push(subDataStructures(item.class_id, item.class_name, "class"));
-      }
+        is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
+        existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+        AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+        return subDataStructures(`${classItem.class_id}+${schoolItem.school_id}`, classItem.class_name, "class");
+      });
+      if (classesChild.length > 0)
+        classesChild.unshift(subDataStructures(`All+${schoolItem.school_id}`, d("All").t("assess_filter_all"), "class", false, existData));
+      classResult.push({
+        id: `${schoolItem.school_id}`,
+        name: schoolItem.school_name,
+        isCheck: false,
+        child: classesChild.length < 1 ? [subDataStructures(`nodata`, d("No Data").t("schedule_filter_no_data"), "class")] : classesChild,
+        isOnlyMine: is_exists,
+        existData: existData,
+        isHide: false,
+      });
     });
     if (classResult.length > 1)
       classResult.unshift({
@@ -464,7 +441,7 @@ function FilterTemplate(props: FilterProps) {
         isCheck: false,
         child: [],
         isOnlyMine: false,
-        existData: [],
+        existData: AllExistData,
         isHide: false,
       });
     return classResult;

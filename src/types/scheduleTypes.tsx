@@ -142,6 +142,18 @@ export interface EntityScheduleClassInfo extends ClassesData {
   schools: EntityScheduleSchoolsInfo[];
 }
 
+export interface EntityScheduleClassesInfo extends ClassesData {
+  class_id: string;
+  class_name: string;
+  status: string;
+}
+
+export interface EntityScheduleSchoolInfo {
+  school_id: string;
+  school_name: string;
+  classes: EntityScheduleClassesInfo[];
+}
+
 export interface ConflictsData {
   class_roster_teachers: EntityScheduleShortInfo[];
   class_roster_students: EntityScheduleShortInfo[];
