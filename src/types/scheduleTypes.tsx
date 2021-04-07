@@ -192,4 +192,5 @@ export interface FilterDataItemsProps {
   showIcon?: boolean;
   existData: string[];
   isHide: boolean;
+  onLyMineData: string[];
 }

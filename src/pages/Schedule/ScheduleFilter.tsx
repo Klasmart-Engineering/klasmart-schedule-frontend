@@ -222,16 +222,17 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                 <FormControlLabel
                   control={<Checkbox name="Only Mine" color="primary" />}
                   onClick={(e) => {
-                    handleChangeExits(item.existData, (e.target as HTMLInputElement).checked, nodeValue, item.existData);
+                    handleChangeExits(item.onLyMineData, (e.target as HTMLInputElement).checked, ["onlyMine", item.id], item.existData);
                     handleSetStateOnlySelectMine(item.id, (e.target as HTMLInputElement).checked);
                     e.stopPropagation();
                   }}
                   label={d("Only MIne").t("schedule_filter_only_mine")}
                   style={{ transform: "scale(0.7)", marginRight: "0px" }}
+                  checked={stateOnlySelectMine.includes(item.id)}
                 />
               </Typography>
             )}
-            {minimumDom && nodeValue[1] !== "nodata" && ["class", "other"].includes(nodeValue[0]) && (
+            {minimumDom && nodeValue[1] !== "nodata" && ["class", "other"].includes(nodeValue[0]) && nodeValue[1] !== "All" && (
               <>
                 <Popover
                   id={id}
@@ -291,7 +292,14 @@ function FilterTemplate(props: FilterProps) {
   const { filterOption, user_id, schoolByOrgOrUserData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { handleChangeShowAnyTime, handleChangeLoadScheduleView, stateOnlyMine, handleChangeOnlyMine, timesTamp, modelView } = props;
 
-  const subDataStructures = (id?: string, name?: string, parentName?: string, isShowIcon: boolean = false, existData?: string[]) => {
+  const subDataStructures = (
+    id?: string,
+    name?: string,
+    parentName?: string,
+    isShowIcon: boolean = false,
+    existData?: string[],
+    onLyMineData?: string[]
+  ) => {
     return {
       id: parentName ? `${parentName}+${id}` : (id as string),
       name: name as string,
@@ -301,6 +309,7 @@ function FilterTemplate(props: FilterProps) {
       showIcon: isShowIcon,
       existData: existData ?? [],
       isHide: false,
+      onLyMineData: onLyMineData ?? [],
     };
   };
 
@@ -364,20 +373,30 @@ function FilterTemplate(props: FilterProps) {
     let setData: any = [];
     let onlyMineData = stateOnlyMine;
     if (checked) {
+      if (node[0] === "All_My_Schools" || node[1] === "All") {
+        onlyMineData = onlyMineData.concat(existData);
+        const onlyResult = node[0] === "All_My_Schools" ? [] : stateOnlySelectMine.splice(stateOnlySelectMine.indexOf(node[2]), 1);
+        setStateOnlySelectMine([...onlyResult]);
+      }
+      if (node[0] === "onlyMine") {
+        const differenceSet = onlyMineData.filter((ea) => existData.every((eb) => eb !== ea));
+        onlyMineData = [...differenceSet, ...data];
+        console.log(data, 888);
+      }
       if (node[0] === "Others") {
         onlyMineData = stateOnlyMine.filter((v: string) => {
           const nodeValue = v.split("+");
           return nodeValue[0] !== "other";
         });
       }
-      if (node[0] === "All_My_Schools" || node[1] === "All") {
-        onlyMineData = onlyMineData.concat(existData);
-      }
       setData = [...onlyMineData.concat(data)];
       handleChangeOnlyMine(setData);
     } else {
       if (node[0] === "All_My_Schools" || node[1] === "All") {
         data = data.concat(existData);
+      }
+      if (node[0] === "class" && node.length > 2) {
+        data = data.concat([`class+All+${node[2]}`]);
       }
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
       setData = [...differenceSet];
@@ -410,6 +429,7 @@ function FilterTemplate(props: FilterProps) {
     schoolByOrgOrUserData?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
       let is_exists: boolean = false;
       const existData: string[] = [];
+      const onLyMineData: string[] = [];
       const classesChild = schoolItem.classes.map((classItem: EntityScheduleClassesInfo) => {
         const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
           return teacher.user_id === user_id;
@@ -420,10 +440,14 @@ function FilterTemplate(props: FilterProps) {
         is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
         existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
         AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-        return subDataStructures(`${classItem.class_id}+${schoolItem.school_id}`, classItem.class_name, "class");
+        if (is_exists) onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+        return subDataStructures(`${classItem.class_id}+${schoolItem.school_id}`, classItem.class_name, "class", false, [], onLyMineData);
       });
-      if (classesChild.length > 0)
+      if (classesChild.length > 1) {
         classesChild.unshift(subDataStructures(`All+${schoolItem.school_id}`, d("All").t("assess_filter_all"), "class", false, existData));
+        existData.push(`class+All+${schoolItem.school_id}`);
+        AllExistData.push(`class+All+${schoolItem.school_id}`);
+      }
       classResult.push({
         id: `${schoolItem.school_id}`,
         name: schoolItem.school_name,
@@ -432,6 +456,7 @@ function FilterTemplate(props: FilterProps) {
         isOnlyMine: is_exists,
         existData: existData,
         isHide: false,
+        onLyMineData: onLyMineData,
       });
     });
     if (classResult.length > 1)
@@ -443,6 +468,7 @@ function FilterTemplate(props: FilterProps) {
         isOnlyMine: false,
         existData: AllExistData,
         isHide: false,
+        onLyMineData: [],
       });
     return classResult;
   };
@@ -475,6 +501,7 @@ function FilterTemplate(props: FilterProps) {
         isOnlyMine: false,
         existData: [],
         isHide: false,
+        onLyMineData: [],
       };
       if (subject.length > 0) program.push(subjectSet);
     });
@@ -514,6 +541,7 @@ function FilterTemplate(props: FilterProps) {
       isOnlyMine: false,
       existData: [],
       isHide: getClassBySchool().length < 1,
+      onLyMineData: [],
     },
     {
       id: "Others+1",
@@ -521,8 +549,9 @@ function FilterTemplate(props: FilterProps) {
       isCheck: false,
       child: getOthersByFilter(),
       isOnlyMine: getOthersExistData().length > 0,
-      existData: getOthersExistData(),
+      existData: [],
       isHide: getOthersByFilter().length < 1,
+      onLyMineData: getOthersExistData(),
     },
     {
       id: "Programs+1",
@@ -532,6 +561,7 @@ function FilterTemplate(props: FilterProps) {
       isOnlyMine: false,
       existData: [],
       isHide: getProgramByFilter().length < 1,
+      onLyMineData: [],
     },
     {
       id: "ClassTypes+1",
@@ -541,6 +571,7 @@ function FilterTemplate(props: FilterProps) {
       isOnlyMine: false,
       existData: [],
       isHide: getClassTypeByFilter().length < 1,
+      onLyMineData: [],
     },
   ];
   const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {

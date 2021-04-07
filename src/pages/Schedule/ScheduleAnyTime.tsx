@@ -28,6 +28,26 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "center",
       alignItems: "center",
     },
+    scrollBox: {
+      display: "flex",
+      flexDirection: "column",
+      maxHeight: "300px",
+      overflow: "auto",
+      "&::-webkit-scrollbar": {
+        width: "3px",
+      },
+      "&::-webkit-scrollbar-track": {
+        boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        borderRadius: "3px",
+        backgroundColor: "rgb(220, 220, 220)",
+        boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+      },
+      "&::-webkit-scrollbar-thumb:window-inactive": {
+        backgroundColor: "rgba(220,220,220,0.4)",
+      },
+    },
     anyTimeBox: {
       width: "80%",
       height: "60%",
@@ -105,8 +125,11 @@ function AnyTimeSchedule(props: SearchListProps) {
       const study: EntityScheduleListView[] = [];
       const homeFun: EntityScheduleListView[] = [];
       scheduleAnyTimeViewData.forEach((view: EntityScheduleListView) => {
-        if (view.is_home_fun) homeFun.push(view);
-        if (!view.start_at && !view.end_at) study.push(view);
+        if (view.is_home_fun) {
+          homeFun.push(view);
+        } else {
+          study.push(view);
+        }
       });
       setAnyTimeData({ study, homeFun });
     }
@@ -434,14 +457,16 @@ function AnyTimeSchedule(props: SearchListProps) {
           <p>
             {d("Anytime Study").t("schedule_any_anytime_study")} {d("Study").t("schedule_detail_homework")}
           </p>
-          {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
-            return (
-              <div>
-                <span>{view.title} </span>
-                {buttonGroup("study", view)}
-              </div>
-            );
-          })}
+          <Box className={classes.scrollBox}>
+            {anyTimeData.study.map((view: EntityScheduleListView) => {
+              return (
+                <div>
+                  <span>{view.title} </span>
+                  {buttonGroup("study", view)}
+                </div>
+              );
+            })}
+          </Box>
         </div>
       )}
       {anyTimeData.homeFun.length > 0 && (
@@ -450,16 +475,19 @@ function AnyTimeSchedule(props: SearchListProps) {
             {d("Anytime Study").t("schedule_any_anytime_study")} {d("Study").t("schedule_detail_homework")} -{" "}
             {d("Home Fun").t("schedule_checkbox_home_fun")}
           </p>
-          {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
-            return (
-              <div>
-                <span>
-                  {view.title} {view.exist_feedback && view.is_hidden && <VisibilityOff style={{ color: "#000000", marginLeft: "10px" }} />}
-                </span>
-                {buttonGroup("home_fun", view)}
-              </div>
-            );
-          })}
+          <Box className={classes.scrollBox}>
+            {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
+              return (
+                <div>
+                  <span>
+                    {view.title}{" "}
+                    {view.exist_feedback && view.is_hidden && <VisibilityOff style={{ color: "#000000", marginLeft: "10px" }} />}
+                  </span>
+                  {buttonGroup("home_fun", view)}
+                </div>
+              );
+            })}
+          </Box>
         </div>
       )}
     </Box>
