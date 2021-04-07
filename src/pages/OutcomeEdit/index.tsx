@@ -16,6 +16,7 @@ import {
   AsyncTrunkReturned,
   createOutcomeSet,
   deleteOutcome,
+  generateShortcode,
   getNewOptions,
   getOutcomeDetail,
   getSpecialSkills,
@@ -288,7 +289,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     if (!outcome_id) {
-      // dispatch(generateShortcode());
+      dispatch(generateShortcode());
       dispatch(getNewOptions({ metaLoading: true }));
     }
   }, [outcome_id, dispatch]);
@@ -302,6 +303,7 @@ export default function CreateOutcomings() {
       age: [newOptions.age[0]?.id],
       grade: [newOptions.grade[0]?.id],
       assumed: true,
+      shortcode: shortCode,
     };
     if (outcome_id) {
       setSelectedOutcomeSet(outcomeDetail.sets || []);
@@ -344,6 +346,7 @@ export default function CreateOutcomings() {
     newOptions.subject,
     outcomeDetail,
     outcome_id,
+    shortCode,
     reset,
     setValue,
   ]);

@@ -127,7 +127,12 @@ export function OutcomeForm(props: OutcomeFormProps) {
     ];
     return `${Y}-${M}-${D} ${h}:${m}`;
   };
-
+  const shortCodeValidate = (value: string) => {
+    const re = /^[0-9A-Z]+$/;
+    const newValue = value.trim();
+    if (newValue.length < 5 || !re.test(newValue))
+      return d("The short code needs to be five characters long, 0-9, A-Z.").t("assess_msg_short_code_error");
+  };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
@@ -165,19 +170,23 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 error={errors.outcome_name ? true : false}
               />
             </Grid>
-            {outcome_id && (
-              <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-                <Controller
-                  name="shortcode"
-                  as={TextField}
-                  control={control}
-                  defaultValue={outcomeDetail.shortcode || shortCode}
-                  fullWidth
-                  label={d("Short Code").t("assess_label_short_code")}
-                  disabled
-                />
-              </Grid>
-            )}
+            {/* {outcome_id && ( */}
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <Controller
+                name="shortcode"
+                as={TextField}
+                control={control}
+                defaultValue={outcomeDetail.shortcode ? outcomeDetail.shortcode : shortCode}
+                fullWidth
+                label={d("Short Code").t("assess_label_short_code")}
+                disabled={showEdit}
+                inputProps={{ maxLength: 5 }}
+                error={!!errors["shortcode"]}
+                rules={{ validate: shortCodeValidate }}
+                helperText={errors["shortcode"]?.message}
+              />
+            </Grid>
+            {/* )} */}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={`${classes.checkBox} ${classes.marginItem}`}>
               <Controller
                 name="assumed"
