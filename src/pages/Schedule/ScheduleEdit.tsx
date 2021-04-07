@@ -23,7 +23,7 @@ import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Maybe, User } from "../../api/api-ko-schema.auto";
@@ -248,17 +248,20 @@ function SmallCalendar(props: CalendarStateProps) {
     });
   };
 
-  const handleChangeLoadScheduleView = (filterQuery: FilterQueryTypeProps | []) => {
-    dispatch(
-      getScheduleTimeViewData({
-        view_type: modelView,
-        time_at: timesTamp.start,
-        time_zone_offset: -new Date().getTimezoneOffset() * 60,
-        metaLoading: true,
-        ...filterQuery,
-      })
-    );
-  };
+  const handleChangeLoadScheduleView = useCallback(
+    async (filterQuery: FilterQueryTypeProps | []) => {
+      dispatch(
+        getScheduleTimeViewData({
+          view_type: modelView,
+          time_at: timesTamp.start,
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+          metaLoading: true,
+          ...filterQuery,
+        })
+      );
+    },
+    [dispatch, modelView, timesTamp]
+  );
 
   const css = useStyles();
 

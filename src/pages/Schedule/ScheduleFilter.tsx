@@ -366,7 +366,7 @@ function FilterTemplate(props: FilterProps) {
 
   React.useEffect(() => {
     if (stateOnlyMine.length < 1) return;
-    // handleActiveAll(stateOnlyMine);
+    handleActiveAll(stateOnlyMine);
   }, [handleActiveAll, modelView, timesTamp, stateOnlyMine, dispatch]);
 
   const handleChangeExits = async (data: string[], checked: boolean, node: string[], existData: string[]) => {
@@ -381,7 +381,6 @@ function FilterTemplate(props: FilterProps) {
       if (node[0] === "onlyMine") {
         const differenceSet = onlyMineData.filter((ea) => existData.every((eb) => eb !== ea));
         onlyMineData = [...differenceSet, ...data];
-        console.log(data, 888);
       }
       if (node[0] === "Others") {
         onlyMineData = stateOnlyMine.filter((v: string) => {
@@ -420,7 +419,6 @@ function FilterTemplate(props: FilterProps) {
       });
       setStateSubject(deepSubject);
     }
-    handleActiveAll(setData);
   };
 
   const getClassBySchool = (): FilterDataItemsProps[] => {

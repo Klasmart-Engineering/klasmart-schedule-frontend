@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
     scrollBox: {
       display: "flex",
       flexDirection: "column",
-      maxHeight: "300px",
+      maxHeight: "230px",
       overflow: "auto",
       "&::-webkit-scrollbar": {
         width: "3px",
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     anyTimeBox: {
       width: "80%",
-      height: "60%",
+      height: "700px",
       position: "absolute",
       backgroundColor: "white",
       zIndex: 999,
