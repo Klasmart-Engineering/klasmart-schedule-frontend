@@ -176,7 +176,7 @@ function AssetEdit(props: AssetEditProps) {
                       <Typography style={{ color: "rgba(0,0,0,0.87)" }}>
                         {d("Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4").t("library_label_uploadInfo1")}
                       </Typography>
-                      <Typography variant="body1" style={{ color: "#999999" }}>
+                      <Typography variant="body1" style={{ color: "#999999", fontSize: "14px" }}>
                         {d("(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)").t(
                           "library_label_uploadInfo2"
                         )}
