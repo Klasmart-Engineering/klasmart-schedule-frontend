@@ -7,7 +7,7 @@ import { EntityScheduleListView } from "../../api/api.auto";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { d } from "../../locale/LocaleManager";
 import { Permission, PermissionType } from "../../components/Permission";
-import { getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
+import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
 import { useDispatch } from "react-redux";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import { actSuccess } from "../../reducers/notify";
@@ -92,7 +92,7 @@ interface SearchListProps {
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
   scheduleAnyTimeViewData: EntityScheduleListView[];
   privilegedMembers: (member: memberType) => boolean;
-  toLive: () => void;
+  toLive: (schedule_id?: string) => void;
   changeModalDate: (data: object) => void;
   handleChangeHidden: (is_hidden: boolean) => void;
   modelView: modeViewType;
@@ -138,14 +138,8 @@ function AnyTimeSchedule(props: SearchListProps) {
     }
   }, [scheduleAnyTimeViewData]);
 
-  const handleGoLive = (scheduleDetial: EntityScheduleListView) => {
+  const handleGoLive = async (scheduleDetial: EntityScheduleListView) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-
-    if (privilegedMembers("Student") && scheduleDetial.class_type === "Homework") {
-      toLive();
-      return;
-    }
-
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
@@ -166,7 +160,12 @@ function AnyTimeSchedule(props: SearchListProps) {
       });
       return;
     }
-    toLive();
+    await dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true }));
+    if (privilegedMembers("Student") && scheduleDetial.class_type === "Homework") {
+      toLive(scheduleDetial.id);
+      return;
+    }
+    toLive(scheduleDetial.id);
   };
 
   const deleteScheduleByid = useCallback(
@@ -380,7 +379,7 @@ function AnyTimeSchedule(props: SearchListProps) {
     }
   };
 
-  const buttonGroup = (type: string, scheduleInfo: EntityScheduleListView) => {
+  const buttonGroup = (type: string, scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => {
     return (
       <span>
         {type === "study" && (
@@ -473,7 +472,7 @@ function AnyTimeSchedule(props: SearchListProps) {
               return (
                 <div>
                   <span>{view.title} </span>
-                  {buttonGroup("study", view)}
+                  {buttonGroup("study", view, !privilegedMembers("Student"))}
                 </div>
               );
             })}
@@ -493,7 +492,7 @@ function AnyTimeSchedule(props: SearchListProps) {
                     {view.title}{" "}
                     {view.exist_feedback && view.is_hidden && <VisibilityOff style={{ color: "#000000", marginLeft: "10px" }} />}
                   </span>
-                  {buttonGroup("home_fun", view)}
+                  {buttonGroup("home_fun", view, !privilegedMembers("Student"))}
                 </div>
               );
             })}

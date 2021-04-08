@@ -1271,6 +1271,7 @@ function EditBox(props: CalendarStateProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
+    if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, scheduleDetial.class?.id as string);
     dispatch(
       actSuccess(
         isHidden ? d("This event is visible again.").t("schedule_msg_visible") : d("This event has been hidden").t("schedule_msg_hidden")

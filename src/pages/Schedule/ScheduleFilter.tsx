@@ -485,7 +485,9 @@ function FilterTemplate(props: FilterProps) {
             return studen.user_id === user_id;
           });
           if ((privilegedMembers("Teacher") || privilegedMembers("Student")) && !isExistTeacher.length && !isExistStudent.length) return;
-          if (!is_exists) is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
+          if (!is_exists)
+            is_exists =
+              !(privilegedMembers("Teacher") || privilegedMembers("Student")) && (isExistTeacher.length > 0 || isExistStudent.length > 0);
           existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
           AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
           if (isExistTeacher.length > 0 || isExistStudent.length > 0)
@@ -507,6 +509,7 @@ function FilterTemplate(props: FilterProps) {
         existData.push(`class+All+${schoolItem.school_id}`);
         AllExistData.push(`class+All+${schoolItem.school_id}`);
       }
+      if (classesChild.length < 1 && (privilegedMembers("Teacher") || privilegedMembers("Student"))) return;
       classResult.push({
         id: `${schoolItem.school_id}`,
         name: schoolItem.school_name,

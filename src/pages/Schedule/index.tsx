@@ -232,8 +232,8 @@ function ScheduleContent() {
     [isAdmin, isSchool, isTeacher, isStudent]
   );
 
-  const toLive = () => {
-    dispatch(scheduleUpdateStatus({ schedule_id: scheduleId, status: { status: "Started" } }));
+  const toLive = (schedule_id?: string) => {
+    dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
     if (liveToken) window.open(apiLivePath(liveToken));
   };
 
