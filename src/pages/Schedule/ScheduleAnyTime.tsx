@@ -388,7 +388,13 @@ function AnyTimeSchedule(props: SearchListProps) {
               color="primary"
               variant="contained"
               disabled={scheduleInfo.class_type === "Task" || !scheduleInfo.lesson_plan_id}
-              style={{ visibility: !privilegedMembers("Student") ? "visible" : "hidden" }}
+              style={{
+                visibility:
+                  (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
+                  (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
+                    ? "hidden"
+                    : "visible",
+              }}
               href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
             >
               {d("Preview").t("schedule_button_preview")}
@@ -399,13 +405,13 @@ function AnyTimeSchedule(props: SearchListProps) {
               autoFocus
               style={{
                 marginLeft: "20px",
-                visibility: privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible",
+                visibility:
+                  (scheduleInfo.role_type === "Teacher" && scheduleInfo.class_type === "Homework") ||
+                  (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
+                    ? "hidden"
+                    : "visible",
               }}
-              disabled={
-                scheduleInfo.status === "Closed" ||
-                !scheduleInfo.lesson_plan_id ||
-                (!privilegedMembers("Student") && scheduleInfo.class_type === "Homework")
-              }
+              disabled={scheduleInfo.status === "Closed" || !scheduleInfo.lesson_plan_id}
               onClick={() => handleGoLive(scheduleInfo)}
             >
               {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
@@ -414,14 +420,16 @@ function AnyTimeSchedule(props: SearchListProps) {
             </Button>
           </>
         )}
-        <Button
-          style={{ marginLeft: "20px", border: "1px solid #009688", color: "#009688" }}
-          onClick={() => handleEditSchedule(scheduleInfo)}
-          variant="outlined"
-          color="inherit"
-        >
-          {d("Edit").t("schedule_button_edit")}
-        </Button>
+        {showDeleteButto && (
+          <Button
+            style={{ marginLeft: "20px", border: "1px solid #009688", color: "#009688" }}
+            onClick={() => handleEditSchedule(scheduleInfo)}
+            variant="outlined"
+            color="inherit"
+          >
+            {d("Edit").t("schedule_button_edit")}
+          </Button>
+        )}
         {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
           <Permission
             value={PermissionType.delete_event_540}
@@ -492,7 +500,7 @@ function AnyTimeSchedule(props: SearchListProps) {
                     {view.title}{" "}
                     {view.exist_feedback && view.is_hidden && <VisibilityOff style={{ color: "#000000", marginLeft: "10px" }} />}
                   </span>
-                  {buttonGroup("home_fun", view, !privilegedMembers("Student"))}
+                  {buttonGroup("home_fun", view, true)}
                 </div>
               );
             })}

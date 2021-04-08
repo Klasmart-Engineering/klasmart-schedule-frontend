@@ -604,7 +604,8 @@ function FilterTemplate(props: FilterProps) {
   const getOnLyMineData = (): string[] => {
     const data: string[] = [];
     filterOption.others.forEach((classItem: EntityScheduleFilterClass) => {
-      if (classItem?.operator_role_type !== "Unknown") data.push(`other+${classItem.id}`);
+      if (!(privilegedMembers("Teacher") || privilegedMembers("Student")) && classItem?.operator_role_type !== "Unknown")
+        data.push(`other+${classItem.id}`);
     });
     return data;
   };

@@ -95,7 +95,6 @@ export default function CustomizeTempalte(props: InfoProps) {
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
   const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   const timestampToTime = (timestamp: Date | null): string => {
@@ -294,8 +293,14 @@ export default function CustomizeTempalte(props: InfoProps) {
           <Button
             color="primary"
             variant="contained"
-            disabled={scheduleInfo.class_type === "Task" || !checkLessonPlan}
-            style={{ visibility: permissionShowPreview ? "visible" : "hidden" }}
+            disabled={!checkLessonPlan}
+            style={{
+              visibility:
+                (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
+                (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
+                  ? "hidden"
+                  : "visible",
+            }}
             href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
           >
             {d("Preview").t("schedule_button_preview")}
@@ -306,13 +311,13 @@ export default function CustomizeTempalte(props: InfoProps) {
             autoFocus
             className={classes.lastButton}
             style={{
-              visibility: scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass" ? "hidden" : "visible",
+              visibility:
+                (scheduleInfo.role_type === "Teacher" && scheduleInfo.class_type === "Homework") ||
+                (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
+                  ? "hidden"
+                  : "visible",
             }}
-            disabled={
-              (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
-              (!permissionShowLive && scheduleInfo.class_type === "Homework") ||
-              !checkLessonPlan
-            }
+            disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
             onClick={() => handleGoLive(scheduleInfo)}
           >
             {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}

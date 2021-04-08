@@ -2078,9 +2078,13 @@ function EditBox(props: CalendarStateProps) {
               style={{
                 width: "45%",
                 marginRight: "10%",
-                visibility: permissionShowPreview ? "visible" : "hidden",
+                visibility:
+                  (scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework") ||
+                  (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
+                    ? "hidden"
+                    : "visible",
               }}
-              disabled={!scheduleDetial.real_time_status?.lesson_plan_is_auth}
+              disabled={!scheduleDetial.real_time_status?.lesson_plan_is_auth || scheduleDetial.role_type === "Student"}
               href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
             >
               {d("Preview").t("schedule_button_preview")}
@@ -2088,14 +2092,14 @@ function EditBox(props: CalendarStateProps) {
             <Button
               variant="contained"
               color="primary"
-              disabled={
-                scheduleDetial.status === "Closed" ||
-                !scheduleDetial.real_time_status?.lesson_plan_is_auth ||
-                (!privilegedMembers("Student") && scheduleList.class_type === "Homework")
-              }
+              disabled={scheduleDetial.status === "Closed" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
               style={{
                 width: "45%",
-                visibility: scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass" ? "hidden" : "visible",
+                visibility:
+                  (scheduleDetial.role_type === "Teacher" && scheduleList.class_type === "Homework") ||
+                  (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
+                    ? "hidden"
+                    : "visible",
               }}
               onClick={() => handleGoLive(scheduleDetial)}
             >
