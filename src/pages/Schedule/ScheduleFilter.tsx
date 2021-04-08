@@ -402,6 +402,7 @@ function FilterTemplate(props: FilterProps) {
       if (node[0] === "All_My_Schools" || node[1] === "All") {
         onlyMineData = onlyMineData.concat(existData);
         const onlyResult = node[0] === "All_My_Schools" ? [] : stateOnlySelectMine.splice(stateOnlySelectMine.indexOf(node[2]), 1);
+        if (node[0] === "All_My_Schools") setStateOnlySelectMineExistData({});
         setStateOnlySelectMine([...onlyResult]);
       }
       if (node[0] === "onlyMine") {

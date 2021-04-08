@@ -430,7 +430,7 @@ function AnyTimeSchedule(props: SearchListProps) {
             {d("Edit").t("schedule_button_edit")}
           </Button>
         )}
-        {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
+        {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && scheduleInfo.role_type !== "Student" && (
           <Permission
             value={PermissionType.delete_event_540}
             render={(value) =>
