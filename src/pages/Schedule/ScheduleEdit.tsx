@@ -54,6 +54,7 @@ import {
   resetParticipantList,
   resetScheduleDetial,
   saveScheduleData,
+  ScheduleFilterPrograms,
   scheduleShowOption,
 } from "../../reducers/schedule";
 import theme from "../../theme";
@@ -930,6 +931,7 @@ function EditBox(props: CalendarStateProps) {
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
         })
       );
+      dispatch(ScheduleFilterPrograms());
       dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({
         type: "changeData",
@@ -1141,6 +1143,17 @@ function EditBox(props: CalendarStateProps) {
     }
   };
 
+  const deDuplication = (arr: any) => {
+    const obj: any = [];
+    return arr.reduce((item: any, next: any) => {
+      if (!obj[next.user_id]) {
+        item.push(next);
+        obj[next.user_id] = true;
+      }
+      return item;
+    }, []);
+  };
+
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     const isFillter = !menuItemListClassKr("roster").length && rosterSaveStatus;
@@ -1150,20 +1163,24 @@ function EditBox(props: CalendarStateProps) {
     const participantsFilterData = {
       classes: {
         students: isFillter
-          ? ParticipantsData?.classes.students
-          : ParticipantsData?.classes.students.filter(
-              (a: any) =>
-                !participantMockOptions?.participantList?.class?.students?.some(
-                  (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
-                )
+          ? deDuplication(ParticipantsData?.classes.students)
+          : deDuplication(
+              ParticipantsData?.classes.students.filter(
+                (a: any) =>
+                  !participantMockOptions?.participantList?.class?.students?.some(
+                    (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
+                  )
+              )
             ),
         teachers: isFillter
-          ? ParticipantsData?.classes.teachers
-          : ParticipantsData?.classes.teachers.filter(
-              (a: any) =>
-                !participantMockOptions?.participantList?.class?.teachers?.some(
-                  (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
-                )
+          ? deDuplication(ParticipantsData?.classes.teachers)
+          : deDuplication(
+              ParticipantsData?.classes.teachers.filter(
+                (a: any) =>
+                  !participantMockOptions?.participantList?.class?.teachers?.some(
+                    (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
+                  )
+              )
             ),
       },
     } as ParticipantsData;

@@ -260,7 +260,6 @@ function ScheduleContent() {
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
         })
       );
-      dispatch(ScheduleFilterPrograms());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelView, timesTamp, stateOnlyMine, dispatch]);

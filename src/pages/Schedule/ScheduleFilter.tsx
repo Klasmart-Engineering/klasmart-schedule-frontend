@@ -181,7 +181,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
       id = `${node[0]}+${node[1]}`;
     }
     if (node[0] === "class" && node.length > 2) {
-      menus = node[2];
+      menus = node[2] === "Others" ? "Others+1" : node[2];
       id = `${node[0]}+${node[1]}+${node[2]}`;
     }
     return stateOnlySelectMineExistData[menus] ? !stateOnlySelectMineExistData[menus].includes(id) : false;
@@ -411,6 +411,7 @@ function FilterTemplate(props: FilterProps) {
           setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node[1]]: data });
         }
         const differenceSet = onlyMineData.filter((ea) => existData.every((eb) => eb !== ea));
+        console.log(existData);
         onlyMineData = [...differenceSet, ...data];
       }
       if (node[0] === "Others") {
@@ -428,6 +429,9 @@ function FilterTemplate(props: FilterProps) {
       if (node[0] === "class" && node.length > 2) {
         data = data.concat([`class+All+${node[2]}`]);
       }
+      if (node[0] === "other") {
+        data = data.concat([`class+All+Others`]);
+      }
       if (node[0] === "onlyMine") {
         if (node.length > 2) {
           delete stateOnlySelectMineExistData[node[2]];
@@ -436,6 +440,9 @@ function FilterTemplate(props: FilterProps) {
           delete stateOnlySelectMineExistData[node[1]];
           setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData });
         }
+      }
+      if (node[0] === "class" && node.length > 2) {
+        data = data.concat([`All_My_Schools`]);
       }
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
       setData = [...differenceSet];
@@ -477,6 +484,7 @@ function FilterTemplate(props: FilterProps) {
           const isExistStudent = classItem.students.filter((studen: RolesData) => {
             return studen.user_id === user_id;
           });
+          if ((privilegedMembers("Teacher") || privilegedMembers("Student")) && !isExistTeacher.length && !isExistStudent.length) return;
           if (!is_exists) is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
           existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
           AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
@@ -560,9 +568,15 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const getOthersByFilter = () => {
-    return filterOption.others.map((classItem: EntityScheduleFilterClass) => {
+    const existData: string[] = [];
+    let filterOptionOthers: FilterDataItemsProps[] = [];
+    filterOptionOthers = filterOption.others.map((classItem: EntityScheduleFilterClass) => {
+      existData.push(`other+${classItem.id}`);
       return subDataStructures(classItem.id, classItem.name, "other", classItem?.operator_role_type === "Student");
     });
+    if (filterOptionOthers.length > 1)
+      filterOptionOthers.unshift(subDataStructures(`All+Others`, d("All").t("assess_filter_all"), "class", false, existData));
+    return filterOptionOthers;
   };
 
   const handleToggle = (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
@@ -576,6 +590,15 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const getOthersExistData = (): string[] => {
+    const data: string[] = [];
+    filterOption.others.forEach((classItem: EntityScheduleFilterClass) => {
+      data.push(`other+${classItem.id}`);
+    });
+    if (data.length > 1) data.push("class+All+Others");
+    return data;
+  };
+
+  const getOnLyMineData = (): string[] => {
     const data: string[] = [];
     filterOption.others.forEach((classItem: EntityScheduleFilterClass) => {
       if (classItem?.operator_role_type !== "Unknown") data.push(`other+${classItem.id}`);
@@ -599,10 +622,10 @@ function FilterTemplate(props: FilterProps) {
       name: d("Others").t("schedule_filter_others"),
       isCheck: false,
       child: getOthersByFilter(),
-      isOnlyMine: getOthersExistData().length > 0,
-      existData: [],
+      isOnlyMine: getOnLyMineData().length > 0,
+      existData: getOthersExistData(),
       isHide: getOthersByFilter().length < 1,
-      onLyMineData: getOthersExistData(),
+      onLyMineData: getOnLyMineData(),
     },
     {
       id: "Programs+1",
