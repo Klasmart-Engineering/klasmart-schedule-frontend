@@ -12,6 +12,7 @@ import {
   modeViewType,
   EntityScheduleSchoolInfo,
   EntityScheduleClassesInfo,
+  memberType,
 } from "../../types/scheduleTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -139,6 +140,8 @@ type StyledTreeItemProps = TreeItemProps & {
   stateOnlyMine: string[];
   handleSetStateOnlySelectMine: (mine: string, is_check: boolean) => void;
   stateOnlySelectMine: string[];
+  stateOnlySelectMineExistData: any;
+  privilegedMembers: (member: memberType) => boolean;
 };
 
 interface InterfaceSubject extends EntityScheduleShortInfo {
@@ -161,6 +164,8 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     handleChangeExits,
     handleSetStateOnlySelectMine,
     stateOnlySelectMine,
+    stateOnlySelectMineExistData,
+    privilegedMembers,
     ...other
   } = props;
   const minimumDom = Array.isArray(props.children) && (props.children as []).length < 1;
@@ -168,13 +173,18 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const rgb = Math.floor(Math.random() * 256);
   const nodeValue = props.nodeId.split("+");
 
-  const isDisable = (title: string, existId: string): boolean => {
-    const menus = title === "other" ? "Others" : title;
-    const filterResult = stateOnlySelectMine.filter((result: string) => {
-      const nodeValue = result.split("+");
-      return nodeValue[0] === menus;
-    });
-    return filterResult.length > 0 ? !stateOnlyMine.includes(`${title}+${existId}`) : false;
+  const isDisable = (node: string[]): boolean => {
+    let id: string = "";
+    let menus: string = "";
+    if (node[0] === "other") {
+      menus = "Others+1";
+      id = `${node[0]}+${node[1]}`;
+    }
+    if (node[0] === "class" && node.length > 2) {
+      menus = node[2];
+      id = `${node[0]}+${node[1]}+${node[2]}`;
+    }
+    return stateOnlySelectMineExistData[menus] ? !stateOnlySelectMineExistData[menus].includes(id) : false;
   };
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -198,11 +208,13 @@ function StyledTreeItem(props: StyledTreeItemProps) {
             handleChangeExits([item.id], (e.target as HTMLInputElement).checked, nodeValue, item.existData);
           }}
           checked={stateOnlyMine.includes(item.id)}
-          disabled={isDisable(nodeValue[0], nodeValue[1])}
+          disabled={isDisable(nodeValue)}
           style={{ position: "absolute", top: "5px", left: "10px" }}
         />
       )}
-      {LabelIcon && isShowIcon && <LabelIcon color="inherit" className={classes.labelIcon} />}
+      {LabelIcon && isShowIcon && (privilegedMembers("Admin") || privilegedMembers("School")) && (
+        <LabelIcon color="inherit" className={classes.labelIcon} />
+      )}
       <TreeItem
         label={
           <div className={classes.labelRoot}>
@@ -252,6 +264,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                     className={classes.typography}
                     onClick={() => {
                       handleChangeShowAnyTime(true, item.name, nodeValue[1]);
+                      setAnchorEl(null);
                     }}
                   >
                     {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
@@ -290,7 +303,16 @@ function FilterTemplate(props: FilterProps) {
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
   const { filterOption, user_id, schoolByOrgOrUserData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleChangeShowAnyTime, handleChangeLoadScheduleView, stateOnlyMine, handleChangeOnlyMine, timesTamp, modelView } = props;
+  const {
+    handleChangeShowAnyTime,
+    handleChangeLoadScheduleView,
+    stateOnlyMine,
+    handleChangeOnlyMine,
+    timesTamp,
+    modelView,
+    privilegedMembers,
+  } = props;
+  const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
   const subDataStructures = (
     id?: string,
@@ -369,6 +391,10 @@ function FilterTemplate(props: FilterProps) {
     handleActiveAll(stateOnlyMine);
   }, [handleActiveAll, modelView, timesTamp, stateOnlyMine, dispatch]);
 
+  React.useEffect(() => {
+    console.log(stateOnlySelectMineExistData);
+  }, [stateOnlySelectMineExistData]);
+
   const handleChangeExits = async (data: string[], checked: boolean, node: string[], existData: string[]) => {
     let setData: any = [];
     let onlyMineData = stateOnlyMine;
@@ -379,6 +405,11 @@ function FilterTemplate(props: FilterProps) {
         setStateOnlySelectMine([...onlyResult]);
       }
       if (node[0] === "onlyMine") {
+        if (node.length > 2) {
+          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node[2]]: data });
+        } else {
+          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node[1]]: data });
+        }
         const differenceSet = onlyMineData.filter((ea) => existData.every((eb) => eb !== ea));
         onlyMineData = [...differenceSet, ...data];
       }
@@ -396,6 +427,15 @@ function FilterTemplate(props: FilterProps) {
       }
       if (node[0] === "class" && node.length > 2) {
         data = data.concat([`class+All+${node[2]}`]);
+      }
+      if (node[0] === "onlyMine") {
+        if (node.length > 2) {
+          delete stateOnlySelectMineExistData[node[2]];
+          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData });
+        } else {
+          delete stateOnlySelectMineExistData[node[1]];
+          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData });
+        }
       }
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
       setData = [...differenceSet];
@@ -437,10 +477,11 @@ function FilterTemplate(props: FilterProps) {
           const isExistStudent = classItem.students.filter((studen: RolesData) => {
             return studen.user_id === user_id;
           });
-          is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
+          if (!is_exists) is_exists = isExistTeacher.length > 0 || isExistStudent.length > 0;
           existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
           AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-          if (is_exists) onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          if (isExistTeacher.length > 0 || isExistStudent.length > 0)
+            onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
           classesChild.push(
             subDataStructures(
               `${classItem.class_id}+${schoolItem.school_id}`,
@@ -463,7 +504,7 @@ function FilterTemplate(props: FilterProps) {
         name: schoolItem.school_name,
         isCheck: false,
         child: classesChild.length < 1 ? [subDataStructures(`nodata`, d("No Data").t("schedule_filter_no_data"), "class")] : classesChild,
-        isOnlyMine: false,
+        isOnlyMine: is_exists,
         existData: existData,
         isHide: false,
         onLyMineData: onLyMineData,
@@ -602,6 +643,8 @@ function FilterTemplate(props: FilterProps) {
               stateOnlyMine={stateOnlyMine}
               handleSetStateOnlySelectMine={handleSetStateOnlySelectMine}
               stateOnlySelectMine={stateOnlySelectMine}
+              stateOnlySelectMineExistData={stateOnlySelectMineExistData}
+              privilegedMembers={privilegedMembers}
             >
               {item.child && styledTreeItemTemplate(item.child)}
             </StyledTreeItem>
@@ -635,6 +678,7 @@ interface FilterProps {
   handleChangeOnlyMine: (data: string[]) => void;
   timesTamp: timestampType;
   modelView: modeViewType;
+  privilegedMembers: (member: memberType) => boolean;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
@@ -647,6 +691,7 @@ export default function ScheduleFilter(props: FilterProps) {
     handleChangeOnlyMine,
     modelView,
     timesTamp,
+    privilegedMembers,
   } = props;
   return (
     <FilterTemplate
@@ -658,6 +703,7 @@ export default function ScheduleFilter(props: FilterProps) {
       handleChangeOnlyMine={handleChangeOnlyMine}
       modelView={modelView}
       timesTamp={timesTamp}
+      privilegedMembers={privilegedMembers}
     />
   );
 }

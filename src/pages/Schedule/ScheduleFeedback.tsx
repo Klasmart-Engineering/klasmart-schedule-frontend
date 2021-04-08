@@ -294,7 +294,7 @@ function FeedbackTemplate(props: FeedbackProps) {
   };
 
   const IsExpired = (due_date?: number): boolean => {
-    return Date.now() > (due_date as number) * 1000;
+    return due_date ? Date.now() > (due_date as number) * 1000 : false;
   };
 
   return (

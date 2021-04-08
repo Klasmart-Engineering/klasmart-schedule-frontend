@@ -237,6 +237,7 @@ function SmallCalendar(props: CalendarStateProps) {
     handleChangeShowAnyTime,
     stateOnlyMine,
     handleChangeOnlyMine,
+    privilegedMembers,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -282,6 +283,7 @@ function SmallCalendar(props: CalendarStateProps) {
           handleChangeOnlyMine={handleChangeOnlyMine}
           modelView={modelView}
           timesTamp={timesTamp}
+          privilegedMembers={privilegedMembers}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -621,8 +623,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const timestampToTime = (timestamp: number | undefined, type: string = "default") => {
-    const date = new Date(Number(timestamp) * 1000);
-
+    const date = timestamp ? new Date(Number(timestamp) * 1000) : new Date();
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
 
     const [Y, M, D, h, m] = [

@@ -14,6 +14,7 @@ import { actSuccess } from "../../reducers/notify";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { useHistory } from "react-router";
+import ContentPreview from "../ContentPreview";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -384,6 +385,15 @@ function AnyTimeSchedule(props: SearchListProps) {
       <span>
         {type === "study" && (
           <>
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={scheduleInfo.class_type === "Task" || !scheduleInfo.lesson_plan_id}
+              style={{ visibility: !privilegedMembers("Student") ? "visible" : "hidden" }}
+              href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
+            >
+              {d("Preview").t("schedule_button_preview")}
+            </Button>
             <Button
               variant="contained"
               color="primary"
