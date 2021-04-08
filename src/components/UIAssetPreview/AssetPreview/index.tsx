@@ -18,12 +18,9 @@ export function AssetPreview(props: PreviewProps) {
   const source = typeof resourceId === "object" ? resourceId["source"] : resourceId;
 
   const path = apiResourcePathById(source);
-  const getSuffix = (source: string | undefined) => {
-    if (JSON.stringify(source) === "{}" || !source) return;
-    return source.substring(source.lastIndexOf(".") + 1, source.length).toLowerCase();
-  };
+  const isHeight = fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0 || fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0;
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" className={className} width="100%" height="100%">
+    <Box display="flex" flexDirection="column" alignItems="center" className={className} width="100%" height={isHeight ? "100vh" : "100%"}>
       {fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetImg src={path} />}
       {fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetVideo src={path} />}
       {fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetAudio src={path} />}
@@ -37,3 +34,7 @@ export function AssetPreview(props: PreviewProps) {
     </Box>
   );
 }
+export const getSuffix = (source: string | undefined) => {
+  if (JSON.stringify(source) === "{}" || !source) return;
+  return source.substring(source.lastIndexOf(".") + 1, source.length).toLowerCase();
+};

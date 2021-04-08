@@ -199,6 +199,12 @@ type LangRecord<T = string> =
   | { id: "library_label_files_selected"; description: "( {value} files selected )"; values: { value: string | number } }
   | { id: "library_label_more"; description: "More"; values: undefined }
   | { id: "library_error_plan_duration"; description: "Plan's duration should be greater than lesson materials' sum"; values: undefined }
+  | { id: "library_label_uploadInfo1"; description: "Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4"; values: undefined }
+  | {
+      id: "library_label_uploadInfo2";
+      description: "(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)";
+      values: undefined;
+    }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -370,6 +376,7 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
+  | { id: "assess_msg_locked_milestone"; description: "Some of the milestones are locked, please try again. "; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
@@ -1050,7 +1057,24 @@ type LangRecord<T = string> =
   | { id: "h5p_label_license_sublicensable"; description: "Sublicensable"; values: undefined }
   | { id: "h5p_label_license_canHoldLiable"; description: "Hold Liable"; values: undefined }
   | { id: "h5p_label_license_mustIncludeCopyright"; description: "Must Include Copyright"; values: undefined }
-  | { id: "h5p_label_license_mustIncludeLicense"; description: "Must Include License"; values: undefined };
+  | { id: "h5p_label_license_mustIncludeLicense"; description: "Must Include License"; values: undefined }
+  | { id: "h5p_label_Slides"; description: "Slides"; values: undefined }
+  | { id: "h5p_label_slide_background"; description: "Slide background"; values: undefined }
+  | { id: "h5p_label_slide_index"; description: "Slide {slide}"; values: { slide: string | number } }
+  | { id: "h5p_label_add_new_slide"; description: "Add New Slide"; values: undefined }
+  | { id: "h5p_label_clone_slide"; description: "Clone Slide"; values: undefined }
+  | { id: "h5p_label_move_slide_left"; description: "Move Slide Left"; values: undefined }
+  | { id: "h5p_label_move_slide_right"; description: "Move Slide Right"; values: undefined }
+  | { id: "h5p_label_delete_slide"; description: "Delete Slide"; values: undefined }
+  | { id: "h5p_label_bookmarks"; description: "Bookmarks"; values: undefined }
+  | { id: "h5p_label_add_bookmark_at"; description: "Add bookmark at {time}"; values: { time: string | number } }
+  | { id: "h5p_label_submit_screens"; description: "Submit Screens"; values: undefined }
+  | { id: "h5p_label_add_submit_screen_at"; description: "Add submit screen at {time}"; values: { time: string | number } }
+  | { id: "h5p_label_submit_screen"; description: "Submit screen"; values: undefined }
+  | { id: "h5p_label_playback_rate"; description: "Playback rate"; values: undefined }
+  | { id: "h5p_label_colorChose"; description: "Choose"; values: undefined }
+  | { id: "h5p_label_label"; description: "Label"; values: undefined }
+  | { id: "h5p_label_statements"; description: "Statements"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
