@@ -92,7 +92,7 @@ interface SearchListProps {
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
   scheduleAnyTimeViewData: EntityScheduleListView[];
   privilegedMembers: (member: memberType) => boolean;
-  toLive: (schedule_id?: string) => void;
+  toLive: (schedule_id?: string, token?: string) => void;
   changeModalDate: (data: object) => void;
   handleChangeHidden: (is_hidden: boolean) => void;
   modelView: modeViewType;
@@ -160,12 +160,17 @@ function AnyTimeSchedule(props: SearchListProps) {
       });
       return;
     }
-    await dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true }));
-    if (privilegedMembers("Student") && scheduleDetial.class_type === "Homework") {
-      toLive(scheduleDetial.id);
-      return;
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true })
+    );
+    if (resultInfo.payload.token) {
+      if (privilegedMembers("Student") && scheduleDetial.class_type === "Homework") {
+        toLive(scheduleDetial.id, resultInfo.payload.token);
+        return;
+      }
+      toLive(scheduleDetial.id, resultInfo.payload.token);
     }
-    toLive(scheduleDetial.id);
   };
 
   const deleteScheduleByid = useCallback(
@@ -382,11 +387,11 @@ function AnyTimeSchedule(props: SearchListProps) {
               variant="contained"
               disabled={scheduleInfo.class_type === "Task" || !scheduleInfo.lesson_plan_id}
               style={{
-                visibility:
+                display:
                   (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
                   (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
-                    ? "hidden"
-                    : "visible",
+                    ? "none"
+                    : "block",
               }}
               href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
             >
@@ -398,11 +403,11 @@ function AnyTimeSchedule(props: SearchListProps) {
               autoFocus
               style={{
                 marginLeft: "20px",
-                visibility:
+                display:
                   (scheduleInfo.role_type === "Teacher" && scheduleInfo.class_type === "Homework") ||
                   (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
-                    ? "hidden"
-                    : "visible",
+                    ? "none"
+                    : "block",
               }}
               disabled={scheduleInfo.status === "Closed" || !scheduleInfo.lesson_plan_id}
               onClick={() => handleGoLive(scheduleInfo)}

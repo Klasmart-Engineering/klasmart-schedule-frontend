@@ -361,7 +361,6 @@ function FilterTemplate(props: FilterProps) {
           setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node[1]]: data });
         }
         const differenceSet = onlyMineData.filter((ea) => existData.every((eb) => eb !== ea));
-        console.log(existData);
         onlyMineData = [...differenceSet, ...data];
       }
       if (node[0] === "Others") {
