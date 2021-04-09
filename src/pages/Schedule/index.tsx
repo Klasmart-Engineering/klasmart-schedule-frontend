@@ -42,6 +42,7 @@ import {
   AlertDialogProps,
   EntityScheduleClassesInfo,
   EntityScheduleSchoolInfo,
+  FilterQueryTypeProps,
   memberType,
   modeViewType,
   ParticipantsShortInfo,
@@ -244,7 +245,41 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    if (stateOnlyMine.length > 0) return;
+    if (stateOnlyMine.length < 1) return;
+    const getConnectionStr = (item: string[]) => {
+      let str = "";
+      item.forEach((val: string) => {
+        const nodeValue = val.split("+");
+        str = `${str},${nodeValue[1]}`;
+      });
+      return str.substr(1);
+    };
+    const filterQuery: FilterQueryTypeProps = {
+      class_types: getConnectionStr(
+        stateOnlyMine.filter((v: string) => {
+          const nodeValue = v.split("+");
+          return nodeValue[0] === "classType";
+        })
+      ),
+      class_ids: getConnectionStr(
+        stateOnlyMine.filter((v: string) => {
+          const nodeValue = v.split("+");
+          return nodeValue[0] === "class" || nodeValue[0] === "other";
+        })
+      ),
+      subject_ids: getConnectionStr(
+        stateOnlyMine.filter((v: string) => {
+          const nodeValue = v.split("+");
+          return nodeValue[0] === "subjectSub";
+        })
+      ),
+      program_ids: getConnectionStr(
+        stateOnlyMine.filter((v: string) => {
+          const nodeValue = v.split("+");
+          return nodeValue[0] === "program";
+        })
+      ),
+    };
     if (teacherName) {
       const data = {
         teacher_name: teacherName,
@@ -252,6 +287,7 @@ function ScheduleContent() {
         page_size: 10,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
         start_at: timesTamp.start,
+        ...filterQuery,
       };
       dispatch(getSearchScheduleList({ data, metaLoading: true }));
     } else {
@@ -260,11 +296,11 @@ function ScheduleContent() {
           view_type: modelView,
           time_at: timesTamp.start,
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
+          ...filterQuery,
         })
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelView, timesTamp, stateOnlyMine, dispatch]);
+  }, [teacherName, modelView, timesTamp, stateOnlyMine, dispatch]);
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
@@ -309,7 +345,8 @@ function ScheduleContent() {
         });
         if (schoolItem.classes.length > 0) existData.push(`class+All+${schoolItem.school_id}`);
       });
-      setStateOnlyMine([...existData, "All_My_Schools"]);
+      if (existData.length > 0) existData.push("All_My_Schools");
+      setStateOnlyMine([...existData]);
     }
   }, [privilegedMembers, schoolByOrgOrUserData, user_id]);
 

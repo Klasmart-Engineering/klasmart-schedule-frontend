@@ -17,7 +17,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
-import React, { useCallback } from "react";
+import React from "react";
 import { SvgIconProps } from "@material-ui/core/SvgIcon";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
@@ -311,15 +311,7 @@ function FilterTemplate(props: FilterProps) {
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
   const { filterOption, user_id, schoolByOrgOrUserData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const {
-    handleChangeShowAnyTime,
-    handleChangeLoadScheduleView,
-    stateOnlyMine,
-    handleChangeOnlyMine,
-    timesTamp,
-    modelView,
-    privilegedMembers,
-  } = props;
+  const { handleChangeShowAnyTime, stateOnlyMine, handleChangeOnlyMine, privilegedMembers } = props;
   const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
   const subDataStructures = (
@@ -351,57 +343,6 @@ function FilterTemplate(props: FilterProps) {
     }
     setStateOnlySelectMine([...stateOnlySelectMine]);
   };
-
-  const getConnectionStr = (item: []) => {
-    let str = "";
-    item.forEach((val: string) => {
-      const nodeValue = val.split("+");
-      str = `${str},${nodeValue[1]}`;
-    });
-    return str.substr(1);
-  };
-
-  const handleActiveAll = useCallback(
-    async (data: any) => {
-      const filterQuery: FilterQueryTypeProps = {
-        class_types: getConnectionStr(
-          data.filter((v: string) => {
-            const nodeValue = v.split("+");
-            return nodeValue[0] === "classType";
-          })
-        ),
-        class_ids: getConnectionStr(
-          data.filter((v: string) => {
-            const nodeValue = v.split("+");
-            return nodeValue[0] === "class" || nodeValue[0] === "other";
-          })
-        ),
-        subject_ids: getConnectionStr(
-          data.filter((v: string) => {
-            const nodeValue = v.split("+");
-            return nodeValue[0] === "subjectSub";
-          })
-        ),
-        program_ids: getConnectionStr(
-          data.filter((v: string) => {
-            const nodeValue = v.split("+");
-            return nodeValue[0] === "program";
-          })
-        ),
-      };
-      handleChangeLoadScheduleView(filterQuery);
-    },
-    [handleChangeLoadScheduleView]
-  );
-
-  React.useEffect(() => {
-    if (stateOnlyMine.length < 1) return;
-    handleActiveAll(stateOnlyMine);
-  }, [handleActiveAll, modelView, timesTamp, stateOnlyMine, dispatch]);
-
-  React.useEffect(() => {
-    console.log(stateOnlySelectMineExistData);
-  }, [stateOnlySelectMineExistData]);
 
   const handleChangeExits = async (data: string[], checked: boolean, node: string[], existData: string[]) => {
     let setData: any = [];
