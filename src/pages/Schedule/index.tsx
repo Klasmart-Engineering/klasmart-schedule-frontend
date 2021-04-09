@@ -280,6 +280,7 @@ function ScheduleContent() {
         })
       ),
     };
+    if (filterQuery.class_ids === "All" && stateOnlyMine.length > 1) filterQuery.class_ids = "";
     if (teacherName) {
       const data = {
         teacher_name: teacherName,
@@ -317,7 +318,7 @@ function ScheduleContent() {
     dispatch(
       searchAuthContentLists({
         metaLoading: true,
-        program_group: "More+Featured+Content",
+        program_group: "More Featured Content",
         page_size: 1000,
       })
     );
