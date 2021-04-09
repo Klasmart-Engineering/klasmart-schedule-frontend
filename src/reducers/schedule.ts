@@ -110,6 +110,7 @@ export interface ScheduleState {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
+  mediaList: EntityContentInfoWithDetails[];
 }
 
 interface Rootstate {
@@ -228,6 +229,7 @@ const initialState: ScheduleState = {
   },
   user_id: "",
   schoolByOrgOrUserData: [],
+  mediaList: [],
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -616,6 +618,17 @@ export const getContentsAuthed = createAsyncThunk<GetContentsAuthedResult, GetCo
   return api.contentsAuthed.queryAuthContent({ ...query });
 });
 
+// contentEdit搜索contentlist
+type IQueryContentsParams = Parameters<typeof api.contents.searchContents>[0] & LoadingMetaPayload;
+type IQueryContentsResult = AsyncReturnType<typeof api.contents.searchContents>;
+export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
+  "searchAuthContentLists",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.contentsAuthed.queryAuthContent({ page_size: 10, ...query });
+    return { list, total };
+  }
+);
+
 interface LiveSchedulePayload extends LoadingMetaPayload {
   schedule_id: Parameters<typeof api.schedules.getScheduleLiveToken>[0];
   live_token_type: "preview" | "live";
@@ -784,6 +797,9 @@ const { actions, reducer } = createSlice({
     },
     [getSchoolByOrg.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.organization?.schools;
+    },
+    [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.mediaList = payload.list;
     },
   },
 });

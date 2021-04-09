@@ -11,7 +11,7 @@ import ModalBox from "../../components/ModalBox";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists, onLoadContentPreview, searchAuthContentLists } from "../../reducers/content";
+import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
   getClassesByOrg,
@@ -37,6 +37,7 @@ import {
   getClassesByStudent,
   getSchoolByUser,
   getSchoolByOrg,
+  searchAuthContentLists,
 } from "../../reducers/schedule";
 import {
   AlertDialogProps,
@@ -94,13 +95,14 @@ function ScheduleContent() {
     scheduleAnyTimeViewData,
     schoolByOrgOrUserData,
     user_id,
+    mediaList,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [modelYear, setModelYear] = React.useState<boolean>(false);
-  const { contentPreview, mediaList } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [isHidden, setIsHidden] = React.useState<boolean>(false);
   const [isShowAnyTime, setIsShowAnyTime] = React.useState<boolean>(false);
   const [anyTimeName, setAnyTimeName] = React.useState<string>("");
@@ -320,6 +322,7 @@ function ScheduleContent() {
         metaLoading: true,
         program_group: "More Featured Content",
         page_size: 1000,
+        content_type: "2",
       })
     );
   }, [dispatch]);
