@@ -332,6 +332,7 @@ function EditBox(props: CalendarStateProps) {
     mediaList,
     handleChangeShowAnyTime,
     isShowAnyTime,
+    stateCurrentCid,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -949,7 +950,7 @@ function EditBox(props: CalendarStateProps) {
             };
       changeTimesTamp(timesTampCallback);
       setIsForce(false);
-      if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, scheduleDetial.class?.id as string);
+      if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, stateCurrentCid as string);
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
@@ -1250,7 +1251,7 @@ function EditBox(props: CalendarStateProps) {
       changeModalDate({
         openStatus: false,
       });
-      if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, scheduleDetial.class?.id as string);
+      if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, stateCurrentCid as string);
       history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
       return;
     }
@@ -1271,7 +1272,7 @@ function EditBox(props: CalendarStateProps) {
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
       })
     );
-    if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, scheduleDetial.class?.id as string);
+    if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, stateCurrentCid as string);
     dispatch(
       actSuccess(
         isHidden ? d("This event is visible again.").t("schedule_msg_visible") : d("This event has been hidden").t("schedule_msg_hidden")
@@ -2151,6 +2152,7 @@ interface CalendarStateProps {
   stateOnlyMine: string[];
   handleChangeOnlyMine: (data: string[]) => void;
   isShowAnyTime: boolean;
+  stateCurrentCid: string;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2189,6 +2191,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     stateOnlyMine,
     handleChangeOnlyMine,
     isShowAnyTime,
+    stateCurrentCid,
   } = props;
 
   const template = (
@@ -2222,6 +2225,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
           isShowAnyTime={isShowAnyTime}
+          stateCurrentCid={stateCurrentCid}
         />
       </Box>
       <Box
@@ -2260,6 +2264,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
           isShowAnyTime={isShowAnyTime}
+          stateCurrentCid={stateCurrentCid}
         />
       </Box>
     </>

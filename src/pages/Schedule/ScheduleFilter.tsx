@@ -271,7 +271,15 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                   </Typography>
                 </Popover>
                 <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
-                  <div style={{ width: "12px", height: "12px", backgroundColor: `rgb(${rgb},${rgb},${rgb})`, borderRadius: "20px" }} />{" "}
+                  <div
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      backgroundColor: `rgb(${rgb},${rgb},${rgb})`,
+                      borderRadius: "20px",
+                      display: "none",
+                    }}
+                  />{" "}
                   <MoreVertIcon
                     aria-describedby={id}
                     onClick={(e) => {

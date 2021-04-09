@@ -287,15 +287,9 @@ function AnyTimeSchedule(props: SearchListProps) {
   const refreshView = useCallback(
     async (template: string) => {
       dispatch(actSuccess(template));
-      dispatch(
-        getScheduleTimeViewData({
-          view_type: modelView,
-          time_at: timesTamp.start,
-          time_zone_offset: -new Date().getTimezoneOffset() * 60,
-        })
-      );
+      await handleChangeShowAnyTime(true, anyTimeName, stateCurrentCid);
     },
-    [dispatch, modelView, timesTamp]
+    [dispatch, handleChangeShowAnyTime, anyTimeName, stateCurrentCid]
   );
 
   const handleHide = async (scheduleInfo: EntityScheduleListView) => {
@@ -305,16 +299,15 @@ function AnyTimeSchedule(props: SearchListProps) {
         show_option: { show_option: scheduleInfo.is_hidden ? "visible" : "hidden" },
       })
     );
-    handleChangeShowAnyTime(false, "");
     handleChangeHidden(!scheduleInfo.is_hidden);
+    changeModalDate({
+      openStatus: false,
+    });
     refreshView(
       scheduleInfo.is_hidden
         ? d("This event is visible again.").t("schedule_msg_visible")
         : d("This event has been hidden").t("schedule_msg_hidden")
     );
-    changeModalDate({
-      openStatus: false,
-    });
   };
 
   const handleEditSchedule = (scheduleInfo: EntityScheduleListView): void => {
@@ -498,7 +491,14 @@ function AnyTimeSchedule(props: SearchListProps) {
                 <div>
                   <span>
                     {view.title}{" "}
-                    {view.exist_feedback && view.is_hidden && <VisibilityOff style={{ color: "#000000", marginLeft: "10px" }} />}
+                    {view.exist_feedback && view.is_hidden && (
+                      <VisibilityOff
+                        style={{ color: "#000000", marginLeft: "10px", cursor: "pointer" }}
+                        onClick={() => {
+                          handleHide(view);
+                        }}
+                      />
+                    )}
                   </span>
                   {buttonGroup("home_fun", view, true)}
                 </div>

@@ -399,6 +399,7 @@ function ScheduleContent() {
               stateOnlyMine={stateOnlyMine}
               handleChangeOnlyMine={handleChangeOnlyMine}
               isShowAnyTime={isShowAnyTime}
+              stateCurrentCid={stateCurrentCid}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
