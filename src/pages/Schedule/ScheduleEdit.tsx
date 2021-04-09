@@ -2102,7 +2102,7 @@ function EditBox(props: CalendarStateProps) {
               style={{
                 width: "45%",
                 visibility:
-                  (scheduleDetial.role_type === "Teacher" && scheduleList.class_type === "Homework") ||
+                  (scheduleDetial.role_type !== "Student" && scheduleList.class_type === "Homework") ||
                   (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
                     ? "hidden"
                     : "visible",

@@ -312,7 +312,7 @@ export default function CustomizeTempalte(props: InfoProps) {
             className={classes.lastButton}
             style={{
               visibility:
-                (scheduleInfo.role_type === "Teacher" && scheduleInfo.class_type === "Homework") ||
+                (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type === "Homework") ||
                 (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
                   ? "hidden"
                   : "visible",

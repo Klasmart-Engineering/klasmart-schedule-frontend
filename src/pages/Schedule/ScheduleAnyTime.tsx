@@ -404,7 +404,7 @@ function AnyTimeSchedule(props: SearchListProps) {
               style={{
                 marginLeft: "20px",
                 display:
-                  (scheduleInfo.role_type === "Teacher" && scheduleInfo.class_type === "Homework") ||
+                  (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type === "Homework") ||
                   (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
                     ? "none"
                     : "block",
