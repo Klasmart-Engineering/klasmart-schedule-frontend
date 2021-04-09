@@ -395,6 +395,7 @@ function FilterTemplate(props: FilterProps) {
       }
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
       setData = [...differenceSet];
+      if (setData < 1) setData.push("All");
       handleChangeOnlyMine(setData);
     }
     if (node[0] === "program" && checked) {

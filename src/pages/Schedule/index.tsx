@@ -266,7 +266,7 @@ function ScheduleContent() {
       class_ids: getConnectionStr(
         stateOnlyMine.filter((v: string) => {
           const nodeValue = v.split("+");
-          return nodeValue[0] === "class" || nodeValue[0] === "other";
+          return (nodeValue[0] === "class" || nodeValue[0] === "other") && nodeValue[1] !== "All";
         })
       ),
       subject_ids: getConnectionStr(
@@ -282,7 +282,8 @@ function ScheduleContent() {
         })
       ),
     };
-    if (filterQuery.class_ids === "All" && stateOnlyMine.length > 1) filterQuery.class_ids = "";
+    if (filterQuery.class_ids === "" && !(filterQuery.class_types || filterQuery.subject_ids || filterQuery.program_ids))
+      filterQuery.class_ids = "All";
     if (teacherName) {
       const data = {
         teacher_name: teacherName,
