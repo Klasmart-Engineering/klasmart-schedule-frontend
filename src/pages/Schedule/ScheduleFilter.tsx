@@ -411,9 +411,13 @@ function FilterTemplate(props: FilterProps) {
       }
     }
     if (node[0] === "program" && !checked) {
+      const checkSubject: string[] = [];
       const deepSubject = stateSubject.filter((v: InterfaceSubject, index: number) => {
+        if (stateOnlyMine.includes(`subjectSub+${v.id}`)) checkSubject.push(`subjectSub+${v.id}`);
         return v.program_id !== node[1];
       });
+      const differenceSet = onlyMineData.filter((ea) => checkSubject.concat(data).every((eb) => eb !== ea));
+      handleChangeOnlyMine([...differenceSet]);
       setStateSubject(deepSubject);
     }
   };
