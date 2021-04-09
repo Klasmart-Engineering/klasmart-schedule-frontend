@@ -6,14 +6,13 @@ import LocalBarOutlinedIcon from "@material-ui/icons/LocalBarOutlined";
 import produce from "immer";
 import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { useForm, UseFormMethods } from "react-hook-form";
-import { Author } from "../../api/type";
+import { Author, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import CreateOutcomings from "../OutcomeEdit";
-import { isPending } from "./FirstSearchHeader";
 import { ListSearch } from "./ListSearch";
-import { BulkListForm, OutcomeListExectSearch, OutcomeQueryConditionBaseProps } from "./types";
+import { BulkListForm, OutcomeListExectSearch, OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,7 +71,8 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-
+export const isPending = (value: OutcomeQueryCondition): boolean =>
+  value.publish_status === OutcomePublishStatus.pending && !value.is_unpub;
 const getOutcomeListExectSearch = () => {
   return [
     {

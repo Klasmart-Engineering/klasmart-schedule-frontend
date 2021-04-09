@@ -1,17 +1,16 @@
-import { Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Button, Divider, Grid, Grow, Menu, MenuItem, MenuList, Paper, Popper, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import { MoreHoriz } from "@material-ui/icons";
+import ArrowDropDownOutlinedIcon from "@material-ui/icons/ArrowDropDownOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
+import clsx from "clsx";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
+import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
-import { isUnpublish, UNPUB } from "./FirstSearchHeader";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -77,31 +76,118 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "42px",
     height: "42px",
   },
+  tabCon: {
+    width: "100%",
+    minHeight: "42px",
+    height: "42px",
+    display: "flex",
+    justifyContent: "center",
+  },
+  button: {
+    maxWidth: "264px",
+    minWidth: "130px",
+    borderRadius: 0,
+  },
+  active: {
+    color: "#0E78D5",
+    borderBottom: "2px solid #0E78D5 !important",
+  },
+  paper: {
+    width: "30%",
+    position: "absolute",
+    left: "60%",
+  },
 }));
-
-function SubUnpublished(props: OutcomeQueryConditionBaseProps) {
+export const UNPUB = "UNPUB";
+export const isUnpublish = (value: OutcomeQueryCondition): boolean => {
+  return (
+    (value.publish_status === OutcomePublishStatus.pending && !!value?.is_unpub) ||
+    value.publish_status === OutcomePublishStatus.draft ||
+    value.publish_status === OutcomePublishStatus.rejected
+  );
+};
+function SubLearningOutcome(props: OutcomeQueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const handleChange = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) => {
-    console.log(publish_status);
-    if (publish_status === OutcomePublishStatus.pending) {
-      return onChange({ ...value, publish_status, page: 1, is_unpub: UNPUB });
-    }
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const handleClickStatus = (publish_status: OutcomeQueryCondition["publish_status"]) => () => {
+    if (publish_status === OutcomePublishStatus.draft || publish_status === OutcomePublishStatus.rejected) return;
     onChange({ ...value, publish_status, page: 1, is_unpub: "" });
   };
+  const unpublished = () => {
+    return [
+      { label: d("Draft").t("assess_label_draft"), value: OutcomePublishStatus.draft },
+      { label: d("Waiting for Approval").t("assess_label_waiting_for_approval"), value: OutcomePublishStatus.pending },
+      { label: d("Rejected").t("assess_label_rejected"), value: OutcomePublishStatus.rejected },
+    ];
+  };
+  const showDropdown = (event: any) => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleClickActionItem = (e: ChangeEvent<{}>, publish_status: OutcomeQueryCondition["publish_status"]) => {
+    onChange({ ...value, publish_status, page: 1, is_unpub: UNPUB });
+  };
   return (
-    <Tabs
-      className={classes.tabs}
-      value={value.publish_status}
-      onChange={handleChange}
-      indicatorColor="primary"
-      textColor="primary"
-      centered
-    >
-      <Tab value={OutcomePublishStatus.draft} label={d("Draft").t("assess_label_draft")} />
-      <Tab value={OutcomePublishStatus.pending} label={d("Waiting for Approval").t("assess_label_waiting_for_approval")} />
-      <Tab value={OutcomePublishStatus.rejected} label={d("Rejected").t("assess_label_rejected")} />
-    </Tabs>
+    <>
+      <div className={classes.tabCon}>
+        <Permission value={PermissionType.learning_outcome_page_404}>
+          <Button
+            className={clsx(classes.button, { [classes.active]: value?.publish_status === OutcomePublishStatus.published })}
+            onClick={handleClickStatus(OutcomePublishStatus.published)}
+          >
+            {d("Published").t("assess_label_published")}
+          </Button>
+        </Permission>
+        <Permission value={PermissionType.pending_page_403}>
+          <Button
+            className={clsx(classes.button, {
+              [classes.active]: value?.publish_status === OutcomePublishStatus.pending && value.is_unpub !== UNPUB,
+            })}
+            onClick={handleClickStatus(OutcomePublishStatus.pending)}
+          >
+            {d("Pending").t("assess_label_pending")}
+          </Button>
+        </Permission>
+        <Permission value={PermissionType.unpublished_page_402}>
+          <Button
+            ref={anchorRef}
+            className={clsx(classes.button, { [classes.active]: value.is_unpub === UNPUB })}
+            endIcon={<ArrowDropDownOutlinedIcon />}
+            onMouseEnter={showDropdown}
+            onMouseLeave={handleClose}
+          >
+            {d("Unpublished").t("assess_label_unpublished")}
+            <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
+              {({ TransitionProps, placement }) => (
+                <Grow {...TransitionProps} style={{ transformOrigin: placement === "bottom" ? "center top" : "center bottom" }}>
+                  <Paper>
+                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleClose}>
+                      {unpublished().map((item) => (
+                        <MenuItem
+                          key={item.label}
+                          selected={
+                            value.publish_status === OutcomePublishStatus.pending
+                              ? value.publish_status === item.value && value.is_unpub === UNPUB
+                              : value.publish_status === item.value
+                          }
+                          onClick={(event) => handleClickActionItem(event, item.value)}
+                        >
+                          {item.label}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+          </Button>
+        </Permission>
+      </div>
+    </>
   );
 }
 
@@ -183,7 +269,6 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     PermissionType.edit_published_learning_outcome_436,
     PermissionType.edit_my_unpublished_learning_outcome_430,
   ]);
-  const unpublish = isUnpublish(value);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.publish) onBulkPublish();
     if (event.target.value === BulkAction.remove) onBulkDelete();
@@ -231,15 +316,9 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 </TextField>
               )}
             </Grid>
-            {unpublish ? (
-              <Grid item md={6}>
-                <SubUnpublished value={value} onChange={onChange} />
-              </Grid>
-            ) : (
-              <Hidden only={["xs", "sm"]}>
-                <Grid item md={6}></Grid>
-              </Hidden>
-            )}
+            <Grid item md={6}>
+              <SubLearningOutcome value={value} onChange={onChange} />
+            </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <TextField
                 size="small"
@@ -274,7 +353,6 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
     PermissionType.edit_published_learning_outcome_436,
     PermissionType.edit_my_unpublished_learning_outcome_430,
   ]);
-  const unpublish = isUnpublish(value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
   const handleClickBulkActionButton = (event: any) => {
@@ -313,7 +391,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
           <hr style={{ borderColor: "#e0e0e0" }} />
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
             <Grid item sm={10} xs={10}>
-              {unpublish && <SubUnpublished value={value} onChange={onChange} />}
+              <SubLearningOutcome value={value} onChange={onChange} />
             </Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
               {actions.length > 0 && <MoreHoriz onClick={handleClickBulkActionButton} />}

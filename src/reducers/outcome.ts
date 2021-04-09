@@ -13,7 +13,7 @@ import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "..
 import { OutcomePublishStatus } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
-import { isUnpublish } from "../pages/OutcomeList/FirstSearchHeader";
+import { isUnpublish } from "../pages/OutcomeList/ThirdSearchHeader";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LinkedMockOptionsItem } from "./content";

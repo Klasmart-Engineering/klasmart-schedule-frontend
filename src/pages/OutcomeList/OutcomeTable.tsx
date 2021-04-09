@@ -19,7 +19,7 @@ import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AppDispatch } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
-import { isUnpublish } from "./FirstSearchHeader";
+import { isUnpublish } from "./ThirdSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
 
 const useStyles = makeStyles((theme) =>
