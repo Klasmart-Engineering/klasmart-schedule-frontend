@@ -49,6 +49,7 @@ import {
   getScheduleParticipant,
   getScheduleParticipantsMockOptionsResponse,
   getScheduleTimeViewData,
+  getSubjectByProgramId,
   initScheduleDetial,
   removeSchedule,
   resetParticipantList,
@@ -516,6 +517,8 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newData);
       setInitScheduleList(newData);
 
+      if (newData.program_id) dispatch(getSubjectByProgramId({ program_id: newData.program_id }));
+
       const getClassOptionsItem = (item: ClassOptionsItem[]) => {
         const items = item?.map((item: ClassOptionsItem) => {
           return { id: item.id, name: item.name, enable: item.enable };
@@ -688,10 +691,12 @@ function EditBox(props: CalendarStateProps) {
     }
 
     if (name === "program_id") {
-      const LinkageProgramData: any = await handleChangeProgramId(value.id);
-      setSubjectItem(LinkageProgramData[0] ?? defaults);
+      if (value?.id) {
+        const LinkageProgramData: any = await handleChangeProgramId(value.id);
+        setSubjectItem(LinkageProgramData[0] ?? defaults);
+        scheduleList.subject_id = LinkageProgramData[0] ? LinkageProgramData[0].id : "";
+      }
       setProgramItem(value);
-      scheduleList.subject_id = LinkageProgramData[0] ? LinkageProgramData[0].id : "";
     }
 
     if (name === "lesson_plan_id") {
@@ -2004,7 +2009,7 @@ function EditBox(props: CalendarStateProps) {
                     autocompleteChange(newValue, "subject_id");
                   }}
                   value={subjectItem}
-                  disabled={isScheduleExpired() || isLimit()}
+                  disabled={isScheduleExpired() || isLimit() || !scheduleList.program_id}
                   renderInput={(params) => (
                     <TextField
                       {...params}
