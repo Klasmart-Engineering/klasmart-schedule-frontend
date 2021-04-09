@@ -275,7 +275,9 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
               }}
             >
               <div className={classes.searchCon}>
-                <TextField
+                <Controller
+                  as={TextField}
+                  control={control}
                   name={EXECT_SEARCH}
                   className={classes.exectSearchInput}
                   size="small"
@@ -291,7 +293,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                   }}
                 >
                   {menuItemList(getExectSearch())}
-                </TextField>
+                </Controller>
                 <Controller
                   style={{
                     borderLeft: 0,

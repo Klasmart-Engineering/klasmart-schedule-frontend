@@ -104,8 +104,7 @@ function SubUnpublished(props: QueryConditionBaseProps) {
     if (publish_status === PublishStatus.pending) {
       return onChange({ ...value, publish_status, author: Author.self });
     }
-
-    onChange({ ...value, publish_status, author: undefined });
+    onChange({ ...value, publish_status, author: "" });
   };
 
   return (
