@@ -116,7 +116,7 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                         })}
                         startIcon={value === Category.learningOutcomes ? <LoInCategoryBlueIcon /> : <LoInCategoryIcon />}
                       >
-                        {d("Skill Coverage").t("report_label_lo_in_categories")}
+                        {t("report_label_lo_in_categories")}
                       </Button>
                     )}
                     {isEnableReport && (
@@ -169,11 +169,7 @@ export function FirstSearchHeaderMb(props: FirstSearchHeaderProps) {
                     >
                       <Tab value={Category.archived} label={t("report_label_student_achievement")} className={classes.capitalize} />
                       {true && (
-                        <Tab
-                          value={Category.learningOutcomes}
-                          label={d("Skill Coverage").t("report_label_lo_in_categories")}
-                          className={classes.capitalize}
-                        />
+                        <Tab value={Category.learningOutcomes} label={t("report_label_lo_in_categories")} className={classes.capitalize} />
                       )}
                       {isEnableReport && (
                         <Tab

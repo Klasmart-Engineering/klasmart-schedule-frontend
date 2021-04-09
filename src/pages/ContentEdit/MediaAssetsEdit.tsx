@@ -1,4 +1,4 @@
-import { Box, IconButton, makeStyles } from "@material-ui/core";
+import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
@@ -42,7 +42,6 @@ const useStyles = makeStyles(({ palette }) => ({
   assetPreviewBox: {
     marginBottom: "5%",
     width: "100%",
-    height: "100vh",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -52,6 +51,13 @@ const useStyles = makeStyles(({ palette }) => ({
     right: 14,
     top: -11,
     color: palette.text.primary,
+  },
+  uploadInfo: {
+    border: "1px dashed #979797",
+    padding: "10px 20px",
+    margin: "0 auto",
+    width: "65%",
+    marginTop: 20,
   },
 }));
 
@@ -163,9 +169,21 @@ function AssetEdit(props: AssetEditProps) {
                 )}
                 {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
                 {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
-                  <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
-                    {d("Upload from Device").t("library_label_upload_from_device")}
-                  </Button>
+                  <>
+                    <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
+                      {d("Upload from Device").t("library_label_upload_from_device")}
+                    </Button>
+                    <div className={css.uploadInfo}>
+                      <Typography style={{ color: "rgba(0,0,0,0.87)" }}>
+                        {d("Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4").t("library_label_uploadInfo1")}
+                      </Typography>
+                      <Typography variant="body1" style={{ color: "#999999", fontSize: "14px" }}>
+                        {d("(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)").t(
+                          "library_label_uploadInfo2"
+                        )}
+                      </Typography>
+                    </div>
+                  </>
                 )}
                 {isUploading && <ProgressWithText value={item?.completed} />}
               </>
