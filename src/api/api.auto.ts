@@ -15,10 +15,7 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -29,10 +26,7 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -60,10 +54,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -80,10 +71,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -95,10 +83,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -209,7 +194,7 @@ export interface ApiProgram {
 }
 
 export interface ApiPublishContentRequest {
-  scope?: string;
+  scope?: string[];
 }
 
 export interface ApiPublishOutcomeReq {
@@ -250,6 +235,11 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -273,19 +263,13 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -454,8 +438,8 @@ export interface EntityAuthedContentRecordInfo {
   outcomes?: string[];
   program?: string;
   program_name?: string;
-  publish_scope?: string;
-  publish_scope_name?: string;
+  publish_scope?: string[];
+  publish_scope_name?: string[];
   publish_status?: string;
   record_id?: string;
   reject_reason?: string[];
@@ -547,8 +531,8 @@ export interface EntityContentInfoWithDetails {
   outcomes?: string[];
   program?: string;
   program_name?: string;
-  publish_scope?: string;
-  publish_scope_name?: string;
+  publish_scope?: string[];
+  publish_scope_name?: string[];
   publish_status?: string;
   reject_reason?: string[];
   remark?: string;
@@ -595,7 +579,7 @@ export interface EntityCreateContentRequest {
   name?: string;
   outcomes?: string[];
   program?: string;
-  publish_scope?: string;
+  publish_scope?: string[];
   self_study?: boolean;
   skills?: string[];
   source_type?: string;
@@ -2387,12 +2371,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description update learning outcomes by id
      */
     updateLearningOutcomes: (outcome_id: string, outcome: ApiOutcomeCreateView, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/learning_outcomes/${outcome_id}`,
-        "PUT",
-        params,
-        outcome
-      ),
+      this.request<
+        string,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/learning_outcomes/${outcome_id}`, "PUT", params, outcome),
 
     /**
      * @tags learning_outcomes
@@ -3086,11 +3068,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description generate shortcode
      */
     generateShortcode: (params?: RequestParams) =>
-      this.request<ApiShortcodeResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/shortcode`,
-        "POST",
-        params
-      ),
+      this.request<
+        ApiShortcodeResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/shortcode`, "POST", params),
   };
   skills = {
     /**

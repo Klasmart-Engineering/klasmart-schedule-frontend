@@ -94,6 +94,23 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 30,
     fontSize: 14,
   },
+  tabCon: {
+    "&.MuiTab-root": {
+      minWidth: 60,
+    },
+  },
+  unpubCon: {
+    display: "inline-block",
+    width: "calc(50% - 162px)",
+    padding: "12px",
+    boxSizing: "border-box",
+  },
+  notUnpubCon: {
+    display: "inline-block",
+    width: "50%",
+    padding: "12px",
+    boxSizing: "border-box",
+  },
 }));
 
 function SubUnpublished(props: QueryConditionBaseProps) {
@@ -116,9 +133,13 @@ function SubUnpublished(props: QueryConditionBaseProps) {
       textColor="primary"
       centered
     >
-      <Tab value={PublishStatus.draft} label={d("Draft").t("library_label_draft")} />
-      <Tab value={PublishStatus.pending} label={d("Waiting for Approval").t("library_label_waiting_for_approval")} />
-      <Tab value={PublishStatus.rejected} label={d("Rejected").t("library_label_rejected")} />
+      <Tab className={classes.tabCon} value={PublishStatus.draft} label={d("Draft").t("library_label_draft")} />
+      <Tab
+        className={classes.tabCon}
+        value={PublishStatus.pending}
+        label={d("Waiting for Approval").t("library_label_waiting_for_approval")}
+      />
+      <Tab className={classes.tabCon} value={PublishStatus.rejected} label={d("Rejected").t("library_label_rejected")} />
     </Tabs>
   );
 }
@@ -504,7 +525,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               marginTop: "6px",
             }}
           >
-            <Grid item sm={unpublish ? 3 : 6} xs={unpublish ? 3 : 6} md={unpublish ? 3 : 6}>
+            {/* <Grid item sm={unpublish ? 3 : 6} xs={unpublish ? 3 : 6} md={unpublish ? 3 : 6}> */}
+            <div className={unpublish ? classes.unpubCon : classes.notUnpubCon}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -543,13 +565,16 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                   {bulkOptions}
                 </TextField>
               )}
-            </Grid>
+            </div>
+            {/* </Grid> */}
             {unpublish && (
-              <Grid item sm={6} xs={6} md={6}>
+              // <Grid item sm={6} xs={6} md={6}>
+              <div style={{ width: "324px", padding: "12px", boxSizing: "border-box" }}>
                 <SubUnpublished value={value} onChange={onChange} />
-              </Grid>
+              </div>
+              // </Grid>
             )}
-            <Grid
+            {/* <Grid
               container
               direction="row"
               justify="flex-end"
@@ -558,7 +583,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               sm={unpublish ? 3 : 6}
               xs={unpublish ? 3 : 6}
               md={unpublish ? 3 : 6}
-            >
+            > */}
+            <div className={unpublish ? classes.unpubCon : classes.notUnpubCon} style={{ textAlign: "right" }}>
               <TextField
                 size="small"
                 style={{
@@ -579,7 +605,8 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               >
                 {orderbyOptions}
               </TextField>
-            </Grid>
+            </div>
+            {/* </Grid> */}
           </Grid>
         </Hidden>
       </LayoutBox>

@@ -559,6 +559,9 @@ export default function Details(props: DetailsProps) {
         <Controller
           as={TextField}
           select
+          SelectProps={{
+            multiple: true,
+          }}
           className={css.fieldset}
           label={d("Visibility Settings").t("library_label_visibility_settings")}
           disabled={permission}
