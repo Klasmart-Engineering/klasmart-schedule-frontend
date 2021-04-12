@@ -86,7 +86,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="due_at"
-            value={formattedTime(detail.due_at).slice(0, 10) || ""}
+            value={formattedTime(detail.due_at).slice(0, 10) || "N/A"}
             className={css.fieldset}
             label={d("Due Date").t("assess_column_due_date")}
           />

@@ -61,7 +61,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   },
   h5pCon: {
     width: "90%",
-    height: "90vh",
+    height: "100vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

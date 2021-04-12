@@ -50,7 +50,7 @@ interface ContentTabsProps {
   tab: string;
   onChangeTab: (tab: string) => any;
   children: ReactNode;
-  error?: FieldError;
+  error?: FieldError | (FieldError | undefined)[];
 }
 export default function ContentTabs(props: ContentTabsProps) {
   const { tab, children, onChangeTab, error } = props;

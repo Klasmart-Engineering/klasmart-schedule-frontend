@@ -87,7 +87,7 @@ const initialState: IContentState = {
     author: "",
     author_name: "",
     org: "",
-    publish_scope: "",
+    publish_scope: [],
     publish_status: "published",
     content_type_name: "",
     program_name: "",
@@ -104,7 +104,7 @@ const initialState: IContentState = {
     latest_id: "",
     lesson_type: "",
     lesson_type_name: "",
-    publish_scope_name: "",
+    publish_scope_name: [],
     reject_reason: [],
     remark: "",
     self_study: false,
@@ -156,7 +156,7 @@ const initialState: IContentState = {
     author: "",
     author_name: "",
     org: "",
-    publish_scope: "",
+    publish_scope: [],
     publish_status: "published",
     content_type_name: "",
     program_name: "",
@@ -170,7 +170,7 @@ const initialState: IContentState = {
     self_study: false,
     draw_activity: false,
     lesson_type: "",
-    publish_scope_name: "",
+    publish_scope_name: [],
     source_type: "",
     lesson_type_name: "",
     creator: "",
@@ -573,7 +573,7 @@ export const publishContent = createAsyncThunk<
   const content = d("Are you sure you want to republish this content?").t("library_msg_republish_content");
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
   if (!isConfirmed) return Promise.reject();
-  return api.contents.publishContent(id, { scope: "" });
+  return api.contents.publishContent(id, { scope: [] });
 });
 
 // type BulkActionIds = Parameters<typeof>
