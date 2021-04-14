@@ -1,7 +1,7 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 import { Close } from "@material-ui/icons";
+import React from "react";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -90,7 +90,12 @@ export default function Content(Props: ModelProps) {
     <div className={css.preview}>
       <CloseButton />
       <div className={css.content}>
-        <iframe src="https://beta-hub.kidsloop.net/?component=library" title="iframe example 1" style={{ width: "100%", height: "100%" }}>
+        <iframe
+          src="https://beta-hub.kidsloop.net/?component=library"
+          title="iframe example 1"
+          style={{ width: "100%", height: "100%" }}
+          allow="camera;microphone"
+        >
           <p>Your browser does not support iframes.</p>
         </iframe>
       </div>
