@@ -85,5 +85,15 @@ export function H5pPlayer(props: H5pPlayerProps) {
     new InlineIframeManager({ contentWindow, ...library, injectBeforeLoad, injectAfterLoad });
     iframeResizer({ log: false, heightCalculationMethod: "taggedElement" }, iframe);
   }, [library, injectBeforeLoad, injectAfterLoad]);
-  return <iframe className={css.iframe} ref={iframeRef} src="h5p" title="h5p" onLoad={handleOnload} key={valueSource} />;
+  return (
+    <iframe
+      className={css.iframe}
+      ref={iframeRef}
+      src="h5p"
+      title="h5p"
+      onLoad={handleOnload}
+      key={valueSource}
+      allow="camera;microphone"
+    />
+  );
 }
