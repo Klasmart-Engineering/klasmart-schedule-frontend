@@ -326,7 +326,7 @@ export interface EntityActivityMemoryGamePlayRecord {
   start_time?: number;
 }
 
-export interface EntityAddAssessmentCommand {
+export interface EntityAddAssessmentArgs {
   attendance_ids?: string[];
   class_end_time?: number;
   class_length?: number;
@@ -351,28 +351,39 @@ export interface EntityAssessHomeFunStudyArgs {
   id?: string;
 }
 
-export interface EntityAssessmentAttendanceView {
-  checked?: boolean;
+export interface EntityAssessmentClass {
   id?: string;
   name?: string;
 }
 
-export interface EntityAssessmentDetailView {
-  attendances?: EntityAssessmentAttendanceView[];
+export interface EntityAssessmentContentView {
+  checked?: boolean;
+  comment?: string;
+  id?: string;
+  name?: string;
+  outcome_ids?: string[];
+}
+
+export interface EntityAssessmentDetail {
+  class?: EntityAssessmentClass;
   class_end_time?: number;
   class_length?: number;
   complete_time?: number;
   id?: string;
-  number_of_activities?: number;
+  materials?: EntityAssessmentContentView[];
   number_of_outcomes?: number;
-  outcome_attendance_maps?: EntityOutcomeAttendanceMapView[];
+  outcome_attendances?: EntityOutcomeAttendances[];
+  plan?: EntityAssessmentContentView;
+  program?: EntityAssessmentProgram;
+  room_id?: string;
   status?: string;
+  students?: EntityAssessmentStudent[];
   subject?: EntityAssessmentSubject;
   teachers?: EntityAssessmentTeacher[];
   title?: string;
 }
 
-export interface EntityAssessmentListView {
+export interface EntityAssessmentItem {
   class_end_time?: number;
   complete_time?: number;
   id?: string;
@@ -384,6 +395,12 @@ export interface EntityAssessmentListView {
 }
 
 export interface EntityAssessmentProgram {
+  id?: string;
+  name?: string;
+}
+
+export interface EntityAssessmentStudent {
+  checked?: boolean;
   id?: string;
   name?: string;
 }
@@ -739,7 +756,7 @@ export interface EntityLessonType {
 }
 
 export interface EntityListAssessmentsResult {
-  items?: EntityAssessmentListView[];
+  items?: EntityAssessmentItem[];
   total?: number;
 }
 
@@ -837,16 +854,10 @@ export interface EntityOutcome {
   version?: number;
 }
 
-export interface EntityOutcomeAttendanceMap {
-  attendance_ids?: string[];
-  none_achieved?: boolean;
-  outcome_id?: string;
-  skip?: boolean;
-}
-
-export interface EntityOutcomeAttendanceMapView {
+export interface EntityOutcomeAttendances {
   assumed?: boolean;
   attendance_ids?: string[];
+  checked?: boolean;
   none_achieved?: boolean;
   outcome_id?: string;
   outcome_name?: string;
@@ -1169,11 +1180,18 @@ export interface EntityTeacherReportCategory {
   name?: string;
 }
 
-export interface EntityUpdateAssessmentCommand {
+export interface EntityUpdateAssessmentArgs {
   action?: "save" | "complete";
   attendance_ids?: string[];
   id?: string;
-  outcome_attendance_maps?: EntityOutcomeAttendanceMap[];
+  materials?: EntityUpdateAssessmentMaterialArgs[];
+  outcome_attendances?: EntityUpdateOutcomeAttendancesArgs[];
+}
+
+export interface EntityUpdateAssessmentMaterialArgs {
+  checked?: boolean;
+  comment?: string;
+  id?: string;
 }
 
 export interface EntityUpdateFolderRequest {
@@ -1181,6 +1199,13 @@ export interface EntityUpdateFolderRequest {
   keywords?: string[];
   name?: string;
   thumbnail?: string;
+}
+
+export interface EntityUpdateOutcomeAttendancesArgs {
+  attendance_ids?: string[];
+  none_achieved?: boolean;
+  outcome_id?: string;
+  skip?: boolean;
 }
 
 export interface EntityUserSettingJsonContent {
@@ -1392,7 +1417,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/assessments
      * @description add assessments
      */
-    addAssessment: (assessment: EntityAddAssessmentCommand, params?: RequestParams) =>
+    addAssessment: (assessment: EntityAddAssessmentArgs, params?: RequestParams) =>
       this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/assessments`,
         "POST",
@@ -1409,7 +1434,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getAssessment: (id: string, params?: RequestParams) =>
       this.request<
-        EntityAssessmentDetailView,
+        EntityAssessmentDetail,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/assessments/${id}`, "GET", params),
 
@@ -1420,7 +1445,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/assessments/{id}
      * @description update assessment
      */
-    updateAssessment: (id: string, update_assessment_command: EntityUpdateAssessmentCommand, params?: RequestParams) =>
+    updateAssessment: (id: string, update_assessment_command: EntityUpdateAssessmentArgs, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments/${id}`,
         "PUT",
@@ -1436,7 +1461,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/assessments_for_test
      * @description add assessments for test
      */
-    addAssessmentForTest: (assessment: EntityAddAssessmentCommand, params?: RequestParams) =>
+    addAssessmentForTest: (assessment: EntityAddAssessmentArgs, params?: RequestParams) =>
       this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/assessments_for_test`,
         "POST",

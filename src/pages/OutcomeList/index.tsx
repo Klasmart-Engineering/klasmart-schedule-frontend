@@ -26,10 +26,9 @@ import {
   publishOutcome,
   pullOutcomeSet,
 } from "../../reducers/outcome";
-import { AssessmentList } from "../AssesmentList";
 import CreateOutcomings from "../OutcomeEdit";
 import { AddSet, AddSetProps, useAddSet } from "./AddSet";
-import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
+import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -127,7 +126,7 @@ export function OutcomeList() {
       pathname: CreateOutcomings.routeBasePath,
       search: toQueryString(clearNull({ outcome_id, is_unpub: condition.is_unpub })),
     });
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
+  const handleChange: ThirdSearchHeaderProps["onChange"] = (value) => {
     const newValue = produce(value, (draft) => {
       const searchText = getValues()[BulkListFormKey.SEARCH_TEXT_KEY];
       searchText ? (draft.search_key = searchText) : delete draft.search_key;
@@ -136,7 +135,6 @@ export function OutcomeList() {
     });
     history.push({ search: toQueryString(clearNull(newValue)) });
   };
-  const handleChangeCategory: FirstSearchHeaderProps["onChangeCategory"] = (value) => history.push(AssessmentList.routeRedirectDefault);
 
   const handleBulkApprove: ThirdSearchHeaderProps["onBulkApprove"] = () => {
     return refreshWithDispatch(dispatch(bulkApprove(ids)));
@@ -207,8 +205,8 @@ export function OutcomeList() {
 
   return (
     <div>
-      <FirstSearchHeader value={condition} onChange={handleChange} onChangeCategory={handleChangeCategory} />
-      <FirstSearchHeaderMb value={condition} onChange={handleChange} onChangeCategory={handleChangeCategory} />
+      <FirstSearchHeader />
+      <FirstSearchHeaderMb />
       <SecondSearchHeader formMethods={formMethods} value={condition} onChange={handleChange} />
       <SecondSearchHeaderMb formMethods={formMethods} value={condition} onChange={handleChange} />
       <ThirdSearchHeader

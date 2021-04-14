@@ -3,14 +3,13 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy } from "../../api/type";
+import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";
-import { OutcomeList } from "../OutcomeList";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { AssessmentQueryCondition } from "./types";
@@ -62,8 +61,6 @@ export function AssessmentList() {
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) =>
     history.push({ pathname: AssessmentsEdit.routeBasePath, search: toQueryString({ id }) });
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
-  const handleChangeOutcome: FirstSearchHeaderProps["onChange"] = (value) =>
-    history.push({ pathname: OutcomeList.routeBasePath, search: toQueryString(value) });
   const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
     history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
   };
@@ -73,8 +70,8 @@ export function AssessmentList() {
 
   return (
     <div>
-      <FirstSearchHeader value={{ page: 1 }} onChange={handleChangeOutcome} />
-      <FirstSearchHeaderMb value={{ page: 1 }} onChange={handleChangeOutcome} />
+      <FirstSearchHeader />
+      <FirstSearchHeaderMb />
       {(perm.view_completed_assessments_414 ||
         perm.view_in_progress_assessments_415 ||
         perm.view_org_completed_assessments_424 ||

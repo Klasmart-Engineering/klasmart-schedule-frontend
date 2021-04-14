@@ -2,14 +2,13 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, HomeFunAssessmentStatus } from "../../api/type";
+import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actHomeFunAssessmentList } from "../../reducers/assessments";
 import { AssessmentsHomefunEdit } from "../HomefunEdit";
-import { OutcomeList } from "../OutcomeList";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { FirstSearchHeader, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { HomeFunAssessmentQueryCondition } from "./types";
@@ -61,16 +60,14 @@ export function HomeFunAssessmentList() {
     history.push({ pathname: AssessmentsHomefunEdit.routeBasePath, search: toQueryString({ id }) });
   };
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
-  const handleChangeOutcome: FirstSearchHeaderProps["onChange"] = (value) =>
-    history.push({ pathname: OutcomeList.routeBasePath, search: toQueryString(value) });
   useEffect(() => {
     dispatch(actHomeFunAssessmentList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
   }, [condition, dispatch]);
 
   return (
     <>
-      <FirstSearchHeader value={{ page: 1 }} onChange={handleChangeOutcome} />
-      <FirstSearchHeaderMb value={{ page: 1 }} onChange={handleChangeOutcome} />
+      <FirstSearchHeader />
+      <FirstSearchHeaderMb />
       {(perm.view_completed_assessments_414 ||
         perm.view_in_progress_assessments_415 ||
         perm.view_org_completed_assessments_424 ||

@@ -38,6 +38,8 @@ export interface BulkListForm {
 export enum HeaderCategory {
   assessment = "assessments",
   outcome = "outcome",
+  milestones = "milestones",
+  standards = "standards",
 }
 
 export enum OutcomeListExectSearch {

@@ -5,7 +5,7 @@ include:
 
 variables:
   deployDir: "build/"
-  devGlobalBuildCommand: "npx env-cmd -f .env.ko.test npm run build"
+  devGlobalBuildCommand: "npx env-cmd -f .env.ko.alpha npm run build"
   devCnBuildCommand: "npx env-cmd -f .env.cn.alpha npm run build"
   testGlobalBuildCommand: "npx env-cmd -f .env.ko.test npm run build"
   testCnBuildCommand: "npx env-cmd -f .env.cn.test npm run build"

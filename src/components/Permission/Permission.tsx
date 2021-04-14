@@ -74,6 +74,14 @@ export enum PermissionType {
   create_my_schools_schedule_events_522 = "create_my_schools_schedule_events_522",
   view_my_school_reports_611 = "view_my_school_reports_611",
   view_my_organizations_reports_612 = "view_my_organization_reports_612",
+  milestones_page_405 = "milestones_page_405",
+  view_unpublished_milestone_417 = "view_unpublished_milestone_417",
+  view_published_milestone_418 = "view_published_milestone_418",
+  create_milestone_422 = "create_milestone_422",
+  edit_unpublished_milestone_440 = "edit_unpublished_milestone_440",
+  edit_published_milestone_441 = "edit_published_milestone_441",
+  delete_unpublished_milestone_449 = "delete_unpublished_milestone_449",
+  delete_published_milestone_450 = "delete_published_milestone_450",
 }
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);

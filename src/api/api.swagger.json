@@ -131,7 +131,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentCommand"
+              "$ref": "#/definitions/entity.AddAssessmentArgs"
             }
           }
         ],
@@ -178,7 +178,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.AssessmentDetailView"
+              "$ref": "#/definitions/entity.AssessmentDetail"
             }
           },
           "400": {
@@ -228,7 +228,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.UpdateAssessmentCommand"
+              "$ref": "#/definitions/entity.UpdateAssessmentArgs"
             }
           }
         ],
@@ -275,7 +275,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentCommand"
+              "$ref": "#/definitions/entity.AddAssessmentArgs"
             }
           }
         ],
@@ -7201,7 +7201,7 @@
         }
       }
     },
-    "entity.AddAssessmentCommand": {
+    "entity.AddAssessmentArgs": {
       "type": "object",
       "properties": {
         "attendance_ids": {
@@ -7265,12 +7265,9 @@
         }
       }
     },
-    "entity.AssessmentAttendanceView": {
+    "entity.AssessmentClass": {
       "type": "object",
       "properties": {
-        "checked": {
-          "type": "boolean"
-        },
         "id": {
           "type": "string"
         },
@@ -7279,14 +7276,35 @@
         }
       }
     },
-    "entity.AssessmentDetailView": {
+    "entity.AssessmentContentView": {
       "type": "object",
       "properties": {
-        "attendances": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "outcome_ids": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.AssessmentAttendanceView"
+            "type": "string"
           }
+        }
+      }
+    },
+    "entity.AssessmentDetail": {
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentClass"
         },
         "class_end_time": {
           "type": "integer"
@@ -7300,20 +7318,40 @@
         "id": {
           "type": "string"
         },
-        "number_of_activities": {
-          "type": "integer"
+        "materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentContentView"
+          }
         },
         "number_of_outcomes": {
           "type": "integer"
         },
-        "outcome_attendance_maps": {
+        "outcome_attendances": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.OutcomeAttendanceMapView"
+            "$ref": "#/definitions/entity.OutcomeAttendances"
           }
+        },
+        "plan": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentContentView"
+        },
+        "program": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentProgram"
+        },
+        "room_id": {
+          "type": "string"
         },
         "status": {
           "type": "string"
+        },
+        "students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudent"
+          }
         },
         "subject": {
           "type": "object",
@@ -7330,7 +7368,7 @@
         }
       }
     },
-    "entity.AssessmentListView": {
+    "entity.AssessmentItem": {
       "type": "object",
       "properties": {
         "class_end_time": {
@@ -7367,6 +7405,20 @@
     "entity.AssessmentProgram": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentStudent": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
         "id": {
           "type": "string"
         },
@@ -8450,7 +8502,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.AssessmentListView"
+            "$ref": "#/definitions/entity.AssessmentItem"
           }
         },
         "total": {
@@ -8709,27 +8761,7 @@
         }
       }
     },
-    "entity.OutcomeAttendanceMap": {
-      "type": "object",
-      "properties": {
-        "attendance_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "none_achieved": {
-          "type": "boolean"
-        },
-        "outcome_id": {
-          "type": "string"
-        },
-        "skip": {
-          "type": "boolean"
-        }
-      }
-    },
-    "entity.OutcomeAttendanceMapView": {
+    "entity.OutcomeAttendances": {
       "type": "object",
       "properties": {
         "assumed": {
@@ -8740,6 +8772,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "checked": {
+          "type": "boolean"
         },
         "none_achieved": {
           "type": "boolean"
@@ -9727,7 +9762,7 @@
         }
       }
     },
-    "entity.UpdateAssessmentCommand": {
+    "entity.UpdateAssessmentArgs": {
       "type": "object",
       "properties": {
         "action": {
@@ -9743,11 +9778,31 @@
         "id": {
           "type": "string"
         },
-        "outcome_attendance_maps": {
+        "materials": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.OutcomeAttendanceMap"
+            "$ref": "#/definitions/entity.UpdateAssessmentMaterialArgs"
           }
+        },
+        "outcome_attendances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateOutcomeAttendancesArgs"
+          }
+        }
+      }
+    },
+    "entity.UpdateAssessmentMaterialArgs": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
         }
       }
     },
@@ -9768,6 +9823,26 @@
         },
         "thumbnail": {
           "type": "string"
+        }
+      }
+    },
+    "entity.UpdateOutcomeAttendancesArgs": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "none_achieved": {
+          "type": "boolean"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
         }
       }
     },
