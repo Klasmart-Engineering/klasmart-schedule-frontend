@@ -5,10 +5,12 @@ import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@mater
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { apiResourcePathById } from "../../api/extra";
-import ModalBox from "../../components/ModalBox";
-import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
 import CancelIcon from "@material-ui/icons/Cancel";
+import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
+import { actError } from "../../reducers/notify";
+import { useDispatch } from "react-redux";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(() => ({
   fieldset: {
@@ -54,26 +56,6 @@ const getTipsText = () => {
   );
 };
 
-const format: string[] = [
-  "avi",
-  "mov",
-  "mp4",
-  "mp3",
-  "wav",
-  "jpg",
-  "jpeg",
-  "png",
-  "gif",
-  "bmp",
-  "doc",
-  "docx",
-  "ppt",
-  "pptx",
-  "xls",
-  "xlsx",
-  "pdf",
-];
-
 interface ScheduleAttachmentProps {
   setAttachmentId: (id: string) => void;
   attachmentId: string;
@@ -92,42 +74,18 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName, specificStatus, setSpecificStatus, attachmentId, isStudent } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent } = props;
   const css = useStyles();
   const { schedule_id } = useQuery();
-  const handleOnChange = (value: string | undefined): void => {
-    if (value) {
-      let si = format.some((item) => value.includes(item));
-      if (!si) {
-        setOpenStatus(true);
-        return;
-      }
-      if (setSpecificStatus) {
-        setSpecificStatus(true);
-      }
-      setAttachmentId(value);
-      const url: string | undefined = apiResourcePathById(value);
-      setDownloadUrl(url);
-    } else {
-      setDownloadUrl("");
-      setAttachmentId("");
-    }
-  };
-  // const [specificStatus, setSpecificStatus] = React.useState(true);
-
-  const getFileName = (name: string): string => {
-    let si = format.some((item) => name.includes(item));
-    if (!si) {
-      setAttachmentName("");
-      setAttachmentId("");
-      return attachmentName;
-    }
-    setAttachmentName(name);
-    return attachmentName;
+  const dispatch = useDispatch();
+  const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
+  const handleOnChange = (value: Pick<FileLikeWithId, "id" | "name">[] | undefined): void => {
+    setAttachmentId(value![0].id as string);
+    setAttachmentName(value![0].name as string);
+    setFileName(value);
   };
 
   const [downloadUrl, setDownloadUrl] = React.useState<string | undefined>(attachmentId);
-  const [openStatus, setOpenStatus] = React.useState(false);
 
   React.useEffect(() => {
     if (attachmentId) {
@@ -135,44 +93,18 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
       setDownloadUrl(url);
     }
   }, [attachmentId]);
-  const modalDate: any = {
-    title: "",
-    text: d("Please upload the file in the correct format").t("schedule_msg_upload_format"),
-    openStatus: openStatus,
-    enableCustomization: false,
-    buttons: [
-      {
-        label: d("OK").t("schedule_button_ok"),
-        event: () => {
-          setOpenStatus(false);
-        },
-      },
-    ],
-    handleClose: () => {
-      setOpenStatus(false);
-    },
-  };
 
   const deleteItem = () => {
-    if (setSpecificStatus) {
-      setSpecificStatus(false);
-    }
     setAttachmentName("");
     setAttachmentId("");
+    setFileName([]);
   };
 
   React.useEffect(() => {
-    if (setSpecificStatus) {
-      setSpecificStatus(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [schedule_id]);
-
-  React.useEffect(() => {
-    if (!specificStatus) {
+    if (!schedule_id) {
       setAttachmentName("");
     }
-  }, [setAttachmentName, specificStatus]);
+  }, [schedule_id, setAttachmentName]);
 
   const reBytesStr = (str: string, len: number) => {
     let bytesNum = 0;
@@ -192,27 +124,44 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
 
   return (
     <>
-      <SingleUploader
+      <MultipleUploader
         partition="schedule_attachment"
-        onChange={handleOnChange}
-        render={({ uploady, item, btnRef, value, isUploading }) => (
+        accept=".avi,.mov,.mp4,.mp3,.wav,.jpg,.jpeg,.png,.gif,.bmp,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf"
+        {...props}
+        maxAmount={1}
+        onChange={(value) => handleOnChange(value)}
+        value={fileName}
+        maxSize={100 * FileSizeUnit.M}
+        onError={(error) =>
+          Promise.reject(
+            dispatch(
+              actError(
+                error.type === MultipleUploaderErrorType.MaxAmountError
+                  ? d("You can upload only one attachment. ").t("schedule_msg_one_attachment")
+                  : d("The attachment you uploaded does not meet the requirement.").t("schedule_msg_attachment")
+              )
+            )
+          )
+        }
+        render={({ btnRef, value, isUploading, batch }) => (
           <Box className={css.fieldBox}>
             <TextField
               disabled
               className={css.fieldset}
-              // placeholder={d("Attachment").t("schedule_detail_attachment")}
               label={d("Attachment").t("schedule_detail_attachment")}
-              value={textEllipsis(specificStatus ? (item ? getFileName(item.file.name) : attachmentName) : attachmentName)}
+              value={textEllipsis(attachmentName)}
             ></TextField>
             <HtmlTooltip title={getTipsText()}>
               <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
             </HtmlTooltip>
-            <input type="file" style={{ display: "none" }} />
-            {!isStudent && (
+            {isUploading && (
+              <CircularProgress style={{ width: "20px", height: "20px", position: "absolute", top: "38px", right: "56px" }} />
+            )}
+            {!isStudent && !attachmentName && (
               <CloudUploadOutlined className={css.iconField} style={{ right: attachmentName ? "50px" : "10px" }} ref={btnRef as any} />
             )}
             {attachmentName && !isStudent && (
-              <CancelIcon className={css.iconField} style={{ right: "85px", color: "#666666" }} onClick={deleteItem} />
+              <CancelIcon className={css.iconField} style={{ right: "50px", color: "#666666" }} onClick={deleteItem} />
             )}
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
               {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />}
@@ -220,7 +169,6 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
           </Box>
         )}
       />
-      <ModalBox modalDate={modalDate} />
     </>
   );
 }

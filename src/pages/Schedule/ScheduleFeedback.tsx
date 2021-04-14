@@ -240,7 +240,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       return;
     }
     if (fileName!.length < 1) {
-      dispatch(actWarning(d("You need to upload at least one attachment.").t("schedule_msg_one_attachment")));
+      dispatch(actWarning(d("You can upload only one attachment. ").t("schedule_msg_one_attachment")));
       return;
     }
     changeModalDate({

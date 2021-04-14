@@ -238,7 +238,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                     handleSetStateOnlySelectMine(item.id, (e.target as HTMLInputElement).checked);
                     e.stopPropagation();
                   }}
-                  label={d("Only MIne").t("schedule_filter_only_mine")}
+                  label={d("Only Mine").t("schedule_filter_only_mine")}
                   style={{ transform: "scale(0.7)", marginRight: "0px" }}
                   checked={stateOnlySelectMine.includes(item.id)}
                 />

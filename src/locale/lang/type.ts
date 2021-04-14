@@ -292,13 +292,16 @@ type LangRecord<T = string> =
   | { id: "assess_detail_edit_student"; description: "Edit Student"; values: undefined }
   | { id: "assess_detail_see_more"; description: "See More"; values: undefined }
   | { id: "assess_detail_see_less"; description: "See Less"; values: undefined }
-  | { id: "assess_detail_lesson_materials_exposure"; description: "Lesson Materials Exposure"; values: undefined }
-  | { id: "assess_detail_edit_exposure"; description: "Edit Exposure"; values: undefined }
+  | { id: "assess_detail_lesson_materials_covered"; description: "Lesson Materials Covered"; values: undefined }
+  | { id: "assess_detail_edit_covered"; description: "Edit Lesson Materials Covered"; values: undefined }
   | { id: "assess_detail_edit_student_list"; description: "Edit Student List"; values: undefined }
   | { id: "assess_detail_students"; description: "Students"; values: undefined }
-  | { id: "assess_detail_lesson_materials_exposed"; description: "Lesson Materials Exposed"; values: undefined }
-  | { id: "assess_msg_one_exposed"; description: "At least one lesson material needs to be selected as exposed."; values: undefined }
+  | { id: "assess_detail_lesson_materials_exposed"; description: "Lesson Materials Covered"; values: undefined }
+  | { id: "assess_msg_one_exposed"; description: "At least one lesson material needs to be selected as covered."; values: undefined }
   | { id: "assess_detail_student"; description: "Student"; values: undefined }
+  | { id: "assess_detail_view_covered"; description: "View Lesson Materials Covered"; values: undefined }
+  | { id: "assess_detail_button_view"; description: "View"; values: undefined }
+  | { id: "assess_detail_comment_here"; description: "Comment here"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -376,7 +379,17 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
-  | { id: "assess_msg_locked_milestone"; description: "Some of the milestones are locked, please try again. "; values: undefined }
+  | { id: "assess_msg_locked_milestone"; description: "You cannot do bulk action for locked milestones."; values: undefined }
+  | { id: "assess_milestone_details"; description: "Milestone Details"; values: undefined }
+  | { id: "assess_milestone_detail_name"; description: "Milestone Name"; values: undefined }
+  | { id: "assess_milestone_contained_lo"; description: "Contained Learning Outcomes"; values: undefined }
+  | { id: "assess_milestone_detail_add"; description: "Add"; values: undefined }
+  | { id: "assess_milestone_code_requirement"; description: "5 characters long, number 0-9 & letter A-Z only"; values: undefined }
+  | {
+      id: "assess_msg_exist_milestone_short_code";
+      description: "This milestone short code already exists, please enter again.";
+      values: undefined;
+    }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
@@ -631,14 +644,14 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_see_more"; description: "See More"; values: undefined }
   | { id: "schedule_msg_hidden"; description: "This event has been hidden"; values: undefined }
   | { id: "schedule_msg_three_attachment"; description: "You can upload no more than three attachments. "; values: undefined }
-  | { id: "schedule_msg_one_attachment"; description: "You need to upload at least one attachment."; values: undefined }
+  | { id: "schedule_msg_one_attachment"; description: "You can upload only one attachment. "; values: undefined }
   | { id: "schedule_attachment_size_each"; description: "each"; values: undefined }
   | { id: "schedule_assignment_no_class"; description: "No Class"; values: undefined }
   | { id: "schedule_filter_all_my_schools"; description: "All My Schools"; values: undefined }
   | { id: "schedule_filter_others"; description: "Others"; values: undefined }
   | { id: "schedule_filter_undefined"; description: "Undefined"; values: undefined }
   | { id: "schedule_filter_class_types"; description: "Class Types"; values: undefined }
-  | { id: "schedule_filter_only_mine"; description: "Only MIne"; values: undefined }
+  | { id: "schedule_filter_only_mine"; description: "Only Mine"; values: undefined }
   | { id: "schedule_filter_view_any_time_study"; description: "View Anytime Study"; values: undefined }
   | { id: "schedule_filter_all"; description: "All"; values: undefined }
   | { id: "schedule_any_anytime_study"; description: "Anytime Study"; values: undefined }
@@ -646,6 +659,8 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_students"; description: "Students"; values: undefined }
   | { id: "schedule_calendar_more"; description: "More"; values: undefined }
   | { id: "schedule_msg_no_available"; description: "No anytime study is available "; values: undefined }
+  | { id: "schedule_popup_room_id"; description: "Room ID"; values: undefined }
+  | { id: "schedule_popup_class_name"; description: "Class Name"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
@@ -1074,7 +1089,23 @@ type LangRecord<T = string> =
   | { id: "h5p_label_playback_rate"; description: "Playback rate"; values: undefined }
   | { id: "h5p_label_colorChose"; description: "Choose"; values: undefined }
   | { id: "h5p_label_label"; description: "Label"; values: undefined }
-  | { id: "h5p_label_statements"; description: "Statements"; values: undefined };
+  | { id: "h5p_label_statements"; description: "Statements"; values: undefined }
+  | { id: "h5p_label_presentation_template"; description: "Template"; values: undefined }
+  | { id: "h5p_label_presentation_this_slide"; description: "This Slide"; values: undefined }
+  | { id: "H5p_label_image_background"; description: "Image background"; values: undefined }
+  | { id: "h5p_label_fill_background"; description: "Color fill background"; values: undefined }
+  | {
+      id: "h5p_label_templete_title";
+      description: "Will be applied to this slide only, and will override any 'Template' settings.";
+      values: undefined;
+    }
+  | {
+      id: "h5p_label_thisSlide_title";
+      description: "Will be applied to all slides not overridden by any 'This slide' settings.";
+      values: undefined;
+    }
+  | { id: "h5p_label_coursepresentation_noTitle"; description: "no title"; values: undefined }
+  | { id: "h5p_label_link"; description: "Link"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
