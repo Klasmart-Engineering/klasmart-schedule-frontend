@@ -6,7 +6,7 @@ import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
-  EntityScheduleFeedbackView
+  EntityScheduleFeedbackView,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
@@ -37,7 +37,7 @@ const initialState: IAssessmentState = {
   assessmentDetail: {
     id: "",
     title: "",
-    attendances: [],
+    students: [],
     subject: {
       id: "",
       name: "",
@@ -45,10 +45,10 @@ const initialState: IAssessmentState = {
     teachers: [],
     class_end_time: 0,
     class_length: 0,
-    number_of_activities: 0,
+    // number_of_activities: 0,
     number_of_outcomes: 0,
     complete_time: 0,
-    outcome_attendance_maps: [],
+    outcome_attendances: [],
   },
   homefunDetail: {
     assess_comment: "",
@@ -159,7 +159,10 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
 );
 
 export type UpdateHomefunAction = AsyncThunkAction<string, UpdateHomefunParams, {}>;
-export type UpdateHomefunParams = Omit<EntityAssessHomeFunStudyArgs, "assess_feedback_id" | "id"> & { id: string, onError: ExtendedRequestParams["onError"] };
+export type UpdateHomefunParams = Omit<EntityAssessHomeFunStudyArgs, "assess_feedback_id" | "id"> & {
+  id: string;
+  onError: ExtendedRequestParams["onError"];
+};
 export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { state: RootState }>(
   "assessments/updateHomefun",
   async ({ id, onError, ...params }, { dispatch, getState }) => {
@@ -193,6 +196,34 @@ const { reducer } = createSlice({
     [getAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       if (payload) {
         state.assessmentDetail = payload.detail;
+        state.assessmentDetail.materials = [
+          {
+            checked: false,
+            comment: "",
+            id: "6075386953c5220395849161",
+            name: "plan",
+            outcome_ids: [
+              "606fe72e964b4f05898452a6",
+              "606fe69f964b4f0589845288",
+              "606d2dea3732b97af0e95c6c",
+              "606d2c9a4f0d99636336317c",
+              "606c30f7b1390c1813cde871",
+            ],
+          },
+          {
+            checked: true,
+            comment: "",
+            id: "6075372562c63b713fd3e010",
+            name: "plan(assessmet 用)",
+            outcome_ids: [
+              "606fe72e964b4f05898452a6",
+              "606fe69f964b4f0589845288",
+              "606d2dea3732b97af0e95c6c",
+              "606d2c9a4f0d99636336317c",
+              "606c30f7b1390c1813cde871",
+            ],
+          },
+        ];
         state.my_id = payload.my_id;
       }
     },

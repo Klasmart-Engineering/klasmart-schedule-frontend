@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { EntityOutcomeAttendanceMap } from "../../api/api.auto";
+import { EntityOutcomeAttendances } from "../../api/api.auto";
 import { UpdateAssessmentRequestData } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -36,9 +36,9 @@ function AssessmentsEditIner() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch } = formMethods;
   const formValue = watch();
-  const { attendances } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
+  const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
-  const filteredOutcomelist = assessmentDetail.outcome_attendance_maps;
+  const filteredOutcomelist = assessmentDetail.outcome_attendances;
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
@@ -65,9 +65,9 @@ function AssessmentsEditIner() {
       handleSubmit(async (value) => {
         if (id) {
           const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
-          const errorlist: EntityOutcomeAttendanceMap[] | undefined =
-            data.outcome_attendance_maps &&
-            data.outcome_attendance_maps.filter(
+          const errorlist: EntityOutcomeAttendances[] | undefined =
+            data.outcome_attendances &&
+            data.outcome_attendances.filter(
               (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
             );
           if (data.action === "complete" && errorlist && errorlist.length > 0)
@@ -112,7 +112,7 @@ function AssessmentsEditIner() {
       {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
         <OutcomesTable
           outcomesList={filteredOutcomelist}
-          attendanceList={attendances}
+          attendanceList={students}
           formMethods={formMethods}
           formValue={formValue}
           filterOutcomes={filterOutcomes}

@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash";
-import { GetAssessmentResult, UpdateAssessmentRequestData } from "../api/type";
+import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDataLessonMaterials } from "../api/type";
 
 interface ObjContainId {
   id?: string;
@@ -16,20 +16,43 @@ function toHash<T extends ObjContainId>(arr: T[]): Record<string, T> {
 export const ModelAssessment = {
   toRequest(detail: GetAssessmentResult): UpdateAssessmentRequestData {
     const draft = cloneDeep(detail);
-    const attendance_ids = draft.attendances?.filter((attendance) => attendance.checked).map((item) => item.id as string);
-    const outcome_attendance_maps = draft.outcome_attendance_maps || [];
-    return { attendance_ids, outcome_attendance_maps };
+    const attendance_ids = draft.students?.filter((attendance) => attendance.checked).map((item) => item.id as string);
+    const outcome_attendances = draft.outcome_attendances || [];
+    return { attendance_ids, outcome_attendances };
   },
 
   toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestDataOmitAction): GetAssessmentResult {
     const draft = cloneDeep(defaultDetail);
-    const attendanceHash = toHash(defaultDetail.attendances || []);
-    draft.attendances = value.attendance_ids?.map((id) => attendanceHash[id]) || [];
-    const list = cloneDeep(draft.attendances);
+    const attendanceHash = toHash(defaultDetail.students || []);
+    draft.students = value.attendance_ids?.map((id) => attendanceHash[id]) || [];
+    const list = cloneDeep(draft.students);
     const bb = list.filter((item) => item === undefined);
     if (bb.length > 0) {
-      draft.attendances = [];
+      draft.students = [];
     }
     return draft;
+  },
+  // toMaterialRequest(detail: GetAssessmentResult): UpdateAssessmentRequestData {
+  //   const draft = cloneDeep(detail);
+  //   const materials = draft.materials?.filter(material => material.checked).map(item)
+  // },
+  toMaterial(
+    defaultDetail: GetAssessmentResult["materials"],
+    value: UpdateAssessmentRequestDataLessonMaterials
+  ): GetAssessmentResult["materials"] {
+    const draft = cloneDeep(defaultDetail);
+    if (draft && draft.length && value && value.length) {
+      return draft.map((item, index) => {
+        return {
+          checked: value[index].checked,
+          comment: value[index].comment,
+          id: item.id,
+          name: item.name,
+          outcome_ids: item.outcome_ids,
+        };
+      });
+    } else {
+      return draft;
+    }
   },
 };

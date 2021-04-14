@@ -57,7 +57,7 @@ const mergeHanlder = <T extends unknown>(handlers: mergeHandlerProps<T>): any =>
 
 interface AssessActionProps {
   outcome: GetAssessmentResultOutcomeAttendanceMap;
-  attendanceList: IAssessmentState["assessmentDetail"]["attendances"];
+  attendanceList: IAssessmentState["assessmentDetail"]["students"];
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
@@ -74,8 +74,8 @@ const AssessAction = (props: AssessActionProps) => {
     formValue,
     editable,
   } = props;
-  const skip: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].skip) || false;
-  const none_achieved: boolean = (formValue.outcome_attendance_maps && formValue.outcome_attendance_maps[index].none_achieved) || false;
+  const skip: boolean = (formValue.outcome_attendances && formValue.outcome_attendances[index].skip) || false;
+  const none_achieved: boolean = (formValue.outcome_attendances && formValue.outcome_attendances[index].none_achieved) || false;
   const allValue: string[] = formValue.attendance_ids || [];
   const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
     allValue,
@@ -83,7 +83,7 @@ const AssessAction = (props: AssessActionProps) => {
   ]);
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
-      setValue(`outcome_attendance_maps[${index}].${name}`, value);
+      setValue(`outcome_attendances[${index}].${name}`, value);
     },
     [index, setValue]
   );
@@ -106,7 +106,7 @@ const AssessAction = (props: AssessActionProps) => {
 
   return (
     <Controller
-      name={`outcome_attendance_maps[${index}].attendance_ids`}
+      name={`outcome_attendances[${index}].attendance_ids`}
       control={control}
       defaultValue={checked_attendance_ids || []}
       render={({ ref, ...props }) => (
@@ -129,7 +129,7 @@ const AssessAction = (props: AssessActionProps) => {
                   disabled={skip || !editable}
                 />
                 <Controller
-                  name={`outcome_attendance_maps[${index}].none_achieved`}
+                  name={`outcome_attendances[${index}].none_achieved`}
                   defaultValue={none_achieved || false}
                   control={control}
                   render={(props: { value: boolean | undefined }) => (
@@ -141,7 +141,7 @@ const AssessAction = (props: AssessActionProps) => {
                   )}
                 />
                 <Controller
-                  name={`outcome_attendance_maps[${index}].skip`}
+                  name={`outcome_attendances[${index}].skip`}
                   defaultValue={skip || false}
                   control={control}
                   render={(props: { value: boolean | undefined }) => (
@@ -174,7 +174,7 @@ const AssessAction = (props: AssessActionProps) => {
                   as={TextField}
                   control={control}
                   disabled
-                  name={`outcome_attendance_maps[${index}].outcome_id`}
+                  name={`outcome_attendances[${index}].outcome_id`}
                   defaultValue={outcome_id}
                   style={{
                     display: "none",
@@ -190,8 +190,8 @@ const AssessAction = (props: AssessActionProps) => {
 };
 
 interface OutcomesTableProps {
-  outcomesList: IAssessmentState["assessmentDetail"]["outcome_attendance_maps"];
-  attendanceList: IAssessmentState["assessmentDetail"]["attendances"];
+  outcomesList: IAssessmentState["assessmentDetail"]["outcome_attendances"];
+  attendanceList: IAssessmentState["assessmentDetail"]["students"];
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   formValue: UpdateAssessmentRequestDataOmitAction;
   editable?: boolean;
