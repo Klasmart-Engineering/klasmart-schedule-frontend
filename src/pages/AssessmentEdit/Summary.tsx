@@ -547,7 +547,7 @@ export function Summary(props: SummaryProps) {
             <Controller
               as={PopupLessonMaterial}
               name="materials"
-              defaultValue={assessmentDetail.materials}
+              value={assessmentDetail.materials}
               assessmentDetail={assessmentDetail}
               control={control}
               isMyAssessment={isMyAssessment}
