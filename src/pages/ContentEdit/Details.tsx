@@ -431,6 +431,9 @@ export default function Details(props: DetailsProps) {
             defaultValue={allDefaultValueAndKey.program?.value}
             key={allDefaultValueAndKey.program?.key}
             control={control}
+            rules={{
+              required: true,
+            }}
             render={(props) => (
               <TextField
                 select
@@ -450,15 +453,19 @@ export default function Details(props: DetailsProps) {
           />
           <Controller
             name="subject"
-            defaultValue={allDefaultValueAndKey.subject?.value}
+            defaultValue={allDefaultValueAndKey.subject?.value || []}
             key={allDefaultValueAndKey.subject?.key}
             control={control}
+            rules={{
+              validate: (value) => value.length > 0,
+            }}
             render={(props) => (
               <TextField
                 select
                 SelectProps={{
                   multiple: true,
                 }}
+                error={errors.subject ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Subject").t("library_label_subject")}
                 disabled={permission}
@@ -482,9 +489,13 @@ export default function Details(props: DetailsProps) {
             defaultValue={allDefaultValueAndKey.developmental?.value}
             key={allDefaultValueAndKey.developmental?.key}
             control={control}
+            rules={{
+              validate: (value) => value.length > 0,
+            }}
             render={(props) => (
               <FormattedTextField
                 select
+                error={errors.developmental ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Category").t("library_label_category")}
                 disabled={permission}
@@ -505,7 +516,7 @@ export default function Details(props: DetailsProps) {
           <Controller
             as={TextField}
             name="skills"
-            defaultValue={allDefaultValueAndKey.skills?.value}
+            defaultValue={allDefaultValueAndKey.skills?.value || []}
             key={allDefaultValueAndKey.skills?.key}
             control={control}
             select
@@ -524,7 +535,7 @@ export default function Details(props: DetailsProps) {
           <Controller
             as={TextField}
             name="age"
-            defaultValue={allDefaultValueAndKey.age?.value}
+            defaultValue={allDefaultValueAndKey.age?.value || []}
             key={allDefaultValueAndKey.age?.key}
             control={control}
             select
@@ -541,7 +552,7 @@ export default function Details(props: DetailsProps) {
           <Controller
             as={TextField}
             name="grade"
-            defaultValue={allDefaultValueAndKey.grade?.value}
+            defaultValue={allDefaultValueAndKey.grade?.value || []}
             key={allDefaultValueAndKey.grade?.key}
             control={control}
             select
@@ -567,11 +578,11 @@ export default function Details(props: DetailsProps) {
           disabled={permission}
           name="publish_scope"
           required
-          defaultValue={allDefaultValueAndKey.publish_scope?.value}
+          defaultValue={allDefaultValueAndKey.publish_scope?.value || []}
           key={allDefaultValueAndKey.publish_scope?.key}
           control={control}
           rules={{
-            required: true,
+            validate: (value) => value.length > 0,
           }}
           error={errors.publish_scope ? true : false}
           helperText=""

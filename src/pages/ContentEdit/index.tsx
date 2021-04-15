@@ -310,7 +310,7 @@ function ContentEditForm() {
     />
   );
   const contentTabs = (
-    <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.name || errors.publish_scope}>
+    <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.name || errors.publish_scope || errors.subject}>
       <PermissionOr
         value={[
           PermissionType.edit_org_published_content_235,
