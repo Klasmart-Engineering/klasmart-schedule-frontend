@@ -32,10 +32,22 @@ export const ModelAssessment = {
     }
     return draft;
   },
-  // toMaterialRequest(detail: GetAssessmentResult): UpdateAssessmentRequestData {
-  //   const draft = cloneDeep(detail);
-  //   const materials = draft.materials?.filter(material => material.checked).map(item)
-  // },
+  toMaterialRequest(detail: GetAssessmentResult, dMaterials: GetAssessmentResult["materials"]): GetAssessmentResult["materials"] {
+    const draft = cloneDeep(detail);
+    const materials =
+      dMaterials && dMaterials[0] && draft.materials && draft.materials[0]
+        ? draft.materials.map((item, index) => {
+            return {
+              checked: dMaterials[index].checked,
+              comment: dMaterials[index].comment,
+              id: item.id,
+              name: item.name,
+              outcome_ids: item.outcome_ids,
+            };
+          })
+        : draft.materials;
+    return materials;
+  },
   toMaterial(
     defaultDetail: GetAssessmentResult["materials"],
     value: UpdateAssessmentRequestDataLessonMaterials

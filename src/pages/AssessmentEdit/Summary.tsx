@@ -272,7 +272,7 @@ export interface MaterialInputProps {
 export const MaterialInput = (props: MaterialInputProps) => {
   const css = useStyles();
   const {
-    // defaultValue,
+    defaultValue,
     assessmentDetail,
     formMethods: { control, watch },
   } = props;
@@ -308,11 +308,11 @@ export const MaterialInput = (props: MaterialInputProps) => {
               name={`materials[${index}].outcome_ids`}
               control={control}
               as={TextField}
-              defaultValue={item.outcome_ids}
+              defaultValue={item.outcome_ids || []}
             />
             <Controller
               name={`materials[${index}].checked`}
-              defaultValue={item.checked}
+              defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
               render={(props) => (
                 <FormControlLabel
                   control={<Checkbox checked={props.value} onChange={(e) => props.onChange(e.target.checked)} color="primary" />}
@@ -328,7 +328,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 as={TextField}
                 className={css.commentCon}
                 placeholder={"Comment here"}
-                defaultValue={item.comment}
+                defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -363,6 +363,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
     return !open;
   }, false);
   const materialString = useMemo(() => {
+    // const { materials } = assessmentDetail;
     const materials = ModelAssessment.toMaterial(assessmentDetail.materials, value);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
     // return materials && materials[0] ? materials?.map((item) => item?.name) : [];
@@ -370,7 +371,6 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
 
   const handleOk = useCallback(() => {
     const value = formMethods.getValues()["materials"];
-    console.log(value);
     if (value && value.length) {
       const newValue = value?.filter((item) => !item.checked);
       if (newValue.length === value.length) {
@@ -385,10 +385,12 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
       <TextField
         fullWidth
         disabled
-        multiline
+        multiline={true}
+        rows={4}
         // value={materialString || ""}
-        className={clsx(css.fieldset, css.nowarp, css.blockEle)}
+        className={clsx(css.fieldset, css.blockEle)}
         InputProps={{
+          readOnly: true,
           startAdornment: (
             <>
               {materialString && materialString.length && (
@@ -397,8 +399,8 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
                     {"Lesson Materials Covered"}({materialString.length})
                   </div>
                   <>
-                    {materialString.map((item) => (
-                      <div className={css.materialNameCon} key={item}>
+                    {materialString.map((item, index) => (
+                      <div className={css.materialNameCon} key={index}>
                         {item}
                       </div>
                     ))}
@@ -453,13 +455,16 @@ export function Summary(props: SummaryProps) {
   const expand = useExpand();
   const { assessmentDetail, isMyAssessment } = props;
   const {
-    formMethods: { control },
+    formMethods: { control, getValues },
   } = props;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
-  // const { materials } = useMemo(() => ModelAssessment.toMaterial(assessmentDetail), [assessmentDetail]);
+  const m = getValues()["materials"];
+  console.log("m=", m);
+  const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
+  console.log("materials=", materials);
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
@@ -547,7 +552,7 @@ export function Summary(props: SummaryProps) {
             <Controller
               as={PopupLessonMaterial}
               name="materials"
-              value={assessmentDetail.materials}
+              value={materials}
               assessmentDetail={assessmentDetail}
               control={control}
               isMyAssessment={isMyAssessment}

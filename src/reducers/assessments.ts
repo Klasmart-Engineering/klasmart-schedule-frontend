@@ -196,34 +196,6 @@ const { reducer } = createSlice({
     [getAssessment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       if (payload) {
         state.assessmentDetail = payload.detail;
-        state.assessmentDetail.materials = [
-          {
-            checked: false,
-            comment: "",
-            id: "6075386953c5220395849161",
-            name: "plan",
-            outcome_ids: [
-              "606fe72e964b4f05898452a6",
-              "606fe69f964b4f0589845288",
-              "606d2dea3732b97af0e95c6c",
-              "606d2c9a4f0d99636336317c",
-              "606c30f7b1390c1813cde871",
-            ],
-          },
-          {
-            checked: true,
-            comment: "",
-            id: "6075372562c63b713fd3e010",
-            name: "plan(assessmet 用)",
-            outcome_ids: [
-              "606fe72e964b4f05898452a6",
-              "606fe69f964b4f0589845288",
-              "606d2dea3732b97af0e95c6c",
-              "606d2c9a4f0d99636336317c",
-              "606c30f7b1390c1813cde871",
-            ],
-          },
-        ];
         state.my_id = payload.my_id;
       }
     },
