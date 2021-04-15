@@ -334,13 +334,14 @@ function EditBox(props: CalendarStateProps) {
     handleChangeShowAnyTime,
     isShowAnyTime,
     stateCurrentCid,
+    stateMaterialArr,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
-  const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
+  const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo[]>([]);
   const [programItem, setProgramItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [attachmentId, setAttachmentId] = React.useState<string>("");
   const [attachmentName, setAttachmentName] = React.useState<string>("");
@@ -472,7 +473,7 @@ function EditBox(props: CalendarStateProps) {
     };
     setClassItem(defaults);
     setLessonPlan(defaults);
-    setSubjectItem(defaults);
+    setSubjectItem([]);
     setProgramItem(defaults);
     setScheduleList(newData);
     setInitScheduleList(newData);
@@ -500,7 +501,6 @@ function EditBox(props: CalendarStateProps) {
         program_id: scheduleDetial.program?.id || "",
         repeat: {},
         start_at: scheduleDetial.start_at || (scheduleDetial.due_at as number),
-        subject_id: scheduleDetial.subject?.id || "",
         title: scheduleDetial.title || "",
         is_home_fun: scheduleDetial.is_home_fun,
       };
@@ -512,7 +512,7 @@ function EditBox(props: CalendarStateProps) {
       });
       if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
-      setSubjectItem(scheduleDetial.subject);
+      setSubjectItem(scheduleDetial.subjects as EntityScheduleShortInfo[]);
       setProgramItem(scheduleDetial.program);
       setScheduleList(newData);
       setInitScheduleList(newData);
@@ -589,9 +589,9 @@ function EditBox(props: CalendarStateProps) {
   }, [dispatchRepeat, scheduleDetial]);
   React.useEffect(() => {
     const program = modelSchedule.LinkageLessonPlan(contentPreview).program[0] as EntityScheduleShortInfo;
-    const subject = modelSchedule.LinkageLessonPlan(contentPreview).subject[0] as EntityScheduleShortInfo;
+    const subject = modelSchedule.LinkageLessonPlan(contentPreview).subject as EntityScheduleShortInfo[];
     setProgramItem(program);
-    setSubjectItem(subject);
+    setSubjectItem(subject[0].id ? [subject[0]] : []);
   }, [contentPreview]);
   const currentTime = timestampInt(new Date().getTime() / 1000);
   const initData: EntityScheduleAddView = {
@@ -609,7 +609,7 @@ function EditBox(props: CalendarStateProps) {
     program_id: "",
     repeat: {},
     start_at: currentTime,
-    subject_id: "",
+    subject_ids: [],
     participants_student_ids: [],
     time_zone_offset: 0,
     title: "",
@@ -693,8 +693,7 @@ function EditBox(props: CalendarStateProps) {
     if (name === "program_id") {
       if (value?.id) {
         const LinkageProgramData: any = await handleChangeProgramId(value.id);
-        setSubjectItem(LinkageProgramData[0] ?? defaults);
-        scheduleList.subject_id = LinkageProgramData[0] ? LinkageProgramData[0].id : "";
+        setSubjectItem(LinkageProgramData ? [LinkageProgramData[0]] : []);
       }
       setProgramItem(value);
     }
@@ -842,6 +841,10 @@ function EditBox(props: CalendarStateProps) {
     addData["is_all_day"] = checkedStatus.allDayCheck;
     addData["is_repeat"] = checkedStatus.repeatCheck;
     addData["repeat"] = checkedStatus.repeatCheck ? repeatData : {};
+    addData["subject_ids"] = [];
+    subjectItem.forEach((item: EntityScheduleShortInfo) => {
+      addData["subject_ids"].push(item.id);
+    });
     addData["attachment"] = {
       id: attachmentId,
       name: attachmentName,
@@ -1475,6 +1478,16 @@ function EditBox(props: CalendarStateProps) {
     ));
   };
 
+  const menuItemListMaterial = () => {
+    const materialArr = (stateMaterialArr.length > 0 ? stateMaterialArr : scheduleDetial.lesson_plan?.materials) as (
+      | EntityContentInfoWithDetails
+      | undefined
+    )[];
+    return materialArr?.map((item: any, key: number) => (
+      <p style={{ fontWeight: 500, paddingLeft: "10px" }}>{`${key + 1}. ${item.name}`}</p>
+    ));
+  };
+
   const menuItemListClassKrParticipants = (type: string) => {
     const participant: ParticipantsByClassQuery = participantMockOptions.participantList;
     const participantSet = type === "teacher" ? participant?.class?.teachers : participant?.class?.students;
@@ -1978,6 +1991,14 @@ function EditBox(props: CalendarStateProps) {
             )}
             <Collapse in={linkageLessonPlanOpen || (checkedStatus.homeFunCheck && scheduleList.class_type === "Homework")}>
               <Paper elevation={0} className={css.paper}>
+                {menuItemListMaterial() && (
+                  <Box style={{ position: "relative" }}>
+                    <span className={css.rosterNotice}>
+                      {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
+                    </span>
+                    <Box className={css.participantSaveBox}>{menuItemListMaterial()}</Box>
+                  </Box>
+                )}
                 <Autocomplete
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(
@@ -2002,6 +2023,7 @@ function EditBox(props: CalendarStateProps) {
                   )}
                 />
                 <Autocomplete
+                  multiple
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(scheduleMockOptions.subjectList.concat(subjectItem!))}
                   getOptionLabel={(option: any) => option.name}
@@ -2016,7 +2038,7 @@ function EditBox(props: CalendarStateProps) {
                       className={css.fieldset}
                       label={d("Subject").t("assess_label_subject")}
                       variant="outlined"
-                      value={scheduleList.subject_id}
+                      value={scheduleList.subject_ids}
                       disabled={isScheduleExpired() || isLimit()}
                     />
                   )}
@@ -2158,6 +2180,7 @@ interface CalendarStateProps {
   handleChangeOnlyMine: (data: string[]) => void;
   isShowAnyTime: boolean;
   stateCurrentCid: string;
+  stateMaterialArr: (EntityContentInfoWithDetails | undefined)[];
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2197,6 +2220,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     handleChangeOnlyMine,
     isShowAnyTime,
     stateCurrentCid,
+    stateMaterialArr,
   } = props;
 
   const template = (
@@ -2231,6 +2255,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeOnlyMine={handleChangeOnlyMine}
           isShowAnyTime={isShowAnyTime}
           stateCurrentCid={stateCurrentCid}
+          stateMaterialArr={stateMaterialArr}
         />
       </Box>
       <Box
@@ -2270,6 +2295,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           handleChangeOnlyMine={handleChangeOnlyMine}
           isShowAnyTime={isShowAnyTime}
           stateCurrentCid={stateCurrentCid}
+          stateMaterialArr={stateMaterialArr}
         />
       </Box>
     </>

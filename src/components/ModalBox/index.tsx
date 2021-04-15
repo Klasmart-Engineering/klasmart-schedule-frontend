@@ -13,7 +13,6 @@ import React from "react";
 const useStyles = makeStyles((theme) => ({
   dialogContainer: {
     "& .MuiPaper-root": {
-      // width: "25%",
       padding: "30px 40px 20px 40px",
       position: "relative",
       [theme.breakpoints.down("sm")]: {
@@ -43,6 +42,7 @@ interface AlertDialogProps {
   radioValue?: number;
   customizeTemplate?: any;
   enableCustomization?: boolean;
+  showScheduleInfo?: boolean;
 }
 
 interface dateProps {
@@ -62,6 +62,7 @@ export default function AlertDialog(props: dateProps) {
     radios,
     buttons,
     enableCustomization,
+    showScheduleInfo,
   } = props.modalDate;
   return (
     <div>
@@ -70,7 +71,7 @@ export default function AlertDialog(props: dateProps) {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        className={classes.dialogContainer}
+        className={showScheduleInfo ? "" : classes.dialogContainer}
       >
         {!enableCustomization ? (
           <>

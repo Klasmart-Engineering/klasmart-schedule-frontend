@@ -74,6 +74,7 @@ export interface AlertDialogProps {
   radioValue?: number;
   customizeTemplate?: any;
   enableCustomization?: boolean;
+  showScheduleInfo?: boolean;
 }
 
 export interface ScheduleFilterProps {

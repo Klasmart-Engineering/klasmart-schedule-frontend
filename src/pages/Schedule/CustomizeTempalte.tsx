@@ -10,16 +10,17 @@ import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
-import { scheduleInfoViewProps } from "../../types/scheduleTypes";
+import { scheduleInfoViewProps, EntityScheduleShortInfo, memberType } from "../../types/scheduleTypes";
+import Box from "@material-ui/core/Box";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import { EntityScheduleViewDetail } from "../../api/api.auto";
+import { apiResourcePathById } from "../../api/extra";
 
 const useStyles = makeStyles({
   previewContainer: {
-    width: "500px",
-    maxHeight: "300px",
+    width: "600px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
-    padding: "20px 30px",
-    position: "relative",
   },
   title: {
     fontSize: "24px",
@@ -33,9 +34,9 @@ const useStyles = makeStyles({
     color: "black",
   },
   iconPart: {
-    position: "absolute",
+    /*    position: "absolute",
     top: "15px",
-    right: "25px",
+    right: "25px",*/
   },
   firstIcon: {
     color: "#0e78d5",
@@ -55,13 +56,67 @@ const useStyles = makeStyles({
     margin: "0 20px !important",
   },
   buttonPart: {
-    textAlign: "right",
-    marginTop: "60px",
+    display: "flex",
+    flexDirection: "row-reverse",
+    padding: "20px",
   },
   checkPlan: {
     color: "#E02020",
     fontWeight: "bold",
     paddingTop: "10px",
+    textAlign: "center",
+  },
+  customizeTitleBox: {
+    display: "flex",
+    width: "94%",
+    height: "2rem",
+    boxShadow: "0px 0px 6px gray",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "3%",
+    "& span": {
+      fontSize: "1.4rem",
+      fontWeight: "bold",
+    },
+  },
+  customizeContentBox: {
+    width: "100%",
+    maxHeight: "500px",
+    overflow: "auto",
+    "&::-webkit-scrollbar": {
+      width: "3px",
+    },
+    "&::-webkit-scrollbar-track": {
+      boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "3px",
+      backgroundColor: "rgb(220, 220, 220)",
+      boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
+  },
+  contentRow: {
+    marginTop: "28px",
+    display: "flex",
+    "& span": {
+      display: "block",
+    },
+  },
+  row: {
+    fontWeight: "bold",
+    width: "18%",
+    textAlign: "left",
+    fontSize: "1.1rem",
+    paddingLeft: "8%",
+  },
+  row2: {
+    width: "60%",
+    wordBreak: "break-all",
+    fontWeight: 500,
+    paddingLeft: "6%",
   },
 });
 
@@ -75,6 +130,8 @@ interface InfoProps {
   handleChangeHidden: (is_hidden: boolean) => void;
   isHidden: boolean;
   refreshView: (template: string) => void;
+  ScheduleViewInfo: EntityScheduleViewDetail;
+  privilegedMembers: (member: memberType) => boolean;
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
@@ -91,21 +148,24 @@ export default function CustomizeTempalte(props: InfoProps) {
     handleChangeHidden,
     isHidden,
     refreshView,
+    ScheduleViewInfo,
+    privilegedMembers,
   } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
-  const timestampToTime = (timestamp: Date | null): string => {
+  const timestampToTime = (timestamp: number): string => {
+    const timestampDate = new Date(timestamp * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
     const [Y, M, D, W, h, m] = [
-      (timestamp as Date).getFullYear(),
-      (timestamp as Date).getMonth(),
-      (timestamp as Date).getDate(),
-      (timestamp as Date).getDay(),
-      dateNumFun((timestamp as Date).getHours()),
-      dateNumFun((timestamp as Date).getMinutes()),
+      (timestampDate as Date).getFullYear(),
+      (timestampDate as Date).getMonth(),
+      (timestampDate as Date).getDate(),
+      (timestampDate as Date).getDay(),
+      dateNumFun((timestampDate as Date).getHours()),
+      dateNumFun((timestampDate as Date).getMinutes()),
     ];
     return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
@@ -174,6 +234,8 @@ export default function CustomizeTempalte(props: InfoProps) {
                     handleChangeHidden={handleChangeHidden}
                     isHidden={isHidden}
                     refreshView={refreshView}
+                    ScheduleViewInfo={ScheduleViewInfo}
+                    privilegedMembers={privilegedMembers}
                   />
                 ),
                 openStatus: true,
@@ -248,45 +310,108 @@ export default function CustomizeTempalte(props: InfoProps) {
     });
   };
 
+  const multiStructure = (item?: EntityScheduleShortInfo[]) => {
+    return item?.map((item: EntityScheduleShortInfo) => {
+      return `${item.name},`;
+    });
+  };
+
   return (
-    <div className={classes.previewContainer}>
-      {!checkLessonPlan && scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
+    <Box className={classes.previewContainer}>
+      <div className={classes.customizeTitleBox}>
+        <span>{ScheduleViewInfo.title}</span>
+        <div className={classes.iconPart}>
+          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
+          {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && (
+            <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
+          )}
+          {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+          {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
+            <Permission
+              value={PermissionType.delete_event_540}
+              render={(value) =>
+                value && (
+                  <DeleteOutlined
+                    className={classes.lastIcon}
+                    onClick={() => {
+                      deleteHandle();
+                    }}
+                  />
+                )
+              }
+            />
+          )}
+        </div>
+      </div>
+      {!ScheduleViewInfo.lesson_plan && scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
         <p className={classes.checkPlan}>
           {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
         </p>
       )}
-      <div>
-        <p className={classes.title}>{scheduleInfo.title}</p>
-        <p className={classes.date}>
-          <span className={classes.time}>{d("Start Time").t("schedule_detail_start_time")}: </span>
-          {timestampToTime(scheduleInfo.start)}
+      <div className={classes.customizeContentBox}>
+        <p className={classes.contentRow}>
+          <span className={classes.row}>{d("Class Type").t("schedule_detail_class_type")}</span>
+          <span className={classes.row2}>{ScheduleViewInfo.class_type}</span>
         </p>
-        <p className={classes.date}>
-          <span className={classes.time}>{d("End Time").t("schedule_detail_end_time")}: </span>
-          {timestampToTime(scheduleInfo.end)}
+        <p className={classes.contentRow}>
+          <span className={classes.row}>Room ID</span>
+          <span className={classes.row2}>{ScheduleViewInfo.room_id}</span>
         </p>
-      </div>
-      <div className={classes.iconPart}>
-        <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
-        {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && (
-          <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
+        {ScheduleViewInfo.class_type !== "Homework" && (
+          <>
+            <p className={classes.contentRow}>
+              <span className={classes.row}>{d("Start Time").t("schedule_detail_start_time")}</span>
+              <span className={classes.row2}>{timestampToTime(ScheduleViewInfo.start_at as number)}</span>
+            </p>
+            <p className={classes.contentRow}>
+              <span className={classes.row}>{d("End Time").t("schedule_detail_end_time")}</span>
+              <span className={classes.row2}>{timestampToTime(ScheduleViewInfo.end_at as number)}</span>
+            </p>
+          </>
         )}
-        {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
-        {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
-          <Permission
-            value={PermissionType.delete_event_540}
-            render={(value) =>
-              value && (
-                <DeleteOutlined
-                  className={classes.lastIcon}
+        <p className={classes.contentRow}>
+          <span className={classes.row}>{d("Class Name").t("assess_detail_class_name")}</span>
+          <span className={classes.row2}>{ScheduleViewInfo.class?.name}</span>
+        </p>
+        <p className={classes.contentRow}>
+          <span className={classes.row}>{d("Teacher").t("schedule_detail_teacher")}</span>
+          <span className={classes.row2}>{multiStructure(ScheduleViewInfo.teachers)}</span>
+        </p>
+        {!privilegedMembers("Student") && (
+          <p className={classes.contentRow}>
+            <span className={classes.row}>{d("Student").t("assess_detail_student")}</span>
+            <span className={classes.row2}>{multiStructure(ScheduleViewInfo.students)}</span>
+          </p>
+        )}
+        {ScheduleViewInfo.lesson_plan && (
+          <p className={classes.contentRow}>
+            <span className={classes.row}>{d("Lesson plan").t("schedule_detail_lesson_plan")}</span>
+            <span style={{ width: "60%", wordBreak: "break-all", paddingLeft: "6%" }}>
+              <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
+              {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
+                return <div style={{ marginTop: "10px" }}>{material.name}</div>;
+              })}
+            </span>
+          </p>
+        )}
+        <p className={classes.contentRow}>
+          <span className={classes.row}>{d("Attachment").t("schedule_detail_attachment")}</span>
+          <span className={classes.row2} style={{ display: "flex" }}>
+            {ScheduleViewInfo.attachment?.id ? (
+              <>
+                {ScheduleViewInfo.attachment?.name}{" "}
+                <GetAppIcon
                   onClick={() => {
-                    deleteHandle();
+                    window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
                   }}
+                  style={{ color: "#0E78D5", cursor: "pointer", fontSize: "20px", marginLeft: "10px" }}
                 />
-              )
-            }
-          />
-        )}
+              </>
+            ) : (
+              "N/A"
+            )}
+          </span>
+        </p>
       </div>
       {scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
         <div className={classes.buttonPart}>
@@ -295,11 +420,11 @@ export default function CustomizeTempalte(props: InfoProps) {
             variant="contained"
             disabled={!checkLessonPlan}
             style={{
-              visibility:
+              display:
                 (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
                 (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
-                  ? "hidden"
-                  : "visible",
+                  ? "none"
+                  : "block",
             }}
             href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
           >
@@ -311,11 +436,11 @@ export default function CustomizeTempalte(props: InfoProps) {
             autoFocus
             className={classes.lastButton}
             style={{
-              visibility:
+              display:
                 (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type === "Homework") ||
                 (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
-                  ? "hidden"
-                  : "visible",
+                  ? "none"
+                  : "block",
             }}
             disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
             onClick={() => handleGoLive(scheduleInfo)}
@@ -326,6 +451,6 @@ export default function CustomizeTempalte(props: InfoProps) {
           </Button>
         </div>
       )}
-    </div>
+    </Box>
   );
 }

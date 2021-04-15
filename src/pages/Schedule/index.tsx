@@ -38,6 +38,7 @@ import {
   getSchoolByUser,
   getSchoolByOrg,
   searchAuthContentLists,
+  getScheduleViewInfo,
 } from "../../reducers/schedule";
 import {
   AlertDialogProps,
@@ -58,6 +59,8 @@ import SearchList from "./SearchList";
 import { PermissionType, usePermission } from "../../components/Permission";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
+import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -96,6 +99,7 @@ function ScheduleContent() {
     schoolByOrgOrUserData,
     user_id,
     mediaList,
+    ScheduleViewInfo,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -108,6 +112,7 @@ function ScheduleContent() {
   const [anyTimeName, setAnyTimeName] = React.useState<string>("");
   const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
+  const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -130,6 +135,10 @@ function ScheduleContent() {
     resultInfo = ((await dispatch(
       onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
     )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
+    const materialArr = ModelLessonPlan.toArray(segment);
+    setStateMaterialArr(materialArr);
+
     await dispatch(getSubjectByProgramId({ program_id: resultInfo.payload.contentDetail.program }));
     return {
       program_id: resultInfo.payload.contentDetail.program as string,
@@ -170,6 +179,7 @@ function ScheduleContent() {
     handleClose: () => {
       changeModalDate({ openStatus: false });
     },
+    showScheduleInfo: false,
   };
 
   const [modalDate, setModalDate] = React.useState<AlertDialogProps>(initModalDate);
@@ -206,6 +216,14 @@ function ScheduleContent() {
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
       dispatch(actError(d("There is no student in this class").t("schedule_msg_no_student")));
     return resultInfo;
+  };
+
+  const getHandleScheduleViewInfo = async (schedule_id: string) => {
+    let resultInfo: any;
+    resultInfo = ((await dispatch(getScheduleViewInfo(schedule_id))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof getScheduleViewInfo>
+    >;
+    return resultInfo.payload as EntityScheduleViewDetail;
   };
 
   /**
@@ -376,6 +394,7 @@ function ScheduleContent() {
     dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
+      setStateMaterialArr([]);
     }
     setModalDate({
       handleChange: function (p1: number) {},
@@ -442,6 +461,7 @@ function ScheduleContent() {
               handleChangeOnlyMine={handleChangeOnlyMine}
               isShowAnyTime={isShowAnyTime}
               stateCurrentCid={stateCurrentCid}
+              stateMaterialArr={stateMaterialArr}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
@@ -473,6 +493,9 @@ function ScheduleContent() {
                 scheduleTimeViewYearData={scheduleTimeViewYearData}
                 handleChangeHidden={handleChangeHidden}
                 isHidden={isHidden}
+                getHandleScheduleViewInfo={getHandleScheduleViewInfo}
+                ScheduleViewInfo={ScheduleViewInfo}
+                privilegedMembers={privilegedMembers}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}

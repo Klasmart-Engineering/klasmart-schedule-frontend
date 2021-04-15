@@ -54,6 +54,7 @@ import {
   EntityScheduleSearchView,
   EntityScheduleShortInfo,
   EntityScheduleFilterClass,
+  EntityScheduleViewDetail,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
@@ -111,6 +112,7 @@ export interface ScheduleState {
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   mediaList: EntityContentInfoWithDetails[];
+  ScheduleViewInfo: EntityScheduleViewDetail;
 }
 
 interface Rootstate {
@@ -125,7 +127,7 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
   start_at: 0,
   end_at: 0,
   repeat: {},
-  subject: {},
+  subjects: [],
   program: {},
   class_type: "OnlineClass",
   due_at: 0,
@@ -230,6 +232,7 @@ const initialState: ScheduleState = {
   user_id: "",
   schoolByOrgOrUserData: [],
   mediaList: [],
+  ScheduleViewInfo: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -672,6 +675,15 @@ export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
   });
 });
 
+type GetScheduleViewInfoParams = Parameters<typeof api.schedulesView.getSchedulePopupById>[0] & LoadingMetaPayload;
+type GetScheduleViewInfoResult = ReturnType<typeof api.schedulesView.getSchedulePopupById>;
+export const getScheduleViewInfo = createAsyncThunk<GetScheduleViewInfoResult, GetScheduleViewInfoParams>(
+  "getScheduleViewInfo",
+  async (schedule_id) => {
+    return api.schedulesView.getSchedulePopupById(schedule_id);
+  }
+);
+
 const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
@@ -800,6 +812,9 @@ const { actions, reducer } = createSlice({
     },
     [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.mediaList = payload.list;
+    },
+    [getScheduleViewInfo.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.ScheduleViewInfo = payload;
     },
   },
 });

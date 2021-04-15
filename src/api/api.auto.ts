@@ -15,7 +15,10 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export type ApiBadRequestResponse = ApiResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -26,7 +29,10 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export type ApiConflictResponse = ApiResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -54,7 +60,10 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -71,7 +80,10 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -83,7 +95,10 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export type ApiNotFoundResponse = ApiResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -235,11 +250,6 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
-export interface ApiResponse {
-  data?: object;
-  label?: string;
-}
-
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -263,13 +273,19 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export type ApiSuccessRequestResponse = ApiResponse;
+export interface ApiSuccessRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export type ApiUnAuthorizedResponse = ApiResponse;
+export interface ApiUnAuthorizedResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -500,6 +516,10 @@ export interface EntityBatchDeleteAuthedContentByOrgsRequest {
   content_ids?: string[];
   folder_i_ds?: string[];
   org_ids?: string[];
+}
+
+export interface EntityClassEventBody {
+  token?: string;
 }
 
 export interface EntityClassType {
@@ -945,7 +965,7 @@ export interface EntityScheduleAddView {
   program_id?: string;
   repeat?: EntityRepeatOptions;
   start_at?: number;
-  subject_id?: string;
+  subject_ids?: string[];
   time_zone_offset?: number;
   title?: string;
   version?: number;
@@ -966,8 +986,7 @@ export interface EntityScheduleDetailsView {
   is_hidden?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
-  lesson_plan?: EntityScheduleShortInfo;
-  member_teachers?: EntityScheduleShortInfo[];
+  lesson_plan?: EntityScheduleLessonPlan;
   org_id?: string;
   participants_students?: EntityScheduleAccessibleUserView[];
   participants_teachers?: EntityScheduleAccessibleUserView[];
@@ -977,9 +996,8 @@ export interface EntityScheduleDetailsView {
   role_type?: "Student" | "Teacher" | "Unknown";
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
-  student_count?: number;
-  subject?: EntityScheduleShortInfo;
-  teachers?: EntityScheduleShortInfo[];
+  subjects?: EntityScheduleShortInfo[];
+  teachers?: EntityScheduleAccessibleUserView[];
   title?: string;
   version?: number;
 }
@@ -1007,6 +1025,18 @@ export interface EntityScheduleFilterClass {
 }
 
 export interface EntityScheduleFilterSchool {
+  id?: string;
+  name?: string;
+}
+
+export interface EntityScheduleLessonPlan {
+  id?: string;
+  is_auth?: boolean;
+  materials?: EntityScheduleLessonPlanMaterial[];
+  name?: string;
+}
+
+export interface EntityScheduleLessonPlanMaterial {
   id?: string;
   name?: string;
 }
@@ -1047,7 +1077,7 @@ export interface EntityScheduleSearchView {
   program?: EntityScheduleShortInfo;
   start_at?: number;
   student_count?: number;
-  subject?: EntityScheduleShortInfo;
+  subjects?: EntityScheduleShortInfo[];
   teachers?: EntityScheduleShortInfo[];
   title?: string;
 }
@@ -1079,10 +1109,33 @@ export interface EntityScheduleUpdateView {
   repeat?: EntityRepeatOptions;
   repeat_edit_options?: "only_current" | "with_following";
   start_at?: number;
-  subject_id?: string;
+  subject_ids?: string[];
   time_zone_offset?: number;
   title?: string;
   version?: number;
+}
+
+export interface EntityScheduleViewDetail {
+  attachment?: EntityScheduleShortInfo;
+  class?: EntityScheduleShortInfo;
+  class_id?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  due_at?: number;
+  end_at?: number;
+  exist_feedback?: boolean;
+  id?: string;
+  is_hidden?: boolean;
+  is_home_fun?: boolean;
+  is_repeat?: boolean;
+  lesson_plan?: EntityScheduleLessonPlan;
+  lesson_plan_id?: string;
+  role_type?: "Student" | "Teacher" | "Unknown";
+  room_id?: string;
+  start_at?: number;
+  status?: "NotStart" | "Started" | "Closed";
+  students?: EntityScheduleShortInfo[];
+  teachers?: EntityScheduleShortInfo[];
+  title?: string;
 }
 
 export interface EntitySet {
@@ -1553,6 +1606,37 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getClassTypeById: (id: string, params?: RequestParams) =>
       this.request<EntityClassType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/class_types/${id}`, "GET", params),
+  };
+  classesMembers = {
+    /**
+     * @tags classAddMembersEvent
+     * @name classAddMembersEvent
+     * @summary classAddMembersEvent
+     * @request POST:/classes_members
+     * @description add members to class
+     */
+    classAddMembersEvent: (event: EntityClassEventBody, params?: RequestParams) =>
+      this.request<ApiSuccessRequestResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/classes_members`,
+        "POST",
+        params,
+        event
+      ),
+
+    /**
+     * @tags classDeleteMembersEvent
+     * @name classDeleteMembersEvent
+     * @summary classDeleteMembersEvent
+     * @request DELETE:/classes_members
+     * @description class delete members
+     */
+    classDeleteMembersEvent: (event: EntityClassEventBody, params?: RequestParams) =>
+      this.request<ApiSuccessRequestResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/classes_members`,
+        "DELETE",
+        params,
+        event
+      ),
   };
   contents = {
     /**
@@ -3029,6 +3113,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<string[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view/dates${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  schedulesView = {
+    /**
+     * @tags schedule
+     * @name getSchedulePopupByID
+     * @summary getSchedulePopupByID
+     * @request GET:/schedules_view/{schedule_id}
+     * @description get schedule popup info by id
+     */
+    getSchedulePopupById: (schedule_id: string, params?: RequestParams) =>
+      this.request<EntityScheduleViewDetail, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules_view/${schedule_id}`,
         "GET",
         params
       ),

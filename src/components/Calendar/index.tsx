@@ -15,11 +15,11 @@ import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleLiveToken, getScheduleRealTimeStatusPath, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
-import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps } from "../../types/scheduleTypes";
+import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps, memberType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
-import { EntityScheduleListView } from "../../api/api.auto";
+import { EntityScheduleListView, EntityScheduleViewDetail } from "../../api/api.auto";
 import "moment/locale/zh-cn";
 import "moment/locale/vi";
 import "moment/locale/ko";
@@ -57,6 +57,8 @@ function MyCalendar(props: CalendarProps) {
     scheduleTimeViewYearData,
     isHidden,
     handleChangeHidden,
+    getHandleScheduleViewInfo,
+    privilegedMembers,
   } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
@@ -344,12 +346,7 @@ function MyCalendar(props: CalendarProps) {
     ) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
-    let checkLessonPlan: any;
-    if (!event.is_home_fun) {
-      checkLessonPlan = ((await dispatch(
-        getScheduleRealTimeStatusPath({ schedule_id: event.id, metaLoading: true })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getScheduleRealTimeStatusPath>>;
-    }
+    const scheduleInfoView = await getHandleScheduleViewInfo(event.id);
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -363,16 +360,19 @@ function MyCalendar(props: CalendarProps) {
           scheduleInfo={event}
           toLive={toLive}
           changeModalDate={changeModalDate}
-          checkLessonPlan={checkLessonPlan?.payload.lesson_plan_is_auth}
+          checkLessonPlan={event.lesson_plan_id !== ""}
           handleChangeHidden={handleChangeHidden}
           isHidden={isHidden}
           refreshView={refreshView}
+          ScheduleViewInfo={scheduleInfoView}
+          privilegedMembers={privilegedMembers}
         />
       ),
       openStatus: true,
       handleClose: () => {
         changeModalDate({ openStatus: false });
       },
+      showScheduleInfo: true,
     });
   };
 
@@ -444,6 +444,9 @@ interface CalendarProps {
   scheduleTimeViewYearData: [];
   handleChangeHidden: (is_hidden: boolean) => void;
   isHidden: boolean;
+  getHandleScheduleViewInfo: (schedule_id: string) => Promise<EntityScheduleViewDetail>;
+  ScheduleViewInfo: EntityScheduleViewDetail;
+  privilegedMembers: (member: memberType) => boolean;
 }
 
 export default function KidsCalendar(props: CalendarProps) {
@@ -458,6 +461,9 @@ export default function KidsCalendar(props: CalendarProps) {
     scheduleTimeViewYearData,
     handleChangeHidden,
     isHidden,
+    getHandleScheduleViewInfo,
+    ScheduleViewInfo,
+    privilegedMembers,
   } = props;
 
   return (
@@ -472,6 +478,9 @@ export default function KidsCalendar(props: CalendarProps) {
       scheduleTimeViewYearData={scheduleTimeViewYearData}
       handleChangeHidden={handleChangeHidden}
       isHidden={isHidden}
+      getHandleScheduleViewInfo={getHandleScheduleViewInfo}
+      ScheduleViewInfo={ScheduleViewInfo}
+      privilegedMembers={privilegedMembers}
     />
   );
 }
