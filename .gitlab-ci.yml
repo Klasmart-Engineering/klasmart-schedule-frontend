@@ -47,6 +47,14 @@ buildAndUploadBucketAwsCn:
     - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /(dev|test|demo)\/cn\b/'
       when: manual
 
+buildAndUploadBucketAwsParallel: 
+  variables:
+    devGlobalBuildCommand: "npx env-cmd -f .env.ko.alpha.parallel npm run build"
+    devGlobalDeployBucketName: 'cdk-kl2-dev-huoyanshan-s3frontend'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH =~ /dev\/global\b/'
+      when: manual
+
 buildAndUploadBucketAwsUk:
   variables:
     extraBizName: 'Uk'
