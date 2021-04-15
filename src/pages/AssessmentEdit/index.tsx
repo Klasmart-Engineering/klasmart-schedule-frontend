@@ -38,7 +38,11 @@ function AssessmentsEditIner() {
   const formValue = watch();
   const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
-  const filteredOutcomelist = assessmentDetail.outcome_attendances;
+  // const filteredOutcomelist = assessmentDetail.outcome_attendances;
+  const filteredOutcomelist = useMemo(() => ModelAssessment.filterOutcomeList(assessmentDetail, formValue.materials), [
+    assessmentDetail,
+    formValue.materials,
+  ]);
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";

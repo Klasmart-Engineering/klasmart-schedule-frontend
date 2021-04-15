@@ -74,13 +74,16 @@ const AssessAction = (props: AssessActionProps) => {
     formValue,
     editable,
   } = props;
-  const skip: boolean = (formValue.outcome_attendances && formValue.outcome_attendances[index].skip) || false;
-  const none_achieved: boolean = (formValue.outcome_attendances && formValue.outcome_attendances[index].none_achieved) || false;
+  const skip: boolean =
+    (formValue.outcome_attendances && formValue.outcome_attendances[index] && formValue.outcome_attendances[index].skip) || false;
+  const none_achieved: boolean =
+    (formValue.outcome_attendances && formValue.outcome_attendances[index] && formValue.outcome_attendances[index].none_achieved) || false;
   const allValue: string[] = formValue.attendance_ids || [];
   const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
     allValue,
     attendance_ids,
   ]);
+  console.log(allValue);
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcome_attendances[${index}].${name}`, value);

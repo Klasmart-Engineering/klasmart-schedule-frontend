@@ -67,4 +67,26 @@ export const ModelAssessment = {
       return draft;
     }
   },
+  filterOutcomeList(
+    assessment: GetAssessmentResult,
+    materials: GetAssessmentResult["materials"]
+  ): GetAssessmentResult["outcome_attendances"] {
+    const check_outcome_ids: string[] = [];
+    if (materials && materials.length) {
+      materials.forEach((item) => {
+        if (item.checked) {
+          check_outcome_ids.push.apply(check_outcome_ids, item.outcome_ids as string[]);
+        }
+      });
+      if (assessment.plan?.outcome_ids && assessment.plan.outcome_ids[0]) {
+        check_outcome_ids.push.apply(check_outcome_ids, assessment.plan.outcome_ids);
+      }
+    }
+    const new_check_outcome_ids = Array.from(check_outcome_ids);
+    if (assessment.outcome_attendances && assessment.outcome_attendances.length && new_check_outcome_ids && new_check_outcome_ids.length) {
+      return assessment.outcome_attendances.filter((item) => new_check_outcome_ids.indexOf(item.outcome_id as string) >= 0);
+    } else {
+      return assessment.outcome_attendances;
+    }
+  },
 };

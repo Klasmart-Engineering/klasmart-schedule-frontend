@@ -20,11 +20,17 @@ import {
 } from "@material-ui/core";
 import { ExpandMore } from "@material-ui/icons";
 import BorderColorOutlinedIcon from "@material-ui/icons/BorderColorOutlined";
+import MessageOutlinedIcon from "@material-ui/icons/MessageOutlined";
 import clsx from "clsx";
 import React, { forwardRef, Fragment, useCallback, useMemo, useReducer, useState } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDatAattendanceIds } from "../../api/type";
+import {
+  AssessmentStatus,
+  GetAssessmentResult,
+  UpdateAssessmentRequestData,
+  UpdateAssessmentRequestDatAattendanceIds,
+} from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -125,6 +131,16 @@ const useStyles = makeStyles(({ palette }) => ({
     color: "#000",
     fontSize: 18,
     margin: "16px 0",
+  },
+  mCoverIcon: {
+    fontSize: 16,
+    color: "#999999",
+  },
+  title: {
+    "& .MuiTypography-root": {
+      fontSize: "24px !important",
+      fontWeight: 700,
+    },
   },
 }));
 
@@ -240,7 +256,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
               color="primary"
               variant="outlined"
               onClick={toggle}
-              disabled={assessmentDetail.status === "complete"}
+              disabled={assessmentDetail.status === AssessmentStatus.complete}
             >
               {d("Edit").t("assess_button_edit")}
             </Button>
@@ -248,7 +264,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
         }
       />
       <Dialog open={open} onClose={toggle}>
-        <DialogTitle>{d("Edit Attendance").t("assess_popup_edit_attendance")}</DialogTitle>
+        <DialogTitle className={css.title}>{d("Edit Attendance").t("assess_popup_edit_attendance")}</DialogTitle>
         <DialogContent dividers>
           <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
         </DialogContent>
@@ -315,7 +331,14 @@ export const MaterialInput = (props: MaterialInputProps) => {
               defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
               render={(props) => (
                 <FormControlLabel
-                  control={<Checkbox checked={props.value} onChange={(e) => props.onChange(e.target.checked)} color="primary" />}
+                  control={
+                    <Checkbox
+                      checked={props.value}
+                      disabled={assessmentDetail.status === AssessmentStatus.complete}
+                      onChange={(e) => props.onChange(e.target.checked)}
+                      color="primary"
+                    />
+                  }
                   label={item.name}
                 />
               )}
@@ -329,10 +352,15 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 className={css.commentCon}
                 placeholder={"Comment here"}
                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
+                disabled={assessmentDetail.status === AssessmentStatus.complete}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <BorderColorOutlinedIcon style={{ fontSize: 16, color: "#999999" }} />
+                      {assessmentDetail.status === AssessmentStatus.complete ? (
+                        <MessageOutlinedIcon className={css.mCoverIcon} />
+                      ) : (
+                        <BorderColorOutlinedIcon className={css.mCoverIcon} />
+                      )}
                     </InputAdornment>
                   ),
                 }}
@@ -416,20 +444,20 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
         render={(value) =>
           isMyAssessment &&
           value && (
-            <Button
-              className={css.editButton}
-              color="primary"
-              variant="outlined"
-              onClick={toggle}
-              disabled={assessmentDetail.status === "complete"}
-            >
-              {d("Edit").t("assess_button_edit")}
+            <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
+              {assessmentDetail.status === AssessmentStatus.complete
+                ? d("Preview").t("library_label_preview")
+                : d("Edit").t("assess_button_edit")}
             </Button>
           )
         }
       />
       <Dialog maxWidth={"sm"} fullWidth={true} open={open} onClose={toggle}>
-        <DialogTitle>{"Edit Lesson Materials Covered"}</DialogTitle>
+        <DialogTitle className={css.title}>
+          {assessmentDetail.status === AssessmentStatus.complete
+            ? d("View Lesson Materials Covered").t("assess_detail_view_covered")
+            : d("Edit Lesson Materials Covered").t("assess_detail_edit_covered")}
+        </DialogTitle>
         <DialogContent dividers>
           <MaterialInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value} />
         </DialogContent>
@@ -462,9 +490,7 @@ export function Summary(props: SummaryProps) {
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
   const m = getValues()["materials"];
-  console.log("m=", m);
   const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
-  console.log("materials=", materials);
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
