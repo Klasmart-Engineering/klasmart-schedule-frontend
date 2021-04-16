@@ -311,8 +311,8 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const multiStructure = (item?: EntityScheduleShortInfo[]) => {
-    return item?.map((item: EntityScheduleShortInfo) => {
-      return `${item.name},`;
+    return item?.map((ite: EntityScheduleShortInfo, key: number) => {
+      return `${ite.name}${key + 1 < item?.length ? "," : ""} `;
     });
   };
 

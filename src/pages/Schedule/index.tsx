@@ -220,7 +220,7 @@ function ScheduleContent() {
 
   const getHandleScheduleViewInfo = async (schedule_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getScheduleViewInfo(schedule_id))) as unknown) as PayloadAction<
+    resultInfo = ((await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleViewInfo>
     >;
     return resultInfo.payload as EntityScheduleViewDetail;

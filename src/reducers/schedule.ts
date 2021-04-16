@@ -675,11 +675,13 @@ export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
   });
 });
 
-type GetScheduleViewInfoParams = Parameters<typeof api.schedulesView.getSchedulePopupById>[0] & LoadingMetaPayload;
+interface GetScheduleViewInfoParams extends LoadingMetaPayload {
+  schedule_id: Parameters<typeof api.schedulesView.getSchedulePopupById>[0];
+}
 type GetScheduleViewInfoResult = ReturnType<typeof api.schedulesView.getSchedulePopupById>;
 export const getScheduleViewInfo = createAsyncThunk<GetScheduleViewInfoResult, GetScheduleViewInfoParams>(
   "getScheduleViewInfo",
-  async (schedule_id) => {
+  async ({ schedule_id }) => {
     return api.schedulesView.getSchedulePopupById(schedule_id);
   }
 );
