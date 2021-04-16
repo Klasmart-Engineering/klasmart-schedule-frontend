@@ -356,6 +356,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 placeholder={"Comment here"}
                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
                 disabled={assessmentDetail.status === AssessmentStatus.complete}
+                inputProps={{ maxLength: 100 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -405,7 +406,9 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
       const newValue = value?.filter((item) => !item.checked);
       onChangeOA(value);
       if (newValue.length === value.length) {
-        return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
+        return Promise.reject(
+          dispatch(actWarning(d("At least one lesson material needs to be selected as covered.").t("assess_msg_one_exposed")))
+        );
       }
       toggle();
     }
