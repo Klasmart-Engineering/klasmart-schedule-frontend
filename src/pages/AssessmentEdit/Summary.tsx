@@ -120,6 +120,7 @@ const useStyles = makeStyles(({ palette }) => ({
   blockEle: {
     "& .MuiInputBase-root": {
       display: "block",
+      // height: 320
     },
   },
   materialTitle: {
@@ -227,7 +228,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
   }, false);
   const attendanceString = useMemo(() => {
     const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
-    return students && students[0] ? students?.map((item) => item.name).join(", ") : "";
+    return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
   }, [assessmentDetail, value]);
   const handleOk = useCallback(() => {
     const { attendance_ids } = formMethods.getValues();
@@ -242,6 +243,8 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
         fullWidth
         disabled
         multiline
+        rows={2}
+        rowsMax={4}
         value={attendanceString || ""}
         className={clsx(css.fieldset, css.nowarp)}
         label={d("Attendance").t("assess_detail_attendance")}
@@ -297,7 +300,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
     return selectedM.length ? selectedM.filter((item) => item.checked) : [];
   }, [assessmentDetail.materials, watch]);
   return (
-    <Box>
+    <Box style={{ height: 320 }}>
       <Typography className={css.subTitle}>
         {"Lesson Materials Covered"}: ({`${selectedMaterials.length}/${assessmentDetail.materials?.length}`})
       </Typography>
@@ -380,9 +383,10 @@ interface PupupLessonMaterialProps {
   isMyAssessment?: boolean;
   value: GetAssessmentResult["materials"];
   onChange?: (value: PupupLessonMaterialProps["value"]) => any;
+  onChangeOA: (materials: GetAssessmentResult["materials"]) => any;
 }
 const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
-  const { value, assessmentDetail, isMyAssessment, onChange } = props;
+  const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateAssessmentRequestData>();
@@ -391,30 +395,30 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
     return !open;
   }, false);
   const materialString = useMemo(() => {
-    // const { materials } = assessmentDetail;
     const materials = ModelAssessment.toMaterial(assessmentDetail.materials, value);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
-    // return materials && materials[0] ? materials?.map((item) => item?.name) : [];
   }, [assessmentDetail.materials, value]);
 
   const handleOk = useCallback(() => {
     const value = formMethods.getValues()["materials"];
     if (value && value.length) {
       const newValue = value?.filter((item) => !item.checked);
+      onChangeOA(value);
       if (newValue.length === value.length) {
         return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
       }
       toggle();
     }
     if (onChange) return onChange(value || []);
-  }, [dispatch, formMethods, onChange]);
+  }, [dispatch, formMethods, onChange, onChangeOA]);
   return (
     <Box className={css.editBox} {...{ ref }}>
       <TextField
         fullWidth
         disabled
         multiline={true}
-        rows={4}
+        // rows={4}
+        // rowsMax={6}
         // value={materialString || ""}
         className={clsx(css.fieldset, css.blockEle)}
         InputProps={{
@@ -426,13 +430,13 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
                   <div className={css.materialTitle}>
                     {"Lesson Materials Covered"}({materialString.length})
                   </div>
-                  <>
+                  <div style={{ height: 180, overflowY: "scroll" }}>
                     {materialString.map((item, index) => (
                       <div className={css.materialNameCon} key={index}>
                         {item}
                       </div>
                     ))}
-                  </>
+                  </div>
                 </>
               )}
             </>
@@ -482,15 +486,20 @@ interface SummaryProps {
 export function Summary(props: SummaryProps) {
   const expand = useExpand();
   const { assessmentDetail, isMyAssessment } = props;
-  const {
-    formMethods: { control, getValues },
-  } = props;
+  const { formMethods } = props;
+  const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
   const m = getValues()["materials"];
   const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
+  const handleClickOk = (materials: GetAssessmentResult["materials"]) => {
+    const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
+    setTimeout(() => {
+      setValue("outcome_attendances", filteredOutcomelist);
+    }, 100);
+  };
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
@@ -578,10 +587,12 @@ export function Summary(props: SummaryProps) {
             <Controller
               as={PopupLessonMaterial}
               name="materials"
+              defaultValue={materials}
               value={materials}
               assessmentDetail={assessmentDetail}
               control={control}
               isMyAssessment={isMyAssessment}
+              onChangeOA={handleClickOk}
             />
             <TextField
               fullWidth

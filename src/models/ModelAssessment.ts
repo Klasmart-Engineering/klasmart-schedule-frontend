@@ -32,6 +32,11 @@ export const ModelAssessment = {
     }
     return draft;
   },
+  toInitMaterial(detail: GetAssessmentResult): GetAssessmentResult["materials"] {
+    const draft = cloneDeep(detail);
+    const { materials } = draft;
+    return materials?.filter((item) => item.checked);
+  },
   toMaterialRequest(detail: GetAssessmentResult, dMaterials: GetAssessmentResult["materials"]): GetAssessmentResult["materials"] {
     const draft = cloneDeep(detail);
     const materials =

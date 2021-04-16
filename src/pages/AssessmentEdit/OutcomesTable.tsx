@@ -83,7 +83,6 @@ const AssessAction = (props: AssessActionProps) => {
     allValue,
     attendance_ids,
   ]);
-  console.log(allValue);
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcome_attendances[${index}].${name}`, value);

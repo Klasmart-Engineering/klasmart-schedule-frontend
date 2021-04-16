@@ -34,18 +34,26 @@ function AssessmentsEditIner() {
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
-  const { handleSubmit, reset, watch } = formMethods;
+  const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
+  const { materials } = formValue;
   const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
   // const filteredOutcomelist = assessmentDetail.outcome_attendances;
-  const filteredOutcomelist = useMemo(() => ModelAssessment.filterOutcomeList(assessmentDetail, formValue.materials), [
-    assessmentDetail,
-    formValue.materials,
-  ]);
+  const filteredOutcomelist = useMemo(() => {
+    if (materials) {
+      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
+      return outcome;
+    } else {
+      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, assessmentDetail.materials);
+      setTimeout(() => setValue("outcome_attendances", outcome), 100);
+      return outcome;
+    }
+  }, [assessmentDetail, materials, setValue]);
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
+
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
