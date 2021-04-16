@@ -15,10 +15,7 @@ export interface ApiAge {
   age_name?: string;
 }
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -29,10 +26,7 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -60,10 +54,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -80,10 +71,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -95,10 +83,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -250,6 +235,11 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -273,19 +263,13 @@ export interface ApiSubject {
   subject_name?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -2908,20 +2892,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getScheduleNewestFeedbackByOperator: (schedule_id: string, params?: RequestParams) =>
       this.request<EntityScheduleFeedbackView, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/operator/newest_feedback`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags schedule
-     * @name getScheduleRealTimeStatus
-     * @summary get schedule real-time status
-     * @request GET:/schedules/{schedule_id}/real_time
-     * @description get schedule real-time status
-     */
-    getScheduleRealTimeStatus: (schedule_id: string, params?: RequestParams) =>
-      this.request<EntityScheduleRealTimeView, ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/schedules/${schedule_id}/real_time`,
         "GET",
         params
       ),

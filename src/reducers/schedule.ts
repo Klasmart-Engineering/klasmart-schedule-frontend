@@ -475,15 +475,6 @@ export const scheduleShowOption = createAsyncThunk<ScheduleShowOptionResult, Sch
   }
 );
 
-type getScheduleRealTimeStatusParams = { schedule_id: Parameters<typeof api.schedules.getScheduleRealTimeStatus>[0] } & LoadingMetaPayload;
-type getScheduleRealTimeStatusResult = ReturnType<typeof api.schedules.getScheduleRealTimeStatus>;
-export const getScheduleRealTimeStatusPath = createAsyncThunk<getScheduleRealTimeStatusResult, getScheduleRealTimeStatusParams>(
-  "schedule/getScheduleRealTimeStatus",
-  ({ schedule_id }) => {
-    return api.schedules.getScheduleRealTimeStatus(schedule_id);
-  }
-);
-
 type getScheduleNewestFeedbackParams = {
   schedule_id: Parameters<typeof api.schedules.getScheduleNewestFeedbackByOperator>[0];
 } & LoadingMetaPayload;
