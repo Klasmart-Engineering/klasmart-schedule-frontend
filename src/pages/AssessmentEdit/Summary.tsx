@@ -494,6 +494,11 @@ export function Summary(props: SummaryProps) {
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
   const m = getValues()["materials"];
   const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
+  const teacherList = useMemo(() => {
+    const list = assessmentDetail.teachers?.map((v) => v.name);
+    const length = list && list.length ? list.length : "";
+    return `${list?.join(",")} (${length})`;
+  }, [assessmentDetail.teachers]);
   const handleClickOk = (materials: GetAssessmentResult["materials"]) => {
     const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
     setTimeout(() => {
@@ -530,9 +535,9 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="title"
-            value={assessmentDetail.plan?.name || ""}
+            value={assessmentDetail.title?.split("-").pop() || ""}
             className={css.fieldset}
-            label={d("Plan Name").t("library_label_plan_name")}
+            label={d("Lesson Name").t("assess_detail_lesson_name")}
           />
           <TextField
             fullWidth
@@ -546,7 +551,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="teacher.name"
-            value={assessmentDetail.teachers?.map((v) => v.name)}
+            value={teacherList}
             className={css.fieldset}
             label={d("Teacher List").t("assess_detail_teacher_list")}
           />
