@@ -417,9 +417,6 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
         fullWidth
         disabled
         multiline={true}
-        // rows={4}
-        // rowsMax={6}
-        // value={materialString || ""}
         className={clsx(css.fieldset, css.blockEle)}
         InputProps={{
           readOnly: true,
@@ -430,7 +427,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
                   <div className={css.materialTitle}>
                     {"Lesson Materials Covered"}({materialString.length})
                   </div>
-                  <div style={{ height: 180, overflowY: "scroll" }}>
+                  <div style={{ maxHeight: 180, minHeight: 90, overflow: "auto" }}>
                     {materialString.map((item, index) => (
                       <div className={css.materialNameCon} key={index}>
                         {item}
@@ -569,40 +566,44 @@ export function Summary(props: SummaryProps) {
             />
             <Typography className={css.minutes}>{d("Minutes").t("assess_detail_minutes")}</Typography>
           </Box>
-          <TextField
-            fullWidth
-            disabled
-            name="title"
-            value={assessmentDetail.plan?.name || ""}
-            className={css.fieldset}
-            label={d("Lesson Plan").t("library_label_lesson_plan")}
-          />
-          <div className={css.expandCon}>
-            {expand.expandMore.open ? "See Less" : "See More"}
-            <ExpandBtn {...expand.expandMore}>
-              <ExpandMore fontSize="small"></ExpandMore>
-            </ExpandBtn>
-          </div>
-          <Collapse {...expand.collapse} unmountOnExit>
-            <Controller
-              as={PopupLessonMaterial}
-              name="materials"
-              defaultValue={materials}
-              value={materials}
-              assessmentDetail={assessmentDetail}
-              control={control}
-              isMyAssessment={isMyAssessment}
-              onChangeOA={handleClickOk}
-            />
-            <TextField
-              fullWidth
-              disabled
-              name="numberofLearningOutcomes"
-              value={assessmentDetail.number_of_outcomes || 0}
-              className={css.fieldset}
-              label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
-            />
-          </Collapse>
+          {assessmentDetail.plan && assessmentDetail.plan.id && (
+            <>
+              <TextField
+                fullWidth
+                disabled
+                name="title"
+                value={assessmentDetail.plan?.name || ""}
+                className={css.fieldset}
+                label={d("Lesson Plan").t("library_label_lesson_plan")}
+              />
+              <div className={css.expandCon}>
+                {expand.expandMore.open ? "See Less" : "See More"}
+                <ExpandBtn {...expand.expandMore}>
+                  <ExpandMore fontSize="small"></ExpandMore>
+                </ExpandBtn>
+              </div>
+              <Collapse {...expand.collapse} unmountOnExit>
+                <Controller
+                  as={PopupLessonMaterial}
+                  name="materials"
+                  defaultValue={materials}
+                  value={materials}
+                  assessmentDetail={assessmentDetail}
+                  control={control}
+                  isMyAssessment={isMyAssessment}
+                  onChangeOA={handleClickOk}
+                />
+                <TextField
+                  fullWidth
+                  disabled
+                  name="numberofLearningOutcomes"
+                  value={assessmentDetail.number_of_outcomes || 0}
+                  className={css.fieldset}
+                  label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
+                />
+              </Collapse>
+            </>
+          )}
           <TextField
             fullWidth
             disabled
