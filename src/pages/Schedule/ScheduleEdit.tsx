@@ -1991,10 +1991,10 @@ function EditBox(props: CalendarStateProps) {
             )}
             <Collapse in={linkageLessonPlanOpen || (checkedStatus.homeFunCheck && scheduleList.class_type === "Homework")}>
               <Paper elevation={0} className={css.paper}>
-                {menuItemListMaterial() && (
+                {menuItemListMaterial() && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
                   <Box style={{ position: "relative" }}>
                     <span className={css.rosterNotice}>
-                      {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
+                      {d("Lesson Material").t("schedule_detail_lesson_material")} <span style={{ color: "#D32F2F" }}>*</span>
                     </span>
                     <Box className={css.participantSaveBox}>{menuItemListMaterial()}</Box>
                   </Box>

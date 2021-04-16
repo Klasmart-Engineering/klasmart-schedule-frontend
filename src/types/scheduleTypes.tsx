@@ -18,6 +18,12 @@ export type FilterType = "Schools" | "Teacher" | "Classes" | "Subjects" | "Progr
 
 export type memberType = "Admin" | "School" | "Teacher" | "Student";
 
+export type classTypeLabel =
+  | "schedule_detail_online_class"
+  | "schedule_detail_offline_class"
+  | "schedule_detail_homework"
+  | "schedule_detail_task";
+
 type endType = {
   type: string;
   after_count: number;

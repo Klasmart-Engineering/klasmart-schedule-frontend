@@ -329,6 +329,10 @@ function ScheduleContent() {
   }, [dispatch, scheduleDetial, scheduleId]);
 
   React.useEffect(() => {
+    setStateMaterialArr([]);
+  }, [timesTamp]);
+
+  React.useEffect(() => {
     dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
     dispatch(getSchoolInfo());
@@ -390,7 +394,9 @@ function ScheduleContent() {
   }, [dispatch, privilegedMembers]);
 
   React.useEffect(() => {
-    dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));
+    if (privilegedMembers("Admin") || privilegedMembers("School") || privilegedMembers("Teacher")) {
+      dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));
+    }
     dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
@@ -408,7 +414,7 @@ function ScheduleContent() {
       buttons: [],
       handleClose: () => {},
     });
-  }, [scheduleId, setModalDate, dispatch]);
+  }, [scheduleId, setModalDate, privilegedMembers, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
   return (

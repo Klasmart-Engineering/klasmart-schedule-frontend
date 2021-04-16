@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { apiLivePath } from "../../api/extra";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import ContentPreview from "../ContentPreview";
-import { scheduleInfoViewProps, EntityScheduleShortInfo, memberType } from "../../types/scheduleTypes";
+import { scheduleInfoViewProps, EntityScheduleShortInfo, memberType, classTypeLabel } from "../../types/scheduleTypes";
 import Box from "@material-ui/core/Box";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
@@ -114,7 +114,7 @@ const useStyles = makeStyles({
   },
   row2: {
     width: "60%",
-    wordBreak: "break-all",
+    wordBreak: "break-word",
     fontWeight: 500,
     paddingLeft: "6%",
   },
@@ -312,7 +312,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const multiStructure = (item?: EntityScheduleShortInfo[]) => {
     return item?.map((ite: EntityScheduleShortInfo, key: number) => {
-      return `${ite.name}${key + 1 < item?.length ? "," : ""} `;
+      return `${ite.name}${key + 1 < item?.length ? "," : ` (${item.length})`} `;
     });
   };
 
@@ -351,10 +351,10 @@ export default function CustomizeTempalte(props: InfoProps) {
       <div className={classes.customizeContentBox}>
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Class Type").t("schedule_detail_class_type")}</span>
-          <span className={classes.row2}>{ScheduleViewInfo.class_type}</span>
+          <span className={classes.row2}>{t(ScheduleViewInfo.class_type?.name as classTypeLabel)}</span>
         </p>
         <p className={classes.contentRow}>
-          <span className={classes.row}>Room ID</span>
+          <span className={classes.row}>{d("Room ID").t("assess_detail_room_id")}</span>
           <span className={classes.row2}>{ScheduleViewInfo.room_id}</span>
         </p>
         {ScheduleViewInfo.class_type !== "Homework" && (
@@ -371,7 +371,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Class Name").t("assess_detail_class_name")}</span>
-          <span className={classes.row2}>{ScheduleViewInfo.class?.name}</span>
+          <span className={classes.row2}>{ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : "N/A"}</span>
         </p>
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Teacher").t("schedule_detail_teacher")}</span>
@@ -386,7 +386,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {ScheduleViewInfo.lesson_plan && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Lesson plan").t("schedule_detail_lesson_plan")}</span>
-            <span style={{ width: "60%", wordBreak: "break-all", paddingLeft: "6%" }}>
+            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: "6%" }}>
               <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
               {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
                 return <div style={{ marginTop: "10px" }}>{material.name}</div>;
@@ -418,7 +418,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <Button
             color="primary"
             variant="contained"
-            disabled={!checkLessonPlan}
+            disabled={!checkLessonPlan || scheduleInfo.role_type === "Student" || scheduleInfo.class_type === "Task"}
             style={{
               display:
                 (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||

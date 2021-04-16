@@ -40,7 +40,7 @@ const getTipsText = () => {
   return (
     <div style={{ paddingBottom: "8px" }}>
       <div style={{ color: "#000000", fontWeight: "bold" }}>
-        <p>{d("Max").t("schedule_detail_max")}: 10MB</p>
+        <p>{d("Max").t("schedule_detail_max")}: 100MB</p>
         <span>{d("Support files in").t("schedule_detail_support_files_in")}:</span>
       </div>
       <div style={{ color: "#666666" }}>

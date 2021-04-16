@@ -347,6 +347,7 @@ function MyCalendar(props: CalendarProps) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
     const scheduleInfoView = await getHandleScheduleViewInfo(event.id);
+    if (!scheduleInfoView) return;
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (

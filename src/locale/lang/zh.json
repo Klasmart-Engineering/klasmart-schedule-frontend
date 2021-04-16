@@ -547,6 +547,7 @@
   "schedule_msg_no_available": "无任何没有截止日期的家庭作业",
   "schedule_popup_room_id": "房间号",
   "schedule_popup_class_name": "班级名称",
+  "schedule_detail_lesson_material": "课件素材",
   "report_label_student_achievement": "学习表现",
   "report_label_teacher": "老师",
   "report_label_class": "班级",

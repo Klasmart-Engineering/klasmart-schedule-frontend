@@ -661,6 +661,7 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_no_available"; description: "No anytime study is available "; values: undefined }
   | { id: "schedule_popup_room_id"; description: "Room ID"; values: undefined }
   | { id: "schedule_popup_class_name"; description: "Class Name"; values: undefined }
+  | { id: "schedule_detail_lesson_material"; description: "Lesson Material"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

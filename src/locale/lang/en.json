@@ -547,6 +547,7 @@
   "schedule_msg_no_available": "No anytime study is available ",
   "schedule_popup_room_id": "Room ID",
   "schedule_popup_class_name": "Class Name",
+  "schedule_detail_lesson_material": "Lesson Material",
   "report_label_student_achievement": "Overall Student Achievement",
   "report_label_teacher": "Teacher",
   "report_label_class": "Class",
