@@ -105,6 +105,7 @@ const useStyles = makeStyles(({ palette }) => ({
   commentCon: {
     height: 40,
     marginLeft: 10,
+    width: "100%",
     "& .MuiInputBase-root": {
       height: "100%",
     },
@@ -352,6 +353,8 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 name={`materials[${index}].comment`}
                 control={control}
                 as={TextField}
+                multiline
+                rowsMax={2}
                 className={css.commentCon}
                 placeholder={"Comment here"}
                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
