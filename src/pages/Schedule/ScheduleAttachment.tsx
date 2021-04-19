@@ -10,7 +10,19 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
 import { actError } from "../../reducers/notify";
 import { useDispatch } from "react-redux";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress, { CircularProgressProps } from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
+
+function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
+  return (
+    <Box position="absolute" display="inline-flex">
+      <CircularProgress variant="determinate" {...props} />
+      <Box top={48} left={-131} bottom={0} right={0} position="absolute" display="flex" alignItems="center" justifyContent="center">
+        <Typography variant="caption" component="div" color="textSecondary">{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
 
 const useStyles = makeStyles(() => ({
   fieldset: {
@@ -155,7 +167,10 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
               <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
             </HtmlTooltip>
             {isUploading && (
-              <CircularProgress style={{ width: "20px", height: "20px", position: "absolute", top: "38px", right: "56px" }} />
+              <CircularProgressWithLabel
+                style={{ width: "36px", height: "36px", position: "absolute", top: "30px", right: "48px" }}
+                value={batch?.items[0].completed as number}
+              />
             )}
             {!isStudent && !attachmentName && (
               <CloudUploadOutlined className={css.iconField} style={{ right: attachmentName ? "50px" : "10px" }} ref={btnRef as any} />

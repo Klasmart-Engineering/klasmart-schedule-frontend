@@ -157,6 +157,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
   const timestampToTime = (timestamp: number): string => {
+    if (!timestamp) return "N/A";
     const timestampDate = new Date(timestamp * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
     const [Y, M, D, W, h, m] = [
@@ -242,6 +243,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                 handleClose: () => {
                   changeModalDate({ openStatus: false });
                 },
+                showScheduleInfo: true,
               });
             },
           },

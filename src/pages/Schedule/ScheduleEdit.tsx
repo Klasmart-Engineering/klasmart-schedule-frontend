@@ -1554,14 +1554,15 @@ function EditBox(props: CalendarStateProps) {
         name: item.name,
       });
     });
-    contentsAuthList.forEach((item: EntityLessonPlanShortInfo) => {
+    const differenceSet = contentsAuthList.filter((ea) => mediaList.every((eb) => eb.id !== ea.id));
+    differenceSet.forEach((item: EntityLessonPlanShortInfo) => {
       newContentsData.push({
         title: "Badanamu Content",
         id: item.id,
         name: item.name,
       });
     });
-    mediaList.forEach((item: EntityContentInfoWithDetails) => {
+    mediaList.forEach((item: EntityLessonPlanShortInfo) => {
       newContentsData.push({
         title: "More Featured Content",
         id: item.id,
