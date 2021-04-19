@@ -318,7 +318,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
   return (
     <Box style={{ height: 390 }}>
       <Typography className={css.subTitle}>
-        {"Lesson Materials Covered"}: ({`${selectedMaterials.length}/${assessmentDetail.materials?.length}`})
+        {"Lesson Materials Covered"}: {`${selectedMaterials.length}/${assessmentDetail.materials?.length}`}
       </Typography>
       {assessmentDetail.materials &&
         assessmentDetail.materials.length &&
@@ -445,7 +445,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
               {materialString && materialString.length && (
                 <>
                   <div className={css.materialTitle}>
-                    {"Lesson Materials Covered"}({materialString.length})
+                    {"Lesson Materials Covered"} ({`${materialString.length}/${assessmentDetail.materials?.length}`})
                   </div>
                   <div style={{ maxHeight: 180, minHeight: 90, overflow: "auto" }}>
                     {materialString.map((item, index) => (
