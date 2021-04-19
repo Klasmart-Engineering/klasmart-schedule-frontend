@@ -91,7 +91,7 @@ export const ModelAssessment = {
     if (assessment.outcome_attendances && assessment.outcome_attendances.length && new_check_outcome_ids && new_check_outcome_ids.length) {
       return assessment.outcome_attendances.filter((item) => new_check_outcome_ids.indexOf(item.outcome_id as string) >= 0);
     } else {
-      return assessment.outcome_attendances;
+      return [];
     }
   },
 };

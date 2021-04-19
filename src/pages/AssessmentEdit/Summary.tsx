@@ -18,7 +18,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { ExpandMore } from "@material-ui/icons";
+import { Close, ExpandMore } from "@material-ui/icons";
 import BorderColorOutlinedIcon from "@material-ui/icons/BorderColorOutlined";
 import MessageOutlinedIcon from "@material-ui/icons/MessageOutlined";
 import clsx from "clsx";
@@ -38,7 +38,7 @@ import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../mo
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { IAssessmentState } from "../../reducers/assessments";
 import { actWarning } from "../../reducers/notify";
-const useStyles = makeStyles(({ palette }) => ({
+const useStyles = makeStyles(({ palette, spacing }) => ({
   classSummaryHeader: {
     height: 64,
     width: "100%",
@@ -68,6 +68,16 @@ const useStyles = makeStyles(({ palette }) => ({
     width: "100%",
     marginTop: 30,
     position: "relative",
+  },
+  materialEditBox: {
+    "& .MuiOutlinedInput-multiline": {
+      padding: "18.5px 14px 40px 14px",
+    },
+  },
+  editAttendanceBox: {
+    "& .MuiInputBase-input": {
+      width: "calc(100% - 78px)",
+    },
   },
   editButton: {
     position: "absolute",
@@ -103,7 +113,6 @@ const useStyles = makeStyles(({ palette }) => ({
     marginBottom: 10,
   },
   commentCon: {
-    height: 40,
     marginLeft: 10,
     width: "100%",
     "& .MuiInputBase-root": {
@@ -121,7 +130,7 @@ const useStyles = makeStyles(({ palette }) => ({
   blockEle: {
     "& .MuiInputBase-root": {
       display: "block",
-      // height: 320
+      minHeight: 120,
     },
   },
   materialTitle: {
@@ -143,6 +152,12 @@ const useStyles = makeStyles(({ palette }) => ({
       fontSize: "24px !important",
       fontWeight: 700,
     },
+  },
+  closeBtn: {
+    color: "#000",
+    position: "absolute",
+    top: spacing(1),
+    right: spacing(1),
   },
 }));
 
@@ -247,8 +262,8 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
         rows={2}
         rowsMax={4}
         value={attendanceString || ""}
-        className={clsx(css.fieldset, css.nowarp)}
-        label={d("Attendance").t("assess_detail_attendance")}
+        className={clsx(css.fieldset, css.nowarp, css.editAttendanceBox)}
+        label={d("Student List").t("assess_detail_student_list")}
       />
       <PermissionOr
         value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
@@ -268,7 +283,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
         }
       />
       <Dialog open={open} onClose={toggle}>
-        <DialogTitle className={css.title}>{d("Edit Attendance").t("assess_popup_edit_attendance")}</DialogTitle>
+        <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
         <DialogContent dividers>
           <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
         </DialogContent>
@@ -297,11 +312,11 @@ export const MaterialInput = (props: MaterialInputProps) => {
     formMethods: { control, watch },
   } = props;
   const selectedMaterials = useMemo(() => {
-    const selectedM = watch("materials") || assessmentDetail.materials || [];
+    const selectedM = watch("materials") || defaultValue || [];
     return selectedM.length ? selectedM.filter((item) => item.checked) : [];
-  }, [assessmentDetail.materials, watch]);
+  }, [defaultValue, watch]);
   return (
-    <Box style={{ height: 320 }}>
+    <Box style={{ height: 390 }}>
       <Typography className={css.subTitle}>
         {"Lesson Materials Covered"}: ({`${selectedMaterials.length}/${assessmentDetail.materials?.length}`})
       </Typography>
@@ -354,7 +369,6 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 control={control}
                 as={TextField}
                 multiline
-                rowsMax={2}
                 className={css.commentCon}
                 placeholder={"Comment here"}
                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
@@ -418,7 +432,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
     if (onChange) return onChange(value || []);
   }, [dispatch, formMethods, onChange, onChangeOA]);
   return (
-    <Box className={css.editBox} {...{ ref }}>
+    <Box className={clsx(css.editBox, css.materialEditBox)} {...{ ref }}>
       <TextField
         fullWidth
         disabled
@@ -453,7 +467,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
           value && (
             <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
               {assessmentDetail.status === AssessmentStatus.complete
-                ? d("Preview").t("library_label_preview")
+                ? d("View").t("assess_detail_button_view")
                 : d("Edit").t("assess_button_edit")}
             </Button>
           )
@@ -464,18 +478,25 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
           {assessmentDetail.status === AssessmentStatus.complete
             ? d("View Lesson Materials Covered").t("assess_detail_view_covered")
             : d("Edit Lesson Materials Covered").t("assess_detail_edit_covered")}
+          {assessmentDetail.status === AssessmentStatus.complete && (
+            <IconButton onClick={toggle} className={css.closeBtn}>
+              <Close />
+            </IconButton>
+          )}
         </DialogTitle>
         <DialogContent dividers>
           <MaterialInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value} />
         </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={toggle} color="primary">
-            {d("CANCEL").t("general_button_CANCEL")}
-          </Button>
-          <Button onClick={handleOk} color="primary">
-            {d("OK").t("general_button_OK")}
-          </Button>
-        </DialogActions>
+        {assessmentDetail.status !== AssessmentStatus.complete && (
+          <DialogActions>
+            <Button autoFocus onClick={toggle} color="primary">
+              {d("CANCEL").t("general_button_CANCEL")}
+            </Button>
+            <Button onClick={handleOk} color="primary">
+              {d("OK").t("general_button_OK")}
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
     </Box>
   );
@@ -485,10 +506,11 @@ interface SummaryProps {
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
   assessmentDetail: IAssessmentState["assessmentDetail"];
   isMyAssessment?: boolean;
+  outcomesList: IAssessmentState["assessmentDetail"]["outcome_attendances"];
 }
 export function Summary(props: SummaryProps) {
   const expand = useExpand();
-  const { assessmentDetail, isMyAssessment } = props;
+  const { assessmentDetail, isMyAssessment, outcomesList } = props;
   const { formMethods } = props;
   const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
@@ -530,7 +552,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="title"
-            value={assessmentDetail.class?.name || ""}
+            value={assessmentDetail.class?.name || d("N/A").t("assess_column_n_a")}
             className={css.fieldset}
             label={d("Class Name").t("assess_detail_class_name")}
           />
@@ -607,8 +629,7 @@ export function Summary(props: SummaryProps) {
                 <TextField
                   fullWidth
                   disabled
-                  name="numberofLearningOutcomes"
-                  value={assessmentDetail.number_of_outcomes || 0}
+                  value={outcomesList?.length || 0}
                   className={css.fieldset}
                   label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
                 />
@@ -626,8 +647,8 @@ export function Summary(props: SummaryProps) {
           <TextField
             fullWidth
             disabled
-            name="subject.name"
-            value={assessmentDetail.subject?.name || ""}
+            name="subjects"
+            value={assessmentDetail.subjects?.map((v) => v.name).join(", ") || ""}
             className={css.fieldset}
             label={d("Subject").t("library_label_subject")}
           />

@@ -146,7 +146,12 @@ function AssessmentsEditIner() {
         editable={editable}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-        <Summary assessmentDetail={assessmentDetail} formMethods={formMethods} isMyAssessment={isMyAssessment} />
+        <Summary
+          assessmentDetail={assessmentDetail}
+          formMethods={formMethods}
+          isMyAssessment={isMyAssessment}
+          outcomesList={filteredOutcomelist}
+        />
         {rightsideArea}
       </LayoutPair>
     </>
