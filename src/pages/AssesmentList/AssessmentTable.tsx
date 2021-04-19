@@ -51,7 +51,7 @@ function AssessmentRow(props: AssessmentProps) {
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title}</TableCell>
-      <TableCell align="center">{assessment.subject?.name}</TableCell>
+      <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
       <TableCell align="center">{assessment.program?.name}</TableCell>
       <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
       <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,")}</TableCell>
