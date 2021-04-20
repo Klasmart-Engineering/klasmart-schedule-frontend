@@ -1997,7 +1997,9 @@ function EditBox(props: CalendarStateProps) {
                     <span className={css.rosterNotice}>
                       {d("Lesson Material").t("schedule_detail_lesson_material")} <span style={{ color: "#D32F2F" }}>*</span>
                     </span>
-                    <Box className={css.participantSaveBox}>{menuItemListMaterial()}</Box>
+                    <Box className={css.participantSaveBox} style={{ padding: "0px" }}>
+                      {menuItemListMaterial()}
+                    </Box>
                   </Box>
                 )}
                 <Autocomplete
