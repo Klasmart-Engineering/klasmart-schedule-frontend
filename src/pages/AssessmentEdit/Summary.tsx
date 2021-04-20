@@ -159,6 +159,9 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
     top: spacing(1),
     right: spacing(1),
   },
+  okBtn: {
+    marginLeft: "40px !important",
+  },
 }));
 
 const useExpand = () => {
@@ -284,14 +287,14 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
       />
       <Dialog open={open} onClose={toggle}>
         <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
-        <DialogContent dividers>
+        <DialogContent dividers style={{ borderBottom: "none" }}>
           <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={toggle} color="primary">
+          <Button autoFocus onClick={toggle} color="primary" variant="outlined">
             {d("CANCEL").t("general_button_CANCEL")}
           </Button>
-          <Button onClick={handleOk} color="primary">
+          <Button onClick={handleOk} color="primary" variant="contained" className={css.okBtn}>
             {d("OK").t("general_button_OK")}
           </Button>
         </DialogActions>
@@ -484,15 +487,15 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
             </IconButton>
           )}
         </DialogTitle>
-        <DialogContent dividers>
+        <DialogContent dividers style={{ borderBottom: "none" }}>
           <MaterialInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value} />
         </DialogContent>
         {assessmentDetail.status !== AssessmentStatus.complete && (
           <DialogActions>
-            <Button autoFocus onClick={toggle} color="primary">
+            <Button autoFocus onClick={toggle} color="primary" variant="outlined">
               {d("CANCEL").t("general_button_CANCEL")}
             </Button>
-            <Button onClick={handleOk} color="primary">
+            <Button onClick={handleOk} color="primary" variant="contained" className={css.okBtn}>
               {d("OK").t("general_button_OK")}
             </Button>
           </DialogActions>
