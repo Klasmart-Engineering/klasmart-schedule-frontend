@@ -575,6 +575,7 @@ export function Summary(props: SummaryProps) {
           <TextField
             fullWidth
             disabled
+            multiline
             name="teacher.name"
             value={teacherList}
             className={css.fieldset}
