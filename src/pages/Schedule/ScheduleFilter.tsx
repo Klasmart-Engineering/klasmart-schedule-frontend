@@ -1,36 +1,36 @@
+import { Box } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Popover from "@material-ui/core/Popover";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
+import Typography from "@material-ui/core/Typography";
+import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { TreeView } from "@material-ui/lab";
+import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
+import { PayloadAction } from "@reduxjs/toolkit";
+import clsx from "clsx";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsOptionsItem } from "../../api/extra";
 import { d, t } from "../../locale/LocaleManager";
+import { RootState } from "../../reducers";
+import { AsyncTrunkReturned } from "../../reducers/content";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
-  FilterQueryTypeProps,
+  EntityScheduleClassesInfo,
+  EntityScheduleSchoolInfo,
   FilterDataItemsProps,
+  FilterQueryTypeProps,
+  memberType,
+  modeViewType,
   RolesData,
   timestampType,
-  modeViewType,
-  EntityScheduleSchoolInfo,
-  EntityScheduleClassesInfo,
-  memberType,
 } from "../../types/scheduleTypes";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../reducers";
-import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
-import React from "react";
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
-import Typography from "@material-ui/core/Typography";
-import { TreeView } from "@material-ui/lab";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { AsyncTrunkReturned } from "../../reducers/content";
-import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
-import clsx from "clsx";
-import { Box } from "@material-ui/core";
-import Popover from "@material-ui/core/Popover";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -511,7 +511,7 @@ function FilterTemplate(props: FilterProps) {
       });
       const subjectSet = {
         id: `subject+${val.id}`,
-        name: "Subject",
+        name: d("Subject").t("schedule_detail_subject"),
         isCheck: false,
         child: subject,
         isOnlyMine: false,

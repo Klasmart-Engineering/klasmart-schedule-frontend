@@ -289,8 +289,8 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                         className={css.exactSerch}
                         size="small"
                       >
-                        <MenuItem value="all">All</MenuItem>
-                        <MenuItem value="name">Name</MenuItem>
+                        <MenuItem value="all">{d("All").t("assess_search_all")}</MenuItem>
+                        <MenuItem value="name">{d("Name").t("library_label_name")}</MenuItem>
                       </TextField>
                       <TextField
                         {...valueProps}

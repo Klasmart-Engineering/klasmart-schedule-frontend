@@ -11,15 +11,15 @@ import TuneOutlinedIcon from "@material-ui/icons/TuneOutlined";
 import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { OutcomeList } from "../../pages/OutcomeList";
-import LayoutBox from "../LayoutBox";
-import { Permission, PermissionType, usePermission } from "../Permission";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentList } from "../../pages/AssesmentList";
 import { HomeFunAssessmentList } from "../../pages/HomeFunAssessmentList";
 import CreateOutcomings from "../../pages/OutcomeEdit";
+import { OutcomeList } from "../../pages/OutcomeList";
 import { LoBlueIcon, LoIcon } from "../../pages/OutcomeList/Icons";
 import { HeaderCategory } from "../../pages/OutcomeList/types";
+import LayoutBox from "../LayoutBox";
+import { Permission, PermissionType, usePermission } from "../Permission";
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
@@ -120,7 +120,7 @@ export function FirstSearchHeader() {
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>
                 <Button className={clsx(css.nav, { [css.actives]: false })} startIcon={<FlagOutlinedIcon />}>
-                  {"Milestones"}
+                  {d("Milestone").t("assess_label_milestone")}
                 </Button>
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>

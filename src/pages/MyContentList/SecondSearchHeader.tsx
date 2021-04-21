@@ -156,11 +156,11 @@ export enum ExectSearch {
 const getExectSearch = () => {
   return [
     {
-      label: "All",
+      label: d("All").t("assess_search_all"),
       value: ExectSearch.all,
     },
     {
-      label: "Name",
+      label: d("Name").t("library_label_name"),
       value: ExectSearch.name,
     },
   ];
