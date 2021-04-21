@@ -187,13 +187,13 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                         className={css.exactSerch}
                         size="small"
                       >
-                        <MenuItem value="all">All</MenuItem>
-                        <MenuItem value="loName">Name</MenuItem>
-                        <MenuItem value="shortCode">Code</MenuItem>
-                        <MenuItem value="author">Author</MenuItem>
-                        <MenuItem value="loSet">Set</MenuItem>
-                        <MenuItem value="keyWord">Keywords</MenuItem>
-                        <MenuItem value="description">Description</MenuItem>
+                        <MenuItem value="all">{d("All").t("assess_filter_all")}</MenuItem>
+                        <MenuItem value="author">{d("Author").t("assess_label_author")}</MenuItem>
+                        <MenuItem value="shortCode">{d("Code").t("assess_search_code")}</MenuItem>
+                        <MenuItem value="description">{d("Description").t("assess_label_description")}</MenuItem>
+                        <MenuItem value="keyWord">{d("Keywords").t("assess_label_keywords")}</MenuItem>
+                        <MenuItem value="loName">{d("Name").t("assess_search_name")}</MenuItem>
+                        <MenuItem value="loSet">{d("Set").t("assess_search_set")}</MenuItem>
                       </TextField>
                       <TextField
                         {...valueProps}

@@ -76,32 +76,32 @@ export const isPending = (value: OutcomeQueryCondition): boolean =>
 const getOutcomeListExectSearch = () => {
   return [
     {
-      label: "All",
+      label: d("All").t("assess_filter_all"),
       value: OutcomeListExectSearch.all,
     },
     {
-      label: "Learning Outcome Name",
-      value: OutcomeListExectSearch.loName,
-    },
-    {
-      label: "Short Code",
-      value: OutcomeListExectSearch.shortCode,
-    },
-    {
-      label: "Author",
+      label: d("Author").t("assess_label_author"),
       value: OutcomeListExectSearch.author,
     },
     {
-      label: "Learning Outcome Set",
-      value: OutcomeListExectSearch.loSet,
+      label: d("Description").t("assess_label_description"),
+      value: OutcomeListExectSearch.description,
     },
     {
-      label: "Keywords",
+      label: d("Keywords").t("assess_label_keywords"),
       value: OutcomeListExectSearch.keyWord,
     },
     {
-      label: "Description",
-      value: OutcomeListExectSearch.description,
+      label: d("Learning Outcome Name").t("assess_label_learning_outcome_name"),
+      value: OutcomeListExectSearch.loName,
+    },
+    {
+      label: d("Learning Outcome Set").t("assess_set_learning_outcome_set"),
+      value: OutcomeListExectSearch.loSet,
+    },
+    {
+      label: d("Short Code").t("assess_label_short_code"),
+      value: OutcomeListExectSearch.shortCode,
     },
   ];
 };

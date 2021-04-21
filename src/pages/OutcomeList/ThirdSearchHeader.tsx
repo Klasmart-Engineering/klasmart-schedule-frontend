@@ -212,7 +212,7 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
         res1.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
       }
       if (perm.edit_published_learning_outcome_436) {
-        res1.push({ label: "Add to Set", value: BulkAction.addSet });
+        res1.push({ label: d("Add to Set").t("assess_set_add_to_set"), value: BulkAction.addSet });
       }
       return res1;
     case OutcomePublishStatus.pending:
@@ -233,7 +233,7 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
         res3.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
       }
       if (perm.edit_my_unpublished_learning_outcome_430) {
-        res3.push({ label: "Add to Set", value: BulkAction.addSet });
+        res3.push({ label: d("Add to Set").t("assess_set_add_to_set"), value: BulkAction.addSet });
       }
       return res3;
   }
