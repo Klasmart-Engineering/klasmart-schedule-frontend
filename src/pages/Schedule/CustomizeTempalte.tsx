@@ -356,7 +356,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span className={classes.row2}>{t(ScheduleViewInfo.class_type?.name as classTypeLabel)}</span>
         </p>
         <p className={classes.contentRow}>
-          <span className={classes.row}>{d("Room ID").t("assess_detail_room_id")}</span>
+          <span className={classes.row}>{d("Room ID").t("schedule_popup_room_id")}</span>
           <span className={classes.row2}>{ScheduleViewInfo.room_id}</span>
         </p>
         {ScheduleViewInfo.class_type !== "Homework" && (
