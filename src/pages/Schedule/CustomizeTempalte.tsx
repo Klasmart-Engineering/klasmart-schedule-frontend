@@ -387,7 +387,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
         {ScheduleViewInfo.lesson_plan && (
           <p className={classes.contentRow}>
-            <span className={classes.row}>{d("Lesson plan").t("schedule_detail_lesson_plan")}</span>
+            <span className={classes.row}>{d("Lesson Plan").t("schedule_detail_lesson_plan")}</span>
             <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: "6%" }}>
               <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
               {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {

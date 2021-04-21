@@ -84,7 +84,7 @@ const sortOptions = () => [
 const assessmentStatusOptions = () => [
   { label: d("All").t("assess_filter_all"), value: HomeFunAssessmentStatus.all },
   { label: d("Complete").t("assess_filter_complete"), value: HomeFunAssessmentStatus.complete },
-  { label: d("In Progress").t("assess_filter_in_progress"), value: HomeFunAssessmentStatus.in_progress },
+  { label: d("Incomplete").t("assess_filter_in_progress"), value: HomeFunAssessmentStatus.in_progress },
 ];
 
 export interface ThirdSearchHeaderProps extends HomeFunAssessmentQueryConditionBaseProps {}

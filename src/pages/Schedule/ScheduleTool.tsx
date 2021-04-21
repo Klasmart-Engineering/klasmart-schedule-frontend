@@ -149,7 +149,7 @@ function Tool(props: ToolProps) {
                   <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
                   <BootstrapInput
                     id="demo-customized-textbox"
-                    placeholder={d("teacher name").t("schedule_label_teacher_name")}
+                    placeholder={d("Teacher Name").t("schedule_label_teacher_name")}
                     value={teacherName}
                     onChange={(event) => setTeacherName(event.target.value)}
                     onKeyDown={handleKeyDown}

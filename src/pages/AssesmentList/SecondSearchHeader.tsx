@@ -81,7 +81,7 @@ export interface options {
 export const assessmentTypes = () => {
   return [
     { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
-    { label: d("Study-Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
+    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
   ];
 };
 const menuItemList = (list: options[]) =>

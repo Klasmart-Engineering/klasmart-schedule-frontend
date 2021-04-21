@@ -465,7 +465,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="estimated_time"
                 decode={Number}
                 type="number"
-                label={d("Estimated Time(Minutes)").t("assess_label_estimated_time")}
+                label={d("Estimated Time (Minutes)").t("assess_label_estimated_time")}
                 defaultValue={outcome_id ? outcomeDetail.estimated_time : 0}
                 fullWidth
                 disabled={showEdit}

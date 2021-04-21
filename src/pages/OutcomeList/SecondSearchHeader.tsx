@@ -149,7 +149,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                   <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
                   <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                     <MenuItem selected={value.author_name === Author.self} onClick={handleItemClick}>
-                      {d("My Only").t("assess_label_my_only")}
+                      {d("Show My Content").t("assess_label_my_only")}
                     </MenuItem>
                   </Menu>
                 </>
@@ -212,7 +212,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 <FormControlLabel
                   value="end"
                   control={<Checkbox color="primary" checked={value.author_name === Author.self} onChange={handleChangeMyonly} />}
-                  label={d("My Only").t("assess_label_my_only")}
+                  label={d("Show My Content").t("assess_label_my_only")}
                   labelPlacement="end"
                 />
               ) : (

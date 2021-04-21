@@ -164,7 +164,7 @@
   "assess_filter_column_status": "Status",
   "assess_filter_all": "Semua",
   "assess_filter_complete": "Lengkap",
-  "Incomplete": "Sedang Berlangsung",
+  "assess_filter_in_progress": "Sedang Berlangsung",
   "assess_sort_by": "Sortir Dengan",
   "assess_class_end_time_new_old": "Waktu Berakhir Kelas (Baru-Lama)",
   "assess_class_end_time_old_new": "Waktu Berakhir Kelas (Lama-Baru)",

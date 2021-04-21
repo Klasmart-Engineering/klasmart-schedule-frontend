@@ -211,7 +211,7 @@ type LangRecord<T = string> =
   | { id: "assess_filter_column_status"; description: "Status"; values: undefined }
   | { id: "assess_filter_all"; description: "All"; values: undefined }
   | { id: "assess_filter_complete"; description: "Complete"; values: undefined }
-  | { id: "Incomplete"; description: "Incomplete"; values: undefined }
+  | { id: "assess_filter_in_progress"; description: "Incomplete"; values: undefined }
   | { id: "assess_sort_by"; description: "Sort By"; values: undefined }
   | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
   | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }

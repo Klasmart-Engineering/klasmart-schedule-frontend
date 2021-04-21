@@ -241,10 +241,10 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
 
 const sortOptions = () => {
   return [
-    { label: d("Name(A-Z)").t("assess_label_name_atoz"), value: OutcomeOrderBy.name },
-    { label: d("Name(Z-A)").t("assess_label_name_ztoa"), value: OutcomeOrderBy._name },
-    { label: d("Created On(New-Old)").t("assess_label_created_on_newtoold"), value: OutcomeOrderBy._updated_at },
-    { label: d("Created On(Old-New)").t("assess_label_created_on_oldtonew"), value: OutcomeOrderBy.updated_at },
+    { label: d("Name (A-Z)").t("assess_label_name_atoz"), value: OutcomeOrderBy.name },
+    { label: d("Name (Z-A)").t("assess_label_name_ztoa"), value: OutcomeOrderBy._name },
+    { label: d("Created On (New-Old)").t("assess_label_created_on_newtoold"), value: OutcomeOrderBy._updated_at },
+    { label: d("Created On (Old-New)").t("assess_label_created_on_oldtonew"), value: OutcomeOrderBy.updated_at },
   ];
 };
 

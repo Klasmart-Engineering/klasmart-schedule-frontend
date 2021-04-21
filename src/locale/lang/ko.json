@@ -164,7 +164,7 @@
   "assess_filter_column_status": "상태",
   "assess_filter_all": "전체",
   "assess_filter_complete": "완료",
-  "Incomplete": "진행 중",
+  "assess_filter_in_progress": "진행 중",
   "assess_sort_by": "정렬 기준",
   "assess_class_end_time_new_old": "수업 종료 시간 (New-Old)",
   "assess_class_end_time_old_new": "수업 종료 시간 (Old-New)",

@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) =>
 
 const mapStatus = (status: string | undefined) => {
   if (status === AssessmentStatus.complete) return d("Complete").t("assess_filter_complete");
-  if (status === AssessmentStatus.in_progress) return d("In Progress").t("assess_filter_in_progress");
+  if (status === AssessmentStatus.in_progress) return d("Incomplete").t("assess_filter_in_progress");
 };
 
 interface AssessmentProps {

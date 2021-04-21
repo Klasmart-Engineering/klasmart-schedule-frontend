@@ -55,7 +55,7 @@ export function Summary(props: SummaryProps) {
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
-          <Typography variant="h6">{d("Study-Home Fun Summary").t("assess_detail_study_homefun_summary")}</Typography>
+          <Typography variant="h6">{d("Study / Home Fun Summary").t("assess_detail_study_homefun_summary")}</Typography>
         </Box>
         <Box px={5} py={5}>
           <TextField

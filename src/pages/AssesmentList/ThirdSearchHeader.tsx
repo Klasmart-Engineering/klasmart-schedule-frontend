@@ -84,7 +84,7 @@ const sortOptions = () => [
 const assessmentStatusOptions = () => [
   { label: d("All").t("assess_filter_all"), value: AssessmentStatus.all },
   { label: d("Complete").t("assess_filter_complete"), value: AssessmentStatus.complete },
-  { label: d("In Progress").t("assess_filter_in_progress"), value: AssessmentStatus.in_progress },
+  { label: d("Incomplete").t("assess_filter_in_progress"), value: AssessmentStatus.in_progress },
 ];
 
 export interface ThirdSearchHeaderProps extends AssessmentQueryConditionBaseProps {}

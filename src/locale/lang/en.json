@@ -165,7 +165,7 @@
   "assess_filter_column_status": "Status",
   "assess_filter_all": "All",
   "assess_filter_complete": "Complete",
-  "Incomplete": "Incomplete",
+  "assess_filter_in_progress": "Incomplete",
   "assess_sort_by": "Sort By",
   "assess_class_end_time_new_old": "Class End Time (New-Old)",
   "assess_class_end_time_old_new": "Class End Time (Old -New)",
