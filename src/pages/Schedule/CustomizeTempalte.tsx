@@ -324,7 +324,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         <span>{ScheduleViewInfo.title}</span>
         <div className={classes.iconPart}>
           <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
-          {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && (
+          {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
           {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
