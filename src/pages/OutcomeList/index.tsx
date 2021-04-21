@@ -156,6 +156,7 @@ export function OutcomeList() {
       return dispatch(actWarning(d("You can only do bulk action to your own learning outcomes.").t("assess_msg_set_myonly")));
     setSelectedOutcomeSet([]);
     openAddSet();
+    setShowSetList(false);
   };
   const handleClickAddSetConfirmBtn: AddSetProps["onAddSet"] = async () => {
     const set_ids = selectedOutcomeSet.map((item) => item.set_id);
@@ -168,8 +169,8 @@ export function OutcomeList() {
       setShowSetList(false);
       return;
     }
-    setShowSetList(true);
     await dispatch(pullOutcomeSet({ set_name }));
+    setShowSetList(true);
   };
   const handleClickCreateOutcomeSet: AddSetProps["onCreateOutcomeSet"] = async (set_name) => {
     return await dispatch(createOutcomeSet({ set_name }));
