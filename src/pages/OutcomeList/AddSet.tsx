@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) =>
       marginLeft: "40px !important",
     },
     dialogContent: {
-      height: 334,
+      height: 350,
       boxSizing: "border-box",
       borderBottom: "none",
     },

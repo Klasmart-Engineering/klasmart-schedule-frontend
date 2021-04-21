@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   outcomeSetCon: {
     width: 250,
-    maxHeight: 276,
+    maxHeight: 312,
     boxShadow: "0px 5px 5px -3px rgba(0,0,0,0.20), 0px 3px 14px 2px rgba(0,0,0,0.12), 0px 8px 10px 1px rgba(0,0,0,0.14)",
     borderRadius: "4px",
     boxSizing: "border-box",
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   outComeSets: {
     width: "100%",
-    maxHeight: 145,
+    maxHeight: 181,
     overflowY: "scroll",
   },
   chip: {
