@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { ApiOutcomeSetCreateView } from "../../api/api.auto";
 import { OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
+import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, isAllMineOutcome } from "../../models/ModelOutcomeDetailForm";
@@ -28,7 +29,6 @@ import {
 } from "../../reducers/outcome";
 import CreateOutcomings from "../OutcomeEdit";
 import { AddSet, AddSetProps, useAddSet } from "./AddSet";
-import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { OutcomeTable, OutcomeTableProps } from "./OutcomeTable";
 import { SecondSearchHeader, SecondSearchHeaderMb } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
@@ -181,7 +181,11 @@ export function OutcomeList() {
     setSelectedOutcomeSet(newSets || []);
     setShowSetList(false);
   };
-
+  const handleOnInputChange: AddSetProps["onInputChange"] = () => {
+    if (showSetList) {
+      setShowSetList(false);
+    }
+  };
   const handleClickDelete: AddSetProps["onDeleteSet"] = (set_id: string) => {
     const index = findSetIndex(set_id, selectedOutcomeSet);
     let newSets = cloneDeep(selectedOutcomeSet);
@@ -258,6 +262,7 @@ export function OutcomeList() {
         outcomeSetList={outcomeSetList}
         onDeleteSet={handleClickDelete}
         defaultSelectOutcomeset={defaultSelectOutcomeset}
+        onInputChange={handleOnInputChange}
       />
     </div>
   );

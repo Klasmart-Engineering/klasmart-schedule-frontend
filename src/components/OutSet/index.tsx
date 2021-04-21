@@ -92,6 +92,7 @@ export interface OutcomeSetProps {
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset?: string;
+  onInputChange: () => any;
 }
 export function OutcomeSet(props: OutcomeSetProps) {
   const css = useStyles();
@@ -106,6 +107,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
     onDeleteSet,
     title,
     defaultSelectOutcomeset,
+    onInputChange,
   } = props;
   const formMethods = useForm();
   const { control, getValues, watch, setValue } = formMethods;
@@ -152,6 +154,7 @@ export function OutcomeSet(props: OutcomeSetProps) {
           placeholder={d("Search").t("assess_label_search")}
           defaultValue={""}
           inputProps={{ maxLength: 36 }}
+          onInput={onInputChange}
         />
         <Button variant="contained" color="primary" className={css.searchBtn} onClick={handleClickSearch}>
           <Search /> {d("Search").t("assess_label_search")}

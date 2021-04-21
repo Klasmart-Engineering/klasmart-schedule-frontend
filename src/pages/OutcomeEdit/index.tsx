@@ -275,6 +275,12 @@ export default function CreateOutcomings() {
     setValue("sets", newSets, { shouldDirty: true });
   };
 
+  const handleOnInputChange: OutcomeFormProps["onInputChange"] = () => {
+    if (showSetList) {
+      setShowSetList(false);
+    }
+  };
+
   React.useEffect(() => {
     if (outcome_id) {
       const program_id = outcomeDetail.program && outcomeDetail.program[0] && outcomeDetail.program[0].program_id;
@@ -391,6 +397,7 @@ export default function CreateOutcomings() {
         onDeleteSet={handleClickDelete}
         defaultSelectOutcomeset={defaultSelectOutcomeset as string}
         shortCode={shortCode}
+        onInputChange={handleOnInputChange}
       />
       <ModalBox modalDate={modalDate} />
     </Box>

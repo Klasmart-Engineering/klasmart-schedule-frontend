@@ -76,6 +76,7 @@ export interface OutcomeFormProps {
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset: string;
   shortCode: string;
+  onInputChange: () => any;
 }
 
 export function OutcomeForm(props: OutcomeFormProps) {
@@ -99,6 +100,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onDeleteSet,
     defaultSelectOutcomeset,
     shortCode,
+    onInputChange,
   } = props;
   const classes = useStyles();
   const getItems = (list: LinkedMockOptionsItem[]) =>
@@ -451,6 +453,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   outcomeSetList={outcomeSetList}
                   onDeleteSet={handleDelete}
                   defaultSelectOutcomeset={defaultSelectOutcomeset}
+                  onInputChange={onInputChange}
                 />
               </Grid>
             </Grid>

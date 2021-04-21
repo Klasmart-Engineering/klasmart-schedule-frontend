@@ -35,6 +35,7 @@ export interface AddSetProps {
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset: string;
+  onInputChange: () => any;
 }
 export function AddSet(props: AddSetProps) {
   const css = useStyles();
@@ -50,6 +51,7 @@ export function AddSet(props: AddSetProps) {
     outcomeSetList,
     onDeleteSet,
     defaultSelectOutcomeset,
+    onInputChange,
   } = props;
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
@@ -69,6 +71,7 @@ export function AddSet(props: AddSetProps) {
           outcomeSetList={outcomeSetList}
           onDeleteSet={handleDelete}
           defaultSelectOutcomeset={defaultSelectOutcomeset}
+          onInputChange={onInputChange}
         />
       </DialogContent>
       <DialogActions>
