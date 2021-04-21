@@ -39,13 +39,13 @@ function AssessmentsHomefunEditIner() {
     handleSubmit(async (value) => {
       if (!id) return;
       const onError: ExtendedRequestParams["onError"] = async (content) => {
-        if (content === d('A new version of the assignment has been submitted, please refresh').t('assess_msg_new_version')) {
+        if (content === d("A new version of the assignment has been submitted, please refresh").t("assess_msg_new_version")) {
           await dispatch(actAsyncConfirm({ content, hideCancel: true }));
           return history.replace({
             search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
           });
         }
-        dispatch(actError(content))
+        dispatch(actError(content));
       };
       const data: UpdateHomefunParams = { ...value, id, action, onError };
       await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
@@ -71,10 +71,10 @@ function AssessmentsHomefunEditIner() {
     <>
       <AssessmentHeader
         name={d("Assessment Details").t("assess_assessment_details")}
-        onSave={handleAssessmentSaveOrComplete(AssessmentUpdateAction.save, d("Save Successfully.").t("assess_msg_save_successfully"))}
+        onSave={handleAssessmentSaveOrComplete(AssessmentUpdateAction.save, d("Saved Successfully.").t("assess_msg_save_successfully"))}
         onComplete={handleAssessmentSaveOrComplete(
           AssessmentUpdateAction.complete,
-          d("Complete Successfully.").t("assess_msg_compete_successfully")
+          d("Completed Successfully.").t("assess_msg_compete_successfully")
         )}
         onBack={handleGoBack}
         editable={editable}

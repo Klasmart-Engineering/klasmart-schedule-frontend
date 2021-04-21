@@ -63,7 +63,7 @@ function AssessmentsEditIner() {
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
-            dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
+            dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
             history.replace({
               search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
             });
@@ -88,7 +88,7 @@ function AssessmentsEditIner() {
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
-            dispatch(actSuccess(d("Complete Successfully.").t("assess_msg_compete_successfully")));
+            dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
             history.replace({
               search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
             });

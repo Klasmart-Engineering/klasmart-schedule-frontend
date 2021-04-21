@@ -276,7 +276,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       AsyncTrunkReturned<typeof saveScheduleFeedback>
     >;
     if (resultInfo.payload) {
-      dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
+      dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
       changeModalDate({
         openStatus: false,

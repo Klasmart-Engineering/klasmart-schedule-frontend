@@ -321,7 +321,8 @@ export const MaterialInput = (props: MaterialInputProps) => {
   return (
     <Box style={{ height: 390 }}>
       <Typography className={css.subTitle}>
-        {"Lesson Materials Covered"}: {`${selectedMaterials.length}/${assessmentDetail.materials?.length}`}
+        {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")}:{" "}
+        {`${selectedMaterials.length}/${assessmentDetail.materials?.length}`}
       </Typography>
       {assessmentDetail.materials &&
         assessmentDetail.materials.length &&
@@ -373,7 +374,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 as={TextField}
                 multiline
                 className={css.commentCon}
-                placeholder={"Comment here"}
+                placeholder={d("Comment here").t("assess_detail_comment_here")}
                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
                 disabled={assessmentDetail.status === AssessmentStatus.complete}
                 inputProps={{ maxLength: 100 }}
@@ -448,7 +449,8 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
               {materialString && materialString.length && (
                 <>
                   <div className={css.materialTitle}>
-                    {"Lesson Materials Covered"} ({`${materialString.length}/${assessmentDetail.materials?.length}`})
+                    {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")} (
+                    {`${materialString.length}/${assessmentDetail.materials?.length}`})
                   </div>
                   <div style={{ maxHeight: 180, minHeight: 90, overflow: "auto" }}>
                     {materialString.map((item, index) => (
@@ -614,7 +616,7 @@ export function Summary(props: SummaryProps) {
                 label={d("Lesson Plan").t("library_label_lesson_plan")}
               />
               <div className={css.expandCon}>
-                {expand.expandMore.open ? "See Less" : "See More"}
+                {expand.expandMore.open ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
                 <ExpandBtn {...expand.expandMore}>
                   <ExpandMore fontSize="small"></ExpandMore>
                 </ExpandBtn>

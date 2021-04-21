@@ -1,20 +1,20 @@
-import { Box, createStyles, makeStyles, Theme, Button } from "@material-ui/core";
+import { Box, Button, createStyles, makeStyles, Theme } from "@material-ui/core";
 import { VisibilityOff } from "@material-ui/icons";
-import React, { useCallback } from "react";
-import { memberType, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import CloseIcon from "@material-ui/icons/Close";
+import { PayloadAction } from "@reduxjs/toolkit";
+import React, { useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
 import { EntityScheduleListView } from "../../api/api.auto";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
-import { d } from "../../locale/LocaleManager";
 import { Permission, PermissionType } from "../../components/Permission";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
-import { useDispatch } from "react-redux";
-import ConfilctTestTemplate from "./ConfilctTestTemplate";
-import { actSuccess } from "../../reducers/notify";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { d } from "../../locale/LocaleManager";
 import { AsyncTrunkReturned } from "../../reducers/content";
-import { useHistory } from "react-router";
+import { actSuccess } from "../../reducers/notify";
+import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
+import { memberType, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
+import ConfilctTestTemplate from "./ConfilctTestTemplate";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -183,7 +183,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
       if (payload) {
-        dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
+        dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({
             view_type: modelView,

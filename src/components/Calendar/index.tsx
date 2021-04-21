@@ -96,7 +96,7 @@ function MyCalendar(props: CalendarProps) {
       )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
       if (payload) {
-        dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
+        dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({
             view_type: modelView,

@@ -23,6 +23,7 @@ import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { enAU, id, ko, vi, zhCN } from "date-fns/esm/locale";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -37,7 +38,7 @@ import {
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
-import { d, t, localeManager } from "../../locale/LocaleManager";
+import { d, localeManager, t } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
@@ -79,7 +80,6 @@ import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import { zhCN, enAU, vi, ko, id } from "date-fns/esm/locale";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -941,7 +941,7 @@ function EditBox(props: CalendarStateProps) {
         })
       );
       dispatch(ScheduleFilterPrograms());
-      dispatch(actSuccess(d("Save Successfully.").t("assess_msg_save_successfully")));
+      dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({
         type: "changeData",
         data: initialState,
@@ -1247,7 +1247,7 @@ function EditBox(props: CalendarStateProps) {
       })
     );
     if (res.payload === "OK") {
-      dispatch(actSuccess(d("Delete sucessfully").t("schedule_msg_delete_success")));
+      dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
