@@ -171,7 +171,9 @@ export default function MyContentList() {
     if (content_type === ContentType.material || content_type === ContentType.plan) {
       history.push({
         pathname: ContentPreview.routeRedirectDefault,
-        search: toQueryString(clearNull({ id: id, content_type: content_type, author: condition.author })),
+        search: toQueryString(
+          clearNull({ id: id, content_type: content_type, author: condition.author, program_group: condition.program_group })
+        ),
       });
     } else if (content_type === ContentType.folder) {
       const path = dir_path === ROOT_PATH ? "" : ROOT_PATH;

@@ -34,12 +34,13 @@ const useQuery = () => {
   const sid = query.get("sid") as string;
   const author = query.get("author");
   const class_id = query.get("class_id") as string;
-  return { id, search, sid, author, class_id };
+  const program_group = query.get("program_group") as string | "";
+  return { id, search, sid, author, class_id, program_group };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, search, sid, author, class_id } = useQuery();
+  const { id, search, sid, author, class_id, program_group } = useQuery();
   const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams();
@@ -109,7 +110,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       ) : (
         <LearningOutcome list={contentPreview.outcome_entities || []} />
       )}
-      {tab === TabValue.details && (
+      {tab === TabValue.details && !program_group && (
         <OperationBtn
           author={author}
           isMine={contentPreview.is_mine}
