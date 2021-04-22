@@ -83,9 +83,9 @@ export const ModelAssessment = {
           check_outcome_ids.push.apply(check_outcome_ids, item.outcome_ids as string[]);
         }
       });
-      if (assessment.plan?.outcome_ids && assessment.plan.outcome_ids[0]) {
-        check_outcome_ids.push.apply(check_outcome_ids, assessment.plan.outcome_ids);
-      }
+    }
+    if (assessment.plan?.outcome_ids && assessment.plan.outcome_ids[0]) {
+      check_outcome_ids.push.apply(check_outcome_ids, assessment.plan.outcome_ids);
     }
     const new_check_outcome_ids = Array.from(check_outcome_ids);
     if (assessment.outcome_attendances && assessment.outcome_attendances.length && new_check_outcome_ids && new_check_outcome_ids.length) {
