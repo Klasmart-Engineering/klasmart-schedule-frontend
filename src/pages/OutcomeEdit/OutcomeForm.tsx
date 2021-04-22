@@ -2,7 +2,8 @@ import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, M
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ApiOutcomeSetCreateView, ApiOutcomeView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
+import { ApiPullOutcomeSetResponse } from "../../api/api.auto";
+import { GetOutcomeDetail, OutcomeSetResult } from "../../api/type";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { OutcomeSet } from "../../components/OutSet";
 import { d } from "../../locale/LocaleManager";
@@ -60,7 +61,7 @@ export interface OutcomeFormProps {
   outcome_id: string;
   showEdit: boolean;
   formMethods: UseFormMethods<any>;
-  outcomeDetail: ApiOutcomeView;
+  outcomeDetail: GetOutcomeDetail;
   onChangeProgram: (value: NonNullable<string[]>) => any;
   onChangeDevelopmental: (value: NonNullable<string[]>) => any;
   onChangeSubject: (value: string[]) => any;
@@ -71,7 +72,7 @@ export interface OutcomeFormProps {
   onSearchOutcomeSet: (set_name: string) => any;
   onCreateOutcomeSet: (set_name: string) => any;
   onSetOutcomeSet: (ids: string[]) => any;
-  selectedOutcomeSet: ApiOutcomeSetCreateView[];
+  selectedOutcomeSet: OutcomeSetResult;
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset: string;

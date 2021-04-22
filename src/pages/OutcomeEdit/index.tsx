@@ -5,7 +5,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { ApiOutcomeSetCreateView } from "../../api/api.auto";
+import { OutcomeSetResult } from "../../api/type";
 import ModalBox from "../../components/ModalBox";
 import { d } from "../../locale/LocaleManager";
 import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
@@ -65,7 +65,7 @@ export default function CreateOutcomings() {
   const [condition, setCondition] = React.useState("default");
   const [isSelf, setIsSelf] = React.useState(false);
   const [showSetList, setShowSetList] = React.useState(false);
-  const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<ApiOutcomeSetCreateView[]>([]);
+  const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<OutcomeSetResult>([]);
   const formMethods = useForm();
   const {
     handleSubmit,
@@ -295,7 +295,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     if (!outcome_id) {
-      dispatch(generateShortcode());
+      dispatch(generateShortcode({ kind: "learning_outcome" }));
       dispatch(getNewOptions({ metaLoading: true }));
     }
   }, [outcome_id, dispatch]);

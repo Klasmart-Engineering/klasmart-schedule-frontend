@@ -5,8 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { ApiOutcomeSetCreateView } from "../../api/api.auto";
-import { OrderBy, OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
+import { OrderBy, OutcomeOrderBy, OutcomePublishStatus, OutcomeSetResult } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
@@ -103,7 +102,7 @@ export function OutcomeList() {
     defaultSelectOutcomeset,
   } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
   const [showSetList, setShowSetList] = React.useState(false);
-  const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<ApiOutcomeSetCreateView[]>([]);
+  const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<OutcomeSetResult>([]);
   const { addSetActive, openAddSet, closeAddSet } = useAddSet();
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: OutcomeTableProps["onPublish"] = (id) => {

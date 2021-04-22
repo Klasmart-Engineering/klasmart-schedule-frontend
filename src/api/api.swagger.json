@@ -316,7 +316,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeIDList"
+              "$ref": "#/definitions/model.OutcomeIDList"
             }
           }
         ],
@@ -369,7 +369,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeIDList"
+              "$ref": "#/definitions/model.OutcomeIDList"
             }
           }
         ],
@@ -422,7 +422,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeIDList"
+              "$ref": "#/definitions/model.OutcomeIDList"
             }
           }
         ],
@@ -475,7 +475,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeBulkRejectRequest"
+              "$ref": "#/definitions/model.OutcomeBulkRejectRequest"
             }
           }
         ],
@@ -3335,7 +3335,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.OutcomeSearchResponse"
+              "$ref": "#/definitions/model.OutcomeSearchResponse"
             }
           },
           "400": {
@@ -3378,7 +3378,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeCreateView"
+              "$ref": "#/definitions/model.OutcomeCreateView"
             }
           }
         ],
@@ -3386,7 +3386,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.OutcomeCreateResponse"
+              "$ref": "#/definitions/model.OutcomeCreateResponse"
             }
           },
           "400": {
@@ -3431,7 +3431,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.OutcomeView"
+              "$ref": "#/definitions/model.OutcomeView"
             }
           },
           "400": {
@@ -3475,7 +3475,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeCreateView"
+              "$ref": "#/definitions/model.OutcomeCreateView"
             }
           }
         ],
@@ -3703,7 +3703,7 @@
             "name": "PublishOutcomeRequest",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/api.PublishOutcomeReq"
+              "$ref": "#/definitions/model.PublishOutcomeReq"
             }
           }
         ],
@@ -3763,7 +3763,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeRejectReq"
+              "$ref": "#/definitions/model.OutcomeRejectReq"
             }
           }
         ],
@@ -3856,6 +3856,421 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/milestones": {
+      "get": {
+        "description": "search milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "search milestone",
+        "operationId": "searchMilestone",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "published"],
+            "type": "string",
+            "description": "search by publish_status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneSearchResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "create milestone",
+        "operationId": "createMilestone",
+        "parameters": [
+          {
+            "description": "create milestone",
+            "name": "milestone",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "delete milestone",
+        "operationId": "deleteMilestone",
+        "parameters": [
+          {
+            "description": "delete milestone",
+            "name": "milestones",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/milestones/publish": {
+      "post": {
+        "description": "publish milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "publish milestone",
+        "operationId": "publishMilestone",
+        "parameters": [
+          {
+            "description": "publish milestone",
+            "name": "milestones",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/milestones/{milestone_id}": {
+      "get": {
+        "description": "milestone info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "get milestone by id",
+        "operationId": "obtainMilestone",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "milestone id",
+            "name": "milestone_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update milestone info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "update milestone",
+        "operationId": "updateMilestone",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "milestone id",
+            "name": "milestone_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "milestone",
+            "name": "milestone",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneView"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/milestones/{milestone_id}/occupy": {
+      "put": {
+        "description": "occupy before edit",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "lock milestone",
+        "operationId": "occupyMilestone",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "milestone id",
+            "name": "milestone_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/api.ConflictResponse"
             }
           },
           "500": {
@@ -4004,7 +4419,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.OutcomeSearchResponse"
+              "$ref": "#/definitions/model.OutcomeSearchResponse"
             }
           },
           "400": {
@@ -4146,7 +4561,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.OutcomeSearchResponse"
+              "$ref": "#/definitions/model.OutcomeSearchResponse"
             }
           },
           "400": {
@@ -5820,7 +6235,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/api.OutcomeSetCreateView"
+              "$ref": "#/definitions/model.OutcomeSetCreateView"
             }
           }
         ],
@@ -5828,7 +6243,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/api.OutcomeSetCreateView"
+              "$ref": "#/definitions/model.OutcomeSetCreateView"
             }
           },
           "400": {
@@ -5931,6 +6346,16 @@
         "tags": ["learning_outcomes"],
         "summary": "generate Shortcode",
         "operationId": "generateShortcode",
+        "parameters": [
+          {
+            "description": "learning outcome",
+            "name": "kind",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/api.ShortcodeRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -6441,17 +6866,6 @@
     }
   },
   "definitions": {
-    "api.Age": {
-      "type": "object",
-      "properties": {
-        "age_id": {
-          "type": "string"
-        },
-        "age_name": {
-          "type": "string"
-        }
-      }
-    },
     "api.BadRequestResponse": {
       "$ref": "#/definitions/api.Response"
     },
@@ -6495,17 +6909,6 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
-        }
-      }
-    },
-    "api.Developmental": {
-      "type": "object",
-      "properties": {
-        "developmental_id": {
-          "type": "string"
-        },
-        "developmental_name": {
           "type": "string"
         }
       }
@@ -6560,17 +6963,6 @@
         }
       }
     },
-    "api.Grade": {
-      "type": "object",
-      "properties": {
-        "grade_id": {
-          "type": "string"
-        },
-        "grade_name": {
-          "type": "string"
-        }
-      }
-    },
     "api.IDResponse": {
       "type": "object",
       "properties": {
@@ -6618,360 +7010,6 @@
         }
       }
     },
-    "api.OutcomeBulkRejectRequest": {
-      "type": "object",
-      "properties": {
-        "outcome_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "reject_reason": {
-          "type": "string"
-        }
-      }
-    },
-    "api.OutcomeCreateResponse": {
-      "type": "object",
-      "properties": {
-        "age": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "ancestor_id": {
-          "type": "string"
-        },
-        "assumed": {
-          "type": "boolean"
-        },
-        "author_id": {
-          "type": "string"
-        },
-        "author_name": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        },
-        "developmental": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "estimated_time": {
-          "type": "integer"
-        },
-        "grade": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "keywords": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "locked_by": {
-          "type": "string"
-        },
-        "organization_id": {
-          "type": "string"
-        },
-        "organization_name": {
-          "type": "string"
-        },
-        "outcome_id": {
-          "type": "string"
-        },
-        "outcome_name": {
-          "type": "string"
-        },
-        "program": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "publish_scope": {
-          "type": "string"
-        },
-        "publish_status": {
-          "type": "string"
-        },
-        "reject_reason": {
-          "type": "string"
-        },
-        "shortcode": {
-          "type": "string"
-        },
-        "skills": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "source_id": {
-          "type": "string"
-        },
-        "subject": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "updated_at": {
-          "type": "integer"
-        }
-      }
-    },
-    "api.OutcomeCreateView": {
-      "type": "object",
-      "properties": {
-        "age": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "assumed": {
-          "type": "boolean"
-        },
-        "description": {
-          "type": "string"
-        },
-        "developmental": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "estimated_time": {
-          "type": "integer"
-        },
-        "grade": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "keywords": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "organization_id": {
-          "type": "string"
-        },
-        "outcome_id": {
-          "type": "string"
-        },
-        "outcome_name": {
-          "type": "string"
-        },
-        "program": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "sets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.OutcomeSetCreateView"
-          }
-        },
-        "shortcode": {
-          "type": "string"
-        },
-        "skills": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "subject": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "api.OutcomeIDList": {
-      "type": "object",
-      "properties": {
-        "outcome_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "api.OutcomeRejectReq": {
-      "type": "object",
-      "properties": {
-        "reject_reason": {
-          "type": "string"
-        }
-      }
-    },
-    "api.OutcomeSearchResponse": {
-      "type": "object",
-      "properties": {
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.OutcomeView"
-          }
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    },
-    "api.OutcomeSetCreateView": {
-      "type": "object",
-      "properties": {
-        "set_id": {
-          "type": "string"
-        },
-        "set_name": {
-          "type": "string"
-        }
-      }
-    },
-    "api.OutcomeView": {
-      "type": "object",
-      "properties": {
-        "age": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.Age"
-          }
-        },
-        "ancestor_id": {
-          "type": "string"
-        },
-        "assumed": {
-          "type": "boolean"
-        },
-        "author_id": {
-          "type": "string"
-        },
-        "author_name": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        },
-        "developmental": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.Developmental"
-          }
-        },
-        "estimated_time": {
-          "type": "integer"
-        },
-        "grade": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.Grade"
-          }
-        },
-        "keywords": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "latest_id": {
-          "type": "string"
-        },
-        "locked_by": {
-          "type": "string"
-        },
-        "organization_id": {
-          "type": "string"
-        },
-        "organization_name": {
-          "type": "string"
-        },
-        "outcome_id": {
-          "type": "string"
-        },
-        "outcome_name": {
-          "type": "string"
-        },
-        "program": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.Program"
-          }
-        },
-        "publish_scope": {
-          "type": "string"
-        },
-        "publish_status": {
-          "type": "string"
-        },
-        "reject_reason": {
-          "type": "string"
-        },
-        "sets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.OutcomeSetCreateView"
-          }
-        },
-        "shortcode": {
-          "type": "string"
-        },
-        "skills": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.Skill"
-          }
-        },
-        "source_id": {
-          "type": "string"
-        },
-        "subject": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/api.Subject"
-          }
-        },
-        "update_at": {
-          "type": "integer"
-        }
-      }
-    },
-    "api.Program": {
-      "type": "object",
-      "properties": {
-        "program_id": {
-          "type": "string"
-        },
-        "program_name": {
-          "type": "string"
-        }
-      }
-    },
     "api.PublishContentRequest": {
       "type": "object",
       "properties": {
@@ -6983,21 +7021,13 @@
         }
       }
     },
-    "api.PublishOutcomeReq": {
-      "type": "object",
-      "properties": {
-        "scope": {
-          "type": "string"
-        }
-      }
-    },
     "api.PullOutcomeSetResponse": {
       "type": "object",
       "properties": {
         "sets": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/api.OutcomeSetCreateView"
+            "$ref": "#/definitions/model.OutcomeSetCreateView"
           }
         }
       }
@@ -7091,6 +7121,14 @@
         }
       }
     },
+    "api.ShortcodeRequest": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        }
+      }
+    },
     "api.ShortcodeResponse": {
       "type": "object",
       "properties": {
@@ -7103,28 +7141,6 @@
       "type": "object",
       "properties": {
         "url": {
-          "type": "string"
-        }
-      }
-    },
-    "api.Skill": {
-      "type": "object",
-      "properties": {
-        "skill_id": {
-          "type": "string"
-        },
-        "skill_name": {
-          "type": "string"
-        }
-      }
-    },
-    "api.Subject": {
-      "type": "object",
-      "properties": {
-        "subject_id": {
-          "type": "string"
-        },
-        "subject_name": {
           "type": "string"
         }
       }
@@ -7409,9 +7425,6 @@
           "items": {
             "$ref": "#/definitions/entity.AssessmentContentView"
           }
-        },
-        "number_of_outcomes": {
-          "type": "integer"
         },
         "outcome_attendances": {
           "type": "array",
@@ -8771,6 +8784,12 @@
         "age": {
           "type": "string"
         },
+        "ages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "ancestor_id": {
           "type": "string"
         },
@@ -8782,6 +8801,12 @@
         },
         "author_name": {
           "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "created_at": {
           "type": "integer"
@@ -8801,6 +8826,12 @@
         },
         "grade": {
           "type": "string"
+        },
+        "grades": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "keywords": {
           "type": "string"
@@ -8822,6 +8853,12 @@
         },
         "program": {
           "type": "string"
+        },
+        "programs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "publish_scope": {
           "type": "string"
@@ -8848,8 +8885,20 @@
         "source_id": {
           "type": "string"
         },
+        "subcategories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "subject": {
           "type": "string"
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "updated_at": {
           "type": "integer"
@@ -10196,6 +10245,618 @@
         },
         "system": {
           "type": "boolean"
+        }
+      }
+    },
+    "model.Age": {
+      "type": "object",
+      "properties": {
+        "age_id": {
+          "type": "string"
+        },
+        "age_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.AuthorView": {
+      "type": "object",
+      "properties": {
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Category": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Developmental": {
+      "type": "object",
+      "properties": {
+        "developmental_id": {
+          "type": "string"
+        },
+        "developmental_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Grade": {
+      "type": "object",
+      "properties": {
+        "grade_id": {
+          "type": "string"
+        },
+        "grade_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.MilestoneList": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "model.MilestoneSearchResponse": {
+      "type": "object",
+      "properties": {
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.MilestoneView"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.MilestoneView": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Age"
+          }
+        },
+        "age_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "category": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Category"
+          }
+        },
+        "category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Grade"
+          }
+        },
+        "grade_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "milestone_id": {
+          "type": "string"
+        },
+        "milestone_name": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "object",
+          "$ref": "#/definitions/model.AuthorView"
+        },
+        "outcome_ancestor_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outcome_count": {
+          "type": "integer"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeView"
+          }
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Program"
+          }
+        },
+        "program_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "sub_category": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.SubCategory"
+          }
+        },
+        "subcategory_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Subject"
+          }
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "model.OrganizationView": {
+      "type": "object",
+      "properties": {
+        "organization_id": {
+          "type": "string"
+        },
+        "organization_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.OutcomeBulkRejectRequest": {
+      "type": "object",
+      "properties": {
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reject_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "model.OutcomeCreateResponse": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "organization_name": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updated_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.OutcomeCreateView": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeSetCreateView"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "model.OutcomeIDList": {
+      "type": "object",
+      "properties": {
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "model.OutcomeRejectReq": {
+      "type": "object",
+      "properties": {
+        "reject_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "model.OutcomeSearchResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeView"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.OutcomeSetCreateView": {
+      "type": "object",
+      "properties": {
+        "set_id": {
+          "type": "string"
+        },
+        "set_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.OutcomeView": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Age"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Developmental"
+          }
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Grade"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "organization_name": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Program"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeSetCreateView"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Skill"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Subject"
+          }
+        },
+        "update_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.Program": {
+      "type": "object",
+      "properties": {
+        "program_id": {
+          "type": "string"
+        },
+        "program_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.PublishOutcomeReq": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Skill": {
+      "type": "object",
+      "properties": {
+        "skill_id": {
+          "type": "string"
+        },
+        "skill_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.SubCategory": {
+      "type": "object",
+      "properties": {
+        "sub_category_id": {
+          "type": "string"
+        },
+        "sub_category_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Subject": {
+      "type": "object",
+      "properties": {
+        "subject_id": {
+          "type": "string"
+        },
+        "subject_name": {
+          "type": "string"
         }
       }
     }

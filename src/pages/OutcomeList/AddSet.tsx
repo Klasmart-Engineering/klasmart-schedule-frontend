@@ -1,6 +1,7 @@
 import { Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles } from "@material-ui/core";
 import React, { useMemo, useState } from "react";
-import { ApiOutcomeSetCreateView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
+import { ApiPullOutcomeSetResponse } from "../../api/api.auto";
+import { OutcomeSetResult } from "../../api/type";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { OutcomeSet } from "../../components/OutSet";
 import { d } from "../../locale/LocaleManager";
@@ -31,7 +32,7 @@ export interface AddSetProps {
   onSearchOutcomeSet: (set_name: string) => any;
   onCreateOutcomeSet: (set_name: string) => any;
   onSetOutcomeSet: (ids: string[]) => any;
-  selectedOutcomeSet: ApiOutcomeSetCreateView[];
+  selectedOutcomeSet: OutcomeSetResult;
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset: string;

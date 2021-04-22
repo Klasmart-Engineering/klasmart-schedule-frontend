@@ -10,11 +10,6 @@
  * ---------------------------------------------------------------
  */
 
-export interface ApiAge {
-  age_id?: string;
-  age_name?: string;
-}
-
 export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiBulkBindOutcomeSetRequest {
@@ -36,11 +31,6 @@ export interface ApiCreateFolderResponse {
   id?: string;
 }
 
-export interface ApiDevelopmental {
-  developmental_id?: string;
-  developmental_name?: string;
-}
-
 export interface ApiDownloadPathResource {
   path?: string;
 }
@@ -60,11 +50,6 @@ export interface ApiForgottenPasswordRequest {
   auth_code?: string;
   auth_to?: string;
   password?: string;
-}
-
-export interface ApiGrade {
-  grade_id?: string;
-  grade_name?: string;
 }
 
 export interface ApiIDResponse {
@@ -89,120 +74,12 @@ export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
 }
 
-export interface ApiOutcomeBulkRejectRequest {
-  outcome_ids?: string[];
-  reject_reason?: string;
-}
-
-export interface ApiOutcomeCreateResponse {
-  age?: string[];
-  ancestor_id?: string;
-  assumed?: boolean;
-  author_id?: string;
-  author_name?: string;
-  created_at?: number;
-  description?: string;
-  developmental?: string[];
-  estimated_time?: number;
-  grade?: string[];
-  keywords?: string[];
-  locked_by?: string;
-  organization_id?: string;
-  organization_name?: string;
-  outcome_id?: string;
-  outcome_name?: string;
-  program?: string[];
-  publish_scope?: string;
-  publish_status?: string;
-  reject_reason?: string;
-  shortcode?: string;
-  skills?: string[];
-  source_id?: string;
-  subject?: string[];
-  updated_at?: number;
-}
-
-export interface ApiOutcomeCreateView {
-  age?: string[];
-  assumed?: boolean;
-  description?: string;
-  developmental?: string[];
-  estimated_time?: number;
-  grade?: string[];
-  keywords?: string[];
-  organization_id?: string;
-  outcome_id?: string;
-  outcome_name?: string;
-  program?: string[];
-  sets?: ApiOutcomeSetCreateView[];
-  shortcode?: string;
-  skills?: string[];
-  subject?: string[];
-}
-
-export interface ApiOutcomeIDList {
-  outcome_ids?: string[];
-}
-
-export interface ApiOutcomeRejectReq {
-  reject_reason?: string;
-}
-
-export interface ApiOutcomeSearchResponse {
-  list?: ApiOutcomeView[];
-  total?: number;
-}
-
-export interface ApiOutcomeSetCreateView {
-  set_id?: string;
-  set_name?: string;
-}
-
-export interface ApiOutcomeView {
-  age?: ApiAge[];
-  ancestor_id?: string;
-  assumed?: boolean;
-  author_id?: string;
-  author_name?: string;
-  created_at?: number;
-  description?: string;
-  developmental?: ApiDevelopmental[];
-  estimated_time?: number;
-  grade?: ApiGrade[];
-  keywords?: string[];
-  latest_id?: string;
-  locked_by?: string;
-  organization_id?: string;
-  organization_name?: string;
-  outcome_id?: string;
-  outcome_name?: string;
-  program?: ApiProgram[];
-  publish_scope?: string;
-  publish_status?: string;
-  reject_reason?: string;
-  sets?: ApiOutcomeSetCreateView[];
-  shortcode?: string;
-  skills?: ApiSkill[];
-  source_id?: string;
-  subject?: ApiSubject[];
-  update_at?: number;
-}
-
-export interface ApiProgram {
-  program_id?: string;
-  program_name?: string;
-}
-
 export interface ApiPublishContentRequest {
   scope?: string[];
 }
 
-export interface ApiPublishOutcomeReq {
-  scope?: string;
-}
-
 export interface ApiPullOutcomeSetResponse {
-  sets?: ApiOutcomeSetCreateView[];
+  sets?: ModelOutcomeSetCreateView[];
 }
 
 export interface ApiRegisterRequest {
@@ -245,22 +122,16 @@ export interface ApiSendCodeRequest {
   mobile?: string;
 }
 
+export interface ApiShortcodeRequest {
+  kind?: string;
+}
+
 export interface ApiShortcodeResponse {
   shortcode?: string;
 }
 
 export interface ApiSignatureResponse {
   url?: string;
-}
-
-export interface ApiSkill {
-  skill_id?: string;
-  skill_name?: string;
-}
-
-export interface ApiSubject {
-  subject_id?: string;
-  subject_name?: string;
 }
 
 export type ApiSuccessRequestResponse = ApiResponse;
@@ -371,7 +242,6 @@ export interface EntityAssessmentDetail {
   complete_time?: number;
   id?: string;
   materials?: EntityAssessmentContentView[];
-  number_of_outcomes?: number;
   outcome_attendances?: EntityOutcomeAttendances[];
   plan?: EntityAssessmentContentView;
   program?: EntityAssessmentProgram;
@@ -825,10 +695,12 @@ export interface EntityOrganizationProperty {
 
 export interface EntityOutcome {
   age?: string;
+  ages?: string[];
   ancestor_id?: string;
   assumed?: boolean;
   author?: string;
   author_name?: string;
+  categories?: string[];
   created_at?: number;
   deleted_at?: number;
   description?: string;
@@ -837,6 +709,7 @@ export interface EntityOutcome {
   developmental?: string;
   extra?: number;
   grade?: string;
+  grades?: string[];
   keywords?: string;
   latest_id?: string;
   locked_by?: string;
@@ -844,6 +717,7 @@ export interface EntityOutcome {
   outcome_id?: string;
   outcome_name?: string;
   program?: string;
+  programs?: string[];
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string;
@@ -853,7 +727,9 @@ export interface EntityOutcome {
   /** SubCategory */
   skills?: string;
   source_id?: string;
+  subcategories?: string[];
   subject?: string;
+  subjects?: string[];
   updated_at?: number;
   version?: number;
 }
@@ -1321,6 +1197,197 @@ export interface ExternalSubject {
   system?: boolean;
 }
 
+export interface ModelAge {
+  age_id?: string;
+  age_name?: string;
+}
+
+export interface ModelAuthorView {
+  author_id?: string;
+  author_name?: string;
+}
+
+export interface ModelCategory {
+  category_id?: string;
+  category_name?: string;
+}
+
+export interface ModelDevelopmental {
+  developmental_id?: string;
+  developmental_name?: string;
+}
+
+export interface ModelGrade {
+  grade_id?: string;
+  grade_name?: string;
+}
+
+export interface ModelMilestoneList {
+  ids?: string[];
+}
+
+export interface ModelMilestoneSearchResponse {
+  milestones?: ModelMilestoneView[];
+  total?: number;
+}
+
+export interface ModelMilestoneView {
+  age?: ModelAge[];
+  age_ids?: string[];
+  ancestor_id?: string;
+  category?: ModelCategory[];
+  category_ids?: string[];
+  create_at?: number;
+  description?: string;
+  grade?: ModelGrade[];
+  grade_ids?: string[];
+  latest_id?: string;
+  locked_by?: string;
+  milestone_id?: string;
+  milestone_name?: string;
+  organization?: ModelAuthorView;
+  outcome_ancestor_ids?: string[];
+  outcome_count?: number;
+  outcomes?: ModelOutcomeView[];
+  program?: ModelProgram[];
+  program_ids?: string[];
+  shortcode?: string;
+  source_id?: string;
+  status?: string;
+  sub_category?: ModelSubCategory[];
+  subcategory_ids?: string[];
+  subject?: ModelSubject[];
+  subject_ids?: string[];
+}
+
+export interface ModelOrganizationView {
+  organization_id?: string;
+  organization_name?: string;
+}
+
+export interface ModelOutcomeBulkRejectRequest {
+  outcome_ids?: string[];
+  reject_reason?: string;
+}
+
+export interface ModelOutcomeCreateResponse {
+  age?: string[];
+  ancestor_id?: string;
+  assumed?: boolean;
+  author_id?: string;
+  author_name?: string;
+  created_at?: number;
+  description?: string;
+  developmental?: string[];
+  estimated_time?: number;
+  grade?: string[];
+  keywords?: string[];
+  locked_by?: string;
+  organization_id?: string;
+  organization_name?: string;
+  outcome_id?: string;
+  outcome_name?: string;
+  program?: string[];
+  publish_scope?: string;
+  publish_status?: string;
+  reject_reason?: string;
+  shortcode?: string;
+  skills?: string[];
+  source_id?: string;
+  subject?: string[];
+  updated_at?: number;
+}
+
+export interface ModelOutcomeCreateView {
+  age?: string[];
+  assumed?: boolean;
+  description?: string;
+  developmental?: string[];
+  estimated_time?: number;
+  grade?: string[];
+  keywords?: string[];
+  organization_id?: string;
+  outcome_id?: string;
+  outcome_name?: string;
+  program?: string[];
+  sets?: ModelOutcomeSetCreateView[];
+  shortcode?: string;
+  skills?: string[];
+  subject?: string[];
+}
+
+export interface ModelOutcomeIDList {
+  outcome_ids?: string[];
+}
+
+export interface ModelOutcomeRejectReq {
+  reject_reason?: string;
+}
+
+export interface ModelOutcomeSearchResponse {
+  list?: ModelOutcomeView[];
+  total?: number;
+}
+
+export interface ModelOutcomeSetCreateView {
+  set_id?: string;
+  set_name?: string;
+}
+
+export interface ModelOutcomeView {
+  age?: ModelAge[];
+  ancestor_id?: string;
+  assumed?: boolean;
+  author_id?: string;
+  author_name?: string;
+  created_at?: number;
+  description?: string;
+  developmental?: ModelDevelopmental[];
+  estimated_time?: number;
+  grade?: ModelGrade[];
+  keywords?: string[];
+  latest_id?: string;
+  locked_by?: string;
+  organization_id?: string;
+  organization_name?: string;
+  outcome_id?: string;
+  outcome_name?: string;
+  program?: ModelProgram[];
+  publish_scope?: string;
+  publish_status?: string;
+  reject_reason?: string;
+  sets?: ModelOutcomeSetCreateView[];
+  shortcode?: string;
+  skills?: ModelSkill[];
+  source_id?: string;
+  subject?: ModelSubject[];
+  update_at?: number;
+}
+
+export interface ModelProgram {
+  program_id?: string;
+  program_name?: string;
+}
+
+export interface ModelPublishOutcomeReq {
+  scope?: string;
+}
+
+export interface ModelSkill {
+  skill_id?: string;
+  skill_name?: string;
+}
+
+export interface ModelSubCategory {
+  sub_category_id?: string;
+  sub_category_name?: string;
+}
+
+export interface ModelSubject {
+  subject_id?: string;
+  subject_name?: string;
+}
+
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
   secure?: boolean;
 };
@@ -1531,7 +1598,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request DELETE:/bulk/learning_outcomes
      * @description bulk delete learning outcomes
      */
-    deleteOutcomeBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
+    deleteOutcomeBulk: (id_list: ModelOutcomeIDList, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk/learning_outcomes`,
         "DELETE",
@@ -1547,7 +1614,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/bulk_approve/learning_outcomes
      * @description approve learning outcomes
      */
-    approveLearningOutcomesBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
+    approveLearningOutcomesBulk: (id_list: ModelOutcomeIDList, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk_approve/learning_outcomes`,
         "PUT",
@@ -1563,7 +1630,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/bulk_publish/learning_outcomes
      * @description submit publish learning outcomes
      */
-    publishLearningOutcomesBulk: (id_list: ApiOutcomeIDList, params?: RequestParams) =>
+    publishLearningOutcomesBulk: (id_list: ModelOutcomeIDList, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk_publish/learning_outcomes`,
         "PUT",
@@ -1579,7 +1646,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/bulk_reject/learning_outcomes
      * @description reject learning outcomes
      */
-    rejectLearningOutcomesBulk: (bulk_reject_list: ApiOutcomeBulkRejectRequest, params?: RequestParams) =>
+    rejectLearningOutcomesBulk: (bulk_reject_list: ModelOutcomeBulkRejectRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk_reject/learning_outcomes`,
         "PUT",
@@ -2440,7 +2507,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       params?: RequestParams
     ) =>
       this.request<
-        ApiOutcomeSearchResponse,
+        ModelOutcomeSearchResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/learning_outcomes${this.addQueryParams(query)}`, "GET", params),
 
@@ -2451,8 +2518,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/learning_outcomes
      * @description Create learning outcomes
      */
-    createLearningOutcomes: (outcome: ApiOutcomeCreateView, params?: RequestParams) =>
-      this.request<ApiOutcomeCreateResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+    createLearningOutcomes: (outcome: ModelOutcomeCreateView, params?: RequestParams) =>
+      this.request<ModelOutcomeCreateResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes`,
         "POST",
         params,
@@ -2467,7 +2534,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description learning outcomes info
      */
     getLearningOutcomesById: (outcome_id: string, params?: RequestParams) =>
-      this.request<ApiOutcomeView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<ModelOutcomeView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes/${outcome_id}`,
         "GET",
         params
@@ -2480,7 +2547,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/learning_outcomes/{outcome_id}
      * @description update learning outcomes by id
      */
-    updateLearningOutcomes: (outcome_id: string, outcome: ApiOutcomeCreateView, params?: RequestParams) =>
+    updateLearningOutcomes: (outcome_id: string, outcome: ModelOutcomeCreateView, params?: RequestParams) =>
       this.request<
         string,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
@@ -2535,7 +2602,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/learning_outcomes/{outcome_id}/publish
      * @description submit publish learning outcomes
      */
-    publishLearningOutcomes: (outcome_id: string, PublishOutcomeRequest: ApiPublishOutcomeReq, params?: RequestParams) =>
+    publishLearningOutcomes: (outcome_id: string, PublishOutcomeRequest: ModelPublishOutcomeReq, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes/${outcome_id}/publish`,
         "PUT",
@@ -2550,7 +2617,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/learning_outcomes/{outcome_id}/reject
      * @description reject learning outcomes
      */
-    rejectLearningOutcomes: (outcome_id: string, OutcomeRejectReq: ApiOutcomeRejectReq, params?: RequestParams) =>
+    rejectLearningOutcomes: (outcome_id: string, OutcomeRejectReq: ModelOutcomeRejectReq, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/learning_outcomes/${outcome_id}/reject`,
         "PUT",
@@ -2578,6 +2645,116 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getLessonTypeById: (id: string, params?: RequestParams) =>
       this.request<EntityLessonType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/lesson_types/${id}`, "GET", params),
+  };
+  milestones = {
+    /**
+     * @tags milestone
+     * @name searchMilestone
+     * @summary search milestone
+     * @request GET:/milestones
+     * @description search milestone
+     */
+    searchMilestone: (
+      query?: {
+        search_key?: string;
+        name?: string;
+        description?: string;
+        shortcode?: string;
+        status?: "draft" | "published";
+        page?: number;
+        page_size?: number;
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<ModelMilestoneSearchResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/milestones${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags milestone
+     * @name createMilestone
+     * @summary create milestone
+     * @request POST:/milestones
+     * @description Create milestone
+     */
+    createMilestone: (milestone: ModelMilestoneView, params?: RequestParams) =>
+      this.request<ModelMilestoneView, ApiBadRequestResponse | ApiForbiddenResponse | ApiConflictResponse | ApiInternalServerErrorResponse>(
+        `/milestones`,
+        "POST",
+        params,
+        milestone
+      ),
+
+    /**
+     * @tags milestone
+     * @name deleteMilestone
+     * @summary delete milestone
+     * @request DELETE:/milestones
+     * @description delete milestone
+     */
+    deleteMilestone: (milestones: ModelMilestoneList, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/milestones`,
+        "DELETE",
+        params,
+        milestones
+      ),
+
+    /**
+     * @tags milestone
+     * @name publishMilestone
+     * @summary publish milestone
+     * @request POST:/milestones/publish
+     * @description publish milestone
+     */
+    publishMilestone: (milestones: ModelMilestoneList, params?: RequestParams) =>
+      this.request<
+        string,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/milestones/publish`, "POST", params, milestones),
+
+    /**
+     * @tags milestone
+     * @name obtainMilestone
+     * @summary get milestone by id
+     * @request GET:/milestones/{milestone_id}
+     * @description milestone info
+     */
+    obtainMilestone: (milestone_id: string, params?: RequestParams) =>
+      this.request<ModelMilestoneView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/milestones/${milestone_id}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags milestone
+     * @name updateMilestone
+     * @summary update milestone
+     * @request PUT:/milestones/{milestone_id}
+     * @description update milestone info
+     */
+    updateMilestone: (milestone_id: string, milestone: ModelMilestoneView, params?: RequestParams) =>
+      this.request<
+        string,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/milestones/${milestone_id}`, "PUT", params, milestone),
+
+    /**
+     * @tags milestone
+     * @name occupyMilestone
+     * @summary lock milestone
+     * @request PUT:/milestones/{milestone_id}/occupy
+     * @description occupy before edit
+     */
+    occupyMilestone: (milestone_id: string, params?: RequestParams) =>
+      this.request<
+        string,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
+      >(`/milestones/${milestone_id}/occupy`, "PUT", params),
   };
   organizationsPropertys = {
     /**
@@ -2625,7 +2802,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<ModelOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/pending_learning_outcomes${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2666,7 +2843,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<ApiOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<ModelOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/private_learning_outcomes${this.addQueryParams(query)}`,
         "GET",
         params
@@ -3172,9 +3349,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/sets
      * @description Create learning outcome sets
      */
-    createOutcomeSet: (outcome: ApiOutcomeSetCreateView, params?: RequestParams) =>
+    createOutcomeSet: (outcome: ModelOutcomeSetCreateView, params?: RequestParams) =>
       this.request<
-        ApiOutcomeSetCreateView,
+        ModelOutcomeSetCreateView,
         ApiBadRequestResponse | ApiUnAuthorizedResponse | ApiForbiddenResponse | ApiConflictResponse | ApiInternalServerErrorResponse
       >(`/sets`, "POST", params, outcome),
 
@@ -3201,11 +3378,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/shortcode
      * @description generate shortcode
      */
-    generateShortcode: (params?: RequestParams) =>
+    generateShortcode: (kind: ApiShortcodeRequest, params?: RequestParams) =>
       this.request<
         ApiShortcodeResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiConflictResponse | ApiInternalServerErrorResponse
-      >(`/shortcode`, "POST", params),
+      >(`/shortcode`, "POST", params, kind),
   };
   skills = {
     /**

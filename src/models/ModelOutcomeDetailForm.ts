@@ -1,6 +1,7 @@
-import { ApiOutcomeSetCreateView, ApiOutcomeView, ApiPullOutcomeSetResponse } from "../api/api.auto";
+import { ApiPullOutcomeSetResponse } from "../api/api.auto";
+import { GetOutcomeDetail, OutcomeSetResult } from "../api/type";
 
-export const modelOutcomeDetail = (outcomeDetail: ApiOutcomeView) => {
+export const modelOutcomeDetail = (outcomeDetail: GetOutcomeDetail) => {
   const afterData = JSON.parse(JSON.stringify(outcomeDetail));
   const { program, subject, developmental, skills, age, grade } = outcomeDetail;
   if (program && program.length) {
@@ -30,7 +31,7 @@ export const modelOutcomeDetail = (outcomeDetail: ApiOutcomeView) => {
   return afterData;
 };
 
-export const ids2OutcomeSet = (ids: string[], outComeSets: ApiPullOutcomeSetResponse["sets"]): ApiOutcomeSetCreateView[] => {
+export const ids2OutcomeSet = (ids: string[], outComeSets: ApiPullOutcomeSetResponse["sets"]): OutcomeSetResult => {
   if (!ids || !ids.length || !outComeSets || !outComeSets.length) return [];
   return outComeSets.filter((item) => ids.indexOf(item.set_id as string) >= 0);
 };
@@ -52,7 +53,7 @@ export const excluedOutcomeSet = (ids: string[], outComeSets: ApiPullOutcomeSetR
   return ids;
 };
 
-export const isAllMineOutcome = (ids: string[], outcomeList: ApiOutcomeView[], user_id: string) => {
+export const isAllMineOutcome = (ids: string[], outcomeList: GetOutcomeDetail[], user_id: string) => {
   const selectedOutcome = outcomeList.filter((item) => ids.indexOf(item.outcome_id as string) >= 0);
   const index = selectedOutcome.findIndex((item) => item.author_id !== user_id);
   return !(index >= 0);

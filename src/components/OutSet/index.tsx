@@ -4,7 +4,8 @@ import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import clsx from "clsx";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ApiOutcomeSetCreateView, ApiPullOutcomeSetResponse } from "../../api/api.auto";
+import { ApiPullOutcomeSetResponse } from "../../api/api.auto";
+import { OutcomeSetResult } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 import { CheckboxGroup } from "../CheckboxGroup";
 import { LButton } from "../LButton";
@@ -88,7 +89,7 @@ export interface OutcomeSetProps {
   onSearchOutcomeSet: (set_name: string) => any;
   onCreateOutcomeSet: (set_name: string) => any;
   onSetOutcomeSet: (ids: string[]) => any;
-  selectedOutcomeSet: ApiOutcomeSetCreateView[];
+  selectedOutcomeSet: OutcomeSetResult;
   outcomeSetList: ApiPullOutcomeSetResponse["sets"];
   onDeleteSet: (set_id: string) => any;
   defaultSelectOutcomeset?: string;

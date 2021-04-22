@@ -1,16 +1,9 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
-import {
-  ApiOutcomeBulkRejectRequest,
-  ApiOutcomeCreateResponse,
-  ApiOutcomeCreateView,
-  ApiOutcomeIDList,
-  ApiOutcomeView,
-  ApiPullOutcomeSetResponse,
-} from "../api/api.auto";
+import { ApiPullOutcomeSetResponse } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
-import { OutcomePublishStatus } from "../api/type";
+import { GetOutcomeDetail, GetOutcomeList, OutcomePublishStatus } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
 import { isUnpublish } from "../pages/OutcomeList/ThirdSearchHeader";
@@ -22,10 +15,10 @@ import { actWarning } from "./notify";
 import { IPermissionState } from "./type";
 
 interface IOutcomeState extends IPermissionState {
-  outcomeDetail: ApiOutcomeView;
+  outcomeDetail: GetOutcomeDetail;
   total: number;
-  outcomeList: ApiOutcomeView[];
-  createOutcome: ApiOutcomeCreateView;
+  outcomeList: GetOutcomeList;
+  // createOutcome: ApiOutcomeCreateView;
   lockOutcome_id: string;
   mockOptions: MockOptions;
   newOptions: ResultGetNewOptions;
@@ -73,20 +66,20 @@ export const initialState: IOutcomeState = {
   },
   total: 0,
   outcomeList: [],
-  createOutcome: {
-    outcome_name: "",
-    assumed: false,
-    organization_id: "",
-    program: [],
-    subject: [],
-    developmental: [],
-    skills: [],
-    age: [],
-    grade: [],
-    estimated_time: 10,
-    keywords: [],
-    description: "",
-  },
+  // createOutcome: {
+  //   outcome_name: "",
+  //   assumed: false,
+  //   organization_id: "",
+  //   program: [],
+  //   subject: [],
+  //   developmental: [],
+  //   skills: [],
+  //   age: [],
+  //   grade: [],
+  //   estimated_time: 10,
+  //   keywords: [],
+  //   description: "",
+  // },
   lockOutcome_id: "",
   mockOptions: {
     options: [],
@@ -280,15 +273,13 @@ export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult,
   }
 );
 
-export const deleteOutcome = createAsyncThunk<string, Required<ApiOutcomeView>["outcome_id"]>(
-  "outcome/deleteOutcome",
-  async (id, { dispatch }) => {
-    const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
-    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    if (!isConfirmed) return Promise.reject();
-    return api.learningOutcomes.deleteLearningOutcome(id);
-  }
-);
+type ParamDeleteLearningOutcome = Parameters<typeof api.learningOutcomes.deleteLearningOutcome>[0];
+export const deleteOutcome = createAsyncThunk<string, ParamDeleteLearningOutcome>("outcome/deleteOutcome", async (id, { dispatch }) => {
+  const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
+  const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+  if (!isConfirmed) return Promise.reject();
+  return api.learningOutcomes.deleteLearningOutcome(id);
+});
 
 type publishOutcomeResponse = AsyncReturnType<typeof api.learningOutcomes.publishLearningOutcomes>;
 type publishOutcomeRequest = Parameters<typeof api.learningOutcomes.publishLearningOutcomes>[0];
@@ -304,7 +295,8 @@ export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOu
 
 // type BulkActionIds = Parameters<typeof>
 type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
-export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
+type BulkDeleteOutcomeParams = Parameters<typeof api.bulk.deleteOutcomeBulk>[0];
+export const bulkDeleteOutcome = createAsyncThunk<string, BulkDeleteOutcomeParams["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
   async (ids, { dispatch }) => {
     if (!ids?.length)
@@ -315,10 +307,11 @@ export const bulkDeleteOutcome = createAsyncThunk<string, Required<ApiOutcomeIDL
     return api.bulk.deleteOutcomeBulk({ outcome_ids: ids });
   }
 );
-export const bulkPublishOutcome = createAsyncThunk<string, Required<ApiOutcomeIDList>["outcome_ids"]>(
+type BulkPublishutcomeParams = Parameters<typeof api.bulkPublish.publishLearningOutcomesBulk>[0];
+export const bulkPublishOutcome = createAsyncThunk<string, BulkPublishutcomeParams["outcome_ids"]>(
   "outcome/bulkPublishOutcome",
   async (ids, { dispatch }) => {
-    if (!ids.length)
+    if (ids && !ids.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
     const content = "Are you sure you want to publish these contents?";
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
@@ -333,8 +326,9 @@ export const lockOutcome = createAsyncThunk<
 >("outcome/lockOutcome", async ({ id }) => {
   return await api.learningOutcomes.lockLearningOutcomes(id);
 });
-
-export const save = createAsyncThunk<ApiOutcomeCreateResponse, ApiOutcomeCreateView, { state: RootState }>(
+type ResultCreateLearningOutcomes = AsyncReturnType<typeof api.learningOutcomes.createLearningOutcomes>;
+type ParamsCreateLearningOutcomes = Parameters<typeof api.learningOutcomes.createLearningOutcomes>[0];
+export const save = createAsyncThunk<ResultCreateLearningOutcomes, ParamsCreateLearningOutcomes, { state: RootState }>(
   "outcome/save",
   async (payload, { getState }) => {
     return await api.learningOutcomes.createLearningOutcomes(payload);
@@ -352,7 +346,7 @@ export const updateOutcome = createAsyncThunk<ResultUpdateOutcome, ParamsUpdateO
 
 type ResuleGetOutcomeDetail = ReturnType<typeof api.learningOutcomes.getLearningOutcomesById>;
 type ParamsGetOutcomeDetail = { id: Parameters<typeof api.learningOutcomes.getLearningOutcomesById>[0] } & LoadingMetaPayload;
-export const getOutcomeDetail = createAsyncThunk<ApiOutcomeView, ParamsGetOutcomeDetail>("outcome/getOutcomeDetail", ({ id }) => {
+export const getOutcomeDetail = createAsyncThunk<ResuleGetOutcomeDetail, ParamsGetOutcomeDetail>("outcome/getOutcomeDetail", ({ id }) => {
   return api.learningOutcomes.getLearningOutcomesById(id);
 });
 
@@ -390,7 +384,8 @@ export const newReject = createAsyncThunk<ResultNewRejectOutcome, ParamsNewRejec
 );
 
 type IQueryBulkRejectResult = AsyncReturnType<typeof api.bulkApprove.approveLearningOutcomesBulk>;
-export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<ApiOutcomeIDList>["outcome_ids"]>(
+type IQueryBulkApproveOutcomeParams = Parameters<typeof api.bulkApprove.approveLearningOutcomesBulk>[0];
+export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, IQueryBulkApproveOutcomeParams["outcome_ids"]>(
   "outcome/bulkApprove",
   async (ids, { dispatch }) => {
     if (!ids || !ids.length)
@@ -403,8 +398,8 @@ export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, Required<Api
 );
 
 type ResultBulkRejectOutcome = AsyncReturnType<typeof api.bulkReject.rejectLearningOutcomesBulk>;
-
-export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, Required<ApiOutcomeBulkRejectRequest>["outcome_ids"]>(
+type IQueryBulkRejctOutcomeParams = Parameters<typeof api.bulkReject.rejectLearningOutcomesBulk>[0];
+export const bulkReject = createAsyncThunk<ResultBulkRejectOutcome, IQueryBulkRejctOutcomeParams["outcome_ids"]>(
   "outcome/bulkReject",
   async (ids, { dispatch }) => {
     if (!ids || !ids.length)
@@ -452,8 +447,8 @@ type IQueryGenerateShortcodeParams = Parameters<typeof api.shortcode.generateSho
 type IQueryGenerateShortcodeResult = AsyncReturnType<typeof api.shortcode.generateShortcode>;
 export const generateShortcode = createAsyncThunk<IQueryGenerateShortcodeResult, IQueryGenerateShortcodeParams>(
   "shortcode/generateShortcode",
-  async () => {
-    return api.shortcode.generateShortcode();
+  async (kind) => {
+    return api.shortcode.generateShortcode(kind);
   }
 );
 
