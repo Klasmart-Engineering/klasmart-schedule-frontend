@@ -322,7 +322,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
     <Box style={{ height: 390 }}>
       <Typography className={css.subTitle}>
         {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")}:{" "}
-        {`${selectedMaterials.length}/${assessmentDetail.materials?.length}`}
+        {`${selectedMaterials.length}/${assessmentDetail.materials?.length ?? 0}`}
       </Typography>
       {assessmentDetail.materials &&
         assessmentDetail.materials.length &&
