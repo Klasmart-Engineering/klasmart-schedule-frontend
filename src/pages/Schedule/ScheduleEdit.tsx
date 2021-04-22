@@ -991,6 +991,14 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const isScheduleExpired = (): boolean => {
+    return scheduleId
+      ? scheduleDetial.status !== "NotStart" ||
+          privilegedMembers("Student") ||
+          ((scheduleDetial.is_home_fun as boolean) && scheduleDetial.role_type === "Student")
+      : false;
+  };
+
+  const isScheduleExpiredMulti = (): boolean => {
     return scheduleId ? scheduleDetial.status !== "NotStart" || privilegedMembers("Student") : false;
   };
 
@@ -1591,7 +1599,7 @@ function EditBox(props: CalendarStateProps) {
                 onClick={closeEdit}
               />
             </Grid>
-            {!isScheduleExpired() && (
+            {!isScheduleExpiredMulti() && (
               <Grid
                 item
                 xs={6}
@@ -1820,6 +1828,7 @@ function EditBox(props: CalendarStateProps) {
             <Box className={css.participantSaveBox}>
               <CreateOutlinedIcon
                 onClick={() => {
+                  if (isScheduleExpired() || isLimit()) return;
                   if (scheduleDetial?.class?.enable !== false) {
                     setRosterSaveStatus(false);
                     setIsForce(false);
@@ -1939,6 +1948,7 @@ function EditBox(props: CalendarStateProps) {
             ></TextField>
             <AddCircleOutlineOutlined
               onClick={() => {
+                if (isScheduleExpired() || isLimit()) return;
                 if (scheduleDetial?.class?.enable !== false) addParticipants();
               }}
               className={css.iconField}
@@ -2071,7 +2081,7 @@ function EditBox(props: CalendarStateProps) {
           specificStatus={specificStatus}
           isStudent={privilegedMembers("Student")}
         />
-        {scheduleId && privilegedMembers("Student") && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
+        {scheduleId && scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
           <ScheduleFeedback
             schedule_id={scheduleId}
             changeModalDate={changeModalDate}
