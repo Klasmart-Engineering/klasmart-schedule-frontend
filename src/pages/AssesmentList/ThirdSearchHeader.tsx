@@ -111,11 +111,10 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   };
   const handleChangeStatus = (event: ChangeEvent<HTMLInputElement>) => {
     const status = event.target.value as AssessmentStatus | undefined;
-    onChange(
-      produce(value, (draft) => {
-        status ? (draft.status = status) : delete draft.status;
-      })
-    );
+    const newValue = produce(value, (draft) => {
+      status ? (draft.status = status) : delete draft.status;
+    });
+    onChange({ ...newValue, page: 1 });
   };
   const orderbyOptions = sortOptions().map((item) => (
     <MenuItem key={item.label} value={item.value}>
