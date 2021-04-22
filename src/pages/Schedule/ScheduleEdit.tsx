@@ -1484,7 +1484,7 @@ function EditBox(props: CalendarStateProps) {
       | undefined
     )[];
     return materialArr?.map((item: any, key: number) => (
-      <p style={{ fontWeight: 500, paddingLeft: "10px" }}>{`${key + 1}. ${item.name}`}</p>
+      <p style={{ fontWeight: 500, paddingLeft: "10px", wordBreak: "break-all" }}>{`${key + 1}. ${item.name}`}</p>
     ));
   };
 

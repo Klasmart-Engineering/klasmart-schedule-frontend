@@ -142,6 +142,7 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
     color: "#000",
     fontSize: 18,
     margin: "16px 0",
+    wordBreak: "break-all",
   },
   mCoverIcon: {
     fontSize: 16,
