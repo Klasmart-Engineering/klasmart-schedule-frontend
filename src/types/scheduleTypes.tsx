@@ -1,4 +1,5 @@
 import { MockOptionsItem } from "../api/extra";
+import { EntityScheduleDetailsView } from "../api/api.auto";
 
 export type timestampType = {
   start: number;
@@ -200,4 +201,9 @@ export interface FilterDataItemsProps {
   existData: string[];
   isHide: boolean;
   onLyMineData: string[];
+}
+
+export interface ScheduleEditExtend extends EntityScheduleDetailsView {
+  class_id: string;
+  lesson_plan_id: string;
 }

@@ -72,7 +72,6 @@ import {
   repeatOptionsType,
   timestampType,
 } from "../../types/scheduleTypes";
-import ContentPreview from "../ContentPreview";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
@@ -80,6 +79,7 @@ import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -1483,6 +1483,7 @@ function EditBox(props: CalendarStateProps) {
       | EntityContentInfoWithDetails
       | undefined
     )[];
+    console.log(materialArr);
     return materialArr?.map((item: any, key: number) => (
       <p style={{ fontWeight: 500, paddingLeft: "10px" }}>{`${key + 1}. ${item.name}`}</p>
     ));
@@ -2100,44 +2101,19 @@ function EditBox(props: CalendarStateProps) {
           <Box
             className={css.fieldset}
             style={{
-              display: scheduleId ? "block" : "none",
+              display: scheduleId ? "flex" : "none",
+              justifyContent: "space-around",
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                width: "45%",
-                marginRight: "10%",
-                visibility:
-                  (scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework") ||
-                  (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
-                    ? "hidden"
-                    : "visible",
+            <ScheduleButton
+              scheduleInfo={{
+                class_id: scheduleList.class_id as string,
+                lesson_plan_id: scheduleList.lesson_plan_id as string,
+                ...scheduleDetial,
               }}
-              disabled={!scheduleDetial.real_time_status?.lesson_plan_is_auth || scheduleDetial.role_type === "Student"}
-              href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
-            >
-              {d("Preview").t("schedule_button_preview")}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={scheduleDetial.status === "Closed" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
-              style={{
-                width: "45%",
-                visibility:
-                  (scheduleDetial.role_type !== "Student" && scheduleList.class_type === "Homework") ||
-                  (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
-                    ? "hidden"
-                    : "visible",
-              }}
-              onClick={() => handleGoLive(scheduleDetial)}
-            >
-              {scheduleList.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
-              {scheduleList.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
-              {scheduleList.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
-            </Button>
+              templateType="scheduleEdit"
+              handleGoLive={handleGoLive}
+            />
           </Box>
         )}
         {checkedStatus.repeatCheck && (
