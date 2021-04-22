@@ -116,7 +116,7 @@ export class ModelLessonPlan {
   static toArray(plan: Segment): Segment["material"][] {
     const result: Segment["material"][] = [];
     ModelLessonPlan.forEach(plan, (item) => {
-      result.push(item.material);
+      if (item.material) result.push(item.material);
     });
 
     return result;
