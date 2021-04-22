@@ -126,6 +126,9 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
     "& .MuiFormControlLabel-label": {
       fontSize: 18,
     },
+    "& .MuiTypography-root": {
+      wordBreak: "break-all",
+    },
   },
   blockEle: {
     "& .MuiInputBase-root": {
@@ -355,6 +358,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
               defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
               render={(props) => (
                 <FormControlLabel
+                  className={css.checkBoxCon}
                   control={
                     <Checkbox
                       checked={props.value}
