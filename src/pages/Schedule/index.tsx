@@ -137,7 +137,11 @@ function ScheduleContent() {
     )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
-    setStateMaterialArr(materialArr);
+    const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
+    materialArr.forEach((value) => {
+      if (value) newMaterialArr.push(value);
+    });
+    setStateMaterialArr(newMaterialArr);
 
     await dispatch(getSubjectByProgramId({ program_id: resultInfo.payload.contentDetail.program }));
     return {
