@@ -2,13 +2,12 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { emptyTip } from "../../components/TipImages";
+import { reportMiss } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getAchievementDetail } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
-import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
-import { ReportCategories } from "../ReportCategories";
-import { ReportStudentPerformance } from "../ReportStudentPerformance";
+import { ReportTitle } from "../ReportDashboard";
 import { AchievementDetailChart } from "./AchievementDetailChart";
 
 const clearNull = (obj: Record<string, any>) => {
@@ -38,11 +37,6 @@ export function ReportAchievementDetail() {
   const achievementDetail = totalData.achievementDetail ?? [];
   const student_name = totalData.student_name;
   const reportMockOptions = totalData.reportMockOptions;
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
-    if (value === Category.archived) return;
-    if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
-    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
-  };
   const backByLessonPlan = (urlParams: string) => {
     history.push({ pathname: ReportAchievementList.routeBasePath, search: urlParams });
   };
@@ -61,8 +55,7 @@ export function ReportAchievementDetail() {
 
   return (
     <>
-      <FirstSearchHeader value={Category.archived} onChange={handleChange} />
-      <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
+      <ReportTitle title={reportMiss("Student Achievement", "report_label_studentAchievement")}></ReportTitle>
       <BriefIntroduction
         value={condition}
         student_name={student_name}

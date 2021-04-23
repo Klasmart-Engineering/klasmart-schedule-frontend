@@ -323,7 +323,7 @@
   "assess_msg_exist_short_code": "This short code already exists, please enter again.",
   "assess_msg_short_code_error": "The short code needs to be five characters long, 0-9, A-Z.",
   "assess_msg_set_myonly": "You can only do bulk action to your own learning outcomes.",
-  "assess_msg_locked_lo": "The selected learning outcome is still in approval process, you cannot do bulk action for now.",
+  "assess_msg_locked_lo": "You cannot do bulk action for locked learning outcomes.",
   "assess_msg_existing_set": "This set already exists in the system, please try again. ",
   "assess_msg_locked_milestone": "You cannot do bulk action for locked milestones.",
   "assess_milestone_details": "Milestone Details",
