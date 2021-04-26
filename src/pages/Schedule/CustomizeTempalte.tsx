@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import { DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,12 +8,12 @@ import { Permission, PermissionType, usePermission } from "../../components/Perm
 import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
-import ContentPreview from "../ContentPreview";
-import { scheduleInfoViewProps, EntityScheduleShortInfo, memberType, classTypeLabel } from "../../types/scheduleTypes";
+import { scheduleInfoViewProps, EntityScheduleShortInfo, memberType, classTypeLabel, ScheduleEditExtend } from "../../types/scheduleTypes";
 import Box from "@material-ui/core/Box";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
+import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -57,7 +56,7 @@ const useStyles = makeStyles({
   },
   buttonPart: {
     display: "flex",
-    flexDirection: "row-reverse",
+    justifyContent: "flex-end",
     padding: "20px",
   },
   checkPlan: {
@@ -200,7 +199,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
   };
 
-  const handleGoLive = (scheduleInfo: scheduleInfoViewProps) => {
+  const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
     const currentTime = Math.floor(new Date().getTime());
     if (permissionShowLive && scheduleInfo.class_type === "Homework") {
       handleClose();
@@ -417,40 +416,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       {scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
         <div className={classes.buttonPart}>
-          <Button
-            color="primary"
-            variant="contained"
-            disabled={!checkLessonPlan || scheduleInfo.role_type === "Student" || scheduleInfo.class_type === "Task"}
-            style={{
-              display:
-                (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
-                (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
-                  ? "none"
-                  : "block",
-            }}
-            href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
-          >
-            {d("Preview").t("schedule_button_preview")}
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            autoFocus
-            className={classes.lastButton}
-            style={{
-              display:
-                (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type === "Homework") ||
-                (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
-                  ? "none"
-                  : "block",
-            }}
-            disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !checkLessonPlan}
-            onClick={() => handleGoLive(scheduleInfo)}
-          >
-            {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
-            {scheduleInfo.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
-            {scheduleInfo.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
-          </Button>
+          <ScheduleButton scheduleInfo={scheduleInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
         </div>
       )}
     </Box>

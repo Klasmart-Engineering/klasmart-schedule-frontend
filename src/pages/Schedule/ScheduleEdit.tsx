@@ -72,7 +72,6 @@ import {
   repeatOptionsType,
   timestampType,
 } from "../../types/scheduleTypes";
-import ContentPreview from "../ContentPreview";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
@@ -80,11 +79,19 @@ import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
     marginTop: 20,
     width: "100%",
+  },
+  fieldsetDisabled: {
+    marginTop: 20,
+    width: "100%",
+    "& .Mui-disabled": {
+      color: "rgba(0, 0, 0, 0.54)",
+    },
   },
   halfFieldset: {
     marginTop: 20,
@@ -991,6 +998,14 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const isScheduleExpired = (): boolean => {
+    return scheduleId
+      ? scheduleDetial.status !== "NotStart" ||
+          privilegedMembers("Student") ||
+          ((scheduleDetial.is_home_fun as boolean) && scheduleDetial.role_type === "Student")
+      : false;
+  };
+
+  const isScheduleExpiredMulti = (): boolean => {
     return scheduleId ? scheduleDetial.status !== "NotStart" || privilegedMembers("Student") : false;
   };
 
@@ -1483,6 +1498,7 @@ function EditBox(props: CalendarStateProps) {
       | EntityContentInfoWithDetails
       | undefined
     )[];
+    console.log(materialArr);
     return materialArr?.map((item: any, key: number) => (
       <p style={{ fontWeight: 500, paddingLeft: "10px", wordBreak: "break-all" }}>{`${key + 1}. ${item.name}`}</p>
     ));
@@ -1590,7 +1606,7 @@ function EditBox(props: CalendarStateProps) {
                 onClick={closeEdit}
               />
             </Grid>
-            {!isScheduleExpired() && (
+            {!isScheduleExpiredMulti() && (
               <Grid
                 item
                 xs={6}
@@ -1819,6 +1835,7 @@ function EditBox(props: CalendarStateProps) {
             <Box className={css.participantSaveBox}>
               <CreateOutlinedIcon
                 onClick={() => {
+                  if (isScheduleExpired() || isLimit()) return;
                   if (scheduleDetial?.class?.enable !== false) {
                     setRosterSaveStatus(false);
                     setIsForce(false);
@@ -1929,7 +1946,7 @@ function EditBox(props: CalendarStateProps) {
         {!privilegedMembers("Student") && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
-              className={css.fieldset}
+              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
               multiline
               label={d("Add Participants").t("schedule_detail_participants")}
               onChange={(e) => handleTopicListChange(e, "title")}
@@ -1938,6 +1955,7 @@ function EditBox(props: CalendarStateProps) {
             ></TextField>
             <AddCircleOutlineOutlined
               onClick={() => {
+                if (isScheduleExpired() || isLimit()) return;
                 if (scheduleDetial?.class?.enable !== false) addParticipants();
               }}
               className={css.iconField}
@@ -2069,8 +2087,9 @@ function EditBox(props: CalendarStateProps) {
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
           isStudent={privilegedMembers("Student")}
+          isDisabled={isScheduleExpired() || isLimit()}
         />
-        {scheduleId && privilegedMembers("Student") && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
+        {scheduleId && scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
           <ScheduleFeedback
             schedule_id={scheduleId}
             changeModalDate={changeModalDate}
@@ -2100,44 +2119,19 @@ function EditBox(props: CalendarStateProps) {
           <Box
             className={css.fieldset}
             style={{
-              display: scheduleId ? "block" : "none",
+              display: scheduleId ? "flex" : "none",
+              justifyContent: "space-around",
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                width: "45%",
-                marginRight: "10%",
-                visibility:
-                  (scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework") ||
-                  (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
-                    ? "hidden"
-                    : "visible",
+            <ScheduleButton
+              scheduleInfo={{
+                class_id: scheduleList.class_id as string,
+                lesson_plan_id: scheduleList.lesson_plan_id as string,
+                ...scheduleDetial,
               }}
-              disabled={!scheduleDetial.real_time_status?.lesson_plan_is_auth || scheduleDetial.role_type === "Student"}
-              href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleList.lesson_plan_id}&sid=${scheduleId}&class_id=${scheduleList.class_id}`}
-            >
-              {d("Preview").t("schedule_button_preview")}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={scheduleDetial.status === "Closed" || !scheduleDetial.real_time_status?.lesson_plan_is_auth}
-              style={{
-                width: "45%",
-                visibility:
-                  (scheduleDetial.role_type !== "Student" && scheduleList.class_type === "Homework") ||
-                  (scheduleDetial.role_type === "Student" && scheduleList.class_type === "OfflineClass")
-                    ? "hidden"
-                    : "visible",
-              }}
-              onClick={() => handleGoLive(scheduleDetial)}
-            >
-              {scheduleList.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
-              {scheduleList.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
-              {scheduleList.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
-            </Button>
+              templateType="scheduleEdit"
+              handleGoLive={handleGoLive}
+            />
           </Box>
         )}
         {checkedStatus.repeatCheck && (

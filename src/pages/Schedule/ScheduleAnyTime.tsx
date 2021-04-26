@@ -13,8 +13,8 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
-import ContentPreview from "../ContentPreview";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
+import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -382,45 +382,12 @@ function AnyTimeSchedule(props: SearchListProps) {
       <span>
         {type === "study" && (
           <>
-            <Button
-              color="primary"
-              variant="contained"
-              disabled={scheduleInfo.class_type === "Task" || !scheduleInfo.lesson_plan_id}
-              style={{
-                display:
-                  (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
-                  (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
-                    ? "none"
-                    : "block",
-              }}
-              href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
-            >
-              {d("Preview").t("schedule_button_preview")}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              autoFocus
-              style={{
-                marginLeft: "20px",
-                display:
-                  (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type === "Homework") ||
-                  (privilegedMembers("Student") && scheduleInfo.class_type === "OfflineClass")
-                    ? "none"
-                    : "block",
-              }}
-              disabled={scheduleInfo.status === "Closed" || !scheduleInfo.lesson_plan_id}
-              onClick={() => handleGoLive(scheduleInfo)}
-            >
-              {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
-              {scheduleInfo.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
-              {scheduleInfo.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
-            </Button>
+            <ScheduleButton scheduleInfo={scheduleInfo} templateType="scheduleAnyTime" handleGoLive={handleGoLive} />
           </>
         )}
         {showDeleteButto && (
           <Button
-            style={{ marginLeft: "20px", border: "1px solid #009688", color: "#009688" }}
+            style={{ border: "1px solid #009688", color: "#009688" }}
             onClick={() => handleEditSchedule(scheduleInfo)}
             variant="outlined"
             color="inherit"
