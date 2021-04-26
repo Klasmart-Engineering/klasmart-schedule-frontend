@@ -3,7 +3,6 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import InputBase from "@material-ui/core/InputBase";
-import InputLabel from "@material-ui/core/InputLabel";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
@@ -52,13 +51,14 @@ const useStyles = makeStyles((theme: Theme) =>
     btnRadio: {
       borderRadius: "20px",
       width: "160px",
-      height: "40px",
+      height: "46px",
     },
     modelSelect: {
       textAlign: "right",
     },
     searchBtn: {
       marginLeft: "12px",
+      height: "40px",
     },
     toolBox: {
       padding: "36px 0px 20px 0px",
@@ -66,6 +66,11 @@ const useStyles = makeStyles((theme: Theme) =>
     arrowsrt: {
       margin: "0px 20px 0px 20px",
       cursor: "pointer",
+    },
+    selectControl: {
+      "& .MuiNativeSelect-icon": {
+        right: "10px",
+      },
     },
   })
 );
@@ -146,13 +151,12 @@ function Tool(props: ToolProps) {
                   />
                 )}
                 <FormControl>
-                  <InputLabel htmlFor="demo-customized-textbox">Search</InputLabel>
                   <BootstrapInput
                     id="demo-customized-textbox"
-                    placeholder={d("Teacher Name").t("schedule_label_teacher_name")}
                     value={teacherName}
                     onChange={(event) => setTeacherName(event.target.value)}
                     onKeyDown={handleKeyDown}
+                    placeholder={d("Search teacher").t("schedule_text_search_teacher")}
                   />
                 </FormControl>
                 <Button
@@ -177,7 +181,7 @@ function Tool(props: ToolProps) {
             </Button>
           )}
           {!includeList && (
-            <FormControl>
+            <FormControl className={css.selectControl}>
               <NativeSelect
                 id="demo-customized-select-native"
                 value={modelYear ? "year" : modelView}

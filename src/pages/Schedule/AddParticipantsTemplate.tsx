@@ -1,8 +1,55 @@
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Hidden, makeStyles, Radio, RadioGroup, TextField } from "@material-ui/core";
+import {
+  Button,
+  Checkbox,
+  createStyles,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  makeStyles,
+  Radio,
+  RadioGroup,
+  Theme,
+  withStyles,
+} from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
 import { ClassOptionsItem, ParticipantsData, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
+import InputBase from "@material-ui/core/InputBase/InputBase";
+
+const BootstrapInput = withStyles((theme: Theme) =>
+  createStyles({
+    input: {
+      width: "160px",
+      borderRadius: 6,
+      position: "relative",
+      backgroundColor: theme.palette.background.paper,
+      border: "1px solid #ced4da",
+      fontSize: 16,
+      padding: "10px 26px 10px 12px",
+      marginLeft: "10px",
+      transition: theme.transitions.create(["border-color", "box-shadow"]),
+      // Use the system font instead of the default Roboto font.
+      fontFamily: [
+        "-apple-system",
+        "BlinkMacSystemFont",
+        '"Segoe UI"',
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(","),
+      "&:focus": {
+        borderRadius: 6,
+        borderColor: "#80bdff",
+        boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
+      },
+    },
+  })
+)(InputBase);
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -13,6 +60,8 @@ const useStyles = makeStyles((theme) => ({
   },
   searchPart: {
     marginTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
   },
   searchInput: {
     width: "500px",
@@ -135,43 +184,40 @@ export default function AddParticipantsTemplate(props: InfoProps) {
   };
 
   return (
-    <div>
+    <div style={{ width: "600px" }}>
       <div className={css.title}>{d("Add Participants").t("schedule_detail_participants")}</div>
       <Grid container alignItems="center" className={css.searchPart}>
-        <Grid item xs={4} sm={5} md={5} lg={5} xl={5} className={css.searchInput}>
-          <TextField
-            size="small"
-            id="outlined-basic"
-            label={d("Search").t("schedule_button_search")}
-            variant="outlined"
-            value={name}
-            onChange={handleNameChange}
-            onKeyDown={handleKeyDown}
+        <BootstrapInput
+          id="outlined-basic"
+          value={name}
+          onChange={handleNameChange}
+          onKeyDown={handleKeyDown}
+          placeholder={d("Search").t("schedule_button_search")}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          size="medium"
+          startIcon={<Search />}
+          onClick={handleSearch}
+          style={{ marginRight: "50px" }}
+        >
+          {d("Search").t("schedule_button_search")}
+        </Button>
+        <RadioGroup aria-label="gender" name="gender1" className={css.radioBox} value={defaultFilter} onChange={handleFilterChange}>
+          <FormControlLabel
+            value="students"
+            control={<Radio />}
+            label={d("Student").t("schedule_time_conflict_student")}
+            className={css.radioItem}
           />
-        </Grid>
-        <Hidden smDown>
-          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
-            <Button variant="contained" color="primary" size="medium" startIcon={<Search />} onClick={handleSearch}>
-              {d("Search").t("schedule_button_search")}
-            </Button>
-          </Grid>
-        </Hidden>
-        <Grid item xs={8} sm={5} md={5} lg={5} xl={5}>
-          <RadioGroup aria-label="gender" name="gender1" className={css.radioBox} value={defaultFilter} onChange={handleFilterChange}>
-            <FormControlLabel
-              value="students"
-              control={<Radio />}
-              label={d("Student").t("schedule_time_conflict_student")}
-              className={css.radioItem}
-            />
-            <FormControlLabel
-              value="teachers"
-              control={<Radio />}
-              label={d("Teacher").t("schedule_detail_teacher")}
-              className={css.radioItem}
-            />
-          </RadioGroup>
-        </Grid>
+          <FormControlLabel
+            value="teachers"
+            control={<Radio />}
+            label={d("Teacher").t("schedule_detail_teacher")}
+            className={css.radioItem}
+          />
+        </RadioGroup>
       </Grid>
       <FormGroup className={css.checkboxContainer}>
         {filterData &&
