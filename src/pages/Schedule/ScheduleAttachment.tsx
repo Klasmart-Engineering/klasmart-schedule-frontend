@@ -29,6 +29,13 @@ const useStyles = makeStyles(() => ({
     marginTop: 20,
     width: "100%",
   },
+  fieldsetDisabled: {
+    marginTop: 20,
+    width: "100%",
+    "& .Mui-disabled": {
+      color: "rgba(0, 0, 0, 0.54)",
+    },
+  },
   fieldBox: {
     position: "relative",
   },
@@ -76,6 +83,7 @@ interface ScheduleAttachmentProps {
   specificStatus?: boolean;
   setSpecificStatus?: (value: boolean) => void;
   isStudent: boolean;
+  isDisabled: boolean;
 }
 
 const useQuery = () => {
@@ -86,7 +94,7 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent, isDisabled } = props;
   const css = useStyles();
   const { schedule_id } = useQuery();
   const dispatch = useDispatch();
@@ -159,7 +167,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
           <Box className={css.fieldBox}>
             <TextField
               disabled
-              className={css.fieldset}
+              className={isDisabled ? css.fieldset : css.fieldsetDisabled}
               label={d("Attachment").t("schedule_detail_attachment")}
               value={textEllipsis(attachmentName)}
             ></TextField>

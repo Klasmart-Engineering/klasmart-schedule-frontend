@@ -86,6 +86,13 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginTop: 20,
     width: "100%",
   },
+  fieldsetDisabled: {
+    marginTop: 20,
+    width: "100%",
+    "& .Mui-disabled": {
+      color: "rgba(0, 0, 0, 0.54)",
+    },
+  },
   halfFieldset: {
     marginTop: 20,
     width: "calc(50% - 10px)",
@@ -1939,7 +1946,7 @@ function EditBox(props: CalendarStateProps) {
         {!privilegedMembers("Student") && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
           <Box className={css.fieldBox}>
             <TextField
-              className={css.fieldset}
+              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
               multiline
               label={d("Add Participants").t("schedule_detail_participants")}
               onChange={(e) => handleTopicListChange(e, "title")}
@@ -2080,6 +2087,7 @@ function EditBox(props: CalendarStateProps) {
           setSpecificStatus={setSpecificStatus}
           specificStatus={specificStatus}
           isStudent={privilegedMembers("Student")}
+          isDisabled={isScheduleExpired() || isLimit()}
         />
         {scheduleId && scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
           <ScheduleFeedback
