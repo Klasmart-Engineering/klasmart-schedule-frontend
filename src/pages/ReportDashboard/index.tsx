@@ -9,15 +9,17 @@ import { reportMiss, t } from "../../locale/LocaleManager";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import ReportTeachingLoad from "../ReportTeachingLoad";
-const useStyles = makeStyles(({ shadows }) => ({
+const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
     height: 129,
     display: "flex",
     alignItems: "center",
   },
   reportList: {
-    display: "flex",
-    justifyContent: "space-between",
+    [breakpoints.up("md")]: {
+      display: "flex",
+      justifyContent: "space-between",
+    },
   },
   reportItem: {
     borderRadius: 8,
@@ -26,6 +28,10 @@ const useStyles = makeStyles(({ shadows }) => ({
     minWidth: 160,
     width: "25%",
     cursor: "pointer",
+    marginBottom: 20,
+    [breakpoints.down("md")]: {
+      width: "90%",
+    },
   },
   iconBoxBorder: {
     border: "1px dashed #ccc ",

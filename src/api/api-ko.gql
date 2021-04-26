@@ -300,5 +300,16 @@ query schoolByOrgQuery($organization_id: ID!) {
           }
     }
 }
+query teacherListBySchoolId($school_id: ID!) {
+  school(school_id: $school_id){
+    classes{
+      class_id
+      teachers{
+        user_id
+        username
+      }
+    }
+  }
+}
 
 
