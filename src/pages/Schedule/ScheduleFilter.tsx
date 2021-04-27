@@ -31,6 +31,7 @@ import {
   RolesData,
   timestampType,
 } from "../../types/scheduleTypes";
+import { modelSchedule } from "../../models/ModelSchedule";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -142,6 +143,7 @@ type StyledTreeItemProps = TreeItemProps & {
   stateOnlySelectMine: string[];
   stateOnlySelectMineExistData: any;
   privilegedMembers: (member: memberType) => boolean;
+  fullSelectionStatusSet: { id: string; status: boolean }[];
 };
 
 interface InterfaceSubject extends EntityScheduleShortInfo {
@@ -166,6 +168,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     stateOnlySelectMine,
     stateOnlySelectMineExistData,
     privilegedMembers,
+    fullSelectionStatusSet,
     ...other
   } = props;
   const minimumDom = Array.isArray(props.children) && (props.children as []).length < 1;
@@ -198,6 +201,21 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  const schoolAllCheck = () => {
+    let allStatus = false;
+    if (item.name === "All") {
+      fullSelectionStatusSet.forEach((item: { id: string; status: boolean }) => {
+        if (item.id === nodeValue[2]) allStatus = item.status;
+      });
+    }
+    if (item.name === "All My Schools")
+      allStatus = fullSelectionStatusSet.every((item: { id: string; status: boolean }) => {
+        return item.status;
+      });
+    return allStatus;
+  };
+
   return (
     <Box style={{ position: "relative" }}>
       {minimumDom && nodeValue[1] !== "nodata" && (
@@ -207,7 +225,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
           onClick={(e) => {
             handleChangeExits([item.id], (e.target as HTMLInputElement).checked, nodeValue, item.existData);
           }}
-          checked={stateOnlyMine.includes(item.id)}
+          checked={schoolAllCheck() || stateOnlyMine.includes(item.id)}
           disabled={isDisable(nodeValue)}
           style={{ position: "absolute", top: "5px", left: "10px" }}
         />
@@ -607,6 +625,7 @@ function FilterTemplate(props: FilterProps) {
     },
   ];
   const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {
+    const fullSelectionStatus = modelSchedule.FilterSchoolDigital(schoolByOrgOrUserData, stateOnlyMine);
     return treeItem.map((item: FilterDataItemsProps) => {
       return (
         !item.isHide && (
@@ -626,6 +645,7 @@ function FilterTemplate(props: FilterProps) {
               stateOnlySelectMine={stateOnlySelectMine}
               stateOnlySelectMineExistData={stateOnlySelectMineExistData}
               privilegedMembers={privilegedMembers}
+              fullSelectionStatusSet={fullSelectionStatus}
             >
               {item.child && styledTreeItemTemplate(item.child)}
             </StyledTreeItem>

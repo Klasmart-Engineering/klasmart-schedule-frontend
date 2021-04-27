@@ -1833,16 +1833,18 @@ function EditBox(props: CalendarStateProps) {
               {d("Class Roster").t("schedule_detail_class_roster")} <span style={{ color: "#D32F2F" }}>*</span>
             </span>
             <Box className={css.participantSaveBox}>
-              <CreateOutlinedIcon
-                onClick={() => {
-                  if (isScheduleExpired() || isLimit()) return;
-                  if (scheduleDetial?.class?.enable !== false) {
-                    setRosterSaveStatus(false);
-                    setIsForce(false);
-                  }
-                }}
-                style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
-              />
+              {!(isScheduleExpired() || isLimit()) && (
+                <CreateOutlinedIcon
+                  onClick={() => {
+                    if (isScheduleExpired() || isLimit()) return;
+                    if (scheduleDetial?.class?.enable !== false) {
+                      setRosterSaveStatus(false);
+                      setIsForce(false);
+                    }
+                  }}
+                  style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                />
+              )}
               <br />
               {menuItemListClassKr("roster")}
             </Box>
@@ -1932,12 +1934,17 @@ function EditBox(props: CalendarStateProps) {
               {d("Add Participants").t("schedule_detail_participants")} <span style={{ color: "#D32F2F" }}>*</span>
             </span>
             <Box className={css.participantSaveBox}>
-              <CreateOutlinedIcon
-                onClick={() => {
-                  setParticipantSaveStatus(false);
-                }}
-                style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
-              />
+              {!(isScheduleExpired() || isLimit()) && (
+                <CreateOutlinedIcon
+                  onClick={() => {
+                    if (isScheduleExpired() || isLimit()) return;
+                    if (scheduleDetial?.class?.enable !== false) {
+                      setParticipantSaveStatus(false);
+                    }
+                  }}
+                  style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                />
+              )}
               <br />
               {menuItemListClassKr("teacher")}
             </Box>
@@ -1953,14 +1960,16 @@ function EditBox(props: CalendarStateProps) {
               required
               disabled
             ></TextField>
-            <AddCircleOutlineOutlined
-              onClick={() => {
-                if (isScheduleExpired() || isLimit()) return;
-                if (scheduleDetial?.class?.enable !== false) addParticipants();
-              }}
-              className={css.iconField}
-              style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
-            />
+            {!(isScheduleExpired() || isLimit()) && (
+              <AddCircleOutlineOutlined
+                onClick={() => {
+                  if (isScheduleExpired() || isLimit()) return;
+                  if (scheduleDetial?.class?.enable !== false) addParticipants();
+                }}
+                className={css.iconField}
+                style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+              />
+            )}
           </Box>
         )}
         {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
