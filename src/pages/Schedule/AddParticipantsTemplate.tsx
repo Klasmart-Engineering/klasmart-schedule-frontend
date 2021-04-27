@@ -207,13 +207,13 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         <RadioGroup aria-label="gender" name="gender1" className={css.radioBox} value={defaultFilter} onChange={handleFilterChange}>
           <FormControlLabel
             value="students"
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label={d("Student").t("schedule_time_conflict_student")}
             className={css.radioItem}
           />
           <FormControlLabel
             value="teachers"
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label={d("Teacher").t("schedule_detail_teacher")}
             className={css.radioItem}
           />

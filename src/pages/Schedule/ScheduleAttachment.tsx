@@ -172,7 +172,10 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
               value={textEllipsis(attachmentName)}
             ></TextField>
             <HtmlTooltip title={getTipsText()}>
-              <InfoOutlined className={css.iconField} style={{ left: "110px", display: attachmentName ? "none" : "block" }} />
+              <InfoOutlined
+                className={css.iconField}
+                style={{ left: "110px", display: attachmentName ? "none" : "block", color: "rgba(0, 0, 0, 0.54)" }}
+              />
             </HtmlTooltip>
             {isUploading && (
               <CircularProgressWithLabel
@@ -180,14 +183,14 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
                 value={batch?.items[0].completed as number}
               />
             )}
-            {!isStudent && !attachmentName && (
+            {!isStudent && !attachmentName && !isDisabled && (
               <CloudUploadOutlined className={css.iconField} style={{ right: attachmentName ? "50px" : "10px" }} ref={btnRef as any} />
             )}
-            {attachmentName && !isStudent && (
+            {attachmentName && !isStudent && !isDisabled && (
               <CancelIcon className={css.iconField} style={{ right: "50px", color: "#666666" }} onClick={deleteItem} />
             )}
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-              {attachmentName && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />}
+              {attachmentName && !isDisabled && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />}
             </a>
           </Box>
         )}
