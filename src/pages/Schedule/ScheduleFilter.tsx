@@ -554,16 +554,6 @@ function FilterTemplate(props: FilterProps) {
     return filterOptionOthers;
   };
 
-  const handleToggle = (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
-    console.log((event.target as HTMLInputElement).checked, 888, nodeIds);
-  };
-
-  const handleSelect = async (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
-    const checked = (event.target as HTMLInputElement).checked;
-    const nodeValue = nodeIds[0].split("+");
-    console.log(checked, nodeValue);
-  };
-
   const getOthersExistData = (): string[] => {
     const data: string[] = [];
     filterOption.others.forEach((classItem: EntityScheduleFilterClass) => {
@@ -661,8 +651,6 @@ function FilterTemplate(props: FilterProps) {
       defaultExpanded={["1"]}
       defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
       defaultExpandIcon={<KeyboardArrowDownOutlinedIcon className={css.filterArrow} style={{ cursor: "pointer" }} />}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
       multiSelect
     >
       {styledTreeItemTemplate(filterData)}

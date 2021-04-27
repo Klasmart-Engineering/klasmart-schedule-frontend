@@ -1498,7 +1498,6 @@ function EditBox(props: CalendarStateProps) {
       | EntityContentInfoWithDetails
       | undefined
     )[];
-    console.log(materialArr);
     return materialArr?.map((item: any, key: number) => (
       <p style={{ fontWeight: 500, paddingLeft: "10px" }}>{`${key + 1}. ${item.name}`}</p>
     ));

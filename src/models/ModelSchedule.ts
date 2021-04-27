@@ -1,4 +1,4 @@
-import { EntityScheduleClassesInfo, EntityScheduleSchoolInfo, EntityScheduleShortInfo } from "../types/scheduleTypes";
+import { EntityScheduleClassesInfo, EntityScheduleSchoolInfo, EntityScheduleShortInfo, FilterQueryTypeProps } from "../types/scheduleTypes";
 import { EntityContentInfoWithDetails } from "../api/api.auto";
 
 interface AssociationStructureProps {
@@ -57,5 +57,25 @@ export class modelSchedule {
       fullElection.push({ id: schoolItem.school_id, status: isElectionAll });
     });
     return fullElection;
+  }
+
+  static AssemblyFilterParameter(stateOnlyMine: string[]) {
+    const filterQuery: FilterQueryTypeProps = { class_types: "", class_ids: "", subject_ids: "", program_ids: "" };
+    stateOnlyMine.forEach((value: string) => {
+      const nodeValue = value.split("+");
+      if (nodeValue[0] === "classType") {
+        filterQuery.class_types += `${nodeValue[1]},`;
+      }
+      if (nodeValue[0] === "subjectSub") {
+        filterQuery.subject_ids += `${nodeValue[1]},`;
+      }
+      if (nodeValue[0] === "program") {
+        filterQuery.program_ids += `${nodeValue[1]},`;
+      }
+      if ((nodeValue[0] === "class" || nodeValue[0] === "other") && nodeValue[1] !== "All") {
+        filterQuery.class_ids += `${nodeValue[1]},`;
+      }
+    });
+    return filterQuery;
   }
 }
