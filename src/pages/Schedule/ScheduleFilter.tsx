@@ -22,6 +22,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
+  classTypeLabel,
   EntityScheduleClassesInfo,
   EntityScheduleSchoolInfo,
   FilterDataItemsProps,
@@ -171,10 +172,21 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     fullSelectionStatusSet,
     ...other
   } = props;
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const minimumDom = Array.isArray(props.children) && (props.children as []).length < 1;
   const maxDom = ["School+1", "Others+1", "Programs+1", "ClassTypes+1"].includes(props.nodeId);
   const rgb = Math.floor(Math.random() * 256);
   const nodeValue = props.nodeId.split("+");
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const isDisable = (node: string[]): boolean => {
     let id: string = "";
@@ -189,18 +201,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     }
     return stateOnlySelectMineExistData[menus] ? !stateOnlySelectMineExistData[menus].includes(id) : false;
   };
-
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   const schoolAllCheck = () => {
     let allStatus = false;
@@ -506,12 +506,6 @@ function FilterTemplate(props: FilterProps) {
       });
     return classResult;
   };
-
-  type classTypeLabel =
-    | "schedule_detail_online_class"
-    | "schedule_detail_offline_class"
-    | "schedule_detail_homework"
-    | "schedule_detail_task";
 
   const getClassTypeByFilter = () => {
     return filterOption.classType.map((val: EntityScheduleShortInfo) => {

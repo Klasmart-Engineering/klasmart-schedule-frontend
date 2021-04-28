@@ -1,12 +1,26 @@
 import { EntityScheduleClassesInfo, EntityScheduleSchoolInfo, EntityScheduleShortInfo, FilterQueryTypeProps } from "../types/scheduleTypes";
 import { EntityContentInfoWithDetails } from "../api/api.auto";
 
+type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
+type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
+
 interface AssociationStructureProps {
   program: EntityScheduleShortInfo[];
   subject: EntityScheduleShortInfo[];
 }
 
 export class modelSchedule {
+  /**
+   * Filtering parameter values to match fields
+   */
+  static FILTER_PARAMETER_MATCH = {
+    classType: "class_types",
+    subjectSub: "subject_ids",
+    program: "program_ids",
+    class: "class_ids",
+    other: "class_ids",
+  };
+
   /**
    * Assembly of program and subject data
    * @param contentPreview
@@ -59,22 +73,17 @@ export class modelSchedule {
     return fullElection;
   }
 
+  /**
+   *  Assembly filtration parameters
+   * @param stateOnlyMine
+   * @constructor
+   */
   static AssemblyFilterParameter(stateOnlyMine: string[]) {
     const filterQuery: FilterQueryTypeProps = { class_types: "", class_ids: "", subject_ids: "", program_ids: "" };
     stateOnlyMine.forEach((value: string) => {
       const nodeValue = value.split("+");
-      if (nodeValue[0] === "classType") {
-        filterQuery.class_types += `${nodeValue[1]},`;
-      }
-      if (nodeValue[0] === "subjectSub") {
-        filterQuery.subject_ids += `${nodeValue[1]},`;
-      }
-      if (nodeValue[0] === "program") {
-        filterQuery.program_ids += `${nodeValue[1]},`;
-      }
-      if ((nodeValue[0] === "class" || nodeValue[0] === "other") && nodeValue[1] !== "All") {
-        filterQuery.class_ids += `${nodeValue[1]},`;
-      }
+      const matchValue = this.FILTER_PARAMETER_MATCH[nodeValue[0] as filterParameterMatchType];
+      if (nodeValue[1] !== "All" && matchValue) filterQuery[matchValue as filterValueMatchType] += `${nodeValue[1]},`;
     });
     return filterQuery;
   }

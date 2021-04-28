@@ -62,6 +62,7 @@ import {
 import theme from "../../theme";
 import {
   ClassOptionsItem,
+  classTypeLabel,
   EntityLessonPlanShortInfo,
   EntityScheduleClassInfo,
   FilterQueryTypeProps,
@@ -1456,12 +1457,6 @@ function EditBox(props: CalendarStateProps) {
       data,
     });
   };
-
-  type classTypeLabel =
-    | "schedule_detail_online_class"
-    | "schedule_detail_offline_class"
-    | "schedule_detail_homework"
-    | "schedule_detail_task";
 
   const menuItemListClassType = (list: MockOptionsItem[]) =>
     list.map((item) => (
