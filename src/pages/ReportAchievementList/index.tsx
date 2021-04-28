@@ -4,16 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
+import { reportMiss } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
-import { ReportCategories } from "../ReportCategories";
-import { ReportStudentPerformance } from "../ReportStudentPerformance";
+import { ReportTitle } from "../ReportDashboard";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
-import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { QueryCondition } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
@@ -51,11 +50,6 @@ export function ReportAchievementList() {
   ]);
   const student_name = totalData.student_name;
   const reportMockOptions = totalData.reportMockOptions;
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
-    if (value === Category.archived) return;
-    if (value === Category.learningOutcomes) history.push(ReportCategories.routeBasePath);
-    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
-  };
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
   };
@@ -134,8 +128,7 @@ export function ReportAchievementList() {
 
   return (
     <>
-      <FirstSearchHeader value={Category.archived} onChange={handleChange} />
-      <FirstSearchHeaderMb value={Category.archived} onChange={handleChange} />
+      <ReportTitle title={reportMiss("Student Achievement", "report_label_studentAchievement")}></ReportTitle>
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}
@@ -155,5 +148,5 @@ export function ReportAchievementList() {
   );
 }
 
-ReportAchievementList.routeBasePath = "/report/achievement-list";
-ReportAchievementList.routeRedirectDefault = `/report/achievement-list`;
+ReportAchievementList.routeBasePath = "/report/student-achievements";
+ReportAchievementList.routeRedirectDefault = `/report/student-achievements`;

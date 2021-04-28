@@ -9,7 +9,6 @@ import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Loading } from "./components/Loading";
 import { Locale } from "./components/Locale";
 import { Notification } from "./components/Notification";
-import { AssessmentsHomefunEdit } from "./pages/HomefunEdit";
 import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit/index";
@@ -17,6 +16,7 @@ import ContentPreview from "./pages/ContentPreview";
 import { H5pDemo } from "./pages/H5pDemo";
 import { H5pEditor } from "./pages/H5pEditor";
 import { HomeFunAssessmentList } from "./pages/HomeFunAssessmentList";
+import { AssessmentsHomefunEdit } from "./pages/HomefunEdit";
 import Live from "./pages/Live";
 import MyContentList from "./pages/MyContentList/index";
 import { default as CreateOutcome, default as CreateOutcomings } from "./pages/OutcomeEdit";
@@ -25,7 +25,9 @@ import Preview from "./pages/Preview";
 import { ReportAchievementDetail } from "./pages/ReportAchievementDetail";
 import { ReportAchievementList } from "./pages/ReportAchievementList";
 import { ReportCategories } from "./pages/ReportCategories";
+import { ReportDashboard } from "./pages/ReportDashboard";
 import { ReportStudentPerformance } from "./pages/ReportStudentPerformance";
+import ReportTeachingLoad from "./pages/ReportTeachingLoad";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
 import theme from "./theme";
@@ -88,6 +90,12 @@ function App() {
                   </Route>
                   <Route path={ReportAchievementDetail.routeBasePath}>
                     <ReportAchievementDetail />
+                  </Route>
+                  <Route path={ReportDashboard.routeBasePath}>
+                    <ReportDashboard />
+                  </Route>
+                  <Route path={ReportTeachingLoad.routeBasePath}>
+                    <ReportTeachingLoad />
                   </Route>
                   <Route path={ReportCategories.routeBasePath}>
                     <ReportCategories />

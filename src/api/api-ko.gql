@@ -116,6 +116,9 @@ query teacherByOrgId($organization_id: ID!){
         teachers{
           user_id
           user_name
+          school_memberships{
+            school_id
+          }
         }
       }
   }
@@ -192,6 +195,11 @@ query participantsByOrganization($organization_id: ID!) {
           user_name
           school_memberships {
             school_id
+            school {
+              organization{
+                organization_id
+              }
+            }
           }
         }
         students {
@@ -218,7 +226,7 @@ query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
                }
                teachers {
                  user_id
-                 username
+                 user_name
                }
                students {
                  user_id
@@ -290,15 +298,46 @@ query schoolByOrgQuery($organization_id: ID!) {
               class_name
               teachers {
                 user_id
-                username
+                user_name
               }
               students {
                 user_id
-                username
+                user_name
               }
             }
           }
     }
 }
+query teacherListBySchoolId($school_id: ID!) {
+  school(school_id: $school_id){
+    classes{
+      class_id
+      teachers{
+        user_id
+        user_name
+      }
+    }
+  }
+}
+query notParticipantsByOrganization($organization_id: ID!) {
+   organization(organization_id: $organization_id) {
+     classes {
+        teachers {
+          user_id
+          user_name
+          school_memberships {
+            school_id
+            school {
+              organization{
+                organization_id
+              }
+            }
+          }
+        }
+       
+     }
+   }
+}
+
 
 
