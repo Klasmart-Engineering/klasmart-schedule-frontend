@@ -798,7 +798,6 @@ const { actions, reducer } = createSlice({
       state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
         return item.school;
       });
-      console.log(payload, 888);
     },
     [getSchoolByOrg.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.organization?.schools;

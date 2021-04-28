@@ -40,18 +40,7 @@ import {
   searchAuthContentLists,
   getScheduleViewInfo,
 } from "../../reducers/schedule";
-import {
-  AlertDialogProps,
-  EntityScheduleClassesInfo,
-  EntityScheduleSchoolInfo,
-  FilterQueryTypeProps,
-  memberType,
-  modeViewType,
-  ParticipantsShortInfo,
-  RolesData,
-  RouteParams,
-  timestampType,
-} from "../../types/scheduleTypes";
+import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
@@ -61,6 +50,7 @@ import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
+import { modelSchedule } from "../../models/ModelSchedule";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -96,8 +86,6 @@ function ScheduleContent() {
     participantsIds,
     scheduleDetial,
     scheduleAnyTimeViewData,
-    schoolByOrgOrUserData,
-    user_id,
     mediaList,
     ScheduleViewInfo,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -269,43 +257,6 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    if (stateOnlyMine.length < 1) return;
-    const getConnectionStr = (item: string[]) => {
-      let str = "";
-      item.forEach((val: string) => {
-        const nodeValue = val.split("+");
-        str = `${str},${nodeValue[1]}`;
-      });
-      return str.substr(1);
-    };
-    const filterQuery: FilterQueryTypeProps = {
-      class_types: getConnectionStr(
-        stateOnlyMine.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "classType";
-        })
-      ),
-      class_ids: getConnectionStr(
-        stateOnlyMine.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return (nodeValue[0] === "class" || nodeValue[0] === "other") && nodeValue[1] !== "All";
-        })
-      ),
-      subject_ids: getConnectionStr(
-        stateOnlyMine.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "subjectSub";
-        })
-      ),
-      program_ids: getConnectionStr(
-        stateOnlyMine.filter((v: string) => {
-          const nodeValue = v.split("+");
-          return nodeValue[0] === "program";
-        })
-      ),
-    };
-    if (filterQuery.class_ids === "" && !(filterQuery.class_types || filterQuery.subject_ids || filterQuery.program_ids))
-      filterQuery.class_ids = "All";
     if (teacherName) {
       const data = {
         teacher_name: teacherName,
@@ -313,7 +264,6 @@ function ScheduleContent() {
         page_size: 10,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
         start_at: timesTamp.start,
-        ...filterQuery,
       };
       dispatch(getSearchScheduleList({ data, metaLoading: true }));
     } else {
@@ -322,7 +272,7 @@ function ScheduleContent() {
           view_type: modelView,
           time_at: timesTamp.start,
           time_zone_offset: -new Date().getTimezoneOffset() * 60,
-          ...filterQuery,
+          ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
         })
       );
     }
@@ -357,29 +307,6 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(getParticipantsData(isAdmin));
   }, [dispatch, isAdmin]);
-
-  React.useEffect(() => {
-    if (schoolByOrgOrUserData) {
-      const existData: string[] = [];
-      schoolByOrgOrUserData?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
-        schoolItem.classes?.forEach((classItem: EntityScheduleClassesInfo) => {
-          if (classItem.status === "active") {
-            const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
-              return teacher.user_id === user_id;
-            });
-            const isExistStudent = classItem.students.filter((studen: RolesData) => {
-              return studen.user_id === user_id;
-            });
-            if ((privilegedMembers("Teacher") || privilegedMembers("Student")) && !isExistTeacher.length && !isExistStudent.length) return;
-            existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-          }
-        });
-        if (schoolItem.classes.length > 0) existData.push(`class+All+${schoolItem.school_id}`);
-      });
-      if (existData.length > 0) existData.push("All_My_Schools");
-      setStateOnlyMine([...existData]);
-    }
-  }, [privilegedMembers, schoolByOrgOrUserData, user_id]);
 
   React.useEffect(() => {
     if (privilegedMembers("Admin")) {
