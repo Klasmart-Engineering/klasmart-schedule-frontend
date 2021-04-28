@@ -202,17 +202,19 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     return stateOnlySelectMineExistData[menus] ? !stateOnlySelectMineExistData[menus].includes(id) : false;
   };
 
-  const schoolAllCheck = () => {
+  const statusCheck = () => {
     let allStatus = false;
     if (item.name === "All") {
       fullSelectionStatusSet.forEach((item: { id: string; status: boolean }) => {
         if (item.id === nodeValue[2]) allStatus = item.status;
       });
-    }
-    if (item.name === "All My Schools")
+    } else if (item.name === "All My Schools") {
       allStatus = fullSelectionStatusSet.every((item: { id: string; status: boolean }) => {
         return item.status;
       });
+    } else {
+      allStatus = stateOnlyMine.includes(item.id);
+    }
     return allStatus;
   };
 
@@ -225,7 +227,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
           onClick={(e) => {
             handleChangeExits([item.id], (e.target as HTMLInputElement).checked, nodeValue, item.existData);
           }}
-          checked={schoolAllCheck() || stateOnlyMine.includes(item.id)}
+          checked={statusCheck()}
           disabled={isDisable(nodeValue)}
           style={{ position: "absolute", top: "5px", left: "10px" }}
         />

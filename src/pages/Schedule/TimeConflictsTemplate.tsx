@@ -154,7 +154,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       student: dataConversion(conflicts.class_roster_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
     } as ParticipantsShortInfo);
     handleChangeParticipants("paiticipants", {
-      teacher: dataConversion(conflicts.participants_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
+      teacher: dataConversion(conflicts.participants_teacher_ids?.filter((item: InnerItem) => item.selected === "schedule")),
       student: dataConversion(conflicts.participants_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
     });
     handleDestroyOperations(keepRosterOpen);

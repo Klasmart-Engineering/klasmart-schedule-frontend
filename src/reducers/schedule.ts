@@ -525,7 +525,7 @@ export const ScheduleClassTypesFilter = createAsyncThunk("schedule/filterClassTy
   return api.schedulesFilter.getClassTypesInScheduleFilter();
 });
 
-export interface getScheduleParticipantsPayLoad {
+export interface getScheduleParticipantsPayLoad extends LoadingMetaPayload {
   class_id: string;
 }
 export interface getScheduleParticipantsMockOptionsResponse {

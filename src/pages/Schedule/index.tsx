@@ -202,7 +202,7 @@ function ScheduleContent() {
    */
   const getParticipantOptions = async (class_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getScheduleParticipant({ class_id: class_id }))) as unknown) as PayloadAction<
+    resultInfo = ((await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleParticipant>
     >;
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
