@@ -16,7 +16,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     alignItems: "center",
   },
   reportList: {
-    [breakpoints.up("md")]: {
+    [breakpoints.up("lg")]: {
       display: "flex",
       justifyContent: "space-between",
     },

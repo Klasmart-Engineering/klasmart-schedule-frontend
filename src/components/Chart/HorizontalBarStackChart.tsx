@@ -6,10 +6,10 @@ import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { BarStackHorizontal } from "@visx/shape";
 import { BarStack } from "@visx/shape/lib/types";
 import { Text } from "@visx/text";
+import { TextProps } from "@visx/text/lib/Text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import { UseTooltipParams } from "@visx/tooltip/lib/hooks/useTooltip";
 import React, { Attributes, ReactNode, SVGAttributes, useMemo } from "react";
-import { TextProps } from "_@visx_text@1.1.0@@visx/text/lib/Text";
 
 const useStyle = makeStyles({
   svg: {
@@ -85,7 +85,7 @@ const getInlineStyles = (px: number, pixels: HorizontalBarStackChartStructSize) 
     tooltipContent: {
       display: "flex",
       alignItems: "center",
-      height: 32 * px,
+      // height: 32 * px,
       fontSize: 16 * px,
       lineHeight: 1,
       paddingLeft: 20 * px,
@@ -165,10 +165,9 @@ const showBarTooltip = (
   pixels: HorizontalBarStackChartStructSize
 ) => {
   const { bar } = tooltipData;
-  const inlineStyles = getInlineStyles(px, pixels);
   showTooltip({
     tooltipLeft: bar.x + pixels.yMarginLeft + bar.width / 2,
-    tooltipTop: bar.y - inlineStyles.tooltipContent.height - 4 * px,
+    tooltipTop: bar.y - 32 * px - 4 * px,
     tooltipData,
   });
 };
@@ -240,7 +239,7 @@ export function HorizontalBarStackChart(props: HorizontalBarStackChartProps) {
     () => computed({ px, data, structSize }),
     [data, px, structSize]
   );
-  console.log("viewPort = ", viewPort);
+  //\\console.log("viewPort = ", viewPort);//
   const { tooltipOpen, tooltipData, tooltipTop, tooltipLeft, showTooltip, hideTooltip } = useTooltip<TooltipData>();
 
   const rectList = (barStacks: TBarStack[]) =>

@@ -9,6 +9,9 @@ import {
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
+  NotParticipantsByOrganizationDocument,
+  NotParticipantsByOrganizationQuery,
+  NotParticipantsByOrganizationQueryVariables,
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
@@ -41,6 +44,8 @@ import { ModelReport } from "../models/ModelReports";
 import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
+const TIME_OFFSET = (0 - new Date().getTimezoneOffset() / 60).toString();
+
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];
   achievementDetail?: EntityStudentAchievementReportCategoryItem[];
@@ -641,7 +646,7 @@ export interface TeachingLoadResponse {
   schoolList?: Pick<School, "school_id" | "school_name">[];
   teacherList?: Pick<User, "user_id" | "user_name">[];
   classList?: Pick<Class, "class_id" | "class_name">[];
-  teachingLoadList?: EntityReportListTeachingLoadResult;
+  teachingLoadList: EntityReportListTeachingLoadResult;
 }
 export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, TeachingLoadPayload & LoadingMetaPayload>(
   "teachingLoadOnload",
@@ -660,13 +665,6 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     schoolList = schoolListResult.organization?.schools as Pick<School, "school_id" | "school_name">[];
     if (school_id === "all") {
       // 获取本组织下的所有在学校的老师
-      schoolListResult.organization?.schools?.forEach((schoolItems) => {
-        schoolItems?.classes?.forEach((classItem) => {
-          teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-        });
-      });
-    } else if (school_id === "no_assigned") {
-      // 获取本组织下不属于任何学校的老师
       const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
         query: TeacherByOrgIdDocument,
         variables: {
@@ -675,6 +673,27 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       });
       data.organization?.classes?.forEach((classItem) => {
         teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+      });
+    } else if (school_id === "no_assigned") {
+      // 获取本组织下不属于任何学校的老师
+      const { data } = await gqlapi.query<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>({
+        query: NotParticipantsByOrganizationDocument,
+        variables: {
+          organization_id,
+        },
+      });
+      data.organization?.classes?.forEach((classItem) => {
+        const newTeacherList = classItem?.teachers
+          ?.map((teacherItem) => {
+            const isThisOrg =
+              teacherItem?.school_memberships?.some(
+                (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+              ) || false;
+            // debugger;
+            return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+          })
+          .filter((item) => item?.user_id !== "");
+        teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
       });
     } else {
       // 获取指定school_id下的老师
@@ -689,23 +708,19 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       });
     }
 
-    if (teacher_ids !== "all") {
-      const teacherIdList = teacher_ids.split(",");
-      teacherIdList.forEach(async (id) => {
-        const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
-          query: ClassesTeachingQueryDocument,
-          variables: {
-            user_id: id,
-            organization_id,
-          },
-        });
-        classList = result.user?.membership?.classesTeaching as Pick<Class, "class_id" | "class_name">[];
+    const teacherIdList = teacher_ids.split(",");
+    if (teacherIdList.length === 1 && teacher_ids !== "all") {
+      const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+        query: ClassesTeachingQueryDocument,
+        variables: {
+          user_id: teacher_ids,
+          organization_id,
+        },
       });
+      classList = classList?.concat(result.user?.membership?.classesTeaching as Pick<Class, "class_id" | "class_name">[]);
     }
     teacherList = ModelReport.teacherListSetDiff(teacherList);
-
-    // teachingLoadList = await api.reports.listTeachingLoadReport({school_id,teacher_ids,class_ids,time_offset:"8"})
-
+    teachingLoadList = (await api.reports.listTeachingLoadReport({ school_id, teacher_ids, class_ids, time_offset: TIME_OFFSET })) || [];
     return {
       schoolList,
       teacherList,

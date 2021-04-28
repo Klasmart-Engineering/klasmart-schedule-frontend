@@ -176,7 +176,17 @@ export type TeacherByOrgIdQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name"> & {
-                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+                teachers?: Types.Maybe<
+                  Array<
+                    Types.Maybe<
+                      { __typename?: "User" } & Pick<Types.User, "user_id" | "user_name"> & {
+                          school_memberships?: Types.Maybe<
+                            Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+                          >;
+                        }
+                    >
+                  >
+                >;
               }
           >
         >
@@ -294,7 +304,19 @@ export type ParticipantsByOrganizationQuery = { __typename?: "Query" } & {
                     Types.Maybe<
                       { __typename?: "User" } & Pick<Types.User, "user_id" | "user_name"> & {
                           school_memberships?: Types.Maybe<
-                            Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+                            Array<
+                              Types.Maybe<
+                                { __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id"> & {
+                                    school?: Types.Maybe<
+                                      { __typename?: "School" } & {
+                                        organization?: Types.Maybe<
+                                          { __typename?: "Organization" } & Pick<Types.Organization, "organization_id">
+                                        >;
+                                      }
+                                    >;
+                                  }
+                              >
+                            >
                           >;
                         }
                     >
@@ -334,7 +356,7 @@ export type ClassesTeachingQueryQuery = { __typename?: "Query" } & {
               Types.Maybe<
                 { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                     schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
-                    teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                    teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
                     students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
                   }
               >
@@ -430,8 +452,8 @@ export type SchoolByOrgQueryQuery = { __typename?: "Query" } & {
                   Array<
                     Types.Maybe<
                       { __typename?: "Class" } & Pick<Types.Class, "status" | "class_id" | "class_name"> & {
-                          teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
-                          students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                          teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+                          students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
                         }
                     >
                   >
@@ -455,8 +477,50 @@ export type TeacherListBySchoolIdQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "class_id"> & {
-                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
               }
+          >
+        >
+      >;
+    }
+  >;
+};
+
+export type NotParticipantsByOrganizationQueryVariables = Types.Exact<{
+  organization_id: Types.Scalars["ID"];
+}>;
+
+export type NotParticipantsByOrganizationQuery = { __typename?: "Query" } & {
+  organization?: Types.Maybe<
+    { __typename?: "Organization" } & {
+      classes?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Class" } & {
+              teachers?: Types.Maybe<
+                Array<
+                  Types.Maybe<
+                    { __typename?: "User" } & Pick<Types.User, "user_id" | "user_name"> & {
+                        school_memberships?: Types.Maybe<
+                          Array<
+                            Types.Maybe<
+                              { __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id"> & {
+                                  school?: Types.Maybe<
+                                    { __typename?: "School" } & {
+                                      organization?: Types.Maybe<
+                                        { __typename?: "Organization" } & Pick<Types.Organization, "organization_id">
+                                      >;
+                                    }
+                                  >;
+                                }
+                            >
+                          >
+                        >;
+                      }
+                  >
+                >
+              >;
+            }
           >
         >
       >;
@@ -842,6 +906,9 @@ export const TeacherByOrgIdDocument = gql`
         teachers {
           user_id
           user_name
+          school_memberships {
+            school_id
+          }
         }
       }
     }
@@ -1069,6 +1136,11 @@ export const ParticipantsByOrganizationDocument = gql`
           user_name
           school_memberships {
             school_id
+            school {
+              organization {
+                organization_id
+              }
+            }
           }
         }
         students {
@@ -1137,7 +1209,7 @@ export const ClassesTeachingQueryDocument = gql`
           }
           teachers {
             user_id
-            username
+            user_name
           }
           students {
             user_id
@@ -1309,11 +1381,11 @@ export const SchoolByOrgQueryDocument = gql`
           class_name
           teachers {
             user_id
-            username
+            user_name
           }
           students {
             user_id
-            username
+            user_name
           }
         }
       }
@@ -1357,7 +1429,7 @@ export const TeacherListBySchoolIdDocument = gql`
         class_id
         teachers {
           user_id
-          username
+          user_name
         }
       }
     }
@@ -1395,3 +1467,64 @@ export function useTeacherListBySchoolIdLazyQuery(
 export type TeacherListBySchoolIdQueryHookResult = ReturnType<typeof useTeacherListBySchoolIdQuery>;
 export type TeacherListBySchoolIdLazyQueryHookResult = ReturnType<typeof useTeacherListBySchoolIdLazyQuery>;
 export type TeacherListBySchoolIdQueryResult = Apollo.QueryResult<TeacherListBySchoolIdQuery, TeacherListBySchoolIdQueryVariables>;
+export const NotParticipantsByOrganizationDocument = gql`
+  query notParticipantsByOrganization($organization_id: ID!) {
+    organization(organization_id: $organization_id) {
+      classes {
+        teachers {
+          user_id
+          user_name
+          school_memberships {
+            school_id
+            school {
+              organization {
+                organization_id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useNotParticipantsByOrganizationQuery__
+ *
+ * To run a query within a React component, call `useNotParticipantsByOrganizationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotParticipantsByOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotParticipantsByOrganizationQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useNotParticipantsByOrganizationQuery(
+  baseOptions: Apollo.QueryHookOptions<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>(
+    NotParticipantsByOrganizationDocument,
+    options
+  );
+}
+export function useNotParticipantsByOrganizationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>(
+    NotParticipantsByOrganizationDocument,
+    options
+  );
+}
+export type NotParticipantsByOrganizationQueryHookResult = ReturnType<typeof useNotParticipantsByOrganizationQuery>;
+export type NotParticipantsByOrganizationLazyQueryHookResult = ReturnType<typeof useNotParticipantsByOrganizationLazyQuery>;
+export type NotParticipantsByOrganizationQueryResult = Apollo.QueryResult<
+  NotParticipantsByOrganizationQuery,
+  NotParticipantsByOrganizationQueryVariables
+>;

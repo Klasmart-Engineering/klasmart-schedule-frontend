@@ -27,7 +27,6 @@ import { ReportAchievementList } from "./pages/ReportAchievementList";
 import { ReportCategories } from "./pages/ReportCategories";
 import { ReportDashboard } from "./pages/ReportDashboard";
 import { ReportStudentPerformance } from "./pages/ReportStudentPerformance";
-import { ReportTeacherLoad } from "./pages/ReportTeacherLoad";
 import ReportTeachingLoad from "./pages/ReportTeachingLoad";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
@@ -88,9 +87,6 @@ function App() {
                   </Route>
                   <Route path={ReportAchievementList.routeBasePath}>
                     <ReportAchievementList />
-                  </Route>
-                  <Route path={ReportTeacherLoad.routeBasePath}>
-                    <ReportTeacherLoad />
                   </Route>
                   <Route path={ReportAchievementDetail.routeBasePath}>
                     <ReportAchievementDetail />
