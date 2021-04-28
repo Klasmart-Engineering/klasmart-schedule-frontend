@@ -103,15 +103,10 @@ interface TimeConflictsTemplateProps {
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { conflictsData, handleChangeParticipants, handleClose, handleDestroyOperations, participantsIds, classRosterIds } = props;
+  const { conflictsData, handleChangeParticipants, handleClose, handleDestroyOperations } = props;
   const css = useStyles();
-
   const { breakpoints } = useTheme();
-
   const sm = useMediaQuery(breakpoints.down("sm"));
-
-  // const [participants, setParticipants] = React.useState<ParticipantsShortInfo>(participantsIds)
-  // const [classRoster, setClassRoster] = React.useState<ParticipantsShortInfo>(classRosterIds)
 
   const [conflicts, setConflict] = React.useState<Conflicts>({
     class_roster_student_ids:
@@ -142,63 +137,25 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
     setConflict({ ...conflicts, [signal]: temp });
   };
 
-  /**
-   * 最终返回出去的数据
-   */
-
-  let arr = {
-    class_roster_student_ids: [],
-    class_roster_teacher_ids: [],
-    participants_student_ids: [],
-    participants_teacher_ids: [],
+  const dataConversion = (conflictsData: InnerItem[]) => {
+    if (!conflictsData) return [];
+    return conflictsData.map((data: InnerItem) => {
+      return { id: data.id, name: data.name, enable: true };
+    });
   };
 
   const handleConfirm = () => {
     let keepRosterOpen = false;
-    let classRosterIds1 = JSON.parse(JSON.stringify(classRosterIds));
-    let participantsIds1 = JSON.parse(JSON.stringify(participantsIds));
     for (let key in conflicts) {
-      // @ts-ignore
-      arr[key] =
-        conflicts[
-          key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
-        ] &&
-        conflicts[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"]
-          .filter((item) => item.selected === "not_schedule")
-          .map((item) => ({ id: item.id, name: item.name }));
-      if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) {
-        keepRosterOpen = true;
-      }
-      arr[key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"] &&
-        arr[
-          key as "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
-        ].forEach((item, index) => {
-          if (key === "class_roster_student_ids") {
-            const idx = classRosterIds1.student.findIndex((item1: ClassOptionsItem) => item1.id === item);
-            classRosterIds1.student.splice(idx, 1);
-          }
-          if (key === "class_roster_teacher_ids") {
-            const idx = classRosterIds1.teacher.findIndex((item1: ClassOptionsItem) => item1.id === item);
-            classRosterIds1.teacher.splice(idx, 1);
-          }
-          if (key === "participants_student_ids") {
-            const idx = participantsIds1.student.findIndex((item1: ClassOptionsItem) => item1.id === item);
-            participantsIds1.student.splice(idx, 1);
-          }
-          if (key === "participants_teacher_ids") {
-            const idx = participantsIds1.teacher.findIndex((item1: ClassOptionsItem) => item1.id === item);
-            participantsIds1.teacher.splice(idx, 1);
-          }
-        });
+      if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) keepRosterOpen = true;
     }
-
-    handleChangeParticipants("paiticipants", {
-      teacher: participantsIds1.teacher ? participantsIds1.teacher : [],
-      student: participantsIds1.student ? participantsIds1.student : [],
-    });
     handleChangeParticipants("classRoster", {
-      teacher: classRosterIds1.teacher ? classRosterIds1.teacher : [],
-      student: classRosterIds1.student ? classRosterIds1.student : [],
+      teacher: dataConversion(conflicts.class_roster_teacher_ids?.filter((item: InnerItem) => item.selected === "schedule")),
+      student: dataConversion(conflicts.class_roster_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
+    } as ParticipantsShortInfo);
+    handleChangeParticipants("paiticipants", {
+      teacher: dataConversion(conflicts.participants_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
+      student: dataConversion(conflicts.participants_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
     });
     handleDestroyOperations(keepRosterOpen);
     handleClose();
