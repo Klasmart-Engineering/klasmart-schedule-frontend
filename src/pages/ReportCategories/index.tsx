@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
-import { reportMiss } from "../../locale/LocaleManager";
+import { t } from "../../locale/LocaleManager";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { reportCategoriesOnload } from "../../reducers/report";
@@ -33,7 +33,7 @@ export function ReportCategories() {
   }, [teacher_id, dispatch]);
   return (
     <>
-      <ReportTitle title={reportMiss("Learning Outcomes in Categories", "report_label_learning_outcomes_in_categories")}></ReportTitle>
+      <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>
       <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
       {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612
         ? categories.length > 0

@@ -5,7 +5,7 @@ import { AccessTime, CategoryOutlined, ChevronRight } from "_@material-ui_icons@
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { LangRecordId } from "../../locale/lang/type";
-import { reportMiss, t } from "../../locale/LocaleManager";
+import { t } from "../../locale/LocaleManager";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import ReportTeachingLoad from "../ReportTeachingLoad";
@@ -83,7 +83,7 @@ export function ReportDashboard() {
       bgColor: "#77dcb7",
     },
     {
-      title: "report_label_student_achievement",
+      title: "report_label_teaching_load",
       url: ReportTeachingLoad.routeBasePath,
       icon: <AccessTime />,
       bgColor: "#ffa966",
@@ -99,7 +99,7 @@ export function ReportDashboard() {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
-        <Typography variant="h4">{reportMiss("Reports List", "report_label_report_liat")}</Typography>
+        <Typography variant="h4">{t("report_label_report_list")}</Typography>
       </div>
       <div className={css.reportList}>
         {reportList.map((item) => (
@@ -107,7 +107,7 @@ export function ReportDashboard() {
             <div className={css.iconBoxBorder}>
               {" "}
               <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                {cloneElement(item.icon, { style: { fontSize: 36 } })}{" "}
+                {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
               </div>
             </div>
             <div className={css.reportItemTitleBox}>

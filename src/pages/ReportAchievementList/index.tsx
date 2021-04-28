@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
-import { reportMiss } from "../../locale/LocaleManager";
+import { t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
@@ -128,7 +128,7 @@ export function ReportAchievementList() {
 
   return (
     <>
-      <ReportTitle title={reportMiss("Student Achievement", "report_label_studentAchievement")}></ReportTitle>
+      <ReportTitle title={t("report_label_student_achievement")}></ReportTitle>
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}

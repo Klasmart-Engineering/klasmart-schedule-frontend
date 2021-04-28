@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
-import { reportMiss } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { ModelReport } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
@@ -82,12 +82,14 @@ export default function ReportTeachingLoad() {
 
   return (
     <Fragment>
-      <ReportTitle title={reportMiss("Teaching Load", "report_label_teaching_load")}></ReportTitle>
+      <ReportTitle title={d("Teaching Load").t("report_label_teaching_load")}></ReportTitle>
       <FilterTeacherLoad value={teacherLoadQuery} onChange={handleChange} teachingLoadOnload={teachingLoadOnloadState}></FilterTeacherLoad>
-      <InfoTeacherLoad />
       {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612 ? (
         teachingLoadList.items && teachingLoadList.items.length > 0 ? (
-          <TeacherLoadChart data={formatedTeachingLoadList} />
+          <>
+            <InfoTeacherLoad />
+            <TeacherLoadChart data={formatedTeachingLoadList} />
+          </>
         ) : (
           emptyTip
         )

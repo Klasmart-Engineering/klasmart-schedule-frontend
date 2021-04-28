@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { emptyTip } from "../../components/TipImages";
-import { reportMiss } from "../../locale/LocaleManager";
+import { t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getAchievementDetail } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
@@ -55,7 +55,7 @@ export function ReportAchievementDetail() {
 
   return (
     <>
-      <ReportTitle title={reportMiss("Student Achievement", "report_label_studentAchievement")}></ReportTitle>
+      <ReportTitle title={t("report_label_student_achievement")}></ReportTitle>
       <BriefIntroduction
         value={condition}
         student_name={student_name}

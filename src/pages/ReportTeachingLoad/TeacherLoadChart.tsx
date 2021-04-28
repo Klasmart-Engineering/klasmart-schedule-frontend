@@ -9,7 +9,7 @@ import {
   HorizontalBarStackChartStructSize,
   HorizontalBarStackDataItem,
 } from "../../components/Chart/HorizontalBarStackChart";
-import { d, reportMiss } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { time2colorLevel } from "../../models/ModelReports";
 
 const structSize = memorize(
@@ -76,15 +76,14 @@ export const teacherLoadDescription = (props: EntityReportListTeachingLoadDurati
   return (
     <div style={{ backgroundColor: "#fff" }}>
       <p>
-        {reportMiss("Total", "report_label_total")}: <b>{total.hour}</b> {reportMiss("hours", "report_label_hours")} <b>{total.min}</b>{" "}
-        {reportMiss("mins", "report_label_mins")}
+        {t("report_label_total")}: <b>{total.hour}</b> {t("report_label_hours")} <b>{total.min}</b> {t("report_label_mins")}
       </p>
       <p>
-        Live: <b>{live.hour}</b> {reportMiss("hours", "report_label_hours")} <b>{live.min}</b> {reportMiss("mins", "report_label_mins")}
+        {d("Live").t("report_label_live")}: <b>{live.hour}</b> {t("report_label_hours")} <b>{live.min}</b> {t("report_label_mins")}
       </p>
       <p>
-        {d("Class").t("report_label_class")}: <b>{classtype.hour}</b> {reportMiss("hours", "report_label_hours")} <b>{classtype.min}</b>{" "}
-        {reportMiss("mins", "report_label_mins")}
+        {d("Class").t("report_label_class")}: <b>{classtype.hour}</b> {t("report_label_hours")} <b>{classtype.min}</b>{" "}
+        {t("report_label_mins")}
       </p>
     </div>
   );
