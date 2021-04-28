@@ -205,6 +205,11 @@ type LangRecord<T = string> =
       description: "(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)";
       values: undefined;
     }
+  | {
+      id: "library_error_include_archived_lesson_material";
+      description: "This lesson plan includes archived lesson material, please remove it and try publishing again.";
+      values: undefined;
+    }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -373,11 +378,7 @@ type LangRecord<T = string> =
   | { id: "assess_msg_exist_short_code"; description: "This short code already exists, please enter again."; values: undefined }
   | { id: "assess_msg_short_code_error"; description: "The short code needs to be five characters long, 0-9, A-Z."; values: undefined }
   | { id: "assess_msg_set_myonly"; description: "You can only do bulk action to your own learning outcomes."; values: undefined }
-  | {
-      id: "assess_msg_locked_lo";
-      description: "The selected learning outcome is still in approval process, you cannot do bulk action for now.";
-      values: undefined;
-    }
+  | { id: "assess_msg_locked_lo"; description: "You cannot do bulk action for locked learning outcomes."; values: undefined }
   | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
   | { id: "assess_msg_locked_milestone"; description: "You cannot do bulk action for locked milestones."; values: undefined }
   | { id: "assess_milestone_details"; description: "Milestone Details"; values: undefined }
@@ -690,6 +691,17 @@ type LangRecord<T = string> =
   | { id: "report_label_time_spent_on_h5p_activities_break_down"; description: "Time Spent on Activities Break Down"; values: undefined }
   | { id: "report_label_total_duration"; description: "Total Duration"; values: undefined }
   | { id: "report_label_avg_duration"; description: "Avg Duration"; values: undefined }
+  | { id: "report_label_report_list"; description: "Reports List"; values: undefined }
+  | { id: "report_label_teaching_load"; description: "Teaching Load"; values: undefined }
+  | { id: "report_label_school"; description: "School"; values: undefined }
+  | { id: "report_label_0_2_hours"; description: "0~2 Hours"; values: undefined }
+  | { id: "report_label_2_4_hours"; description: "2~4 Hours"; values: undefined }
+  | { id: "report_label_4_6_hours"; description: "4~6 Hours"; values: undefined }
+  | { id: "report_label_more_than_6_hours"; description: "More than 6 Hours"; values: undefined }
+  | { id: "report_label_total"; description: "Total"; values: undefined }
+  | { id: "report_label_live"; description: "Live"; values: undefined }
+  | { id: "report_label_hours"; description: "Hours"; values: undefined }
+  | { id: "report_label_mins"; description: "Mins"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
