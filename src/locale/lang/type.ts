@@ -373,11 +373,7 @@ type LangRecord<T = string> =
   | { id: "assess_msg_exist_short_code"; description: "This short code already exists, please enter again."; values: undefined }
   | { id: "assess_msg_short_code_error"; description: "The short code needs to be five characters long, 0-9, A-Z."; values: undefined }
   | { id: "assess_msg_set_myonly"; description: "You can only do bulk action to your own learning outcomes."; values: undefined }
-  | {
-      id: "assess_msg_locked_lo";
-      description: "The selected learning outcome is still in approval process, you cannot do bulk action for now.";
-      values: undefined;
-    }
+  | { id: "assess_msg_locked_lo"; description: "You cannot do bulk action for locked learning outcomes."; values: undefined }
   | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
   | { id: "assess_msg_locked_milestone"; description: "You cannot do bulk action for locked milestones."; values: undefined }
   | { id: "assess_milestone_details"; description: "Milestone Details"; values: undefined }

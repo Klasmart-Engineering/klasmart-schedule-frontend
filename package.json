@@ -34,6 +34,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/redux": "^3.6.0",
     "@visx/axis": "^1.1.0",
+    "@visx/grid": "^1.9.1",
     "@visx/group": "^1.0.0",
     "@visx/responsive": "^1.1.0",
     "@visx/scale": "^1.1.0",

@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
+import { reportMiss } from "../../locale/LocaleManager";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { reportCategoriesOnload } from "../../reducers/report";
-import { ReportAchievementList, useReportQuery } from "../ReportAchievementList";
-import FirstSearchHeader, { Category, FirstSearchHeaderMb, FirstSearchHeaderProps } from "../ReportAchievementList/FirstSearchHeader";
-import { ReportStudentPerformance } from "../ReportStudentPerformance";
+import { useReportQuery } from "../ReportAchievementList";
+import { ReportTitle } from "../ReportDashboard";
 import { CategoriesChart } from "./CategoriesChart";
 import { SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 
@@ -24,11 +24,6 @@ export function ReportCategories() {
     PermissionType.view_my_school_reports_611,
     PermissionType.view_my_organizations_reports_612,
   ]);
-  const handleChange: FirstSearchHeaderProps["onChange"] = (value) => {
-    if (value === Category.learningOutcomes) return;
-    if (value === Category.archived) history.push(ReportAchievementList.routeBasePath);
-    if (value === Category.studentPerformance) history.push(ReportStudentPerformance.routeBasePath);
-  };
   const handleChangeFilter: SecondSearchHeaderProps["onChange"] = (value, tab) => {
     history.replace({ search: toQueryString({ [tab]: value }) });
   };
@@ -38,8 +33,7 @@ export function ReportCategories() {
   }, [teacher_id, dispatch]);
   return (
     <>
-      <FirstSearchHeader value={Category.learningOutcomes} onChange={handleChange} />
-      <FirstSearchHeaderMb value={Category.learningOutcomes} onChange={handleChange} />
+      <ReportTitle title={reportMiss("Learning Outcomes in Categories", "report_label_learning_outcomes_in_categories")}></ReportTitle>
       <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
       {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612
         ? categories.length > 0

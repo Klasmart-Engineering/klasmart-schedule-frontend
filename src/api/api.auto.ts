@@ -857,6 +857,23 @@ export interface EntityOutcome {
   updated_at?: number;
   version?: number;
 }
+export interface EntityReportListTeachingLoadDuration {
+  end_at?: number;
+  offline?: number;
+  online?: number;
+  start_at?: number;
+}
+
+export interface EntityReportListTeachingLoadItem {
+  durations?: EntityReportListTeachingLoadDuration[];
+  teacher_id?: string;
+  teacher_name?: string;
+}
+
+export interface EntityReportListTeachingLoadResult {
+  items?: EntityReportListTeachingLoadItem[];
+  total?: number;
+}
 
 export interface EntityOutcomeAttendances {
   assumed?: boolean;
@@ -2788,6 +2805,29 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         EntityTeacherReport,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/teachers/${id}`, "GET", params),
+    /**
+     * @tags reports
+     * @name listTeachingLoadReport
+     * @summary list teaching load report
+     * @request GET:/reports/teaching_loading
+     * @description list teaching load report
+     */
+    listTeachingLoadReport: (
+      query: {
+        school_id?: string;
+        teacher_ids?: string;
+        class_ids?: string;
+        time_offset: string;
+        page?: number;
+        size?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityReportListTeachingLoadResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teaching_loading${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   schedules = {
     /**

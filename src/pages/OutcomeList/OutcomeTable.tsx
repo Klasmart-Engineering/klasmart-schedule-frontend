@@ -15,7 +15,7 @@ import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGr
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission/Permission";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { AppDispatch } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
@@ -90,11 +90,7 @@ function OutomeRow(props: OutcomeProps) {
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (outcome.locked_by) {
       setIsDisable(true);
-      return dispatch(
-        actWarning(
-          d("The selected learning outcome is still in approval process, you cannot do bulk action for now.").t("assess_msg_locked_lo")
-        )
-      );
+      return dispatch(actWarning(t("assess_msg_locked_lo")));
     }
     registerChange(e);
   };
