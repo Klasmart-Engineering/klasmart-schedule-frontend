@@ -1,4 +1,4 @@
-import { ReactNode } from "_@types_react@16.14.5@@types/react";
+import { ReactNode } from "react";
 import { User } from "../api/api-ko-schema.auto";
 import { EntityReportListTeachingLoadItem } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
