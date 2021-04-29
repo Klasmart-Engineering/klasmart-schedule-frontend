@@ -362,7 +362,6 @@ function EditBox(props: CalendarStateProps) {
     PermissionType.create_my_schools_schedule_events_522,
     PermissionType.attend_live_class_as_a_student_187,
   ]);
-  const [rosterChecked, setRosterChecked] = React.useState("other");
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -384,7 +383,6 @@ function EditBox(props: CalendarStateProps) {
     } else {
       handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
     }
-    setRosterChecked(event.target.value);
     setIsForce(false);
   };
 
@@ -426,7 +424,6 @@ function EditBox(props: CalendarStateProps) {
         teacher: type === "teacher" ? deconstructIds : classRosterIds?.teacher,
       } as ParticipantsShortInfo);
     }
-    setRosterChecked("other");
     setIsForce(false);
   };
 
@@ -685,11 +682,6 @@ function EditBox(props: CalendarStateProps) {
         student: getClassOptionsItem(resultInfo.payload.participantList.class.students),
         teacher: getClassOptionsItem(resultInfo.payload.participantList.class.teachers),
       } as ParticipantsShortInfo);
-      if (resultInfo.payload.participantList.class.students.length || resultInfo.payload.participantList.class.teachers.length) {
-        setRosterChecked("all");
-      } else {
-        setRosterChecked("other");
-      }
       setRosterSaveStatus(false);
       setClassItem(value);
     }
@@ -1781,7 +1773,13 @@ function EditBox(props: CalendarStateProps) {
                 <div style={{ textAlign: "end" }}>
                   <FormControlLabel
                     control={
-                      <Radio name="checkedA" value="all" color="primary" checked={rosterChecked === "all"} onChange={handleRosterChange} />
+                      <Radio
+                        name="checkedA"
+                        value="all"
+                        color="primary"
+                        checked={modelSchedule.ClassRosterDigital(classRosterIds, participantMockOptions) === 1}
+                        onChange={handleRosterChange}
+                      />
                     }
                     label={d("Select All").t("schedule_detail_select_all")}
                   />
@@ -1791,7 +1789,7 @@ function EditBox(props: CalendarStateProps) {
                         name="checkedB"
                         value="empty"
                         color="primary"
-                        checked={rosterChecked === "empty"}
+                        checked={modelSchedule.ClassRosterDigital(classRosterIds, participantMockOptions) === 2}
                         onChange={handleRosterChange}
                       />
                     }

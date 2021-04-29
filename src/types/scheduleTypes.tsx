@@ -207,3 +207,9 @@ export interface ScheduleEditExtend extends EntityScheduleDetailsView {
   class_id: string;
   lesson_plan_id: string;
 }
+
+export interface FilterItemInfo {
+  label: string;
+  self_id: string;
+  school_id: string;
+}

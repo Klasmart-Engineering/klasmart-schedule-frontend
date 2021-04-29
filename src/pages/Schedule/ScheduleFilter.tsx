@@ -31,6 +31,7 @@ import {
   modeViewType,
   RolesData,
   timestampType,
+  FilterItemInfo,
 } from "../../types/scheduleTypes";
 import { modelSchedule } from "../../models/ModelSchedule";
 
@@ -138,7 +139,7 @@ type StyledTreeItemProps = TreeItemProps & {
   isShowIcon?: boolean;
   isOnlyMine?: boolean;
   item: FilterDataItemsProps;
-  handleChangeExits: (data: string[], checked: boolean, node: string[], existData: string[]) => void;
+  handleChangeExits: (data: string[], checked: boolean, node: FilterItemInfo, existData: string[]) => void;
   stateOnlyMine: string[];
   handleSetStateOnlySelectMine: (mine: string, is_check: boolean) => void;
   stateOnlySelectMine: string[];
@@ -178,7 +179,8 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const minimumDom = Array.isArray(props.children) && (props.children as []).length < 1;
   const maxDom = ["School+1", "Others+1", "Programs+1", "ClassTypes+1"].includes(props.nodeId);
   const rgb = Math.floor(Math.random() * 256);
-  const nodeValue = props.nodeId.split("+");
+  const [label, self_id, school_id] = props.nodeId.split("+");
+  const filterItem: FilterItemInfo = { label: label, self_id: self_id, school_id: school_id };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -190,16 +192,16 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     setAnchorEl(null);
   };
 
-  const isDisable = (node: string[]): boolean => {
+  const isDisable = (): boolean => {
     let id: string = "";
     let menus: string = "";
-    if (node[0] === "other") {
+    if (filterItem.label === "other") {
       menus = "Others+1";
-      id = `${node[0]}+${node[1]}`;
+      id = `${filterItem.label}+${filterItem.self_id}`;
     }
-    if (node[0] === "class" && node.length > 2) {
-      menus = node[2] === "Others" ? "Others+1" : node[2];
-      id = `${node[0]}+${node[1]}+${node[2]}`;
+    if (filterItem.label === "class" && filterItem.school_id) {
+      menus = filterItem.school_id === "Others" ? "Others+1" : filterItem.school_id;
+      id = `${filterItem.label}+${filterItem.self_id}+${filterItem.school_id}`;
     }
     return stateOnlySelectMineExistData[menus] ? !stateOnlySelectMineExistData[menus].includes(id) : false;
   };
@@ -214,7 +216,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
       });
     } else if (item.name === "All") {
       fullSelectionStatusSet.forEach((item: { id: string; status: boolean }) => {
-        if (item.id === nodeValue[2]) allStatus = item.status;
+        if (item.id === filterItem.school_id) allStatus = item.status;
       });
     } else {
       allStatus = stateOnlyMine.includes(item.id);
@@ -224,15 +226,15 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 
   return (
     <Box style={{ position: "relative" }}>
-      {minimumDom && nodeValue[1] !== "nodata" && (
+      {minimumDom && filterItem.self_id !== "nodata" && (
         <Checkbox
           color="primary"
           inputProps={{ "aria-label": "primary checkbox" }}
           onClick={(e) => {
-            handleChangeExits([item.id], (e.target as HTMLInputElement).checked, nodeValue, item.existData);
+            handleChangeExits([item.id], (e.target as HTMLInputElement).checked, filterItem, item.existData);
           }}
           checked={statusCheck()}
-          disabled={isDisable(nodeValue)}
+          disabled={isDisable()}
           style={{ position: "absolute", top: "5px", left: "10px" }}
         />
       )}
@@ -258,7 +260,12 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                 <FormControlLabel
                   control={<Checkbox name="Only Mine" color="primary" />}
                   onClick={(e) => {
-                    handleChangeExits(item.onLyMineData, (e.target as HTMLInputElement).checked, ["onlyMine", item.id], item.existData);
+                    handleChangeExits(
+                      item.onLyMineData,
+                      (e.target as HTMLInputElement).checked,
+                      { label: "onlyMine", self_id: item.id, school_id: "" },
+                      item.existData
+                    );
                     handleSetStateOnlySelectMine(item.id, (e.target as HTMLInputElement).checked);
                     e.stopPropagation();
                   }}
@@ -268,51 +275,54 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                 />
               </Typography>
             )}
-            {minimumDom && nodeValue[1] !== "nodata" && ["class", "other"].includes(nodeValue[0]) && nodeValue[1] !== "All" && (
-              <>
-                <Popover
-                  id={id}
-                  open={open}
-                  anchorEl={anchorEl}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                  }}
-                  transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                  }}
-                >
-                  <Typography
-                    className={classes.typography}
-                    onClick={() => {
-                      handleChangeShowAnyTime(true, item.name, nodeValue[1]);
-                      setAnchorEl(null);
+            {minimumDom &&
+              filterItem.self_id !== "nodata" &&
+              ["class", "other"].includes(filterItem.label) &&
+              filterItem.self_id !== "All" && (
+                <>
+                  <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center",
                     }}
                   >
-                    {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
+                    <Typography
+                      className={classes.typography}
+                      onClick={() => {
+                        handleChangeShowAnyTime(true, item.name, filterItem.self_id);
+                        setAnchorEl(null);
+                      }}
+                    >
+                      {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
+                    </Typography>
+                  </Popover>
+                  <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
+                    <div
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        backgroundColor: `rgb(${rgb},${rgb},${rgb})`,
+                        borderRadius: "20px",
+                        display: "none",
+                      }}
+                    />{" "}
+                    <MoreVertIcon
+                      aria-describedby={id}
+                      onClick={(e) => {
+                        handleClick(e as any);
+                      }}
+                    />
                   </Typography>
-                </Popover>
-                <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
-                  <div
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                      backgroundColor: `rgb(${rgb},${rgb},${rgb})`,
-                      borderRadius: "20px",
-                      display: "none",
-                    }}
-                  />{" "}
-                  <MoreVertIcon
-                    aria-describedby={id}
-                    onClick={(e) => {
-                      handleClick(e as any);
-                    }}
-                  />
-                </Typography>
-              </>
-            )}
+                </>
+              )}
           </div>
         }
         classes={{
@@ -368,26 +378,27 @@ function FilterTemplate(props: FilterProps) {
     setStateOnlySelectMine([...stateOnlySelectMine]);
   };
 
-  const handleChangeExits = async (data: string[], checked: boolean, node: string[], existData: string[]) => {
+  const handleChangeExits = async (data: string[], checked: boolean, node: FilterItemInfo, existData: string[]) => {
     let setData: any = [];
     let onlyMineData = stateOnlyMine;
     if (checked) {
-      if (node[0] === "All_My_Schools" || node[1] === "All") {
+      if (node.label === "All_My_Schools" || node.self_id === "All") {
         onlyMineData = onlyMineData.concat(existData);
-        const onlyResult = node[0] === "All_My_Schools" ? [] : stateOnlySelectMine.splice(stateOnlySelectMine.indexOf(node[2]), 1);
-        if (node[0] === "All_My_Schools") setStateOnlySelectMineExistData({});
+        const onlyResult =
+          node.label === "All_My_Schools" ? [] : stateOnlySelectMine.splice(stateOnlySelectMine.indexOf(node.school_id), 1);
+        if (node.label === "All_My_Schools") setStateOnlySelectMineExistData({});
         setStateOnlySelectMine([...onlyResult]);
       }
-      if (node[0] === "onlyMine") {
-        if (node.length > 2) {
-          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node[2]]: data });
+      if (node.label === "onlyMine") {
+        if (node.school_id) {
+          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node.school_id]: data });
         } else {
-          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node[1]]: data });
+          setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData, [node.self_id]: data });
         }
         const differenceSet = onlyMineData.filter((ea) => existData.every((eb) => eb !== ea));
         onlyMineData = [...differenceSet, ...data];
       }
-      if (node[0] === "Others") {
+      if (node.label === "Others") {
         onlyMineData = stateOnlyMine.filter((v: string) => {
           const nodeValue = v.split("+");
           return nodeValue[0] !== "other";
@@ -396,25 +407,25 @@ function FilterTemplate(props: FilterProps) {
       setData = [...onlyMineData.concat(data)];
       handleChangeOnlyMine(setData);
     } else {
-      if (node[0] === "All_My_Schools" || node[1] === "All") {
+      if (node.label === "All_My_Schools" || node.self_id === "All") {
         data = data.concat(existData);
       }
-      if (node[0] === "class" && node.length > 2) {
-        data = data.concat([`class+All+${node[2]}`]);
+      if (node.label === "class" && node.school_id) {
+        data = data.concat([`class+All+${node.school_id}`]);
       }
-      if (node[0] === "other") {
+      if (node.label === "other") {
         data = data.concat([`class+All+Others`]);
       }
-      if (node[0] === "onlyMine") {
-        if (node.length > 2) {
-          delete stateOnlySelectMineExistData[node[2]];
+      if (node.label === "onlyMine") {
+        if (node.school_id) {
+          delete stateOnlySelectMineExistData[node.school_id];
           setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData });
         } else {
-          delete stateOnlySelectMineExistData[node[1]];
+          delete stateOnlySelectMineExistData[node.self_id];
           setStateOnlySelectMineExistData({ ...stateOnlySelectMineExistData });
         }
       }
-      if (node[0] === "class" && node.length > 2) {
+      if (node.label === "class" && node.school_id) {
         data = data.concat([`All_My_Schools`]);
       }
       const differenceSet = onlyMineData.filter((ea) => data.every((eb) => eb !== ea));
@@ -422,23 +433,23 @@ function FilterTemplate(props: FilterProps) {
       if (setData < 1) setData.push("All");
       handleChangeOnlyMine(setData);
     }
-    if (node[0] === "program" && checked) {
+    if (node.label === "program" && checked) {
       let resultInfo: any;
-      resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node[1], metaLoading: true }))) as unknown) as PayloadAction<
+      resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof ScheduleFilterSubject>
       >;
       if (resultInfo.payload.length > 0) {
         const subjectData = resultInfo.payload.map((val: EntityScheduleShortInfo) => {
-          return { program_id: node[1], name: val.name, id: val.id };
+          return { program_id: node.self_id, name: val.name, id: val.id };
         });
         setStateSubject([...stateSubject, ...subjectData]);
       }
     }
-    if (node[0] === "program" && !checked) {
+    if (node.label === "program" && !checked) {
       const checkSubject: string[] = [];
       const deepSubject = stateSubject.filter((v: InterfaceSubject, index: number) => {
         if (stateOnlyMine.includes(`subjectSub+${v.id}`)) checkSubject.push(`subjectSub+${v.id}`);
-        return v.program_id !== node[1];
+        return v.program_id !== node.self_id;
       });
       const differenceSet = onlyMineData.filter((ea) => checkSubject.concat(data).every((eb) => eb !== ea));
       handleChangeOnlyMine([...differenceSet]);
@@ -646,7 +657,6 @@ function FilterTemplate(props: FilterProps) {
       );
     });
   };
-
   return (
     <TreeView
       className={css.containerRoot}
