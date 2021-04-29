@@ -672,6 +672,14 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       ],
       meInfo.me
     );
+    if (!perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organization_reports_612) {
+      return {
+        schoolList,
+        teacherList,
+        classList,
+        teachingLoadList,
+      };
+    }
     const my_id = meInfo?.me?.user_id || "";
     if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organization_reports_612) {
       teacherList = [{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }];
@@ -760,7 +768,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
                 (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
               )
             );
-        } else {
+        } else if (school_id !== "no_assigned") {
           // 获取指定school_id下的老师
           const { data } = await gqlapi.query<TeacherListBySchoolIdQuery, TeacherListBySchoolIdQueryVariables>({
             query: TeacherListBySchoolIdDocument,
@@ -774,6 +782,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
         }
       }
     }
+
     const teacherIdList = teacher_ids.split(",");
     if (teacherIdList.length === 1 && teacher_ids !== "all") {
       const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
