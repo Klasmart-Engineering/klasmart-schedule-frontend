@@ -145,6 +145,7 @@ type StyledTreeItemProps = TreeItemProps & {
   stateOnlySelectMineExistData: any;
   privilegedMembers: (member: memberType) => boolean;
   fullSelectionStatusSet: { id: string; status: boolean }[];
+  fullOtherSelectionStatusSet: boolean;
 };
 
 interface InterfaceSubject extends EntityScheduleShortInfo {
@@ -170,6 +171,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     stateOnlySelectMineExistData,
     privilegedMembers,
     fullSelectionStatusSet,
+    fullOtherSelectionStatusSet,
     ...other
   } = props;
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -204,13 +206,15 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 
   const statusCheck = () => {
     let allStatus = false;
-    if (item.name === "All") {
-      fullSelectionStatusSet.forEach((item: { id: string; status: boolean }) => {
-        if (item.id === nodeValue[2]) allStatus = item.status;
-      });
+    if (item.id === "class+All+Others") {
+      allStatus = fullOtherSelectionStatusSet;
     } else if (item.name === "All My Schools") {
       allStatus = fullSelectionStatusSet.every((item: { id: string; status: boolean }) => {
         return item.status;
+      });
+    } else if (item.name === "All") {
+      fullSelectionStatusSet.forEach((item: { id: string; status: boolean }) => {
+        if (item.id === nodeValue[2]) allStatus = item.status;
       });
     } else {
       allStatus = stateOnlyMine.includes(item.id);
@@ -612,6 +616,7 @@ function FilterTemplate(props: FilterProps) {
   ];
   const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {
     const fullSelectionStatus = modelSchedule.FilterSchoolDigital(schoolByOrgOrUserData, stateOnlyMine);
+    const fullOtherSelectionStatus = modelSchedule.FilterOtherDigital(filterOption.others, stateOnlyMine);
     return treeItem.map((item: FilterDataItemsProps) => {
       return (
         !item.isHide && (
@@ -632,6 +637,7 @@ function FilterTemplate(props: FilterProps) {
               stateOnlySelectMineExistData={stateOnlySelectMineExistData}
               privilegedMembers={privilegedMembers}
               fullSelectionStatusSet={fullSelectionStatus}
+              fullOtherSelectionStatusSet={fullOtherSelectionStatus}
             >
               {item.child && styledTreeItemTemplate(item.child)}
             </StyledTreeItem>
