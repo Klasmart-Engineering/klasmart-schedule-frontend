@@ -656,58 +656,120 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     let schoolList: Pick<School, "school_id" | "school_name">[] | undefined = [];
     let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
     let classList: Pick<Class, "class_id" | "class_name">[] | undefined = [];
-    const { data: schoolListResult } = await gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
-      query: SchoolByOrgQueryDocument,
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
       variables: {
-        organization_id: organization_id,
+        organization_id,
       },
     });
-    schoolList = schoolListResult.organization?.schools as Pick<School, "school_id" | "school_name">[];
-    if (school_id === "all") {
-      // 获取本组织下的所有在学校的老师
-      const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
-        query: TeacherByOrgIdDocument,
+    const perm = hasPermissionOfMe(
+      [
+        PermissionType.view_my_reports_614,
+        PermissionType.view_reports_610,
+        PermissionType.view_my_organizations_reports_612,
+        PermissionType.view_my_school_reports_611,
+      ],
+      meInfo.me
+    );
+    const my_id = meInfo?.me?.user_id || "";
+    if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organization_reports_612) {
+      teacherList = [{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }];
+      // 获取我所在的本组织的学校
+      const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
+        query: GetSchoolTeacherDocument,
         variables: {
-          organization_id,
+          user_id: my_id,
         },
       });
-      data.organization?.classes?.forEach((classItem) => {
-        teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-      });
-    } else if (school_id === "no_assigned") {
-      // 获取本组织下不属于任何学校的老师
-      const { data } = await gqlapi.query<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>({
-        query: NotParticipantsByOrganizationDocument,
-        variables: {
-          organization_id,
-        },
-      });
-      data.organization?.classes?.forEach((classItem) => {
-        const newTeacherList = classItem?.teachers
-          ?.map((teacherItem) => {
-            const isThisOrg =
-              teacherItem?.school_memberships?.some(
-                (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-              ) || false;
-            // debugger;
-            return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
-          })
-          .filter((item) => item?.user_id !== "");
-        teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
-      });
+      schoolList = data.user?.school_memberships?.filter(
+        (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+      ) as Pick<School, "school_id" | "school_name">[];
     } else {
-      // 获取指定school_id下的老师
-      const { data } = await gqlapi.query<TeacherListBySchoolIdQuery, TeacherListBySchoolIdQueryVariables>({
-        query: TeacherListBySchoolIdDocument,
-        variables: {
-          school_id,
-        },
-      });
-      data.school?.classes?.forEach((classItem) => {
-        teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-      });
+      if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
+        const { data: schoolListResult } = await gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
+          query: SchoolByOrgQueryDocument,
+          variables: {
+            organization_id: organization_id,
+          },
+        });
+        schoolList = schoolListResult.organization?.schools as Pick<School, "school_id" | "school_name">[];
+        if (school_id === "all") {
+          // 获取本组织下的所有在学校的老师
+          const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
+            query: TeacherByOrgIdDocument,
+            variables: {
+              organization_id,
+            },
+          });
+          data.organization?.classes?.forEach((classItem) => {
+            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+          });
+        } else if (school_id === "no_assigned") {
+          // 获取本组织下不属于任何学校的老师
+          const { data } = await gqlapi.query<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>({
+            query: NotParticipantsByOrganizationDocument,
+            variables: {
+              organization_id,
+            },
+          });
+          data.organization?.classes?.forEach((classItem) => {
+            const newTeacherList = classItem?.teachers
+              ?.map((teacherItem) => {
+                const isThisOrg =
+                  teacherItem?.school_memberships?.some(
+                    (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+                  ) || false;
+                return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+              })
+              .filter((item) => item?.user_id !== "");
+            teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
+          });
+        } else {
+          // 获取指定school_id下的老师
+          const { data } = await gqlapi.query<TeacherListBySchoolIdQuery, TeacherListBySchoolIdQueryVariables>({
+            query: TeacherListBySchoolIdDocument,
+            variables: {
+              school_id,
+            },
+          });
+          data.school?.classes?.forEach((classItem) => {
+            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+          });
+        }
+      }
+      if ((!perm.view_my_organization_reports_612 && perm.view_my_school_reports_611) || perm.view_reports_610) {
+        const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
+          query: GetSchoolTeacherDocument,
+          variables: {
+            user_id: my_id,
+          },
+        });
+        schoolList = data.user?.school_memberships?.filter(
+          (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+        ) as Pick<School, "school_id" | "school_name">[];
+        if (school_id === "all") {
+          data.user?.school_memberships
+            ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
+            .map((schoolItem) =>
+              schoolItem?.school?.classes?.forEach(
+                (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
+              )
+            );
+        } else {
+          // 获取指定school_id下的老师
+          const { data } = await gqlapi.query<TeacherListBySchoolIdQuery, TeacherListBySchoolIdQueryVariables>({
+            query: TeacherListBySchoolIdDocument,
+            variables: {
+              school_id,
+            },
+          });
+          data.school?.classes?.forEach((classItem) => {
+            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+          });
+        }
+      }
     }
-
     const teacherIdList = teacher_ids.split(",");
     if (teacherIdList.length === 1 && teacher_ids !== "all") {
       const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({

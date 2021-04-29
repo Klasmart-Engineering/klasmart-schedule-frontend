@@ -55,8 +55,11 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
     PermissionType.view_my_organizations_reports_612,
     PermissionType.view_my_school_reports_611,
   ]);
+
   const schools = teachingLoadOnload.schoolList?.slice(0) || [];
-  schools.push({ school_id: "no_assigned", school_name: "No assigned" });
+  if (perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organization_reports_612) {
+    schools.push({ school_id: "no_assigned", school_name: "No assigned" });
+  }
   schools.unshift({ school_id: "all", school_name: "All" });
   const classs = teachingLoadOnload.classList?.slice(0) || [];
   classs.unshift({ class_id: "all", class_name: "All" });

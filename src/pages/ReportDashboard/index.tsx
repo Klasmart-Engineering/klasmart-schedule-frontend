@@ -1,4 +1,4 @@
-import { makeStyles, SvgIcon, Typography } from "@material-ui/core";
+import { Grid, Hidden, makeStyles, SvgIcon, Typography } from "@material-ui/core";
 import { AccessTime, CategoryOutlined, ChevronRight } from "@material-ui/icons";
 import React, { cloneElement, useMemo } from "react";
 import { useHistory } from "react-router";
@@ -16,50 +16,64 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     alignItems: "center",
   },
   reportList: {
-    [breakpoints.up("lg")]: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
+    display: "flex",
+    justifyContent: "space-between",
   },
 
   reportItem: {
     minWidth: 160,
     width: "25%",
     cursor: "pointer",
-    marginBottom: 20,
-    [breakpoints.down("md")]: {
-      width: "100%",
-    },
-  },
-  reportItemInner: {
     borderRadius: 8,
     boxShadow: shadows[3],
     padding: "32px 28px",
   },
-  iconBoxBorder: {
-    border: "1px dashed #ccc ",
-    width: 64,
-    height: 64,
-    marginBottom: 24,
+  reportItemMb: {
+    textAlign: "center",
+    cursor: "pointer",
+    boxShadow: shadows[3],
+    borderRadius: 8,
+    boxSizing: "border-box",
+    padding: "32px 28px",
+    minWidth: 140,
   },
   iconBox: {
     backgroundColor: "#89c4f9",
     borderRadius: 8,
     color: "#fff",
+    width: 64,
     height: 64,
-    fontSize: 32,
+    marginBottom: 24,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    [breakpoints.down("sm")]: {
+      height: 40,
+      width: 40,
+      marginBottom: 20,
+    },
   },
   reportItemTitleBox: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    [breakpoints.down("sm")]: {
+      display: "block",
+    },
+  },
+  reportItemTitleTop: {
+    fontSize: 32,
+    fontWeight: 700,
+    [breakpoints.down("sm")]: {
+      fontSize: 20,
+    },
   },
   reportItemTitle: {
     fontSize: 18,
     fontWeight: 700,
+    [breakpoints.down("sm")]: {
+      fontSize: 12,
+    },
   },
 }));
 interface ReportItem {
@@ -102,26 +116,42 @@ export function ReportDashboard() {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
-        <Typography variant="h4">{t("report_label_report_list")}</Typography>
+        <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
       </div>
-      <div className={css.reportList}>
-        {reportList.map((item) => (
-          <div className={css.reportItem} onClick={() => handleClick(item.url)}>
-            <div key={item.title} className={css.reportItemInner}>
-              <div className={css.iconBoxBorder}>
-                {" "}
-                <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                  {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
-                </div>
+      <Hidden smDown>
+        <div className={css.reportList}>
+          {reportList.map((item) => (
+            <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
+              <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
+                {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
               </div>
               <div className={css.reportItemTitleBox}>
                 <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
                 <ChevronRight style={{ opacity: 0.54 }} />
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </Hidden>
+      <Hidden mdUp>
+        <Grid container spacing={4}>
+          {reportList.map((item) => (
+            <Grid key={item.title} item xs={6}>
+              <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
+                    {cloneElement(item.icon, { style: { fontSize: 22 } })}{" "}
+                  </div>
+                </div>
+                <div className={css.reportItemTitleBox}>
+                  <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
+                  <ChevronRight style={{ opacity: 0.54, marginTop: 7 }} />
+                </div>
+              </div>
+            </Grid>
+          ))}
+        </Grid>
+      </Hidden>
     </LayoutBox>
   );
 }
@@ -132,7 +162,7 @@ export const ReportTitle = (props: { title: string }) => {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
-        <Typography variant="h4">{title}</Typography>
+        <Typography className={css.reportItemTitleTop}>{title}</Typography>
       </div>
     </LayoutBox>
   );
