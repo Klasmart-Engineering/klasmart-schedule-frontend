@@ -4,6 +4,7 @@ import confirm from "./confirm";
 import content from "./content";
 import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
+import milestone from "./milestone";
 import notify from "./notify";
 import outcome from "./outcome";
 import report from "./report";
@@ -24,6 +25,7 @@ export const store = configureStore({
     schedule,
     assessments,
     report,
+    milestone,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loadingMiddleware),
 });

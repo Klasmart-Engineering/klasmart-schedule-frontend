@@ -14,6 +14,8 @@ import { useHistory } from "react-router-dom";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentList } from "../../pages/AssesmentList";
 import { HomeFunAssessmentList } from "../../pages/HomeFunAssessmentList";
+import MilestoneEdit from "../../pages/MilestoneEdit";
+import MilestonesList from "../../pages/MilestoneList";
 import CreateOutcomings from "../../pages/OutcomeEdit";
 import { OutcomeList } from "../../pages/OutcomeList";
 import { LoBlueIcon, LoIcon } from "../../pages/OutcomeList/Icons";
@@ -107,6 +109,13 @@ export function FirstSearchHeader() {
                   </Button>
                 </Permission>
               )}
+              {pathname.indexOf(MilestonesList.routeBasePath) >= 0 && (
+                <Permission value={PermissionType.create_milestone_422}>
+                  <Button href={`#${MilestoneEdit.routeRedirectDefault}`} variant="contained" color="primary" className={css.createBtn}>
+                    {d("Create").t("assess_label_create")} +
+                  </Button>
+                </Permission>
+              )}
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center" item md={9} lg={7} xl={5}>
               <Permission value={PermissionType.learning_outcome_page_404}>
@@ -119,7 +128,11 @@ export function FirstSearchHeader() {
                 </Button>
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>
-                <Button className={clsx(css.nav, { [css.actives]: false })} startIcon={<FlagOutlinedIcon />}>
+                <Button
+                  onClick={() => history.push(MilestonesList.routeBasePath)}
+                  className={clsx(css.nav, { [css.actives]: pathname.indexOf(MilestonesList.routeBasePath) >= 0 })}
+                  startIcon={<FlagOutlinedIcon />}
+                >
                   {d("Milestone").t("assess_label_milestone")}
                 </Button>
               </Permission>
@@ -178,7 +191,15 @@ export function FirstSearchHeaderMb() {
                     onClick={() => history.push(OutcomeList.routeRedirectDefault)}
                   />
                 )}
-                {perm.milestones_page_405 && <Tab value={HeaderCategory.milestones} label={"Milestones"} className={classes.capitalize} />}
+                {perm.milestones_page_405 && (
+                  <Tab
+                    component={Button}
+                    value={MilestonesList.routeBasePath}
+                    label={"Milestones"}
+                    className={classes.capitalize}
+                    onClick={() => history.push(MilestonesList.routeBasePath)}
+                  />
+                )}
                 <Tab value={HeaderCategory.standards} label={"Standard"} className={classes.capitalize} />
                 {!isHomeFunList && perm.assessments_page_406 && (
                   <Tab

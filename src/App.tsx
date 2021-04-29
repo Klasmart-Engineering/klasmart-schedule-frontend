@@ -18,6 +18,8 @@ import { H5pEditor } from "./pages/H5pEditor";
 import { HomeFunAssessmentList } from "./pages/HomeFunAssessmentList";
 import { AssessmentsHomefunEdit } from "./pages/HomefunEdit";
 import Live from "./pages/Live";
+import MilestoneEdit from "./pages/MilestoneEdit";
+import MilestonesList from "./pages/MilestoneList";
 import MyContentList from "./pages/MyContentList/index";
 import { default as CreateOutcome, default as CreateOutcomings } from "./pages/OutcomeEdit";
 import { OutcomeList } from "./pages/OutcomeList";
@@ -108,6 +110,12 @@ function App() {
                   </Route>
                   <Route path={H5pDemo.routeBasePath}>
                     <H5pDemo />
+                  </Route>
+                  <Route path={MilestonesList.routeBasePath}>
+                    <MilestonesList />
+                  </Route>
+                  <Route path={MilestoneEdit.routeMatchPath}>
+                    <MilestoneEdit />
                   </Route>
                   <Route path="/">
                     <Redirect to={MyContentList.routeRedirectDefault} />
