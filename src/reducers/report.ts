@@ -682,9 +682,11 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           user_id: my_id,
         },
       });
-      schoolList = data.user?.school_memberships?.filter(
-        (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-      ) as Pick<School, "school_id" | "school_name">[];
+      schoolList = schoolList.concat(
+        data.user?.school_memberships?.filter(
+          (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+        ) as Pick<School, "school_id" | "school_name">[]
+      );
     } else {
       if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
         const { data: schoolListResult } = await gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
@@ -693,7 +695,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             organization_id: organization_id,
           },
         });
-        schoolList = schoolListResult.organization?.schools as Pick<School, "school_id" | "school_name">[];
+        schoolList = schoolList.concat(schoolListResult.organization?.schools as Pick<School, "school_id" | "school_name">[]);
         if (school_id === "all") {
           // 获取本组织下的所有在学校的老师
           const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
@@ -745,9 +747,11 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             user_id: my_id,
           },
         });
-        schoolList = data.user?.school_memberships?.filter(
-          (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-        ) as Pick<School, "school_id" | "school_name">[];
+        schoolList = schoolList.concat(
+          data.user?.school_memberships?.filter(
+            (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+          ) as Pick<School, "school_id" | "school_name">[]
+        );
         if (school_id === "all") {
           data.user?.school_memberships
             ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
