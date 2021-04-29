@@ -13,7 +13,6 @@ import {
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
-  ApiOutcomeView,
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
   EntityFolderContentData,
@@ -22,7 +21,15 @@ import {
   EntityOrganizationProperty,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
-import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
+import {
+  Author,
+  ContentType,
+  FolderPartition,
+  GetOutcomeList,
+  OutcomePublishStatus,
+  PublishStatus,
+  SearchContentsRequestContentType,
+} from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
@@ -38,7 +45,7 @@ interface IContentState {
   history?: ReturnType<typeof useHistory>;
   contentDetail: Required<EntityContentInfoWithDetails>;
   mediaList: EntityContentInfoWithDetails[];
-  outcomeList: ApiOutcomeView[];
+  outcomeList: GetOutcomeList;
   total: number;
   contentsList: EntityFolderContentData[];
   contentPreview: EntityContentInfoWithDetails;

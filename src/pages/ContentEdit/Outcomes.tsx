@@ -20,7 +20,7 @@ import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { forwardRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { ApiOutcomeView } from "../../api/api.auto";
+import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
@@ -117,10 +117,10 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 }));
 
 interface OutcomesTableProps {
-  list?: ApiOutcomeView[];
-  value?: ApiOutcomeView[];
-  onChange?: (value: ApiOutcomeView[]) => any;
-  onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
+  list?: GetOutcomeList;
+  value?: GetOutcomeList;
+  onChange?: (value: GetOutcomeList) => any;
+  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   open?: boolean;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
@@ -130,7 +130,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   const createContent = usePermission(PermissionType.create_content_page_201);
   const editAll = usePermission(PermissionType.edit_org_published_content_235);
   const isPermission = associateLOC || createContent || editAll;
-  const handleAction = (item: ApiOutcomeView, type: "add" | "remove") => {
+  const handleAction = (item: GetOutcomeDetail, type: "add" | "remove") => {
     const { outcome_id: id } = item;
     if (type === "add") {
       if (id && value) {
@@ -195,9 +195,9 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
 };
 
 interface OutcomesInputProps {
-  value?: ApiOutcomeView[];
-  onChange?: (value: ApiOutcomeView[]) => any;
-  onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
+  value?: GetOutcomeDetail[];
+  onChange?: (value: GetOutcomeDetail[]) => any;
+  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
 export const OutComesInput = (props: OutcomesInputProps) => {
   const css = useStyles();
@@ -237,16 +237,16 @@ export const OutComesInput = (props: OutcomesInputProps) => {
 
 export interface OutcomesProps {
   comingsoon?: boolean;
-  list: ApiOutcomeView[];
+  list: GetOutcomeDetail[];
   total: number;
   amountPerPage?: number;
   searchName: string;
   assumed: boolean;
   onSearch: (query: SearchItems) => any;
   onChangePage: (page: number) => any;
-  value?: ApiOutcomeView[];
-  onChange?: (value: ApiOutcomeView[]) => any;
-  onGoOutcomesDetail: (id: ApiOutcomeView["outcome_id"]) => any;
+  value?: GetOutcomeDetail[];
+  onChange?: (value: GetOutcomeDetail[]) => any;
+  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   outcomePage: number;
 }
 
@@ -267,6 +267,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     outcomePage,
   } = props;
   const { lesson } = useParams();
+  console.log(value);
   const handChangePage = useCallback(
     (event: object, page: number) => {
       onChangePage(page);

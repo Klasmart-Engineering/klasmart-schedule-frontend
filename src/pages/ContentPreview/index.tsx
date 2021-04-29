@@ -26,7 +26,9 @@ import { H5pPreview } from "./H5pPreview";
 import { LearningOutcome } from "./LeaningOutcomes";
 import { OperationBtn } from "./OperationBtn";
 import { TabValue } from "./type";
-
+interface RouteParams {
+  tab: "details" | "outcomes";
+}
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
@@ -43,7 +45,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const { id, search, sid, author, class_id, program_group } = useQuery();
   const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { tab } = useParams();
+  const { tab } = useParams<RouteParams>();
   const content_type = contentPreview.content_type;
   const history = useHistory();
   const handleDelete = async () => {

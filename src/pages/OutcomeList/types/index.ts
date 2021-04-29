@@ -1,5 +1,4 @@
 import api from "../../../api";
-import { ApiOutcomeIDList } from "../../../api/api.auto";
 
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
@@ -29,8 +28,9 @@ export enum BulkListFormKey {
   EXECT_SEARCH = "EXECT_SEARCH",
 }
 
+export type GetOutcomeIDList = NonNullRecordValue<NonNullable<Parameters<typeof api.bulk.deleteOutcomeBulk>[0]>>;
 export interface BulkListForm {
-  [BulkListFormKey.CHECKED_BULK_IDS]: NonNullable<ApiOutcomeIDList["outcome_ids"]>;
+  [BulkListFormKey.CHECKED_BULK_IDS]: NonNullRecordValue<NonNullable<GetOutcomeIDList["outcome_ids"]>>;
   [BulkListFormKey.SEARCH_TEXT_KEY]: string;
   [BulkListFormKey.EXECT_SEARCH]: string;
 }

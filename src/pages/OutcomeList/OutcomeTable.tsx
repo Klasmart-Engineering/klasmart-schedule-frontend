@@ -9,8 +9,7 @@ import clsx from "clsx";
 import React, { useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { ApiOutcomeView } from "../../api/api.auto";
-import { OutcomePublishStatus } from "../../api/type";
+import { GetOutcomeDetail, OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
@@ -75,7 +74,7 @@ const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T
 };
 
 interface OutcomeProps extends OutcomeActionProps {
-  outcome: ApiOutcomeView;
+  outcome: GetOutcomeDetail;
   queryCondition: OutcomeQueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
   onClickOutcome: OutcomeTableProps["onClickOutcome"];
@@ -215,10 +214,10 @@ function OutomeRow(props: OutcomeProps) {
 }
 
 interface OutcomeActionProps {
-  onPublish: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
-  onDelete: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
-  onApprove: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
-  onReject: (id: NonNullable<ApiOutcomeView["outcome_id"]>) => any;
+  onPublish: (id: NonNullable<GetOutcomeDetail["outcome_id"]>) => any;
+  onDelete: (id: NonNullable<GetOutcomeDetail["outcome_id"]>) => any;
+  onApprove: (id: NonNullable<GetOutcomeDetail["outcome_id"]>) => any;
+  onReject: (id: NonNullable<GetOutcomeDetail["outcome_id"]>) => any;
 }
 
 export interface OutcomeTableProps extends OutcomeActionProps {
@@ -226,10 +225,10 @@ export interface OutcomeTableProps extends OutcomeActionProps {
   total: number;
   userId: string;
   amountPerPage?: number;
-  list: ApiOutcomeView[];
+  list: GetOutcomeDetail[];
   queryCondition: OutcomeQueryCondition;
   onChangePage: (page: number) => void;
-  onClickOutcome: (id: ApiOutcomeView["outcome_id"]) => any;
+  onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();

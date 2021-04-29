@@ -5,9 +5,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { ApiOutcomeView } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
-import { ContentInputSourceType, ContentType, H5pSub, SearchContentsRequestContentType } from "../../api/type";
+import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
@@ -259,7 +258,7 @@ function ContentEditForm() {
     [assumed, dispatch, exactSerch, searchOutcome]
   );
   const handleGoOutcomeDetail = useMemo(
-    () => (id: ApiOutcomeView["outcome_id"]) => {
+    () => (id: GetOutcomeDetail["outcome_id"]) => {
       window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
     },
     []
