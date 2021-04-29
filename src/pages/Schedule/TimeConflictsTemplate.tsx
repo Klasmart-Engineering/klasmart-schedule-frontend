@@ -103,7 +103,7 @@ interface TimeConflictsTemplateProps {
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
-  const { conflictsData, handleChangeParticipants, handleClose, handleDestroyOperations } = props;
+  const { conflictsData, handleChangeParticipants, handleClose, handleDestroyOperations, classRosterIds, participantsIds } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -137,11 +137,12 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
     setConflict({ ...conflicts, [signal]: temp });
   };
 
-  const dataConversion = (conflictsData: InnerItem[]) => {
-    if (!conflictsData) return [];
-    return conflictsData.map((data: InnerItem) => {
-      return { id: data.id, name: data.name, enable: true };
-    });
+  const finalData = (afterTreatment: InnerItem[], preTreatment?: ClassOptionsItem[]) => {
+    const filterData =
+      afterTreatment?.map((item: InnerItem) => {
+        if (item.selected === "not_schedule") return item.id;
+      }) ?? [];
+    return preTreatment?.filter((treatment: ClassOptionsItem) => !filterData.includes(treatment.id));
   };
 
   const handleConfirm = () => {
@@ -150,13 +151,13 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       if (conflicts[key] && conflicts[key].some((item) => item.selected === "not_schedule")) keepRosterOpen = true;
     }
     handleChangeParticipants("classRoster", {
-      teacher: dataConversion(conflicts.class_roster_teacher_ids?.filter((item: InnerItem) => item.selected === "schedule")),
-      student: dataConversion(conflicts.class_roster_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
+      teacher: finalData(conflicts.class_roster_teacher_ids, classRosterIds?.teacher),
+      student: finalData(conflicts.class_roster_student_ids, classRosterIds?.student),
     } as ParticipantsShortInfo);
     handleChangeParticipants("paiticipants", {
-      teacher: dataConversion(conflicts.participants_teacher_ids?.filter((item: InnerItem) => item.selected === "schedule")),
-      student: dataConversion(conflicts.participants_student_ids?.filter((item: InnerItem) => item.selected === "schedule")),
-    });
+      teacher: finalData(conflicts.participants_teacher_ids, participantsIds?.teacher),
+      student: finalData(conflicts.participants_student_ids, participantsIds?.student),
+    } as ParticipantsShortInfo);
     handleDestroyOperations(keepRosterOpen);
     handleClose();
   };

@@ -1,5 +1,13 @@
-import { EntityScheduleClassesInfo, EntityScheduleSchoolInfo, EntityScheduleShortInfo, FilterQueryTypeProps } from "../types/scheduleTypes";
+import {
+  ClassOptionsItem,
+  EntityScheduleClassesInfo,
+  EntityScheduleSchoolInfo,
+  EntityScheduleShortInfo,
+  FilterQueryTypeProps,
+  ParticipantsShortInfo,
+} from "../types/scheduleTypes";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
+import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -7,6 +15,12 @@ type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "cla
 interface AssociationStructureProps {
   program: EntityScheduleShortInfo[];
   subject: EntityScheduleShortInfo[];
+}
+
+enum ClassRosterSelectType {
+  selectAll = 1,
+  unselectAll = 2,
+  notFullySelect = 3,
 }
 
 export class modelSchedule {
@@ -91,6 +105,29 @@ export class modelSchedule {
   }
 
   /**
+   * Get Class Roster Full Selection Status in edit
+   * @param classRosterCheck
+   * @param classRosterAll
+   * @constructor
+   */
+  static ClassRosterDigital(
+    classRosterCheck: ParticipantsShortInfo | undefined,
+    classRosterAll: getScheduleParticipantsMockOptionsResponse
+  ) {
+    const classRosterDataNum = (
+      classRosterAll?.participantList?.class?.students?.concat(classRosterAll?.participantList?.class?.teachers!) ?? []
+    ).length;
+    const filterDataNum = (
+      classRosterCheck?.student.concat(classRosterCheck.teacher).map((item: ClassOptionsItem) => {
+        return item.id;
+      }) ?? []
+    ).length;
+    if (classRosterDataNum === filterDataNum) return ClassRosterSelectType.selectAll;
+    if (filterDataNum === 0) return ClassRosterSelectType.unselectAll;
+    return ClassRosterSelectType.notFullySelect;
+  }
+
+  /**
    *  Assembly filtration parameters
    * @param stateOnlyMine
    * @constructor
@@ -98,9 +135,9 @@ export class modelSchedule {
   static AssemblyFilterParameter(stateOnlyMine: string[]) {
     const filterQuery: FilterQueryTypeProps = { class_types: "", class_ids: "", subject_ids: "", program_ids: "" };
     stateOnlyMine.forEach((value: string) => {
-      const nodeValue = value.split("+");
-      const matchValue = this.FILTER_PARAMETER_MATCH[nodeValue[0] as filterParameterMatchType];
-      if (nodeValue[1] !== "All" && matchValue) filterQuery[matchValue as filterValueMatchType] += `${nodeValue[1]},`;
+      const [label, id] = value.split("+");
+      const matchValue = this.FILTER_PARAMETER_MATCH[label as filterParameterMatchType];
+      if (id !== "All" && matchValue) filterQuery[matchValue as filterValueMatchType] += `${id},`;
     });
     return filterQuery;
   }
