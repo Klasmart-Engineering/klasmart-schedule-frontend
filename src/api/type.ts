@@ -162,3 +162,20 @@ export type GetOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.s
 export type GetOutcomeList = NonNullable<GetOutcomeListResult["list"]>;
 export type GetOutcomeDetail = NonNullable<GetOutcomeListResult["list"]>[0];
 export type OutcomeSetResult = NonNullable<AsyncReturnType<typeof api.sets.pullOutcomeSet>["sets"]>;
+
+export enum MilestoneStatus {
+  published = "published",
+  unpublished = "draft",
+}
+export enum MilestoneOrderBy {
+  name = "name",
+  _name = "_name",
+  created_at = "created_at",
+  _created_at = "-created_at",
+  updated_at = "updated_at",
+  _updated_at = "_updated_at",
+}
+
+export type SearchMilestonneResult = AsyncReturnType<typeof api.milestones.searchMilestone>;
+export type MilestoneListResult = SearchMilestonneResult["milestones"];
+export type MilestoneDetailResult = NonNullable<MilestoneListResult>[0];

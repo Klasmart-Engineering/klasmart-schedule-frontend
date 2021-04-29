@@ -52,6 +52,8 @@ export interface ApiForgottenPasswordRequest {
   password?: string;
 }
 
+export type ApiHasPermissionResponse = Record<string, boolean>;
+
 export interface ApiIDResponse {
   id?: string;
 }
@@ -283,6 +285,11 @@ export interface EntityAssessmentSubject {
 export interface EntityAssessmentTeacher {
   id?: string;
   name?: string;
+}
+
+export interface EntityAssessmentsSummary {
+  complete?: number;
+  in_progress?: number;
 }
 
 export interface EntityAuthedContentRecordInfo {
@@ -602,7 +609,6 @@ export interface EntityGetHomeFunStudyResult {
   status?: string;
   student_id?: string;
   student_name?: string;
-  subject_name?: string;
   teacher_ids?: string[];
   teacher_names?: string[];
   title?: string;
@@ -667,6 +673,32 @@ export interface EntityLiveTokenView {
   token?: string;
 }
 
+export interface EntityMilestone {
+  ages?: string[];
+  ancestor_id?: string;
+  author_id?: string;
+  categories?: string[];
+  created_at?: number;
+  deleted_at?: number;
+  description?: string;
+  grades?: string[];
+  latest_id?: string;
+  lo_counts?: number;
+  locked_by?: string;
+  milestone_id?: string;
+  milestone_name?: string;
+  organization_id?: string;
+  outcomes?: EntityOutcome[];
+  programs?: string[];
+  shortcode?: string;
+  source_id?: string;
+  status?: string;
+  subcategories?: string[];
+  subjects?: string[];
+  type?: string;
+  updated_at?: number;
+}
+
 export interface EntityMoveFolderIDBulkRequest {
   dist?: string;
   folder_info?: EntityFolderIdWithFileType[];
@@ -713,6 +745,7 @@ export interface EntityOutcome {
   keywords?: string;
   latest_id?: string;
   locked_by?: string;
+  milestones?: EntityMilestone[];
   organization_id?: string;
   outcome_id?: string;
   outcome_name?: string;
@@ -813,6 +846,24 @@ export interface EntityRepeatYearly {
   on_week?: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
   on_week_month?: number;
   on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
+}
+
+export interface EntityReportListTeachingLoadDuration {
+  end_at?: number;
+  offline?: number;
+  online?: number;
+  start_at?: number;
+}
+
+export interface EntityReportListTeachingLoadItem {
+  durations?: EntityReportListTeachingLoadDuration[];
+  teacher_id?: string;
+  teacher_name?: string;
+}
+
+export interface EntityReportListTeachingLoadResult {
+  items?: EntityReportListTeachingLoadItem[];
+  total?: number;
 }
 
 export interface EntityScheduleAccessibleUserView {
@@ -1222,6 +1273,11 @@ export interface ModelGrade {
   grade_name?: string;
 }
 
+export interface ModelMilestone {
+  milestone_id?: string;
+  milestone_name?: string;
+}
+
 export interface ModelMilestoneList {
   ids?: string[];
 }
@@ -1235,6 +1291,7 @@ export interface ModelMilestoneView {
   age?: ModelAge[];
   age_ids?: string[];
   ancestor_id?: string;
+  author?: ModelAuthorView;
   category?: ModelCategory[];
   category_ids?: string[];
   create_at?: number;
@@ -1245,7 +1302,7 @@ export interface ModelMilestoneView {
   locked_by?: string;
   milestone_id?: string;
   milestone_name?: string;
-  organization?: ModelAuthorView;
+  organization?: ModelOrganizationView;
   outcome_ancestor_ids?: string[];
   outcome_count?: number;
   outcomes?: ModelOutcomeView[];
@@ -1258,6 +1315,8 @@ export interface ModelMilestoneView {
   subcategory_ids?: string[];
   subject?: ModelSubject[];
   subject_ids?: string[];
+  type?: string;
+  with_publish?: boolean;
 }
 
 export interface ModelOrganizationView {
@@ -1348,6 +1407,7 @@ export interface ModelOutcomeView {
   keywords?: string[];
   latest_id?: string;
   locked_by?: string;
+  milestones?: ModelMilestone[];
   organization_id?: string;
   organization_name?: string;
   outcome_id?: string;
@@ -1519,6 +1579,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         status?: string;
         teacher_name?: string;
+        class_type?: string;
         page?: number;
         page_size?: number;
         order_by?: "class_end_time" | "-class_end_time" | "complete_time" | "-complete_time";
@@ -1588,6 +1649,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         assessment
+      ),
+  };
+  assessmentsSummary = {
+    /**
+     * @tags assessments
+     * @name getAssessmentsSummary
+     * @summary get assessments summary
+     * @request GET:/assessments_summary
+     * @description get assessments summary
+     */
+    getAssessmentsSummary: (query?: { status?: string; teacher_name?: string; class_type?: string }, params?: RequestParams) =>
+      this.request<EntityAssessmentsSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/assessments_summary${this.addQueryParams(query)}`,
+        "GET",
+        params
       ),
   };
   bulk = {
@@ -2661,6 +2737,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         description?: string;
         shortcode?: string;
         status?: "draft" | "published";
+        author_id?: string;
         page?: number;
         page_size?: number;
         order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
@@ -2755,6 +2832,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         string,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
       >(`/milestones/${milestone_id}/occupy`, "PUT", params),
+  };
+  organizationPermissions = {
+    /**
+     * @tags permission
+     * @name hasOrganizationPermissions
+     * @summary hasOrganizationPermissions
+     * @request GET:/organization_permissions
+     * @description has organization permission
+     */
+    hasOrganizationPermissions: (query: { permission_name: string }, params?: RequestParams) =>
+      this.request<ApiHasPermissionResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/organization_permissions${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   organizationsPropertys = {
     /**
@@ -2982,6 +3074,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         EntityTeacherReport,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/teachers/${id}`, "GET", params),
+
     /**
      * @tags reports
      * @name listTeachingLoadReport
@@ -3323,9 +3416,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     /**
      * @tags outcome_set
      * @name pullOutcomeSet
-     * @summary getLearningOutcome
+     * @summary getOutcomeSet
      * @request GET:/sets
-     * @description learning outcomes info
+     * @description outcome_set info
      */
     pullOutcomeSet: (
       query: {

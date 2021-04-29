@@ -67,6 +67,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "class type",
+            "name": "class_type",
+            "in": "query"
+          },
+          {
             "type": "integer",
             "default": 1,
             "description": "page number",
@@ -290,6 +296,62 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/assessments_summary": {
+      "get": {
+        "description": "get assessments summary",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "get assessments summary",
+        "operationId": "getAssessmentsSummary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "status search",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher name fuzzy search",
+            "name": "teacher_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class type",
+            "name": "class_type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AssessmentsSummary"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -3908,6 +3970,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "search by author",
+            "name": "author_id",
+            "in": "query"
+          },
+          {
             "type": "integer",
             "description": "page",
             "name": "page",
@@ -4271,6 +4339,45 @@
             "description": "Conflict",
             "schema": {
               "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/organization_permissions": {
+      "get": {
+        "description": "has organization permission",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["permission"],
+        "summary": "hasOrganizationPermissions",
+        "operationId": "hasOrganizationPermissions",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "permission_name separated by commas",
+            "name": "permission_name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.HasPermissionResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
@@ -5088,6 +5195,81 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/teaching_loading": {
+      "get": {
+        "description": "list teaching load report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "list teaching load report",
+        "operationId": "listTeachingLoadReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "school_id",
+            "name": "school_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher_ids",
+            "name": "teacher_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class_ids",
+            "name": "class_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "time_offset",
+            "name": "time_offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "size",
+            "name": "size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ReportListTeachingLoadResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -6160,11 +6342,11 @@
     },
     "/sets": {
       "get": {
-        "description": "learning outcomes info",
+        "description": "outcome_set info",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["outcome_set"],
-        "summary": "getLearningOutcome",
+        "summary": "getOutcomeSet",
         "operationId": "pullOutcomeSet",
         "parameters": [
           {
@@ -6963,6 +7145,12 @@
         }
       }
     },
+    "api.HasPermissionResponse": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
     "api.IDResponse": {
       "type": "object",
       "properties": {
@@ -7549,6 +7737,17 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentsSummary": {
+      "type": "object",
+      "properties": {
+        "complete": {
+          "type": "integer"
+        },
+        "in_progress": {
+          "type": "integer"
         }
       }
     },
@@ -8527,9 +8726,6 @@
         "student_name": {
           "type": "string"
         },
-        "subject_name": {
-          "type": "string"
-        },
         "teacher_ids": {
           "type": "array",
           "items": {
@@ -8710,6 +8906,101 @@
         }
       }
     },
+    "entity.Milestone": {
+      "type": "object",
+      "properties": {
+        "ages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "deleted_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grades": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "lo_counts": {
+          "type": "integer"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "milestone_id": {
+          "type": "string"
+        },
+        "milestone_name": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.Outcome"
+          }
+        },
+        "programs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "subcategories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.MoveFolderIDBulkRequest": {
       "type": "object",
       "properties": {
@@ -8841,6 +9132,12 @@
         },
         "locked_by": {
           "type": "string"
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.Milestone"
+          }
         },
         "organization_id": {
           "type": "string"
@@ -9087,6 +9384,54 @@
         "on_week_seq": {
           "type": "string",
           "enum": ["first", "second", "third", "fourth", "last"]
+        }
+      }
+    },
+    "entity.ReportListTeachingLoadDuration": {
+      "type": "object",
+      "properties": {
+        "end_at": {
+          "type": "integer"
+        },
+        "offline": {
+          "type": "integer"
+        },
+        "online": {
+          "type": "integer"
+        },
+        "start_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ReportListTeachingLoadItem": {
+      "type": "object",
+      "properties": {
+        "durations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ReportListTeachingLoadDuration"
+          }
+        },
+        "teacher_id": {
+          "type": "string"
+        },
+        "teacher_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ReportListTeachingLoadResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ReportListTeachingLoadItem"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
@@ -10303,6 +10648,17 @@
         }
       }
     },
+    "model.Milestone": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "type": "string"
+        },
+        "milestone_name": {
+          "type": "string"
+        }
+      }
+    },
     "model.MilestoneList": {
       "type": "object",
       "properties": {
@@ -10345,6 +10701,10 @@
         },
         "ancestor_id": {
           "type": "string"
+        },
+        "author": {
+          "type": "object",
+          "$ref": "#/definitions/model.AuthorView"
         },
         "category": {
           "type": "array",
@@ -10390,7 +10750,7 @@
         },
         "organization": {
           "type": "object",
-          "$ref": "#/definitions/model.AuthorView"
+          "$ref": "#/definitions/model.OrganizationView"
         },
         "outcome_ancestor_ids": {
           "type": "array",
@@ -10451,6 +10811,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "type": {
+          "type": "string"
+        },
+        "with_publish": {
+          "type": "boolean"
         }
       }
     },
@@ -10751,6 +11117,12 @@
         },
         "locked_by": {
           "type": "string"
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Milestone"
+          }
         },
         "organization_id": {
           "type": "string"
