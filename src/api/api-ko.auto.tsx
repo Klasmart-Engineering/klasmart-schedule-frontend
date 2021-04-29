@@ -104,7 +104,7 @@ export type QeuryMeQueryVariables = Types.Exact<{
 
 export type QeuryMeQuery = { __typename?: "Query" } & {
   me?: Types.Maybe<
-    { __typename?: "User" } & Pick<Types.User, "user_id"> & {
+    { __typename?: "User" } & Pick<Types.User, "user_id" | "user_name"> & {
         membership?: Types.Maybe<
           { __typename?: "OrganizationMembership" } & {
             roles?: Types.Maybe<
@@ -773,6 +773,7 @@ export const QeuryMeDocument = gql`
   query qeuryMe($organization_id: ID!) {
     me {
       user_id
+      user_name
       membership(organization_id: $organization_id) {
         roles {
           permissions {

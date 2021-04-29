@@ -71,6 +71,7 @@ query participantsByClass($class_id: ID!) {
 query qeuryMe($organization_id: ID!) {
   me {
     user_id
+    user_name
     membership(organization_id: $organization_id) {
       roles {
         permissions {
