@@ -1,5 +1,5 @@
 import { EntityScheduleClassesInfo, EntityScheduleSchoolInfo, EntityScheduleShortInfo, FilterQueryTypeProps } from "../types/scheduleTypes";
-import { EntityContentInfoWithDetails } from "../api/api.auto";
+import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -71,6 +71,23 @@ export class modelSchedule {
       fullElection.push({ id: schoolItem.school_id, status: isElectionAll });
     });
     return fullElection;
+  }
+
+  /**
+   *  Get Other Full Selection Status in filter
+   * @param OtherDigitalAll
+   * @param OtherDigital
+   * @constructor
+   */
+  static FilterOtherDigital(OtherDigitalAll: EntityScheduleFilterClass[], OtherDigital: string[]) {
+    let fullElectionStatus: boolean = true;
+    OtherDigitalAll.forEach((classItem: EntityScheduleFilterClass) => {
+      const includes = OtherDigital.filter((id: string) => {
+        return id.includes(classItem.id as string);
+      });
+      if (includes.length < 1) fullElectionStatus = false;
+    });
+    return fullElectionStatus;
   }
 
   /**
