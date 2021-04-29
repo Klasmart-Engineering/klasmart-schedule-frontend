@@ -78,9 +78,9 @@ export class modelSchedule {
       schoolItem.classes.forEach((classItem: EntityScheduleClassesInfo) => {
         if (classItem.status === "inactive") return;
         const includes = SchoolDigital.filter((id: string) => {
-          return id.includes(classItem.class_id);
+          return id.includes(`${classItem.class_id}+${schoolItem.school_id}`);
         });
-        if (includes.length < 1) isElectionAll = false;
+        if (!includes.length) isElectionAll = false;
       });
       fullElection.push({ id: schoolItem.school_id, status: isElectionAll });
     });
@@ -99,7 +99,7 @@ export class modelSchedule {
       const includes = OtherDigital.filter((id: string) => {
         return id.includes(classItem.id as string);
       });
-      if (includes.length < 1) fullElectionStatus = false;
+      if (!includes.length) fullElectionStatus = false;
     });
     return fullElectionStatus;
   }
@@ -123,7 +123,7 @@ export class modelSchedule {
       }) ?? []
     ).length;
     if (classRosterDataNum === filterDataNum) return ClassRosterSelectType.selectAll;
-    if (filterDataNum === 0) return ClassRosterSelectType.unselectAll;
+    if (!filterDataNum) return ClassRosterSelectType.unselectAll;
     return ClassRosterSelectType.notFullySelect;
   }
 
