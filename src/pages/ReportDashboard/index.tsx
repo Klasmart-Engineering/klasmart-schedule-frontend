@@ -1,7 +1,7 @@
+import { makeStyles, SvgIcon, Typography } from "@material-ui/core";
+import { AccessTime, CategoryOutlined, ChevronRight } from "@material-ui/icons";
 import React, { cloneElement, useMemo } from "react";
 import { useHistory } from "react-router";
-import { makeStyles, SvgIcon, Typography } from "_@material-ui_core@4.11.3@@material-ui/core";
-import { AccessTime, CategoryOutlined, ChevronRight } from "_@material-ui_icons@4.11.2@@material-ui/icons";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { LangRecordId } from "../../locale/lang/type";
@@ -21,17 +21,20 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
       justifyContent: "space-between",
     },
   },
+
   reportItem: {
-    borderRadius: 8,
-    boxShadow: shadows[3],
-    padding: "32px 28px",
     minWidth: 160,
     width: "25%",
     cursor: "pointer",
     marginBottom: 20,
     [breakpoints.down("md")]: {
-      width: "90%",
+      width: "100%",
     },
+  },
+  reportItemInner: {
+    borderRadius: 8,
+    boxShadow: shadows[3],
+    padding: "32px 28px",
   },
   iconBoxBorder: {
     border: "1px dashed #ccc ",
@@ -103,16 +106,18 @@ export function ReportDashboard() {
       </div>
       <div className={css.reportList}>
         {reportList.map((item) => (
-          <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
-            <div className={css.iconBoxBorder}>
-              {" "}
-              <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
+          <div className={css.reportItem} onClick={() => handleClick(item.url)}>
+            <div key={item.title} className={css.reportItemInner}>
+              <div className={css.iconBoxBorder}>
+                {" "}
+                <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
+                  {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
+                </div>
               </div>
-            </div>
-            <div className={css.reportItemTitleBox}>
-              <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-              <ChevronRight style={{ opacity: 0.54 }} />
+              <div className={css.reportItemTitleBox}>
+                <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
+                <ChevronRight style={{ opacity: 0.54 }} />
+              </div>
             </div>
           </div>
         ))}
