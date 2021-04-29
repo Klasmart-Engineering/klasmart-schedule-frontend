@@ -1,9 +1,9 @@
 import { Box, Hidden, makeStyles, Menu, MenuItem, TextField } from "@material-ui/core";
+import { SchoolOutlined } from "@material-ui/icons";
 import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
-import { SchoolOutlined } from "_@material-ui_icons@4.11.2@@material-ui/icons";
 import { Class, School, User } from "../../api/api-ko-schema.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
