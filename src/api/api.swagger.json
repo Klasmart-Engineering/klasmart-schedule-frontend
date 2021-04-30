@@ -723,7 +723,7 @@
     },
     "/contents": {
       "get": {
-        "description": "query content by condition (Inherent & unchangeable)",
+        "description": "query content by condition (Inherent \u0026 unchangeable)",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["content"],
@@ -915,7 +915,7 @@
     },
     "/contents/{content_id}": {
       "get": {
-        "description": "get a content by id (Inherent & unchangeable)",
+        "description": "get a content by id (Inherent \u0026 unchangeable)",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["content"],
@@ -4351,7 +4351,7 @@
       }
     },
     "/organization_permissions": {
-      "get": {
+      "post": {
         "description": "has organization permission",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -4360,11 +4360,13 @@
         "operationId": "hasOrganizationPermissions",
         "parameters": [
           {
-            "type": "string",
-            "description": "permission_name separated by commas",
-            "name": "permission_name",
-            "in": "query",
-            "required": true
+            "description": "permission names",
+            "name": "PermissionNames",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.HasPermissionRequest"
+            }
           }
         ],
         "responses": {
@@ -5318,13 +5320,13 @@
           },
           {
             "type": "integer",
-            "description": "page index, not paging if page <=0",
+            "description": "page index, not paging if page \u003c=0",
             "name": "page",
             "in": "query"
           },
           {
             "type": "integer",
-            "description": "records per page, not paging if page_size <= 0",
+            "description": "records per page, not paging if page_size \u003c= 0",
             "name": "page_size",
             "in": "query"
           }
@@ -7142,6 +7144,17 @@
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "api.HasPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "permission_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

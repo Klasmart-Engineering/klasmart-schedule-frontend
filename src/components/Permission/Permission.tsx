@@ -106,7 +106,6 @@ export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(v
   }
   return result as PermissionResult<V>;
 }
-
 export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
   const organization_id = apiOrganizationOfPage() || "";
   const { data } = useQeuryMeQuery({ variables: { organization_id }, fetchPolicy: "cache-first" });

@@ -5,8 +5,9 @@ import api from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
 import { QeuryMeQuery } from "./api-ko.auto";
-import { ApiHasPermissionResponse, EntityFolderItemInfo } from "./api.auto";
+import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
+import premissionAll from "./permission_all.json";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
@@ -199,31 +200,24 @@ export function apiIsEnableNewH5p() {
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
-(window as any).apiGetPermission = apiGetPermission;
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const permission = await api.organizationPermissions.hasOrganizationPermissions({
-    permission_name: "school_reports_602,teacher_reports_603,class_reports_604",
+    permission_name: premissionAll,
   });
-  console.log("permissionData=", permission);
-  const mock: ApiHasPermissionResponse = {
-    class_reports_604: true,
-    school_reports_602: true,
-    teacher_reports_603: true,
-  };
-  let returnData = {
+  let returnData: NonNullable<QeuryMeQuery> = {
     me: {
       user_id: "",
       membership: {
         roles: [
           {
-            permissions: [{ permission_name: "" }],
+            permissions: [],
           },
         ],
       },
     },
   };
-  Object.keys(mock).forEach((permissionName) => {
-    if (mock[permissionName]) {
+  Object.keys(permission).forEach((permissionName) => {
+    if (returnData?.me?.membership?.roles?.length && permission[permissionName]) {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });

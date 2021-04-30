@@ -48,6 +48,9 @@ export interface ApiDownloadPathResource {
 export interface ApiFolderItemsResponse {
   items?: EntityFolderItemInfo[];
 }
+export interface ApiHasPermissionRequest {
+  permission_name?: string[];
+}
 
 export interface ApiFolderItemsResponseWithTotal {
   items?: EntityFolderItemInfo[];
@@ -2568,14 +2571,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags permission
      * @name hasOrganizationPermissions
      * @summary hasOrganizationPermissions
-     * @request GET:/organization_permissions
+     * @request POST:/organization_permissions
      * @description has organization permission
      */
-    hasOrganizationPermissions: (query: { permission_name: string }, params?: RequestParams) =>
+    hasOrganizationPermissions: (PermissionNames: ApiHasPermissionRequest, params?: RequestParams) =>
       this.request<ApiHasPermissionResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/organization_permissions${this.addQueryParams(query)}`,
-        "GET",
-        params
+        `/organization_permissions`,
+        "POST",
+        params,
+        PermissionNames
       ),
   };
   organizationsPropertys = {

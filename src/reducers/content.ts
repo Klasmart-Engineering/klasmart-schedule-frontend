@@ -13,6 +13,8 @@ import {
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
+  ApiHasPermissionRequest,
+  ApiHasPermissionResponse,
   ApiOutcomeView,
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
@@ -859,16 +861,9 @@ export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult
   return orgProperty;
 });
 
-// export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload>(
-//   "content/getOrgList",
-//   async (folder_ids, { dispatch }) => {
-//     const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
-//       query: OrganizationsDocument,
-//     });
-//     await dispatch(getFoldersSharedRecords(folder_ids));
-//     return data.organizations;
-//   }
-// );
+export const getSharePermission = createAsyncThunk<ApiHasPermissionResponse, ApiHasPermissionRequest>("getharePermission", async (data) => {
+  return await api.organizationPermissions.hasOrganizationPermissions(data);
+});
 
 export enum Region {
   vn = "vn",
