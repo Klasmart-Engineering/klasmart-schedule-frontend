@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { MilestoneOrderBy, MilestoneStatus } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
-import { PermissionOr, PermissionType } from "../../components/Permission";
+import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { deleteMilestone, onLoadMilestoneList } from "../../reducers/milestone";
@@ -75,6 +75,7 @@ export default function MilestonesList() {
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const { milestoneList, total } = useSelector<RootState, RootState["milestone"]>((state) => state.milestone);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
+  const perm = usePermission([PermissionType.view_unpublished_milestone_417, PermissionType.view_published_milestone_418]);
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => {
     history.push({ search: toQueryString(clearNull(value)) });
   };
@@ -97,9 +98,13 @@ export default function MilestonesList() {
     <>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      <SecondSearchHeader value={condition} onChange={handleChange} />
-      <ThirdSearchHeader value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
-      <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
+      {(perm.view_published_milestone_418 || perm.view_unpublished_milestone_417) && (
+        <>
+          <SecondSearchHeader value={condition} onChange={handleChange} />
+          <ThirdSearchHeader value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
+          <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
+        </>
+      )}
       <PermissionOr
         value={[PermissionType.view_unpublished_milestone_417, PermissionType.view_published_milestone_418]}
         render={(value) =>
