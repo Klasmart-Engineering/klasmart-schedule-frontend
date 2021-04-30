@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -176,32 +177,59 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
   const getHeaderButtonsSmallScreen = () => {
     return (
       <>
-        {!canEdit && (
+        {(!milestone_id || (milestone_id && canEdit)) && (
           <>
             <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
               <CancelOutlined fontSize="small" />
             </IconButton>
             <LButton
-              disabled={!isDirty}
+              disabled={canClick ? !canClick : !isDirty}
               className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
               color="primary"
               onClick={onSave}
             >
               <Save fontSize="small" />
             </LButton>
-            <IconButton disabled={isDirty} className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish}>
+            <IconButton
+              disabled={canClick ? !canClick : !isDirty}
+              className={clsx(css.iconButton, css.greenButton)}
+              color="primary"
+              onClick={onPublish}
+            >
               <Publish fontSize="small" />
             </IconButton>
           </>
         )}
-        {canEdit && (
+        {milestone_id && !canEdit && (
           <>
-            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
-              <Delete fontSize="small" />
-            </IconButton>
-            <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
-              <Create fontSize="small" />
-            </IconButton>
+            {canClick && (
+              <Permission value={PermissionType.delete_unpublished_milestone_449}>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Permission>
+            )}
+            {!canClick && (
+              <Permission value={PermissionType.delete_published_milestone_450}>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Permission>
+            )}
+            {canClick && (
+              <Permission value={PermissionType.edit_unpublished_milestone_440}>
+                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+                  <Create fontSize="small" />
+                </IconButton>
+              </Permission>
+            )}
+            {!canClick && (
+              <Permission value={PermissionType.edit_published_milestone_441}>
+                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+                  <Create fontSize="small" />
+                </IconButton>
+              </Permission>
+            )}
           </>
         )}
       </>
