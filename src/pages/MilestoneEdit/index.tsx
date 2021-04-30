@@ -86,7 +86,6 @@ function MilestoneEditForm() {
     (state) => state.milestone
   );
   const [canEdit, setCanEdit] = useState(false);
-  const [canSave, setCanSave] = useState(true);
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByMilestoneDetail : Regulation.ByMilestoneDetailAndOptionCount);
   const initDefaultValue = useMemo(
     () => ModelMilestoneOptions.createDefaultValueAndKey({ regulation, milestoneDetail, linkedMockOptions }),
@@ -117,7 +116,6 @@ function MilestoneEditForm() {
             });
           }
         }
-        setCanSave(false);
       }),
     [dispatch, handleSubmit, history, id]
   );
@@ -150,7 +148,6 @@ function MilestoneEditForm() {
   );
   const handleEdit = async () => {
     setCanEdit(true);
-    setCanSave(false);
     if (milestoneDetail.status === MilestoneStatus.published) {
       const { payload } = ((await dispatch(
         occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true })
@@ -239,7 +236,6 @@ function MilestoneEditForm() {
   useEffect(() => {
     dispatch(onLoadMilestoneEdit({ id, metaLoading: true }));
     id ? setCanEdit(false) : setCanEdit(true);
-    id ? setCanSave(false) : setCanSave(true);
   }, [dispatch, id]);
   const leftside = (
     <ContentTab tab={tab} onChangeTab={handleChangeTab} error={errors.milestone_name}>
@@ -297,7 +293,6 @@ function MilestoneEditForm() {
         onDelete={handleDelete}
         canEdit={canEdit}
         formMethods={formMethods}
-        canSave={canSave}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftside}

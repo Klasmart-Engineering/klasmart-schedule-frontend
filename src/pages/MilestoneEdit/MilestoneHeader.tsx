@@ -94,6 +94,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     minWidth: "32px",
   },
 }));
+export const GENERALMILESTONE = "general";
 
 export interface MilestoneHeaderProps {
   milestoneDetail?: MilestoneDetailResult;
@@ -105,7 +106,6 @@ export interface MilestoneHeaderProps {
   onDelete: ButtonProps["onClick"];
   canEdit: boolean;
   formMethods: UseFormMethods<MilestoneDetailResult>;
-  canSave: boolean;
 }
 export function MilestoneHeader(props: MilestoneHeaderProps) {
   const history = useHistory();
@@ -155,7 +155,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
             </LButton>
           </>
         )}
-        {milestone_id && !canEdit && (
+        {milestoneDetail?.type !== GENERALMILESTONE && milestone_id && !canEdit && (
           <>
             <Button
               variant="contained"

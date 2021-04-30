@@ -55,6 +55,13 @@ const useStyles = makeStyles((theme) => ({
       width: 0,
     },
   },
+  milestoneCon: {
+    "& .MuiInputBase-input": {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+  },
 }));
 
 export interface OutcomeFormProps {
@@ -460,7 +467,20 @@ export function OutcomeForm(props: OutcomeFormProps) {
             </Grid>
           )}
         </Box>
+
         <Box>
+          <Grid container justify="space-between" className={classes.marginItem}>
+            <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
+              <TextField
+                label={d("Milestone").t("assess_label_milestone")}
+                fullWidth
+                disabled
+                variant="outlined"
+                className={classes.milestoneCon}
+                value={outcomeDetail.milestones?.map((v) => v.milestone_name).join(",")}
+              />
+            </Grid>
+          </Grid>
           <Grid container justify="space-between" style={{ marginTop: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
