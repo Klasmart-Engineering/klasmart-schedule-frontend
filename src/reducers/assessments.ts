@@ -186,6 +186,10 @@ const { reducer } = createSlice({
     [actAssessmentList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
+    [actAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
+      state.assessmentList = initialState.assessmentList;
+      state.total = 0;
+    },
     [getAssessment.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       state.assessmentDetail = cloneDeep(initialState.assessmentDetail);
       state.my_id = cloneDeep(initialState.my_id);
@@ -219,6 +223,10 @@ const { reducer } = createSlice({
     [actHomeFunAssessmentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof actHomeFunAssessmentList>>) => {
       state.homeFunAssessmentList = payload.items || [];
       state.total = payload.total || 0;
+    },
+    [actHomeFunAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
+      state.homeFunAssessmentList = initialState.homeFunAssessmentList;
+      state.total = 0;
     },
     [updateHomefun.rejected.type]: (state, { error }: any) => {
       console.error(error);

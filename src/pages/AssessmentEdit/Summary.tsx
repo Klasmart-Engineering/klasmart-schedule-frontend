@@ -451,7 +451,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
           readOnly: true,
           startAdornment: (
             <>
-              {materialString && materialString.length && (
+              {materialString && materialString.length ? (
                 <>
                   <div className={css.materialTitle}>
                     {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")} (
@@ -465,6 +465,8 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
                     ))}
                   </div>
                 </>
+              ) : (
+                d("N/A").t("assess_column_n_a")
               )}
             </>
           ),
