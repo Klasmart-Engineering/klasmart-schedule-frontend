@@ -40,7 +40,6 @@ export function ChartLayout(props: ChartLayoutProps) {
         <ParentSize>
           {(info) => {
             const px = info.width / chartWidth;
-            console.log("info.width, chartWidth, px = ", info.width, chartWidth, px);
             return !px ? null : <div className={css.chartLayoutContent}>{render(px)}</div>;
           }}
         </ParentSize>

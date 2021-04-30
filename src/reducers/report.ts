@@ -1,7 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
 import api, { gqlapi } from "../api";
-import { Class, School, User } from "../api/api-ko-schema.auto";
+import { Class, School, Status, User } from "../api/api-ko-schema.auto";
 import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
@@ -18,9 +18,9 @@ import {
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
-  SchoolByOrgQueryDocument,
-  SchoolByOrgQueryQuery,
-  SchoolByOrgQueryQueryVariables,
+  SchoolAndTeacherByOrgDocument,
+  SchoolAndTeacherByOrgQuery,
+  SchoolAndTeacherByOrgQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
   TeacherByOrgIdQueryVariables,
@@ -44,7 +44,7 @@ import { ModelReport } from "../models/ModelReports";
 import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
-const TIME_OFFSET = (0 - new Date().getTimezoneOffset() / 60).toString();
+const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
 
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];
@@ -697,13 +697,17 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       );
     } else {
       if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
-        const { data: schoolListResult } = await gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
-          query: SchoolByOrgQueryDocument,
+        const { data: schoolListResult } = await gqlapi.query<SchoolAndTeacherByOrgQuery, SchoolAndTeacherByOrgQueryVariables>({
+          query: SchoolAndTeacherByOrgDocument,
           variables: {
             organization_id: organization_id,
           },
         });
-        schoolList = schoolList.concat(schoolListResult.organization?.schools as Pick<School, "school_id" | "school_name">[]);
+        schoolListResult.organization?.schools?.forEach((schoolItem) => {
+          if (schoolItem?.status === Status.Active) {
+            schoolList?.push(schoolItem as Pick<School, "school_id" | "school_name">);
+          }
+        });
         if (school_id === "all") {
           // 获取本组织下的所有在学校的老师
           const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({

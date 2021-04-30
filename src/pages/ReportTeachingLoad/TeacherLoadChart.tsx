@@ -25,17 +25,8 @@ const structSize = memorize(
 );
 
 const tickValue2index = (v?: string) => (Number(v ?? 5) - 5) / 10;
-const xLabels = [
-  ["Mar.10th", "Monday"],
-  ["Mar.11th", "Tuesday"],
-  ["Mar.12th", "Wednesday"],
-  ["Mar.13th", "Thursday"],
-  ["Mar.14th", "Friday"],
-  ["Mar.15th", "Saturday"],
-  ["Mar.16th", "Sunday"],
-];
-export function TeacherLoadChart(props: { data: HorizontalBarStackDataItem[] }) {
-  const { data } = props;
+export function TeacherLoadChart(props: { data: HorizontalBarStackDataItem[]; xLabels?: string[][] }) {
+  const { data, xLabels } = props;
   const [chartWidth, chartHeight] = horizontalBarStackChartSize({ data, structSize: structSize(1) });
   return (
     <ChartLayout
@@ -54,10 +45,10 @@ export function TeacherLoadChart(props: { data: HorizontalBarStackDataItem[] }) 
           renderXAxiosLabel={({ formattedValue, ...textProps }) => (
             <Fragment>
               <Text {...textProps} dy="-1.2em">
-                {xLabels[tickValue2index(formattedValue)][0]}
+                {xLabels && xLabels[tickValue2index(formattedValue)][0]}
               </Text>
               <Text {...textProps} dy={0} fontWeight="bold">
-                {xLabels[tickValue2index(formattedValue)][1]}
+                {xLabels && xLabels[tickValue2index(formattedValue)][1]}
               </Text>
             </Fragment>
           )}

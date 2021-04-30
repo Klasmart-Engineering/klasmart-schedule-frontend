@@ -5,7 +5,7 @@ import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
-import { ModelReport } from "../../models/ModelReports";
+import { formatTeachingLoadList } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
 import { getTeachingLoadList, teachingLoadOnload, TeachingLoadPayload } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
@@ -37,8 +37,6 @@ export default function ReportTeachingLoad() {
     (state) => state.report.teachingLoadOnload
   );
   const { teachingLoadList } = teachingLoadOnloadState;
-  const formatedTeachingLoadList =
-    teachingLoadList.items && teachingLoadList.items.length > 0 ? ModelReport.formatTeachingLoadList(teachingLoadList.items) : [];
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -88,7 +86,10 @@ export default function ReportTeachingLoad() {
         teachingLoadList.items && teachingLoadList.items.length > 0 ? (
           <>
             <InfoTeacherLoad />
-            <TeacherLoadChart data={formatedTeachingLoadList} />
+            <TeacherLoadChart
+              data={formatTeachingLoadList(teachingLoadList?.items).formatedData}
+              xLabels={formatTeachingLoadList(teachingLoadList?.items).xLabels}
+            />
           </>
         ) : (
           emptyTip

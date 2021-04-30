@@ -3,6 +3,10 @@ import { User } from "../api/api-ko-schema.auto";
 import { EntityReportListTeachingLoadItem } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
+interface formatTeachingLoadListResponse {
+  formatedData: HorizontalBarStackDataItem[];
+  xLabels?: string[][];
+}
 
 export const ModelReport = {
   teacherListSetDiff(teacherList: Pick<User, "user_id" | "user_name">[]): Pick<User, "user_id" | "user_name">[] {
@@ -16,30 +20,8 @@ export const ModelReport = {
     }, []);
     return teacherList;
   },
-  formatTeachingLoadList(data: EntityReportListTeachingLoadItem[]): HorizontalBarStackDataItem[] {
-    let formatedData: HorizontalBarStackDataItem[] = [];
-    formatedData = data.map((dataItem) => {
-      return {
-        id: dataItem.teacher_id || "",
-        name: dataItem.teacher_name || "",
-        description: "",
-        value: dataItem.durations
-          ? dataItem.durations.map((durationItems, idx) => {
-              const { opacity } = time2colorLevel(durationItems.offline || 0);
-              const description: ReactNode = teacherLoadDescription({ ...durationItems });
-              return {
-                name: `category-${idx}`,
-                value: 10,
-                color: `rgba(120,186,230,${opacity})`,
-                description: description,
-              };
-            })
-          : [],
-      };
-    });
-    return formatedData;
-  },
 };
+
 export function formatTime(seconds: number | undefined) {
   if (!seconds) return "";
   const date = new Date(seconds * 1000);
@@ -53,14 +35,21 @@ export function formatTime(seconds: number | undefined) {
     .toString()
     .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
-
-export function formatTimeToMonWek(seconds: number) {
+enum formatTimeToMonWekType {
+  hasTh = "hasTh",
+}
+export function formatTimeToMonWek(seconds: number, type?: string) {
   const date = new Date(seconds * 1000);
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const weekFullNameArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const month = monthArr[date.getMonth()];
   const day = date.getDate();
   const week = weekArr[date.getDay()];
+  const weekFullName = weekFullNameArr[date.getDay()];
+  if (type === formatTimeToMonWekType.hasTh) {
+    return `${month}.${day}.th,${weekFullName}`;
+  }
   return `${month}  ${day},  ${week}`;
 }
 
@@ -78,9 +67,8 @@ interface Time2colorLevelResponse {
 }
 export function time2colorLevel(seconds: number): Time2colorLevelResponse {
   if (seconds === 0) return { opacity: 0.25, hour: 0, min: 0 };
-  const date = new Date(seconds * 1000);
-  const hour = date.getHours();
-  const min = date.getMinutes();
+  const hour = Math.floor(seconds / 3600);
+  const min = Math.ceil((seconds % 3600) / 60);
   let opacity = 1;
   if (hour < 2) {
     opacity = 0.25;
@@ -90,4 +78,31 @@ export function time2colorLevel(seconds: number): Time2colorLevelResponse {
     opacity = 0.7;
   }
   return { opacity, hour, min };
+}
+export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[]): formatTeachingLoadListResponse {
+  let formatedData: HorizontalBarStackDataItem[] = [];
+  formatedData = data.map((dataItem) => {
+    return {
+      id: dataItem.teacher_id || "",
+      name: dataItem.teacher_name || "",
+      description: "",
+      value: dataItem.durations
+        ? dataItem.durations.map((durationItems, idx) => {
+            const total = durationItems?.online || 0 + (durationItems?.offline || 0);
+            const { opacity } = time2colorLevel(total);
+            const description: ReactNode = teacherLoadDescription({ ...durationItems });
+            return {
+              name: `category-${idx}`,
+              value: 10,
+              color: `rgba(120,186,230,${opacity})`,
+              description: description,
+            };
+          })
+        : [],
+    };
+  });
+  const xLabels = data[0].durations?.map((items) => {
+    return formatTimeToMonWek && formatTimeToMonWek(items.end_at || 0, formatTimeToMonWekType.hasTh).split(",");
+  });
+  return { formatedData, xLabels };
 }

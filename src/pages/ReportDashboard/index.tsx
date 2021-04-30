@@ -1,6 +1,6 @@
-import { Grid, Hidden, makeStyles, SvgIcon, Typography } from "@material-ui/core";
-import { AccessTime, CategoryOutlined, ChevronRight } from "@material-ui/icons";
-import React, { cloneElement, useMemo } from "react";
+import { Button, Grid, Hidden, makeStyles, SvgIcon, Typography } from "@material-ui/core";
+import { AccessTime, CategoryOutlined, ChevronRight, KeyboardBackspace } from "@material-ui/icons";
+import React, { cloneElement, useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
@@ -12,7 +12,8 @@ import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
     height: 129,
-    display: "flex",
+    paddingTop: 30,
+    boxSizing: "border-box",
     alignItems: "center",
   },
   reportList: {
@@ -159,9 +160,16 @@ export function ReportDashboard() {
 export const ReportTitle = (props: { title: string }) => {
   const css = useStyles();
   const { title } = props;
+  const history = useHistory();
+  const handleBack = useCallback(() => {
+    history.push(ReportDashboard.routeBasePath);
+  }, [history]);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
+        <Button color="primary" startIcon={<KeyboardBackspace />} onClick={handleBack}>
+          Return to Reports List
+        </Button>
         <Typography className={css.reportItemTitleTop}>{title}</Typography>
       </div>
     </LayoutBox>
