@@ -5,7 +5,7 @@ import { useHistory } from "react-router";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { LangRecordId } from "../../locale/lang/type";
-import { t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import ReportTeachingLoad from "../ReportTeachingLoad";
@@ -168,7 +168,7 @@ export const ReportTitle = (props: { title: string }) => {
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
         <Button color="primary" startIcon={<KeyboardBackspace />} onClick={handleBack}>
-          Return to Reports List
+          {d("Return to Reports List").t("report_label_go_back")}
         </Button>
         <Typography className={css.reportItemTitleTop}>{title}</Typography>
       </div>

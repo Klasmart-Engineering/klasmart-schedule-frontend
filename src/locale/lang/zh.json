@@ -590,6 +590,7 @@
   "report_label_live": "在线课",
   "report_label_hours": "小时",
   "report_label_mins": "分钟",
+  "report_label_go_back": "返回报告列表",
   "general_error_unauthorized": "用户未登录，请先登录",
   "general_error_no_organization": "用户没有机构信息",
   "general_error_unknown": "服务器请求失败",

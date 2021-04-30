@@ -93,12 +93,14 @@ query getSchoolTeacher($user_id:ID!){
   user(user_id: $user_id) {
     school_memberships{
       school {
+        status
         school_id
         school_name
         organization {
                 organization_id
         }
         classes{
+          status
           teachers{
             user_id
             user_name
@@ -112,6 +114,7 @@ query getSchoolTeacher($user_id:ID!){
 query teacherByOrgId($organization_id: ID!){
   organization(organization_id: $organization_id) {
       classes{
+        status
         class_id
         class_name
         teachers{
@@ -312,6 +315,7 @@ query schoolByOrgQuery($organization_id: ID!) {
 query teacherListBySchoolId($school_id: ID!) {
   school(school_id: $school_id){
     classes{
+      status
       class_id
       teachers{
         user_id
@@ -323,6 +327,7 @@ query teacherListBySchoolId($school_id: ID!) {
 query notParticipantsByOrganization($organization_id: ID!) {
    organization(organization_id: $organization_id) {
      classes {
+       status
         teachers {
           user_id
           user_name

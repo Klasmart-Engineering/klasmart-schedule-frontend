@@ -590,6 +590,7 @@
   "report_label_live": "Live",
   "report_label_hours": "Hours",
   "report_label_mins": "Mins",
+  "report_label_go_back": "Return to Reports List",
   "general_error_unauthorized": "User not logged in, please log in",
   "general_error_no_organization": "You have no organization",
   "general_error_unknown": "Server request failed",

@@ -717,7 +717,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.organization?.classes?.forEach((classItem) => {
-            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+            if (classItem?.status === Status.Active) {
+              teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+            }
           });
         } else if (school_id === "no_assigned") {
           // 获取本组织下不属于任何学校的老师
@@ -728,16 +730,18 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.organization?.classes?.forEach((classItem) => {
-            const newTeacherList = classItem?.teachers
-              ?.map((teacherItem) => {
-                const isThisOrg =
-                  teacherItem?.school_memberships?.some(
-                    (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-                  ) || false;
-                return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
-              })
-              .filter((item) => item?.user_id !== "");
-            teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
+            if (classItem?.status === Status.Active) {
+              const newTeacherList = classItem?.teachers
+                ?.map((teacherItem) => {
+                  const isThisOrg =
+                    teacherItem?.school_memberships?.some(
+                      (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+                    ) || false;
+                  return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                })
+                .filter((item) => item?.user_id !== "");
+              teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
+            }
           });
         } else {
           // 获取指定school_id下的老师
@@ -748,7 +752,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.school?.classes?.forEach((classItem) => {
-            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+            teacherList = teacherList?.concat(
+              (classItem?.status === Status.Active ? classItem?.teachers : []) as Pick<User, "user_id" | "user_name">[]
+            );
           });
         }
       }
@@ -761,15 +767,20 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
         });
         schoolList = schoolList.concat(
           data.user?.school_memberships?.filter(
-            (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+            (schoolItem) =>
+              schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
           ) as Pick<School, "school_id" | "school_name">[]
         );
+
         if (school_id === "all") {
           data.user?.school_memberships
             ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
             .map((schoolItem) =>
               schoolItem?.school?.classes?.forEach(
-                (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
+                (classItem) =>
+                  (teacherList = teacherList?.concat(
+                    (classItem?.status === Status.Active ? classItem?.teachers : []) as Pick<User, "user_id" | "user_name">[]
+                  ))
               )
             );
         } else if (school_id !== "no_assigned") {
@@ -781,7 +792,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.school?.classes?.forEach((classItem) => {
-            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+            teacherList = teacherList?.concat(
+              (classItem?.status === Status.Active ? classItem?.teachers : []) as Pick<User, "user_id" | "user_name">[]
+            );
           });
         }
       }
@@ -796,7 +809,10 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           organization_id,
         },
       });
-      classList = classList?.concat(result.user?.membership?.classesTeaching as Pick<Class, "class_id" | "class_name">[]);
+      const classListall = result.user?.membership?.classesTeaching;
+      classList = classList?.concat(
+        classListall?.filter((classItem) => classItem?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]
+      );
     }
     teacherList = ModelReport.teacherListSetDiff(teacherList);
     teachingLoadList = (await api.reports.listTeachingLoadReport({ school_id, teacher_ids, class_ids, time_offset: TIME_OFFSET })) || [];

@@ -704,6 +704,7 @@ type LangRecord<T = string> =
   | { id: "report_label_live"; description: "Live"; values: undefined }
   | { id: "report_label_hours"; description: "Hours"; values: undefined }
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
+  | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
