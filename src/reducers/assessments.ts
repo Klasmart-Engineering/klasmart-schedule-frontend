@@ -61,7 +61,7 @@ const initialState: IAssessmentState = {
     teacher_names: [],
     title: "",
     status: undefined,
-    subject_name: "",
+    // subject_name: "",
   },
   homefunFeedbacks: [],
   hasPermissionOfHomefun: false,
