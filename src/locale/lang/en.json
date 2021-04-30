@@ -336,6 +336,8 @@
   "assess_msg_deleted_successfully": "Deleted Successfully",
   "assess_msg_saved_successfully": "Saved Successfully",
   "assess_msg_updated_successfully": "Updated Successfully",
+  "assess_msg_published_successfully": "Published Successfully",
+  "assess_msg_delete_milestone": "Are you sure you want to delete this milestone?",
   "schedule_tab_schedule": "Schedule",
   "schedue_button_schedule_class": "Schedule Class",
   "schedule_button_search": "Search",

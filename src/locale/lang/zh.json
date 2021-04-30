@@ -336,6 +336,8 @@
   "assess_msg_deleted_successfully": "删除成功",
   "assess_msg_saved_successfully": "保存成功",
   "assess_msg_updated_successfully": "更新成功",
+  "assess_msg_published_successfully": "发布成功",
+  "assess_msg_delete_milestone": "确定要删除这个阶段成果吗？",
   "schedule_tab_schedule": "课表",
   "schedue_button_schedule_class": "排课",
   "schedule_button_search": "搜索",

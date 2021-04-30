@@ -394,6 +394,8 @@ type LangRecord<T = string> =
   | { id: "assess_msg_deleted_successfully"; description: "Deleted Successfully"; values: undefined }
   | { id: "assess_msg_saved_successfully"; description: "Saved Successfully"; values: undefined }
   | { id: "assess_msg_updated_successfully"; description: "Updated Successfully"; values: undefined }
+  | { id: "assess_msg_published_successfully"; description: "Published Successfully"; values: undefined }
+  | { id: "assess_msg_delete_milestone"; description: "Are you sure you want to delete this milestone?"; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
