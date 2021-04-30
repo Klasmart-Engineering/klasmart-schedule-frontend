@@ -4,7 +4,8 @@ import merge from "lodash/merge";
 import api from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
-import { EntityFolderItemInfo } from "./api.auto";
+import { QeuryMeQuery } from "./api-ko.auto";
+import { ApiHasPermissionResponse, EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
@@ -197,4 +198,35 @@ export function apiIsEnableNewH5p() {
 
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
+}
+(window as any).apiGetPermission = apiGetPermission;
+export async function apiGetPermission(): Promise<QeuryMeQuery> {
+  const permission = await api.organizationPermissions.hasOrganizationPermissions({
+    permission_name: "school_reports_602,teacher_reports_603,class_reports_604",
+  });
+  console.log("permissionData=", permission);
+  const mock: ApiHasPermissionResponse = {
+    class_reports_604: true,
+    school_reports_602: true,
+    teacher_reports_603: true,
+  };
+  let returnData = {
+    me: {
+      user_id: "",
+      membership: {
+        roles: [
+          {
+            permissions: [{ permission_name: "" }],
+          },
+        ],
+      },
+    },
+  };
+  Object.keys(mock).forEach((permissionName) => {
+    if (mock[permissionName]) {
+      returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
+    }
+  });
+  console.log("returnData = ", returnData);
+  return returnData;
 }

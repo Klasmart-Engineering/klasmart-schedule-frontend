@@ -991,6 +991,7 @@ export interface EntityScheduleFeedbackAddInput {
   comment?: string;
   schedule_id?: string;
 }
+export type ApiHasPermissionResponse = Record<string, boolean>;
 
 export interface EntityScheduleFeedbackView {
   assignments?: EntityFeedbackAssignmentView[];
@@ -2561,6 +2562,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getLessonTypeById: (id: string, params?: RequestParams) =>
       this.request<EntityLessonType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/lesson_types/${id}`, "GET", params),
+  };
+  organizationPermissions = {
+    /**
+     * @tags permission
+     * @name hasOrganizationPermissions
+     * @summary hasOrganizationPermissions
+     * @request GET:/organization_permissions
+     * @description has organization permission
+     */
+    hasOrganizationPermissions: (query: { permission_name: string }, params?: RequestParams) =>
+      this.request<ApiHasPermissionResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/organization_permissions${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
   };
   organizationsPropertys = {
     /**
