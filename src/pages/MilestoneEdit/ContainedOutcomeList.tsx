@@ -74,7 +74,7 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
         </TableCell>
         <TableCell className={css.tableCell}>
           {/* <AddCircle className={css.addGreen} /> */}
-          {!canEdit && <RemoveCircle className={css.removeRead} onClick={() => addOrRemoveOutcome(item, "remove")} />}
+          {canEdit && <RemoveCircle className={css.removeRead} onClick={() => addOrRemoveOutcome(item, "remove")} />}
         </TableCell>
       </TableRow>
     ));

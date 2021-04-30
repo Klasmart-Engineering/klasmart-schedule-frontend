@@ -1,13 +1,16 @@
-import { Box, Button, ButtonProps, fade, Hidden, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { ArrowBack, Cancel, Publish, Save } from "@material-ui/icons";
+import { ArrowBack, CancelOutlined, Create, Delete, Publish, Save } from "@material-ui/icons";
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
+import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
+import SaveOutlinedIcon from "@material-ui/icons/SaveOutlined";
 import clsx from "clsx";
 import React from "react";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { MilestoneDetailResult } from "../../api/type";
+import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
@@ -101,13 +104,16 @@ export interface MilestoneHeaderProps {
   onDelete: ButtonProps["onClick"];
   canEdit: boolean;
   formMethods: UseFormMethods<MilestoneDetailResult>;
+  canSave: boolean;
 }
 export function MilestoneHeader(props: MilestoneHeaderProps) {
   const history = useHistory();
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const { milestone_id, canEdit, onCancel, onPublish, onSave, onEdit, onDelete, formMethods } = props;
+  const { milestone_id, canEdit, onCancel, onPublish, onSave, onEdit, onDelete, formMethods, milestoneDetail } = props;
+  const status = milestoneDetail?.status;
+  const canClick = status === MilestoneStatus.unpublished;
   const {
     formState: { isDirty },
   } = formMethods;
@@ -117,33 +123,38 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
   const getHeaderButtons = () => {
     return (
       <>
-        {!canEdit && (
+        {(!milestone_id || (milestone_id && canEdit)) && (
           <>
-            <Button variant="contained" endIcon={<Cancel />} className={clsx(css.headerButton, css.redButton)} onClick={onCancel}>
+            <Button
+              variant="contained"
+              endIcon={<CancelOutlinedIcon />}
+              className={clsx(css.headerButton, css.redButton)}
+              onClick={onCancel}
+            >
               {d("Cancel").t("assess_label_cancel")}
             </Button>
             <LButton
               variant="contained"
-              endIcon={<Save />}
+              endIcon={<SaveOutlinedIcon />}
               color="primary"
               className={css.headerButton}
-              disabled={!isDirty}
+              disabled={canClick ? !canClick : !isDirty}
               onClick={onSave}
             >
               {d("Save").t("assess_label_save")}
             </LButton>
             <LButton
               variant="contained"
-              endIcon={<Publish />}
+              endIcon={<PublishOutlinedIcon />}
               className={clsx(css.headerButton, css.greenButton)}
               onClick={onPublish}
-              disabled={isDirty}
+              disabled={canClick ? !canClick : !isDirty}
             >
               {d("Publish").t("assess_label_publish")}
             </LButton>
           </>
         )}
-        {canEdit && (
+        {milestone_id && !canEdit && (
           <>
             <Button
               variant="contained"
@@ -157,6 +168,40 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
             <Button variant="outlined" endIcon={<DeleteOutlinedIcon />} className={clsx(css.deleteButton)} onClick={onDelete}>
               {d("Delete").t("assess_label_delete")}
             </Button>
+          </>
+        )}
+      </>
+    );
+  };
+  const getHeaderButtonsSmallScreen = () => {
+    return (
+      <>
+        {!canEdit && (
+          <>
+            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
+              <CancelOutlined fontSize="small" />
+            </IconButton>
+            <LButton
+              disabled={!isDirty}
+              className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
+              color="primary"
+              onClick={onSave}
+            >
+              <Save fontSize="small" />
+            </LButton>
+            <IconButton disabled={isDirty} className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onPublish}>
+              <Publish fontSize="small" />
+            </IconButton>
+          </>
+        )}
+        {canEdit && (
+          <>
+            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+              <Delete fontSize="small" />
+            </IconButton>
+            <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+              <Create fontSize="small" />
+            </IconButton>
           </>
         )}
       </>
@@ -189,7 +234,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          {/* {getHeaderButtonsSmallScreen()} */}
+          {getHeaderButtonsSmallScreen()}
         </Box>
       </Hidden>
     </>

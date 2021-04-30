@@ -1,7 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
-import { ModelMilestoneView } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { GetOutcomeList, MilestoneDetailResult, MilestoneListResult } from "../api/type";
 import { d } from "../locale/LocaleManager";
@@ -159,22 +158,24 @@ interface ParamsOnLoadMilestoneEdit extends LoadingMetaPayload {
 }
 interface ResultOnLoadMilestoneEdit {
   milestoneDetail?: AsyncReturnType<typeof api.milestones.obtainMilestone>;
-  shortCode?: AsyncReturnType<typeof api.shortcode.generateShortcode>["shortcode"];
+  // shortCode?: AsyncReturnType<typeof api.shortcode.generateShortcode>["shortcode"];
 }
 export const onLoadMilestoneEdit = createAsyncThunk<ResultOnLoadMilestoneEdit, ParamsOnLoadMilestoneEdit, { state: RootState }>(
   "milestone/onLoadMilestoneEdit",
   async ({ id }, { dispatch }) => {
     const milestoneDetail = id ? await api.milestones.obtainMilestone(id) : initialState.milestoneDetail;
-    const shortCode = id ? initialState.shortCode : await (await api.shortcode.generateShortcode({ kind: "milestones" })).shortcode;
+    if (!id) await dispatch(generateShortcode({ kind: "milestones" }));
+    // const shortCode = id ? initialState.shortCode : await (await api.shortcode.generateShortcode({ kind: "milestones" })).shortcode;
     await dispatch(
       getLinkedMockOptions({
+        metaLoading: true,
         default_program_id: milestoneDetail.program && milestoneDetail.program[0] ? milestoneDetail.program[0].program_id : "",
         default_developmental_id: milestoneDetail.category && milestoneDetail.category[0] ? milestoneDetail.category[0].category_id : "",
         default_subject_ids:
           milestoneDetail.subject && milestoneDetail.subject[0] ? milestoneDetail.subject?.map((v) => v.subject_id).join(",") : "",
       })
     );
-    return { milestoneDetail, shortCode };
+    return { milestoneDetail };
   }
 );
 
@@ -194,7 +195,7 @@ export const deleteMilestone = createAsyncThunk<ResultDeleteMilestone, ParamsDel
   async (ids, { dispatch }) => {
     if (!ids?.length)
       return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
-    const content = d("Are you sure you want to delete these contents?").t("library_msg_bulk_delete_content");
+    const content = d("Are you sure you want to delete this milestone?").t("assess_msg_delete_milestone");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
     return api.milestones.deleteMilestone({ ids });
@@ -222,6 +223,15 @@ export const updateMilestone = createAsyncThunk<ResultUpdateMilestone, ParamsUpd
   "milestone/updateMilestone",
   ({ milestone_id, milestone }) => {
     return api.milestones.updateMilestone(milestone_id, milestone);
+  }
+);
+
+type ParamsGenerateShortcode = Parameters<typeof api.shortcode.generateShortcode>[0];
+type ResultGenerateShortcode = AsyncReturnType<typeof api.shortcode.generateShortcode>;
+export const generateShortcode = createAsyncThunk<ResultGenerateShortcode, ParamsGenerateShortcode>(
+  "milestone/generateShortcode",
+  (kind) => {
+    return api.shortcode.generateShortcode(kind);
   }
 );
 
@@ -284,20 +294,21 @@ const { reducer } = createSlice({
       state.linkedMockOptions = payload;
     },
     [getLinkedMockOptions.rejected.type]: (state: any, { error }: any) => {},
-    [onLoadMilestoneEdit.fulfilled.type]: (
-      state: { shortCode: string | undefined; milestoneDetail: ModelMilestoneView | undefined },
-      { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneEdit>>
-    ) => {
-      state.shortCode = payload.shortCode;
-      state.milestoneDetail = payload.milestoneDetail;
+    [onLoadMilestoneEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneEdit>>) => {
+      state.milestoneDetail = payload.milestoneDetail || {};
     },
     [onLoadMilestoneEdit.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.shortCode = initialState.shortCode;
       state.milestoneDetail = initialState.milestoneDetail;
     },
     [onLoadOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadOutcomeList>>) => {
       state.outcomeList = payload.outcomeRes?.list || [];
       state.outcomeTotal = payload.outcomeRes?.total || 0;
+    },
+    [generateShortcode.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof generateShortcode>>) => {
+      state.shortCode = payload.shortcode || "";
+    },
+    [generateShortcode.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.shortCode = initialState.shortCode;
     },
   },
 });

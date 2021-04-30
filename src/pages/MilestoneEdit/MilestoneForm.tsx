@@ -76,7 +76,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           style: { color: "rgba(0,0,0,1)" },
         }}
         error={errors.milestone_name ? true : false}
-        disabled={canEdit}
+        disabled={!canEdit}
       />
       <Controller
         name="shortcode"
@@ -86,7 +86,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         key={milestone_id ? initDefaultValue.shortcode?.key : shortCode}
         fullWidth
         className={css.fieldset}
-        disabled={canEdit}
+        disabled={!canEdit}
         label={d("Short Code").t("assess_label_short_code")}
         inputProps={{ maxLength: 5 }}
         error={!!errors["shortcode"]}
@@ -152,7 +152,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             required
             fullWidth
             className={css.fieldset}
-            disabled={canEdit}
+            disabled={!canEdit}
           >
             {menuItemList(linkedMockOptions.program)}
           </FormattedTextField>
@@ -177,7 +177,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             className={css.fieldset}
             SelectProps={{ multiple: true }}
             required
-            disabled={canEdit}
+            disabled={!canEdit}
           >
             {menuItemList(linkedMockOptions.subject)}
           </TextField>
@@ -202,14 +202,14 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             fullWidth
             required
             className={css.fieldset}
-            disabled={canEdit}
+            disabled={!canEdit}
           >
             {menuItemList(linkedMockOptions.developmental)}
           </FormattedTextField>
         )}
       />
       <Controller
-        disabled={canEdit}
+        disabled={!canEdit}
         as={TextField}
         select
         SelectProps={{ multiple: true }}
@@ -226,7 +226,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <Controller
-            disabled={canEdit}
+            disabled={!canEdit}
             as={TextField}
             name={"age_ids"}
             defaultValue={initDefaultValue.age?.value || []}
@@ -244,7 +244,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Controller
-            disabled={canEdit}
+            disabled={!canEdit}
             as={TextField}
             name={"grade_ids"}
             defaultValue={initDefaultValue.grade?.value || []}
@@ -274,8 +274,9 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         multiline
         rows={4}
         inputProps={{ maxLength: 200 }}
-        disabled={canEdit}
+        disabled={!canEdit}
       />
+      <Controller style={{ display: "none" }} name="with_publish" control={control} as={TextField} defaultValue={false} />
     </Box>
   );
 }

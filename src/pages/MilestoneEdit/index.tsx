@@ -7,15 +7,16 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { GetOutcomeDetail, MilestoneDetailResult, MilestoneStatus } from "../../api/type";
+import { d } from "../../locale/LocaleManager";
 import { ModelMilestoneOptions } from "../../models/ModelMilestone";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,
+  deleteMilestone,
   getLinkedMockOptions,
   occupyMilestone,
   onLoadMilestoneEdit,
   onLoadOutcomeList,
-  publishMilestone,
   saveMilestone,
   updateMilestone,
 } from "../../reducers/milestone";
@@ -26,7 +27,7 @@ import { OutcomeListExectSearch } from "../OutcomeList/types";
 import ContainedOutcomeList, { ContainedOutcomeListProps } from "./ContainedOutcomeList";
 import ContentTab from "./ContentTab";
 import MilestoneForm from "./MilestoneForm";
-import { MilestoneHeader, MilestoneHeaderProps } from "./MilestoneHeader";
+import { MilestoneHeader } from "./MilestoneHeader";
 import { Outcomes, OutcomesProps } from "./Outcomes";
 import { OutcomeSearchProps } from "./OutcomeSearch";
 import { Regulation } from "./type";
@@ -83,60 +84,88 @@ function MilestoneEditForm() {
     (state) => state.milestone
   );
   const [canEdit, setCanEdit] = useState(false);
+  const [canSave, setCanSave] = useState(true);
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByMilestoneDetail : Regulation.ByMilestoneDetailAndOptionCount);
   const initDefaultValue = useMemo(
     () => ModelMilestoneOptions.createDefaultValueAndKey({ regulation, milestoneDetail, linkedMockOptions }),
     [linkedMockOptions, milestoneDetail, regulation]
   );
   const value = watch("outcome_ancestor_ids");
-  const handleCancel = () => {};
+  const handleCancel = () => {
+    history.push(MilestoneList.routeBasePath);
+  };
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value) => {
-        console.log(value);
         if (id) {
           const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone: value }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateMilestone>
           >;
           if (payload === "ok") {
-            dispatch(actSuccess("Update Success"));
-            setCanEdit(false);
+            dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
           }
         } else {
           const { payload } = ((await dispatch(saveMilestone(value))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof saveMilestone>
           >;
           if (payload.milestone_id) {
-            dispatch(actSuccess("Save Success"));
-            setCanEdit(false);
+            dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
             history.replace({
               search: setQuery(history.location.search, { id: payload.milestone_id }),
             });
           }
         }
+        setCanSave(false);
       }),
     [dispatch, handleSubmit, history, id]
   );
-  const handlePublish: MilestoneHeaderProps["onPublish"] = async () => {
-    const { payload } = ((await dispatch(publishMilestone({ ids: [milestoneDetail?.milestone_id || ""] }))) as unknown) as PayloadAction<
-      AsyncTrunkReturned<typeof publishMilestone>
-    >;
-    if (payload === "ok") {
-      history.push(MilestoneList.routeBasePath);
-    }
-  };
+  const handlePublish = useMemo(
+    () =>
+      handleSubmit(async (value) => {
+        if (!id) {
+          const milestone = cloneDeep(value);
+          milestone.with_publish = true;
+          const { payload } = ((await dispatch(saveMilestone(value))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof saveMilestone>
+          >;
+          if (payload === "ok") {
+            dispatch(actSuccess(d("Published Successfully").t("assess_msg_published_successfully")));
+            history.push(MilestoneList.routeBasePath);
+          }
+        } else {
+          const milestone = cloneDeep(value);
+          milestone.with_publish = true;
+          const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof updateMilestone>
+          >;
+          if (payload === "ok") {
+            dispatch(actSuccess(d("Published Successfully").t("assess_msg_published_successfully")));
+            history.push(MilestoneList.routeBasePath);
+          }
+        }
+      }),
+    [dispatch, handleSubmit, history, id]
+  );
   const handleEdit = async () => {
-    setCanEdit(!canEdit);
+    setCanEdit(true);
+    setCanSave(false);
     if (milestoneDetail.status === MilestoneStatus.published) {
       const { payload } = ((await dispatch(
         occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true })
       )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof occupyMilestone>>;
       if (payload === "ok") {
         history.push(`/milestone/milestone-edit/tab/details?id=${milestoneDetail}&status=edit`);
+        history.push(MilestoneList.routeBasePath);
       }
     }
   };
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    const { payload } = ((await dispatch(deleteMilestone([id]))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteMilestone>>;
+    if (payload === "ok") {
+      dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
+    }
+    dispatch(deleteMilestone([id]));
+  };
   const handleChangeTab = useMemo(
     () => (value: string) => {
       history.replace(`${routeBasePath}/tab/${value}${search}`);
@@ -195,8 +224,7 @@ function MilestoneEditForm() {
       if (id && value) {
         let newValue = cloneDeep(value);
         newValue = newValue.filter((v) => v !== id);
-        // onChange && onChange(newValue);
-        setValue("outcome_ancestor_ids", newValue);
+        setValue("outcome_ancestor_ids", newValue, { shouldDirty: true });
       }
     }
   };
@@ -205,7 +233,8 @@ function MilestoneEditForm() {
   }, [assumed, dispatch, exect_search, search_key, page]);
   useEffect(() => {
     dispatch(onLoadMilestoneEdit({ id, metaLoading: true }));
-    id ? setCanEdit(true) : setCanEdit(false);
+    id ? setCanEdit(false) : setCanEdit(true);
+    id ? setCanSave(false) : setCanSave(true);
   }, [dispatch, id]);
   const leftside = (
     <ContentTab tab={tab} onChangeTab={handleChangeTab} error={errors.milestone_name}>
@@ -246,7 +275,7 @@ function MilestoneEditForm() {
     <DndProvider backend={HTML5Backend}>
       <MilestoneHeader
         milestoneDetail={milestoneDetail}
-        milestone_id={"22"}
+        milestone_id={id}
         onCancel={handleCancel}
         onSave={handleSave}
         onPublish={handlePublish}
@@ -254,6 +283,7 @@ function MilestoneEditForm() {
         onDelete={handleDelete}
         canEdit={canEdit}
         formMethods={formMethods}
+        canSave={canSave}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftside}

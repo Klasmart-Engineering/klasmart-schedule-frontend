@@ -77,7 +77,7 @@ export default function OutcomeTable(props: OutcomeTableProps) {
           </ul>
         </TableCell>
         <TableCell className={css.tableCell}>
-          {!canEdit &&
+          {canEdit &&
             (value && value[0] ? (
               value.indexOf(item.ancestor_id as string) < 0 ? (
                 <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
