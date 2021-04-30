@@ -1,9 +1,11 @@
-import { makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Button, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { RemoveCircle } from "@material-ui/icons";
 import React, { useMemo } from "react";
 import { GetOutcomeDetail, GetOutcomeList, MilestoneDetailResult } from "../../api/type";
+import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { d } from "../../locale/LocaleManager";
+
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: paletteColor.main,
   cursor: "pointer",
@@ -80,7 +82,7 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
     ));
   return (
     <>
-      <h1>{d("Contained Learning Outcomes").t("assess_milestone_contained_lo")}</h1>
+      <h1 style={{ marginLeft: 10 }}>{d("Contained Learning Outcomes").t("assess_milestone_contained_lo")}</h1>
       <TableContainer className={css.tableContainer}>
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>
@@ -98,5 +100,28 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
         </Table>
       </TableContainer>
     </>
+  );
+}
+
+export interface AddOutcomesProps {
+  onAddOutcome: () => any;
+}
+export function AddOutcomes(props: AddOutcomesProps) {
+  const { onAddOutcome } = props;
+  return (
+    <div style={{ textAlign: "right" }}>
+      <Button variant="contained" color="primary" onClick={onAddOutcome}>
+        {d("Add").t("assess_milestone_detail_add")} +
+      </Button>
+    </div>
+  );
+}
+
+export function NoOutcome() {
+  return (
+    <div style={{ width: "100%", textAlign: "center" }}>
+      <img src={AnyTimeNoData} style={{ width: "50%" }} alt="" />
+      <p>{d("No learning outcome is available.").t("assess_msg_no_lo")}</p>
+    </div>
   );
 }

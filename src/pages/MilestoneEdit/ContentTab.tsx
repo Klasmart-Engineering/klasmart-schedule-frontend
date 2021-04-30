@@ -44,7 +44,7 @@ export default function ContentTab(props: ContentTabProps) {
     );
   });
   return (
-    <Paper elevation={sm ? 0 : 3}>
+    <Paper elevation={sm ? 0 : 3} style={{ minHeight: 900 }}>
       <TabContext value={tab}>
         <Tabs
           className={css.tab}

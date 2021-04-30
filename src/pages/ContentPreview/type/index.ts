@@ -1,6 +1,6 @@
 export enum TabValue {
   details = "details",
-  leaningoutcomes = "leaningoutcomes",
+  leaningoutcomes = "learningoutcomes",
 }
 
 export interface DataH5p {
