@@ -3,7 +3,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import { cloneDeep } from "lodash";
 import React from "react";
-import { GetOutcomeDetail, GetOutcomeList, MilestoneDetailResult } from "../../api/type";
+import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: paletteColor.main,
@@ -35,10 +35,16 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     listStylePosition: "inside",
   },
 }));
+
+const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
+  e.stopPropagation();
+  if (handler) return handler(e);
+};
+
 interface OutcomeTableProps {
   outcomeList: GetOutcomeList;
-  value?: MilestoneDetailResult["outcome_ancestor_ids"];
-  onChange?: (value: MilestoneDetailResult["outcome_ancestor_ids"]) => any;
+  value?: GetOutcomeList;
+  onChange?: (value: GetOutcomeList) => any;
   canEdit: boolean;
   onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
@@ -47,15 +53,15 @@ export default function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();
 
   const handleAction = (item: GetOutcomeDetail, type: "add" | "remove") => {
-    const { outcome_id: id } = item;
+    const { ancestor_id: id } = item;
     if (type === "add") {
       if (id && value) {
-        onChange && onChange(value.concat([item.ancestor_id as string]));
+        onChange && onChange(value.concat([item]));
       }
     } else {
       if (id && value) {
         let newValue = cloneDeep(value);
-        newValue = newValue.filter((v) => v !== id);
+        newValue = newValue.filter((v) => v.ancestor_id !== id);
         onChange && onChange(newValue);
       }
     }
@@ -80,13 +86,13 @@ export default function OutcomeTable(props: OutcomeTableProps) {
         <TableCell className={css.tableCell}>
           {canEdit &&
             (value && value[0] ? (
-              value.indexOf(item.ancestor_id as string) < 0 ? (
-                <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
+              value?.map((v) => v.ancestor_id) && value?.map((v) => v.ancestor_id).indexOf(item.ancestor_id) < 0 ? (
+                <AddCircle className={css.addGreen} onClick={stopPropagation((e) => handleAction(item, "add"))} />
               ) : (
-                <RemoveCircle className={css.removeRead} onClick={() => handleAction(item, "remove")} />
+                <RemoveCircle className={css.removeRead} onClick={stopPropagation((e) => handleAction(item, "remove"))} />
               )
             ) : (
-              <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
+              <AddCircle className={css.addGreen} onClick={stopPropagation((e) => handleAction(item, "add"))} />
             ))}
           {/* {value && value[0] && value.indexOf(item.ancestor_id as string) < 0 ? (
               <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />

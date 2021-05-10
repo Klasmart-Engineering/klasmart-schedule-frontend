@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { forwardRef } from "react";
 import { MilestoneCondition } from ".";
-import { GetOutcomeDetail, GetOutcomeList, MilestoneDetailResult } from "../../api/type";
+import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import { resultsTip } from "../../components/TipImages";
 import OutcomeSearch, { OutcomeSearchProps } from "./OutcomeSearch";
 import OutcomeTable from "./OutcomeTable";
@@ -14,13 +14,13 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 }));
 export interface OutcomesProps {
   outcomeList: GetOutcomeList;
-  value?: MilestoneDetailResult["outcome_ancestor_ids"];
+  value?: GetOutcomeList;
   outcomeTotal: number;
   outcomePage: number;
   onSearch: OutcomeSearchProps["onSearch"];
   condition: MilestoneCondition;
   onChangePage: (page: number) => any;
-  onChange?: (value: MilestoneDetailResult["outcome_ancestor_ids"]) => any;
+  onChange?: (value: GetOutcomeList) => any;
   canEdit: boolean;
   onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
