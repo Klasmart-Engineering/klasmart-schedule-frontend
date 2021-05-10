@@ -147,7 +147,6 @@ function MilestoneEditForm() {
     [dispatch, handleSubmit, history, id]
   );
   const handleEdit = async () => {
-    setCanEdit(true);
     if (milestoneDetail.status === MilestoneStatus.published) {
       const { payload } = ((await dispatch(
         occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true })
@@ -155,7 +154,10 @@ function MilestoneEditForm() {
       if (payload === "ok") {
         history.push(`/milestone/milestone-edit/tab/details?id=${milestoneDetail}&status=edit`);
         history.push(MilestoneList.routeBasePath);
+        setCanEdit(true);
       }
+    } else {
+      setCanEdit(true);
     }
   };
   const handleDelete = async () => {
@@ -278,7 +280,7 @@ function MilestoneEditForm() {
       ) : (
         <NoOutcome />
       )}
-      {tab === TabValue.details && <AddOutcomes onAddOutcome={handleClickAdd} />}
+      {tab === TabValue.details && canEdit && <AddOutcomes onAddOutcome={handleClickAdd} />}
     </>
   );
   return (
