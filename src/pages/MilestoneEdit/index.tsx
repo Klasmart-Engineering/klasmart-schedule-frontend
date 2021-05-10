@@ -58,6 +58,7 @@ export interface MilestoneCondition {
   assumed: boolean;
   page: number;
   search: string;
+  first_save: boolean;
 }
 export const useQueryCms = (): MilestoneCondition => {
   const { search } = useLocation();
@@ -68,7 +69,9 @@ export const useQueryCms = (): MilestoneCondition => {
   const aa = query.get("assumed");
   const assumed = aa ? (aa === "true" ? true : false) : false;
   const page = Number(query.get("page")) || 1;
-  return { id, exect_search, search_key, assumed, page, search };
+  const first = query.get("first_save");
+  const first_save = first ? (first === "true" ? true : false) : false;
+  return { id, exect_search, search_key, assumed, page, search, first_save };
 };
 function MilestoneEditForm() {
   // const { breakpoints } = useTheme();
@@ -76,7 +79,7 @@ function MilestoneEditForm() {
   const dispatch = useDispatch();
   const history = useHistory();
   const condition = useQueryCms();
-  const { id, exect_search, search_key, assumed, page, search } = condition;
+  const { id, exect_search, search_key, assumed, page, search, first_save } = condition;
   const formMethods = useForm<MilestoneDetailResult>();
   const { watch, getValues, handleSubmit, setValue, control, errors } = formMethods;
   const { tab } = useParams<RouteParams>();
@@ -114,7 +117,7 @@ function MilestoneEditForm() {
           if (payload.milestone_id) {
             dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
             history.replace({
-              search: setQuery(history.location.search, { id: payload.milestone_id }),
+              search: setQuery(history.location.search, { id: payload.milestone_id, first_save: true }),
             });
           }
         }
@@ -155,7 +158,7 @@ function MilestoneEditForm() {
     if (milestoneDetail.status === MilestoneStatus.published) {
       const result: any = await dispatch(occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true }));
       if (result.payload.milestone_id) {
-        history.replace(`/milestone/milestone-edit/tab/details?id=${result.payload.milestone_id}&status=edit`);
+        history.replace(`/milestone/milestone-edit/tab/details?id=${result.payload.milestone_id}&first_save=true`);
         // history.push(MilestoneList.routeBasePath);
         setCanEdit(true);
       }
@@ -218,7 +221,7 @@ function MilestoneEditForm() {
     history.push({ search: toQueryString(clearNull(condition)) });
   };
   const handleAddOrRemoveOutcome: ContainedOutcomeListProps["addOrRemoveOutcome"] = (outcome: GetOutcomeDetail, type: "add" | "remove") => {
-    const { outcome_id: id } = outcome;
+    const { ancestor_id: id } = outcome;
     if (type === "add") {
       if (id && value) {
         value.concat([outcome]);
@@ -227,7 +230,7 @@ function MilestoneEditForm() {
       if (id && value) {
         let newValue = cloneDeep(value);
         newValue = newValue.filter((v) => v.ancestor_id !== id);
-        setValue("outcome_ancestor_ids", newValue, { shouldDirty: true });
+        setValue("outcomes", newValue, { shouldDirty: true });
       }
     }
   };
@@ -244,8 +247,8 @@ function MilestoneEditForm() {
   }, [assumed, dispatch, exect_search, search_key, page]);
   useEffect(() => {
     dispatch(onLoadMilestoneEdit({ id, metaLoading: true }));
-    id ? setCanEdit(false) : setCanEdit(true);
-  }, [dispatch, id]);
+    id && !first_save ? setCanEdit(false) : setCanEdit(true);
+  }, [dispatch, first_save, id]);
   const leftside = (
     <ContentTab tab={tab} onChangeTab={handleChangeTab} error={errors.milestone_name}>
       <MilestoneForm
