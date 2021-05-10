@@ -396,6 +396,12 @@ type LangRecord<T = string> =
   | { id: "assess_msg_updated_successfully"; description: "Updated Successfully"; values: undefined }
   | { id: "assess_msg_published_successfully"; description: "Published Successfully"; values: undefined }
   | { id: "assess_msg_delete_milestone"; description: "Are you sure you want to delete this milestone?"; values: undefined }
+  | {
+      id: "assess_error_message_locked";
+      description: "This content is locked by editor at {email}. To use this content, ask the editor to get it approved.";
+      values: { email: string | number };
+    }
+  | { id: "assess_create_new_milestone"; description: "Create New Milestone"; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }

@@ -338,6 +338,8 @@
   "assess_msg_updated_successfully": "更新成功",
   "assess_msg_published_successfully": "发布成功",
   "assess_msg_delete_milestone": "确定要删除这个阶段成果吗？",
+  "assess_error_message_locked": "内容被{email}锁定，请联系该作者以解锁。",
+  "assess_create_new_milestone": "创建新的阶段成果",
   "schedule_tab_schedule": "课表",
   "schedue_button_schedule_class": "排课",
   "schedule_button_search": "搜索",
