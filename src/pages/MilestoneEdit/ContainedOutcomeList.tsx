@@ -1,8 +1,8 @@
 import { Button, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { RemoveCircle } from "@material-ui/icons";
-import React, { useMemo } from "react";
-import { GetOutcomeDetail, GetOutcomeList, MilestoneDetailResult } from "../../api/type";
+import React from "react";
+import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { d } from "../../locale/LocaleManager";
 
@@ -40,30 +40,29 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   addGreen: createColor(palette.success, palette),
   removeRead: createColor(palette.error, palette),
 }));
+
+const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
+  e.stopPropagation();
+  if (handler) return handler(e);
+};
 export interface ContainedOutcomeListProps {
   outcomeList: GetOutcomeList;
-  value: MilestoneDetailResult["outcome_ancestor_ids"];
+  value: GetOutcomeList;
   addOrRemoveOutcome: (outcome: GetOutcomeDetail, type: "add" | "remove") => any;
   canEdit: boolean;
   onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
 export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
   const css = useStyles();
-  const { outcomeList, value, canEdit, addOrRemoveOutcome, onClickOutcome } = props;
-  const containedOutcomeList = useMemo(() => {
-    if (value && value[0]) {
-      return outcomeList.filter((outcome) => value.indexOf(outcome.ancestor_id as string) >= 0);
-    }
-  }, [outcomeList, value]);
-
+  const { outcomeList, canEdit, addOrRemoveOutcome, onClickOutcome } = props;
   const rows =
-    containedOutcomeList &&
-    containedOutcomeList[0] &&
-    containedOutcomeList.map((item) => (
+    outcomeList &&
+    outcomeList[0] &&
+    outcomeList.map((item) => (
       <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
-        <TableCell className={css.tableCell}>{item.program && item.program[0] ? item.program[0].program_id : ""}</TableCell>
+        <TableCell className={css.tableCell}>{item.program && item.program[0] ? item.program[0].program_name : ""}</TableCell>
         <TableCell className={css.tableCell}>{item.developmental?.map((v) => v.developmental_name).join(",")}</TableCell>
         <TableCell className={css.tableCell}>{item.assumed ? "Yes" : ""}</TableCell>
         <TableCell className={css.tableCell}>
@@ -77,7 +76,7 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
         </TableCell>
         <TableCell className={css.tableCell}>
           {/* <AddCircle className={css.addGreen} /> */}
-          {canEdit && <RemoveCircle className={css.removeRead} onClick={() => addOrRemoveOutcome(item, "remove")} />}
+          {canEdit && <RemoveCircle className={css.removeRead} onClick={stopPropagation((e) => addOrRemoveOutcome(item, "remove"))} />}
         </TableCell>
       </TableRow>
     ));

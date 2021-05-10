@@ -90,22 +90,25 @@ function MilestoneEditForm() {
     () => ModelMilestoneOptions.createDefaultValueAndKey({ regulation, milestoneDetail, linkedMockOptions }),
     [linkedMockOptions, milestoneDetail, regulation]
   );
-  const value = watch("outcome_ancestor_ids");
+  const value = watch("outcomes");
   const handleCancel = () => {
     history.push(MilestoneList.routeBasePath);
   };
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value) => {
+        const { outcomes, ...restValues } = value;
+        const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
+        const inputValue = { ...restValues, outcome_ancestor_ids };
         if (id) {
-          const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone: value }))) as unknown) as PayloadAction<
+          const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone: inputValue }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateMilestone>
           >;
           if (payload === "ok") {
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
           }
         } else {
-          const { payload } = ((await dispatch(saveMilestone(value))) as unknown) as PayloadAction<
+          const { payload } = ((await dispatch(saveMilestone(inputValue))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof saveMilestone>
           >;
           if (payload.milestone_id) {
@@ -121,10 +124,13 @@ function MilestoneEditForm() {
   const handlePublish = useMemo(
     () =>
       handleSubmit(async (value) => {
+        const { outcomes, ...restValues } = value;
+        const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
+        const inputValue = { ...restValues, outcome_ancestor_ids };
         if (!id) {
-          const milestone = cloneDeep(value);
+          const milestone = cloneDeep(inputValue);
           milestone.with_publish = true;
-          const { payload } = ((await dispatch(saveMilestone(value))) as unknown) as PayloadAction<
+          const { payload } = ((await dispatch(saveMilestone(milestone))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof saveMilestone>
           >;
           if (payload === "ok") {
@@ -132,7 +138,7 @@ function MilestoneEditForm() {
             history.push(MilestoneList.routeBasePath);
           }
         } else {
-          const milestone = cloneDeep(value);
+          const milestone = cloneDeep(inputValue);
           milestone.with_publish = true;
           const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateMilestone>
@@ -160,7 +166,6 @@ function MilestoneEditForm() {
   const handleDelete = async () => {
     const { payload } = ((await dispatch(deleteMilestone([id]))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteMilestone>>;
     if (payload === "ok") {
-      dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
       history.goBack();
     }
   };
@@ -216,12 +221,12 @@ function MilestoneEditForm() {
     const { outcome_id: id } = outcome;
     if (type === "add") {
       if (id && value) {
-        value.concat([outcome.ancestor_id as string]);
+        value.concat([outcome]);
       }
     } else {
       if (id && value) {
         let newValue = cloneDeep(value);
-        newValue = newValue.filter((v) => v !== id);
+        newValue = newValue.filter((v) => v.ancestor_id !== id);
         setValue("outcome_ancestor_ids", newValue, { shouldDirty: true });
       }
     }
@@ -257,8 +262,8 @@ function MilestoneEditForm() {
       />
       <Controller
         as={Outcomes}
-        name="outcome_ancestor_ids"
-        defaultValue={milestoneDetail?.outcomes?.map((v) => v.ancestor_id) || []}
+        name="outcomes"
+        defaultValue={milestoneDetail?.outcomes}
         key={initDefaultValue.outcome_ancestor_ids?.key}
         control={control}
         outcomeList={outcomeList}
@@ -276,7 +281,7 @@ function MilestoneEditForm() {
     <>
       {value && value.length ? (
         <ContainedOutcomeList
-          outcomeList={outcomeList}
+          outcomeList={value}
           value={value}
           canEdit={canEdit}
           addOrRemoveOutcome={handleAddOrRemoveOutcome}
