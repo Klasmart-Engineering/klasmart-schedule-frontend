@@ -7,7 +7,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { GetOutcomeDetail, MilestoneDetailResult, MilestoneStatus } from "../../api/type";
-import { resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ModelMilestoneOptions } from "../../models/ModelMilestone";
 import { RootState } from "../../reducers";
@@ -230,6 +229,11 @@ function MilestoneEditForm() {
   const handleClickAdd = () => {
     history.replace(`${routeBasePath}/tab/${TabValue.leaningoutcomes}${search}`);
   };
+
+  const handleClickOutcome: ContainedOutcomeListProps["onClickOutcome"] = (id: GetOutcomeDetail["outcome_id"]) => {
+    window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
+  };
+
   useEffect(() => {
     dispatch(onLoadOutcomeList({ exect_search, search_key, assumed: assumed ? 1 : -1, page, metaLoading: true }));
   }, [assumed, dispatch, exect_search, search_key, page]);
@@ -251,30 +255,33 @@ function MilestoneEditForm() {
         shortCode={shortCode}
         canEdit={canEdit}
       />
-      {outcomeList && outcomeList.length ? (
-        <Controller
-          as={Outcomes}
-          name="outcome_ancestor_ids"
-          defaultValue={milestoneDetail?.outcomes?.map((v) => v.ancestor_id) || []}
-          key={initDefaultValue.outcome_ancestor_ids?.key}
-          control={control}
-          outcomeList={outcomeList}
-          outcomeTotal={outcomeTotal}
-          condition={condition}
-          onSearch={handleClickSearch}
-          outcomePage={page}
-          onChangePage={handleChangePage}
-          canEdit={canEdit}
-        />
-      ) : (
-        resultsTip
-      )}
+      <Controller
+        as={Outcomes}
+        name="outcome_ancestor_ids"
+        defaultValue={milestoneDetail?.outcomes?.map((v) => v.ancestor_id) || []}
+        key={initDefaultValue.outcome_ancestor_ids?.key}
+        control={control}
+        outcomeList={outcomeList}
+        outcomeTotal={outcomeTotal}
+        condition={condition}
+        onSearch={handleClickSearch}
+        outcomePage={page}
+        onChangePage={handleChangePage}
+        canEdit={canEdit}
+        onClickOutcome={handleClickOutcome}
+      />
     </ContentTab>
   );
   const rightside = (
     <>
       {value && value.length ? (
-        <ContainedOutcomeList outcomeList={outcomeList} value={value} canEdit={canEdit} addOrRemoveOutcome={handleAddOrRemoveOutcome} />
+        <ContainedOutcomeList
+          outcomeList={outcomeList}
+          value={value}
+          canEdit={canEdit}
+          addOrRemoveOutcome={handleAddOrRemoveOutcome}
+          onClickOutcome={handleClickOutcome}
+        />
       ) : (
         <NoOutcome />
       )}

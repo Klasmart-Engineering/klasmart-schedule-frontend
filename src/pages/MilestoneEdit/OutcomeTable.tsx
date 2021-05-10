@@ -40,9 +40,10 @@ interface OutcomeTableProps {
   value?: MilestoneDetailResult["outcome_ancestor_ids"];
   onChange?: (value: MilestoneDetailResult["outcome_ancestor_ids"]) => any;
   canEdit: boolean;
+  onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
 export default function OutcomeTable(props: OutcomeTableProps) {
-  const { outcomeList, value, onChange, canEdit } = props;
+  const { outcomeList, value, onChange, canEdit, onClickOutcome } = props;
   const css = useStyles();
 
   const handleAction = (item: GetOutcomeDetail, type: "add" | "remove") => {
@@ -63,7 +64,7 @@ export default function OutcomeTable(props: OutcomeTableProps) {
   const rows =
     outcomeList &&
     outcomeList.map((item) => (
-      <TableRow key={item.outcome_id}>
+      <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
         <TableCell className={css.tableCell}>{item.assumed ? "Yes" : ""}</TableCell>

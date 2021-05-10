@@ -45,10 +45,11 @@ export interface ContainedOutcomeListProps {
   value: MilestoneDetailResult["outcome_ancestor_ids"];
   addOrRemoveOutcome: (outcome: GetOutcomeDetail, type: "add" | "remove") => any;
   canEdit: boolean;
+  onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
 export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
   const css = useStyles();
-  const { outcomeList, value, canEdit, addOrRemoveOutcome } = props;
+  const { outcomeList, value, canEdit, addOrRemoveOutcome, onClickOutcome } = props;
   const containedOutcomeList = useMemo(() => {
     if (value && value[0]) {
       return outcomeList.filter((outcome) => value.indexOf(outcome.ancestor_id as string) >= 0);
@@ -59,7 +60,7 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
     containedOutcomeList &&
     containedOutcomeList[0] &&
     containedOutcomeList.map((item) => (
-      <TableRow key={item.outcome_id}>
+      <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
         <TableCell className={css.tableCell}>{item.program && item.program[0] ? item.program[0].program_id : ""}</TableCell>
