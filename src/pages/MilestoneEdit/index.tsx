@@ -157,9 +157,8 @@ function MilestoneEditForm() {
   const handleEdit = async () => {
     if (milestoneDetail.status === MilestoneStatus.published) {
       const result: any = await dispatch(occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true }));
-      if (result.payload.milestone_id) {
+      if (result && result.payload && result.payload.milestone_id) {
         history.replace(`/milestone/milestone-edit/tab/details?id=${result.payload.milestone_id}&first_save=true`);
-        // history.push(MilestoneList.routeBasePath);
         setCanEdit(true);
       }
     } else {

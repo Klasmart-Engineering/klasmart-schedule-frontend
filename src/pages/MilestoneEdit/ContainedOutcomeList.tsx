@@ -1,7 +1,8 @@
 import { Button, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { RemoveCircle } from "@material-ui/icons";
-import React from "react";
+import { cloneDeep } from "lodash";
+import React, { useMemo } from "react";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { d } from "../../locale/LocaleManager";
@@ -52,13 +53,18 @@ export interface ContainedOutcomeListProps {
   canEdit: boolean;
   onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
 }
+
 export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
   const css = useStyles();
   const { outcomeList, canEdit, addOrRemoveOutcome, onClickOutcome } = props;
+  const containedList = useMemo(() => {
+    const newList = cloneDeep(outcomeList);
+    return newList.reverse();
+  }, [outcomeList]);
   const rows =
-    outcomeList &&
-    outcomeList[0] &&
-    outcomeList.map((item) => (
+    containedList &&
+    containedList[0] &&
+    containedList.map((item) => (
       <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
