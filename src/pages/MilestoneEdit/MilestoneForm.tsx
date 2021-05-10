@@ -77,6 +77,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         InputProps={{
           style: { color: "rgba(0,0,0,1)" },
         }}
+        inputProps={{ maxLength: 200 }}
         error={errors.milestone_name ? true : false}
         disabled={!canEdit}
       />

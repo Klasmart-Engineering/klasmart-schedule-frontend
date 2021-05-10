@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   exectSearchInput: {
-    maxWidth: 128,
+    maxWidth: 95,
     marignRgiht: -10,
     height: 40,
     boxSizing: "border-box",

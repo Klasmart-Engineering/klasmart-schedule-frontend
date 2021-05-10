@@ -8,7 +8,7 @@ import { MilestoneQueryCondition } from "../pages/MilestoneList/types";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { actWarning } from "./notify";
+import { actSuccess, actWarning } from "./notify";
 interface IMilestoneState {
   milestoneList: MilestoneListResult;
   milestoneDetail: MilestoneDetailResult;
@@ -198,7 +198,11 @@ export const deleteMilestone = createAsyncThunk<ResultDeleteMilestone, ParamsDel
     const content = d("Are you sure you want to delete this milestone?").t("assess_msg_delete_milestone");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
-    return api.milestones.deleteMilestone({ ids });
+    const result = await api.milestones.deleteMilestone({ ids });
+    if (result === "ok") {
+      dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
+    }
+    return result;
   }
 );
 
