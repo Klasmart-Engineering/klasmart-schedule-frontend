@@ -765,12 +765,13 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             user_id: my_id,
           },
         });
-        schoolList = schoolList.concat(
-          data.user?.school_memberships?.filter(
+        const newSchoolList = data.user?.school_memberships
+          ?.filter(
             (schoolItem) =>
               schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
-          ) as Pick<School, "school_id" | "school_name">[]
-        );
+          )
+          .map((schoolMember) => schoolMember?.school) as Pick<School, "school_id" | "school_name">[];
+        schoolList = schoolList.concat(newSchoolList);
 
         if (school_id === "all") {
           data.user?.school_memberships
@@ -815,6 +816,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       );
     }
     teacherList = ModelReport.teacherListSetDiff(teacherList);
+    schoolList = ModelReport.schoolListSetDiff(schoolList);
     teachingLoadList = (await api.reports.listTeachingLoadReport({ school_id, teacher_ids, class_ids, time_offset: TIME_OFFSET })) || [];
     return {
       schoolList,

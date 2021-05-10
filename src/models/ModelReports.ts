@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { User } from "../api/api-ko-schema.auto";
+import { School, User } from "../api/api-ko-schema.auto";
 import { EntityReportListTeachingLoadItem } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
@@ -19,6 +19,17 @@ export const ModelReport = {
       return preVal;
     }, []);
     return teacherList;
+  },
+  schoolListSetDiff(schoolList: Pick<School, "school_id" | "school_name">[]): Pick<School, "school_id" | "school_name">[] {
+    let hash: Record<string, boolean> = {};
+    schoolList = schoolList.reduce((preVal: Pick<School, "school_id" | "school_name">[], curVal) => {
+      if (!hash[curVal.school_id]) {
+        hash[curVal.school_id] = true;
+        preVal.push(curVal);
+      }
+      return preVal;
+    }, []);
+    return schoolList;
   },
 };
 
