@@ -65,6 +65,8 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         label={d("Milestone Name").t("assess_milestone_detail_name")}
         required
         fullWidth
+        multiline
+        rowsMax={3}
         encode={frontTrim}
         decode={frontTrim}
         defaultValue={initDefaultValue.milestone_name?.value}
