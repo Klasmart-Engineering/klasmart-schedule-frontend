@@ -88,7 +88,7 @@ export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[])
       description: "",
       value: dataItem.durations
         ? dataItem.durations.map((durationItems, idx) => {
-            const total = durationItems?.online || 0 + (durationItems?.offline || 0);
+            const total = (durationItems?.online || 0) + (durationItems?.offline || 0);
             const { opacity } = time2colorLevel(total);
             const description: ReactNode = teacherLoadDescription({ ...durationItems });
             return {
