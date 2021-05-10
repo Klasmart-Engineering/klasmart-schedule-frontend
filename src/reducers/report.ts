@@ -810,7 +810,10 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           organization_id,
         },
       });
-      const classListall = result.user?.membership?.classesTeaching;
+      let classListall = result.user?.membership?.classesTeaching;
+      if (school_id && school_id !== "all" && school_id !== "no_assigned") {
+        classListall = classListall?.filter((classItem) => classItem?.schools?.some((school) => school?.school_id === school_id));
+      }
       classList = classList?.concat(
         classListall?.filter((classItem) => classItem?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]
       );

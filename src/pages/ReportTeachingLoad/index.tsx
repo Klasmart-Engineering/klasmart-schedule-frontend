@@ -13,7 +13,7 @@ import { FilterTeacherLoad } from "./FilterTeacherLoad";
 import { InfoTeacherLoad } from "./InfoTeacherLoad";
 import { TeacherLoadChart } from "./TeacherLoadChart";
 const ALL = "all";
-const TIME_OFFSET = (0 - new Date().getTimezoneOffset() / 60).toString();
+const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
 const removeoneValueOfList = (value: string[]): string => {
   return value[value.length - 1] === ALL ? "all" : value.filter((id) => id !== ALL).join(",");
 };
