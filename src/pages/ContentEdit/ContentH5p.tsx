@@ -12,12 +12,15 @@ export interface ContentH5pProps {
   onChangeSourceType?: (value: string) => any;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ breakpoints }) => ({
   iframe: {
     width: "100%",
     height: "calc(100% - 80px)",
+    [breakpoints.down("md")]: {
+      minHeight: 866,
+    },
   },
-});
+}));
 
 const useH5pSrc = function (sub: H5pSub, content_id?: string) {
   const [src, setSrc] = useState<string>();
