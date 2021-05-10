@@ -295,7 +295,7 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     if (!outcome_id) {
-      dispatch(generateShortcode({ kind: "learning_outcome" }));
+      dispatch(generateShortcode({ kind: "outcomes" }));
       dispatch(getNewOptions({ metaLoading: true }));
     }
   }, [outcome_id, dispatch]);

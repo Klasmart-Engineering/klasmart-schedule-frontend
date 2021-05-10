@@ -150,7 +150,7 @@ function MilestoneEditForm() {
     if (milestoneDetail.status === MilestoneStatus.published) {
       const result: any = await dispatch(occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true }));
       if (result.payload.milestone_id) {
-        history.push(`/milestone/milestone-edit/tab/details?id=${result.payload.milestone_id}&status=edit`);
+        history.replace(`/milestone/milestone-edit/tab/details?id=${result.payload.milestone_id}&status=edit`);
         // history.push(MilestoneList.routeBasePath);
         setCanEdit(true);
       }
@@ -162,8 +162,8 @@ function MilestoneEditForm() {
     const { payload } = ((await dispatch(deleteMilestone([id]))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteMilestone>>;
     if (payload === "ok") {
       dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
+      history.goBack();
     }
-    dispatch(deleteMilestone([id]));
   };
   const handleChangeTab = useMemo(
     () => (value: string) => {

@@ -146,7 +146,7 @@ function getBulkAction(condition: MilestoneQueryCondition, perm: PermissionResul
       if (perm.delete_published_milestone_450) {
         pubRes = [
           {
-            label: d("Remove").t("library_label_remove"),
+            label: d("Delete").t("assess_label_delete"),
             value: BulkAction.delete,
           },
         ];
@@ -157,7 +157,7 @@ function getBulkAction(condition: MilestoneQueryCondition, perm: PermissionResul
       if (perm.delete_unpublished_milestone_449) {
         unPubRes = [
           {
-            label: d("Remove").t("library_label_remove"),
+            label: d("Delete").t("assess_label_delete"),
             value: BulkAction.delete,
           },
         ];

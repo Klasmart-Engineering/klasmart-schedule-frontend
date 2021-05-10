@@ -245,9 +245,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
         </Hidden>
         <Typography variant="h6" className={css.title}>
-          {sm
-            ? d("Create New Learning Outcome").t("assess_label_create_new_learning_outcome")
-            : d("For Organizations").t("assess_label_for_organizations")}
+          {sm ? d("Create New Milestone").t("assess_create_new_milestone") : d("For Organizations").t("assess_label_for_organizations")}
         </Typography>
         <Hidden smDown>{getHeaderButtons()}</Hidden>
       </Box>
@@ -256,7 +254,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
           <Typography variant="h6" className={css.title}>
             {milestone_id
               ? d("Milestone Details").t("assess_milestone_details")
-              : d("Create New Learning Outcome").t("assess_label_create_new_learning_outcome")}
+              : d("Create New Milestone").t("assess_create_new_milestone")}
           </Typography>
         </Box>
       </Hidden>
