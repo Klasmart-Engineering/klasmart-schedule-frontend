@@ -18,7 +18,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   tableContainer: {
     marginTop: 5,
     maxHeight: 790,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   tableHead: {
     backgroundColor: "#F2F5F7",

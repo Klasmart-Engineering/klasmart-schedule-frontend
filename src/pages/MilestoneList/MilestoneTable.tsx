@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-
+export const GENERALMILESTONE = "general";
 const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
   e.stopPropagation();
   if (handler) return handler(e);
@@ -113,7 +113,7 @@ function MilestoneRow(props: MilestoneProps) {
       <TableCell className={clsx(css.tableCell)}>{milestone.category?.map((item) => item.category_name).join(",")}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(milestone.create_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
-        {milestone.status === MilestoneStatus.published && (
+        {milestone.type !== GENERALMILESTONE && milestone.status === MilestoneStatus.published && (
           <Permission value={PermissionType.delete_published_milestone_450}>
             <LButton
               as={IconButton}
@@ -125,7 +125,7 @@ function MilestoneRow(props: MilestoneProps) {
             </LButton>
           </Permission>
         )}
-        {milestone.status === MilestoneStatus.unpublished && (
+        {milestone.type !== GENERALMILESTONE && milestone.status === MilestoneStatus.unpublished && (
           <Permission value={PermissionType.delete_unpublished_milestone_449}>
             <LButton
               as={IconButton}

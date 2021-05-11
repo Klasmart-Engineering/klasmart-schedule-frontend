@@ -124,7 +124,7 @@ export function FirstSearchHeader() {
                   className={clsx(css.nav, { [css.actives]: pathname.indexOf(OutcomeList.routeBasePath) >= 0 })}
                   startIcon={pathname.indexOf(OutcomeList.routeBasePath) >= 0 ? <LoBlueIcon /> : <LoIcon />}
                 >
-                  {d("Learning Outcome").t("assess_label_learning_outcome")}
+                  {d("Learning Outcomes").t("assess_column_lo")}
                 </Button>
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>

@@ -280,6 +280,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         disabled={!canEdit}
       />
       <Controller style={{ display: "none" }} name="with_publish" control={control} as={TextField} defaultValue={false} />
+      <Controller style={{ display: "none" }} name="type" control={control} as={TextField} defaultValue={"normal"} />
     </Box>
   );
 }

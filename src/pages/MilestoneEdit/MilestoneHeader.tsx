@@ -155,7 +155,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
             </LButton>
           </>
         )}
-        {milestoneDetail?.type !== GENERALMILESTONE && milestone_id && !canEdit && (
+        {milestone_id && !canEdit && (
           <>
             <Button
               variant="contained"
@@ -247,7 +247,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
         <Typography variant="h6" className={css.title}>
           {sm ? d("Create New Milestone").t("assess_create_new_milestone") : d("For Organizations").t("assess_label_for_organizations")}
         </Typography>
-        <Hidden smDown>{getHeaderButtons()}</Hidden>
+        <Hidden smDown>{milestoneDetail?.type !== GENERALMILESTONE ? getHeaderButtons() : ""}</Hidden>
       </Box>
       <Hidden smDown>
         <Box display="flex" alignItems="center" pl={5} pr={10} height={64} boxShadow={2}>
@@ -260,7 +260,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
       </Hidden>
       <Hidden mdUp>
         <Box display="flex" justifyContent="flex-end" pt={3}>
-          {getHeaderButtonsSmallScreen()}
+          {milestoneDetail?.type !== GENERALMILESTONE ? getHeaderButtonsSmallScreen() : ""}
         </Box>
       </Hidden>
     </>
