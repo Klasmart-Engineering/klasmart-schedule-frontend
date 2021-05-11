@@ -168,7 +168,7 @@ export function MilestoneTable(props: MilestoneTableProps) {
     onChangePage,
     onClickMilestone,
   } = props;
-  const amountPerPage = props.amountPerPage ?? 20;
+  const amountPerPage = props.amountPerPage ?? 10;
   // const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const allValue = useMemo(() => {
     if (list && list[0]) {
