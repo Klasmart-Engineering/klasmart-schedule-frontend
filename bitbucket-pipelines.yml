@@ -1,0 +1,64 @@
+pipelines:
+  custom:
+    deploy:
+    - variables:
+          - name: KIDSLOOP_REGION
+          - name: KIDSLOOP_ENV
+
+    - step:
+        name: 'Build NPM'
+        image: node:lts-alpine
+        script:
+          - apk update && apk add git --no-cache
+          - npm i
+          - mv deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env.production
+          - npm run build
+        caches:
+          - nodemodules
+        artifacts:
+          - build/*
+
+    - step:
+        name: "Build & Push Docker image"
+        image: python:3.9-alpine
+        script:
+          - pip3 install -U awscli
+          - apk add git --no-cache
+          - mv build deploy/
+          
+          - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+          - export REPO=$DOCKER_REPO_URL/kidsloop-hub-frontend      # DOCKER_REPO_URL is workspace wide variable
+          - export TAG=$BRANCH_TAG-$KIDSLOOP_REGION-$KIDSLOOP_ENV
+          - export COMMIT_TAG=$(git rev-parse --short HEAD)
+
+          - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_REPO_URL
+          - docker build -t cms-frontend deploy/
+          
+          - docker tag cms-frontend:latest $REPO:$TAG
+          - docker tag cms-frontend:latest $REPO:$TAG-latest
+          - docker tag cms-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          - docker tag cms-frontend:latest $REPO:$TAG-$COMMIT_TAG
+          - docker push $REPO:$TAG
+          - docker push $REPO:$TAG-latest
+          - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          - docker push $REPO:$TAG-$COMMIT_TAG
+          
+        services:
+          - docker
+    
+    - step:
+        name: "Sync & Invalidate"
+        image: python:3.9-alpine
+        script:
+          - pip3 install -U awscli
+          - apk add git --no-cache
+          
+          - export AWS_ACCESS_KEY_ID=$AWS_ALPHA_KEY_ID && export AWS_SECRET_ACCESS_KEY=$AWS_ALPHA_ACCESS_KEY && export AWS_DEFAULT_REGION=ap-northeast-2
+          
+          - aws s3 sync build s3://$S3_BUCKET/alpha/latest
+
+          - aws cloudfront create-invalidation --paths "/*" --distribution-id $CDN_DIST
+        
+definitions:
+  caches:
+    nodemodules: ./node_modules
