@@ -998,6 +998,10 @@ const { reducer } = createSlice({
     [getClassListByschool.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassListByschool>>) => {
       state.teachingLoadOnload.classList = payload.classList;
     },
+    [getClassListByschool.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassListByschool>>) => {
+      state.teachingLoadOnload.classList = initialState.teachingLoadOnload.classList;
+      state.teachingLoadOnload.teachingLoadList = initialState.teachingLoadOnload.teachingLoadList;
+    },
   },
 });
 export default reducer;

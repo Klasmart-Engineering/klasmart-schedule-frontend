@@ -62,7 +62,8 @@ export default function ReportTeachingLoad() {
           if (newValue !== "all" && !newValue.includes(",")) {
             dispatch(getClassListByschool({ school_id, teacher_ids: newValue }));
           }
-          dispatch(getTeachingLoadList({ school_id, teacher_ids, class_ids: ALL, time_offset: TIME_OFFSET, metaLoading: true }));
+          dispatch(getTeachingLoadList({ school_id, teacher_ids: newValue, class_ids: ALL, time_offset: TIME_OFFSET, metaLoading: true }));
+
           break;
         }
         case "class_ids":
