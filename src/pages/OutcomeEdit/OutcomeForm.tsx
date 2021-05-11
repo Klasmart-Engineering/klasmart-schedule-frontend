@@ -477,7 +477,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled
                 variant="outlined"
                 className={classes.milestoneCon}
-                value={outcomeDetail.milestones?.map((v) => v.milestone_name).join(",")}
+                value={outcomeDetail.milestones?.map((v) => v.milestone_name).join(",") || ""}
               />
             </Grid>
           </Grid>

@@ -1,8 +1,9 @@
 import { Button, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { RemoveCircle } from "@material-ui/icons";
+import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { d } from "../../locale/LocaleManager";
@@ -40,8 +41,11 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
   addGreen: createColor(palette.success, palette),
   removeRead: createColor(palette.error, palette),
+  pagination: {},
+  paginationUl: {
+    justifyContent: "center",
+  },
 }));
-
 const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
   e.stopPropagation();
   if (handler) return handler(e);
@@ -57,14 +61,22 @@ export interface ContainedOutcomeListProps {
 export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
   const css = useStyles();
   const { outcomeList, canEdit, addOrRemoveOutcome, onClickOutcome } = props;
+  const [page, setPage] = useState(1);
   const containedList = useMemo(() => {
     const newList = cloneDeep(outcomeList);
     return newList.reverse();
   }, [outcomeList]);
+  const handleChangePage = (e: Object, page: number) => {
+    setPage(page);
+  };
+  const onePageList = useMemo(() => {
+    const cloneList = cloneDeep(containedList);
+    return cloneList.slice((page - 1) * 10, 10 * page);
+  }, [containedList, page]);
   const rows =
-    containedList &&
-    containedList[0] &&
-    containedList.map((item) => (
+    onePageList &&
+    onePageList[0] &&
+    onePageList.map((item) => (
       <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
@@ -105,6 +117,13 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
           <TableBody>{rows}</TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        classes={{ ul: css.paginationUl }}
+        onChange={handleChangePage}
+        count={Math.ceil(containedList.length / 10)}
+        color="primary"
+        page={page}
+      />
     </>
   );
 }
