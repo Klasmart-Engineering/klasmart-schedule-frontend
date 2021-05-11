@@ -20,7 +20,7 @@ interface IMilestoneState {
   outcomeList: GetOutcomeList;
   outcomeTotal: number;
 }
-// const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 interface RootState {
   outcome: IMilestoneState;
 }
@@ -101,7 +101,11 @@ export const onLoadMilestoneList = createAsyncThunk<ResultMilestoneList, ParamsM
     });
     const { author_id } = query;
     const user_id = meInfo.me?.user_id;
-    const { total, milestones } = await api.milestones.searchMilestone({ ...query, author_id: author_id ? user_id : "" });
+    const { total, milestones } = await api.milestones.searchMilestone({
+      ...query,
+      author_id: author_id ? user_id : "",
+      page_size: PAGE_SIZE,
+    });
     return { total, milestones };
   }
 );
