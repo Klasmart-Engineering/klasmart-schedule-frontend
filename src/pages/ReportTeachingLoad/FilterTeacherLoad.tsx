@@ -57,7 +57,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
   ]);
 
   const schools = teachingLoadOnload.schoolList?.slice(0) || [];
-  if (perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organization_reports_612) {
+  if (perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612) {
     schools.push({ school_id: "no_assigned", school_name: "No assigned" });
   }
   schools.unshift({ school_id: "all", school_name: "All" });
@@ -115,7 +115,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
 
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
+      {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
         <Hidden smDown>
           <Box position="relative">
             <TextField
@@ -130,7 +130,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
             >
               {getSchoolList(schools)}
             </TextField>
-            {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
+            {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
               <TextField
                 size="small"
                 className={css.selectButton}
@@ -158,7 +158,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
           </Box>
         </Hidden>
       )}
-      {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
+      {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
         <Hidden mdUp>
           <Box display="flex">
             <Box flex={3}>
@@ -166,7 +166,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
               <Menu anchorEl={anchorElSchool} keepMounted open={Boolean(anchorElSchool)} onClose={(e) => handleClose(e, "school_id")}>
                 <GetSchoolItem list={schools} value={value} onChangeMenu={handleChangeMenu} tab="school_id"></GetSchoolItem>
               </Menu>
-              {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && (
+              {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
                 <PersonOutlinedIcon fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "teacher_ids")} />
               )}
               <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_ids")}>

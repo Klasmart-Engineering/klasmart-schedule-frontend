@@ -283,7 +283,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
                       <TableCell className={clsx(css.tableCell)}>{d("Short Code").t("assess_label_short_code")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Program").t("assess_label_program")}</TableCell>
                       {/* <TableCell className={clsx(css.tableCell)}>{d("Subject").t("assess_label_subject")}</TableCell> */}
-                      {/* <TableCell className={clsx(css.tableCell)}>{d("Milestone").t("assess_label_milestone")}</TableCell> */}
+                      {/* <TableCell className={clsx(css.tableCell)}>{d("Milestones").t("assess_label_milestone")}</TableCell> */}
                       {/* <TableCell className={clsx(css.tableCell)}>{d("Standard").t("assess_label_Standard")}</TableCell> */}
                       <TableCell className={clsx(css.tableCell)}>{d("Assumed").t("assess_label_assumed")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Author").t("library_label_author")}</TableCell>

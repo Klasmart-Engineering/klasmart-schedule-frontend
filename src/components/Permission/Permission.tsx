@@ -1,6 +1,9 @@
-import React, { ReactNode } from "react";
-import { QeuryMeQuery, useQeuryMeQuery } from "../../api/api-ko.auto";
-import { apiOrganizationOfPage } from "../../api/extra";
+import memoize from "lodash/memoize";
+import React, { ReactNode, useEffect, useState } from "react";
+import { QeuryMeQuery } from "../../api/api-ko.auto";
+import { apiGetPermission } from "../../api/extra";
+
+const apiMemoizedGetPermission = memoize(apiGetPermission) as (key?: string) => ReturnType<typeof apiGetPermission>;
 
 export enum PermissionType {
   create_content_page_201 = "create_content_page_201",
@@ -73,7 +76,7 @@ export enum PermissionType {
   publish_featured_content_for_specific_orgs_79001 = "publish_featured_content_for_specific_orgs_79001",
   create_my_schools_schedule_events_522 = "create_my_schools_schedule_events_522",
   view_my_school_reports_611 = "view_my_school_reports_611",
-  view_my_organizations_reports_612 = "view_my_organization_reports_612",
+  view_my_organizations_reports_612 = "view_my_organizations_reports_612",
   milestones_page_405 = "milestones_page_405",
   view_unpublished_milestone_417 = "view_unpublished_milestone_417",
   view_published_milestone_418 = "view_published_milestone_418",
@@ -106,10 +109,11 @@ export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(v
   }
   return result as PermissionResult<V>;
 }
-
-export function usePermission<V extends PermissionType | PermissionType[]>(value: V): PermissionResult<V> {
-  const organization_id = apiOrganizationOfPage() || "";
-  const { data } = useQeuryMeQuery({ variables: { organization_id }, fetchPolicy: "cache-first" });
+export function usePermission<V extends PermissionType | PermissionType[]>(value: V, key?: string): PermissionResult<V> {
+  const [data, setData] = useState<QeuryMeQuery>();
+  useEffect(() => {
+    apiMemoizedGetPermission(key).then(setData);
+  }, [key]);
   return hasPermissionOfMe<V>(value, data?.me);
 }
 

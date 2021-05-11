@@ -87,7 +87,7 @@ export default function ReportTeachingLoad() {
     <Fragment>
       <ReportTitle title={d("Teaching Load").t("report_label_teaching_load")}></ReportTitle>
       <FilterTeacherLoad value={teacherLoadQuery} onChange={handleChange} teachingLoadOnload={teachingLoadOnloadState}></FilterTeacherLoad>
-      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612 ? (
+      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612 ? (
         teachingLoadList.items && teachingLoadList.items.length > 0 ? (
           <>
             <InfoTeacherLoad />

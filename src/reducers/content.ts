@@ -866,17 +866,6 @@ export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult
   return orgProperty;
 });
 
-// export const getOrgList = createAsyncThunk<OrganizationsQuery["organizations"], IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload>(
-//   "content/getOrgList",
-//   async (folder_ids, { dispatch }) => {
-//     const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
-//       query: OrganizationsDocument,
-//     });
-//     await dispatch(getFoldersSharedRecords(folder_ids));
-//     return data.organizations;
-//   }
-// );
-
 export enum Region {
   vn = "vn",
   global = "global",

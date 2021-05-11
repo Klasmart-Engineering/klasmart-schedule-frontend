@@ -205,7 +205,7 @@ export function MilestoneTable(props: MilestoneTableProps) {
                           onChange={selectedContentGroupContext.registerAllChange}
                         />
                       </TableCell>
-                      <TableCell className={clsx(css.tableCell)}>{d("Milestone").t("assess_label_milestone")}</TableCell>
+                      <TableCell className={clsx(css.tableCell)}>{d("Milestones").t("assess_label_milestone")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Short Code").t("assess_label_short_code")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Number of Learning Outcomes").t("assess_detail_number_lo")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Program").t("assess_label_program")}</TableCell>

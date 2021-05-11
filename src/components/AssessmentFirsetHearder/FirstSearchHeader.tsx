@@ -133,7 +133,7 @@ export function FirstSearchHeader() {
                   className={clsx(css.nav, { [css.actives]: pathname.indexOf(MilestonesList.routeBasePath) >= 0 })}
                   startIcon={<FlagOutlinedIcon />}
                 >
-                  {d("Milestone").t("assess_label_milestone")}
+                  {d("Milestones").t("assess_label_milestone")}
                 </Button>
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>

@@ -6,7 +6,7 @@ import { ApiPullOutcomeSetResponse } from "../../api/api.auto";
 import { GetOutcomeDetail, OutcomeSetResult } from "../../api/type";
 import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
 import { OutcomeSet } from "../../components/OutSet";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { LinkedMockOptionsItem } from "../../reducers/content";
 import { ResultGetNewOptions } from "../../reducers/outcome";
 
@@ -472,7 +472,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
           <Grid container justify="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
               <TextField
-                label={d("Milestone").t("assess_label_milestone")}
+                label={t("assess_label_milestone")}
                 fullWidth
                 disabled
                 variant="outlined"

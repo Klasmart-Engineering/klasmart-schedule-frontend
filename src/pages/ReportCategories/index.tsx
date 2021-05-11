@@ -35,7 +35,7 @@ export function ReportCategories() {
     <>
       <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>
       <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
-      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612
+      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612
         ? categories.length > 0
           ? chart
           : emptyTip

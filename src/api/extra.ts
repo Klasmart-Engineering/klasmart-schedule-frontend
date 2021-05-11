@@ -4,8 +4,10 @@ import merge from "lodash/merge";
 import api from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
+import { QeuryMeQuery } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
+import premissionAll from "./permission_all.json";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
@@ -197,4 +199,27 @@ export function apiIsEnableNewH5p() {
 
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
+}
+export async function apiGetPermission(): Promise<QeuryMeQuery> {
+  const permission = await api.organizationPermissions.hasOrganizationPermissions({
+    permission_name: premissionAll,
+  });
+  let returnData: NonNullable<QeuryMeQuery> = {
+    me: {
+      user_id: "",
+      membership: {
+        roles: [
+          {
+            permissions: [],
+          },
+        ],
+      },
+    },
+  };
+  Object.keys(permission).forEach((permissionName) => {
+    if (returnData?.me?.membership?.roles?.length && permission[permissionName]) {
+      returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
+    }
+  });
+  return returnData;
 }

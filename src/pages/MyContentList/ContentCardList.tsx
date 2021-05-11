@@ -329,8 +329,8 @@ function ContentCard(props: ContentProps) {
   ]);
   const isShowShareButton =
     orgProperty.region === OrgOrigin.global
-      ? perm.publish_featured_content_for_all_hub_79000 && perm.publish_featured_content_for_all_orgs_79002
-      : perm.publish_featured_content_for_specific_orgs_79001;
+      ? perm?.publish_featured_content_for_all_hub_79000 && perm?.publish_featured_content_for_all_orgs_79002
+      : perm?.publish_featured_content_for_specific_orgs_79001;
   if (content?.content_type === ContentType.assets) {
     file_type = JSON.parse(content.data || "").file_type;
   }

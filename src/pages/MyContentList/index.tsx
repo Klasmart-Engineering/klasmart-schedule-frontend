@@ -361,7 +361,6 @@ export default function MyContentList() {
       setTimeout(reset, 500);
     })();
   }, [condition, reset, dispatch, refreshKey]);
-
   return (
     <div>
       {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (

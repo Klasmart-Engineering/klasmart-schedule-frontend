@@ -4351,7 +4351,7 @@
       }
     },
     "/organization_permissions": {
-      "get": {
+      "post": {
         "description": "has organization permission",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -4360,11 +4360,13 @@
         "operationId": "hasOrganizationPermissions",
         "parameters": [
           {
-            "type": "string",
-            "description": "permission_name separated by commas",
-            "name": "permission_name",
-            "in": "query",
-            "required": true
+            "description": "permission names",
+            "name": "PermissionNames",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.HasPermissionRequest"
+            }
           }
         ],
         "responses": {
@@ -7142,6 +7144,17 @@
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "api.HasPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "permission_name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
