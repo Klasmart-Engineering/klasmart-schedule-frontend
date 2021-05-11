@@ -129,7 +129,7 @@ export function FirstSearchHeader() {
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>
                 <Button
-                  onClick={() => history.push(MilestonesList.routeBasePath)}
+                  onClick={() => history.push(MilestonesList.routeRedirectDefault)}
                   className={clsx(css.nav, { [css.actives]: pathname.indexOf(MilestonesList.routeBasePath) >= 0 })}
                   startIcon={<FlagOutlinedIcon />}
                 >

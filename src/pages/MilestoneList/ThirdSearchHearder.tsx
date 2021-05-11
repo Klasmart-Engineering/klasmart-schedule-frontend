@@ -6,7 +6,7 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import clsx from "clsx";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
-import { MilestoneStatus, OutcomeOrderBy } from "../../api/type";
+import { MilestoneOrderBy, MilestoneStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -170,10 +170,10 @@ function getBulkAction(condition: MilestoneQueryCondition, perm: PermissionResul
 
 const sortOptions = () => {
   return [
-    { label: d("Name (A-Z)").t("assess_label_name_atoz"), value: OutcomeOrderBy.name },
-    { label: d("Name (Z-A)").t("assess_label_name_ztoa"), value: OutcomeOrderBy._name },
-    { label: d("Created On (New-Old)").t("assess_label_created_on_newtoold"), value: OutcomeOrderBy._updated_at },
-    { label: d("Created On (Old-New)").t("assess_label_created_on_oldtonew"), value: OutcomeOrderBy.updated_at },
+    { label: d("Name (A-Z)").t("assess_label_name_atoz"), value: MilestoneOrderBy.name },
+    { label: d("Name (Z-A)").t("assess_label_name_ztoa"), value: MilestoneOrderBy._name },
+    { label: d("Created On (New-Old)").t("assess_label_created_on_newtoold"), value: MilestoneOrderBy._created_at },
+    { label: d("Created On (Old-New)").t("assess_label_created_on_oldtonew"), value: MilestoneOrderBy.created_at },
   ];
 };
 
@@ -188,7 +188,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     if (event.target.value === BulkAction.delete) onBulkDelete();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
-    const order_by = event.target.value as OutcomeOrderBy | undefined;
+    const order_by = event.target.value as MilestoneOrderBy | undefined;
     onChange(
       produce(value, (draft) => {
         order_by ? (draft.order_by = order_by) : delete draft.order_by;
@@ -235,7 +235,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
-                value={value.order_by || OutcomeOrderBy._updated_at}
+                value={value.order_by || MilestoneOrderBy._updated_at}
                 label={d("Sort By").t("assess_label_sort_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -269,7 +269,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const showSort = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClickOrderbyItem = (event: any, order_by: OutcomeOrderBy | undefined) => {
+  const handleClickOrderbyItem = (event: any, order_by: MilestoneOrderBy | undefined) => {
     setAnchorEl(null);
     onChange(
       produce(value, (draft) => {

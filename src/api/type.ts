@@ -169,11 +169,11 @@ export enum MilestoneStatus {
 }
 export enum MilestoneOrderBy {
   name = "name",
-  _name = "_name",
+  _name = "-name",
   created_at = "created_at",
   _created_at = "-created_at",
   updated_at = "updated_at",
-  _updated_at = "_updated_at",
+  _updated_at = "-updated_at",
 }
 
 export type SearchMilestonneResult = AsyncReturnType<typeof api.milestones.searchMilestone>;
