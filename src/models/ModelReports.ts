@@ -59,7 +59,7 @@ export function formatTimeToMonWek(seconds: number, type?: string) {
   const week = weekArr[date.getDay()];
   const weekFullName = weekFullNameArr[date.getDay()];
   if (type === formatTimeToMonWekType.hasTh) {
-    return `${month}.${day}.th,${weekFullName}`;
+    return `${month}.${day}th,${weekFullName}`;
   }
   return `${month}  ${day},  ${week}`;
 }
