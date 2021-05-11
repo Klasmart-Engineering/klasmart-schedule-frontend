@@ -86,6 +86,15 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
   editButton: {
     marginRight: "10px",
   },
+  editBtn: {
+    marginRight: "50px",
+    paddingLeft: "25px",
+    paddingRight: "25px",
+  },
+  deleteBtn: {
+    paddingLeft: "20px",
+    paddingRight: "20px",
+  },
   saveButton: {
     width: "32px !important",
     height: "32px",
@@ -161,12 +170,17 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
               variant="contained"
               endIcon={<CreateOutlinedIcon />}
               color="primary"
-              className={clsx(css.headerButton, css.editButton)}
+              className={clsx(css.headerButton, css.editButton, css.editBtn)}
               onClick={onEdit}
             >
               {d("Edit").t("library_label_edit")}
             </Button>
-            <Button variant="outlined" endIcon={<DeleteOutlinedIcon />} className={clsx(css.deleteButton)} onClick={onDelete}>
+            <Button
+              variant="outlined"
+              endIcon={<DeleteOutlinedIcon />}
+              className={clsx(css.deleteButton, css.deleteBtn)}
+              onClick={onDelete}
+            >
               {d("Delete").t("assess_label_delete")}
             </Button>
           </>
