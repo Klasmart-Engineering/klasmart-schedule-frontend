@@ -7,7 +7,7 @@ import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { formatTeachingLoadList } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
-import { getTeachingLoadList, teachingLoadOnload, TeachingLoadPayload } from "../../reducers/report";
+import { getClassListByschool, getTeachingLoadList, teachingLoadOnload, TeachingLoadPayload } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterTeacherLoad } from "./FilterTeacherLoad";
 import { InfoTeacherLoad } from "./InfoTeacherLoad";
@@ -55,9 +55,14 @@ export default function ReportTeachingLoad() {
         }
         case "teacher_ids": {
           const newValue = removeoneValueOfList((value as unknown) as string[]);
+          console.log("newValue =", newValue);
           history.push({
             search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newValue, class_ids: ALL }),
           });
+          if (newValue !== "all" && !newValue.includes(",")) {
+            dispatch(getClassListByschool({ school_id, teacher_ids: newValue }));
+          }
+          dispatch(getTeachingLoadList({ school_id, teacher_ids, class_ids: ALL, time_offset: TIME_OFFSET, metaLoading: true }));
           break;
         }
         case "class_ids":
@@ -76,7 +81,7 @@ export default function ReportTeachingLoad() {
   useEffect(() => {
     dispatch(teachingLoadOnload({ school_id, teacher_ids, class_ids, metaLoading: true }));
     // eslint-disable-next-line
-  }, [dispatch, school_id, teacher_ids]);
+  }, [dispatch, school_id]);
 
   return (
     <Fragment>

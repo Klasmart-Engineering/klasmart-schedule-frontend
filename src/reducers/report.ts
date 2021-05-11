@@ -829,6 +829,35 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     };
   }
 );
+interface GetClassListPayload {
+  school_id: string;
+  teacher_ids: string;
+}
+interface GetClassListResponse {
+  classList: Pick<Class, "class_id" | "class_name">[];
+}
+export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetClassListPayload & LoadingMetaPayload>(
+  "getClassList",
+  async ({ school_id, teacher_ids }) => {
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    let classList: Pick<Class, "class_id" | "class_name">[] | undefined = [];
+    const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+      query: ClassesTeachingQueryDocument,
+      variables: {
+        user_id: teacher_ids,
+        organization_id,
+      },
+    });
+    let classListall = result.user?.membership?.classesTeaching;
+    if (school_id && school_id !== "all" && school_id !== "no_assigned") {
+      classListall = classListall?.filter((classItem) => classItem?.schools?.some((school) => school?.school_id === school_id));
+    }
+    classList = classList?.concat(
+      classListall?.filter((classItem) => classItem?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]
+    );
+    return { classList };
+  }
+);
 
 const { reducer } = createSlice({
   name: "report ",
@@ -953,6 +982,9 @@ const { reducer } = createSlice({
     },
     [getTeachingLoadList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadList>>) => {
       state.teachingLoadOnload.teachingLoadList = payload;
+    },
+    [getClassListByschool.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassListByschool>>) => {
+      state.teachingLoadOnload.classList = payload.classList;
     },
   },
 });
