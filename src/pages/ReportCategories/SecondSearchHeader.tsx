@@ -96,7 +96,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) && teacherList.length > 0 && (
+      {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && teacherList.length > 0 && (
         <>
           <Hidden smDown>
             <TextField

@@ -29,12 +29,12 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ApiHasPermissionResponse, EntityFolderContentData, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
+import { EntityFolderContentData, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
 import { Author, ContentType, PublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
 import { BackToPrevPage } from "./BackToPrevPage";
@@ -320,15 +320,13 @@ function ContentCard(props: ContentProps) {
     onApprove,
     onReject,
     onClickShareBtn,
-    sharePrem,
   } = props;
   let file_type: number = 0;
-  // const perm = usePermission([
-  //   PermissionType.publish_featured_content_for_all_hub_79000,
-  //   PermissionType.publish_featured_content_for_all_orgs_79002,
-  //   PermissionType.publish_featured_content_for_specific_orgs_79001,
-  // ]);
-  const perm = sharePrem;
+  const perm = usePermission([
+    PermissionType.publish_featured_content_for_all_hub_79000,
+    PermissionType.publish_featured_content_for_all_orgs_79002,
+    PermissionType.publish_featured_content_for_specific_orgs_79001,
+  ]);
   const isShowShareButton =
     orgProperty.region === OrgOrigin.global
       ? perm?.publish_featured_content_for_all_hub_79000 && perm?.publish_featured_content_for_all_orgs_79002
@@ -555,7 +553,6 @@ interface ContentActionProps {
   onApprove: (id: NonNullable<EntityFolderContentData["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onReject: (id: NonNullable<EntityFolderContentData["id"]>) => ReturnType<LButtonProps["onClick"]>;
   onClickShareBtn: (content: NonNullable<EntityFolderContentData>) => ReturnType<LButtonProps["onClick"]>;
-  sharePrem?: ApiHasPermissionResponse;
 }
 
 export interface ContentCardListProps extends ContentActionProps {
@@ -597,7 +594,6 @@ export function ContentCardList(props: ContentCardListProps) {
     onReject,
     onClickShareBtn,
     orgProperty,
-    sharePrem,
   } = props;
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
@@ -640,7 +636,6 @@ export function ContentCardList(props: ContentCardListProps) {
                           onApprove,
                           onReject,
                           onClickShareBtn,
-                          sharePrem,
                         }}
                       />
                     </Grid>

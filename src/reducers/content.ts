@@ -13,8 +13,6 @@ import {
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
-  ApiHasPermissionRequest,
-  ApiHasPermissionResponse,
   ApiOutcomeView,
   EntityContentInfoWithDetails,
   EntityCreateContentRequest,
@@ -859,10 +857,6 @@ export const getOrgProperty = createAsyncThunk<IQueryOrganizationPropertysResult
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
   const orgProperty = api.organizationsPropertys.getOrganizationPropertyById(organization_id);
   return orgProperty;
-});
-
-export const getSharePermission = createAsyncThunk<ApiHasPermissionResponse, ApiHasPermissionRequest>("getharePermission", async (data) => {
-  return await api.organizationPermissions.hasOrganizationPermissions(data);
 });
 
 export enum Region {

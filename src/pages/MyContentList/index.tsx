@@ -1,10 +1,10 @@
-import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { unwrapResult } from "@reduxjs/toolkit";
 import produce from "immer";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
-import { ApiHasPermissionResponse, EntityFolderContentData } from "../../api/api.auto";
+import { EntityFolderContentData } from "../../api/api.auto";
 import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
@@ -17,7 +17,6 @@ import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder1,
   approveContent,
-  AsyncTrunkReturned,
   bulkApprove,
   bulkDeleteContent,
   bulkDeleteFolder,
@@ -27,7 +26,6 @@ import {
   deleteContent,
   deleteFolder,
   getOrgList,
-  getSharePermission,
   onLoadContentList,
   publishContent,
   rejectContent,
@@ -129,7 +127,6 @@ export default function MyContentList() {
     RootState["content"]
   >((state) => state.content);
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
-  const [sharePrem, setSharePrem] = useState<ApiHasPermissionResponse | undefined>(undefined);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
@@ -364,25 +361,6 @@ export default function MyContentList() {
       setTimeout(reset, 500);
     })();
   }, [condition, reset, dispatch, refreshKey]);
-  useEffect(() => {
-    let isUnmount = false;
-    const getShare = async () => {
-      const { payload } = ((await dispatch(
-        getSharePermission({
-          permission_name: [
-            PermissionType.publish_featured_content_for_all_hub_79000,
-            PermissionType.publish_featured_content_for_all_orgs_79002,
-            PermissionType.publish_featured_content_for_specific_orgs_79001,
-          ],
-        })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getSharePermission>>;
-      payload && !isUnmount && setSharePrem(payload);
-    };
-    getShare();
-    return () => {
-      isUnmount = true;
-    };
-  }, [dispatch]);
   return (
     <div>
       {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (
@@ -484,7 +462,6 @@ export default function MyContentList() {
                 onApprove={handleApprove}
                 onReject={handleReject}
                 onClickShareBtn={handleClickShareBtn}
-                sharePrem={sharePrem}
               />
             ) : JSON.stringify(parentFolderInfo) !== "{}" &&
               (condition.publish_status === PublishStatus.published ||

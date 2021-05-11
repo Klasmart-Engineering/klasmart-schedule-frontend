@@ -28,12 +28,13 @@ import {
   EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
-import { apiWaitForOrganizationOfPage } from "../api/extra";
+import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { ModelReport } from "../models/ModelReports";
 import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
+
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];
   achievementDetail?: EntityStudentAchievementReportCategoryItem[];
@@ -198,6 +199,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
         organization_id,
       },
     });
+    const meInfoPerm = await apiGetPermission();
     const myTearchId = meInfo.me?.user_id || "";
     const perm = hasPermissionOfMe(
       [
@@ -206,17 +208,21 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
         PermissionType.view_my_organizations_reports_612,
         PermissionType.view_my_school_reports_611,
       ],
-      meInfo.me
+      meInfoPerm.me
     );
+    // const perm = await api.organizationPermissions.hasOrganizationPermissions({
+    //   permission_name: premissionAll,
+    // })
+
     //根据权限调接口
     // 1 如果只有看自己的report的权限 finalTeachId => 我自己的user_id
-    if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organization_reports_612) {
+    if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
       teacherList = [];
       finalTearchId = myTearchId;
     } else {
       // 2 如果有查看自己组织的report的权限或者查看所有report的权限
       //    teacherList => 通过组织id获取所有classes =>所有的teacherid(可能有重复)
-      if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
+      if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
         const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
           query: TeacherByOrgIdDocument,
           variables: {
@@ -311,13 +317,14 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
   "report/reportCategoriesOnload",
   async ({ teacher_id }) => {
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    // 拉取我的user_id
+    //拉取我的user_id
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
       query: QeuryMeDocument,
       variables: {
         organization_id,
       },
     });
+    const meInfoPerm = await apiGetPermission();
     const perm = hasPermissionOfMe(
       [
         PermissionType.view_my_reports_614,
@@ -325,13 +332,13 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
         PermissionType.view_my_school_reports_611,
         PermissionType.view_my_organizations_reports_612,
       ],
-      meInfo.me
+      meInfoPerm.me
     );
     const my_id = meInfo?.me?.user_id || "";
 
-    if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organization_reports_612) {
+    if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
       let teacherList: Pick<User, "user_id" | "user_name">[] = [];
-      if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
+      if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
         const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
           query: TeacherByOrgIdDocument,
           variables: {
@@ -458,6 +465,7 @@ export const stuPerformanceReportOnload = createAsyncThunk<
     },
   });
   const myTearchId = meInfo.me?.user_id || "";
+  const meInfoPerm = await apiGetPermission();
   const perm = hasPermissionOfMe(
     [
       PermissionType.view_my_reports_614,
@@ -465,13 +473,13 @@ export const stuPerformanceReportOnload = createAsyncThunk<
       PermissionType.view_my_organizations_reports_612,
       PermissionType.view_my_school_reports_611,
     ],
-    meInfo.me
+    meInfoPerm.me
   );
-  if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organization_reports_612) {
+  if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
     teacherList = [];
     finalTearchId = myTearchId;
   } else {
-    if (perm.view_my_organization_reports_612 || perm.view_reports_610) {
+    if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
       const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
         query: TeacherByOrgIdDocument,
         variables: {
