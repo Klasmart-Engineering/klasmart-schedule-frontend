@@ -79,7 +79,7 @@ interface Time2colorLevelResponse {
 export function time2colorLevel(seconds: number): Time2colorLevelResponse {
   if (seconds === 0) return { opacity: 0.25, hour: 0, min: 0 };
   const hour = Math.floor(seconds / 3600);
-  const min = Math.ceil((seconds % 3600) / 60);
+  const min = Math.floor((seconds % 3600) / 60);
   let opacity = 1;
   if (hour < 2) {
     opacity = 0.25;

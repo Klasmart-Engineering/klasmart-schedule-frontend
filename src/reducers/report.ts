@@ -101,6 +101,7 @@ const initialState: IreportState = {
     teacherList: [],
     classList: [],
     teachingLoadList: {},
+    user_id: "",
   },
 };
 
@@ -654,6 +655,7 @@ export interface TeachingLoadResponse {
   teacherList?: Pick<User, "user_id" | "user_name">[];
   classList?: Pick<Class, "class_id" | "class_name">[];
   teachingLoadList: EntityReportListTeachingLoadResult;
+  user_id: string;
 }
 export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, TeachingLoadPayload & LoadingMetaPayload>(
   "teachingLoadOnload",
@@ -663,6 +665,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     let schoolList: Pick<School, "school_id" | "school_name">[] | undefined = [];
     let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
     let classList: Pick<Class, "class_id" | "class_name">[] | undefined = [];
+    let newteacher_ids: string = teacher_ids;
     // 拉取我的user_id
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
       query: QeuryMeDocument,
@@ -670,6 +673,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
         organization_id,
       },
     });
+    const user_id = meInfo.me?.user_id || "";
     const perm = hasPermissionOfMe(
       [
         PermissionType.view_my_reports_614,
@@ -690,11 +694,13 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
         teacherList,
         classList,
         teachingLoadList,
+        user_id,
       };
     }
     const my_id = meInfo?.me?.user_id || "";
     if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
       teacherList = [{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }];
+      newteacher_ids = my_id;
       // 获取我所在的本组织的学校
       const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
         query: GetSchoolTeacherDocument,
@@ -813,12 +819,12 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       }
     }
 
-    const teacherIdList = teacher_ids.split(",");
-    if (teacherIdList.length === 1 && teacher_ids !== "all") {
+    const teacherIdList = newteacher_ids.split(",");
+    if (teacherIdList.length === 1 && newteacher_ids !== "all") {
       const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
         query: ClassesTeachingQueryDocument,
         variables: {
-          user_id: teacher_ids,
+          user_id: newteacher_ids,
           organization_id,
         },
       });
@@ -826,18 +832,23 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       if (school_id && school_id !== "all" && school_id !== "no_assigned") {
         classListall = classListall?.filter((classItem) => classItem?.schools?.some((school) => school?.school_id === school_id));
       }
+      if (school_id === "no_assigned") {
+        classListall = classListall?.filter((classItem) => classItem?.schools?.length === 0);
+      }
       classList = classList?.concat(
         classListall?.filter((classItem) => classItem?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]
       );
     }
     teacherList = ModelReport.teacherListSetDiff(teacherList);
     schoolList = ModelReport.schoolListSetDiff(schoolList);
-    teachingLoadList = (await api.reports.listTeachingLoadReport({ school_id, teacher_ids, class_ids, time_offset: TIME_OFFSET })) || [];
+    teachingLoadList =
+      (await api.reports.listTeachingLoadReport({ school_id, teacher_ids: newteacher_ids, class_ids, time_offset: TIME_OFFSET })) || [];
     return {
       schoolList,
       teacherList,
       classList,
       teachingLoadList,
+      user_id,
     };
   }
 );
@@ -863,6 +874,9 @@ export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetCl
     let classListall = result.user?.membership?.classesTeaching;
     if (school_id && school_id !== "all" && school_id !== "no_assigned") {
       classListall = classListall?.filter((classItem) => classItem?.schools?.some((school) => school?.school_id === school_id));
+    }
+    if (school_id === "no_assigned") {
+      classListall = classListall?.filter((classItem) => classItem?.schools?.length === 0);
     }
     classList = classList?.concat(
       classListall?.filter((classItem) => classItem?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]

@@ -36,7 +36,7 @@ export default function ReportTeachingLoad() {
   const teachingLoadOnloadState = useSelector<RootState, RootState["report"]["teachingLoadOnload"]>(
     (state) => state.report.teachingLoadOnload
   );
-  const { teachingLoadList } = teachingLoadOnloadState;
+  const { teachingLoadList, user_id } = teachingLoadOnloadState;
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -48,8 +48,15 @@ export default function ReportTeachingLoad() {
     () => (value: string, tab: keyof TeachingLoadPayload) => {
       switch (tab) {
         case "school_id": {
+          const newTeacher_ids =
+            perm.view_my_reports_614 &&
+            !perm.view_reports_610 &&
+            !perm.view_my_school_reports_611 &&
+            !perm.view_my_organizations_reports_612
+              ? user_id
+              : ALL;
           history.push({
-            search: setQuery(history.location.search, { school_id: value, teacher_ids: ALL, class_ids: ALL }),
+            search: setQuery(history.location.search, { school_id: value, teacher_ids: newTeacher_ids, class_ids: ALL }),
           });
           break;
         }
@@ -68,16 +75,41 @@ export default function ReportTeachingLoad() {
         }
         case "class_ids":
           {
+            const newTeacher_ids =
+              perm.view_my_reports_614 &&
+              !perm.view_reports_610 &&
+              !perm.view_my_school_reports_611 &&
+              !perm.view_my_organizations_reports_612
+                ? user_id
+                : teacher_ids;
             const newValue = removeoneValueOfList((value as unknown) as string[]);
             history.push({
-              search: setQuery(history.location.search, { school_id: school_id, teacher_ids: teacher_ids, class_ids: newValue }),
+              search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newTeacher_ids, class_ids: newValue }),
             });
-            dispatch(getTeachingLoadList({ school_id, teacher_ids, class_ids: newValue, time_offset: TIME_OFFSET, metaLoading: true }));
+            dispatch(
+              getTeachingLoadList({
+                school_id,
+                teacher_ids: newTeacher_ids,
+                class_ids: newValue,
+                time_offset: TIME_OFFSET,
+                metaLoading: true,
+              })
+            );
           }
           break;
       }
     },
-    [school_id, teacher_ids, dispatch, history]
+    [
+      perm.view_my_reports_614,
+      perm.view_reports_610,
+      perm.view_my_school_reports_611,
+      perm.view_my_organizations_reports_612,
+      user_id,
+      history,
+      school_id,
+      dispatch,
+      teacher_ids,
+    ]
   );
   useEffect(() => {
     dispatch(teachingLoadOnload({ school_id, teacher_ids, class_ids, metaLoading: true }));

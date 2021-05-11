@@ -41,6 +41,14 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
     color: palette.grey[500],
   },
 }));
+function isClassDisabled(props: { perm: Record<PermissionType, Boolean>; value: TeachingLoadPayload; teacher_ids: string[] }) {
+  const { perm, value, teacher_ids } = props;
+  if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
+    return false;
+  } else {
+    return value?.teacher_ids === "all" || teacher_ids.length > 1;
+  }
+}
 export interface FilterTeacherLoadProps {
   value: TeachingLoadPayload;
   onChange: (value: string, tab: keyof TeachingLoadPayload) => any;
@@ -67,7 +75,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
   teachers.unshift({ user_id: "all", user_name: "All" });
   const class_ids = value?.class_ids?.split(",");
   const teacher_ids = value?.teacher_ids?.split(",");
-  const classIsDisabled = value?.teacher_ids === "all" || teacher_ids.length > 1;
+  const classIsDisabled = isClassDisabled({ perm, value, teacher_ids });
 
   const [anchorElSchool, setAnchorElSchool] = React.useState<null | HTMLElement>(null);
   const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
