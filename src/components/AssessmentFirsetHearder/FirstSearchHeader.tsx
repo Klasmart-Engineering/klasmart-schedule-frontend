@@ -195,7 +195,7 @@ export function FirstSearchHeaderMb() {
                   <Tab
                     component={Button}
                     value={MilestonesList.routeBasePath}
-                    label={"Milestones"}
+                    label={d("Milestones").t("assess_label_milestone")}
                     className={classes.capitalize}
                     onClick={() => history.push(MilestonesList.routeBasePath)}
                   />
