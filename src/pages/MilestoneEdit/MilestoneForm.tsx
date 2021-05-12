@@ -44,7 +44,6 @@ export default function MilestoneForm(props: MilestoneFormProps) {
     canEdit,
     initDefaultValue,
   } = props;
-  console.log(initDefaultValue);
   const shortCodeValidate = (value: string) => {
     const re = /^[0-9A-Z]+$/;
     const newValue = value.trim();
