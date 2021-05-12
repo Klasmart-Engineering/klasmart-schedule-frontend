@@ -300,9 +300,6 @@ const { reducer } = createSlice({
     [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>) => {
       state.linkedMockOptions = payload;
     },
-    [getLinkedMockOptions.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.linkedMockOptions = initialState.linkedMockOptions;
-    },
     [getLinkedMockOptions.rejected.type]: (state: any, { error }: any) => {},
     [onLoadMilestoneEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneEdit>>) => {
       state.milestoneDetail = payload.milestoneDetail || {};

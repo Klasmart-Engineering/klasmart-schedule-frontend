@@ -139,7 +139,7 @@ function MilestoneEditForm() {
           >;
           if (payload === "ok") {
             dispatch(actSuccess(d("Published Successfully").t("assess_msg_published_successfully")));
-            history.push(MilestoneList.routeBasePath);
+            history.push(MilestoneList.routeRedirectDefault);
           }
         } else {
           const milestone = cloneDeep(inputValue);
@@ -149,7 +149,7 @@ function MilestoneEditForm() {
           >;
           if (payload === "ok") {
             dispatch(actSuccess(d("Published Successfully").t("assess_msg_published_successfully")));
-            history.push(MilestoneList.routeBasePath);
+            history.push(MilestoneList.routeRedirectDefault);
           }
         }
       }),
