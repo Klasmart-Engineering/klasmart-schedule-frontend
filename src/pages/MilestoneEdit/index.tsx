@@ -96,7 +96,7 @@ function MilestoneEditForm() {
   );
   const value = watch("outcomes");
   const handleCancel = () => {
-    history.push(MilestoneList.routeBasePath);
+    history.push(MilestoneList.routeRedirectDefault);
   };
   const handleSave = useMemo(
     () =>
