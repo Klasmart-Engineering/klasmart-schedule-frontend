@@ -32,6 +32,7 @@ import { MilestoneHeader } from "./MilestoneHeader";
 import { Outcomes, OutcomesProps } from "./Outcomes";
 import { OutcomeSearchProps } from "./OutcomeSearch";
 import { Regulation } from "./type";
+
 interface RouteParams {
   tab: "details" | "leaningoutcomes";
 }
@@ -181,7 +182,7 @@ function MilestoneEditForm() {
   const handleChangeProgram = useMemo(
     () => ([programId]: string[]) => {
       setRegulation(Regulation.ByOptionCount);
-      dispatch(getLinkedMockOptions({ default_program_id: programId }));
+      dispatch(getLinkedMockOptions({ default_program_id: programId, metaLoading: true }));
     },
     [dispatch]
   );
@@ -189,7 +190,9 @@ function MilestoneEditForm() {
     () => (default_subject_ids: string[]) => {
       setRegulation(Regulation.ByOptionCount);
       const program = getValues("program_ids") as string[];
-      dispatch(getLinkedMockOptions({ default_program_id: program[0], default_subject_ids: default_subject_ids.join(",") }));
+      dispatch(
+        getLinkedMockOptions({ default_program_id: program[0], default_subject_ids: default_subject_ids.join(","), metaLoading: true })
+      );
     },
     [dispatch, getValues]
   );
@@ -213,11 +216,14 @@ function MilestoneEditForm() {
     condition.search_key = search_key;
     condition.assumed = assumed;
     condition.page = 1;
-    history.push({ search: toQueryString(clearNull(condition)) });
+    history.replace({ search: toQueryString(clearNull(condition)) });
+    dispatch(onLoadOutcomeList({ exect_search, search_key, assumed: assumed ? 1 : -1, page, metaLoading: true }));
   };
   const handleChangePage: OutcomesProps["onChangePage"] = (page: number) => {
     condition.page = page;
-    history.push({ search: toQueryString(clearNull(condition)) });
+    history.replace({ search: toQueryString(clearNull(condition)) });
+    // const {  exect_search, search_key, assumed } = condition;
+    dispatch(onLoadOutcomeList({ exect_search, search_key, assumed: assumed ? 1 : -1, page, metaLoading: true }));
   };
   const handleAddOrRemoveOutcome: ContainedOutcomeListProps["addOrRemoveOutcome"] = (outcome: GetOutcomeDetail, type: "add" | "remove") => {
     const { ancestor_id: id } = outcome;
@@ -241,9 +247,6 @@ function MilestoneEditForm() {
     window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
   };
 
-  useEffect(() => {
-    dispatch(onLoadOutcomeList({ exect_search, search_key, assumed: assumed ? 1 : -1, page, metaLoading: true }));
-  }, [assumed, dispatch, exect_search, search_key, page]);
   useEffect(() => {
     dispatch(onLoadMilestoneEdit({ id, metaLoading: true }));
     id && !first_save ? setCanEdit(false) : setCanEdit(true);
