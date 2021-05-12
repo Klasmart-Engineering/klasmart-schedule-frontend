@@ -61,8 +61,7 @@ export default function ReportTeachingLoad() {
           break;
         }
         case "teacher_ids": {
-          const newValue = removeoneValueOfList((value as unknown) as string[]);
-          console.log("newValue =", newValue);
+          const newValue = removeoneValueOfList((value as unknown) as string[]) || ALL;
           history.push({
             search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newValue, class_ids: ALL }),
           });
@@ -82,7 +81,7 @@ export default function ReportTeachingLoad() {
               !perm.view_my_organizations_reports_612
                 ? user_id
                 : teacher_ids;
-            const newValue = removeoneValueOfList((value as unknown) as string[]);
+            const newValue = removeoneValueOfList((value as unknown) as string[]) || ALL;
             history.push({
               search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newTeacher_ids, class_ids: newValue }),
             });
