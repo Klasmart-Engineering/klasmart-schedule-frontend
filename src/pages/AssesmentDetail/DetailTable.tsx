@@ -8,43 +8,85 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { Collapse } from "@material-ui/core";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import BorderColorIcon from "@material-ui/icons/BorderColor";
+import Input from "@material-ui/core/Input";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import CheckIcon from "@material-ui/icons/Check";
+import { ElasticLayerControl } from "./types";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
+  tableBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "16px",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#F2F5F7 !important",
+    },
+    "& div": {
+      display: "flex",
+      width: "260px",
+      justifyContent: "space-between",
+      alignItems: "center",
+      "& a": {
+        fontSize: "14px",
+        color: "#006CCF",
+      },
+    },
+  },
 });
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
+function createData(name: string, calories: string, fat: string, carbs: number, protein: number, score: number, percent: string) {
+  return { name, calories, fat, carbs, protein, score, percent };
 }
 
 const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
+  createData("1", "Every Living Things", "Video", 24, 4.0, 3.5, "35%"),
+  createData("2", "Animal Names", "Video Recording", 37, 4.3, 4.5, "35%"),
+  createData("3", "Living Animals", "Drag and Drop", 24, 6.0, 6.5, "35%"),
+  createData("4", "Animal Body Parts", "Multiple Choice", 67, 4.3, 5.5, "35%"),
+  createData("5", "Animal Care", "Essay", 49, 3.9, 6.5, "35%"),
 ];
 
-function BasicTable() {
+function BasicTable(props: tableProps) {
   const classes = useStyles();
-  const [checked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
+  const [editScore, setEditScore] = React.useState(false);
+  const { handleElasticLayerControl } = props;
   return (
-    <TableContainer component={Paper}>
-      <Box>
-        <span></span>
+    <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
+      <Box
+        className={classes.tableBar}
+        style={{ backgroundColor: checked ? "#F2F5F7" : "white" }}
+        onClick={() => {
+          setChecked(!checked);
+        }}
+      >
+        <div style={{ color: checked ? "black" : "#666666" }}>
+          <AccountCircleIcon />
+          <span>小学生</span>
+          <a href="https://www.baidu.com">Click to add a comment</a>
+        </div>
+        {checked && <ArrowDropUpIcon />}
+        {!checked && <ArrowDropDownIcon />}
       </Box>
       <Collapse in={checked}>
         <Paper elevation={4}>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
-                <TableCell align="center">Calories</TableCell>
-                <TableCell align="center">Fat&nbsp;(g)</TableCell>
-                <TableCell align="center">Carbs&nbsp;(g)</TableCell>
-                <TableCell align="center">Protein&nbsp;(g)</TableCell>
+                <TableCell>No.</TableCell>
+                <TableCell align="center">Lesson Material Name</TableCell>
+                <TableCell align="center">Lesson Material Type</TableCell>
+                <TableCell align="center">Answer</TableCell>
+                <TableCell align="center">Maximum Possible Score</TableCell>
+                <TableCell align="center">Achieved Score</TableCell>
+                <TableCell align="center">Percentage</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -55,8 +97,42 @@ function BasicTable() {
                   </TableCell>
                   <TableCell align="center">{row.calories}</TableCell>
                   <TableCell align="center">{row.fat}</TableCell>
-                  <TableCell align="center">{row.carbs}</TableCell>
+                  <TableCell align="center">
+                    <p
+                      style={{ color: "#006CCF", cursor: "pointer" }}
+                      onClick={() => {
+                        handleElasticLayerControl({ link: "", openStatus: true, type: "" });
+                      }}
+                    >
+                      Click to view
+                    </p>
+                  </TableCell>
                   <TableCell align="center">{row.protein}</TableCell>
+                  <TableCell align="center">
+                    {!editScore && (
+                      <>
+                        {row.score}{" "}
+                        <BorderColorIcon
+                          onClick={() => {
+                            setEditScore(true);
+                          }}
+                          style={{ fontSize: "13px", marginLeft: "8px", cursor: "pointer", color: "#006CCF" }}
+                        />
+                      </>
+                    )}
+                    {editScore && (
+                      <>
+                        <Input value={row.score} style={{ width: "10%" }} />
+                        <CheckIcon
+                          onClick={() => {
+                            setEditScore(false);
+                          }}
+                          style={{ fontSize: "15px", marginLeft: "10px", cursor: "pointer" }}
+                        />
+                      </>
+                    )}
+                  </TableCell>
+                  <TableCell align="center">{row.percent}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -67,12 +143,17 @@ function BasicTable() {
   );
 }
 
-export function DetailTable() {
-  const mock = [1, 2, 3, 4];
+interface tableProps {
+  handleElasticLayerControl: (elasticLayerControlData: ElasticLayerControl) => void;
+}
+
+export function DetailTable(props: tableProps) {
+  const mock = [1, 2, 3, 4, 5, 6, 7, 8];
+  const { handleElasticLayerControl } = props;
   return (
     <>
       {mock.map((value) => {
-        return <BasicTable />;
+        return <BasicTable handleElasticLayerControl={handleElasticLayerControl} />;
       })}
     </>
   );

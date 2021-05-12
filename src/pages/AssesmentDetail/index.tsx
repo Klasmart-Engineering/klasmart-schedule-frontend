@@ -5,6 +5,8 @@ import { d } from "../../locale/LocaleManager";
 import LayoutPair from "../ContentEdit/Layout";
 import { DetailFrom } from "./DetailForm";
 import { DetailTable } from "./DetailTable";
+import ResourcesView from "./ResourcesView";
+import { ElasticLayerControl } from "./types";
 
 export const useQueryDetail = () => {
   const { search } = useLocation();
@@ -32,6 +34,14 @@ export function AssessmentDetail() {
     },
     []
   );
+  const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
+    link: "",
+    openStatus: false,
+    type: "",
+  });
+  const handleElasticLayerControl = (elasticLayerControlData: ElasticLayerControl) => {
+    setElasticLayerControlData(elasticLayerControlData);
+  };
   return (
     <>
       <DetailHeader
@@ -42,8 +52,9 @@ export function AssessmentDetail() {
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <DetailFrom />
-        <DetailTable />
+        <DetailTable handleElasticLayerControl={handleElasticLayerControl} />
       </LayoutPair>
+      <ResourcesView elasticLayerControlData={elasticLayerControlData} handleElasticLayerControl={handleElasticLayerControl} />
     </>
   );
 }
