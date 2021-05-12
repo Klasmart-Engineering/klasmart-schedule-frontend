@@ -33,6 +33,7 @@ import ReportTeachingLoad from "./pages/ReportTeachingLoad";
 import Schedule from "./pages/Schedule";
 import { store } from "./reducers";
 import theme from "./theme";
+import { AssessmentDetail } from "./pages/AssesmentDetail";
 
 function App() {
   return (
@@ -45,6 +46,9 @@ function App() {
               <SnackbarProvider>
                 {/* <UIAppHeaderNavBar /> */}
                 <Switch>
+                  <Route path={AssessmentDetail.routeBasePath}>
+                    <AssessmentDetail />
+                  </Route>
                   <Route path={Preview.routeBasePath}>
                     <Preview />
                   </Route>
