@@ -104,7 +104,6 @@ export default function OutcomeSearch(props: OutcomeSearchProps) {
     const searchField = getValues()[EXECT_SEARCH];
     const searchText = getValues()[SEARCH_TEXT_KEY];
     const assumed = getValues()["assumed"];
-    console.log(typeof assumed);
     onSearch(searchField, searchText, assumed);
   };
   return (
