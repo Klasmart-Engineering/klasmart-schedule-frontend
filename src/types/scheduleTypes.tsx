@@ -122,6 +122,7 @@ export interface ParticipantsShortInfo {
 export interface RolesData {
   user_id: string;
   user_name: string;
+  school_memberships?: EntityScheduleSchoolsInfo;
 }
 
 export interface ClassesData {

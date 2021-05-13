@@ -708,11 +708,27 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           user_id: my_id,
         },
       });
-      schoolList = schoolList.concat(
-        data.user?.school_memberships?.filter(
-          (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-        ) as Pick<School, "school_id" | "school_name">[]
-      );
+      const newSchoolList = data.user?.school_memberships
+        ?.filter(
+          (schoolItem) =>
+            schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
+        )
+        .map((schoolMember) => schoolMember?.school) as Pick<School, "school_id" | "school_name">[];
+      schoolList = schoolList.concat(newSchoolList);
+      const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+        query: ClassesTeachingQueryDocument,
+        variables: {
+          user_id: newteacher_ids,
+          organization_id,
+        },
+      });
+      result.user?.membership?.classesTeaching
+        ?.filter((classItem) => classItem?.status === Status.Active)
+        .forEach((classItem) => {
+          schoolList = schoolList?.concat(classItem?.schools as Pick<School, "school_id" | "school_name">[]);
+        });
+
+      teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
     } else {
       if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
         const { data: schoolListResult } = await gqlapi.query<SchoolAndTeacherByOrgQuery, SchoolAndTeacherByOrgQueryVariables>({
@@ -739,6 +755,30 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
               teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
             }
           });
+          const { data: notParticipantsdata } = await gqlapi.query<
+            NotParticipantsByOrganizationQuery,
+            NotParticipantsByOrganizationQueryVariables
+          >({
+            query: NotParticipantsByOrganizationDocument,
+            variables: {
+              organization_id,
+            },
+          });
+          notParticipantsdata.organization?.classes?.forEach((classItem) => {
+            if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
+              const newTeacherList = classItem?.teachers
+                ?.map((teacherItem) => {
+                  // const isThisOrg =
+                  //   teacherItem?.school_memberships?.some(
+                  //     (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+                  //   ) || false;
+                  // return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  return teacherItem;
+                })
+                .filter((item) => item?.user_id !== "");
+              teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
+            }
+          });
         } else if (school_id === "no_assigned") {
           // 获取本组织下不属于任何学校的老师
           const { data } = await gqlapi.query<NotParticipantsByOrganizationQuery, NotParticipantsByOrganizationQueryVariables>({
@@ -748,14 +788,15 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.organization?.classes?.forEach((classItem) => {
-            if (classItem?.status === Status.Active) {
+            if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
               const newTeacherList = classItem?.teachers
                 ?.map((teacherItem) => {
-                  const isThisOrg =
-                    teacherItem?.school_memberships?.some(
-                      (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-                    ) || false;
-                  return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  // const isThisOrg =
+                  //   teacherItem?.school_memberships?.some(
+                  //     (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+                  //   ) || false;
+                  // return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  return teacherItem;
                 })
                 .filter((item) => item?.user_id !== "");
               teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
@@ -790,6 +831,22 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           )
           .map((schoolMember) => schoolMember?.school) as Pick<School, "school_id" | "school_name">[];
         schoolList = schoolList.concat(newSchoolList);
+        if (perm.view_my_reports_614) {
+          const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+            query: ClassesTeachingQueryDocument,
+            variables: {
+              user_id: newteacher_ids,
+              organization_id,
+            },
+          });
+          result.user?.membership?.classesTeaching
+            ?.filter((classItem) => classItem?.status === Status.Active)
+            .forEach((classItem) => {
+              schoolList = schoolList?.concat(classItem?.schools as Pick<School, "school_id" | "school_name">[]);
+            });
+
+          teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
+        }
 
         if (school_id === "all") {
           data.user?.school_memberships
@@ -802,6 +859,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
                   ))
               )
             );
+          if (perm.view_my_reports_614) {
+            teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
+          }
         } else if (school_id !== "no_assigned") {
           // 获取指定school_id下的老师
           const { data } = await gqlapi.query<TeacherListBySchoolIdQuery, TeacherListBySchoolIdQueryVariables>({
@@ -816,6 +876,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             );
           });
         }
+        //  else if (perm.view_my_reports_614) {
+        //   teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
+        // }
       }
     }
 

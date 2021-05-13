@@ -4,10 +4,13 @@ import {
   EntityScheduleSchoolInfo,
   EntityScheduleShortInfo,
   FilterQueryTypeProps,
+  ParticipantsData,
   ParticipantsShortInfo,
+  RolesData,
 } from "../types/scheduleTypes";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
+import { ParticipantsByClassQuery } from "../api/api-ko.auto";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -140,5 +143,45 @@ export class modelSchedule {
       if (id !== "All" && matchValue) filterQuery[matchValue as filterValueMatchType] += `${id},`;
     });
     return filterQuery;
+  }
+
+  static FilterParticipants(
+    ParticipantsDatas: ParticipantsData | undefined,
+    ClassRoster: ParticipantsByClassQuery,
+    is_org: boolean,
+    mySchoolId: string[]
+  ) {
+    const rosterIdSet = { students: [], teachers: [] };
+    const isVested = (item: any): boolean => item.some((list: any) => (is_org ? true : mySchoolId.includes(list.school_id)));
+    const deDuplication = (arr: any) => {
+      const obj: any = [];
+      return arr.reduce((item: any, next: any) => {
+        if (!obj[next.user_id]) {
+          item.push(next);
+          obj[next.user_id] = true;
+        }
+        return item;
+      }, []);
+    };
+    ClassRoster?.class?.students?.forEach((item) => {
+      rosterIdSet.students.push(item?.user_id as never);
+    });
+    ClassRoster?.class?.teachers?.forEach((item) => {
+      rosterIdSet.teachers.push(item?.user_id as never);
+    });
+    return {
+      classes: {
+        students: deDuplication(
+          ParticipantsDatas?.classes.students.filter(
+            (item: RolesData) => !rosterIdSet.students.includes(item.user_id as never) && isVested(item.school_memberships)
+          )
+        ),
+        teachers: deDuplication(
+          ParticipantsDatas?.classes.teachers.filter(
+            (item: RolesData) => !rosterIdSet.teachers.includes(item.user_id as never) && isVested(item.school_memberships)
+          )
+        ),
+      },
+    } as ParticipantsData;
   }
 }

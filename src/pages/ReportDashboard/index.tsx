@@ -1,9 +1,11 @@
 import { Button, Grid, Hidden, makeStyles, SvgIcon, Typography } from "@material-ui/core";
 import { AccessTime, CategoryOutlined, ChevronRight, KeyboardBackspace } from "@material-ui/icons";
-import React, { cloneElement, useCallback, useMemo } from "react";
+import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
+import { PermissionType, usePermission } from "../../components/Permission";
+import { permissionTip } from "../../components/TipImages";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
 import { ReportAchievementList } from "../ReportAchievementList";
@@ -113,47 +115,59 @@ export function ReportDashboard() {
     },
     [history]
   );
+  const perm = usePermission([
+    PermissionType.view_reports_610,
+    PermissionType.view_my_reports_614,
+    PermissionType.view_my_organizations_reports_612,
+    PermissionType.view_my_school_reports_611,
+  ]);
 
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <div className={css.reportTitle}>
-        <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
-      </div>
-      <Hidden smDown>
-        <div className={css.reportList}>
-          {reportList.map((item) => (
-            <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
-              <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
-              </div>
-              <div className={css.reportItemTitleBox}>
-                <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-                <ChevronRight style={{ opacity: 0.54 }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </Hidden>
-      <Hidden mdUp>
-        <Grid container spacing={4}>
-          {reportList.map((item) => (
-            <Grid key={item.title} item xs={6}>
-              <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
-                <div style={{ display: "flex", justifyContent: "center" }}>
+    <Fragment>
+      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612 ? (
+        <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+          <div className={css.reportTitle}>
+            <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
+          </div>
+          <Hidden smDown>
+            <div className={css.reportList}>
+              {reportList.map((item) => (
+                <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
                   <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                    {cloneElement(item.icon, { style: { fontSize: 22 } })}{" "}
+                    {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
+                  </div>
+                  <div className={css.reportItemTitleBox}>
+                    <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
+                    <ChevronRight style={{ opacity: 0.54 }} />
                   </div>
                 </div>
-                <div className={css.reportItemTitleBox}>
-                  <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-                  <ChevronRight style={{ opacity: 0.54, marginTop: 7 }} />
-                </div>
-              </div>
+              ))}
+            </div>
+          </Hidden>
+          <Hidden mdUp>
+            <Grid container spacing={4}>
+              {reportList.map((item) => (
+                <Grid key={item.title} item xs={6}>
+                  <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
+                        {cloneElement(item.icon, { style: { fontSize: 22 } })}{" "}
+                      </div>
+                    </div>
+                    <div className={css.reportItemTitleBox}>
+                      <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
+                      <ChevronRight style={{ opacity: 0.54, marginTop: 7 }} />
+                    </div>
+                  </div>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-      </Hidden>
-    </LayoutBox>
+          </Hidden>
+        </LayoutBox>
+      ) : (
+        permissionTip
+      )}
+    </Fragment>
   );
 }
 

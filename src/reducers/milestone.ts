@@ -22,7 +22,7 @@ interface IMilestoneState {
 }
 const PAGE_SIZE = 10;
 interface RootState {
-  outcome: IMilestoneState;
+  milestone: IMilestoneState;
 }
 
 const initialState: IMilestoneState = {
@@ -151,13 +151,12 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
         return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" };
       }
     } else {
-      debugger;
       return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
     }
   }
 );
 
-interface ParamsOnLoadMilestoneEdit extends LoadingMetaPayload {
+interface ParamsOnLoadMilestoneEdit extends IQueryOnLoadOutcomeListParams {
   id: MilestoneDetailResult["milestone_id"] | null;
 }
 interface ResultOnLoadMilestoneEdit {
@@ -170,9 +169,9 @@ export const onLoadMilestoneEdit = createAsyncThunk<ResultOnLoadMilestoneEdit, P
     const milestoneDetail = id ? await api.milestones.obtainMilestone(id) : initialState.milestoneDetail;
     if (!id) await dispatch(generateShortcode({ kind: "milestones" }));
     // const shortCode = id ? initialState.shortCode : await (await api.shortcode.generateShortcode({ kind: "milestones" })).shortcode;
+    await dispatch(onLoadOutcomeList({ exect_search: OutcomeListExectSearch.all, search_key: "", assumed: -1, page: 1 }));
     await dispatch(
       getLinkedMockOptions({
-        metaLoading: true,
         default_program_id: milestoneDetail.program && milestoneDetail.program[0] ? milestoneDetail.program[0].program_id : "",
         default_developmental_id: milestoneDetail.category && milestoneDetail.category[0] ? milestoneDetail.category[0].category_id : "",
         default_subject_ids:
@@ -216,7 +215,7 @@ export const publishMilestone = createAsyncThunk<ResultPublishMilestone, ParamsP
   return api.milestones.publishMilestone(ids);
 });
 
-type ParamsObtainMilestone = Parameters<typeof api.milestones.obtainMilestone>[0];
+type ParamsObtainMilestone = Parameters<typeof api.milestones.obtainMilestone>[0] & LoadingMetaPayload;
 type ResultObtainMilestone = AsyncReturnType<typeof api.milestones.obtainMilestone>;
 export const obtainMilestone = createAsyncThunk<ResultObtainMilestone, ParamsObtainMilestone>("milestone/obtainMilestone", (id) => {
   return api.milestones.obtainMilestone(id);
@@ -234,7 +233,7 @@ export const updateMilestone = createAsyncThunk<ResultUpdateMilestone, ParamsUpd
   }
 );
 
-type ParamsGenerateShortcode = Parameters<typeof api.shortcode.generateShortcode>[0];
+type ParamsGenerateShortcode = Parameters<typeof api.shortcode.generateShortcode>[0] & LoadingMetaPayload;
 type ResultGenerateShortcode = AsyncReturnType<typeof api.shortcode.generateShortcode>;
 export const generateShortcode = createAsyncThunk<ResultGenerateShortcode, ParamsGenerateShortcode>(
   "milestone/generateShortcode",
@@ -312,6 +311,10 @@ const { reducer } = createSlice({
       state.outcomeList = payload.outcomeRes?.list || [];
       state.outcomeTotal = payload.outcomeRes?.total || 0;
     },
+    [onLoadOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = [];
+      state.outcomeTotal = 0;
+    },
     [generateShortcode.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof generateShortcode>>) => {
       state.shortCode = payload.shortcode || "";
     },
@@ -320,5 +323,4 @@ const { reducer } = createSlice({
     },
   },
 });
-
 export default reducer;

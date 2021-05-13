@@ -92,11 +92,10 @@ export default function SeacondSearchHeader(props: SecondSearchHeaderProps) {
   };
   const handleChangeMyonly = (event: ChangeEvent<HTMLInputElement>) => {
     const author = event.target.checked ? Author.self : null;
-    onChange(
-      produce(value, (draft) => {
-        author ? (draft.author_id = author) : delete draft.author_id;
-      })
-    );
+    const newValue = produce(value, (draft) => {
+      author ? (draft.author_id = author) : delete draft.author_id;
+    });
+    onChange({ ...newValue, page: 1 });
   };
 
   const handleClickCreate = () => {

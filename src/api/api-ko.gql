@@ -328,6 +328,9 @@ query notParticipantsByOrganization($organization_id: ID!) {
    organization(organization_id: $organization_id) {
      classes {
        status
+       schools{
+         school_id
+       }
         teachers {
           user_id
           user_name
