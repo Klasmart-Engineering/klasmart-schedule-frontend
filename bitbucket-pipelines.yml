@@ -47,7 +47,7 @@ pipelines:
           artifacts:
             - infra/**/*
       - step:
-          name: 'Build NPM Infra'
+          name: 'Build NPM Indonesia'
           image: node:lts-alpine
           size: 2x
           script:
@@ -133,7 +133,7 @@ pipelines:
             - docker
     
     - step:
-        name: "Sync & Invalidate"
+        name: "Sync & Invalidate Alpha"
         trigger: manual
         image: python:3.9-alpine
         script:
