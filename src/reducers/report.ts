@@ -749,14 +749,15 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           notParticipantsdata.organization?.classes?.forEach((classItem) => {
-            if (classItem?.status === Status.Active) {
+            if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
               const newTeacherList = classItem?.teachers
                 ?.map((teacherItem) => {
-                  const isThisOrg =
-                    teacherItem?.school_memberships?.some(
-                      (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-                    ) || false;
-                  return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  // const isThisOrg =
+                  //   teacherItem?.school_memberships?.some(
+                  //     (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+                  //   ) || false;
+                  // return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  return teacherItem;
                 })
                 .filter((item) => item?.user_id !== "");
               teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
@@ -771,14 +772,15 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.organization?.classes?.forEach((classItem) => {
-            if (classItem?.status === Status.Active) {
+            if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
               const newTeacherList = classItem?.teachers
                 ?.map((teacherItem) => {
-                  const isThisOrg =
-                    teacherItem?.school_memberships?.some(
-                      (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-                    ) || false;
-                  return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  // const isThisOrg =
+                  //   teacherItem?.school_memberships?.some(
+                  //     (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
+                  //   ) || false;
+                  // return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
+                  return teacherItem;
                 })
                 .filter((item) => item?.user_id !== "");
               teacherList = teacherList?.concat(newTeacherList as Pick<User, "user_id" | "user_name">[]);
