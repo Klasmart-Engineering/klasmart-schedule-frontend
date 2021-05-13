@@ -46,42 +46,91 @@ pipelines:
             - nodemodules
           artifacts:
             - infra/**/*
+      - step:
+          name: 'Build NPM Infra'
+          image: node:lts-alpine
+          size: 2x
+          script:
+            - apk update && apk add git --no-cache
+            - npm i
+            - npm audit fix
+            - mv deploy/config/id/.env.beta ./.env.production
+            - npm run build && mv build id
+          after-script:
+            - BUILD_STATUS="success"
+            - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+            - pipe: atlassian/slack-notify:1.0.2
+              variables:
+                WEBHOOK_URL: $WEBHOOK_URL
+                PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
+                MESSAGE: 'Indonesia build has exited with [$BUILD_STATUS] status'
+          caches:
+            - nodemodules
+          artifacts:
+            - id/**/*
+    
+    - parallel:
+      - step:
+          name: "Build Infra & Push Image"
+          script:
+            - pip3 install -U awscli
+            - apk add git --no-cache
+            - mv infra deploy/build
 
-    - step:
-        name: "Build & Push Docker image"
-        image: python:3.9-alpine
-        script:
-          - pip3 install -U awscli
-          - apk add git --no-cache
-          - mv infra deploy/build
-          
-          - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
-          - export REPO=$DOCKER_REPO_URL/kidsloop-hub-frontend      # DOCKER_REPO_URL is workspace wide variable
-          - export TAG=$BRANCH_TAG-$KIDSLOOP_REGION-$KIDSLOOP_ENV
-          - export COMMIT_TAG=$(git rev-parse --short HEAD)
+            - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+            - export REPO=$DOCKER_REPO_URL/kidsloop-cms-frontend
+            - export TAG=$BRANCH_TAG-INFRA-ALPHA
 
-          - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_REPO_URL
-          - docker build -t cms-frontend deploy/
-          
-          - docker tag cms-frontend:latest $REPO:$TAG
-          - docker tag cms-frontend:latest $REPO:$TAG-latest
-          - docker tag cms-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
-          - docker tag cms-frontend:latest $REPO:$TAG-$COMMIT_TAG
-          - docker push $REPO:$TAG
-          - docker push $REPO:$TAG-latest
-          - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
-          - docker push $REPO:$TAG-$COMMIT_TAG
-        after-script:
+            - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_REPO_URL
+            - docker build -t cms-frontend deploy/
+
+            - docker tag cms-frontend:latest $REPO:$TAG
+            - docker tag cms-frontend:latest $REPO:$TAG-latest
+            - docker tag cms-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+            - docker push $REPO:$TAG
+            - docker push $REPO:$TAG-latest
+            - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          after-script:
           - BUILD_STATUS="success"
           - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
           - pipe: atlassian/slack-notify:1.0.2
             variables:
               WEBHOOK_URL: $WEBHOOK_URL
               PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
-              MESSAGE: 'ECR push has exited with [$BUILD_STATUS] status'
-          
-        services:
-          - docker
+              MESSAGE: 'Infra image push has exited with [$BUILD_STATUS] status'
+          services:
+            - docker
+      - step:
+          name: "Build Indonesia & Push image"
+          image: python:3.9-alpine
+          script:
+            - pip3 install -U awscli
+            - apk add git --no-cache
+            - mv infra deploy/build
+            
+            - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+            - export REPO=$DOCKER_REPO_URL/kidsloop-cms-frontend      # DOCKER_REPO_URL is workspace wide variable
+            - export TAG=$BRANCH_TAG-ID-BETA
+
+            - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_REPO_URL
+            - docker build -t cms-frontend deploy/
+            
+            - docker tag cms-frontend:latest $REPO:$TAG
+            - docker tag cms-frontend:latest $REPO:$TAG-latest
+            - docker tag cms-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+            - docker push $REPO:$TAG
+            - docker push $REPO:$TAG-latest
+            - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          after-script:
+            - BUILD_STATUS="success"
+            - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+            - pipe: atlassian/slack-notify:1.0.2
+              variables:
+                WEBHOOK_URL: $WEBHOOK_URL
+                PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
+                MESSAGE: 'Indonesia image push has exited with [$BUILD_STATUS] status'   
+          services:
+            - docker
     
     - step:
         name: "Sync & Invalidate"
