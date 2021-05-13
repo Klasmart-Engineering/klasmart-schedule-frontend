@@ -242,29 +242,31 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 )}
               </StyledMenu>
             </Grid>
-            <Grid
-              container
-              item
-              xs={4}
-              sm={4}
-              justify="flex-end"
-              alignItems="center"
-              style={{
-                fontSize: "24px",
-              }}
-            >
-              {value.publish_status === PublishStatus.published ||
-              value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
-                <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
-              ) : (
-                ""
-              )}
-              <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-                <MenuItem selected={value.author === Author.self} onClick={handleItemClick}>
-                  {d("Show My Content").t("library_label_my_only")}
-                </MenuItem>
-              </Menu>
-            </Grid>
+            <Permission value={PermissionType.view_my_published_214}>
+              <Grid
+                container
+                item
+                xs={4}
+                sm={4}
+                justify="flex-end"
+                alignItems="center"
+                style={{
+                  fontSize: "24px",
+                }}
+              >
+                {value.publish_status === PublishStatus.published ||
+                value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
+                  <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
+                ) : (
+                  ""
+                )}
+                <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+                  <MenuItem selected={value.author === Author.self} onClick={handleItemClick}>
+                    {d("Show My Content").t("library_label_my_only")}
+                  </MenuItem>
+                </Menu>
+              </Grid>
+            </Permission>
             <Grid
               item
               xs={12}
@@ -428,19 +430,21 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 </TextField>
               )}
             </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
-              {value.publish_status === PublishStatus.published ||
-              value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
-                <FormControlLabel
-                  value="end"
-                  control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}
-                  label={d("Show My Content").t("library_label_my_only")}
-                  labelPlacement="end"
-                />
-              ) : (
-                ""
-              )}
-            </Grid>
+            <Permission value={PermissionType.view_my_published_214}>
+              <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
+                {value.publish_status === PublishStatus.published ||
+                value.content_type === SearchContentsRequestContentType.assetsandfolder ? (
+                  <FormControlLabel
+                    value="end"
+                    control={<Checkbox color="primary" checked={value.author === Author.self} onChange={handleChangeMyonly} />}
+                    label={d("Show My Content").t("library_label_my_only")}
+                    labelPlacement="end"
+                  />
+                ) : (
+                  ""
+                )}
+              </Grid>
+            </Permission>
           </Grid>
         </Hidden>
       </LayoutBox>

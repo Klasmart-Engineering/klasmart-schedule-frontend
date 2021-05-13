@@ -1,5 +1,5 @@
 import { UseFormMethods } from "react-hook-form";
-import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "../api/api.auto";
+import { EntityContentInfoWithDetails, EntityContentPermission, EntityTeacherManualFile } from "../api/api.auto";
 import { MockOptions, MockOptionsItem } from "../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../api/type";
 import { Regulation } from "../pages/ContentEdit/type";
@@ -106,7 +106,7 @@ export class ModelMockOptions {
 
   static createSelectKey(
     options: LinkedMockOptionsItem[] | undefined = [],
-    ...args: (string[] | string | number | boolean | undefined | EntityTeacherManualFile[])[]
+    ...args: (string[] | string | number | boolean | undefined | EntityTeacherManualFile[] | EntityContentPermission)[]
   ): string {
     return args
       .map((x) => (Array.isArray(x) ? x.join(",") : x))
@@ -156,6 +156,13 @@ export class ModelMockOptions {
             value: contentDetail[name] as any,
           };
           break;
+        case "permission":
+          result[name] = {
+            key: ModelMockOptions.createSelectKey([], JSON.stringify(contentDetail.permission), name),
+            value: contentDetail[name] as any,
+          };
+          break;
+
         case "outcome_entities":
           break;
         default:

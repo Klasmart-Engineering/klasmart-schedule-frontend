@@ -10,7 +10,10 @@
  * ---------------------------------------------------------------
  */
 
-export type ApiBadRequestResponse = ApiResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -21,7 +24,10 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export type ApiConflictResponse = ApiResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -38,21 +44,25 @@ export interface ApiDownloadPathResource {
 export interface ApiFolderItemsResponse {
   items?: EntityFolderItemInfo[];
 }
-export interface ApiHasPermissionRequest {
-  permission_name?: string[];
-}
 
 export interface ApiFolderItemsResponseWithTotal {
   items?: EntityFolderItemInfo[];
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
   auth_to?: string;
   password?: string;
+}
+
+export interface ApiHasPermissionRequest {
+  permission_name?: string[];
 }
 
 export type ApiHasPermissionResponse = Record<string, boolean>;
@@ -61,7 +71,10 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -73,7 +86,10 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export type ApiNotFoundResponse = ApiResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -117,11 +133,6 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
-export interface ApiResponse {
-  data?: object;
-  label?: string;
-}
-
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -139,13 +150,19 @@ export interface ApiSignatureResponse {
   url?: string;
 }
 
-export type ApiSuccessRequestResponse = ApiResponse;
+export interface ApiSuccessRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export type ApiUnAuthorizedResponse = ApiResponse;
+export interface ApiUnAuthorizedResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -333,6 +350,7 @@ export interface EntityAuthedContentRecordInfo {
   org_name?: string;
   outcome_entities?: EntityOutcome[];
   outcomes?: string[];
+  permission?: EntityContentPermission;
   program?: string;
   program_name?: string;
   publish_scope?: string[];
@@ -430,6 +448,7 @@ export interface EntityContentInfoWithDetails {
   org_name?: string;
   outcome_entities?: EntityOutcome[];
   outcomes?: string[];
+  permission?: EntityContentPermission;
   program?: string;
   program_name?: string;
   publish_scope?: string[];
@@ -459,6 +478,15 @@ export interface EntityContentInfoWithDetails {
 export interface EntityContentInfoWithDetailsResponse {
   list?: EntityContentInfoWithDetails[];
   total?: number;
+}
+
+export interface EntityContentPermission {
+  allow_approve?: boolean;
+  allow_delete?: boolean;
+  allow_edit?: boolean;
+  allow_reject?: boolean;
+  allow_republish?: boolean;
+  id?: string;
 }
 
 export interface EntityContentStatisticsInfo {
@@ -553,6 +581,7 @@ export interface EntityFolderContentData {
   items_count?: number;
   keywords?: string[];
   name?: string;
+  permission?: EntityContentPermission;
   publish_status?: string;
   thumbnail?: string;
   update_at?: number;
@@ -769,23 +798,6 @@ export interface EntityOutcome {
   updated_at?: number;
   version?: number;
 }
-export interface EntityReportListTeachingLoadDuration {
-  end_at?: number;
-  offline?: number;
-  online?: number;
-  start_at?: number;
-}
-
-export interface EntityReportListTeachingLoadItem {
-  durations?: EntityReportListTeachingLoadDuration[];
-  teacher_id?: string;
-  teacher_name?: string;
-}
-
-export interface EntityReportListTeachingLoadResult {
-  items?: EntityReportListTeachingLoadItem[];
-  total?: number;
-}
 
 export interface EntityOutcomeAttendances {
   assumed?: boolean;
@@ -938,6 +950,7 @@ export interface EntityScheduleFeedbackAddInput {
   comment?: string;
   schedule_id?: string;
 }
+
 export interface EntityScheduleFeedbackView {
   assignments?: EntityFeedbackAssignmentView[];
   comment?: string;
@@ -1015,6 +1028,22 @@ export interface EntityScheduleSearchView {
 export interface EntityScheduleShortInfo {
   id?: string;
   name?: string;
+}
+
+export interface EntityScheduleTimeViewQuery {
+  anytime?: boolean;
+  class_ids?: string[];
+  class_types?: string[];
+  end_at_le?: number;
+  order_by?: string;
+  program_ids?: string[];
+  school_ids?: string[];
+  start_at_ge?: number;
+  subject_ids?: string[];
+  teacher_ids?: string[];
+  time_at?: number;
+  time_zone_offset?: number;
+  view_type?: string;
 }
 
 export interface EntityScheduleUpdateView {
@@ -1799,6 +1828,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program_group?: string;
+        submenu?: string;
         program?: string;
         content_name?: string;
         path?: string;
@@ -2055,6 +2085,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         program?: string;
         content_name?: string;
         program_group?: string;
+        submenu?: string;
         source_type?: string;
         order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
         page_size?: number;
@@ -2104,6 +2135,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         content_name?: string;
+        submenu?: string;
         program?: string;
         program_group?: string;
         path?: string;
@@ -2136,6 +2168,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         content_type?: string;
         scope?: string;
         program?: string;
+        submenu?: string;
         content_name?: string;
         program_group?: string;
         source_type?: string;
@@ -2168,6 +2201,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         program?: string;
         program_group?: string;
         content_name?: string;
+        submenu?: string;
         source_type?: string;
         scope?: string;
         publish_status?: "published" | "draft" | "pending" | "rejected" | "archive";
@@ -3376,6 +3410,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags schedule
+     * @name postScheduleTimeView
+     * @summary postScheduleTimeView
+     * @request POST:/schedules_time_view
+     * @description post schedule time view
+     */
+    postScheduleTimeView: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
+      this.request<EntityScheduleListView, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view`,
+        "POST",
+        params,
+        queryData
+      ),
+
+    /**
+     * @tags schedule
      * @name getScheduledDates
      * @summary getScheduledDates
      * @request GET:/schedules_time_view/dates
@@ -3398,6 +3447,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         `/schedules_time_view/dates${this.addQueryParams(query)}`,
         "GET",
         params
+      ),
+
+    /**
+     * @tags schedule
+     * @name postScheduledDates
+     * @summary postScheduledDates
+     * @request POST:/schedules_time_view/dates
+     * @description get schedules dates(format:2006-01-02)
+     */
+    postScheduledDates: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
+      this.request<string[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view/dates`,
+        "POST",
+        params,
+        queryData
       ),
   };
   schedulesView = {
@@ -3468,7 +3532,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   };
   shortcode = {
     /**
-     * @tags learning_outcomes
+     * @tags shortcode
      * @name generateShortcode
      * @summary generate Shortcode
      * @request POST:/shortcode

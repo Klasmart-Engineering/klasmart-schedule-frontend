@@ -104,6 +104,7 @@ const initialState: IContentState = {
     age_name: [],
     org_name: "",
     outcomes: [],
+    permission: {},
     outcome_entities: [],
     created_at: 0,
     draw_activity: false,
@@ -426,10 +427,17 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
+    const submenu =
+      publish_status === PublishStatus.pending && author === Author.self
+        ? "wfa"
+        : publish_status === PublishStatus.archive
+        ? "archived"
+        : publish_status;
     const params = {
       name: nameValue,
       content_name: contentNameValue,
       publish_status,
+      submenu,
       author,
       content_type,
       program_group,
@@ -468,7 +476,6 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     } else {
       delete params.path;
       delete params.program_group;
-
       const contentRes = await api.contents.searchContents(params);
       return { contentRes, organization_id };
     }

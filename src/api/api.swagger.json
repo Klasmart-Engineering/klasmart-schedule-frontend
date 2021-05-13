@@ -5,7 +5,6 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
-    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -758,6 +757,12 @@
             "type": "string",
             "description": "search program group",
             "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
             "in": "query"
           },
           {
@@ -1642,6 +1647,12 @@
           },
           {
             "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content source type",
             "name": "source_type",
             "in": "query"
@@ -1811,6 +1822,12 @@
           },
           {
             "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content program",
             "name": "program",
             "in": "query"
@@ -1929,6 +1946,12 @@
           },
           {
             "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content name",
             "name": "content_name",
             "in": "query"
@@ -2037,6 +2060,12 @@
             "type": "string",
             "description": "search content name",
             "name": "content_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
             "in": "query"
           },
           {
@@ -6202,6 +6231,51 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "post schedule time view",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "postScheduleTimeView",
+        "operationId": "postScheduleTimeView",
+        "parameters": [
+          {
+            "description": "schedule data to query",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleListView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/schedules_time_view/dates": {
@@ -6264,6 +6338,54 @@
             "description": "program id,separated by comma",
             "name": "program_ids",
             "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "get schedules dates(format:2006-01-02)",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "postScheduledDates",
+        "operationId": "postScheduledDates",
+        "parameters": [
+          {
+            "description": "schedule data to query",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+            }
           }
         ],
         "responses": {
@@ -6527,7 +6649,7 @@
         "description": "generate shortcode",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["learning_outcomes"],
+        "tags": ["shortcode"],
         "summary": "generate Shortcode",
         "operationId": "generateShortcode",
         "parameters": [
@@ -7051,7 +7173,16 @@
   },
   "definitions": {
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.BulkBindOutcomeSetRequest": {
       "type": "object",
@@ -7079,7 +7210,16 @@
       }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -7131,7 +7271,16 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -7173,7 +7322,16 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.LoginRequest": {
       "type": "object",
@@ -7198,7 +7356,16 @@
       }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.OrganizationRegionInfoResponse": {
       "type": "object",
@@ -7299,18 +7466,6 @@
         }
       }
     },
-    "api.Response": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
-    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -7347,7 +7502,16 @@
       }
     },
     "api.SuccessRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.TokenResponse": {
       "type": "object",
@@ -7358,7 +7522,16 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -7606,7 +7779,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentClass"
         },
         "class_end_time": {
@@ -7634,11 +7806,9 @@
           }
         },
         "plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentContentView"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "room_id": {
@@ -7683,7 +7853,6 @@
           "type": "string"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
@@ -7899,6 +8068,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
         },
         "program": {
           "type": "string"
@@ -8213,6 +8385,9 @@
             "type": "string"
           }
         },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
+        },
         "program": {
           "type": "string"
         },
@@ -8308,6 +8483,29 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ContentPermission": {
+      "type": "object",
+      "properties": {
+        "allow_approve": {
+          "type": "boolean"
+        },
+        "allow_delete": {
+          "type": "boolean"
+        },
+        "allow_edit": {
+          "type": "boolean"
+        },
+        "allow_reject": {
+          "type": "boolean"
+        },
+        "allow_republish": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
         }
       }
     },
@@ -8568,6 +8766,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
         },
         "publish_status": {
           "type": "string"
@@ -9273,7 +9474,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9300,7 +9500,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9327,11 +9526,9 @@
       "type": "object",
       "properties": {
         "daily": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -9339,11 +9536,9 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -9352,7 +9547,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9371,7 +9565,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9469,7 +9662,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -9534,7 +9726,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -9561,11 +9752,9 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "class_roster_students": {
@@ -9612,7 +9801,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "org_id": {
@@ -9631,15 +9819,12 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "real_time_status": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleRealTimeView"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "role_type": {
@@ -9854,7 +10039,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "end_at": {
@@ -9864,7 +10048,6 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -9874,7 +10057,6 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -9911,11 +10093,72 @@
         }
       }
     },
+    "entity.ScheduleTimeViewQuery": {
+      "type": "object",
+      "properties": {
+        "anytime": {
+          "type": "boolean"
+        },
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "end_at_le": {
+          "type": "integer"
+        },
+        "order_by": {
+          "type": "string"
+        },
+        "program_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "school_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start_at_ge": {
+          "type": "integer"
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_at": {
+          "type": "integer"
+        },
+        "time_zone_offset": {
+          "type": "integer"
+        },
+        "view_type": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ScheduleUpdateView": {
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -9983,7 +10226,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {
@@ -10014,18 +10256,15 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
           "type": "string"
         },
         "class_type": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "due_at": {
@@ -10050,7 +10289,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "lesson_plan_id": {
@@ -10203,19 +10441,15 @@
       "type": "object",
       "properties": {
         "activity_flash_cards": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityFlashCards"
         },
         "activity_image_pair": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityImagePair"
         },
         "activity_image_sequencing": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityImageSequencing"
         },
         "activity_memory_game": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityMemoryGame"
         },
         "activity_type": {
@@ -10716,7 +10950,6 @@
           "type": "string"
         },
         "author": {
-          "type": "object",
           "$ref": "#/definitions/model.AuthorView"
         },
         "category": {
@@ -10762,7 +10995,6 @@
           "type": "string"
         },
         "organization": {
-          "type": "object",
           "$ref": "#/definitions/model.OrganizationView"
         },
         "outcome_ancestor_ids": {
