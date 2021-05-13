@@ -3,12 +3,23 @@ pipelines:
     dev/global/alpha:
     - step:
         name: 'Build NPM'
-        image: node:lts
+        image: node:lts-alpine
+        size: 2x
         script:
+          - apk update && apk add git --no-cache
           - npm i
           - npm audit fix
           - mv deploy/config/alpha/.env.alpha ./.env.production
           - npm run build
+        after-script:
+          - BUILD_STATUS="success"
+          - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+          - $BITBUCKET_GIT_HTTP_ORIGIN/addon/pipelines/home#!/results/$BITBUCKET_BUILD_NUMBER
+          - pipe: atlassian/slack-notify:1.0.2
+            variables:
+              WEBHOOK_URL: $WEBHOOK_URL
+              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - build notification, pipeline build number $BITBUCKET_BUILD_NUMBER"'
+              MESSAGE: 'build has exited with [$BUILD_STATUS] status'
         caches:
           - nodemodules
         artifacts:
@@ -38,6 +49,14 @@ pipelines:
           - docker push $REPO:$TAG-latest
           - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
           - docker push $REPO:$TAG-$COMMIT_TAG
+        after-script:
+          - BUILD_STATUS="success"
+          - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+          - pipe: atlassian/slack-notify:1.0.2
+            variables:
+              WEBHOOK_URL: $WEBHOOK_URL
+              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - build notification, pipeline build number $BITBUCKET_BUILD_NUMBER"'
+              MESSAGE: 'ECR push has exited with [$BUILD_STATUS] status'
           
         services:
           - docker
@@ -49,13 +68,22 @@ pipelines:
           - pip3 install -U awscli
           - apk add git jq --no-cache
 
-          - assume_role=$(aws sts assume-role --role-arn arn:aws:iam::871601235178:role/cross_account_deployment_role --role-session-name deployment)
+          - assume_role=$(aws sts assume-role --role-arn arn:aws:iam::${ACC_ID}:role/cross_account_deployment_role --role-session-name deployment)
           
           - export AWS_ACCESS_KEY_ID=$(echo $assume_role | jq -r .Credentials.AccessKeyId) && export AWS_SECRET_ACCESS_KEY=$(echo $assume_role | jq -r .Credentials.SecretAccessKey) && export AWS_SESSION_TOKEN=$(echo $assume_role | jq -r .Credentials.SessionToken) && export AWS_DEFAULT_REGION=ap-northeast-2
           
           - aws s3 sync build s3://$S3_BUCKET/alpha/latest
 
           - aws cloudfront create-invalidation --paths "/*" --distribution-id $CDN_DIST 
+          
+        after-script:
+          - BUILD_STATUS="success"
+          - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+          - pipe: atlassian/slack-notify:1.0.2
+            variables:
+              WEBHOOK_URL: $WEBHOOK_URL
+              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - build notification, pipeline build number $BITBUCKET_BUILD_NUMBER"'
+              MESSAGE: 'S3 sync CDN Invalidation has exited with [$BUILD_STATUS] status'
         
 definitions:
   caches:
