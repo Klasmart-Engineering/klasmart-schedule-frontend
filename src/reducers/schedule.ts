@@ -69,6 +69,7 @@ import {
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
+import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
 
 const MOCK = false;
 
@@ -106,7 +107,7 @@ export interface ScheduleState {
   ParticipantsData: ParticipantsData;
   participantsIds: ParticipantsShortInfo;
   classRosterIds: ParticipantsShortInfo;
-  mySchoolId: string;
+  mySchoolId: string[];
   feedbackData: EntityScheduleFeedbackView;
   filterOption: filterOptionItem;
   user_id: string;
@@ -214,7 +215,7 @@ const initialState: ScheduleState = {
   },
   participantsIds: { student: [], teacher: [] },
   classRosterIds: { student: [], teacher: [] },
-  mySchoolId: "",
+  mySchoolId: [],
   feedbackData: {
     assignments: [],
     comment: "",
@@ -771,7 +772,9 @@ const { actions, reducer } = createSlice({
       state.ParticipantsData = { classes: { students, teachers } };
     },
     [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
-      state.mySchoolId = payload.data.user.school_memberships[0]?.school_id;
+      state.mySchoolId = payload.data.user.school_memberships.map((item: Maybe<SchoolMembership>) => {
+        return item?.school_id;
+      });
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;

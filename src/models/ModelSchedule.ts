@@ -149,10 +149,10 @@ export class modelSchedule {
     ParticipantsDatas: ParticipantsData | undefined,
     ClassRoster: ParticipantsByClassQuery,
     is_org: boolean,
-    mySchoolId: string
+    mySchoolId: string[]
   ) {
     const rosterIdSet = { students: [], teachers: [] };
-    const isVested = (item: any): boolean => item.some((list: any) => (is_org ? true : list.school_id === mySchoolId));
+    const isVested = (item: any): boolean => item.some((list: any) => (is_org ? true : mySchoolId.includes(list.school_id)));
     const deDuplication = (arr: any) => {
       const obj: any = [];
       return arr.reduce((item: any, next: any) => {
