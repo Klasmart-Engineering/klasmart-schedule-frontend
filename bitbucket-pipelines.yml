@@ -1,29 +1,51 @@
 pipelines:
   branches:
     dev/global/alpha:
-    - step:
-        name: 'Build NPM'
-        image: node:lts-alpine
-        size: 2x
-        script:
-          - apk update && apk add git --no-cache
-          - npm i
-          - npm audit fix
-          - mv deploy/config/alpha/.env.alpha ./.env.production
-          - npm run build
-        after-script:
-          - BUILD_STATUS="success"
-          - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
-          - $BITBUCKET_GIT_HTTP_ORIGIN/addon/pipelines/home#!/results/$BITBUCKET_BUILD_NUMBER
-          - pipe: atlassian/slack-notify:1.0.2
-            variables:
-              WEBHOOK_URL: $WEBHOOK_URL
-              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - build notification, pipeline build number $BITBUCKET_BUILD_NUMBER"'
-              MESSAGE: 'build has exited with [$BUILD_STATUS] status'
-        caches:
-          - nodemodules
-        artifacts:
-          - build/**/*
+    - parallel:
+      - step:
+          name: 'Build NPM Alpha'
+          image: node:lts-alpine
+          size: 2x
+          script:
+            - apk update && apk add git --no-cache
+            - npm i
+            - npm audit fix
+            - mv deploy/config/alpha/.env.alpha ./.env.production
+            - npm run build
+          after-script:
+            - BUILD_STATUS="success"
+            - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+            - pipe: atlassian/slack-notify:1.0.2
+              variables:
+                WEBHOOK_URL: $WEBHOOK_URL
+                PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
+                MESSAGE: 'Alpha build has exited with [$BUILD_STATUS] status'
+          caches:
+            - nodemodules
+          artifacts:
+            - build/**/*
+      - step:
+          name: 'Build NPM Infra'
+          image: node:lts-alpine
+          size: 2x
+          script:
+            - apk update && apk add git --no-cache
+            - npm i
+            - npm audit fix
+            - mv deploy/config/sre/.env.alpha ./.env.production
+            - npm run build && mv build infra
+          after-script:
+            - BUILD_STATUS="success"
+            - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
+            - pipe: atlassian/slack-notify:1.0.2
+              variables:
+                WEBHOOK_URL: $WEBHOOK_URL
+                PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
+                MESSAGE: 'Infra build has exited with [$BUILD_STATUS] status'
+          caches:
+            - nodemodules
+          artifacts:
+            - infra/**/*
 
     - step:
         name: "Build & Push Docker image"
@@ -31,7 +53,7 @@ pipelines:
         script:
           - pip3 install -U awscli
           - apk add git --no-cache
-          - mv build deploy/
+          - mv infra deploy/build
           
           - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
           - export REPO=$DOCKER_REPO_URL/kidsloop-hub-frontend      # DOCKER_REPO_URL is workspace wide variable
@@ -55,7 +77,7 @@ pipelines:
           - pipe: atlassian/slack-notify:1.0.2
             variables:
               WEBHOOK_URL: $WEBHOOK_URL
-              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - build notification, pipeline build number $BITBUCKET_BUILD_NUMBER"'
+              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
               MESSAGE: 'ECR push has exited with [$BUILD_STATUS] status'
           
         services:
@@ -63,6 +85,7 @@ pipelines:
     
     - step:
         name: "Sync & Invalidate"
+        trigger: manual
         image: python:3.9-alpine
         script:
           - pip3 install -U awscli
@@ -82,11 +105,9 @@ pipelines:
           - pipe: atlassian/slack-notify:1.0.2
             variables:
               WEBHOOK_URL: $WEBHOOK_URL
-              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - build notification, pipeline build number $BITBUCKET_BUILD_NUMBER"'
+              PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
               MESSAGE: 'S3 sync CDN Invalidation has exited with [$BUILD_STATUS] status'
         
 definitions:
   caches:
     nodemodules: ./node_modules
-
-    
