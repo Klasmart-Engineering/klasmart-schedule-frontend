@@ -708,11 +708,27 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           user_id: my_id,
         },
       });
-      schoolList = schoolList.concat(
-        data.user?.school_memberships?.filter(
-          (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-        ) as Pick<School, "school_id" | "school_name">[]
-      );
+      const newSchoolList = data.user?.school_memberships
+        ?.filter(
+          (schoolItem) =>
+            schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
+        )
+        .map((schoolMember) => schoolMember?.school) as Pick<School, "school_id" | "school_name">[];
+      schoolList = schoolList.concat(newSchoolList);
+      const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+        query: ClassesTeachingQueryDocument,
+        variables: {
+          user_id: newteacher_ids,
+          organization_id,
+        },
+      });
+      result.user?.membership?.classesTeaching
+        ?.filter((classItem) => classItem?.status === Status.Active)
+        .forEach((classItem) => {
+          schoolList = schoolList?.concat(classItem?.schools as Pick<School, "school_id" | "school_name">[]);
+        });
+
+      teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
     } else {
       if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
         const { data: schoolListResult } = await gqlapi.query<SchoolAndTeacherByOrgQuery, SchoolAndTeacherByOrgQueryVariables>({
@@ -815,6 +831,22 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           )
           .map((schoolMember) => schoolMember?.school) as Pick<School, "school_id" | "school_name">[];
         schoolList = schoolList.concat(newSchoolList);
+        if (perm.view_my_reports_614) {
+          const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+            query: ClassesTeachingQueryDocument,
+            variables: {
+              user_id: newteacher_ids,
+              organization_id,
+            },
+          });
+          result.user?.membership?.classesTeaching
+            ?.filter((classItem) => classItem?.status === Status.Active)
+            .forEach((classItem) => {
+              schoolList = schoolList?.concat(classItem?.schools as Pick<School, "school_id" | "school_name">[]);
+            });
+
+          teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
+        }
 
         if (school_id === "all") {
           data.user?.school_memberships
