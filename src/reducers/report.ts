@@ -843,9 +843,10 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
               (classItem?.status === Status.Active ? classItem?.teachers : []) as Pick<User, "user_id" | "user_name">[]
             );
           });
-        } else if (perm.view_my_reports_614) {
-          teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
         }
+        //  else if (perm.view_my_reports_614) {
+        //   teacherList = teacherList.concat([{ user_id: my_id, user_name: meInfo?.me?.user_name || "" }]);
+        // }
       }
     }
 
