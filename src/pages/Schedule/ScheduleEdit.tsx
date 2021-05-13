@@ -1160,47 +1160,15 @@ function EditBox(props: CalendarStateProps) {
     }
   };
 
-  const deDuplication = (arr: any) => {
-    const obj: any = [];
-    return arr.reduce((item: any, next: any) => {
-      if (!obj[next.user_id]) {
-        item.push(next);
-        obj[next.user_id] = true;
-      }
-      return item;
-    }, []);
-  };
-
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
-    const isFillter = !menuItemListClassKr("roster").length && rosterSaveStatus;
-    const isVested = (item: any): boolean => item.some((list: any) => (perm.create_event_520 ? true : list.school_id === mySchoolId));
-
     // will class roster data remove in ParticipantsData
-    const participantsFilterData = {
-      classes: {
-        students: isFillter
-          ? deDuplication(ParticipantsData?.classes.students)
-          : deDuplication(
-              ParticipantsData?.classes.students.filter(
-                (a: any) =>
-                  !participantMockOptions?.participantList?.class?.students?.some(
-                    (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
-                  )
-              )
-            ),
-        teachers: isFillter
-          ? deDuplication(ParticipantsData?.classes.teachers)
-          : deDuplication(
-              ParticipantsData?.classes.teachers.filter(
-                (a: any) =>
-                  !participantMockOptions?.participantList?.class?.teachers?.some(
-                    (b: any) => b.user_id === a.user_id || !isVested(a.school_memberships)
-                  )
-              )
-            ),
-      },
-    } as ParticipantsData;
+    const participantsFilterData = modelSchedule.FilterParticipants(
+      ParticipantsData,
+      participantMockOptions.participantList,
+      perm.create_event_520,
+      mySchoolId
+    );
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
