@@ -96,11 +96,12 @@ function MilestoneEditForm() {
   );
   const value = watch("outcomes");
   const handleCancel = () => {
-    history.push(MilestoneList.routeBasePath);
+    history.push(MilestoneList.routeRedirectDefault);
   };
   const handleSave = useMemo(
     () =>
       handleSubmit(async (value) => {
+        setRegulation(Regulation.ByMilestoneDetail);
         const { outcomes, ...restValues } = value;
         const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
         const inputValue = { ...restValues, outcome_ancestor_ids };

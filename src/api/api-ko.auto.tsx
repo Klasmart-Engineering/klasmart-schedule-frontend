@@ -499,6 +499,7 @@ export type NotParticipantsByOrganizationQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "status"> & {
+                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id">>>>;
                 teachers?: Types.Maybe<
                   Array<
                     Types.Maybe<
@@ -1507,6 +1508,9 @@ export const NotParticipantsByOrganizationDocument = gql`
     organization(organization_id: $organization_id) {
       classes {
         status
+        schools {
+          school_id
+        }
         teachers {
           user_id
           user_name
