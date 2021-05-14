@@ -9,6 +9,7 @@ import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Loading } from "./components/Loading";
 import { Locale } from "./components/Locale";
 import { Notification } from "./components/Notification";
+import { AssessmentDetail } from "./pages/AssesmentDetail";
 import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit/index";
@@ -31,9 +32,9 @@ import { ReportDashboard } from "./pages/ReportDashboard";
 import { ReportStudentPerformance } from "./pages/ReportStudentPerformance";
 import ReportTeachingLoad from "./pages/ReportTeachingLoad";
 import Schedule from "./pages/Schedule";
+import { StudyAssessmentList } from "./pages/StudyAssessmentList";
 import { store } from "./reducers";
 import theme from "./theme";
-import { AssessmentDetail } from "./pages/AssesmentDetail";
 
 function App() {
   return (
@@ -46,6 +47,9 @@ function App() {
               <SnackbarProvider>
                 {/* <UIAppHeaderNavBar /> */}
                 <Switch>
+                  <Route path={StudyAssessmentList.routeBasePath}>
+                    <StudyAssessmentList />
+                  </Route>
                   <Route path={AssessmentDetail.routeBasePath}>
                     <AssessmentDetail />
                   </Route>
