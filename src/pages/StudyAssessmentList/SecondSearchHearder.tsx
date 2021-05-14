@@ -8,7 +8,7 @@ import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { HomeFunAssessmentQueryCondition, HomeFunAssessmentQueryConditionBaseProps } from "./types";
+import { StudyAssessmentQueryCondition, StudyAssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,7 +83,7 @@ export const assessmentTypes = () => {
   return [
     { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
     { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
-    { label: "study", value: AssessmentType.study },
+    { label: "Study", value: AssessmentType.study },
   ];
 };
 const menuItemList = (list: options[]) =>
@@ -95,7 +95,7 @@ const menuItemList = (list: options[]) =>
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
+  const [searchText, setSearchText] = useState<StudyAssessmentQueryCondition["query"]>();
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
@@ -135,13 +135,13 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   );
 }
 
-export interface SecondSearchHeaderProps extends HomeFunAssessmentQueryConditionBaseProps {
+export interface SecondSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {
   onChangeAssessmentType: (assessmentType: AssessmentType) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssessmentType } = props;
-  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
+  const [searchText, setSearchText] = useState<StudyAssessmentQueryCondition["query"]>();
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
       searchText ? (draft.query = searchText) : delete draft.query;
@@ -179,7 +179,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 size="small"
                 onChange={handleChangeAssessmentType}
                 // label={d("Content Type").t("library")}
-                defaultValue={AssessmentType.homeFun}
+                defaultValue={AssessmentType.study}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >

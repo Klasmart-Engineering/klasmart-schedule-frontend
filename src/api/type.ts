@@ -179,3 +179,13 @@ export enum MilestoneOrderBy {
 export type SearchMilestonneResult = AsyncReturnType<typeof api.milestones.searchMilestone>;
 export type MilestoneListResult = SearchMilestonneResult["milestones"];
 export type MilestoneDetailResult = NonNullable<MilestoneListResult>[0];
+
+export enum StudyAssessmentOrderBy {
+  create_at = "create_at",
+  _create_at = "-create_at",
+  complete_at = "complete_at",
+  _complete_at = "-complete_at",
+}
+
+export type ListStudyAssessment = AsyncReturnType<typeof api.studies.listStudies>["items"];
+export type DetailStudyAssessment = AsyncReturnType<typeof api.studies.getStudyDetail>;

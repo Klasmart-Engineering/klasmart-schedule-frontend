@@ -24,6 +24,8 @@ export interface IAssessmentState {
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
+  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.studies.listStudies>["items"]>;
+  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.studies.getStudyDetail>>;
 }
 
 interface RootState {
@@ -65,6 +67,8 @@ const initialState: IAssessmentState = {
   },
   homefunFeedbacks: [],
   hasPermissionOfHomefun: false,
+  studyAssessmentList: [],
+  studyAssessmentDetail: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -173,6 +177,25 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   }
 );
 
+type IQueryStudyAssessmentListParams = Parameters<typeof api.studies.listStudies>[0] & LoadingMetaPayload;
+type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.studies.listStudies>;
+export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
+  "assessment/getStudyAssessmentList",
+  async ({ metaLoading, ...query }) => {
+    const { items, total } = await api.studies.listStudies(query);
+    return { items, total };
+  }
+);
+
+type IQueryStudyAssessmentDetailResult = AsyncReturnType<typeof api.studies.getStudyDetail>;
+export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
+  "assessment/getStudyAssessmentDetail",
+  async ({ id }) => {
+    const studyAssessmentDetail = await api.studies.getStudyDetail(id);
+    return studyAssessmentDetail;
+  }
+);
+
 const { reducer } = createSlice({
   name: "assessments",
   initialState,
@@ -231,6 +254,20 @@ const { reducer } = createSlice({
     [updateHomefun.rejected.type]: (state, { error }: any) => {
       console.error(error);
       throw error;
+    },
+    [getStudyAssessmentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentList>>) => {
+      state.studyAssessmentList = payload.items || [];
+      state.total = payload.total || 0;
+    },
+    [getStudyAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentList>>) => {
+      state.studyAssessmentList = initialState.studyAssessmentList;
+      state.total = 0;
+    },
+    [getStudyAssessmentDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
+      state.studyAssessmentDetail = payload;
+    },
+    [getStudyAssessmentDetail.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
+      state.studyAssessmentDetail = initialState.studyAssessmentDetail;
     },
   },
 });

@@ -11,6 +11,7 @@ import TuneOutlinedIcon from "@material-ui/icons/TuneOutlined";
 import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { StudyAssessmentOrderBy } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentList } from "../../pages/AssesmentList";
 import { HomeFunAssessmentList } from "../../pages/HomeFunAssessmentList";
@@ -95,7 +96,9 @@ export function FirstSearchHeader() {
   const history = useHistory();
   const pathname = history.location.pathname;
   const hightLightAssessment =
-    pathname.indexOf(AssessmentList.routeBasePath) >= 0 || pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0;
+    pathname.indexOf(AssessmentList.routeBasePath) >= 0 ||
+    pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0 ||
+    pathname.indexOf(StudyAssessmentOrderBy.routeBasePath);
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
