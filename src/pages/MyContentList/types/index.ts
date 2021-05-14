@@ -35,3 +35,13 @@ export enum PublishScope {
   all = "all",
   tempArgument = "10f38ce9-5152-4049-b4e7-6d2e2ba884e6",
 }
+export enum SubmenuType {
+  pending = "pending",
+  draft = "draft",
+  wfa = "wfa",
+  rejected = "rejected",
+  archived = "archived",
+  assets = "assets",
+  badanamu = "badanamu",
+  moreFeatured = "more featured",
+}
