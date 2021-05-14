@@ -378,6 +378,9 @@ function AnyTimeSchedule(props: SearchListProps) {
   };
 
   const buttonGroup = (type: string, scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => {
+    const isScheduleExpiredMulti = (): boolean => {
+      return scheduleInfo.id ? scheduleInfo.status !== "NotStart" || privilegedMembers("Student") : false;
+    };
     return (
       <span>
         {type === "study" && (
@@ -395,7 +398,7 @@ function AnyTimeSchedule(props: SearchListProps) {
             {d("Edit").t("schedule_button_edit")}
           </Button>
         )}
-        {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && scheduleInfo.role_type !== "Student" && (
+        {!scheduleInfo.is_hidden && !isScheduleExpiredMulti() && (
           <Permission
             value={PermissionType.delete_event_540}
             render={(value) =>

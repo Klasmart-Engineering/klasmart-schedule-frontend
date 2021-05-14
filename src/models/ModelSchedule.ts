@@ -152,7 +152,10 @@ export class modelSchedule {
     mySchoolId: string[]
   ) {
     const rosterIdSet = { students: [], teachers: [] };
-    const isVested = (item: any): boolean => item.some((list: any) => (is_org ? true : mySchoolId.includes(list.school_id)));
+    const isVested = (item: any): boolean => {
+      if (is_org) return true;
+      return item.some((list: any) => mySchoolId.includes(list.school_id));
+    };
     const deDuplication = (arr: any) => {
       const obj: any = [];
       return arr.reduce((item: any, next: any) => {
