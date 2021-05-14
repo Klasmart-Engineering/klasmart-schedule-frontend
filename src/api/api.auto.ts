@@ -1902,7 +1902,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         query?: string;
         query_type?: "class_name" | "teacher_name";
-        status?: "in_progress" | "complete";
+        status?: "in_progress" | "complete" | "all";
         order_by?: "create_at" | "-create_at" | "complete_at" | "-complete_at";
         page?: number;
         page_size?: number;

@@ -11,7 +11,6 @@ import TuneOutlinedIcon from "@material-ui/icons/TuneOutlined";
 import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { StudyAssessmentOrderBy } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentList } from "../../pages/AssesmentList";
 import { HomeFunAssessmentList } from "../../pages/HomeFunAssessmentList";
@@ -21,6 +20,7 @@ import CreateOutcomings from "../../pages/OutcomeEdit";
 import { OutcomeList } from "../../pages/OutcomeList";
 import { LoBlueIcon, LoIcon } from "../../pages/OutcomeList/Icons";
 import { HeaderCategory } from "../../pages/OutcomeList/types";
+import { StudyAssessmentList } from "../../pages/StudyAssessmentList";
 import LayoutBox from "../LayoutBox";
 import { Permission, PermissionType, usePermission } from "../Permission";
 const useStyles = makeStyles((theme) => ({
@@ -98,7 +98,7 @@ export function FirstSearchHeader() {
   const hightLightAssessment =
     pathname.indexOf(AssessmentList.routeBasePath) >= 0 ||
     pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0 ||
-    pathname.indexOf(StudyAssessmentOrderBy.routeBasePath);
+    pathname.indexOf(StudyAssessmentList.routeBasePath) >= 0;
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
