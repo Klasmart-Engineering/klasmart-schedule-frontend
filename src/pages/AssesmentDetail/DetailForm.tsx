@@ -3,6 +3,7 @@ import { ExpandMore } from "@material-ui/icons";
 import React, { useMemo, useState } from "react";
 import { DetailStudyAssessment } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
+import { ModelAssessment } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 const useStyles = makeStyles(({ palette, spacing }) => ({
   classSummaryHeader: {
@@ -148,24 +149,26 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 }));
 // export interface AttendanceInputProps {
 //   defaultValue: PopupInputProps["value"];
-//   assessmentDetail: GetAssessmentResult;
-//   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
+//   assessmentDetail: DetailFormProps["assessmentDetail"];
+//   // formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
 // }
 // export const AttendanceInput = (props: AttendanceInputProps) => {
 //   const css = useStyles();
 //   const {
 //     defaultValue,
 //     assessmentDetail,
-//     formMethods: { control, errors, watch },
+//     // formMethods: { control, errors, watch },
 //   } = props;
-//   const attendance_ids = watch("attendance_ids") || defaultValue || [];
+//   const formMethods = useForm();
+//   const { control, errors, watch } =  formMethods;
+//   const student_ids = watch("student_ids") || defaultValue || [];
 //   return (
 //     <Box>
 //       <Typography className={css.subTitle}>
-//         {d("Students").t("assess_detail_students")}({attendance_ids.length})
+//         {d("Students").t("assess_detail_students")}({student_ids.length})
 //       </Typography>
 //       <Controller
-//         name="attendance_ids"
+//         name="student_ids"
 //         control={control}
 //         defaultValue={defaultValue}
 //         rules={{ required: true }}
@@ -201,8 +204,8 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 //   );
 // };
 // interface PopupInputProps {
-//   assessmentDetail: SummaryProps["assessmentDetail"];
-//   value?: UpdateAssessmentRequestDatAattendanceIds;
+//   assessmentDetail: DetailFormProps["assessmentDetail"];
+//   value?: UpdateStudyAssessmentStudentIds;
 //   onChange?: (value: PopupInputProps["value"]) => any;
 //   isMyAssessment?: boolean;
 // }
@@ -210,7 +213,7 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 //   const { value, onChange, assessmentDetail, isMyAssessment } = props;
 //   const css = useStyles();
 //   const dispatch = useDispatch();
-//   const formMethods = useForm<UpdateAssessmentRequestData>();
+//   const formMethods = useForm<UpdataStudyAssessmentRequestData>();
 //   const [open, toggle] = useReducer((open) => {
 //     formMethods.reset();
 //     return !open;
@@ -220,11 +223,11 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 //     return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
 //   }, [assessmentDetail, value]);
 //   const handleOk = useCallback(() => {
-//     const { attendance_ids } = formMethods.getValues();
-//     if (!attendance_ids?.length)
+//     const { student_ids } = formMethods.getValues();
+//     if (!student_ids?.length)
 //       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
 //     toggle();
-//     if (onChange) return onChange(attendance_ids || []);
+//     if (onChange) return onChange(student_ids || []);
 //   }, [dispatch, formMethods, onChange]);
 //   return (
 //     <Box className={css.editBox} {...{ ref }}>
@@ -248,7 +251,7 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 //               color="primary"
 //               variant="outlined"
 //               onClick={toggle}
-//               disabled={assessmentDetail.status === AssessmentStatus.complete}
+//               // disabled={assessmentDetail.status === AssessmentStatus.complete}
 //             >
 //               {d("Edit").t("assess_button_edit")}
 //             </Button>
@@ -258,7 +261,7 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
 //       <Dialog open={open} onClose={toggle}>
 //         <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
 //         <DialogContent dividers style={{ borderBottom: "none" }}>
-//           <AttendanceInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value}></AttendanceInput>
+//           <AttendanceInput assessmentDetail={assessmentDetail} defaultValue={value}></AttendanceInput>
 //         </DialogContent>
 //         <DialogActions>
 //           <Button autoFocus onClick={toggle} color="primary" variant="outlined">
@@ -489,10 +492,13 @@ export default function DetailForm(props: DetailFormProps) {
   const expand = useExpand();
   const { assessmentDetail } = props;
   // const { formMethods } = props;
+  // const formMethods = useForm();
   // const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
+  const { student_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
+  console.log(student_ids);
   // const m = getValues()["materials"];
   // const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
@@ -536,11 +542,11 @@ export default function DetailForm(props: DetailFormProps) {
           />
           {/* <Controller
             as={PopupInput}
-            name="attendance_ids"
-            defaultValue={attendance_ids}
+            name="student_ids"
+            defaultValue={student_ids}
             assessmentDetail={assessmentDetail}
             control={control}
-            isMyAssessment={isMyAssessment}
+            // isMyAssessment={isMyAssessment}
           /> */}
           {assessmentDetail.lesson_plan && assessmentDetail.lesson_plan.id && (
             <>

@@ -24,8 +24,8 @@ export interface IAssessmentState {
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
-  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.studies.listStudies>["items"]>;
-  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.studies.getStudyDetail>>;
+  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.contentAssessments.listContentAssessments>["items"]>;
+  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.contentAssessments.getContentAssessmentDetail>>;
 }
 
 interface RootState {
@@ -177,22 +177,35 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   }
 );
 
-type IQueryStudyAssessmentListParams = Parameters<typeof api.studies.listStudies>[0] & LoadingMetaPayload;
-type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.studies.listStudies>;
+type IQueryStudyAssessmentListParams = Parameters<typeof api.contentAssessments.listContentAssessments>[0] & LoadingMetaPayload;
+type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.contentAssessments.listContentAssessments>;
 export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
-  "assessment/getStudyAssessmentList",
+  "assessments/getStudyAssessmentList",
   async ({ metaLoading, ...query }) => {
-    const { items, total } = await api.studies.listStudies(query);
+    const { items, total } = await api.contentAssessments.listContentAssessments(query);
     return { items, total };
   }
 );
 
-type IQueryStudyAssessmentDetailResult = AsyncReturnType<typeof api.studies.getStudyDetail>;
+type IQueryStudyAssessmentDetailResult = AsyncReturnType<typeof api.contentAssessments.getContentAssessmentDetail>;
 export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
-  "assessment/getStudyAssessmentDetail",
+  "assessments/getStudyAssessmentDetail",
   async ({ id }) => {
-    const studyAssessmentDetail = await api.studies.getStudyDetail(id);
+    const studyAssessmentDetail = await api.contentAssessments.getContentAssessmentDetail(id);
     return studyAssessmentDetail;
+  }
+);
+
+type IQueryUpdateStudyAssessmentParams = {
+  id: Parameters<typeof api.contentAssessments.updateContentAssessment>[0];
+  data: Parameters<typeof api.contentAssessments.updateContentAssessment>[1];
+};
+
+export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
+  "assessments/updateStudyAssessment",
+  async ({ id, data }) => {
+    await api.contentAssessments.updateContentAssessment(id, data);
+    return id;
   }
 );
 

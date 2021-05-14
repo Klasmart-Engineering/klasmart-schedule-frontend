@@ -5,7 +5,9 @@ type NonNullRecordValue<T> = {
   [K in keyof T]: NonOnlyNull<T[K]>;
 };
 
-export type StudyAssessmentQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.studies.listStudies>[0]>>;
+export type StudyAssessmentQueryCondition = NonNullRecordValue<
+  NonNullable<Parameters<typeof api.contentAssessments.listContentAssessments>[0]>
+>;
 export type StudyAssessmentQueryConditionChangeHandler = (value: StudyAssessmentQueryCondition) => any;
 export type StudyAssessmentQueryConditionBaseProps = {
   onChange: StudyAssessmentQueryConditionChangeHandler;

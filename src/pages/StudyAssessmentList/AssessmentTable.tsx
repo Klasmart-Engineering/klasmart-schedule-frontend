@@ -2,7 +2,7 @@ import { createStyles, Table, TableBody, TableCell, TableContainer, TableHead, T
 import { makeStyles } from "@material-ui/core/styles";
 import { Pagination } from "@material-ui/lab";
 import React from "react";
-import { DetailStudyAssessment } from "../../api/type";
+import { ListStudyAssessmentItem } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) =>
 // };
 
 interface AssessmentProps {
-  assessment: DetailStudyAssessment;
+  assessment: ListStudyAssessmentItem;
   onClickAssessment: AssessmentTableProps["onClickAssessment"];
 }
 function AssessmentRow(props: AssessmentProps) {
@@ -64,10 +64,10 @@ function AssessmentRow(props: AssessmentProps) {
 export interface AssessmentTableProps {
   total: number;
   amountPerPage?: number;
-  list: DetailStudyAssessment[];
+  list: ListStudyAssessmentItem[];
   queryCondition: StudyAssessmentQueryCondition;
   onChangePage: (page: number) => void;
-  onClickAssessment: (id: DetailStudyAssessment["id"]) => any;
+  onClickAssessment: (id: ListStudyAssessmentItem["id"]) => any;
 }
 export function AssessmentTable(props: AssessmentTableProps) {
   const css = useStyles();

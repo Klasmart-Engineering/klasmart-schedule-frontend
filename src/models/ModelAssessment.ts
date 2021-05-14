@@ -1,5 +1,10 @@
 import { cloneDeep } from "lodash";
-import { GetAssessmentResult, UpdateAssessmentRequestData, UpdateAssessmentRequestDataLessonMaterials } from "../api/type";
+import {
+  DetailStudyAssessment,
+  GetAssessmentResult,
+  UpdateAssessmentRequestData,
+  UpdateAssessmentRequestDataLessonMaterials,
+} from "../api/type";
 
 interface ObjContainId {
   id?: string;
@@ -102,5 +107,10 @@ export const ModelAssessment = {
     } else {
       return assessment.outcome_attendances;
     }
+  },
+  toGetStudentIds(detail: DetailStudyAssessment) {
+    const draft = cloneDeep(detail);
+    const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
+    return { student_ids };
   },
 };
