@@ -70,7 +70,9 @@ function BasicTable(props: tableProps) {
         <div style={{ color: checked ? "black" : "#666666" }}>
           <AccountCircleIcon />
           <span>小学生</span>
-          <a href="https://www.baidu.com">Click to add a comment</a>
+          <a href="https://www.baidu.com" style={{ visibility: checked ? "visible" : "hidden" }}>
+            Click to add a comment
+          </a>
         </div>
         {checked && <ArrowDropUpIcon />}
         {!checked && <ArrowDropDownIcon />}

@@ -36,7 +36,7 @@ export function AssessmentDetail() {
   );
   const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
     link: "",
-    openStatus: false,
+    openStatus: true,
     type: "",
   });
   const handleElasticLayerControl = (elasticLayerControlData: ElasticLayerControl) => {
