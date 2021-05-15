@@ -5,7 +5,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { emptyTip, permissionTip } from "../../components/TipImages";
+import { emptyTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";
@@ -81,26 +81,26 @@ export function AssessmentList() {
     <div>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      {(perm.view_completed_assessments_414 ||
+      {/* {(perm.view_completed_assessments_414 ||
         perm.view_in_progress_assessments_415 ||
         perm.view_org_completed_assessments_424 ||
         perm.view_org_in_progress_assessments_425 ||
         perm.view_school_completed_assessments_426 ||
-        perm.view_school_in_progress_assessments_427) && (
+        perm.view_school_in_progress_assessments_427) && ( */}
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
           <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
           <ThirdSearchHeader value={condition} onChange={handleChange} />
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
         </>
-      )}
-      {perm.view_completed_assessments_414 ||
+      {/* )} */}
+      {/* {perm.view_completed_assessments_414 ||
       perm.view_in_progress_assessments_415 ||
       perm.view_org_completed_assessments_424 ||
       perm.view_org_in_progress_assessments_425 ||
       perm.view_school_completed_assessments_426 ||
-      perm.view_school_in_progress_assessments_427 ? (
-        assessmentList && assessmentList.length > 0 ? (
+      perm.view_school_in_progress_assessments_427 ? ( */}
+        {assessmentList && assessmentList.length > 0 ? (
           <AssessmentTable
             list={assessmentList}
             total={total}
@@ -110,10 +110,10 @@ export function AssessmentList() {
           />
         ) : (
           emptyTip
-        )
-      ) : (
+        )}
+      {/* ) : (
         permissionTip
-      )}
+      )} */}
     </div>
   );
 }

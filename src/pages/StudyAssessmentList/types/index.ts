@@ -6,7 +6,7 @@ type NonNullRecordValue<T> = {
 };
 
 export type StudyAssessmentQueryCondition = NonNullRecordValue<
-  NonNullable<Parameters<typeof api.contentAssessments.listContentAssessments>[0]>
+  NonNullable<Parameters<typeof api.h5PAssessments.listH5PAssessments>[0]>
 >;
 export type StudyAssessmentQueryConditionChangeHandler = (value: StudyAssessmentQueryCondition) => any;
 export type StudyAssessmentQueryConditionBaseProps = {

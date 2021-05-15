@@ -2,8 +2,10 @@ import { cloneDeep } from "lodash";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
-  UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials,
+
+
+  UpdataStudyAssessmentRequestData, UpdateAssessmentRequestData,
+  UpdateAssessmentRequestDataLessonMaterials
 } from "../api/type";
 
 interface ObjContainId {
@@ -56,6 +58,21 @@ export const ModelAssessment = {
             };
           })
         : draft.materials;
+    return materials;
+  },
+  toStudyAssessment(detail: DetailStudyAssessment, dMaterials: DetailStudyAssessment["lesson_materials"]): DetailStudyAssessment["lesson_materials"] {
+    const draft = cloneDeep(detail);
+    const materials =
+    dMaterials && dMaterials[0] && draft.lesson_materials && draft.lesson_materials[0]
+    ? draft.lesson_materials.map((item, index) => {
+        return {
+          checked: dMaterials[index].checked,
+          comment: dMaterials[index].comment,
+          id: item.id,
+          name: item.name,
+        };
+      })
+    : draft.lesson_materials;
     return materials;
   },
   toMaterial(
@@ -114,3 +131,5 @@ export const ModelAssessment = {
     return { student_ids };
   },
 };
+
+export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;

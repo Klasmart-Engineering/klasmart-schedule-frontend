@@ -1,10 +1,17 @@
-import { Box, Collapse, IconButton, makeStyles, Paper, styled, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
-import { ExpandMore } from "@material-ui/icons";
-import React, { useMemo, useState } from "react";
-import { DetailStudyAssessment } from "../../api/type";
+import { Box, Button, Checkbox, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, InputAdornment, makeStyles, Paper, styled, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import { Close, ExpandMore } from "@material-ui/icons";
+import BorderColorOutlinedIcon from "@material-ui/icons/BorderColorOutlined";
+import MessageOutlinedIcon from "@material-ui/icons/MessageOutlined";
+import clsx from "clsx";
+import React, { forwardRef, Fragment, useCallback, useMemo, useReducer, useState } from "react";
+import { Controller, useForm, UseFormMethods } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { AssessmentStatus, DetailStudyAssessment, UpdataStudyAssessmentRequestData, UpdateStudyAssessmentStudentIds } from "../../api/type";
+import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { d } from "../../locale/LocaleManager";
-import { ModelAssessment } from "../../models/ModelAssessment";
+import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { actWarning } from "../../reducers/notify";
 const useStyles = makeStyles(({ palette, spacing }) => ({
   classSummaryHeader: {
     height: 64,
@@ -147,371 +154,370 @@ const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
   color: "#0e78d5",
   transform: props.open ? "rotate(180deg)" : "none",
 }));
-// export interface AttendanceInputProps {
-//   defaultValue: PopupInputProps["value"];
-//   assessmentDetail: DetailFormProps["assessmentDetail"];
-//   // formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
-// }
-// export const AttendanceInput = (props: AttendanceInputProps) => {
-//   const css = useStyles();
-//   const {
-//     defaultValue,
-//     assessmentDetail,
-//     // formMethods: { control, errors, watch },
-//   } = props;
-//   const formMethods = useForm();
-//   const { control, errors, watch } =  formMethods;
-//   const student_ids = watch("student_ids") || defaultValue || [];
-//   return (
-//     <Box>
-//       <Typography className={css.subTitle}>
-//         {d("Students").t("assess_detail_students")}({student_ids.length})
-//       </Typography>
-//       <Controller
-//         name="student_ids"
-//         control={control}
-//         defaultValue={defaultValue}
-//         rules={{ required: true }}
-//         error={errors.attendance_ids}
-//         render={(props: any) => {
-//           return (
-//             <CheckboxGroup
-//               {...props}
-//               render={(selectedContentGroupContext) => (
-//                 <Fragment>
-//                   {assessmentDetail.students &&
-//                     assessmentDetail.students.map((item) => (
-//                       <FormControlLabel
-//                         control={
-//                           <Checkbox
-//                             color="primary"
-//                             value={item.id}
-//                             checked={selectedContentGroupContext.hashValue[item.id as string] || false}
-//                             onChange={selectedContentGroupContext.registerChange}
-//                           />
-//                         }
-//                         label={item.name}
-//                         key={item.id}
-//                       />
-//                     ))}
-//                 </Fragment>
-//               )}
-//             />
-//           );
-//         }}
-//       />
-//     </Box>
-//   );
-// };
-// interface PopupInputProps {
-//   assessmentDetail: DetailFormProps["assessmentDetail"];
-//   value?: UpdateStudyAssessmentStudentIds;
-//   onChange?: (value: PopupInputProps["value"]) => any;
-//   isMyAssessment?: boolean;
-// }
-// const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
-//   const { value, onChange, assessmentDetail, isMyAssessment } = props;
-//   const css = useStyles();
-//   const dispatch = useDispatch();
-//   const formMethods = useForm<UpdataStudyAssessmentRequestData>();
-//   const [open, toggle] = useReducer((open) => {
-//     formMethods.reset();
-//     return !open;
-//   }, false);
-//   const attendanceString = useMemo(() => {
-//     const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
-//     return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
-//   }, [assessmentDetail, value]);
-//   const handleOk = useCallback(() => {
-//     const { student_ids } = formMethods.getValues();
-//     if (!student_ids?.length)
-//       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
-//     toggle();
-//     if (onChange) return onChange(student_ids || []);
-//   }, [dispatch, formMethods, onChange]);
-//   return (
-//     <Box className={css.editBox} {...{ ref }}>
-//       <TextField
-//         fullWidth
-//         disabled
-//         multiline
-//         rows={2}
-//         rowsMax={4}
-//         value={attendanceString || ""}
-//         className={clsx(css.fieldset, css.nowarp, css.editAttendanceBox)}
-//         label={d("Student List").t("assess_detail_student_list")}
-//       />
-//       <PermissionOr
-//         value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
-//         render={(value) =>
-//           isMyAssessment &&
-//           value && (
-//             <Button
-//               className={css.editButton}
-//               color="primary"
-//               variant="outlined"
-//               onClick={toggle}
-//               // disabled={assessmentDetail.status === AssessmentStatus.complete}
-//             >
-//               {d("Edit").t("assess_button_edit")}
-//             </Button>
-//           )
-//         }
-//       />
-//       <Dialog open={open} onClose={toggle}>
-//         <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
-//         <DialogContent dividers style={{ borderBottom: "none" }}>
-//           <AttendanceInput assessmentDetail={assessmentDetail} defaultValue={value}></AttendanceInput>
-//         </DialogContent>
-//         <DialogActions>
-//           <Button autoFocus onClick={toggle} color="primary" variant="outlined">
-//             {d("CANCEL").t("general_button_CANCEL")}
-//           </Button>
-//           <Button onClick={handleOk} color="primary" variant="contained" className={css.okBtn}>
-//             {d("OK").t("general_button_OK")}
-//           </Button>
-//         </DialogActions>
-//       </Dialog>
-//     </Box>
-//   );
-// });
-// export interface MaterialInputProps {
-//   defaultValue?: GetAssessmentResult["materials"];
-//   assessmentDetail: GetAssessmentResult;
-//   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
-// }
-// export const MaterialInput = (props: MaterialInputProps) => {
-//   const css = useStyles();
-//   const {
-//     defaultValue,
-//     assessmentDetail,
-//     formMethods: { control, watch },
-//   } = props;
-//   const selectedMaterials = useMemo(() => {
-//     const selectedM = watch("materials") || defaultValue || [];
-//     return selectedM.length ? selectedM.filter((item) => item.checked) : [];
-//   }, [defaultValue, watch]);
-//   return (
-//     <Box style={{ height: 390 }}>
-//       <Typography className={css.subTitle}>
-//         {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")}:{" "}
-//         {`${selectedMaterials.length}/${assessmentDetail.materials?.length ?? 0}`}
-//       </Typography>
-//       {assessmentDetail.materials &&
-//         assessmentDetail.materials.length &&
-//         assessmentDetail.materials.map((item, index) => (
-//           <div key={item.id}>
-//             <Controller
-//               style={{ display: "none" }}
-//               name={`materials[${index}].id`}
-//               control={control}
-//               as={TextField}
-//               defaultValue={item.id}
-//             />
-//             <Controller
-//               style={{ display: "none" }}
-//               name={`materials[${index}].name`}
-//               control={control}
-//               as={TextField}
-//               defaultValue={item.name}
-//             />
-//             <Controller
-//               style={{ display: "none" }}
-//               name={`materials[${index}].outcome_ids`}
-//               control={control}
-//               as={TextField}
-//               defaultValue={item.outcome_ids || []}
-//             />
-//             <Controller
-//               name={`materials[${index}].checked`}
-//               defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
-//               render={(props) => (
-//                 <FormControlLabel
-//                   className={css.checkBoxCon}
-//                   control={
-//                     <Checkbox
-//                       checked={props.value}
-//                       disabled={assessmentDetail.status === AssessmentStatus.complete}
-//                       onChange={(e) => props.onChange(e.target.checked)}
-//                       color="primary"
-//                     />
-//                   }
-//                   label={item.name}
-//                 />
-//               )}
-//               control={control}
-//             />
-//             <div>
-//               <Controller
-//                 name={`materials[${index}].comment`}
-//                 control={control}
-//                 as={TextField}
-//                 multiline
-//                 className={css.commentCon}
-//                 placeholder={d("Comment here").t("assess_detail_comment_here")}
-//                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
-//                 disabled={assessmentDetail.status === AssessmentStatus.complete}
-//                 inputProps={{ maxLength: 100 }}
-//                 InputProps={{
-//                   startAdornment: (
-//                     <InputAdornment position="start">
-//                       {assessmentDetail.status === AssessmentStatus.complete ? (
-//                         <MessageOutlinedIcon className={css.mCoverIcon} />
-//                       ) : (
-//                         <BorderColorOutlinedIcon className={css.mCoverIcon} />
-//                       )}
-//                     </InputAdornment>
-//                   ),
-//                 }}
-//               />
-//             </div>
-//           </div>
-//         ))}
-//     </Box>
-//   );
-// };
-// export interface MaterialProps {
-//   checked: boolean;
-//   comment: string;
-// }
-// interface PupupLessonMaterialProps {
-//   assessmentDetail: SummaryProps["assessmentDetail"];
-//   isMyAssessment?: boolean;
-//   value: GetAssessmentResult["materials"];
-//   onChange?: (value: PupupLessonMaterialProps["value"]) => any;
-//   onChangeOA: (materials: GetAssessmentResult["materials"]) => any;
-// }
-// const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
-//   const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA } = props;
-//   const css = useStyles();
-//   const dispatch = useDispatch();
-//   const formMethods = useForm<UpdateAssessmentRequestData>();
-//   const [open, toggle] = useReducer((open) => {
-//     // formMethods.reset();
-//     return !open;
-//   }, false);
-//   const materialString = useMemo(() => {
-//     const materials = ModelAssessment.toMaterial(assessmentDetail.materials, value);
-//     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
-//   }, [assessmentDetail.materials, value]);
+export interface AttendanceInputProps {
+  defaultValue: PopupInputProps["value"];
+  assessmentDetail: DetailFormProps["assessmentDetail"];
+  formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
+}
+export const AttendanceInput = (props: AttendanceInputProps) => {
+  const css = useStyles();
+  const {
+    defaultValue,
+    assessmentDetail,
+    formMethods: { control, errors, watch },
+  } = props;
+  const student_ids = watch("student_ids") || defaultValue || [];
+  return (
+    <Box>
+      <Typography className={css.subTitle}>
+        {d("Students").t("assess_detail_students")}({student_ids.length})
+      </Typography>
+      <Controller
+        name="student_ids"
+        control={control}
+        defaultValue={defaultValue}
+        rules={{ required: true }}
+        error={errors.student_ids}
+        render={(props: any) => {
+          return (
+            <CheckboxGroup
+              {...props}
+              render={(selectedContentGroupContext) => (
+                <Fragment>
+                  {assessmentDetail.students &&
+                    assessmentDetail.students.map((item) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            color="primary"
+                            value={item.id}
+                            checked={selectedContentGroupContext.hashValue[item.id as string] || false}
+                            onChange={selectedContentGroupContext.registerChange}
+                          />
+                        }
+                        label={item.name}
+                        key={item.id}
+                      />
+                    ))}
+                </Fragment>
+              )}
+            />
+          );
+        }}
+      />
+    </Box>
+  );
+};
+interface PopupInputProps {
+  assessmentDetail: DetailFormProps["assessmentDetail"];
+  value?: UpdateStudyAssessmentStudentIds;
+  onChange?: (value: PopupInputProps["value"]) => any;
+  isMyAssessment?: boolean;
+}
+const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
+  const { value, onChange, assessmentDetail, isMyAssessment } = props;
+  const css = useStyles();
+  const dispatch = useDispatch();
+  const formMethods = useForm<UpdataStudyAssessmentRequestData>();
+  const [open, toggle] = useReducer((open) => {
+    formMethods.reset();
+    return !open;
+  }, false);
+  const attendanceString = useMemo(() => {
+    const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
+    return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
+  }, [assessmentDetail, value]);
+  const handleOk = useCallback(() => {
+    const { student_ids } = formMethods.getValues();
+    if (!student_ids?.length)
+      return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
+    toggle();
+    if (onChange) return onChange(student_ids || []);
+  }, [dispatch, formMethods, onChange]);
+  return (
+    <Box className={css.editBox} {...{ ref }}>
+      <TextField
+        fullWidth
+        disabled
+        multiline
+        rows={2}
+        rowsMax={4}
+        value={attendanceString || ""}
+        className={clsx(css.fieldset, css.nowarp, css.editAttendanceBox)}
+        label={d("Student List").t("assess_detail_student_list")}
+      />
+      {/* <PermissionOr
+        value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
+        render={(value) => */}
+        {isMyAssessment &&
+          // value && (
+            <Button
+              className={css.editButton}
+              color="primary"
+              variant="outlined"
+              onClick={toggle}
+              // disabled={assessmentDetail.status === AssessmentStatus.complete}
+            >
+              {d("Edit").t("assess_button_edit")}
+            </Button>
+          // )
+        }
+      {/* /> */}
+      <Dialog open={open} onClose={toggle}>
+        <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
+        <DialogContent dividers style={{ borderBottom: "none" }}>
+          <AttendanceInput assessmentDetail={assessmentDetail} defaultValue={value} formMethods={formMethods}></AttendanceInput>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={toggle} color="primary" variant="outlined">
+            {d("CANCEL").t("general_button_CANCEL")}
+          </Button>
+          <Button onClick={handleOk} color="primary" variant="contained" className={css.okBtn}>
+            {d("OK").t("general_button_OK")}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+});
+export interface MaterialInputProps {
+  defaultValue?: DetailStudyAssessment["lesson_materials"];
+  assessmentDetail: DetailFormProps["assessmentDetail"];
+  formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
+}
+export const MaterialInput = (props: MaterialInputProps) => {
+  const css = useStyles();
+  const {
+    defaultValue,
+    assessmentDetail,
+    formMethods: { control, watch },
+  } = props;
+  const selectedMaterials = useMemo(() => {
+    const selectedM = watch("lesson_materials") || defaultValue || [];
+    // return selectedM.length ? selectedM.filter((item) => item.checked) : [];
+    return selectedM;
+  }, [defaultValue, watch]);
+  return (
+    <Box style={{ height: 390 }}>
+      <Typography className={css.subTitle}>
+        {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")}:{" "}
+        {`${selectedMaterials.length}/${assessmentDetail.lesson_materials?.length ?? 0}`}
+      </Typography>
+      {assessmentDetail.lesson_materials &&
+        assessmentDetail.lesson_materials.length &&
+        assessmentDetail.lesson_materials.map((item, index) => (
+          <div key={item.id}>
+            <Controller
+              style={{ display: "none" }}
+              name={`lesson_materials[${index}].id`}
+              control={control}
+              as={TextField}
+              defaultValue={item.id}
+            />
+            {/* <Controller
+              style={{ display: "none" }}
+              name={`lesson_materials[${index}].content_name`}
+              control={control}
+              as={TextField}
+              defaultValue={item.content_name}
+            /> */}
+            {/* <Controller
+              style={{ display: "none" }}
+              name={`lesson_materials[${index}].outcome_ids`}
+              control={control}
+              as={TextField}
+              defaultValue={item.outcome_ids || []}
+            /> */}
+            <Controller
+              name={`lesson_materials[${index}].checked`}
+              defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
+              render={(props) => (
+                <FormControlLabel
+                  className={css.checkBoxCon}
+                  control={
+                    <Checkbox
+                      checked={props.value}
+                      disabled={assessmentDetail.status === AssessmentStatus.complete}
+                      onChange={(e) => props.onChange(e.target.checked)}
+                      color="primary"
+                    />
+                  }
+                  label={item.name}
+                />
+              )}
+              control={control}
+            />
+            <div>
+              <Controller
+                name={`lesson_materials[${index}].comment`}
+                control={control}
+                as={TextField}
+                multiline
+                className={css.commentCon}
+                placeholder={d("Comment here").t("assess_detail_comment_here")}
+                defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
+                disabled={assessmentDetail.status === AssessmentStatus.complete}
+                inputProps={{ maxLength: 100 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {assessmentDetail.status === AssessmentStatus.complete ? (
+                        <MessageOutlinedIcon className={css.mCoverIcon} />
+                      ) : (
+                        <BorderColorOutlinedIcon className={css.mCoverIcon} />
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+          </div>
+        ))}
+    </Box>
+  );
+};
+export interface MaterialProps {
+  checked: boolean;
+  comment: string;
+}
+interface PupupLessonMaterialProps {
+  assessmentDetail: DetailFormProps["assessmentDetail"];
+  isMyAssessment?: boolean;
+  value: DetailStudyAssessment["lesson_materials"];
+  onChange?: (value: PupupLessonMaterialProps["value"]) => any;
+  onChangeOA: (materials: DetailStudyAssessment["lesson_materials"]) => any;
+}
+const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
+  const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA } = props;
+  const css = useStyles();
+  const dispatch = useDispatch();
+  const formMethods = useForm<UpdataStudyAssessmentRequestData>();
+  const [open, toggle] = useReducer((open) => {
+    // formMethods.reset();
+    return !open;
+  }, false);
+  const materialString = useMemo(() => {
+    const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, value);
+    return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
+  }, [assessmentDetail.lesson_materials, value]);
 
-//   const handleOk = useCallback(() => {
-//     const value = formMethods.getValues()["materials"];
-//     if (value && value.length) {
-//       const newValue = value?.filter((item) => !item.checked);
-//       onChangeOA(value);
-//       if (newValue.length === value.length) {
-//         return Promise.reject(
-//           dispatch(actWarning(d("At least one lesson material needs to be selected as covered.").t("assess_msg_one_exposed")))
-//         );
-//       }
-//       toggle();
-//     }
-//     if (onChange) return onChange(value || []);
-//   }, [dispatch, formMethods, onChange, onChangeOA]);
-//   return (
-//     <Box className={clsx(css.editBox, css.materialEditBox)} {...{ ref }}>
-//       <TextField
-//         fullWidth
-//         disabled
-//         multiline={true}
-//         className={clsx(css.fieldset, css.blockEle)}
-//         InputProps={{
-//           readOnly: true,
-//           startAdornment: (
-//             <>
-//               {materialString && materialString.length ? (
-//                 <>
-//                   <div className={css.materialTitle}>
-//                     {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")} (
-//                     {`${materialString.length}/${assessmentDetail.materials?.length}`})
-//                   </div>
-//                   <div style={{ maxHeight: 180, minHeight: 90, overflow: "auto" }}>
-//                     {materialString.map((item, index) => (
-//                       <div className={css.materialNameCon} key={index}>
-//                         {item}
-//                       </div>
-//                     ))}
-//                   </div>
-//                 </>
-//               ) : (
-//                 d("N/A").t("assess_column_n_a")
-//               )}
-//             </>
-//           ),
-//         }}
-//       />
-//       <PermissionOr
-//         value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
-//         render={(value) =>
-//           isMyAssessment &&
-//           value && (
-//             <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
-//               {assessmentDetail.status === AssessmentStatus.complete
-//                 ? d("View").t("assess_detail_button_view")
-//                 : d("Edit").t("assess_button_edit")}
-//             </Button>
-//           )
-//         }
-//       />
-//       <Dialog maxWidth={"sm"} fullWidth={true} open={open} onClose={toggle}>
-//         <DialogTitle className={css.title}>
-//           {assessmentDetail.status === AssessmentStatus.complete
-//             ? d("View Lesson Materials Covered").t("assess_detail_view_covered")
-//             : d("Edit Lesson Materials Covered").t("assess_detail_edit_covered")}
-//           {assessmentDetail.status === AssessmentStatus.complete && (
-//             <IconButton onClick={toggle} className={css.closeBtn}>
-//               <Close />
-//             </IconButton>
-//           )}
-//         </DialogTitle>
-//         <DialogContent dividers style={{ borderBottom: "none" }}>
-//           <MaterialInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value} />
-//         </DialogContent>
-//         {assessmentDetail.status !== AssessmentStatus.complete && (
-//           <DialogActions>
-//             <Button autoFocus onClick={toggle} color="primary" variant="outlined">
-//               {d("CANCEL").t("general_button_CANCEL")}
-//             </Button>
-//             <Button onClick={handleOk} color="primary" variant="contained" className={css.okBtn}>
-//               {d("OK").t("general_button_OK")}
-//             </Button>
-//           </DialogActions>
-//         )}
-//       </Dialog>
-//     </Box>
-//   );
-// });
+  const handleOk = useCallback(() => {
+    const value = formMethods.getValues()["lesson_materials"];
+    if (value && value.length) {
+      const newValue = value?.filter((item) => !item.checked);
+      onChangeOA(value);
+      if (newValue.length === value.length) {
+        return Promise.reject(
+          dispatch(actWarning(d("At least one lesson material needs to be selected as covered.").t("assess_msg_one_exposed")))
+        );
+      }
+      toggle();
+    }
+    if (onChange) return onChange(value || []);
+  }, [dispatch, formMethods, onChange, onChangeOA]);
+  return (
+    <Box className={clsx(css.editBox, css.materialEditBox)} {...{ ref }}>
+      <TextField
+        fullWidth
+        disabled
+        multiline={true}
+        className={clsx(css.fieldset, css.blockEle)}
+        InputProps={{
+          readOnly: true,
+          startAdornment: (
+            <>
+              {materialString && materialString.length ? (
+                <>
+                  <div className={css.materialTitle}>
+                    {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")} (
+                    {`${materialString.length}/${assessmentDetail.lesson_materials?.length}`})
+                  </div>
+                  <div style={{ maxHeight: 180, minHeight: 90, overflow: "auto" }}>
+                    {materialString.map((item, index) => (
+                      <div className={css.materialNameCon} key={index}>
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                d("N/A").t("assess_column_n_a")
+              )}
+            </>
+          ),
+        }}
+      />
+      {/* <PermissionOr
+        value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
+        render={(value) => */}
+          {isMyAssessment &&
+          // value && (
+            <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
+              {assessmentDetail.status === AssessmentStatus.complete
+                ? d("View").t("assess_detail_button_view")
+                : d("Edit").t("assess_button_edit")}
+            </Button>
+          // )
+        }
+      {/* /> */}
+      <Dialog maxWidth={"sm"} fullWidth={true} open={open} onClose={toggle}>
+        <DialogTitle className={css.title}>
+          {assessmentDetail.status === AssessmentStatus.complete
+            ? d("View Lesson Materials Covered").t("assess_detail_view_covered")
+            : d("Edit Lesson Materials Covered").t("assess_detail_edit_covered")}
+          {assessmentDetail.status === AssessmentStatus.complete && (
+            <IconButton onClick={toggle} className={css.closeBtn}>
+              <Close />
+            </IconButton>
+          )}
+        </DialogTitle>
+        <DialogContent dividers style={{ borderBottom: "none" }}>
+          <MaterialInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value} />
+        </DialogContent>
+        {assessmentDetail.status !== AssessmentStatus.complete && (
+          <DialogActions>
+            <Button autoFocus onClick={toggle} color="primary" variant="outlined">
+              {d("CANCEL").t("general_button_CANCEL")}
+            </Button>
+            <Button onClick={handleOk} color="primary" variant="contained" className={css.okBtn}>
+              {d("OK").t("general_button_OK")}
+            </Button>
+          </DialogActions>
+        )}
+      </Dialog>
+    </Box>
+  );
+});
 
 interface DetailFormProps {
-  // formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
+  formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
   assessmentDetail: DetailStudyAssessment;
   // isMyAssessment?: boolean;
 }
 export default function DetailForm(props: DetailFormProps) {
   const expand = useExpand();
   const { assessmentDetail } = props;
-  // const { formMethods } = props;
+  const { formMethods } = props;
   // const formMethods = useForm();
-  // const { control, getValues, setValue } = formMethods;
+  const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { student_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
   console.log(student_ids);
-  // const m = getValues()["materials"];
-  // const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
+  const m = getValues()["lesson_materials"];
+  const materials = useMemo(() => ModelAssessment.toStudyAssessment(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
     const list = assessmentDetail.teacher_names;
     const length = list && list.length ? list.length : "";
     return `${list?.join(",")} (${length})`;
   }, [assessmentDetail.teacher_names]);
-  // const handleClickOk = (materials: GetAssessmentResult["materials"]) => {
-  //   const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
-  //   setTimeout(() => {
-  //     setValue("outcome_attendances", filteredOutcomelist);
-  //   }, 100);
-  // };
+  const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {
+    // const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
+    // setTimeout(() => {
+    //   setValue("outcome_attendances", filteredOutcomelist);
+    // }, 100);
+  };
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
@@ -540,21 +546,21 @@ export default function DetailForm(props: DetailFormProps) {
             className={css.fieldset}
             label={d("Teacher List").t("assess_detail_teacher_list")}
           />
-          {/* <Controller
+          <Controller
             as={PopupInput}
             name="student_ids"
             defaultValue={student_ids}
             assessmentDetail={assessmentDetail}
             control={control}
-            // isMyAssessment={isMyAssessment}
-          /> */}
+            isMyAssessment={true}
+          />
           {assessmentDetail.lesson_plan && assessmentDetail.lesson_plan.id && (
             <>
               <TextField
                 fullWidth
                 disabled
                 name="title"
-                value={assessmentDetail.lesson_plan?.content_name || ""}
+                value={assessmentDetail.lesson_plan?.name || ""}
                 className={css.fieldset}
                 label={d("Lesson Plan").t("library_label_lesson_plan")}
               />
@@ -565,16 +571,16 @@ export default function DetailForm(props: DetailFormProps) {
                 </ExpandBtn>
               </div>
               <Collapse {...expand.collapse} unmountOnExit>
-                {/* <Controller
+                <Controller
                   as={PopupLessonMaterial}
-                  name="materials"
+                  name="lesson_materials"
                   defaultValue={materials}
                   value={materials}
                   assessmentDetail={assessmentDetail}
                   control={control}
-                  isMyAssessment={isMyAssessment}
+                  isMyAssessment={true}
                   onChangeOA={handleClickOk}
-                /> */}
+                />
               </Collapse>
             </>
           )}

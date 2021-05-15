@@ -187,9 +187,9 @@ export enum StudyAssessmentOrderBy {
   _complete_at = "-complete_at",
 }
 
-export type ListStudyAssessment = AsyncReturnType<typeof api.contentAssessments.listContentAssessments>["items"];
+export type ListStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"];
 export type ListStudyAssessmentItem = NonNullable<ListStudyAssessment>[0];
-export type DetailStudyAssessment = AsyncReturnType<typeof api.contentAssessments.getContentAssessmentDetail>;
+export type DetailStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
 
-export type UpdataStudyAssessmentRequestData = Parameters<typeof api.contentAssessments.updateContentAssessment>[1];
+export type UpdataStudyAssessmentRequestData = Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
 export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["student_ids"]>;

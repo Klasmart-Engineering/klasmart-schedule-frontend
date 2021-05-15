@@ -6,7 +6,7 @@ import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
-  EntityScheduleFeedbackView,
+  EntityScheduleFeedbackView
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
@@ -24,8 +24,8 @@ export interface IAssessmentState {
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
-  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.contentAssessments.listContentAssessments>["items"]>;
-  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.contentAssessments.getContentAssessmentDetail>>;
+  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"]>;
+  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>>;
 }
 
 interface RootState {
@@ -68,7 +68,66 @@ const initialState: IAssessmentState = {
   homefunFeedbacks: [],
   hasPermissionOfHomefun: false,
   studyAssessmentList: [],
-  studyAssessmentDetail: {},
+  studyAssessmentDetail: {
+    class_name: "Class Name",
+    complete_at: new Date().getTime()/1000,
+    complete_rate: 80,
+    due_at: new Date().getTime()/1000,
+    id: "3929939393992932",
+    lesson_materials: [
+      {
+        checked: true,
+        comment: "material-comment-1",
+        id: "material-id-1",
+        name: "material-name-1",
+      }
+    ],
+    lesson_plan: {
+      checked: true,
+      comment: "123",
+      id: "plan1",
+      name: "planname---1",
+    },
+    remaining_time: 90,
+    schedule_id: "scheduleid",
+    status: "in_progress",
+    student_view_items: [
+      {
+        comment: "comment comment comment",
+        lesson_materials: [
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material-id-1",
+            lesson_material_name: "material-name-1",
+            lesson_material_type: "",
+            max_score: 100,
+          }
+        ],
+        student_id: "student1id",
+        student_name: "student1name",
+      }
+    ],
+    students: [
+      {
+        checked: true,
+        id: "studentid---1",
+        name: "studentname---1",
+      },
+      {
+        checked: true,
+        id: "studentid---2",
+        name: "studentname---2",
+      },
+      {
+        checked: true,
+        id: "studentid---3",
+        name: "studentname---3",
+      }
+    ],
+    teacher_names: ["teacher1", "teacher2", "teacher3"],
+    title: "study assessment detail",
+  },
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -177,34 +236,34 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   }
 );
 
-type IQueryStudyAssessmentListParams = Parameters<typeof api.contentAssessments.listContentAssessments>[0] & LoadingMetaPayload;
-type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.contentAssessments.listContentAssessments>;
+type IQueryStudyAssessmentListParams = Parameters<typeof api.h5PAssessments.listH5PAssessments>[0] & LoadingMetaPayload;
+type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>;
 export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
   "assessments/getStudyAssessmentList",
   async ({ metaLoading, ...query }) => {
-    const { items, total } = await api.contentAssessments.listContentAssessments(query);
+    const { items, total } = await api.h5PAssessments.listH5PAssessments(query);
     return { items, total };
   }
 );
 
-type IQueryStudyAssessmentDetailResult = AsyncReturnType<typeof api.contentAssessments.getContentAssessmentDetail>;
+type IQueryStudyAssessmentDetailResult = AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
 export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
   "assessments/getStudyAssessmentDetail",
   async ({ id }) => {
-    const studyAssessmentDetail = await api.contentAssessments.getContentAssessmentDetail(id);
+    const studyAssessmentDetail = await api.h5PAssessments.getH5PAssessmentDetail(id);
     return studyAssessmentDetail;
   }
 );
 
 type IQueryUpdateStudyAssessmentParams = {
-  id: Parameters<typeof api.contentAssessments.updateContentAssessment>[0];
-  data: Parameters<typeof api.contentAssessments.updateContentAssessment>[1];
+  id: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[0];
+  data: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
 };
 
 export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/updateStudyAssessment",
   async ({ id, data }) => {
-    await api.contentAssessments.updateContentAssessment(id, data);
+    await api.h5PAssessments.updateH5PAssessment(id, data);
     return id;
   }
 );

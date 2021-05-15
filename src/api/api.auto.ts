@@ -224,10 +224,11 @@ export interface EntityAddAssessmentArgs {
   class_end_time?: number;
   class_length?: number;
   schedule_id?: string;
+  type?: string;
 }
 
 export interface EntityAddAssessmentResult {
-  id?: string;
+  id?: string[];
 }
 
 export interface EntityAddAuthedContentRequest {
@@ -247,16 +248,6 @@ export interface EntityAssessHomeFunStudyArgs {
 export interface EntityAssessmentClass {
   id?: string;
   name?: string;
-}
-
-export interface EntityAssessmentContent {
-  assessment_id?: string;
-  checked?: boolean;
-  content_comment?: string;
-  content_id?: string;
-  content_name?: string;
-  content_type?: number;
-  id?: string;
 }
 
 export interface EntityAssessmentContentView {
@@ -423,21 +414,6 @@ export interface EntityClassType {
   number?: number;
   updateAt?: number;
   updateID?: string;
-}
-
-export interface EntityContentAssessmentStudentViewContentItem {
-  achieved_score?: number;
-  answer?: string;
-  lesson_material_id?: string;
-  lesson_material_name?: string;
-  lesson_material_type?: string;
-  max_score?: number;
-}
-
-export interface EntityContentAssessmentStudentViewItem {
-  lesson_materials?: EntityContentAssessmentStudentViewContentItem[];
-  student_id?: string;
-  student_name?: string;
 }
 
 export interface EntityContentInfoWithDetails {
@@ -643,20 +619,20 @@ export interface EntityFolderShareRecords {
   data?: EntityFolderShareRecord[];
 }
 
-export interface EntityGetContentAssessmentDetailResult {
+export interface EntityGetH5PAssessmentDetailResult {
   class_name?: string;
   complete_at?: number;
   complete_rate?: number;
   due_at?: number;
   id?: string;
-  lesson_materials?: EntityAssessmentContent[];
-  lesson_plan?: EntityAssessmentContent;
+  lesson_materials?: EntityH5PAssessmentLessonMaterial[];
+  lesson_plan?: EntityH5PAssessmentLessonPlan;
   remaining_time?: number;
 
   /** debug */
   schedule_id?: string;
   status?: string;
-  student_view_items?: EntityContentAssessmentStudentViewItem[];
+  student_view_items?: EntityH5PAssessmentStudentViewItem[];
   students?: EntityAssessmentStudent[];
   teacher_names?: string[];
   title?: string;
@@ -687,6 +663,36 @@ export interface EntityGetStudentPerformanceReportResponse {
   items?: EntityStudentPerformanceReportItem[];
 }
 
+export interface EntityH5PAssessmentLessonMaterial {
+  checked?: boolean;
+  comment?: string;
+  id?: string;
+  name?: string;
+}
+
+export interface EntityH5PAssessmentLessonPlan {
+  comment?: string;
+  id?: string;
+  name?: string;
+}
+
+export interface EntityH5PAssessmentStudentViewContentItem {
+  achieved_score?: number;
+  answer?: string;
+  checked?: boolean;
+  lesson_material_id?: string;
+  lesson_material_name?: string;
+  lesson_material_type?: string;
+  max_score?: number;
+}
+
+export interface EntityH5PAssessmentStudentViewItem {
+  comment?: string;
+  lesson_materials?: EntityH5PAssessmentStudentViewContentItem[];
+  student_id?: string;
+  student_name?: string;
+}
+
 export interface EntityLessonType {
   createAt?: number;
   createID?: string;
@@ -704,14 +710,13 @@ export interface EntityListAssessmentsResult {
   total?: number;
 }
 
-export interface EntityListContentAssessmentsResult {
-  items?: EntityListContentAssessmentsResultItem[];
+export interface EntityListH5PAssessmentsResult {
+  items?: EntityListH5PAssessmentsResultItem[];
   total?: number;
 }
 
-export interface EntityListContentAssessmentsResultItem {
+export interface EntityListH5PAssessmentsResultItem {
   class_name?: string;
-  comment?: string;
   complete_at?: number;
   complete_rate?: number;
   due_at?: number;
@@ -1264,30 +1269,30 @@ export interface EntityUpdateAssessmentMaterialArgs {
   id?: string;
 }
 
-export interface EntityUpdateContentAssessmentArgs {
-  action?: "save" | "complete";
-  id?: string;
-  lesson_materials?: EntityUpdateAssessmentContentArgs[];
-  student_ids?: string[];
-  student_view_items?: EntityUpdateContentAssessmentStudentViewItem[];
-}
-
-export interface EntityUpdateContentAssessmentStudentViewItem {
-  comment?: string;
-  lesson_materials?: EntityUpdateContentAssessmentStudentViewMaterialItem[];
-  student_id?: string;
-}
-
-export interface EntityUpdateContentAssessmentStudentViewMaterialItem {
-  achieved_score?: number;
-  lesson_material_id?: string;
-}
-
 export interface EntityUpdateFolderRequest {
   description?: string;
   keywords?: string[];
   name?: string;
   thumbnail?: string;
+}
+
+export interface EntityUpdateH5PAssessmentArgs {
+  action?: "save" | "complete";
+  id?: string;
+  lesson_materials?: EntityUpdateAssessmentContentArgs[];
+  student_ids?: string[];
+  student_view_items?: EntityUpdateH5PAssessmentStudentViewItem[];
+}
+
+export interface EntityUpdateH5PAssessmentStudentViewItem {
+  comment?: string;
+  lesson_materials?: EntityUpdateH5PAssessmentStudentViewMaterialItem[];
+  student_id?: string;
+}
+
+export interface EntityUpdateH5PAssessmentStudentViewMaterialItem {
+  achieved_score?: number;
+  lesson_material_id?: string;
 }
 
 export interface EntityUpdateOutcomeAttendancesArgs {
@@ -1888,58 +1893,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "DELETE",
         params,
         event
-      ),
-  };
-  contentAssessments = {
-    /**
-     * @tags contentAssessments
-     * @name listContentAssessments
-     * @summary list content assessments
-     * @request GET:/content_assessments
-     * @description list content assessments
-     */
-    listContentAssessments: (
-      query?: {
-        query?: string;
-        query_type?: "class_name" | "teacher_name";
-        status?: "in_progress" | "complete" | "all";
-        order_by?: "create_at" | "-create_at" | "complete_at" | "-complete_at";
-        page?: number;
-        page_size?: number;
-      },
-      params?: RequestParams
-    ) =>
-      this.request<EntityListContentAssessmentsResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/content_assessments${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags contentAssessments
-     * @name getContentAssessmentDetail
-     * @summary get content assessment detail
-     * @request GET:/content_assessments/{id}
-     * @description get content assessment detail
-     */
-    getContentAssessmentDetail: (id: string, params?: RequestParams) =>
-      this.request<
-        EntityGetContentAssessmentDetailResult,
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/content_assessments/${id}`, "GET", params),
-
-    /**
-     * @tags contentAssessments
-     * @name updateContentAssessment
-     * @request PUT:/content_assessments/{id}/update
-     * @description update content assessment
-     */
-    updateContentAssessment: (id: string, update_content_assessment_args: EntityUpdateContentAssessmentArgs, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/content_assessments/${id}/update`,
-        "PUT",
-        params,
-        update_content_assessment_args
       ),
   };
   contents = {
@@ -2663,6 +2616,59 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         content
+      ),
+  };
+  h5PAssessments = {
+    /**
+     * @tags h5pAssessments
+     * @name listH5PAssessments
+     * @summary list h5p assessments
+     * @request GET:/h5p_assessments
+     * @description list h5p assessments
+     */
+    listH5PAssessments: (
+      query?: {
+        type?: "study" | "class_and_live";
+        query?: string;
+        query_type?: "class_name" | "teacher_name";
+        status?: "in_progress" | "complete" | "all";
+        order_by?: "create_at" | "-create_at" | "complete_at" | "-complete_at";
+        page?: number;
+        page_size?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityListH5PAssessmentsResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/h5p_assessments${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags h5pAssessments
+     * @name getH5PAssessmentDetail
+     * @summary get h5p assessment detail
+     * @request GET:/h5p_assessments/{id}
+     * @description get h5p assessment detail
+     */
+    getH5PAssessmentDetail: (id: string, params?: RequestParams) =>
+      this.request<
+        EntityGetH5PAssessmentDetailResult,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/h5p_assessments/${id}`, "GET", params),
+
+    /**
+     * @tags h5pAssessments
+     * @name updateH5PAssessment
+     * @request PUT:/h5p_assessments/{id}/update
+     * @description update h5p assessment
+     */
+    updateH5PAssessment: (id: string, update_h5p_assessment_args: EntityUpdateH5PAssessmentArgs, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/h5p_assessments/${id}/update`,
+        "PUT",
+        params,
+        update_h5p_assessment_args
       ),
   };
   homeFunStudies = {
