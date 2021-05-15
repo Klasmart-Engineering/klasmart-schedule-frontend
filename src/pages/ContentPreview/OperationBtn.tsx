@@ -5,7 +5,6 @@ import React from "react";
 import { EntityContentInfoWithDetails, EntityContentPermission } from "../../api/api.auto";
 import { Author, ContentType, PublishStatus } from "../../api/type";
 import { LButton } from "../../components/LButton";
-import { Permission, PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -88,67 +87,79 @@ export function OperationBtn(props: ActionProps) {
           </LButton>
           // </Permission>
         )}
-      {publish_status === PublishStatus.pending && author !== Author.self && (
-        <Permission value={PermissionType.reject_pending_content_272}>
+      {publish_status === PublishStatus.pending &&
+        author !== Author.self &&
+        // <Permission value={PermissionType.reject_pending_content_272}>
+        permission?.allow_reject && (
           <LButton variant="contained" className={clsx(css.btn, css.rejectBtn)} onClick={onReject}>
             {d("Reject").t("library_label_reject")}
           </LButton>
-        </Permission>
-      )}
+          // </Permission>
+        )}
       {isMine && publish_status === PublishStatus.published && content_type === ContentType.plan && (
         <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
           {d("Edit").t("library_label_edit")}
         </LButton>
       )}
-      {!isMine && publish_status === PublishStatus.published && content_type === ContentType.plan && (
-        <PermissionOr
-          value={[
-            PermissionType.edit_org_published_content_235,
-            PermissionType.edit_lesson_plan_metadata_237,
-            PermissionType.edit_lesson_plan_content_238,
-          ]}
-        >
+      {!isMine &&
+        publish_status === PublishStatus.published &&
+        content_type === ContentType.plan &&
+        // <PermissionOr
+        //   value={[
+        //     PermissionType.edit_org_published_content_235,
+        //     PermissionType.edit_lesson_plan_metadata_237,
+        //     PermissionType.edit_lesson_plan_content_238,
+        //   ]}
+        // >
+        permission?.allow_edit && (
           <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
             {d("Edit").t("library_label_edit")}
           </LButton>
-        </PermissionOr>
-      )}
+          // </PermissionOr>
+        )}
       {isMine && publish_status === PublishStatus.published && content_type === ContentType.material && (
         <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
           {d("Edit").t("library_label_edit")}
         </LButton>
       )}
-      {!isMine && publish_status === PublishStatus.published && content_type === ContentType.material && (
-        <PermissionOr value={[PermissionType.edit_org_published_content_235, PermissionType.edit_lesson_material_metadata_and_content_236]}>
+      {!isMine &&
+        publish_status === PublishStatus.published &&
+        content_type === ContentType.material &&
+        // <PermissionOr value={[PermissionType.edit_org_published_content_235, PermissionType.edit_lesson_material_metadata_and_content_236]}>
+        permission?.allow_edit && (
           <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
             {d("Edit").t("library_label_edit")}
           </LButton>
-        </PermissionOr>
-      )}
+          // </PermissionOr>
+        )}
       {(publish_status === PublishStatus.draft || publish_status === PublishStatus.rejected) && (
         <LButton variant="contained" className={clsx(css.btn, css.editBtn)} onClick={onEdit}>
           {d("Edit").t("library_label_edit")}
         </LButton>
       )}
-      {publish_status === PublishStatus.pending && author !== Author.self && (
-        <Permission value={PermissionType.approve_pending_content_271}>
+      {publish_status === PublishStatus.pending &&
+        author !== Author.self &&
+        // <Permission value={PermissionType.approve_pending_content_271}>
+        permission?.allow_approve && (
           <LButton variant="contained" className={clsx(css.btn, css.approveBtn)} onClick={onApprove}>
             {d("Approve").t("library_label_approve")}
           </LButton>
-        </Permission>
-      )}
+          // </Permission>
+        )}
       {isMine && publish_status === PublishStatus.archive && (
         <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
           {d("Republish").t("library_label_republish")}
         </LButton>
       )}
-      {!isMine && publish_status === PublishStatus.archive && (
-        <Permission value={PermissionType.delete_archived_content_275}>
+      {!isMine &&
+        publish_status === PublishStatus.archive &&
+        // <Permission value={PermissionType.delete_archived_content_275}>
+        permission?.allow_delete && (
           <LButton variant="contained" className={clsx(css.btn, css.publistedBtn)} onClick={onPublish}>
             {d("Republish").t("library_label_republish")}
           </LButton>
-        </Permission>
-      )}
+          // </Permission>
+        )}
     </Box>
   );
 }
