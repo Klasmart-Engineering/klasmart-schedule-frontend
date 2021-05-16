@@ -130,6 +130,41 @@ export const ModelAssessment = {
     const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
     return { student_ids };
   },
+  toGetStudentViewItems(detail: DetailStudyAssessment, student_ids: UpdataStudyAssessmentRequestData["student_ids"], lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]) {
+    const { student_view_items } = detail;
+    if(student_view_items && student_view_items.length ) {
+      if(student_ids && student_ids.length) {
+        const newValues = student_view_items.filter(item => student_ids.indexOf(item.student_id as string) >= 0 )
+        if(lesson_materials && lesson_materials.length) {
+          return newValues.map(item => {
+            return {
+              comment: item.comment,
+              student_id: item.student_id,
+              student_name: item.student_name,
+              lesson_materials: lesson_materials.filter(item => item.checked)
+            }
+          })
+        } else {
+          return newValues
+        }
+      } else {
+        if(lesson_materials && lesson_materials.length) {
+          return student_view_items.map(item => {
+            return {
+              comment: item.comment,
+              student_id: item.student_id,
+              student_name: item.student_name,
+              lesson_materials: lesson_materials.filter(item => item.checked)
+            }
+          })
+        } else {
+          return student_view_items;
+        }
+      }
+    } else {
+      return [];
+    }
+  }
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;

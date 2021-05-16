@@ -504,7 +504,6 @@ export default function DetailForm(props: DetailFormProps) {
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { student_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
-  console.log(student_ids);
   const m = getValues()["lesson_materials"];
   const materials = useMemo(() => ModelAssessment.toStudyAssessment(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {

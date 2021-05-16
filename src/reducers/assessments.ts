@@ -12,8 +12,9 @@ import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
+import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { actInfo } from "./notify";
+import { actInfo, actSuccess } from "./notify";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -77,15 +78,27 @@ const initialState: IAssessmentState = {
     lesson_materials: [
       {
         checked: true,
-        comment: "material-comment-1",
-        id: "material-id-1",
-        name: "material-name-1",
-      }
+        comment: "material_comment_1",
+        id: "material_id_1",
+        name: "material_name_1",
+      },
+      {
+        checked: true,
+        comment: "material_comment_2",
+        id: "material_id_2",
+        name: "material_name_2",
+      },
+      {
+        checked: true,
+        comment: "material_comment_3",
+        id: "material_id_3",
+        name: "material_name_3",
+      },
     ],
     lesson_plan: {
       comment: "123",
       id: "plan1",
-      name: "planname---1",
+      name: "planname_1",
     },
     remaining_time: 90,
     schedule_id: "scheduleid",
@@ -97,31 +110,61 @@ const initialState: IAssessmentState = {
           {
             achieved_score: 90,
             answer: "answer",
-            lesson_material_id: "material-id-1",
-            lesson_material_name: "material-name-1",
+            lesson_material_id: "material_id_1",
+            lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
           }
         ],
-        student_id: "student1id",
-        student_name: "student1name",
+        student_id: "studentid_1",
+        student_name: "studentname_1",
+      },
+      {
+        comment: "comment comment comment",
+        lesson_materials: [
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material_id_2",
+            lesson_material_name: "material_name_2",
+            lesson_material_type: "",
+            max_score: 100,
+          }
+        ],
+        student_id: "studentid_2",
+        student_name: "studentname_2",
+      },
+      {
+        comment: "comment comment comment",
+        lesson_materials: [
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material_id_3",
+            lesson_material_name: "material_name_3",
+            lesson_material_type: "",
+            max_score: 100,
+          }
+        ],
+        student_id: "studentid_3",
+        student_name: "studentname_3",
       }
     ],
     students: [
       {
         checked: true,
-        id: "studentid---1",
-        name: "studentname---1",
+        id: "studentid_1",
+        name: "studentname_1",
       },
       {
         checked: true,
-        id: "studentid---2",
-        name: "studentname---2",
+        id: "studentid_2",
+        name: "studentname_2",
       },
       {
         checked: true,
-        id: "studentid---3",
-        name: "studentname---3",
+        id: "studentid_3",
+        name: "studentname_3",
       }
     ],
     teacher_names: ["teacher1", "teacher2", "teacher3"],
@@ -266,6 +309,30 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
     return id;
   }
 );
+
+export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
+  "assessments/completeStudyAssessment",
+  async ({ id, data}, {dispatch}) => {
+    
+
+    // const content = d("Are you sure you want to link this card to your account?").t("card_msg_link_card");
+    // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
+    // if (!isConfirmed) return Promise.reject();
+    // const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content, hideCancel: true }));
+    // const res = await api.ecards.linkECard({ password: pwd }, { onError } as ExtendedRequestParams);
+    // const msg = d("Linked successfully").t("card_msg_link_succeed");
+    // if (res === "ok") dispatch(actAsyncConfirm({ content: msg, hideCancel: true }));
+    // return res;
+    // const content = "There are still students not start their Study activities. You cannot change the assessment after clicking Complete";
+    // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
+    // if (!isConfirmed) return Promise.reject();
+    const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content }));
+    const res = await api.h5PAssessments.updateH5PAssessment(id, data, { onError } as ExtendedRequestParams);
+    // const msg = d("Linked successfully").t("card_msg_link_succeed");
+    if (res === "ok") dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+    return res;
+  }
+)
 
 const { reducer } = createSlice({
   name: "assessments",

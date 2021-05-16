@@ -114,9 +114,6 @@ const menuItemList = (list: options[]) =>
       {item.label}
     </MenuItem>
   ));
-
-const EXECT_SEARCH = "EXECT_SEARCH";
-const SEARCH_TEXT = "SEARCH_TEXT";
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
@@ -175,7 +172,6 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssessmentType, formMethods } = props;
   const { control } = formMethods;
-  const [searchText, setSearchText] = useState<StudyAssessmentQueryCondition["query"]>();
   const handleClickSearch = () => {
     // const newValue = produce(value, (draft) => {
     //   searchText ? (draft.query = searchText) : delete draft.query;

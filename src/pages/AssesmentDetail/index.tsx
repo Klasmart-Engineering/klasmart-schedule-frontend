@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
 import { UpdataStudyAssessmentRequestData } from "../../api/type";
 import { d } from "../../locale/LocaleManager";
-import { UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
+import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
-import { AsyncTrunkReturned, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
@@ -35,16 +35,25 @@ export function AssessmentDetail() {
   const { studyAssessmentDetail } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   
   const editable = true;
-  const { handleSubmit } = formMethods;
-  const handleGoBack = useCallback(() => {
+  const {
+    handleSubmit,
+    // formState: { isDirty },
+    // getValues,
+    watch,
+  } = formMethods;
+  const formValue = watch();
+  const { student_ids, lesson_materials } = formValue;
+  const student_view_items = useMemo(() => {
+    // const students_ids = getValues()["student_ids"] || [];
+    // const lesson_materials = getValues()["lesson_materials"];
+    // const { student_view_items } = studyAssessmentDetail;
+    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials)
+    return res;
+  }, [studyAssessmentDetail, student_ids, lesson_materials]);
+  console.log(student_view_items)
+  const handleGoBack = useCallback(async () => {
     history.goBack();
   }, [history]);
-  const handleDetailComplete = useMemo(
-    () => () => {
-      console.log("complete");
-    },
-    []
-  );
   const handleDetailSave = useMemo(
     () => handleSubmit(async (value) => {
       console.log(value)
@@ -62,6 +71,45 @@ export function AssessmentDetail() {
       }
     }),
   [handleSubmit, id, dispatch, history, editindex]
+  );
+  const handleDetailComplete = useMemo(
+    () =>
+      handleSubmit(async (value) => {
+        // if (id) {
+          const data: UpdataStudyAssessmentRequestData = { ...value, action: "complete" };
+          // const errorlist: EntityOutcomeAttendances[] | undefined =
+          //   data.outcome_attendances &&
+          //   data.outcome_attendances.filter(
+          //     (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
+          //   );
+          // if (data.action === "complete" && errorlist && errorlist.length > 0)
+          //   return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
+          // const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          //   AsyncTrunkReturned<typeof updateStudyAssessment>
+          // >;
+          // if (payload) {
+          //   dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+          //   history.replace({
+          //     search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+          //   });
+          // }
+
+          // const info = "You cannot change the assessment after clicking Complete";
+          // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content: info, hideCancel: true })));
+          // if(isConfirmed) {
+            debugger
+            const { payload } = ((await dispatch(completeStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+              AsyncTrunkReturned<typeof updateStudyAssessment>
+            >;
+            if (payload) {
+              history.replace({
+                search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+              });
+            }
+          // }
+        // }
+      }),
+    [handleSubmit, id, dispatch, history, editindex]
   );
   const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
     link: "",
