@@ -8,7 +8,7 @@ pipelines:
           size: 2x
           script:
             - apk update && apk add git --no-cache
-            - npm i
+            - npm ci
             - npm audit fix
             - mv deploy/config/alpha/.env.alpha ./.env.production
             - npm run build
@@ -21,7 +21,7 @@ pipelines:
                 PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
                 MESSAGE: 'Alpha build has exited with [$BUILD_STATUS] status'
           artifacts:
-            - build/**/*
+            - build/**
 
       - step:
           name: 'Build NPM Infra'
@@ -29,7 +29,7 @@ pipelines:
           size: 2x
           script:
             - apk update && apk add git --no-cache
-            - npm i
+            - npm ci
             - npm audit fix
             - mv deploy/config/sre/.env.alpha ./.env.production
             - npm run build && mv build infra
@@ -42,7 +42,7 @@ pipelines:
                 PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
                 MESSAGE: 'Infra build has exited with [$BUILD_STATUS] status'
           artifacts:
-            - infra/**/*
+            - infra/**
     
     - step:
         name: "Build Infra & Push Image"
@@ -127,7 +127,7 @@ pipelines:
         caches:
           - nodemodules
         artifacts:
-          - build/**/*
+          - build/**
 
     - step:
         name: "Build & Push Docker image"
@@ -166,3 +166,6 @@ pipelines:
         services:
           - docker
 
+definitions:
+  caches:
+    nodemodules: ./node_modules
