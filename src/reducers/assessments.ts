@@ -83,7 +83,6 @@ const initialState: IAssessmentState = {
       }
     ],
     lesson_plan: {
-      checked: true,
       comment: "123",
       id: "plan1",
       name: "planname---1",

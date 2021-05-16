@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
@@ -47,14 +46,14 @@ interface RefreshWithDispatch {
 export function AssessmentList() {
   const condition = useQuery();
   const history = useHistory();
-  const perm = usePermission([
-    PermissionType.view_completed_assessments_414,
-    PermissionType.view_in_progress_assessments_415,
-    PermissionType.view_org_completed_assessments_424,
-    PermissionType.view_org_in_progress_assessments_425,
-    PermissionType.view_school_completed_assessments_426,
-    PermissionType.view_school_in_progress_assessments_427,
-  ]);
+  // const perm = usePermission([
+  //   PermissionType.view_completed_assessments_414,
+  //   PermissionType.view_in_progress_assessments_415,
+  //   PermissionType.view_org_completed_assessments_424,
+  //   PermissionType.view_org_in_progress_assessments_425,
+  //   PermissionType.view_school_completed_assessments_426,
+  //   PermissionType.view_school_in_progress_assessments_427,
+  // ]);
   const { assessmentList, total } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });

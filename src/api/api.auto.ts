@@ -2628,10 +2628,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     listH5PAssessments: (
       query?: {
-        type?: "study" | "class_and_live";
+        type?: "study_h5p" | "class_and_live_h5p";
         query?: string;
-        query_type?: "class_name" | "teacher_name";
-        status?: "in_progress" | "complete" | "all";
+        query_type?: "all" | "class_name" | "teacher_name";
+        status?: "all" | "in_progress" | "complete";
         order_by?: "create_at" | "-create_at" | "complete_at" | "-complete_at";
         page?: number;
         page_size?: number;

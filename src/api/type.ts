@@ -193,3 +193,8 @@ export type DetailStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.ge
 
 export type UpdataStudyAssessmentRequestData = Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
 export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["student_ids"]>;
+export enum ExectSeachType {
+  all = "all",
+  class_name = "class_name",
+  teacher_name = "teacher_name"
+}

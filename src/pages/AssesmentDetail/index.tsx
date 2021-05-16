@@ -35,7 +35,7 @@ export function AssessmentDetail() {
   const { studyAssessmentDetail } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   
   const editable = true;
-  const { handleSubmit, reset, watch, setValue } = formMethods;
+  const { handleSubmit } = formMethods;
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);

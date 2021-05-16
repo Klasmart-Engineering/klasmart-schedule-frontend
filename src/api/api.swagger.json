@@ -3133,7 +3133,7 @@
         "operationId": "listH5PAssessments",
         "parameters": [
           {
-            "enum": ["study", "class_and_live"],
+            "enum": ["study_h5p", "class_and_live_h5p"],
             "type": "string",
             "description": "h5p assessment type",
             "name": "type",
@@ -3146,15 +3146,17 @@
             "in": "query"
           },
           {
-            "enum": ["class_name", "teacher_name"],
+            "enum": ["all", "class_name", "teacher_name"],
             "type": "string",
+            "default": "all",
             "description": "query type",
             "name": "query_type",
             "in": "query"
           },
           {
-            "enum": ["in_progress", "complete"],
+            "enum": ["all", "in_progress", "complete"],
             "type": "string",
+            "default": "all",
             "description": "query status",
             "name": "status",
             "in": "query"

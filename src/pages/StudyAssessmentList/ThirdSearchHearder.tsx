@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
-import { AssessmentStatus, HomeFunAssessmentOrderBy, HomeFunAssessmentStatus, StudyAssessmentOrderBy } from "../../api/type";
+import { AssessmentStatus, StudyAssessmentOrderBy } from "../../api/type";
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
@@ -144,7 +144,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                     size="small"
                     style={{ width: 200 }}
                     onChange={handleChangeStatus}
-                    value={value.status || HomeFunAssessmentStatus.all}
+                    value={value.status || AssessmentStatus.all}
                     label={d("Status").t("assess_filter_column_status")}
                     select
                     SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -161,7 +161,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
-                value={value.order_by || HomeFunAssessmentOrderBy._latest_feedback_at}
+                value={value.order_by || StudyAssessmentOrderBy._complete_at}
                 label={d("Sort By").t("assess_sort_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

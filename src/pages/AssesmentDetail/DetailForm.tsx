@@ -499,7 +499,7 @@ export default function DetailForm(props: DetailFormProps) {
   const { assessmentDetail } = props;
   const { formMethods } = props;
   // const formMethods = useForm();
-  const { control, getValues, setValue } = formMethods;
+  const { control, getValues } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));

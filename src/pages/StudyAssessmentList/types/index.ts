@@ -13,3 +13,12 @@ export type StudyAssessmentQueryConditionBaseProps = {
   onChange: StudyAssessmentQueryConditionChangeHandler;
   value: StudyAssessmentQueryCondition;
 };
+
+export enum SearchListFormKey {
+  EXECT_SEARCH = "EXECT_SEARCH",
+  SEARCH_TEXT = "SEARCH_TEXT",
+}
+export interface SearchListForm {
+  [SearchListFormKey.EXECT_SEARCH]: NonNullable<StudyAssessmentQueryCondition["query_type"]>,
+  [SearchListFormKey.SEARCH_TEXT]: NonNullable<StudyAssessmentQueryCondition["query"]>,
+}
