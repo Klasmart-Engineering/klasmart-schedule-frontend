@@ -8,7 +8,7 @@ pipelines:
           size: 2x
           script:
             - apk update && apk add git --no-cache
-            - npm ci
+            - npm i
             - npm audit fix
             - mv deploy/config/alpha/.env.alpha ./.env.production
             - npm run build
@@ -29,7 +29,7 @@ pipelines:
           size: 2x
           script:
             - apk update && apk add git --no-cache
-            - npm ci
+            - npm i
             - npm audit fix
             - mv deploy/config/sre/.env.alpha ./.env.production
             - npm run build && mv build infra
