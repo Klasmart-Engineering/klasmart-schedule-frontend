@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, ExectSeachType, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
-import { emptyTip } from "../../components/TipImages";
+import { PermissionType, usePermission } from "../../components/Permission";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { getStudyAssessmentList } from "../../reducers/assessments";
 import { AssessmentDetail } from "../AssesmentDetail";
@@ -40,6 +41,14 @@ const toQueryString = (hash: Record<string, any>): string => {
 };
 
 export function StudyAssessmentList() {
+  const perm = usePermission([
+    PermissionType.view_completed_assessments_414,
+    PermissionType.view_in_progress_assessments_415,
+    PermissionType.view_org_completed_assessments_424,
+    PermissionType.view_org_in_progress_assessments_425,
+    PermissionType.view_school_completed_assessments_426,
+    PermissionType.view_school_in_progress_assessments_427,
+  ]);
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
@@ -53,7 +62,7 @@ export function StudyAssessmentList() {
       searchText ? (draft.query = searchText) : delete draft.query;
       draft.query_type = exectSearch;
     });
-    history.push({ search: toQueryString(newValue) })
+    history.push({ search: toQueryString(newValue) });
   };
   const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
     if (assessmentType === AssessmentType.classLive) {
@@ -77,20 +86,48 @@ export function StudyAssessmentList() {
     <>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      <SecondSearchHeader value={condition} formMethods={formMethods} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
-      <SecondSearchHeaderMb value={condition} formMethods={formMethods}  onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
-      <ThirdSearchHeader value={condition} onChange={handleChange} />
-      <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
-      {studyAssessmentList && studyAssessmentList[0] ? (
-        <AssessmentTable
-          list={studyAssessmentList}
-          total={total}
-          queryCondition={condition}
-          onChangePage={handleChangePage}
-          onClickAssessment={handleClickAssessment}
-        />
+      {(perm.view_completed_assessments_414 ||
+        perm.view_in_progress_assessments_415 ||
+        perm.view_org_completed_assessments_424 ||
+        perm.view_org_in_progress_assessments_425 ||
+        perm.view_school_completed_assessments_426 ||
+        perm.view_school_in_progress_assessments_427) && (
+        <>
+          <SecondSearchHeader
+            value={condition}
+            formMethods={formMethods}
+            onChange={handleChange}
+            onChangeAssessmentType={handleChangeAssessmentType}
+          />
+          <SecondSearchHeaderMb
+            value={condition}
+            formMethods={formMethods}
+            onChange={handleChange}
+            onChangeAssessmentType={handleChangeAssessmentType}
+          />
+          <ThirdSearchHeader value={condition} onChange={handleChange} />
+          <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
+        </>
+      )}
+      {perm.view_completed_assessments_414 ||
+      perm.view_in_progress_assessments_415 ||
+      perm.view_org_completed_assessments_424 ||
+      perm.view_org_in_progress_assessments_425 ||
+      perm.view_school_completed_assessments_426 ||
+      perm.view_school_in_progress_assessments_427 ? (
+        studyAssessmentList && studyAssessmentList[0] ? (
+          <AssessmentTable
+            list={studyAssessmentList}
+            total={total}
+            queryCondition={condition}
+            onChangePage={handleChangePage}
+            onClickAssessment={handleClickAssessment}
+          />
+        ) : (
+          emptyTip
+        )
       ) : (
-        emptyTip
+        permissionTip
       )}
     </>
   );

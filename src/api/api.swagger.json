@@ -3133,7 +3133,7 @@
         "operationId": "listH5PAssessments",
         "parameters": [
           {
-            "enum": ["study_h5p", "class_and_live_h5p"],
+            "enum": ["study_h5p"],
             "type": "string",
             "description": "h5p assessment type",
             "name": "type",
@@ -9107,10 +9107,10 @@
             "$ref": "#/definitions/entity.AssessmentStudent"
           }
         },
-        "teacher_names": {
+        "teachers": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.AssessmentTeacher"
           }
         },
         "title": {
@@ -9228,7 +9228,27 @@
         }
       }
     },
-    "entity.H5PAssessmentStudentViewContentItem": {
+    "entity.H5PAssessmentStudentViewItem": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.H5PAssessmentStudentViewLessonMaterial"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.H5PAssessmentStudentViewLessonMaterial": {
       "type": "object",
       "properties": {
         "achieved_score": {
@@ -9236,9 +9256,6 @@
         },
         "answer": {
           "type": "string"
-        },
-        "checked": {
-          "type": "boolean"
         },
         "lesson_material_id": {
           "type": "string"
@@ -9251,26 +9268,9 @@
         },
         "max_score": {
           "type": "number"
-        }
-      }
-    },
-    "entity.H5PAssessmentStudentViewItem": {
-      "type": "object",
-      "properties": {
-        "comment": {
-          "type": "string"
         },
-        "lesson_materials": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.H5PAssessmentStudentViewContentItem"
-          }
-        },
-        "student_id": {
-          "type": "string"
-        },
-        "student_name": {
-          "type": "string"
+        "score_count": {
+          "type": "integer"
         }
       }
     },

@@ -634,7 +634,7 @@ export interface EntityGetH5PAssessmentDetailResult {
   status?: string;
   student_view_items?: EntityH5PAssessmentStudentViewItem[];
   students?: EntityAssessmentStudent[];
-  teacher_names?: string[];
+  teachers?: EntityAssessmentTeacher[];
   title?: string;
 }
 
@@ -676,21 +676,21 @@ export interface EntityH5PAssessmentLessonPlan {
   name?: string;
 }
 
-export interface EntityH5PAssessmentStudentViewContentItem {
+export interface EntityH5PAssessmentStudentViewItem {
+  comment?: string;
+  lesson_materials?: EntityH5PAssessmentStudentViewLessonMaterial[];
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface EntityH5PAssessmentStudentViewLessonMaterial {
   achieved_score?: number;
   answer?: string;
-  checked?: boolean;
   lesson_material_id?: string;
   lesson_material_name?: string;
   lesson_material_type?: string;
   max_score?: number;
-}
-
-export interface EntityH5PAssessmentStudentViewItem {
-  comment?: string;
-  lesson_materials?: EntityH5PAssessmentStudentViewContentItem[];
-  student_id?: string;
-  student_name?: string;
+  score_count?: number;
 }
 
 export interface EntityLessonType {
@@ -2628,7 +2628,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     listH5PAssessments: (
       query?: {
-        type?: "study_h5p" | "class_and_live_h5p";
+        type?: "study_h5p";
         query?: string;
         query_type?: "all" | "class_name" | "teacher_name";
         status?: "all" | "in_progress" | "complete";

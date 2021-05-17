@@ -179,6 +179,27 @@ export const ModelAssessment = {
       return [];
     }
   },
+  toUpdateH5pStudentView(
+    student_view_items: DetailStudyAssessment["student_view_items"]
+  ): UpdataStudyAssessmentRequestData["student_view_items"] {
+    return student_view_items && student_view_items.length
+      ? student_view_items.map((item) => {
+          return {
+            comment: item.comment,
+            student_id: item.student_id,
+            lesson_materials:
+              item.lesson_materials && item.lesson_materials.length
+                ? item.lesson_materials.map((v) => {
+                    return {
+                      achieved_score: v.achieved_score,
+                      lesson_material_id: v.lesson_material_id,
+                    };
+                  })
+                : [],
+          };
+        })
+      : [];
+  },
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;

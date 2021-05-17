@@ -1,5 +1,5 @@
 import { cloneDeep } from "@apollo/client/utilities";
-import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import {
@@ -14,7 +14,7 @@ import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { actInfo, actSuccess } from "./notify";
+import { actInfo } from "./notify";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -100,7 +100,7 @@ const initialState: IAssessmentState = {
       id: "plan1",
       name: "planname_1",
     },
-    remaining_time: 90,
+    remaining_time: 0,
     schedule_id: "scheduleid",
     status: "in_progress",
     student_view_items: [
@@ -114,6 +114,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 1,
           },
           {
             achieved_score: 90,
@@ -122,6 +123,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 0,
           },
           {
             achieved_score: 90,
@@ -130,6 +132,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 2,
           },
         ],
         student_id: "studentid_1",
@@ -145,6 +148,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 3,
           },
           {
             achieved_score: 90,
@@ -153,6 +157,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 2,
           },
           {
             achieved_score: 90,
@@ -161,6 +166,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 1,
           },
         ],
         student_id: "studentid_2",
@@ -176,6 +182,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 1,
           },
           {
             achieved_score: 90,
@@ -184,6 +191,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 2,
           },
           {
             achieved_score: 90,
@@ -192,6 +200,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
+            score_count: 3,
           },
         ],
         student_id: "studentid_3",
@@ -215,9 +224,14 @@ const initialState: IAssessmentState = {
         name: "studentname_3",
       },
     ],
-    teacher_names: ["teacher1", "teacher2", "teacher3"],
+    teachers: [
+      { id: "teacherid_1", name: "teachername_1" },
+      { id: "teacherid_2", name: "teachername_2" },
+      { id: "teacherid_3", name: "teachername_3" },
+    ],
     title: "study assessment detail",
   },
+  my_id: "teacherid_1",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -335,19 +349,31 @@ export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentList
     return { items, total };
   }
 );
-
-type IQueryStudyAssessmentDetailResult = AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+type IQueryStudyAssessmentDetailResult = {
+  detail: AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+  my_id: string;
+};
 export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
   "assessments/getStudyAssessmentDetail",
   async ({ id }) => {
-    const studyAssessmentDetail = await api.h5PAssessments.getH5PAssessmentDetail(id);
-    return studyAssessmentDetail;
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const my_id = meInfo.me?.user_id || "";
+    const detail = await api.h5PAssessments.getH5PAssessmentDetail(id);
+    return { detail, my_id };
   }
 );
 
 type IQueryUpdateStudyAssessmentParams = {
   id: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[0];
   data: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
+  student_view_items?: IQueryStudyAssessmentDetailResult["detail"]["student_view_items"];
 };
 
 export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
@@ -360,7 +386,7 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
 
 export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/completeStudyAssessment",
-  async ({ id, data }, { dispatch }) => {
+  async ({ id, data, student_view_items }, { dispatch }) => {
     // const content = d("Are you sure you want to link this card to your account?").t("card_msg_link_card");
     // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     // if (!isConfirmed) return Promise.reject();
@@ -372,10 +398,21 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
     // const content = "There are still students not start their Study activities. You cannot change the assessment after clicking Complete";
     // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     // if (!isConfirmed) return Promise.reject();
-    const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content }));
-    const res = await api.h5PAssessments.updateH5PAssessment(id, data, { onError } as ExtendedRequestParams);
-    // const msg = d("Linked successfully").t("card_msg_link_succeed");
-    if (res === "ok") dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+    const item =
+      student_view_items && student_view_items.length
+        ? student_view_items.find((item) => item.lesson_materials?.find((m) => m.score_count === 0))
+        : undefined;
+    if (!item) {
+      const content = "You cannot change the assessment after clicking Complete";
+      const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
+      if (!isConfirmed) return Promise.reject();
+      const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+      return res;
+    }
+    const content = "There are still students not start their Study activities. You cannot change the assessment after clicking Complete";
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
+    if (!isConfirmed) return Promise.reject();
+    const res = await api.h5PAssessments.updateH5PAssessment(id, data);
     return res;
   }
 );
@@ -448,7 +485,8 @@ const { reducer } = createSlice({
       state.total = 0;
     },
     [getStudyAssessmentDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
-      state.studyAssessmentDetail = payload;
+      state.studyAssessmentDetail = payload.detail;
+      state.my_id = payload.my_id;
     },
     [getStudyAssessmentDetail.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
       state.studyAssessmentDetail = initialState.studyAssessmentDetail;
