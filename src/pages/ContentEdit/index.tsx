@@ -319,20 +319,23 @@ function ContentEditForm() {
           PermissionType.create_lesson_plan_221,
           PermissionType.create_lesson_material_220,
         ]}
-        render={(value) => (
-          <Details
-            allDefaultValueAndKey={allDefaultValueAndKey}
-            contentDetail={contentDetail}
-            formMethods={formMethods}
-            linkedMockOptions={linkedMockOptions}
-            visibility_settings={visibility_settings}
-            lesson_types={lesson_types}
-            onChangeProgram={handleChangeProgram}
-            onChangeDevelopmental={handleChangeDevelopmental}
-            onChangeSubject={handleChangeSubject}
-            permission={id ? !!contentDetail.permission.allow_edit : !value}
-          />
-        )}
+        render={(value) => {
+          console.log("id ? !!contentDetail.permission.allow_edit : !value =", value, id ? !!contentDetail.permission.allow_edit : value);
+          return (
+            <Details
+              allDefaultValueAndKey={allDefaultValueAndKey}
+              contentDetail={contentDetail}
+              formMethods={formMethods}
+              linkedMockOptions={linkedMockOptions}
+              visibility_settings={visibility_settings}
+              lesson_types={lesson_types}
+              onChangeProgram={handleChangeProgram}
+              onChangeDevelopmental={handleChangeDevelopmental}
+              onChangeSubject={handleChangeSubject}
+              disabled={id ? !contentDetail.permission.allow_edit : !value}
+            />
+          );
+        }}
       />
       <Controller
         as={Outcomes}
@@ -367,7 +370,7 @@ function ContentEditForm() {
             total={mediaListTotal}
             mediaPage={mediaPage}
             isShare={isShare}
-            permission={id ? !!contentDetail.permission.allow_edit : !value}
+            permission={id ? !!contentDetail.permission.allow_edit : value}
           />
         )}
       />
@@ -428,7 +431,7 @@ function ContentEditForm() {
                               readonly={false}
                               overlay={false}
                               contentDetail={contentDetail}
-                              permission={id ? !!contentDetail.permission.allow_edit : !value}
+                              disabled={id ? !contentDetail.permission.allow_edit : !value}
                             />
                           }
                         />
@@ -476,7 +479,7 @@ function ContentEditForm() {
                               readonly={false}
                               overlay={false}
                               contentDetail={contentDetail}
-                              permission={!value}
+                              disabled={id ? !contentDetail.permission.allow_edit : !value}
                             />
                           )
                         }
@@ -545,7 +548,7 @@ function ContentEditForm() {
           PermissionType.edit_lesson_plan_metadata_237,
         ]}
         render={(value) =>
-          (id ? !!contentDetail.permission.allow_edit : !value) ? (
+          (id ? !!contentDetail.permission.allow_edit : value) ? (
             <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
               {
                 <Fragment>
