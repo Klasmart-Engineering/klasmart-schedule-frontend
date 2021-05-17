@@ -130,7 +130,11 @@ export function AssessmentDetail() {
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <DetailForm assessmentDetail={studyAssessmentDetail} formMethods={formMethods} />
-        <DetailTable handleElasticLayerControl={handleElasticLayerControl} />
+        <DetailTable
+          handleElasticLayerControl={handleElasticLayerControl}
+          studentViewItems={student_view_items}
+          formMethods={formMethods}
+        />
       </LayoutPair>
       <ResourcesView elasticLayerControlData={elasticLayerControlData} handleElasticLayerControl={handleElasticLayerControl} />
     </>

@@ -15,6 +15,9 @@ import Input from "@material-ui/core/Input";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import CheckIcon from "@material-ui/icons/Check";
 import { ElasticLayerControl } from "./types";
+import { EntityH5PAssessmentStudentViewItem } from "../../api/api.auto";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 
 const useStyles = makeStyles({
   table: {
@@ -30,7 +33,6 @@ const useStyles = makeStyles({
     },
     "& div": {
       display: "flex",
-      width: "260px",
       justifyContent: "space-between",
       alignItems: "center",
       "& a": {
@@ -41,121 +43,175 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(name: string, calories: string, fat: string, carbs: number, protein: number, score: number, percent: string) {
-  return { name, calories, fat, carbs, protein, score, percent };
+interface BasicTableProps extends tableProps {
+  studentViewItem: EntityH5PAssessmentStudentViewItem;
+  index: number;
 }
 
-const rows = [
-  createData("1", "Every Living Things", "Video", 24, 4.0, 3.5, "35%"),
-  createData("2", "Animal Names", "Video Recording", 37, 4.3, 4.5, "35%"),
-  createData("3", "Living Animals", "Drag and Drop", 24, 6.0, 6.5, "35%"),
-  createData("4", "Animal Body Parts", "Multiple Choice", 67, 4.3, 5.5, "35%"),
-  createData("5", "Animal Care", "Essay", 49, 3.9, 6.5, "35%"),
-];
-
-function BasicTable(props: tableProps) {
+function BasicTable(props: BasicTableProps) {
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
   const [editScore, setEditScore] = React.useState(false);
-  const { handleElasticLayerControl } = props;
+  const {
+    handleElasticLayerControl,
+    studentViewItem,
+    formMethods: { control, setValue, getValues },
+    index,
+  } = props;
+  /*  const funSetValue = useMemo(
+    () => (name: string, value: boolean | string[]) => {
+      setValue(`outcome_attendances[${index}].${name}`, value);
+    },
+    [index, setValue]
+  );*/
+
+  const handleChangeComment = (commentText: string) => {
+    const attendance_ids = getValues() as {
+      student_ids: string[];
+      outcome_attendances: { attendance_ids: EntityH5PAssessmentStudentViewItem }[];
+    };
+    setValue(`outcome_attendances[${index}].attendance_ids`, {
+      ...attendance_ids.outcome_attendances[index].attendance_ids,
+      comment: commentText,
+    });
+    handleElasticLayerControl({ link: "", openStatus: false, type: "" });
+  };
+
+  /*  const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
+    funSetValue(name, e.target.checked);
+
+    if (e.target.checked) {
+      if (name === "skip") {
+        funSetValue("none_achieved", false);
+      }
+      funSetValue("attendance_ids", []);
+    }
+  };*/
   return (
-    <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
-      <Box
-        className={classes.tableBar}
-        style={{ backgroundColor: checked ? "#F2F5F7" : "white" }}
-        onClick={() => {
-          setChecked(!checked);
-        }}
-      >
-        <div style={{ color: checked ? "black" : "#666666" }}>
-          <AccountCircleIcon />
-          <span>小学生</span>
-          <a href="https://www.baidu.com" style={{ visibility: checked ? "visible" : "hidden" }}>
-            Click to add a comment
-          </a>
-        </div>
-        {checked && <ArrowDropUpIcon />}
-        {!checked && <ArrowDropDownIcon />}
-      </Box>
-      <Collapse in={checked}>
-        <Paper elevation={4}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>No.</TableCell>
-                <TableCell align="center">Lesson Material Name</TableCell>
-                <TableCell align="center">Lesson Material Type</TableCell>
-                <TableCell align="center">Answer</TableCell>
-                <TableCell align="center">Maximum Possible Score</TableCell>
-                <TableCell align="center">Achieved Score</TableCell>
-                <TableCell align="center">Percentage</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="center">{row.calories}</TableCell>
-                  <TableCell align="center">{row.fat}</TableCell>
-                  <TableCell align="center">
-                    <p
-                      style={{ color: "#006CCF", cursor: "pointer" }}
-                      onClick={() => {
-                        handleElasticLayerControl({ link: "", openStatus: true, type: "" });
-                      }}
-                    >
-                      Click to view
-                    </p>
-                  </TableCell>
-                  <TableCell align="center">{row.protein}</TableCell>
-                  <TableCell align="center">
-                    {!editScore && (
-                      <>
-                        {row.score}{" "}
-                        <BorderColorIcon
+    <Controller
+      name={`outcome_attendances[${index}].attendance_ids`}
+      control={control}
+      defaultValue={studentViewItem || []}
+      render={({ ref, ...props }) => (
+        <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
+          <Box
+            className={classes.tableBar}
+            style={{ backgroundColor: checked ? "#F2F5F7" : "white" }}
+            onClick={() => {
+              setChecked(!checked);
+            }}
+          >
+            <div style={{ color: checked ? "black" : "#666666" }}>
+              <AccountCircleIcon />
+              <span style={{ padding: "0 18px 0 18px" }}>{studentViewItem.student_name}</span>
+              <p
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleElasticLayerControl({
+                    link: "",
+                    openStatus: true,
+                    type: "AddComment",
+                    contentText: studentViewItem.comment,
+                    handleChangeComment: handleChangeComment,
+                  });
+                }}
+                style={{ visibility: checked ? "visible" : "hidden" }}
+              >
+                Click to add a comment
+              </p>
+            </div>
+            {checked && <ArrowDropUpIcon />}
+            {!checked && <ArrowDropDownIcon />}
+          </Box>
+          <Collapse in={checked}>
+            <Paper elevation={4}>
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>No.</TableCell>
+                    <TableCell align="center">Lesson Material Name</TableCell>
+                    <TableCell align="center">Lesson Material Type</TableCell>
+                    <TableCell align="center">Answer</TableCell>
+                    <TableCell align="center">Maximum Possible Score</TableCell>
+                    <TableCell align="center">Achieved Score</TableCell>
+                    <TableCell align="center">Percentage</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {studentViewItem?.lesson_materials?.map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {index + 1}
+                      </TableCell>
+                      <TableCell align="center">{row.lesson_material_name}</TableCell>
+                      <TableCell align="center">{row.lesson_material_type}</TableCell>
+                      <TableCell align="center">
+                        <p
+                          style={{ color: "#006CCF", cursor: "pointer" }}
                           onClick={() => {
-                            setEditScore(true);
+                            handleElasticLayerControl({ link: "", openStatus: true, type: "" });
                           }}
-                          style={{ fontSize: "13px", marginLeft: "8px", cursor: "pointer", color: "#006CCF" }}
-                        />
-                      </>
-                    )}
-                    {editScore && (
-                      <>
-                        <Input value={row.score} style={{ width: "10%" }} />
-                        <CheckIcon
-                          onClick={() => {
-                            setEditScore(false);
-                          }}
-                          style={{ fontSize: "15px", marginLeft: "10px", cursor: "pointer" }}
-                        />
-                      </>
-                    )}
-                  </TableCell>
-                  <TableCell align="center">{row.percent}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </Collapse>
-    </TableContainer>
+                        >
+                          Click to view
+                        </p>
+                      </TableCell>
+                      <TableCell align="center">{row.max_score}</TableCell>
+                      <TableCell align="center">
+                        {!editScore && (
+                          <>
+                            {row.achieved_score}{" "}
+                            <BorderColorIcon
+                              onClick={() => {
+                                setEditScore(true);
+                              }}
+                              style={{ fontSize: "13px", marginLeft: "8px", cursor: "pointer", color: "#006CCF" }}
+                            />
+                          </>
+                        )}
+                        {editScore && (
+                          <>
+                            <Input value={row.achieved_score} style={{ width: "10%" }} />
+                            <CheckIcon
+                              onClick={() => {
+                                setEditScore(false);
+                              }}
+                              style={{ fontSize: "15px", marginLeft: "10px", cursor: "pointer" }}
+                            />
+                          </>
+                        )}
+                      </TableCell>
+                      <TableCell align="center">{(row?.achieved_score! / row?.max_score!) * 100 + "%"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          </Collapse>
+        </TableContainer>
+      )}
+    />
   );
 }
 
 interface tableProps {
   handleElasticLayerControl: (elasticLayerControlData: ElasticLayerControl) => void;
+  studentViewItems?: EntityH5PAssessmentStudentViewItem[];
+  formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
 }
 
 export function DetailTable(props: tableProps) {
-  const mock = [1, 2, 3, 4, 5, 6, 7, 8];
-  const { handleElasticLayerControl } = props;
+  const { handleElasticLayerControl, studentViewItems, formMethods } = props;
   return (
     <>
-      {mock.map((value) => {
-        return <BasicTable handleElasticLayerControl={handleElasticLayerControl} />;
+      {studentViewItems?.map((item: EntityH5PAssessmentStudentViewItem, index: number) => {
+        return (
+          <BasicTable
+            handleElasticLayerControl={handleElasticLayerControl}
+            studentViewItem={item}
+            formMethods={formMethods}
+            index={index}
+          />
+        );
       })}
     </>
   );

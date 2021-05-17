@@ -3,10 +3,10 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import { ElasticLayerControl } from "./types";
 import { Box } from "@material-ui/core";
-/*import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import BorderColorIcon from "@material-ui/icons/BorderColor";*/
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import BorderColorIcon from "@material-ui/icons/BorderColor";
 import CloseIcon from "@material-ui/icons/Close";
 
 function getModalStyle() {
@@ -72,56 +72,96 @@ interface NoticeProps extends elasticLayerControlProps {
   contentText: string;
 }
 
-/*function NoticeTemplate(props: NoticeProps) {
-  const {contentText, handleElasticLayerControl} = props;
+function NoticeTemplate(props: NoticeProps) {
+  const { contentText, handleElasticLayerControl } = props;
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
   return (
     <Box style={modalStyle} className={classes.paper}>
-      <p style={{lineHeight: "28px", color: "#666666"}}>{contentText}</p>
-      <span style={{display: "flex", justifyContent: "flex-end"}}>
-        <Button color="primary" onClick={()=>{handleElasticLayerControl({ link: "", openStatus: false, type: "" })}}>Cancel</Button>
-        <Button color="primary" onClick={()=>{handleElasticLayerControl({ link: "", openStatus: false, type: "" })}}>OK</Button>
+      <p style={{ lineHeight: "28px", color: "#666666" }}>{contentText}</p>
+      <span style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          color="primary"
+          onClick={() => {
+            handleElasticLayerControl({ link: "", openStatus: false, type: "" });
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          color="primary"
+          onClick={() => {
+            handleElasticLayerControl({ link: "", openStatus: false, type: "" });
+          }}
+        >
+          OK
+        </Button>
       </span>
     </Box>
-  )
-}*/
+  );
+}
 
-/*interface CommentsProps extends elasticLayerControlProps{
-  commentText: string
-}*/
-/*function CommentsTemplate(props: CommentsProps) {
-  const {commentText, handleElasticLayerControl} = props
+interface CommentsProps extends elasticLayerControlProps {
+  contentText: string;
+}
+function CommentsTemplate(props: CommentsProps) {
+  const { handleElasticLayerControl, elasticLayerControlData } = props;
+  const [commentText, setCommentText] = React.useState(elasticLayerControlData?.contentText);
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
+  console.log(elasticLayerControlData?.contentText, 8888);
+  const handleChangeComment = elasticLayerControlData?.handleChangeComment!;
   return (
     <Box style={modalStyle} className={classes.commentBox}>
       <h3>Add comments</h3>
-      <div style={{padding: "16px"}}>
+      <div style={{ padding: "16px" }}>
         <TextField
           id="filled-multiline-flexible"
-          style={{width: "100%"}}
+          style={{ width: "100%" }}
           multiline
           rows={8}
           variant="outlined"
           placeholder=" Leave a message to your student!"
           InputProps={{
-            startAdornment: <InputAdornment position="start"><BorderColorIcon style={{ fontSize: "15px", position: "absolute", top: "20px", left: "5px" }} /></InputAdornment>,
+            startAdornment: (
+              <InputAdornment position="start">
+                <BorderColorIcon style={{ fontSize: "15px", position: "absolute", top: "20px", left: "5px" }} />
+              </InputAdornment>
+            ),
           }}
+          value={commentText}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCommentText(e.target.value)}
         />
       </div>
-      <span style={{display: "flex", justifyContent: "flex-end"}}>
-        <Button style={{marginRight: "16px"}} variant="outlined" color="primary" onClick={()=>{handleElasticLayerControl({ link: "", openStatus: false, type: "" })}}>Cancel</Button>
-        <Button style={{marginRight: "16px"}} variant="contained" color="primary" onClick={()=>{handleElasticLayerControl({ link: "", openStatus: false, type: "" })}}>OK</Button>
+      <span style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          style={{ marginRight: "16px" }}
+          variant="outlined"
+          color="primary"
+          onClick={() => {
+            handleElasticLayerControl({ link: "", openStatus: false, type: "" });
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          style={{ marginRight: "16px" }}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            handleChangeComment(commentText!);
+          }}
+        >
+          OK
+        </Button>
       </span>
     </Box>
-  )
-}*/
+  );
+}
 
 function DetailedViewTemplate(props: NoticeProps) {
-  //const {contentText, handleElasticLayerControl} = props
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
@@ -149,10 +189,44 @@ export default function ResourcesView(props: elasticLayerControlProps) {
   };
 
   const body = (
-    <DetailedViewTemplate
-      contentText={"There are still students not start their Study activities. You cannot change the assessment after clicking Complete."}
-      handleElasticLayerControl={handleElasticLayerControl}
-    />
+    <>
+      {elasticLayerControlData?.type === "ViewComment" && (
+        <CommentsTemplate
+          contentText={
+            "There are still students not start their Study activities. You cannot change the assessment after clicking Complete."
+          }
+          handleElasticLayerControl={handleElasticLayerControl}
+          elasticLayerControlData={elasticLayerControlData}
+        />
+      )}
+      {elasticLayerControlData?.type === "AddComment" && (
+        <CommentsTemplate
+          contentText={
+            "There are still students not start their Study activities. You cannot change the assessment after clicking Complete."
+          }
+          handleElasticLayerControl={handleElasticLayerControl}
+          elasticLayerControlData={elasticLayerControlData}
+        />
+      )}
+      {elasticLayerControlData?.type === "DetailView" && (
+        <DetailedViewTemplate
+          contentText={
+            "There are still students not start their Study activities. You cannot change the assessment after clicking Complete."
+          }
+          handleElasticLayerControl={handleElasticLayerControl}
+          elasticLayerControlData={elasticLayerControlData}
+        />
+      )}
+      {elasticLayerControlData?.type === "Notice" && (
+        <NoticeTemplate
+          contentText={
+            "There are still students not start their Study activities. You cannot change the assessment after clicking Complete."
+          }
+          handleElasticLayerControl={handleElasticLayerControl}
+          elasticLayerControlData={elasticLayerControlData}
+        />
+      )}
+    </>
   );
 
   return (
