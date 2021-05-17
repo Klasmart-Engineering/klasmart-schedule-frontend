@@ -718,7 +718,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
         query: ClassesTeachingQueryDocument,
         variables: {
-          user_id: newteacher_ids,
+          user_id: my_id,
           organization_id,
         },
       });
@@ -791,11 +791,6 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
               const newTeacherList = classItem?.teachers
                 ?.map((teacherItem) => {
-                  // const isThisOrg =
-                  //   teacherItem?.school_memberships?.some(
-                  //     (schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id
-                  //   ) || false;
-                  // return teacherItem?.school_memberships?.length === 0 || !isThisOrg ? teacherItem : { user_id: "", user_name: "" };
                   return teacherItem;
                 })
                 .filter((item) => item?.user_id !== "");
@@ -835,7 +830,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
             query: ClassesTeachingQueryDocument,
             variables: {
-              user_id: newteacher_ids,
+              user_id: my_id,
               organization_id,
             },
           });
