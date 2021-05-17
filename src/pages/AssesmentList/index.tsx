@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
-import { emptyTip } from "../../components/TipImages";
+import { PermissionType, usePermission } from "../../components/Permission";
+import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";
@@ -46,14 +47,14 @@ interface RefreshWithDispatch {
 export function AssessmentList() {
   const condition = useQuery();
   const history = useHistory();
-  // const perm = usePermission([
-  //   PermissionType.view_completed_assessments_414,
-  //   PermissionType.view_in_progress_assessments_415,
-  //   PermissionType.view_org_completed_assessments_424,
-  //   PermissionType.view_org_in_progress_assessments_425,
-  //   PermissionType.view_school_completed_assessments_426,
-  //   PermissionType.view_school_in_progress_assessments_427,
-  // ]);
+  const perm = usePermission([
+    PermissionType.view_completed_assessments_414,
+    PermissionType.view_in_progress_assessments_415,
+    PermissionType.view_org_completed_assessments_424,
+    PermissionType.view_org_in_progress_assessments_425,
+    PermissionType.view_school_completed_assessments_426,
+    PermissionType.view_school_in_progress_assessments_427,
+  ]);
   const { assessmentList, total } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
@@ -69,7 +70,7 @@ export function AssessmentList() {
       history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
     }
     if (assessmentType === AssessmentType.study) {
-      history.push(`/assessment/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
+      history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
     }
   };
   useEffect(() => {
@@ -80,26 +81,26 @@ export function AssessmentList() {
     <div>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      {/* {(perm.view_completed_assessments_414 ||
+      {(perm.view_completed_assessments_414 ||
         perm.view_in_progress_assessments_415 ||
         perm.view_org_completed_assessments_424 ||
         perm.view_org_in_progress_assessments_425 ||
         perm.view_school_completed_assessments_426 ||
-        perm.view_school_in_progress_assessments_427) && ( */}
+        perm.view_school_in_progress_assessments_427) && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
           <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
           <ThirdSearchHeader value={condition} onChange={handleChange} />
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
         </>
-      {/* )} */}
-      {/* {perm.view_completed_assessments_414 ||
+      )}
+      {perm.view_completed_assessments_414 ||
       perm.view_in_progress_assessments_415 ||
       perm.view_org_completed_assessments_424 ||
       perm.view_org_in_progress_assessments_425 ||
       perm.view_school_completed_assessments_426 ||
-      perm.view_school_in_progress_assessments_427 ? ( */}
-        {assessmentList && assessmentList.length > 0 ? (
+      perm.view_school_in_progress_assessments_427 ? (
+        assessmentList && assessmentList.length > 0 ? (
           <AssessmentTable
             list={assessmentList}
             total={total}
@@ -109,10 +110,10 @@ export function AssessmentList() {
           />
         ) : (
           emptyTip
-        )}
-      {/* ) : (
+        )
+      ) : (
         permissionTip
-      )} */}
+      )}
     </div>
   );
 }

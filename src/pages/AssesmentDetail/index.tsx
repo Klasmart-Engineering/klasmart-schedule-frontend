@@ -17,7 +17,6 @@ import { DetailTable } from "./DetailTable";
 import ResourcesView from "./ResourcesView";
 import { ElasticLayerControl } from "./types";
 
-
 export const useQueryDetail = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
@@ -28,12 +27,12 @@ export const useQueryDetail = () => {
 };
 
 export function AssessmentDetail() {
-  const { id, editindex} = useQueryDetail();
+  const { id, editindex } = useQueryDetail();
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
   const { studyAssessmentDetail } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
-  
+
   const editable = true;
   const {
     handleSubmit,
@@ -44,69 +43,67 @@ export function AssessmentDetail() {
   const formValue = watch();
   const { student_ids, lesson_materials } = formValue;
   const student_view_items = useMemo(() => {
-    // const students_ids = getValues()["student_ids"] || [];
-    // const lesson_materials = getValues()["lesson_materials"];
-    // const { student_view_items } = studyAssessmentDetail;
-    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials)
+    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
     return res;
   }, [studyAssessmentDetail, student_ids, lesson_materials]);
-  console.log(student_view_items)
+  console.log(student_view_items);
   const handleGoBack = useCallback(async () => {
     history.goBack();
   }, [history]);
   const handleDetailSave = useMemo(
-    () => handleSubmit(async (value) => {
-      console.log(value)
-      if (id) {
-        const data: UpdataStudyAssessmentRequestData = { ...value, action: "save" };
-        const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof updateStudyAssessment>
-        >;
-        if (payload) {
-          dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
-          history.replace({
-            search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-          });
+    () =>
+      handleSubmit(async (value) => {
+        console.log(value);
+        if (id) {
+          const data: UpdataStudyAssessmentRequestData = { ...value, action: "save" };
+          const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof updateStudyAssessment>
+          >;
+          if (payload) {
+            dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
+            history.replace({
+              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+            });
+          }
         }
-      }
-    }),
-  [handleSubmit, id, dispatch, history, editindex]
+      }),
+    [handleSubmit, id, dispatch, history, editindex]
   );
   const handleDetailComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
         // if (id) {
-          const data: UpdataStudyAssessmentRequestData = { ...value, action: "complete" };
-          // const errorlist: EntityOutcomeAttendances[] | undefined =
-          //   data.outcome_attendances &&
-          //   data.outcome_attendances.filter(
-          //     (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
-          //   );
-          // if (data.action === "complete" && errorlist && errorlist.length > 0)
-          //   return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-          // const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
-          //   AsyncTrunkReturned<typeof updateStudyAssessment>
-          // >;
-          // if (payload) {
-          //   dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
-          //   history.replace({
-          //     search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-          //   });
-          // }
+        const data: UpdataStudyAssessmentRequestData = { ...value, action: "complete" };
+        // const errorlist: EntityOutcomeAttendances[] | undefined =
+        //   data.outcome_attendances &&
+        //   data.outcome_attendances.filter(
+        //     (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
+        //   );
+        // if (data.action === "complete" && errorlist && errorlist.length > 0)
+        //   return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
+        // const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+        //   AsyncTrunkReturned<typeof updateStudyAssessment>
+        // >;
+        // if (payload) {
+        //   dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+        //   history.replace({
+        //     search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+        //   });
+        // }
 
-          // const info = "You cannot change the assessment after clicking Complete";
-          // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content: info, hideCancel: true })));
-          // if(isConfirmed) {
-            debugger
-            const { payload } = ((await dispatch(completeStudyAssessment({ id, data }))) as unknown) as PayloadAction<
-              AsyncTrunkReturned<typeof updateStudyAssessment>
-            >;
-            if (payload) {
-              history.replace({
-                search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-              });
-            }
-          // }
+        // const info = "You cannot change the assessment after clicking Complete";
+        // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content: info, hideCancel: true })));
+        // if(isConfirmed) {
+        debugger;
+        const { payload } = ((await dispatch(completeStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          AsyncTrunkReturned<typeof updateStudyAssessment>
+        >;
+        if (payload) {
+          history.replace({
+            search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+          });
+        }
+        // }
         // }
       }),
     [handleSubmit, id, dispatch, history, editindex]

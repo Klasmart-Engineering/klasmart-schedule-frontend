@@ -2,10 +2,9 @@ import { cloneDeep } from "lodash";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
-
-
-  UpdataStudyAssessmentRequestData, UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials
+  UpdataStudyAssessmentRequestData,
+  UpdateAssessmentRequestData,
+  UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
 
 interface ObjContainId {
@@ -60,19 +59,22 @@ export const ModelAssessment = {
         : draft.materials;
     return materials;
   },
-  toStudyAssessment(detail: DetailStudyAssessment, dMaterials: DetailStudyAssessment["lesson_materials"]): DetailStudyAssessment["lesson_materials"] {
+  toStudyAssessment(
+    detail: DetailStudyAssessment,
+    dMaterials: DetailStudyAssessment["lesson_materials"]
+  ): DetailStudyAssessment["lesson_materials"] {
     const draft = cloneDeep(detail);
     const materials =
-    dMaterials && dMaterials[0] && draft.lesson_materials && draft.lesson_materials[0]
-    ? draft.lesson_materials.map((item, index) => {
-        return {
-          checked: dMaterials[index].checked,
-          comment: dMaterials[index].comment,
-          id: item.id,
-          name: item.name,
-        };
-      })
-    : draft.lesson_materials;
+      dMaterials && dMaterials[0] && draft.lesson_materials && draft.lesson_materials[0]
+        ? draft.lesson_materials.map((item, index) => {
+            return {
+              checked: dMaterials[index].checked,
+              comment: dMaterials[index].comment,
+              id: item.id,
+              name: item.name,
+            };
+          })
+        : draft.lesson_materials;
     return materials;
   },
   toMaterial(
@@ -130,33 +132,45 @@ export const ModelAssessment = {
     const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
     return { student_ids };
   },
-  toGetStudentViewItems(detail: DetailStudyAssessment, student_ids: UpdataStudyAssessmentRequestData["student_ids"], lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]) {
+  toGetStudentViewItems(
+    detail: DetailStudyAssessment,
+    student_ids: UpdataStudyAssessmentRequestData["student_ids"],
+    lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]
+  ) {
     const { student_view_items } = detail;
-    if(student_view_items && student_view_items.length ) {
-      if(student_ids && student_ids.length) {
-        const newValues = student_view_items.filter(item => student_ids.indexOf(item.student_id as string) >= 0 )
-        if(lesson_materials && lesson_materials.length) {
-          return newValues.map(item => {
+    if (student_view_items && student_view_items.length) {
+      if (student_ids && student_ids.length) {
+        const newValues = student_view_items.filter((item) => student_ids.indexOf(item.student_id as string) >= 0);
+        if (lesson_materials && lesson_materials.length) {
+          const checkedLessonMaterialsIds = lesson_materials.filter((item) => item.checked).map((v) => v.id);
+          return newValues.map((item) => {
             return {
               comment: item.comment,
               student_id: item.student_id,
               student_name: item.student_name,
-              lesson_materials: lesson_materials.filter(item => item.checked)
-            }
-          })
+              lesson_materials:
+                item.lesson_materials && item.lesson_materials.length
+                  ? item.lesson_materials.filter((item) => checkedLessonMaterialsIds.indexOf(item.lesson_material_id) >= 0)
+                  : [],
+            };
+          });
         } else {
-          return newValues
+          return newValues;
         }
       } else {
-        if(lesson_materials && lesson_materials.length) {
-          return student_view_items.map(item => {
+        if (lesson_materials && lesson_materials.length) {
+          const checkedLessonMaterialsIds = lesson_materials.filter((item) => item.checked).map((v) => v.id);
+          return student_view_items.map((item) => {
             return {
               comment: item.comment,
               student_id: item.student_id,
               student_name: item.student_name,
-              lesson_materials: lesson_materials.filter(item => item.checked)
-            }
-          })
+              lesson_materials:
+                item.lesson_materials && item.lesson_materials.length
+                  ? item.lesson_materials.filter((item) => checkedLessonMaterialsIds.indexOf(item.lesson_material_id) >= 0)
+                  : [],
+            };
+          });
         } else {
           return student_view_items;
         }
@@ -164,7 +178,7 @@ export const ModelAssessment = {
     } else {
       return [];
     }
-  }
+  },
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;

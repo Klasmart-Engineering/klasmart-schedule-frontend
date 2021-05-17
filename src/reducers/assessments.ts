@@ -6,7 +6,7 @@ import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
-  EntityScheduleFeedbackView
+  EntityScheduleFeedbackView,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
@@ -71,9 +71,9 @@ const initialState: IAssessmentState = {
   studyAssessmentList: [],
   studyAssessmentDetail: {
     class_name: "Class Name",
-    complete_at: new Date().getTime()/1000,
+    complete_at: new Date().getTime() / 1000,
     complete_rate: 80,
-    due_at: new Date().getTime()/1000,
+    due_at: new Date().getTime() / 1000,
     id: "3929939393992932",
     lesson_materials: [
       {
@@ -114,7 +114,23 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
-          }
+          },
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material_id_2",
+            lesson_material_name: "material_name_2",
+            lesson_material_type: "",
+            max_score: 100,
+          },
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material_id_3",
+            lesson_material_name: "material_name_3",
+            lesson_material_type: "",
+            max_score: 100,
+          },
         ],
         student_id: "studentid_1",
         student_name: "studentname_1",
@@ -125,11 +141,27 @@ const initialState: IAssessmentState = {
           {
             achieved_score: 90,
             answer: "answer",
+            lesson_material_id: "material_id_1",
+            lesson_material_name: "material_name_1",
+            lesson_material_type: "",
+            max_score: 100,
+          },
+          {
+            achieved_score: 90,
+            answer: "answer",
             lesson_material_id: "material_id_2",
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
-          }
+          },
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material_id_3",
+            lesson_material_name: "material_name_3",
+            lesson_material_type: "",
+            max_score: 100,
+          },
         ],
         student_id: "studentid_2",
         student_name: "studentname_2",
@@ -140,15 +172,31 @@ const initialState: IAssessmentState = {
           {
             achieved_score: 90,
             answer: "answer",
+            lesson_material_id: "material_id_1",
+            lesson_material_name: "material_name_1",
+            lesson_material_type: "",
+            max_score: 100,
+          },
+          {
+            achieved_score: 90,
+            answer: "answer",
+            lesson_material_id: "material_id_2",
+            lesson_material_name: "material_name_2",
+            lesson_material_type: "",
+            max_score: 100,
+          },
+          {
+            achieved_score: 90,
+            answer: "answer",
             lesson_material_id: "material_id_3",
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
-          }
+          },
         ],
         student_id: "studentid_3",
         student_name: "studentname_3",
-      }
+      },
     ],
     students: [
       {
@@ -165,7 +213,7 @@ const initialState: IAssessmentState = {
         checked: true,
         id: "studentid_3",
         name: "studentname_3",
-      }
+      },
     ],
     teacher_names: ["teacher1", "teacher2", "teacher3"],
     title: "study assessment detail",
@@ -312,9 +360,7 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
 
 export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/completeStudyAssessment",
-  async ({ id, data}, {dispatch}) => {
-    
-
+  async ({ id, data }, { dispatch }) => {
     // const content = d("Are you sure you want to link this card to your account?").t("card_msg_link_card");
     // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     // if (!isConfirmed) return Promise.reject();
@@ -332,7 +378,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
     if (res === "ok") dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
     return res;
   }
-)
+);
 
 const { reducer } = createSlice({
   name: "assessments",
