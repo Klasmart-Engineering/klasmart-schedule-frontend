@@ -68,7 +68,47 @@ const initialState: IAssessmentState = {
   },
   homefunFeedbacks: [],
   hasPermissionOfHomefun: false,
-  studyAssessmentList: [],
+  studyAssessmentList: [
+    {
+      class_name: "class_name_1",
+      complete_at: new Date().getTime() / 1000,
+      complete_rate: 90,
+      due_at: new Date().getTime() / 1000,
+      id: "study_assessment_id_1",
+      remaining_time: 9,
+
+      /** debug */
+      schedule_id: "schedule_id_1",
+      teacher_names: ["teachername_1", "teachername_2", "teachername_3"],
+      title: "study_assessment_title_1",
+    },
+    {
+      class_name: "class_name_2",
+      complete_at: new Date().getTime() / 1000,
+      complete_rate: 90,
+      due_at: new Date().getTime() / 1000,
+      id: "study_assessment_id_2",
+      remaining_time: 9,
+
+      /** debug */
+      schedule_id: "schedule_id_2",
+      teacher_names: ["teachername_1", "teachername_2", "teachername_3"],
+      title: "study_assessment_title_2",
+    },
+    {
+      class_name: "class_name_3",
+      complete_at: new Date().getTime() / 1000,
+      complete_rate: 90,
+      due_at: new Date().getTime() / 1000,
+      id: "study_assessment_id_3",
+      remaining_time: 9,
+
+      /** debug */
+      schedule_id: "schedule_id_3",
+      teacher_names: ["teachername_1", "teachername_2", "teachername_3"],
+      title: "study_assessment_title_3",
+    },
+  ],
   studyAssessmentDetail: {
     class_name: "Class Name",
     complete_at: new Date().getTime() / 1000,
@@ -114,7 +154,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 1,
+            attempted: true,
           },
           {
             achieved_score: 90,
@@ -123,7 +163,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 0,
+            attempted: true,
           },
           {
             achieved_score: 90,
@@ -132,7 +172,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 2,
+            attempted: true,
           },
         ],
         student_id: "studentid_1",
@@ -148,7 +188,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 3,
+            attempted: true,
           },
           {
             achieved_score: 90,
@@ -157,7 +197,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 2,
+            attempted: false,
           },
           {
             achieved_score: 90,
@@ -166,7 +206,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 1,
+            attempted: true,
           },
         ],
         student_id: "studentid_2",
@@ -182,7 +222,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 1,
+            attempted: true,
           },
           {
             achieved_score: 90,
@@ -191,7 +231,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 2,
+            attempted: true,
           },
           {
             achieved_score: 90,
@@ -200,7 +240,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
-            score_count: 3,
+            attempted: true,
           },
         ],
         student_id: "studentid_3",
@@ -373,7 +413,7 @@ export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDe
 type IQueryUpdateStudyAssessmentParams = {
   id: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[0];
   data: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
-  student_view_items?: IQueryStudyAssessmentDetailResult["detail"]["student_view_items"];
+  filter_student_view_items?: IQueryStudyAssessmentDetailResult["detail"]["student_view_items"];
 };
 
 export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
@@ -386,21 +426,10 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
 
 export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/completeStudyAssessment",
-  async ({ id, data, student_view_items }, { dispatch }) => {
-    // const content = d("Are you sure you want to link this card to your account?").t("card_msg_link_card");
-    // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
-    // if (!isConfirmed) return Promise.reject();
-    // const onError: ExtendedRequestParams["onError"] = (content) => dispatch(actAsyncConfirm({ content, hideCancel: true }));
-    // const res = await api.ecards.linkECard({ password: pwd }, { onError } as ExtendedRequestParams);
-    // const msg = d("Linked successfully").t("card_msg_link_succeed");
-    // if (res === "ok") dispatch(actAsyncConfirm({ content: msg, hideCancel: true }));
-    // return res;
-    // const content = "There are still students not start their Study activities. You cannot change the assessment after clicking Complete";
-    // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
-    // if (!isConfirmed) return Promise.reject();
+  async ({ id, data, filter_student_view_items }, { dispatch }) => {
     const item =
-      student_view_items && student_view_items.length
-        ? student_view_items.find((item) => item.lesson_materials?.find((m) => m.score_count === 0))
+      filter_student_view_items && filter_student_view_items.length
+        ? filter_student_view_items.find((item) => item.lesson_materials?.some((m) => !m.attempted))
         : undefined;
     if (!item) {
       const content = "You cannot change the assessment after clicking Complete";

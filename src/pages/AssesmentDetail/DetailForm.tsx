@@ -25,7 +25,7 @@ import clsx from "clsx";
 import React, { forwardRef, Fragment, useCallback, useMemo, useReducer, useState } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { AssessmentStatus, DetailStudyAssessment, UpdataStudyAssessmentRequestData, UpdateStudyAssessmentStudentIds } from "../../api/type";
+import { AssessmentStatus, DetailStudyAssessment, UpdateStudyAssessmentStudentIds } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -240,7 +240,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
   const { value, onChange, assessmentDetail, isMyAssessment, editable } = props;
   const css = useStyles();
   const dispatch = useDispatch();
-  const formMethods = useForm<UpdataStudyAssessmentRequestData>();
+  const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
   const [open, toggle] = useReducer((open) => {
     formMethods.reset();
     return !open;
@@ -396,7 +396,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
   const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA, editable } = props;
   const css = useStyles();
   const dispatch = useDispatch();
-  const formMethods = useForm<UpdataStudyAssessmentRequestData>();
+  const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
   const [open, toggle] = useReducer((open) => {
     // formMethods.reset();
     return !open;
@@ -405,7 +405,6 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
     const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, value);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
   }, [assessmentDetail.lesson_materials, value]);
-
   const handleOk = useCallback(() => {
     const { lesson_materials } = formMethods.getValues();
     if (lesson_materials && lesson_materials.length) {
@@ -515,10 +514,7 @@ export default function DetailForm(props: DetailFormProps) {
     return `${list?.map((v) => v.name)?.join(",")} (${length})`;
   }, [assessmentDetail.teachers]);
   const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {
-    // const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
-    // setTimeout(() => {
-    //   setValue("outcome_attendances", filteredOutcomelist);
-    // }, 100);
+    console.log(materials);
   };
   return (
     <>

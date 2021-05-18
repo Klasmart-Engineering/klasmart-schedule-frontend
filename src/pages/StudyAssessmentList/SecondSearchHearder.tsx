@@ -1,16 +1,16 @@
 import { Grid, InputAdornment, MenuItem } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField";
+import TextField from "@material-ui/core/TextField/TextField";
 import { Search } from "@material-ui/icons";
 import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
+import { UseFormMethods } from "react-hook-form";
 import { ExectSeachType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { ListSearch } from "../../components/ListSearch";
 import { d } from "../../locale/LocaleManager";
-import { SearchListForm, SearchListFormKey, StudyAssessmentQueryCondition, StudyAssessmentQueryConditionBaseProps } from "./types";
+import { SearchListForm, StudyAssessmentQueryCondition, StudyAssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,12 +29,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     marginRight: "3px",
     textTransform: "capitalize",
-  },
-  searchBtn: {
-    width: "111px",
-    height: "40px",
-    backgroundColor: "#0E78D5",
-    marginLeft: "20px",
   },
   formControl: {
     minWidth: 136,
@@ -67,29 +61,6 @@ const useStyles = makeStyles((theme) => ({
   tabs: {
     minHeight: "42px",
     height: "42px",
-  },
-  searchText: {
-    "& .MuiOutlinedInput-notchedOutline": {
-      border: 0,
-      borderRadius: 0,
-    },
-  },
-  exectSearchInput: {
-    maxWidth: 128,
-    marignRgiht: -10,
-    height: 40,
-    boxSizing: "border-box",
-    background: "#F0F0F0",
-    "& .MuiOutlinedInput-notchedOutline": {
-      border: 0,
-    },
-  },
-  searchCon: {
-    display: "inline-flex",
-    border: "1px solid rgba(0,0,0,0.23)",
-    borderRadius: 4,
-    boxSizing: "border-box",
-    verticalAlign: "top",
   },
 }));
 export enum AssessmentType {
@@ -159,10 +130,10 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 
 const searchFieldList = () => {
   return [
-    {label: d("All").t("assess_search_all"), value: ExectSeachType.all},
-    {label: "CLass Name", value: ExectSeachType.class_name},
-    {label: "Teacher Name", value: ExectSeachType.teacher_name},
-  ]
+    { label: d("All").t("assess_search_all"), value: ExectSeachType.all },
+    { label: "CLass Name", value: ExectSeachType.class_name },
+    { label: "Teacher Name", value: ExectSeachType.teacher_name },
+  ];
 };
 export interface SecondSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {
   onChangeAssessmentType: (assessmentType: AssessmentType) => any;
@@ -171,18 +142,15 @@ export interface SecondSearchHeaderProps extends StudyAssessmentQueryConditionBa
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssessmentType, formMethods } = props;
-  const { control } = formMethods;
   const handleClickSearch = () => {
     // const newValue = produce(value, (draft) => {
     //   searchText ? (draft.query = searchText) : delete draft.query;
     // });
     onChange({ ...value, page: 1 });
-    
   };
-
-  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
-    if (event.key === "Enter") handleClickSearch();
-  };
+  // const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
+  //   if (event.key === "Enter") handleClickSearch();
+  // };
   const handleChangeAssessmentType = (event: ChangeEvent<HTMLInputElement>) => {
     onChangeAssessmentType(event.target.value as AssessmentType);
   };
@@ -192,7 +160,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <div className={classes.searchCon}>
+              {/* <div className={classes.searchCon}>
                 <Controller
                   as={TextField}
                   control={control}
@@ -228,7 +196,14 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </div>
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("assess_label_search")}
-              </Button>
+              </Button> */}
+              <ListSearch
+                searchTextDefaultValue={value.query}
+                searchFieldDefaultValue={value.query_type}
+                searchFieldList={searchFieldList()}
+                onSearch={handleClickSearch}
+                formMethods={formMethods}
+              />
               <TextField
                 style={{ width: 160, marginLeft: 10 }}
                 size="small"

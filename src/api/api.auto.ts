@@ -686,11 +686,11 @@ export interface EntityH5PAssessmentStudentViewItem {
 export interface EntityH5PAssessmentStudentViewLessonMaterial {
   achieved_score?: number;
   answer?: string;
+  attempted?: boolean;
   lesson_material_id?: string;
   lesson_material_name?: string;
   lesson_material_type?: string;
   max_score?: number;
-  score_count?: number;
 }
 
 export interface EntityLessonType {

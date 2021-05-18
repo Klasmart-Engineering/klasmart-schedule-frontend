@@ -53,7 +53,7 @@ function AssessmentRow(props: AssessmentProps) {
       <TableCell align="center">{assessment.class_name}</TableCell>
       <TableCell align="center">{assessment.teacher_names?.join(",")}</TableCell>
       <TableCell align="center">{assessment.class_name}</TableCell>
-      <TableCell align="center">{assessment.due_at}</TableCell>
+      <TableCell align="center">{formattedTime(assessment.due_at)}</TableCell>
       <TableCell align="center">{assessment.complete_rate}</TableCell>
       <TableCell align="center">{assessment.remaining_time}</TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>

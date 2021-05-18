@@ -39,12 +39,7 @@ export function AssessmentDetail() {
   const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
   const isInProgress = studyAssessmentDetail.status === AssessmentStatus.in_progress;
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
-  const {
-    handleSubmit,
-    // formState: { isDirty },
-    // getValues,
-    watch,
-  } = formMethods;
+  const { handleSubmit, watch } = formMethods;
   const formValue = watch();
   const { student_ids, lesson_materials } = formValue;
   const filter_student_view_items = useMemo(() => {
@@ -59,7 +54,6 @@ export function AssessmentDetail() {
       handleSubmit(async (value) => {
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(filter_student_view_items);
         const formValue = { ...value, student_view_items };
-        console.log(formValue);
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
           const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
@@ -78,18 +72,19 @@ export function AssessmentDetail() {
   const handleDetailComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
-        // if (id) {
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(filter_student_view_items);
         const formValue = { ...value, student_view_items };
-        const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
-        const { payload } = ((await dispatch(completeStudyAssessment({ id, data }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof updateStudyAssessment>
-        >;
-        if (payload) {
-          dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
-          history.replace({
-            search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-          });
+        if (id) {
+          const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
+          const { payload } = ((await dispatch(
+            completeStudyAssessment({ id, data, filter_student_view_items })
+          )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
+          if (payload) {
+            dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+            history.replace({
+              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+            });
+          }
         }
       }),
     [handleSubmit, filter_student_view_items, dispatch, id, history, editindex]

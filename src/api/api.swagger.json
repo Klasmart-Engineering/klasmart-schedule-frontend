@@ -9257,6 +9257,9 @@
         "answer": {
           "type": "string"
         },
+        "attempted": {
+          "type": "boolean"
+        },
         "lesson_material_id": {
           "type": "string"
         },
@@ -9268,9 +9271,6 @@
         },
         "max_score": {
           "type": "number"
-        },
-        "score_count": {
-          "type": "integer"
         }
       }
     },

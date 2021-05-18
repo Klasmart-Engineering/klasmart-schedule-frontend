@@ -11,7 +11,7 @@ import {
   makeStyles,
   Typography,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
@@ -79,7 +79,7 @@ interface AssessmentHeaderProps {
   name: string;
   onBack: ButtonProps["onClick"] | any;
   onSave: LButtonProps["onClick"];
-  onComplete: Function;
+  onComplete: LButtonProps["onClick"];
   editable?: boolean;
 }
 export function DetailHeader(props: AssessmentHeaderProps) {
@@ -95,8 +95,8 @@ export function DetailHeader(props: AssessmentHeaderProps) {
   }, false);
   const handleOk = useCallback(() => {
     toggle();
-    onComplete();
-  }, [onComplete]);
+    // onComplete();
+  }, []);
   const handleDiscard = useCallback(() => {
     toggleCancel();
     onBack();
@@ -121,9 +121,9 @@ export function DetailHeader(props: AssessmentHeaderProps) {
             <LButton variant="contained" endIcon={<Save />} color="primary" className={css.headerButton} onClick={onSave}>
               {d("Save").t("assess_label_save")}
             </LButton>
-            <Button variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={toggle as any}>
+            <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={onComplete}>
               {d("Complete").t("assess_button_complete")}
-            </Button>
+            </LButton>
           </Hidden>
         )}
       </Box>
