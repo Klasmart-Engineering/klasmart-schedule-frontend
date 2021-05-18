@@ -9260,6 +9260,9 @@
         "attempted": {
           "type": "boolean"
         },
+        "is_h5p": {
+          "type": "boolean"
+        },
         "lesson_material_id": {
           "type": "string"
         },

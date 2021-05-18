@@ -72,19 +72,18 @@ export function AssessmentDetail() {
   const handleDetailComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
+        // if (id) {
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(filter_student_view_items);
         const formValue = { ...value, student_view_items };
-        if (id) {
-          const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
-          const { payload } = ((await dispatch(
-            completeStudyAssessment({ id, data, filter_student_view_items })
-          )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
-          if (payload) {
-            dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
-            history.replace({
-              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-            });
-          }
+        const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
+        const { payload } = ((await dispatch(completeStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          AsyncTrunkReturned<typeof updateStudyAssessment>
+        >;
+        if (payload) {
+          dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+          history.replace({
+            search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+          });
         }
       }),
     [handleSubmit, filter_student_view_items, dispatch, id, history, editindex]
@@ -120,6 +119,8 @@ export function AssessmentDetail() {
           handleElasticLayerControl={handleElasticLayerControl}
           studentViewItems={filter_student_view_items}
           formMethods={formMethods}
+          isInProgress={isInProgress}
+          editable={editable}
         />
       </LayoutPair>
       <ResourcesView elasticLayerControlData={elasticLayerControlData} handleElasticLayerControl={handleElasticLayerControl} />

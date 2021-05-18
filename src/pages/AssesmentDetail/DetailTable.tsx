@@ -17,7 +17,10 @@ import CheckIcon from "@material-ui/icons/Check";
 import { ElasticLayerControl } from "./types";
 import { EntityH5PAssessmentStudentViewItem } from "../../api/api.auto";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
+import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
+import { actWarning } from "../../reducers/notify";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../reducers";
 
 const useStyles = makeStyles({
   table: {
@@ -41,6 +44,18 @@ const useStyles = makeStyles({
       },
     },
   },
+  borderIconStyle: {
+    fontSize: "13px",
+    marginLeft: "8px",
+    cursor: "pointer",
+    color: "#006CCF",
+  },
+  checkIconStyle: {
+    fontSize: "15px",
+    marginLeft: "10px",
+    cursor: "pointer",
+    color: "#006CCF",
+  },
 });
 
 interface BasicTableProps extends tableProps {
@@ -48,48 +63,108 @@ interface BasicTableProps extends tableProps {
   index: number;
 }
 
+interface EditScoreProps {
+  score?: number;
+  handleChangeScore: (score?: number, indexSub?: number) => void;
+  index: number;
+  editable: boolean;
+  isSubjectiveActivity: boolean;
+  maxScore?: number;
+}
+
+function EditScore(props: EditScoreProps) {
+  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore } = props;
+  const [editScore, setEditScore] = React.useState(false);
+  const [scoreNum, setScoreNum] = React.useState(score);
+  const dispatch = useDispatch<AppDispatch>();
+  const classes = useStyles();
+  return (
+    <div style={{ width: "100px" }}>
+      {!editScore && (
+        <>
+          {scoreNum}{" "}
+          <BorderColorIcon
+            onClick={() => {
+              setEditScore(true);
+            }}
+            className={classes.borderIconStyle}
+            style={{ visibility: editable && isSubjectiveActivity ? "visible" : "hidden" }}
+          />
+        </>
+      )}
+      {editScore && (
+        <>
+          <Input
+            value={scoreNum}
+            style={{ width: "22%" }}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setScoreNum((e.target.value as unknown) as number);
+            }}
+          />
+          <CheckIcon
+            onClick={() => {
+              if (scoreNum! < score!) {
+                dispatch(actWarning("The new score cannot be lower than the old one."));
+              } else if (scoreNum! > maxScore!) {
+                dispatch(actWarning("The score you entered cannot exceed the maximum score."));
+              } else {
+                handleChangeScore(scoreNum, index);
+                setEditScore(false);
+              }
+            }}
+            className={classes.checkIconStyle}
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
 function BasicTable(props: BasicTableProps) {
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
-  const [editScore, setEditScore] = React.useState(false);
+
   const {
     handleElasticLayerControl,
     studentViewItem,
     formMethods: { control, setValue, getValues },
     index,
+    editable,
   } = props;
-  /*  const funSetValue = useMemo(
-    () => (name: string, value: boolean | string[]) => {
-      setValue(`outcome_attendances[${index}].${name}`, value);
-    },
-    [index, setValue]
-  );*/
 
   const handleChangeComment = (commentText: string) => {
     const attendance_ids = getValues() as {
       student_ids: string[];
-      outcome_attendances: { attendance_ids: EntityH5PAssessmentStudentViewItem }[];
+      student_view_items: EntityH5PAssessmentStudentViewItem[];
     };
-    setValue(`outcome_attendances[${index}].attendance_ids`, {
-      ...attendance_ids.outcome_attendances[index].attendance_ids,
+    setValue(`student_view_items[${index}]`, {
+      ...attendance_ids.student_view_items[index],
       comment: commentText,
     });
     handleElasticLayerControl({ link: "", openStatus: false, type: "" });
   };
 
-  /*  const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
-    funSetValue(name, e.target.checked);
+  const handleChangeScore = (score?: number, indexSub?: number) => {
+    const attendance_ids = getValues() as {
+      student_ids: string[];
+      student_view_items: EntityH5PAssessmentStudentViewItem[];
+    };
+    const lesson_materials = attendance_ids.student_view_items[index].lesson_materials?.map((materials, idx) => {
+      return idx === indexSub ? { ...materials, achieved_score: score } : materials;
+    });
+    setValue(`student_view_items[${index}]`, {
+      ...attendance_ids.student_view_items[index],
+      lesson_materials: lesson_materials,
+    });
+  };
 
-    if (e.target.checked) {
-      if (name === "skip") {
-        funSetValue("none_achieved", false);
-      }
-      funSetValue("attendance_ids", []);
-    }
-  };*/
+  const subjectiveActivity = (type?: string) => {
+    return ["essay"].includes(type ?? "");
+  };
+
   return (
     <Controller
-      name={`outcome_attendances[${index}].attendance_ids`}
+      name={`student_view_items[${index}]`}
       control={control}
       defaultValue={studentViewItem || []}
       render={({ ref, ...props }) => (
@@ -104,21 +179,23 @@ function BasicTable(props: BasicTableProps) {
             <div style={{ color: checked ? "black" : "#666666" }}>
               <AccountCircleIcon />
               <span style={{ padding: "0 18px 0 18px" }}>{studentViewItem.student_name}</span>
-              <p
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleElasticLayerControl({
-                    link: "",
-                    openStatus: true,
-                    type: "AddComment",
-                    contentText: studentViewItem.comment,
-                    handleChangeComment: handleChangeComment,
-                  });
-                }}
-                style={{ visibility: checked ? "visible" : "hidden" }}
-              >
-                Click to add a comment
-              </p>
+              {editable && (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleElasticLayerControl({
+                      link: "",
+                      openStatus: true,
+                      type: "AddComment",
+                      contentText: studentViewItem.comment,
+                      handleChangeComment: handleChangeComment,
+                    });
+                  }}
+                  style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
+                >
+                  Click to add a comment
+                </span>
+              )}
             </div>
             {checked && <ArrowDropUpIcon />}
             {!checked && <ArrowDropDownIcon />}
@@ -147,9 +224,13 @@ function BasicTable(props: BasicTableProps) {
                       <TableCell align="center">{row.lesson_material_type}</TableCell>
                       <TableCell align="center">
                         <p
-                          style={{ color: "#006CCF", cursor: "pointer" }}
+                          style={{
+                            color: "#006CCF",
+                            cursor: "pointer",
+                            visibility: subjectiveActivity(row.lesson_material_type) ? "visible" : "hidden",
+                          }}
                           onClick={() => {
-                            handleElasticLayerControl({ link: "", openStatus: true, type: "" });
+                            handleElasticLayerControl({ link: "", openStatus: true, type: "DetailView" });
                           }}
                         >
                           Click to view
@@ -157,28 +238,14 @@ function BasicTable(props: BasicTableProps) {
                       </TableCell>
                       <TableCell align="center">{row.max_score}</TableCell>
                       <TableCell align="center">
-                        {!editScore && (
-                          <>
-                            {row.achieved_score}{" "}
-                            <BorderColorIcon
-                              onClick={() => {
-                                setEditScore(true);
-                              }}
-                              style={{ fontSize: "13px", marginLeft: "8px", cursor: "pointer", color: "#006CCF" }}
-                            />
-                          </>
-                        )}
-                        {editScore && (
-                          <>
-                            <Input value={row.achieved_score} style={{ width: "10%" }} />
-                            <CheckIcon
-                              onClick={() => {
-                                setEditScore(false);
-                              }}
-                              style={{ fontSize: "15px", marginLeft: "10px", cursor: "pointer" }}
-                            />
-                          </>
-                        )}
+                        <EditScore
+                          score={row.achieved_score}
+                          maxScore={row.max_score}
+                          handleChangeScore={handleChangeScore}
+                          index={index}
+                          editable={editable}
+                          isSubjectiveActivity={subjectiveActivity(row.lesson_material_type)}
+                        />
                       </TableCell>
                       <TableCell align="center">{(row?.achieved_score! / row?.max_score!) * 100 + "%"}</TableCell>
                     </TableRow>
@@ -197,19 +264,26 @@ interface tableProps {
   handleElasticLayerControl: (elasticLayerControlData: ElasticLayerControl) => void;
   studentViewItems?: EntityH5PAssessmentStudentViewItem[];
   formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
+  formValue?: UpdateAssessmentRequestDataOmitAction;
+  editable: boolean;
+  isInProgress: boolean;
 }
 
 export function DetailTable(props: tableProps) {
-  const { handleElasticLayerControl, studentViewItems, formMethods } = props;
+  const { handleElasticLayerControl, studentViewItems, formMethods, formValue, editable, isInProgress } = props;
   return (
     <>
       {studentViewItems?.map((item: EntityH5PAssessmentStudentViewItem, index: number) => {
         return (
           <BasicTable
+            key={index}
             handleElasticLayerControl={handleElasticLayerControl}
             studentViewItem={item}
             formMethods={formMethods}
             index={index}
+            formValue={formValue}
+            editable={editable}
+            isInProgress={isInProgress}
           />
         );
       })}

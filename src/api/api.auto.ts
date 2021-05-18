@@ -687,6 +687,7 @@ export interface EntityH5PAssessmentStudentViewLessonMaterial {
   achieved_score?: number;
   answer?: string;
   attempted?: boolean;
+  is_h5p?: boolean;
   lesson_material_id?: string;
   lesson_material_name?: string;
   lesson_material_type?: string;

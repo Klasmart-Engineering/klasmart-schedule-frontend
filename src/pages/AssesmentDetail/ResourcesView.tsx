@@ -60,6 +60,26 @@ const useStyles = makeStyles((theme: Theme) =>
         justifyContent: "space-between",
       },
     },
+    detailView: {
+      padding: "12px",
+      lineHeight: "30px",
+      maxHeight: "400px",
+      overflow: "auto",
+      "&::-webkit-scrollbar": {
+        width: "3px",
+      },
+      "&::-webkit-scrollbar-track": {
+        boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        borderRadius: "3px",
+        backgroundColor: "rgb(220, 220, 220)",
+        boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+      },
+      "&::-webkit-scrollbar-thumb:window-inactive": {
+        backgroundColor: "rgba(220,220,220,0.4)",
+      },
+    },
   })
 );
 
@@ -132,7 +152,9 @@ function CommentsTemplate(props: CommentsProps) {
             ),
           }}
           value={commentText}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCommentText(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.target.value.length <= 500) setCommentText(e.target.value);
+          }}
         />
       </div>
       <span style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -162,20 +184,40 @@ function CommentsTemplate(props: CommentsProps) {
 }
 
 function DetailedViewTemplate(props: NoticeProps) {
+  const { handleElasticLayerControl } = props;
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
   return (
     <Box style={modalStyle} className={classes.DetailViewBox}>
       <h3>
-        Add comments <CloseIcon />
+        Detailed Answer{" "}
+        <CloseIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            handleElasticLayerControl({ link: "", openStatus: false, type: "" });
+          }}
+        />
       </h3>
-      <p style={{ padding: "12px", lineHeight: "30px" }}>
+      <p className={classes.detailView}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut
         sollicitudin erat mauris, a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit.
         Maecenas quis dui diam. Curabitur varius nunc sit amet metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque
         nunc ligula, condimentum luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class
-        aptent taciti sociosqu ad litora
+        aptent taciti sociosqu ad litora Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut
+        scelerisque massa scelerisque. Ut sollicitudin erat mauris, a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed
+        convallis sed massa ac hendrerit. Maecenas quis dui diam. Curabitur varius nunc sit amet metus semper fermentum. Duis vitae
+        venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies
+        nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu ad litora Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut sollicitudin erat mauris, a aliquam est posuere ut. In
+        convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit. Maecenas quis dui diam. Curabitur varius nunc sit amet
+        metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum luctus luctus ac, pulvinar ut
+        dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu ad litora Lorem ipsum dolor sit
+        amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut sollicitudin erat mauris,
+        a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit. Maecenas quis dui diam.
+        Curabitur varius nunc sit amet metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum
+        luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu
+        ad litora
       </p>
     </Box>
   );

@@ -179,6 +179,24 @@ export const ModelAssessment = {
       return [];
     }
   },
+  toGetStudentViewFormItems(
+    student_view_items: UpdataStudyAssessmentRequestData["student_view_items"],
+    student_view_items_form: UpdataStudyAssessmentRequestData["student_view_items"]
+  ) {
+    return student_view_items?.map((item) => {
+      const Similar = student_view_items_form?.filter((item_from) => item_from.student_id === item.student_id) ?? [];
+      if (Similar.length) {
+        const lesson_materials = item?.lesson_materials?.map((material) => {
+          const similarMaterial =
+            Similar[0]?.lesson_materials?.filter((material_from) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
+          return similarMaterial.length ? similarMaterial[0] : material;
+        });
+        return { ...Similar[0], lesson_materials: lesson_materials };
+      } else {
+        return item;
+      }
+    }) as UpdataStudyAssessmentRequestData["student_view_items"];
+  },
   toUpdateH5pStudentView(
     student_view_items: DetailStudyAssessment["student_view_items"]
   ): UpdataStudyAssessmentRequestData["student_view_items"] {
