@@ -319,23 +319,20 @@ function ContentEditForm() {
           PermissionType.create_lesson_plan_221,
           PermissionType.create_lesson_material_220,
         ]}
-        render={(value) => {
-          console.log("id ? !!contentDetail.permission.allow_edit : !value =", value, id ? !!contentDetail.permission.allow_edit : value);
-          return (
-            <Details
-              allDefaultValueAndKey={allDefaultValueAndKey}
-              contentDetail={contentDetail}
-              formMethods={formMethods}
-              linkedMockOptions={linkedMockOptions}
-              visibility_settings={visibility_settings}
-              lesson_types={lesson_types}
-              onChangeProgram={handleChangeProgram}
-              onChangeDevelopmental={handleChangeDevelopmental}
-              onChangeSubject={handleChangeSubject}
-              disabled={id ? !contentDetail.permission.allow_edit : !value}
-            />
-          );
-        }}
+        render={(value) => (
+          <Details
+            allDefaultValueAndKey={allDefaultValueAndKey}
+            contentDetail={contentDetail}
+            formMethods={formMethods}
+            linkedMockOptions={linkedMockOptions}
+            visibility_settings={visibility_settings}
+            lesson_types={lesson_types}
+            onChangeProgram={handleChangeProgram}
+            onChangeDevelopmental={handleChangeDevelopmental}
+            onChangeSubject={handleChangeSubject}
+            disabled={id ? !contentDetail.permission.allow_edit : !value}
+          />
+        )}
       />
       <Controller
         as={Outcomes}
@@ -548,7 +545,7 @@ function ContentEditForm() {
           PermissionType.edit_lesson_plan_metadata_237,
         ]}
         render={(value) =>
-          (id ? !!contentDetail.permission.allow_edit : value) ? (
+          (contentDetail.content_type !== ContentType.assets && id ? !!contentDetail.permission.allow_edit : value) ? (
             <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
               {
                 <Fragment>

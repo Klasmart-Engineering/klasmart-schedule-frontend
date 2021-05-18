@@ -52,11 +52,11 @@ export function OperationBtn(props: ActionProps) {
   const { permission, author, isMine, publish_status, content_type, onDelete, onPublish, onApprove, onReject, onEdit } = props;
   return (
     <Box display="flex" justifyContent="flex-end">
-      {isMine && publish_status === PublishStatus.published && (
+      {/* {isMine && publish_status === PublishStatus.published && (
         <LButton variant="outlined" className={clsx(css.btn, css.deleteBtn)} onClick={onDelete}>
           {d("Remove").t("library_label_remove")}
         </LButton>
-      )}
+      )} */}
       {!isMine &&
         publish_status === PublishStatus.published &&
         // <Permission value={PermissionType.archive_published_content_273}>
