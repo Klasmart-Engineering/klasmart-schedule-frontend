@@ -276,7 +276,7 @@ const initialState: IAssessmentState = {
     ],
     students: [
       {
-        checked: true,
+        checked: false,
         id: "studentid_1",
         name: "studentname_1",
       },

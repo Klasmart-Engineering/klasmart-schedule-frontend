@@ -63,6 +63,7 @@ export function ConfirmDialog() {
     reValidateMode: "onSubmit",
   });
   const values = watch();
+  console.log(rules);
   const disableConfirm =
     type === ConfirmDialogType.textField && !values[REJECT_REASON]?.length && !values[OTHER_REASON] && !values[INPUT_NAME];
   const handleCancel = useCallback(
@@ -77,6 +78,8 @@ export function ConfirmDialog() {
   const handleConfirm = useMemo(
     () =>
       handleSubmit((values) => {
+        console.log(values);
+        debugger;
         if (type === ConfirmDialogType.text)
           return dispatch(
             actExitConfirm({
@@ -95,6 +98,7 @@ export function ConfirmDialog() {
         }
 
         if (type === ConfirmDialogType.textField) {
+          debugger;
           if (values[OTHER_REASON] && !values[INPUT_NAME]) {
             return setError(INPUT_NAME, {
               type: "manual",
@@ -183,7 +187,7 @@ export function ConfirmDialog() {
               label={label}
               placeholder={placeholder || d("Reason").t("library_label_reason")}
               rules={{
-                required: true,
+                required: !!values[OTHER_REASON],
                 ...rules,
               }}
               control={control}
