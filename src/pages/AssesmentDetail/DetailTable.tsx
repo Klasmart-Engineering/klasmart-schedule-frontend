@@ -306,7 +306,7 @@ export function DetailTable(props: tableProps) {
       {studentViewItems?.map((item: EntityH5PAssessmentStudentViewItem, index: number) => {
         return (
           <BasicTable
-            key={index}
+            key={item.student_id}
             handleElasticLayerControl={handleElasticLayerControl}
             studentViewItem={item}
             formMethods={formMethods}
