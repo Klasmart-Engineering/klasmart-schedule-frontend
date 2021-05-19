@@ -99,7 +99,7 @@ export function AssessmentDetail() {
     setElasticLayerControlData(elasticLayerControlData);
   };
   useEffect(() => {
-    dispatch(getStudyAssessmentDetail({ id }));
+    dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
   }, [dispatch, id]);
   return (
     <>

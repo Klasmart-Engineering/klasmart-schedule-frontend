@@ -63,7 +63,6 @@ export function ConfirmDialog() {
     reValidateMode: "onSubmit",
   });
   const values = watch();
-  console.log(rules);
   const disableConfirm =
     type === ConfirmDialogType.textField && !values[REJECT_REASON]?.length && !values[OTHER_REASON] && !values[INPUT_NAME];
   const handleCancel = useCallback(

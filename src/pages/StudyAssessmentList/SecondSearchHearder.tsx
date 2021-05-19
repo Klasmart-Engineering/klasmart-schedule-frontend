@@ -132,7 +132,7 @@ const searchFieldList = () => {
   return [
     { label: d("All").t("assess_search_all"), value: ExectSeachType.all },
     // { label: "CLass Name", value: ExectSeachType.class_name },
-    { label: "Teacher Name", value: ExectSeachType.teacher_name },
+    { label: d("Teacher Name").t("schedule_label_teacher_name"), value: ExectSeachType.teacher_name },
   ];
 };
 export interface SecondSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {

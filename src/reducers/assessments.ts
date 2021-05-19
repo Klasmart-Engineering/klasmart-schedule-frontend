@@ -184,7 +184,7 @@ type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.h5PAssessments
 export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
   "assessments/getStudyAssessmentList",
   async ({ metaLoading, ...query }) => {
-    const { items, total } = await api.h5PAssessments.listH5PAssessments(query);
+    const { items, total } = await api.h5PAssessments.listH5PAssessments({ ...query, page_size: 20 });
     return { items, total };
   }
 );
