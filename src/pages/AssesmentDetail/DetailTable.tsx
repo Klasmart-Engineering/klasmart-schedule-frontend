@@ -22,6 +22,7 @@ import { actWarning } from "../../reducers/notify";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../reducers";
 import { d } from "../../locale/LocaleManager";
+import noDataIconUrl from "../../assets/icons/any_time_no_data.png";
 
 const useStyles = makeStyles({
   table: {
@@ -56,6 +57,13 @@ const useStyles = makeStyles({
     marginLeft: "10px",
     cursor: "pointer",
     color: "#006CCF",
+  },
+  emptyBox: {
+    textAlign: "center",
+    "& img": {
+      width: "60%",
+      marginTop: "6%",
+    },
   },
 });
 
@@ -303,6 +311,8 @@ interface tableProps {
 
 export function DetailTable(props: tableProps) {
   const { handleElasticLayerControl, studentViewItems, formMethods, formValue, editable, isComplete } = props;
+  console.log(studentViewItems);
+  const classes = useStyles();
   return (
     <>
       {studentViewItems?.map((item: EntityH5PAssessmentStudentViewItem, index: number) => {
@@ -319,6 +329,11 @@ export function DetailTable(props: tableProps) {
           />
         );
       })}
+      {(!studentViewItems || !studentViewItems.length) && (
+        <div className={classes.emptyBox}>
+          <img alt="empty" src={noDataIconUrl} />
+        </div>
+      )}
     </>
   );
 }
