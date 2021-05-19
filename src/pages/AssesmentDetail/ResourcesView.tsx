@@ -127,9 +127,10 @@ function NoticeTemplate(props: NoticeProps) {
 
 interface CommentsProps extends elasticLayerControlProps {
   contentText: string;
+  title?: string;
 }
 function CommentsTemplate(props: CommentsProps) {
-  const { handleElasticLayerControl, elasticLayerControlData } = props;
+  const { handleElasticLayerControl, elasticLayerControlData, title } = props;
   const [commentText, setCommentText] = React.useState(elasticLayerControlData?.contentText);
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
@@ -137,7 +138,7 @@ function CommentsTemplate(props: CommentsProps) {
   const handleChangeComment = elasticLayerControlData?.handleChangeComment!;
   return (
     <Box style={modalStyle} className={classes.commentBox}>
-      <h3>Add comments</h3>
+      <h3>{title}</h3>
       <div style={{ padding: "16px" }}>
         <TextField
           id="filled-multiline-flexible"
@@ -145,7 +146,7 @@ function CommentsTemplate(props: CommentsProps) {
           multiline
           rows={8}
           variant="outlined"
-          placeholder=" Leave a message to your student!"
+          placeholder={d("Leave a message to your student!").t("assess_popup_leave_msg")}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -231,6 +232,7 @@ export default function ResourcesView(props: elasticLayerControlProps) {
           }
           handleElasticLayerControl={handleElasticLayerControl}
           elasticLayerControlData={elasticLayerControlData}
+          title={elasticLayerControlData.title}
         />
       )}
       {elasticLayerControlData?.type === "DetailView" && (

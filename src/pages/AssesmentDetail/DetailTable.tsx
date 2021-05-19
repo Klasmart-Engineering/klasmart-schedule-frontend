@@ -82,7 +82,7 @@ function EditScore(props: EditScoreProps) {
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   return (
-    <div style={{ width: "100px" }}>
+    <div style={{ width: "100px", margin: "0 auto" }}>
       {!editScore && (
         <>
           {attempted ? scoreNum : d("Not Attempted").t("assess_option_not_attempted")}{" "}
@@ -196,6 +196,7 @@ function BasicTable(props: BasicTableProps) {
                       type: "AddComment",
                       contentText: studentViewItem.comment,
                       handleChangeComment: handleChangeComment,
+                      title: d("Add Comments").t("assess_popup_add_comments"),
                     });
                   }}
                   style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
@@ -212,7 +213,7 @@ function BasicTable(props: BasicTableProps) {
                       openStatus: true,
                       type: "DetailView",
                       contentText: studentViewItem.comment,
-                      title: "View comments",
+                      title: d("View Comments").t("assess_popup_view_comments"),
                     });
                   }}
                   style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
@@ -229,7 +230,7 @@ function BasicTable(props: BasicTableProps) {
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>No.</TableCell>
+                    <TableCell>{d("No").t("assess_detail_no")}.</TableCell>
                     <TableCell align="center">{d("Lesson Material Name").t("assess_detail_lesson_material_name")}</TableCell>
                     <TableCell align="center">{d("Lesson Material Type").t("assess_detail_lesson_material_type")}</TableCell>
                     <TableCell align="center">{d("Answer").t("assess_detail_answer")}</TableCell>
@@ -259,11 +260,11 @@ function BasicTable(props: BasicTableProps) {
                               openStatus: true,
                               type: "DetailView",
                               contentText: row.answer,
-                              title: "Detailed Answer",
+                              title: d("Detailed Answer").t("assess_popup_detailed_answer"),
                             });
                           }}
                         >
-                          Click to view
+                          {d("Click to View").t("assess_detail_click_to_view")}
                         </p>
                       </TableCell>
                       <TableCell align="center">{row.max_score}</TableCell>
