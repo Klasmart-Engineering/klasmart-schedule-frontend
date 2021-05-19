@@ -1,14 +1,16 @@
 import { Grid, InputAdornment, MenuItem } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField";
+import TextField from "@material-ui/core/TextField/TextField";
 import { Search } from "@material-ui/icons";
 import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
+import { UseFormMethods } from "react-hook-form";
+import { ExectSeachType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
+import { ListSearch } from "../../components/ListSearch";
 import { d } from "../../locale/LocaleManager";
-import { HomeFunAssessmentQueryCondition, HomeFunAssessmentQueryConditionBaseProps } from "./types";
+import { SearchListForm, StudyAssessmentQueryCondition, StudyAssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,12 +30,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: "3px",
     textTransform: "capitalize",
   },
-  searchBtn: {
-    width: "111px",
-    height: "40px",
-    backgroundColor: "#0E78D5",
-    marginLeft: "20px",
-  },
   formControl: {
     minWidth: 136,
     marginLeft: "20px",
@@ -47,9 +43,6 @@ const useStyles = makeStyles((theme) => ({
   },
   navigation: {
     padding: "20px 0px 10px 0px",
-  },
-  searchText: {
-    width: "34%",
   },
   actives: {
     color: "#0E78D5",
@@ -83,7 +76,7 @@ export const assessmentTypes = () => {
   return [
     { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
     { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
-    { label: "study", value: AssessmentType.study },
+    { label: "Study", value: AssessmentType.study },
   ];
 };
 const menuItemList = (list: options[]) =>
@@ -95,7 +88,7 @@ const menuItemList = (list: options[]) =>
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
+  const [searchText, setSearchText] = useState<StudyAssessmentQueryCondition["query"]>();
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
@@ -135,25 +128,29 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   );
 }
 
-export interface SecondSearchHeaderProps extends HomeFunAssessmentQueryConditionBaseProps {
+const searchFieldList = () => {
+  return [
+    { label: d("All").t("assess_search_all"), value: ExectSeachType.all },
+    // { label: "CLass Name", value: ExectSeachType.class_name },
+    { label: d("Teacher Name").t("schedule_label_teacher_name"), value: ExectSeachType.teacher_name },
+  ];
+};
+export interface SecondSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {
   onChangeAssessmentType: (assessmentType: AssessmentType) => any;
+  formMethods: UseFormMethods<SearchListForm>;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onChangeAssessmentType } = props;
-  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
+  const { value, onChange, onChangeAssessmentType, formMethods } = props;
   const handleClickSearch = () => {
-    const newValue = produce(value, (draft) => {
-      searchText ? (draft.query = searchText) : delete draft.query;
-    });
-    onChange({ ...newValue, page: 1 });
+    // const newValue = produce(value, (draft) => {
+    //   searchText ? (draft.query = searchText) : delete draft.query;
+    // });
+    onChange({ ...value, page: 1 });
   };
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
-  };
-  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
-    if (event.key === "Enter") handleClickSearch();
-  };
+  // const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
+  //   if (event.key === "Enter") handleClickSearch();
+  // };
   const handleChangeAssessmentType = (event: ChangeEvent<HTMLInputElement>) => {
     onChangeAssessmentType(event.target.value as AssessmentType);
   };
@@ -163,23 +160,56 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
         <Hidden only={["xs", "sm"]}>
           <Grid container spacing={3} style={{ marginTop: "6px" }}>
             <Grid item md={10} lg={8} xl={8}>
-              <TextField
-                size="small"
-                className={classes.searchText}
-                onKeyPress={handleKeyPress}
-                onChange={handleChange}
-                placeholder={d("Search").t("assess_label_search")}
-                defaultValue={value.query}
-              />
+              {/* <div className={classes.searchCon}>
+                <Controller
+                  as={TextField}
+                  control={control}
+                  name={SearchListFormKey.EXECT_SEARCH}
+                  className={classes.exectSearchInput}
+                  size="small"
+                  select
+                  SelectProps={{
+                    MenuProps: {
+                      transformOrigin: {
+                        vertical: -40,
+                        horizontal: "left",
+                      },
+                    },
+                  }}
+                  defaultValue={value.query_type}
+                >
+                  {menuItemList(searchFieldList())}
+                </Controller>
+                <Controller
+                  as={TextField}
+                  control={control}
+                  name={SearchListFormKey.SEARCH_TEXT}
+                  style={{
+                    borderLeft: 0,
+                  }}
+                  size="small"
+                  className={classes.searchText}
+                  onKeyPress={handleKeyPress}
+                  placeholder={d("Search").t("assess_label_search")}
+                  defaultValue={value.query}
+                />
+              </div>
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("assess_label_search")}
-              </Button>
+              </Button> */}
+              <ListSearch
+                searchTextDefaultValue={value.query}
+                searchFieldDefaultValue={value.query_type}
+                searchFieldList={searchFieldList()}
+                onSearch={handleClickSearch}
+                formMethods={formMethods}
+              />
               <TextField
                 style={{ width: 160, marginLeft: 10 }}
                 size="small"
                 onChange={handleChangeAssessmentType}
                 // label={d("Content Type").t("library")}
-                defaultValue={AssessmentType.homeFun}
+                defaultValue={AssessmentType.study}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >

@@ -199,7 +199,11 @@ type LangRecord<T = string> =
   | { id: "library_label_files_selected"; description: "( {value} files selected )"; values: { value: string | number } }
   | { id: "library_label_more"; description: "More"; values: undefined }
   | { id: "library_error_plan_duration"; description: "Plan's duration should be greater than lesson materials' sum"; values: undefined }
-  | { id: "library_label_uploadInfo1"; description: "Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4"; values: undefined }
+  | {
+      id: "library_label_uploadInfo1";
+      description: "Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4, MP3, WAV";
+      values: undefined;
+    }
   | {
       id: "library_label_uploadInfo2";
       description: "(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)";
@@ -307,6 +311,33 @@ type LangRecord<T = string> =
   | { id: "assess_detail_view_covered"; description: "View Lesson Materials Covered"; values: undefined }
   | { id: "assess_detail_button_view"; description: "View"; values: undefined }
   | { id: "assess_detail_comment_here"; description: "Comment here"; values: undefined }
+  | { id: "assess_study_list_study"; description: "Study"; values: undefined }
+  | { id: "assess_study_teacher_name"; description: "Teacher Name"; values: undefined }
+  | { id: "assess_list_study_title"; description: "Study Title"; values: undefined }
+  | { id: "assess_list_completion_rate"; description: "Completion Rate"; values: undefined }
+  | { id: "assess_list_assessment_remaining"; description: "Assessment Remaining"; values: undefined }
+  | { id: "assess_list_remaining_days"; description: "Day(s) "; values: undefined }
+  | { id: "assess_detail_no"; description: "No"; values: undefined }
+  | { id: "assess_detail_lesson_material_name"; description: "Lesson Material Name"; values: undefined }
+  | { id: "assess_detail_lesson_material_type"; description: "Lesson Material Type"; values: undefined }
+  | { id: "assess_detail_answer"; description: "Answer"; values: undefined }
+  | { id: "assess_detail_click_to_view"; description: "Click to View"; values: undefined }
+  | { id: "assess_detail_maximum_possible_score"; description: "Maximum Possible Score"; values: undefined }
+  | { id: "assess_detail_achieved_score"; description: "Achieved Score"; values: undefined }
+  | { id: "assess_msg_exceed_maximum"; description: "The score you entered cannot exceed the maximum score."; values: undefined }
+  | { id: "assess_detail_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "assess_detail_percentage"; description: "Percentage"; values: undefined }
+  | { id: "assess_detail_click_to_add_comments"; description: "Click to add comments"; values: undefined }
+  | { id: "assess_detail_click_to_view_comments"; description: "Click to view comments"; values: undefined }
+  | { id: "assess_popup_add_comments"; description: "Add Comments"; values: undefined }
+  | { id: "assess_popup_leave_msg"; description: "Leave a message to your student!"; values: undefined }
+  | { id: "assess_popup_view_comments"; description: "View Comments"; values: undefined }
+  | { id: "assess_popup_detailed_answer"; description: "Detailed Answer"; values: undefined }
+  | {
+      id: "assess_popup_students_not_started";
+      description: "There are still students not start their Study activities. You cannot change the assessment after clicking Complete. ";
+      values: undefined;
+    }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -674,6 +705,16 @@ type LangRecord<T = string> =
   | { id: "schedule_popup_room_id"; description: "Room ID"; values: undefined }
   | { id: "schedule_popup_class_name"; description: "Class Name"; values: undefined }
   | { id: "schedule_detail_lesson_material"; description: "Lesson Material"; values: undefined }
+  | {
+      id: "schedule_msg_cannot_edit_study";
+      description: "This event cannot be edited because some students already made progress for Study activities.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_cannot_delete_study";
+      description: "This event cannot be deleted because some students already made progress for Study activities.";
+      values: undefined;
+    }
   | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }

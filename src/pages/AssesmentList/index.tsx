@@ -2,7 +2,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy } from "../../api/type";
+import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
@@ -62,7 +62,16 @@ export function AssessmentList() {
     history.push({ pathname: AssessmentsEdit.routeBasePath, search: toQueryString({ id }) });
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
-    history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
+    // history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
+    if (assessmentType === AssessmentType.classLive) {
+      history.push(`/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`);
+    }
+    if (assessmentType === AssessmentType.homeFun) {
+      history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
+    }
+    if (assessmentType === AssessmentType.study) {
+      history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
+    }
   };
   useEffect(() => {
     dispatch(actAssessmentList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));

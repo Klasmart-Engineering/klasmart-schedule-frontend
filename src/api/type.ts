@@ -179,3 +179,22 @@ export enum MilestoneOrderBy {
 export type SearchMilestonneResult = AsyncReturnType<typeof api.milestones.searchMilestone>;
 export type MilestoneListResult = SearchMilestonneResult["milestones"];
 export type MilestoneDetailResult = NonNullable<MilestoneListResult>[0];
+
+export enum StudyAssessmentOrderBy {
+  create_at = "create_at",
+  _create_at = "-create_at",
+  complete_at = "complete_at",
+  _complete_at = "-complete_at",
+}
+
+export type ListStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"];
+export type ListStudyAssessmentItem = NonNullable<ListStudyAssessment>[0];
+export type DetailStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+
+export type UpdataStudyAssessmentRequestData = Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
+export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["student_ids"]>;
+export enum ExectSeachType {
+  all = "all",
+  class_name = "class_name",
+  teacher_name = "teacher_name"
+}
