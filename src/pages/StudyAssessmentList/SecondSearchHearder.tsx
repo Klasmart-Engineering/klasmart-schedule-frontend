@@ -131,7 +131,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 const searchFieldList = () => {
   return [
     { label: d("All").t("assess_search_all"), value: ExectSeachType.all },
-    { label: "CLass Name", value: ExectSeachType.class_name },
+    // { label: "CLass Name", value: ExectSeachType.class_name },
     { label: "Teacher Name", value: ExectSeachType.teacher_name },
   ];
 };

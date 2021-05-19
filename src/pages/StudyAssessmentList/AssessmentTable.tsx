@@ -34,6 +34,12 @@ const useStyles = makeStyles((theme) =>
       height: 80,
       backgroundColor: "#f2f5f7",
     },
+    tableCell: {
+      textAlign: "center",
+      maxWidth: 200,
+      wordWrap: "break-word",
+      wordBreak: "normal",
+    },
   })
 );
 
@@ -47,16 +53,31 @@ interface AssessmentProps {
   onClickAssessment: AssessmentTableProps["onClickAssessment"];
 }
 function AssessmentRow(props: AssessmentProps) {
+  const css = useStyles();
   const { assessment, onClickAssessment } = props;
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
-      <TableCell align="center">{assessment.class_name}</TableCell>
-      <TableCell align="center">{assessment.teacher_names?.join(",")}</TableCell>
-      <TableCell align="center">{assessment.class_name}</TableCell>
-      <TableCell align="center">{formattedTime(assessment.due_at)}</TableCell>
-      <TableCell align="center">{assessment.complete_rate}</TableCell>
-      <TableCell align="center">{assessment.remaining_time}</TableCell>
-      <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {assessment.title}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {assessment.teacher_names?.join(",")}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {assessment.class_name}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {formattedTime(assessment.due_at)}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {assessment.complete_rate}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {assessment.remaining_time}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
+        {formattedTime(assessment.complete_at)}
+      </TableCell>
     </TableRow>
   );
 }
@@ -80,13 +101,27 @@ export function AssessmentTable(props: AssessmentTableProps) {
         <Table>
           <TableHead className={css.tableHead}>
             <TableRow>
-              <TableCell align="center">{"Studt Title"}</TableCell>
-              <TableCell align="center">{d("Teacher Name").t("schedule_label_teacher_name")}</TableCell>
-              <TableCell align="center">{d("Class Name").t("assess_detail_class_name")}</TableCell>
-              <TableCell align="center">{d("Due Date").t("assess_column_due_date")}</TableCell>
-              <TableCell align="center">{"Completion Rate"}</TableCell>
-              <TableCell align="center">{"Assessment Remaining"}</TableCell>
-              <TableCell align="center">{d("Complete Time").t("assess_column_complete_time")}</TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {"Studt Title"}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {d("Teacher Name").t("schedule_label_teacher_name")}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {d("Class Name").t("assess_detail_class_name")}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {d("Due Date").t("assess_column_due_date")}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {"Completion Rate"}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {"Assessment Remaining"}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {d("Complete Time").t("assess_column_complete_time")}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

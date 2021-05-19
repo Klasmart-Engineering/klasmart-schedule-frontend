@@ -312,8 +312,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
   } = props;
   const selectedMaterials = useMemo(() => {
     const selectedM = watch("lesson_materials") || defaultValue || [];
-    // return selectedM.length ? selectedM.filter((item) => item.checked) : [];
-    return selectedM;
+    return selectedM.length ? selectedM.filter((item) => item.checked) : [];
   }, [defaultValue, watch]);
   return (
     <Box style={{ height: 390 }}>
@@ -433,7 +432,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
               {materialString && materialString.length ? (
                 <>
                   <div className={css.materialTitle}>
-                    {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")} (
+                    {d("Lesson Materials Covered").t("assess_detail_lesson_materials_covered")}(
                     {`${materialString.length}/${assessmentDetail.lesson_materials?.length}`})
                   </div>
                   <div style={{ maxHeight: 180, minHeight: 90, overflow: "auto" }}>

@@ -80,7 +80,7 @@ export function StudyAssessmentList() {
     history.push({ pathname: AssessmentDetail.routeBasePath, search: toQueryString({ id }) });
   };
   useEffect(() => {
-    dispatch(getStudyAssessmentList(condition));
+    dispatch(getStudyAssessmentList({ ...condition, metaLoading: true }));
   }, [condition, dispatch]);
   return (
     <>
