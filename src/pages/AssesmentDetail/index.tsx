@@ -38,6 +38,7 @@ export function AssessmentDetail() {
   const isMyAssessment = Boolean(isMyAssessmentlist && isMyAssessmentlist.length > 0);
   const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
   const isInProgress = studyAssessmentDetail.status === AssessmentStatus.in_progress;
+  const isComplete = studyAssessmentDetail.status === AssessmentStatus.complete;
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
   const { handleSubmit, watch } = formMethods;
   const formValue = watch();
@@ -119,7 +120,7 @@ export function AssessmentDetail() {
           handleElasticLayerControl={handleElasticLayerControl}
           studentViewItems={filter_student_view_items}
           formMethods={formMethods}
-          isInProgress={isInProgress}
+          isComplete={isComplete}
           editable={editable}
         />
       </LayoutPair>

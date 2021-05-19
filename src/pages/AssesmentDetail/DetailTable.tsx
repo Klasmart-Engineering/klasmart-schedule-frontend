@@ -70,10 +70,12 @@ interface EditScoreProps {
   editable: boolean;
   isSubjectiveActivity: boolean;
   maxScore?: number;
+  attempted?: boolean;
+  isComplete?: boolean;
 }
 
 function EditScore(props: EditScoreProps) {
-  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore } = props;
+  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete } = props;
   const [editScore, setEditScore] = React.useState(false);
   const [scoreNum, setScoreNum] = React.useState(score);
   const dispatch = useDispatch<AppDispatch>();
@@ -82,14 +84,16 @@ function EditScore(props: EditScoreProps) {
     <div style={{ width: "100px" }}>
       {!editScore && (
         <>
-          {scoreNum}{" "}
-          <BorderColorIcon
-            onClick={() => {
-              setEditScore(true);
-            }}
-            className={classes.borderIconStyle}
-            style={{ visibility: editable && isSubjectiveActivity ? "visible" : "hidden" }}
-          />
+          {attempted ? scoreNum : "Not Attempted"}{" "}
+          {attempted && (
+            <BorderColorIcon
+              onClick={() => {
+                setEditScore(true);
+              }}
+              className={classes.borderIconStyle}
+              style={{ visibility: editable && !isComplete && isSubjectiveActivity ? "visible" : "hidden" }}
+            />
+          )}
         </>
       )}
       {editScore && (
@@ -130,6 +134,7 @@ function BasicTable(props: BasicTableProps) {
     formMethods: { control, setValue, getValues },
     index,
     editable,
+    isComplete,
   } = props;
 
   const handleChangeComment = (commentText: string) => {
@@ -179,7 +184,7 @@ function BasicTable(props: BasicTableProps) {
             <div style={{ color: checked ? "black" : "#666666" }}>
               <AccountCircleIcon />
               <span style={{ padding: "0 18px 0 18px" }}>{studentViewItem.student_name}</span>
-              {editable && (
+              {editable && !isComplete && (
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -194,6 +199,23 @@ function BasicTable(props: BasicTableProps) {
                   style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
                 >
                   Click to add a comment
+                </span>
+              )}
+              {isComplete && (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleElasticLayerControl({
+                      link: "",
+                      openStatus: true,
+                      type: "DetailView",
+                      contentText: studentViewItem.comment,
+                      title: "View comments",
+                    });
+                  }}
+                  style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
+                >
+                  Click to view a comment
                 </span>
               )}
             </div>
@@ -230,7 +252,13 @@ function BasicTable(props: BasicTableProps) {
                             visibility: subjectiveActivity(row.lesson_material_type) ? "visible" : "hidden",
                           }}
                           onClick={() => {
-                            handleElasticLayerControl({ link: "", openStatus: true, type: "DetailView" });
+                            handleElasticLayerControl({
+                              link: "",
+                              openStatus: true,
+                              type: "DetailView",
+                              contentText: row.answer,
+                              title: "Detailed Answer",
+                            });
                           }}
                         >
                           Click to view
@@ -245,6 +273,7 @@ function BasicTable(props: BasicTableProps) {
                           index={index}
                           editable={editable}
                           isSubjectiveActivity={subjectiveActivity(row.lesson_material_type)}
+                          attempted={row.attempted}
                         />
                       </TableCell>
                       <TableCell align="center">{(row?.achieved_score! / row?.max_score!) * 100 + "%"}</TableCell>
@@ -266,11 +295,11 @@ interface tableProps {
   formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
   formValue?: UpdateAssessmentRequestDataOmitAction;
   editable: boolean;
-  isInProgress: boolean;
+  isComplete: boolean;
 }
 
 export function DetailTable(props: tableProps) {
-  const { handleElasticLayerControl, studentViewItems, formMethods, formValue, editable, isInProgress } = props;
+  const { handleElasticLayerControl, studentViewItems, formMethods, formValue, editable, isComplete } = props;
   return (
     <>
       {studentViewItems?.map((item: EntityH5PAssessmentStudentViewItem, index: number) => {
@@ -283,7 +312,7 @@ export function DetailTable(props: tableProps) {
             index={index}
             formValue={formValue}
             editable={editable}
-            isInProgress={isInProgress}
+            isComplete={isComplete}
           />
         );
       })}

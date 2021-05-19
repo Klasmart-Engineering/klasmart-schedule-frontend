@@ -8,4 +8,5 @@ export interface ElasticLayerControl {
   type: AssesmentPopType;
   handleChangeComment?: (commentText: string) => void;
   contentText?: string;
+  title?: string;
 }

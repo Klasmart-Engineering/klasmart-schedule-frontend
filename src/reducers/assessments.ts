@@ -154,7 +154,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_1",
             lesson_material_type: "",
             max_score: 100,
-            attempted: true,
+            attempted: false,
             is_h5p: false,
           },
           {
@@ -174,7 +174,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_3",
             lesson_material_type: "",
             max_score: 100,
-            attempted: true,
+            attempted: false,
             is_h5p: false,
           },
         ],
@@ -186,7 +186,25 @@ const initialState: IAssessmentState = {
         lesson_materials: [
           {
             achieved_score: 90,
-            answer: "answer",
+            answer:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut\n" +
+              "        sollicitudin erat mauris, a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit.\n" +
+              "        Maecenas quis dui diam. Curabitur varius nunc sit amet metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque\n" +
+              "        nunc ligula, condimentum luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class\n" +
+              "        aptent taciti sociosqu ad litora Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut\n" +
+              "        scelerisque massa scelerisque. Ut sollicitudin erat mauris, a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed\n" +
+              "        convallis sed massa ac hendrerit. Maecenas quis dui diam. Curabitur varius nunc sit amet metus semper fermentum. Duis vitae\n" +
+              "        venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies\n" +
+              "        nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu ad litora Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n" +
+              "        In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut sollicitudin erat mauris, a aliquam est posuere ut. In\n" +
+              "        convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit. Maecenas quis dui diam. Curabitur varius nunc sit amet\n" +
+              "        metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum luctus luctus ac, pulvinar ut\n" +
+              "        dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu ad litora Lorem ipsum dolor sit\n" +
+              "        amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut sollicitudin erat mauris,\n" +
+              "        a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit. Maecenas quis dui diam.\n" +
+              "        Curabitur varius nunc sit amet metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum\n" +
+              "        luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu\n" +
+              "        ad litora",
             lesson_material_id: "material_id_1",
             lesson_material_name: "material_name_1",
             lesson_material_type: "essay",
@@ -201,7 +219,7 @@ const initialState: IAssessmentState = {
             lesson_material_name: "material_name_2",
             lesson_material_type: "",
             max_score: 100,
-            attempted: false,
+            attempted: true,
             is_h5p: false,
           },
           {

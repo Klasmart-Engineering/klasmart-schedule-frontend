@@ -64,6 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: "12px",
       lineHeight: "30px",
       maxHeight: "400px",
+      minWidth: "600px",
       overflow: "auto",
       "&::-webkit-scrollbar": {
         width: "3px",
@@ -89,7 +90,8 @@ interface elasticLayerControlProps {
 }
 
 interface NoticeProps extends elasticLayerControlProps {
-  contentText: string;
+  contentText?: string;
+  title?: string;
 }
 
 function NoticeTemplate(props: NoticeProps) {
@@ -184,14 +186,14 @@ function CommentsTemplate(props: CommentsProps) {
 }
 
 function DetailedViewTemplate(props: NoticeProps) {
-  const { handleElasticLayerControl } = props;
+  const { handleElasticLayerControl, contentText, title } = props;
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
   return (
     <Box style={modalStyle} className={classes.DetailViewBox}>
       <h3>
-        Detailed Answer{" "}
+        {title}{" "}
         <CloseIcon
           style={{ cursor: "pointer" }}
           onClick={() => {
@@ -199,26 +201,7 @@ function DetailedViewTemplate(props: NoticeProps) {
           }}
         />
       </h3>
-      <p className={classes.detailView}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut
-        sollicitudin erat mauris, a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit.
-        Maecenas quis dui diam. Curabitur varius nunc sit amet metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque
-        nunc ligula, condimentum luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class
-        aptent taciti sociosqu ad litora Lorem ipsum dolor sit amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut
-        scelerisque massa scelerisque. Ut sollicitudin erat mauris, a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed
-        convallis sed massa ac hendrerit. Maecenas quis dui diam. Curabitur varius nunc sit amet metus semper fermentum. Duis vitae
-        venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies
-        nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu ad litora Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut sollicitudin erat mauris, a aliquam est posuere ut. In
-        convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit. Maecenas quis dui diam. Curabitur varius nunc sit amet
-        metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum luctus luctus ac, pulvinar ut
-        dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu ad litora Lorem ipsum dolor sit
-        amet, consectetur adipiscing elit. In cursus felis ac diam placerat, ut scelerisque massa scelerisque. Ut sollicitudin erat mauris,
-        a aliquam est posuere ut. In convallis erat id sem blandit ornare. Sed convallis sed massa ac hendrerit. Maecenas quis dui diam.
-        Curabitur varius nunc sit amet metus semper fermentum. Duis vitae venenatis ligula, et aliquet mi. Quisque nunc ligula, condimentum
-        luctus luctus ac, pulvinar ut dui. Pellentesque euismod ultricies nulla sed faucibus. Nulla facilisi. Class aptent taciti sociosqu
-        ad litora
-      </p>
+      <p className={classes.detailView}>{contentText}</p>
     </Box>
   );
 }
@@ -252,11 +235,10 @@ export default function ResourcesView(props: elasticLayerControlProps) {
       )}
       {elasticLayerControlData?.type === "DetailView" && (
         <DetailedViewTemplate
-          contentText={
-            "There are still students not start their Study activities. You cannot change the assessment after clicking Complete."
-          }
+          contentText={elasticLayerControlData.contentText}
           handleElasticLayerControl={handleElasticLayerControl}
           elasticLayerControlData={elasticLayerControlData}
+          title={elasticLayerControlData.title}
         />
       )}
       {elasticLayerControlData?.type === "Notice" && (
