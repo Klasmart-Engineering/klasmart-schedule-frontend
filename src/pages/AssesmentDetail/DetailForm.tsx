@@ -235,9 +235,10 @@ interface PopupInputProps {
   onChange?: (value: PopupInputProps["value"]) => any;
   isMyAssessment: boolean;
   editable: boolean;
+  studentIds: UpdateStudyAssessmentStudentIds;
 }
 const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
-  const { value, onChange, assessmentDetail, isMyAssessment, editable } = props;
+  const { value, onChange, assessmentDetail, isMyAssessment, editable, studentIds } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
@@ -246,9 +247,9 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
     return !open;
   }, false);
   const attendanceString = useMemo(() => {
-    const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
+    const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value || studentIds });
     return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
-  }, [assessmentDetail, value]);
+  }, [assessmentDetail, studentIds, value]);
   const handleOk = useCallback(() => {
     const { student_ids } = formMethods.getValues();
     if (!student_ids?.length)
@@ -282,7 +283,11 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
       <Dialog open={open} onClose={toggle}>
         <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
         <DialogContent dividers style={{ borderBottom: "none" }}>
-          <AttendanceInput assessmentDetail={assessmentDetail} defaultValue={value} formMethods={formMethods}></AttendanceInput>
+          <AttendanceInput
+            assessmentDetail={assessmentDetail}
+            defaultValue={value || studentIds}
+            formMethods={formMethods}
+          ></AttendanceInput>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary" variant="outlined">
@@ -505,6 +510,7 @@ export default function DetailForm(props: DetailFormProps) {
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { student_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
+  console.log(student_ids);
   const m = getValues()["lesson_materials"];
   const materials = useMemo(() => ModelAssessment.toStudyAssessment(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
@@ -551,6 +557,7 @@ export default function DetailForm(props: DetailFormProps) {
             control={control}
             isMyAssessment={isMyAssessment}
             editable={editable}
+            studentIds={student_ids}
           />
           {assessmentDetail.lesson_plan && assessmentDetail.lesson_plan.id && (
             <>
