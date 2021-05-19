@@ -3292,9 +3292,7 @@
             }
           }
         }
-      }
-    },
-    "/h5p_assessments/{id}/update": {
+      },
       "put": {
         "description": "update h5p assessment",
         "consumes": ["application/json"],

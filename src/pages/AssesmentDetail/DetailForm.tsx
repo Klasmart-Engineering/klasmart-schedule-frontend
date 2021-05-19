@@ -595,7 +595,7 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="completeTime"
-            value={assessmentDetail?.complete_rate}
+            value={assessmentDetail?.complete_rate || 0}
             className={css.fieldset}
             label={"Completion Rate"}
           />
@@ -603,7 +603,7 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="completeTime"
-            value={assessmentDetail?.remaining_time}
+            value={assessmentDetail?.remaining_time || 0}
             className={css.fieldset}
             label={"Assessment Remaining"}
           />
@@ -611,7 +611,7 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="completeTime"
-            value={formattedTime(assessmentDetail.complete_at) || ""}
+            value={formattedTime(assessmentDetail.complete_at) || 0}
             className={css.fieldset}
             label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
           />

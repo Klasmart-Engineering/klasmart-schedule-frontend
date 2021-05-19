@@ -2678,12 +2678,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     /**
      * @tags h5pAssessments
      * @name updateH5PAssessment
-     * @request PUT:/h5p_assessments/{id}/update
+     * @request PUT:/h5p_assessments/{id}
      * @description update h5p assessment
      */
     updateH5PAssessment: (id: string, update_h5p_assessment_args: EntityUpdateH5PAssessmentArgs, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
-        `/h5p_assessments/${id}/update`,
+        `/h5p_assessments/${id}`,
         "PUT",
         params,
         update_h5p_assessment_args
