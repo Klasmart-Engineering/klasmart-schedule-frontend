@@ -102,7 +102,8 @@ function EditScore(props: EditScoreProps) {
             value={scoreNum}
             style={{ width: "22%" }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setScoreNum((e.target.value as unknown) as number);
+              const value = (e.target.value as unknown) as number;
+              if (Number(value) + "" !== NaN + "") setScoreNum(value);
             }}
           />
           <CheckIcon

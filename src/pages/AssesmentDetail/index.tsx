@@ -42,11 +42,12 @@ export function AssessmentDetail() {
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
   const { handleSubmit, watch } = formMethods;
   const formValue = watch();
-  const { student_ids, lesson_materials } = formValue;
+  const { student_ids, lesson_materials, student_view_items } = formValue;
   const filter_student_view_items = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
-    return res;
-  }, [studyAssessmentDetail, student_ids, lesson_materials]);
+    return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
+  }, [studyAssessmentDetail, student_ids, lesson_materials, student_view_items]);
+
   const handleGoBack = useCallback(async () => {
     history.goBack();
   }, [history]);
