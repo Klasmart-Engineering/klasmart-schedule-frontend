@@ -21,6 +21,7 @@ import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAct
 import { actWarning } from "../../reducers/notify";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../reducers";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles({
   table: {
@@ -84,7 +85,7 @@ function EditScore(props: EditScoreProps) {
     <div style={{ width: "100px" }}>
       {!editScore && (
         <>
-          {attempted ? scoreNum : "Not Attempted"}{" "}
+          {attempted ? scoreNum : d("Not Attempted").t("assess_option_not_attempted")}{" "}
           {attempted && (
             <BorderColorIcon
               onClick={() => {
@@ -111,7 +112,7 @@ function EditScore(props: EditScoreProps) {
               if (scoreNum! < score!) {
                 dispatch(actWarning("The new score cannot be lower than the old one."));
               } else if (scoreNum! > maxScore!) {
-                dispatch(actWarning("The score you entered cannot exceed the maximum score."));
+                dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
               } else {
                 handleChangeScore(scoreNum, index);
                 setEditScore(false);
@@ -199,7 +200,7 @@ function BasicTable(props: BasicTableProps) {
                   }}
                   style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
                 >
-                  Click to add a comment
+                  {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                 </span>
               )}
               {isComplete && (
@@ -216,7 +217,7 @@ function BasicTable(props: BasicTableProps) {
                   }}
                   style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
                 >
-                  Click to view a comment
+                  {d("Click to view comments").t("assess_detail_click_to_view_comments")}
                 </span>
               )}
             </div>
@@ -229,12 +230,12 @@ function BasicTable(props: BasicTableProps) {
                 <TableHead>
                   <TableRow>
                     <TableCell>No.</TableCell>
-                    <TableCell align="center">Lesson Material Name</TableCell>
-                    <TableCell align="center">Lesson Material Type</TableCell>
-                    <TableCell align="center">Answer</TableCell>
-                    <TableCell align="center">Maximum Possible Score</TableCell>
-                    <TableCell align="center">Achieved Score</TableCell>
-                    <TableCell align="center">Percentage</TableCell>
+                    <TableCell align="center">{d("Lesson Material Name").t("assess_detail_lesson_material_name")}</TableCell>
+                    <TableCell align="center">{d("Lesson Material Type").t("assess_detail_lesson_material_type")}</TableCell>
+                    <TableCell align="center">{d("Answer").t("assess_detail_answer")}</TableCell>
+                    <TableCell align="center">{d("Maximum Possible Score").t("assess_detail_maximum_possible_score")}</TableCell>
+                    <TableCell align="center">{d("Achieved Score").t("assess_detail_achieved_score")}</TableCell>
+                    <TableCell align="center">{d("Percentage").t("assess_detail_percentage")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

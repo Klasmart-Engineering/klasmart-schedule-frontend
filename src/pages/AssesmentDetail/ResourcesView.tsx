@@ -8,6 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import CloseIcon from "@material-ui/icons/Close";
+import { d } from "../../locale/LocaleManager";
 
 function getModalStyle() {
   const top = 50;
@@ -109,7 +110,7 @@ function NoticeTemplate(props: NoticeProps) {
             handleElasticLayerControl({ link: "", openStatus: false, type: "" });
           }}
         >
-          Cancel
+          {d("Cancel").t("library_label_cancel")}
         </Button>
         <Button
           color="primary"
@@ -117,7 +118,7 @@ function NoticeTemplate(props: NoticeProps) {
             handleElasticLayerControl({ link: "", openStatus: false, type: "" });
           }}
         >
-          OK
+          {d("OK").t("general_button_OK")}
         </Button>
       </span>
     </Box>
@@ -133,7 +134,6 @@ function CommentsTemplate(props: CommentsProps) {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
-  console.log(elasticLayerControlData?.contentText, 8888);
   const handleChangeComment = elasticLayerControlData?.handleChangeComment!;
   return (
     <Box style={modalStyle} className={classes.commentBox}>
@@ -168,7 +168,7 @@ function CommentsTemplate(props: CommentsProps) {
             handleElasticLayerControl({ link: "", openStatus: false, type: "" });
           }}
         >
-          Cancel
+          {d("Cancel").t("library_label_cancel")}
         </Button>
         <Button
           style={{ marginRight: "16px" }}
@@ -178,7 +178,7 @@ function CommentsTemplate(props: CommentsProps) {
             handleChangeComment(commentText!);
           }}
         >
-          OK
+          {d("OK").t("general_button_OK")}
         </Button>
       </span>
     </Box>
