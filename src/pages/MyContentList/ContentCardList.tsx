@@ -437,58 +437,93 @@ function ContentCard(props: ContentProps) {
           {!queryCondition.program_group &&
             queryCondition.publish_status === PublishStatus.published &&
             content?.content_type !== ContentType.folder &&
-            content?.content_type_name !== ASSETS_NAME && (
-              <Permission value={PermissionType.archive_published_content_273}>
-                <LButton
-                  as={IconButton}
-                  replace
-                  className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-                  onClick={() => onDelete(content.id as string, type)}
-                >
-                  <RemoveCircleOutlineIcon />
-                </LButton>
-              </Permission>
-            )}
-          {!queryCondition.program_group && content?.content_type === ContentType.folder && (
-            <Permission value={PermissionType.create_folder_289}>
+            content?.content_type_name !== ASSETS_NAME &&
+            content.permission?.allow_delete && (
               <LButton
                 as={IconButton}
                 replace
                 className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-                onClick={() => onDeleteFolder(content.id as string)}
+                onClick={() => onDelete(content.id as string, type)}
               >
-                <DeleteOutlineIcon />
+                <RemoveCircleOutlineIcon />
               </LButton>
-            </Permission>
+              // <Permission value={PermissionType.archive_published_content_273}>
+              //   <LButton
+              //     as={IconButton}
+              //     replace
+              //     className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              //     onClick={() => onDelete(content.id as string, type)}
+              //   >
+              //     <RemoveCircleOutlineIcon />
+              //   </LButton>
+              // </Permission>
+            )}
+          {!queryCondition.program_group && content?.content_type === ContentType.folder && content.permission?.allow_delete && (
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              onClick={() => onDeleteFolder(content.id as string)}
+            >
+              <DeleteOutlineIcon />
+            </LButton>
+            // <Permission value={PermissionType.create_folder_289}>
+            //   <LButton
+            //     as={IconButton}
+            //     replace
+            //     className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+            //     onClick={() => onDeleteFolder(content.id as string)}
+            //   >
+            //     <DeleteOutlineIcon />
+            //   </LButton>
+            // </Permission>
           )}
           {/* content archieved republish delete */}
           {!queryCondition.program_group &&
             content?.publish_status === PublishStatus.archive &&
-            content?.content_type_name !== ASSETS_NAME && (
-              <Permission value={PermissionType.republish_archived_content_274}>
-                <LButton
-                  as={IconButton}
-                  replace
-                  className={clsx(css.rePublishColor, css.MuiIconButtonRoot)}
-                  onClick={() => onPublish(content.id as string)}
-                >
-                  <PublishOutlinedIcon />
-                </LButton>
-              </Permission>
+            content?.content_type_name !== ASSETS_NAME &&
+            content.permission?.allow_republish && (
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.rePublishColor, css.MuiIconButtonRoot)}
+                onClick={() => onPublish(content.id as string)}
+              >
+                <PublishOutlinedIcon />
+              </LButton>
+              // <Permission value={PermissionType.republish_archived_content_274}>
+              //   <LButton
+              //     as={IconButton}
+              //     replace
+              //     className={clsx(css.rePublishColor, css.MuiIconButtonRoot)}
+              //     onClick={() => onPublish(content.id as string)}
+              //   >
+              //     <PublishOutlinedIcon />
+              //   </LButton>
+              // </Permission>
             )}
           {!queryCondition.program_group &&
             content?.publish_status === PublishStatus.archive &&
-            content?.content_type_name !== ASSETS_NAME && (
-              <Permission value={PermissionType.delete_archived_content_275}>
-                <LButton
-                  as={IconButton}
-                  replace
-                  className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-                  onClick={() => onDelete(content.id as string, type)}
-                >
-                  <DeleteOutlineIcon />
-                </LButton>
-              </Permission>
+            content?.content_type_name !== ASSETS_NAME &&
+            content.permission?.allow_delete && (
+              <LButton
+                as={IconButton}
+                replace
+                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+                onClick={() => onDelete(content.id as string, type)}
+              >
+                <DeleteOutlineIcon />
+              </LButton>
+              // <Permission value={PermissionType.delete_archived_content_275}>
+              //   <LButton
+              //     as={IconButton}
+              //     replace
+              //     className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              //     onClick={() => onDelete(content.id as string, type)}
+              //   >
+              //     <DeleteOutlineIcon />
+              //   </LButton>
+              // </Permission>
             )}
           {/* content unpublished delete */}
           {!queryCondition.program_group && isUnpublish(queryCondition) && content?.content_type_name !== ASSETS_NAME && (
@@ -502,20 +537,30 @@ function ContentCard(props: ContentProps) {
             </LButton>
           )}
           {/* assets delete */}
-          {!queryCondition.program_group && content?.content_type_name === ASSETS_NAME && (
-            <Permission value={PermissionType.delete_asset_340}>
-              <LButton
-                as={IconButton}
-                replace
-                className={clsx(css.iconColor, css.MuiIconButtonRoot)}
-                onClick={() => onDelete(content.id as string, type)}
-              >
-                <DeleteIcon />
-              </LButton>
-            </Permission>
+          {!queryCondition.program_group && content?.content_type_name === ASSETS_NAME && content.permission?.allow_delete && (
+            <LButton
+              as={IconButton}
+              replace
+              className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              onClick={() => onDelete(content.id as string, type)}
+            >
+              <DeleteIcon />
+            </LButton>
+            // <Permission value={PermissionType.delete_asset_340}>
+            //   <LButton
+            //     as={IconButton}
+            //     replace
+            //     className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+            //     onClick={() => onDelete(content.id as string, type)}
+            //   >
+            //     <DeleteIcon />
+            //   </LButton>
+            // </Permission>
           )}
-          {!queryCondition.program_group && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
-            <Permission value={PermissionType.reject_pending_content_272}>
+          {!queryCondition.program_group &&
+            content?.publish_status === PublishStatus.pending &&
+            queryCondition?.author !== Author.self &&
+            content.permission?.allow_reject && (
               <LButton
                 as={IconButton}
                 replace
@@ -524,10 +569,21 @@ function ContentCard(props: ContentProps) {
               >
                 <ClearIcon />
               </LButton>
-            </Permission>
-          )}
-          {!queryCondition.program_group && content?.publish_status === PublishStatus.pending && queryCondition?.author !== Author.self && (
-            <Permission value={PermissionType.approve_pending_content_271}>
+              // <Permission value={PermissionType.reject_pending_content_272}>
+              //   <LButton
+              //     as={IconButton}
+              //     replace
+              //     className={clsx(css.iconColor, css.MuiIconButtonRoot)}
+              //     onClick={() => onReject(content.id as string)}
+              //   >
+              //     <ClearIcon />
+              //   </LButton>
+              // </Permission>
+            )}
+          {!queryCondition.program_group &&
+            content?.publish_status === PublishStatus.pending &&
+            queryCondition?.author !== Author.self &&
+            content.permission?.allow_approve && (
               <LButton
                 as={IconButton}
                 replace
@@ -536,8 +592,17 @@ function ContentCard(props: ContentProps) {
               >
                 <DoneIcon />
               </LButton>
-            </Permission>
-          )}
+              // <Permission value={PermissionType.approve_pending_content_271}>
+              //   <LButton
+              //     as={IconButton}
+              //     replace
+              //     className={clsx(css.approveIconColor, css.MuiIconButtonRoot)}
+              //     onClick={() => onApprove(content.id as string)}
+              //   >
+              //     <DoneIcon />
+              //   </LButton>
+              // </Permission>
+            )}
         </div>
       </CardActions>
     </Card>

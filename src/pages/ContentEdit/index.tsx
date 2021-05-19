@@ -330,7 +330,7 @@ function ContentEditForm() {
             onChangeProgram={handleChangeProgram}
             onChangeDevelopmental={handleChangeDevelopmental}
             onChangeSubject={handleChangeSubject}
-            permission={!value}
+            disabled={id ? !contentDetail.permission.allow_edit : !value}
           />
         )}
       />
@@ -349,14 +349,27 @@ function ContentEditForm() {
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
       />
-      <MediaAssets
-        list={mediaList}
-        onSearch={handleSearchMedia}
-        value={searchMedia}
-        onChangePage={handleChangePage}
-        total={mediaListTotal}
-        mediaPage={mediaPage}
-        isShare={isShare}
+      <PermissionOr
+        value={[
+          PermissionType.edit_org_published_content_235,
+          PermissionType.edit_lesson_material_metadata_and_content_236,
+          PermissionType.edit_lesson_plan_metadata_237,
+          PermissionType.create_content_page_201,
+          PermissionType.create_lesson_plan_221,
+          PermissionType.create_lesson_material_220,
+        ]}
+        render={(value) => (
+          <MediaAssets
+            list={mediaList}
+            onSearch={handleSearchMedia}
+            value={searchMedia}
+            onChangePage={handleChangePage}
+            total={mediaListTotal}
+            mediaPage={mediaPage}
+            isShare={isShare}
+            permission={id ? !!contentDetail.permission.allow_edit : value}
+          />
+        )}
       />
     </ContentTabs>
   );
@@ -415,7 +428,7 @@ function ContentEditForm() {
                               readonly={false}
                               overlay={false}
                               contentDetail={contentDetail}
-                              permission={!value}
+                              disabled={id ? !contentDetail.permission.allow_edit : !value}
                             />
                           }
                         />
@@ -463,7 +476,7 @@ function ContentEditForm() {
                               readonly={false}
                               overlay={false}
                               contentDetail={contentDetail}
-                              permission={!value}
+                              disabled={id ? !contentDetail.permission.allow_edit : !value}
                             />
                           )
                         }
@@ -532,7 +545,7 @@ function ContentEditForm() {
           PermissionType.edit_lesson_plan_metadata_237,
         ]}
         render={(value) =>
-          value ? (
+          (contentDetail.content_type !== ContentType.assets && id ? !!contentDetail.permission.allow_edit : value) ? (
             <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
               {
                 <Fragment>

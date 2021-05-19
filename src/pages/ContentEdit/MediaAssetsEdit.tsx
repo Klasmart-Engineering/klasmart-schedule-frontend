@@ -83,7 +83,7 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
 interface AssetEditProps {
   isAsset?: boolean;
   contentDetail: EntityContentInfoWithDetails;
-  permission?: boolean;
+  disabled?: boolean;
   assetLibraryId?: ContentFileType;
   value?: string;
   onChange: (value?: string) => any;
@@ -92,7 +92,7 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, contentDetail, permission, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
   const setFile = useMemo(
     () => (item: DragItem) => {
@@ -170,7 +170,7 @@ function AssetEdit(props: AssetEditProps) {
                 {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
                 {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
                   <>
-                    <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
+                    <Button variant="contained" color="primary" ref={btnRef} disabled={disabled}>
                       {d("Upload from Device").t("library_label_upload_from_device")}
                     </Button>
                     <div className={css.uploadInfo}>
@@ -202,7 +202,7 @@ function AssetPreviewOverlay() {
 interface MediaAssetsEditProps extends AssetEditProps {
   readonly: boolean;
   overlay: boolean;
-  permission?: boolean;
+  disabled?: boolean;
 }
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {

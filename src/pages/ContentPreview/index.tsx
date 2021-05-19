@@ -114,6 +114,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       )}
       {tab === TabValue.details && !program_group && (
         <OperationBtn
+          permission={contentPreview.permission}
           author={author}
           isMine={contentPreview.is_mine}
           publish_status={contentPreview.publish_status}
