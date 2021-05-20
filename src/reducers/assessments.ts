@@ -1,5 +1,5 @@
 import { cloneDeep } from "@apollo/client/utilities";
-import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import {
@@ -12,6 +12,7 @@ import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
+import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actInfo } from "./notify";
 
@@ -24,6 +25,8 @@ export interface IAssessmentState {
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
+  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"]>;
+  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>>;
 }
 
 interface RootState {
@@ -65,6 +68,9 @@ const initialState: IAssessmentState = {
   },
   homefunFeedbacks: [],
   hasPermissionOfHomefun: false,
+  studyAssessmentList: [],
+  studyAssessmentDetail: {},
+  my_id: "teacherid_1",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -173,6 +179,72 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   }
 );
 
+type IQueryStudyAssessmentListParams = Parameters<typeof api.h5PAssessments.listH5PAssessments>[0] & LoadingMetaPayload;
+type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>;
+export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
+  "assessments/getStudyAssessmentList",
+  async ({ metaLoading, ...query }) => {
+    const { items, total } = await api.h5PAssessments.listH5PAssessments({ ...query, page_size: 20 });
+    return { items, total };
+  }
+);
+type IQueryStudyAssessmentDetailResult = {
+  detail: AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+  my_id: string;
+};
+export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
+  "assessments/getStudyAssessmentDetail",
+  async ({ id }) => {
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const my_id = meInfo.me?.user_id || "";
+    const detail = await api.h5PAssessments.getH5PAssessmentDetail(id);
+    return { detail, my_id };
+  }
+);
+
+type IQueryUpdateStudyAssessmentParams = {
+  id: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[0];
+  data: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
+  filter_student_view_items?: IQueryStudyAssessmentDetailResult["detail"]["student_view_items"];
+};
+
+export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
+  "assessments/updateStudyAssessment",
+  async ({ id, data }) => {
+    await api.h5PAssessments.updateH5PAssessment(id, data);
+    return id;
+  }
+);
+
+export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
+  "assessments/completeStudyAssessment",
+  async ({ id, data, filter_student_view_items }, { dispatch }) => {
+    const item =
+      filter_student_view_items && filter_student_view_items.length
+        ? filter_student_view_items.find((item) => item.lesson_materials?.some((m) => !m.attempted))
+        : undefined;
+    if (!item) {
+      const content = "You cannot change the assessment after clicking Complete";
+      const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
+      if (!isConfirmed) return Promise.reject();
+      const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+      return res;
+    }
+    const content = "There are still students not start their Study activities. You cannot change the assessment after clicking Complete";
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
+    if (!isConfirmed) return Promise.reject();
+    const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+    return res;
+  }
+);
+
 const { reducer } = createSlice({
   name: "assessments",
   initialState,
@@ -231,6 +303,21 @@ const { reducer } = createSlice({
     [updateHomefun.rejected.type]: (state, { error }: any) => {
       console.error(error);
       throw error;
+    },
+    [getStudyAssessmentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentList>>) => {
+      state.studyAssessmentList = payload.items || [];
+      state.total = payload.total || 0;
+    },
+    [getStudyAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentList>>) => {
+      state.studyAssessmentList = initialState.studyAssessmentList;
+      state.total = 0;
+    },
+    [getStudyAssessmentDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
+      state.studyAssessmentDetail = payload.detail;
+      state.my_id = payload.my_id;
+    },
+    [getStudyAssessmentDetail.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
+      state.studyAssessmentDetail = initialState.studyAssessmentDetail;
     },
   },
 });

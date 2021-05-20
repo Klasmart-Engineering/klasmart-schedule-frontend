@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType } from "../../api/type";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
@@ -83,26 +82,12 @@ interface DraggableItemProps {
   type: string;
   item: EntityContentInfoWithDetails;
   lesson?: "assets" | "material" | "plan";
+  permission: boolean;
 }
 function DraggableImage(props: DraggableItemProps) {
-  const { type, item, lesson } = props;
+  const { type, item, lesson, permission } = props;
   const css = useStyles();
-  const editbales = usePermission([
-    PermissionType.edit_lesson_plan_content_238,
-    PermissionType.edit_lesson_material_metadata_and_content_236,
-    PermissionType.edit_org_published_content_235,
-    PermissionType.create_lesson_material_220,
-    PermissionType.create_lesson_plan_221,
-    PermissionType.create_content_page_201,
-  ]);
-  const editbale =
-    editbales.edit_lesson_material_metadata_and_content_236 ||
-    editbales.edit_lesson_plan_content_238 ||
-    editbales.create_content_page_201 ||
-    editbales.create_lesson_material_220 ||
-    editbales.create_lesson_plan_221 ||
-    editbales.edit_org_published_content_235;
-  const [, dragRef] = useDrag({ item: { type, data: item }, canDrag: () => editbale });
+  const [, dragRef] = useDrag({ item: { type, data: item }, canDrag: () => permission });
   const contentType =
     lesson === "material"
       ? item.content_type && Number(item.content_type * 10 + (item.data && (JSON.parse(item.data).file_type || 1)))
@@ -120,11 +105,12 @@ export interface MediaAssetsProps {
   onChangePage: (page: number) => any;
   mediaPage: number;
   isShare?: string;
+  permission: boolean;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
-  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, isShare } = props;
+  const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, isShare, permission } = props;
   const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -138,7 +124,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     return (
       <TableRow key={idx}>
         <TableCell className={css.cellThumnbnail}>
-          <DraggableImage type={dragType} item={item} lesson={lesson} />
+          <DraggableImage type={dragType} item={item} lesson={lesson} permission={permission} />
         </TableCell>
         <TableCell>{item.name}</TableCell>
         <TableCell>{item.author_name}</TableCell>

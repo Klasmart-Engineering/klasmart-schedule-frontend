@@ -379,7 +379,9 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const buttonGroup = (type: string, scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => {
     const isScheduleExpiredMulti = (): boolean => {
-      return scheduleInfo.id ? scheduleInfo.status !== "NotStart" || privilegedMembers("Student") : false;
+      return scheduleInfo.id
+        ? scheduleInfo.status !== "NotStart" || privilegedMembers("Student") || (scheduleInfo.exist_assessment as boolean)
+        : false;
     };
     return (
       <span>

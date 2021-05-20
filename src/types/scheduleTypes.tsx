@@ -190,6 +190,7 @@ export interface scheduleInfoViewProps {
   is_home_fun: boolean;
   is_hidden: boolean;
   role_type: string;
+  exist_assessment: boolean;
 }
 
 export interface FilterDataItemsProps {

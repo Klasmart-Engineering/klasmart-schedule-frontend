@@ -34,8 +34,9 @@ import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
 import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
+import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
-import { ContentListForm, ContentListFormKey, QueryCondition } from "../pages/MyContentList/types";
+import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -104,6 +105,7 @@ const initialState: IContentState = {
     age_name: [],
     org_name: "",
     outcomes: [],
+    permission: {},
     outcome_entities: [],
     created_at: 0,
     draw_activity: false,
@@ -426,10 +428,18 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     await dispatch(getOrgProperty());
+    const submenu = content_type?.split(",").includes(ContentType.assets.toString())
+      ? SubmenuType.assets
+      : publish_status === PublishStatus.pending && author === Author.self
+      ? SubmenuType.wfa
+      : publish_status === PublishStatus.archive
+      ? SubmenuType.archived
+      : publish_status;
     const params = {
       name: nameValue,
       content_name: contentNameValue,
       publish_status,
+      submenu,
       author,
       content_type,
       program_group,
@@ -463,12 +473,12 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       delete params.author;
       delete params.content_type;
       delete params.path;
+      params.submenu = program_group === ProgramGroup.moreFeaturedContent ? SubmenuType.moreFeatured : SubmenuType.badanamu;
       const badaContent = await api.contentsAuthed.queryAuthContent(params);
       return { badaContent, organization_id };
     } else {
       delete params.path;
       delete params.program_group;
-
       const contentRes = await api.contents.searchContents(params);
       return { contentRes, organization_id };
     }

@@ -5,7 +5,6 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
-    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -758,6 +757,12 @@
             "type": "string",
             "description": "search program group",
             "name": "program_group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
             "in": "query"
           },
           {
@@ -1642,6 +1647,12 @@
           },
           {
             "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content source type",
             "name": "source_type",
             "in": "query"
@@ -1811,6 +1822,12 @@
           },
           {
             "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content program",
             "name": "program",
             "in": "query"
@@ -1929,6 +1946,12 @@
           },
           {
             "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "search content name",
             "name": "content_name",
             "in": "query"
@@ -2037,6 +2060,12 @@
             "type": "string",
             "description": "search content name",
             "name": "content_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search page sub menu",
+            "name": "submenu",
             "in": "query"
           },
           {
@@ -3113,6 +3142,204 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/h5p_assessments": {
+      "get": {
+        "description": "list h5p assessments",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["h5pAssessments"],
+        "summary": "list h5p assessments",
+        "operationId": "listH5PAssessments",
+        "parameters": [
+          {
+            "enum": ["study_h5p"],
+            "type": "string",
+            "description": "h5p assessment type",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "query teacher name or class name",
+            "name": "query",
+            "in": "query"
+          },
+          {
+            "enum": ["all", "class_name", "teacher_name"],
+            "type": "string",
+            "default": "all",
+            "description": "query type",
+            "name": "query_type",
+            "in": "query"
+          },
+          {
+            "enum": ["all", "in_progress", "complete"],
+            "type": "string",
+            "default": "all",
+            "description": "query status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "enum": ["create_at", "-create_at", "complete_at", "-complete_at"],
+            "type": "string",
+            "default": "-complete_at",
+            "description": "list order by",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "default": 10,
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ListH5PAssessmentsResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/h5p_assessments/{id}": {
+      "get": {
+        "description": "get h5p assessment detail",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["h5pAssessments"],
+        "summary": "get h5p assessment detail",
+        "operationId": "getH5PAssessmentDetail",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "h5p assessment id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.GetH5PAssessmentDetailResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update h5p assessment",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["h5pAssessments"],
+        "operationId": "updateH5PAssessment",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "h5p assessment id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "update h5p assessment args",
+            "name": "update_h5p_assessment_args",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UpdateH5PAssessmentArgs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
@@ -6202,6 +6429,51 @@
             }
           }
         }
+      },
+      "post": {
+        "description": "post schedule time view",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "postScheduleTimeView",
+        "operationId": "postScheduleTimeView",
+        "parameters": [
+          {
+            "description": "schedule data to query",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleListView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
       }
     },
     "/schedules_time_view/dates": {
@@ -6264,6 +6536,54 @@
             "description": "program id,separated by comma",
             "name": "program_ids",
             "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "get schedules dates(format:2006-01-02)",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "postScheduledDates",
+        "operationId": "postScheduledDates",
+        "parameters": [
+          {
+            "description": "schedule data to query",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+            }
           }
         ],
         "responses": {
@@ -6527,7 +6847,7 @@
         "description": "generate shortcode",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["learning_outcomes"],
+        "tags": ["shortcode"],
         "summary": "generate Shortcode",
         "operationId": "generateShortcode",
         "parameters": [
@@ -6749,7 +7069,9 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "409": {},
+          "409": {
+            "description": ""
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -6779,7 +7101,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -6915,7 +7239,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -6951,7 +7277,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7051,7 +7379,16 @@
   },
   "definitions": {
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.BulkBindOutcomeSetRequest": {
       "type": "object",
@@ -7079,7 +7416,16 @@
       }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -7131,7 +7477,16 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -7173,7 +7528,16 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.LoginRequest": {
       "type": "object",
@@ -7198,7 +7562,16 @@
       }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.OrganizationRegionInfoResponse": {
       "type": "object",
@@ -7299,18 +7672,6 @@
         }
       }
     },
-    "api.Response": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
-    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -7347,7 +7708,16 @@
       }
     },
     "api.SuccessRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.TokenResponse": {
       "type": "object",
@@ -7358,7 +7728,16 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -7521,6 +7900,9 @@
         },
         "schedule_id": {
           "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -7528,7 +7910,10 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -7606,7 +7991,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentClass"
         },
         "class_end_time": {
@@ -7634,11 +8018,9 @@
           }
         },
         "plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentContentView"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "room_id": {
@@ -7683,7 +8065,6 @@
           "type": "string"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
@@ -7899,6 +8280,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
         },
         "program": {
           "type": "string"
@@ -8213,6 +8597,9 @@
             "type": "string"
           }
         },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
+        },
         "program": {
           "type": "string"
         },
@@ -8308,6 +8695,29 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ContentPermission": {
+      "type": "object",
+      "properties": {
+        "allow_approve": {
+          "type": "boolean"
+        },
+        "allow_delete": {
+          "type": "boolean"
+        },
+        "allow_edit": {
+          "type": "boolean"
+        },
+        "allow_reject": {
+          "type": "boolean"
+        },
+        "allow_republish": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
         }
       }
     },
@@ -8569,6 +8979,9 @@
         "name": {
           "type": "string"
         },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
+        },
         "publish_status": {
           "type": "string"
         },
@@ -8705,6 +9118,66 @@
         }
       }
     },
+    "entity.GetH5PAssessmentDetailResult": {
+      "type": "object",
+      "properties": {
+        "class_name": {
+          "type": "string"
+        },
+        "complete_at": {
+          "type": "integer"
+        },
+        "complete_rate": {
+          "type": "number"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.H5PAssessmentLessonMaterial"
+          }
+        },
+        "lesson_plan": {
+          "$ref": "#/definitions/entity.H5PAssessmentLessonPlan"
+        },
+        "remaining_time": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "description": "debug",
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "student_view_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.H5PAssessmentStudentViewItem"
+          }
+        },
+        "students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudent"
+          }
+        },
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentTeacher"
+          }
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
     "entity.GetHomeFunStudyResult": {
       "type": "object",
       "properties": {
@@ -8784,6 +9257,86 @@
         }
       }
     },
+    "entity.H5PAssessmentLessonMaterial": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.H5PAssessmentLessonPlan": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.H5PAssessmentStudentViewItem": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.H5PAssessmentStudentViewLessonMaterial"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.H5PAssessmentStudentViewLessonMaterial": {
+      "type": "object",
+      "properties": {
+        "achieved_score": {
+          "type": "number"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "attempted": {
+          "type": "boolean"
+        },
+        "is_h5p": {
+          "type": "boolean"
+        },
+        "lesson_material_id": {
+          "type": "string"
+        },
+        "lesson_material_name": {
+          "type": "string"
+        },
+        "lesson_material_type": {
+          "type": "string"
+        },
+        "max_score": {
+          "type": "number"
+        }
+      }
+    },
     "entity.LessonType": {
       "type": "object",
       "properties": {
@@ -8827,6 +9380,56 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ListH5PAssessmentsResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ListH5PAssessmentsResultItem"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ListH5PAssessmentsResultItem": {
+      "type": "object",
+      "properties": {
+        "class_name": {
+          "type": "string"
+        },
+        "complete_at": {
+          "type": "integer"
+        },
+        "complete_rate": {
+          "type": "number"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "remaining_time": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "description": "debug",
+          "type": "string"
+        },
+        "teacher_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "title": {
+          "type": "string"
         }
       }
     },
@@ -9273,7 +9876,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9300,7 +9902,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9327,11 +9928,9 @@
       "type": "object",
       "properties": {
         "daily": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -9339,11 +9938,9 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -9352,7 +9949,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9371,7 +9967,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9469,7 +10064,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -9534,7 +10128,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -9561,11 +10154,9 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "class_roster_students": {
@@ -9593,6 +10184,9 @@
         "end_at": {
           "type": "integer"
         },
+        "exist_assessment": {
+          "type": "boolean"
+        },
         "exist_feedback": {
           "type": "boolean"
         },
@@ -9612,7 +10206,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "org_id": {
@@ -9631,15 +10224,12 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "real_time_status": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleRealTimeView"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "role_type": {
@@ -9792,6 +10382,9 @@
         "end_at": {
           "type": "integer"
         },
+        "exist_assessment": {
+          "type": "boolean"
+        },
         "exist_feedback": {
           "type": "boolean"
         },
@@ -9854,7 +10447,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "end_at": {
@@ -9864,7 +10456,6 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -9874,7 +10465,6 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -9911,11 +10501,72 @@
         }
       }
     },
+    "entity.ScheduleTimeViewQuery": {
+      "type": "object",
+      "properties": {
+        "anytime": {
+          "type": "boolean"
+        },
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "end_at_le": {
+          "type": "integer"
+        },
+        "order_by": {
+          "type": "string"
+        },
+        "program_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "school_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start_at_ge": {
+          "type": "integer"
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_at": {
+          "type": "integer"
+        },
+        "time_zone_offset": {
+          "type": "integer"
+        },
+        "view_type": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ScheduleUpdateView": {
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -9983,7 +10634,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {
@@ -10014,18 +10664,15 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
           "type": "string"
         },
         "class_type": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "due_at": {
@@ -10050,7 +10697,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "lesson_plan_id": {
@@ -10203,19 +10849,15 @@
       "type": "object",
       "properties": {
         "activity_flash_cards": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityFlashCards"
         },
         "activity_image_pair": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityImagePair"
         },
         "activity_image_sequencing": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityImageSequencing"
         },
         "activity_memory_game": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityMemoryGame"
         },
         "activity_type": {
@@ -10406,6 +11048,20 @@
         }
       }
     },
+    "entity.UpdateAssessmentContentArgs": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "entity.UpdateAssessmentMaterialArgs": {
       "type": "object",
       "properties": {
@@ -10436,6 +11092,64 @@
           "type": "string"
         },
         "thumbnail": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.UpdateH5PAssessmentArgs": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["save", "complete"]
+        },
+        "id": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateAssessmentContentArgs"
+          }
+        },
+        "student_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "student_view_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateH5PAssessmentStudentViewItem"
+          }
+        }
+      }
+    },
+    "entity.UpdateH5PAssessmentStudentViewItem": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateH5PAssessmentStudentViewMaterialItem"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.UpdateH5PAssessmentStudentViewMaterialItem": {
+      "type": "object",
+      "properties": {
+        "achieved_score": {
+          "type": "number"
+        },
+        "lesson_material_id": {
           "type": "string"
         }
       }
@@ -10716,7 +11430,6 @@
           "type": "string"
         },
         "author": {
-          "type": "object",
           "$ref": "#/definitions/model.AuthorView"
         },
         "category": {
@@ -10762,7 +11475,6 @@
           "type": "string"
         },
         "organization": {
-          "type": "object",
           "$ref": "#/definitions/model.OrganizationView"
         },
         "outcome_ancestor_ids": {

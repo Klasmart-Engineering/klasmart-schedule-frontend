@@ -1,25 +1,19 @@
+import produce from "immer";
 import React, { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import {
-  AssessmentOrderBy,
-  AssessmentStatus,
-  HomeFunAssessmentOrderBy,
-  HomeFunAssessmentStatus,
-  StudyAssessmentOrderBy,
-} from "../../api/type";
+import { AssessmentOrderBy, AssessmentStatus, ExectSeachType, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
-import { actHomeFunAssessmentList } from "../../reducers/assessments";
-import { AssessmentsHomefunEdit } from "../HomefunEdit";
+import { getStudyAssessmentList } from "../../reducers/assessments";
+import { AssessmentDetail } from "../AssesmentDetail";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
-import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
-import { HomeFunAssessmentQueryCondition } from "./types";
-
-const PAGE_SIZE = 20;
+import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHearder";
+import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHearder";
+import { SearchListForm, SearchListFormKey, StudyAssessmentQueryCondition } from "./types";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -28,15 +22,16 @@ const clearNull = (obj: Record<string, any>) => {
   return obj;
 };
 
-const useQuery = (): HomeFunAssessmentQueryCondition => {
+const useQuery = (): StudyAssessmentQueryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const querys = new URLSearchParams(search);
-    const query = querys.get("query");
-    const status = (querys.get("status") as HomeFunAssessmentStatus | null) || undefined;
+    const query = querys.get("query") || "";
+    const query_type = querys.get("query_type") || ExectSeachType.all;
+    const status = (querys.get("status") as AssessmentStatus | null) || undefined;
     const page = Number(querys.get("page")) || 1;
-    const order_by = (querys.get("order_by") as HomeFunAssessmentOrderBy | null) || undefined;
-    return clearNull({ query, status, page, order_by });
+    const order_by = (querys.get("order_by") as StudyAssessmentOrderBy | null) || undefined;
+    return clearNull({ query, status, page, order_by, query_type });
   }, [search]);
 };
 
@@ -45,10 +40,7 @@ const toQueryString = (hash: Record<string, any>): string => {
   return `?${search.toString()}`;
 };
 
-export function HomeFunAssessmentList() {
-  const condition = useQuery();
-  const history = useHistory();
-  const { homeFunAssessmentList, total } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
+export function StudyAssessmentList() {
   const perm = usePermission([
     PermissionType.view_completed_assessments_414,
     PermissionType.view_in_progress_assessments_415,
@@ -57,10 +49,22 @@ export function HomeFunAssessmentList() {
     PermissionType.view_school_completed_assessments_426,
     PermissionType.view_school_in_progress_assessments_427,
   ]);
+  const condition = useQuery();
+  const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
-  const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
+  const formMethods = useForm<SearchListForm>();
+  const { getValues } = formMethods;
+  const { studyAssessmentList, total } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
+  const handleChange: SecondSearchHeaderProps["onChange"] = (value) => {
+    const searchText = getValues()[SearchListFormKey.SEARCH_TEXT];
+    const exectSearch = getValues()[SearchListFormKey.EXECT_SEARCH];
+    const newValue = produce(value, (draft) => {
+      searchText ? (draft.query = searchText) : delete draft.query;
+      draft.query_type = exectSearch;
+    });
+    history.push({ search: toQueryString(newValue) });
+  };
   const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
-    // history.push(`/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`);
     if (assessmentType === AssessmentType.classLive) {
       history.push(`/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`);
     }
@@ -68,17 +72,16 @@ export function HomeFunAssessmentList() {
       history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
     }
     if (assessmentType === AssessmentType.study) {
-      history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
+      history.push(`/assessment/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
     }
   };
+  const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) => {
-    history.push({ pathname: AssessmentsHomefunEdit.routeBasePath, search: toQueryString({ id }) });
+    history.push({ pathname: AssessmentDetail.routeBasePath, search: toQueryString({ id }) });
   };
-  const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   useEffect(() => {
-    dispatch(actHomeFunAssessmentList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
+    dispatch(getStudyAssessmentList({ ...condition, metaLoading: true }));
   }, [condition, dispatch]);
-
   return (
     <>
       <FirstSearchHeader />
@@ -90,8 +93,18 @@ export function HomeFunAssessmentList() {
         perm.view_school_completed_assessments_426 ||
         perm.view_school_in_progress_assessments_427) && (
         <>
-          <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
-          <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
+          <SecondSearchHeader
+            value={condition}
+            formMethods={formMethods}
+            onChange={handleChange}
+            onChangeAssessmentType={handleChangeAssessmentType}
+          />
+          <SecondSearchHeaderMb
+            value={condition}
+            formMethods={formMethods}
+            onChange={handleChange}
+            onChangeAssessmentType={handleChangeAssessmentType}
+          />
           <ThirdSearchHeader value={condition} onChange={handleChange} />
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
         </>
@@ -102,9 +115,9 @@ export function HomeFunAssessmentList() {
       perm.view_org_in_progress_assessments_425 ||
       perm.view_school_completed_assessments_426 ||
       perm.view_school_in_progress_assessments_427 ? (
-        homeFunAssessmentList && homeFunAssessmentList.length > 0 ? (
+        studyAssessmentList && studyAssessmentList[0] ? (
           <AssessmentTable
-            list={homeFunAssessmentList}
+            list={studyAssessmentList}
             total={total}
             queryCondition={condition}
             onChangePage={handleChangePage}
@@ -120,5 +133,5 @@ export function HomeFunAssessmentList() {
   );
 }
 
-HomeFunAssessmentList.routeBasePath = "/assessments/home-fun";
-HomeFunAssessmentList.routeRedirectDefault = `/assessments/home-fun?status=${HomeFunAssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`;
+StudyAssessmentList.routeBasePath = "/assessments/study";
+StudyAssessmentList.routeRedirectDefault = `/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`;

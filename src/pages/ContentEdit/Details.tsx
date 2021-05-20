@@ -147,10 +147,10 @@ interface SuggestTimeProps {
   value?: number;
   onChange?: (value: SuggestTimeProps["value"]) => any;
   watch: UseFormMethods["watch"];
-  permission: boolean;
+  disabled: boolean;
 }
 const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) => {
-  const { value, onChange, watch, permission } = props;
+  const { value, onChange, watch, disabled } = props;
   const css = useStyles();
   const { lesson } = useParams();
   const [suggestTime, SetSuggestTime] = useState(String(value));
@@ -179,7 +179,7 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
       type="number"
       className={css.fieldset}
       label={lesson === "plan" ? t("library_label_plan_duration") : t("library_label_duration")}
-      disabled={permission}
+      disabled={disabled}
       value={suggestTime}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => SetSuggestTime(String(Math.ceil(Number(e.target.value))))}
       onBlur={handleBlur}
@@ -199,7 +199,7 @@ export interface DetailsProps {
   onChangeProgram: (value: NonNullable<ContentDetailForm["program"]>) => any;
   onChangeDevelopmental: (value: NonNullable<ContentDetailForm["developmental"]>) => any;
   onChangeSubject: (value: string[]) => any;
-  permission: boolean;
+  disabled: boolean;
 }
 export default function Details(props: DetailsProps) {
   const {
@@ -217,7 +217,7 @@ export default function Details(props: DetailsProps) {
     onChangeDevelopmental,
     onChangeProgram,
     onChangeSubject,
-    permission,
+    disabled,
   } = props;
   const css = useStyles();
   const { lesson } = useParams();
@@ -352,7 +352,7 @@ export default function Details(props: DetailsProps) {
           }}
           error={errors.name ? true : false}
           helperText=""
-          disabled={permission}
+          disabled={disabled}
         />
         <Controller
           name="thumbnail"
@@ -378,7 +378,7 @@ export default function Details(props: DetailsProps) {
                         component="span"
                         color="primary"
                         endIcon={<CloudUploadOutlined />}
-                        disabled={permission}
+                        disabled={disabled}
                       >
                         {d("Thumbnail").t("library_label_thumbnail")}
                       </Button>
@@ -423,7 +423,7 @@ export default function Details(props: DetailsProps) {
               : allDefaultValueAndKey.suggest_time?.value
           }
           key={lesson === "plan" ? suggest_timeKey : allDefaultValueAndKey.suggest_time?.key}
-          render={({ ref, ...props }) => <SuggestTime {...props} ref={ref} watch={watch} permission={permission} />}
+          render={({ ref, ...props }) => <SuggestTime {...props} ref={ref} watch={watch} disabled={disabled} />}
         />
 
         <Box>
@@ -440,7 +440,7 @@ export default function Details(props: DetailsProps) {
                 select
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Program").t("library_label_program")}
-                disabled={permission}
+                disabled={disabled}
                 {...props}
                 onChange={(e) => {
                   onChangeProgram(e.target.value);
@@ -469,7 +469,7 @@ export default function Details(props: DetailsProps) {
                 error={errors.subject ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Subject").t("library_label_subject")}
-                disabled={permission}
+                disabled={disabled}
                 {...props}
                 onChange={(e) => {
                   const value = (e.target.value as unknown) as string[];
@@ -499,7 +499,7 @@ export default function Details(props: DetailsProps) {
                 error={errors.developmental ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Category").t("library_label_category")}
-                disabled={permission}
+                disabled={disabled}
                 encode={encodeOneItemArray}
                 decode={decodeOneItemArray}
                 {...props}
@@ -527,7 +527,7 @@ export default function Details(props: DetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Subcategory").t("library_label_subcategory")}
-            disabled={permission}
+            disabled={disabled}
           >
             {menuItemList(linkedMockOptions.skills || [])}
           </Controller>
@@ -546,7 +546,7 @@ export default function Details(props: DetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Age").t("library_label_age")}
-            disabled={permission}
+            disabled={disabled}
           >
             {menuItemList(linkedMockOptions.age || [])}
           </Controller>
@@ -563,7 +563,7 @@ export default function Details(props: DetailsProps) {
             className={sm ? css.fieldset : css.halfFieldset}
             fullWidth={sm}
             label={d("Grade").t("library_label_grade")}
-            disabled={permission}
+            disabled={disabled}
           >
             {menuItemList(linkedMockOptions.grade || [])}
           </Controller>
@@ -576,7 +576,7 @@ export default function Details(props: DetailsProps) {
           }}
           className={css.fieldset}
           label={d("Visibility Settings").t("library_label_visibility_settings")}
-          disabled={permission}
+          disabled={disabled}
           name="publish_scope"
           required
           defaultValue={allDefaultValueAndKey.publish_scope?.value || []}
@@ -596,7 +596,7 @@ export default function Details(props: DetailsProps) {
             select
             className={css.fieldset}
             label={d("Lesson Type").t("library_label_lesson_type")}
-            disabled={permission}
+            disabled={disabled}
             name="lesson_type"
             defaultValue={allDefaultValueAndKey.lesson_type?.value}
             key={allDefaultValueAndKey.lesson_type?.key}
@@ -629,7 +629,7 @@ export default function Details(props: DetailsProps) {
                   />
                 }
                 label={d("Suitable for Self Study").t("library_label_self_study")}
-                disabled={permission}
+                disabled={disabled}
                 style={{
                   color: "rgba(0,0,0,0.6)",
                 }}
@@ -664,7 +664,7 @@ export default function Details(props: DetailsProps) {
                     />
                   }
                   label={d("Drawing Activity").t("library_label_drawing_activity")}
-                  disabled={permission}
+                  disabled={disabled}
                   style={{
                     color: "rgba(0,0,0,0.6)",
                   }}
@@ -685,7 +685,7 @@ export default function Details(props: DetailsProps) {
           key={allDefaultValueAndKey.description?.key}
           className={css.fieldset}
           label={d("Description").t("library_label_description")}
-          disabled={permission}
+          disabled={disabled}
         />
         <Controller
           as={FormattedTextField}
@@ -696,7 +696,7 @@ export default function Details(props: DetailsProps) {
           key={allDefaultValueAndKey.keywords?.key}
           className={css.fieldset}
           label={d("Keywords").t("library_label_keywords")}
-          disabled={permission}
+          disabled={disabled}
         />
         {lesson === "plan" && (
           <Controller

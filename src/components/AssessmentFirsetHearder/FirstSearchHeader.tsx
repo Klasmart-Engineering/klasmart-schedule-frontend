@@ -20,6 +20,7 @@ import CreateOutcomings from "../../pages/OutcomeEdit";
 import { OutcomeList } from "../../pages/OutcomeList";
 import { LoBlueIcon, LoIcon } from "../../pages/OutcomeList/Icons";
 import { HeaderCategory } from "../../pages/OutcomeList/types";
+import { StudyAssessmentList } from "../../pages/StudyAssessmentList";
 import LayoutBox from "../LayoutBox";
 import { Permission, PermissionType, usePermission } from "../Permission";
 const useStyles = makeStyles((theme) => ({
@@ -95,7 +96,9 @@ export function FirstSearchHeader() {
   const history = useHistory();
   const pathname = history.location.pathname;
   const hightLightAssessment =
-    pathname.indexOf(AssessmentList.routeBasePath) >= 0 || pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0;
+    pathname.indexOf(AssessmentList.routeBasePath) >= 0 ||
+    pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0 ||
+    pathname.indexOf(StudyAssessmentList.routeBasePath) >= 0;
   return (
     <div className={css.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>

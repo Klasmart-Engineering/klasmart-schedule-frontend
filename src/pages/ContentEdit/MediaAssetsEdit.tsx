@@ -83,7 +83,7 @@ const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsR
 interface AssetEditProps {
   isAsset?: boolean;
   contentDetail: EntityContentInfoWithDetails;
-  permission?: boolean;
+  disabled?: boolean;
   assetLibraryId?: ContentFileType;
   value?: string;
   onChange: (value?: string) => any;
@@ -92,7 +92,7 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, contentDetail, permission, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
   const setFile = useMemo(
     () => (item: DragItem) => {
@@ -170,12 +170,12 @@ function AssetEdit(props: AssetEditProps) {
                 {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
                 {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
                   <>
-                    <Button variant="contained" color="primary" ref={btnRef} disabled={permission}>
+                    <Button variant="contained" color="primary" ref={btnRef} disabled={disabled}>
                       {d("Upload from Device").t("library_label_upload_from_device")}
                     </Button>
                     <div className={css.uploadInfo}>
                       <Typography style={{ color: "rgba(0,0,0,0.87)" }}>
-                        {d("Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4").t("library_label_uploadInfo1")}
+                        {d("Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4, MP3, WAV").t("library_label_uploadInfo1")}
                       </Typography>
                       <Typography variant="body1" style={{ color: "#999999", fontSize: "14px" }}>
                         {d("(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)").t(
@@ -202,7 +202,7 @@ function AssetPreviewOverlay() {
 interface MediaAssetsEditProps extends AssetEditProps {
   readonly: boolean;
   overlay: boolean;
-  permission?: boolean;
+  disabled?: boolean;
 }
 
 export default class MediaAssetsEdit extends React.PureComponent<MediaAssetsEditProps> {
