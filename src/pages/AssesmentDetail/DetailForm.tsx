@@ -235,10 +235,9 @@ interface PopupInputProps {
   onChange?: (value: PopupInputProps["value"]) => any;
   isMyAssessment: boolean;
   editable: boolean;
-  studentIds: UpdateStudyAssessmentStudentIds;
 }
 const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
-  const { value, onChange, assessmentDetail, isMyAssessment, editable, studentIds } = props;
+  const { value, onChange, assessmentDetail, isMyAssessment, editable } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
@@ -246,11 +245,10 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
     formMethods.reset();
     return !open;
   }, false);
-
   const attendanceString = useMemo(() => {
-    const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value || studentIds });
+    const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value });
     return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
-  }, [assessmentDetail, studentIds, value]);
+  }, [assessmentDetail, value]);
   const handleOk = useCallback(() => {
     const { student_ids } = formMethods.getValues();
     if (!student_ids?.length)
@@ -284,11 +282,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
       <Dialog open={open} onClose={toggle}>
         <DialogTitle className={css.title}>{d("Edit Student List").t("assess_detail_edit_student_list")}</DialogTitle>
         <DialogContent dividers style={{ borderBottom: "none" }}>
-          <AttendanceInput
-            assessmentDetail={assessmentDetail}
-            defaultValue={value || studentIds}
-            formMethods={formMethods}
-          ></AttendanceInput>
+          <AttendanceInput assessmentDetail={assessmentDetail} defaultValue={value} formMethods={formMethods}></AttendanceInput>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={toggle} color="primary" variant="outlined">
@@ -505,7 +499,6 @@ interface DetailFormProps {
 export default function DetailForm(props: DetailFormProps) {
   const expand = useExpand();
   const { formMethods, assessmentDetail, isMyAssessment, editable } = props;
-  // const formMethods = useForm();
   const { control, getValues } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
@@ -562,12 +555,11 @@ export default function DetailForm(props: DetailFormProps) {
           <Controller
             as={PopupInput}
             name="student_ids"
-            defaultValue={student_ids}
+            defaultValue={student_ids ?? []}
             assessmentDetail={assessmentDetail}
             control={control}
             isMyAssessment={isMyAssessment}
             editable={editable}
-            studentIds={student_ids || []}
           />
           {assessmentDetail.lesson_plan && assessmentDetail.lesson_plan.id && (
             <>

@@ -36,11 +36,12 @@ export function AssessmentDetail() {
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const isMyAssessmentlist = studyAssessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = Boolean(isMyAssessmentlist && isMyAssessmentlist.length > 0);
-  const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
+  // const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
   const isInProgress = studyAssessmentDetail.status === AssessmentStatus.in_progress;
   const isComplete = studyAssessmentDetail.status === AssessmentStatus.complete;
-  const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
-  const { handleSubmit, watch } = formMethods;
+  // !hasRemainTime &&
+  const editable = isMyAssessment && perm_439 && isInProgress;
+  const { handleSubmit, watch, reset } = formMethods;
   const formValue = watch();
   const { student_ids, lesson_materials, student_view_items } = formValue;
   const filter_student_view_items = useMemo(() => {
@@ -101,6 +102,12 @@ export function AssessmentDetail() {
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (studyAssessmentDetail.id) {
+      reset(ModelAssessment.toStudyRequest(studyAssessmentDetail));
+    }
+  }, [reset, studyAssessmentDetail]);
   return (
     <>
       <DetailHeader

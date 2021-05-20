@@ -218,6 +218,26 @@ export const ModelAssessment = {
         })
       : [];
   },
+  toGetInitStudentIds(defaultDetail: DetailStudyAssessment, value: UpdateStudyAssessmentDataOmitAction): DetailStudyAssessment {
+    const draft = cloneDeep(defaultDetail);
+    // console.log(defaultDetail.students)
+    const attendanceHash = toHash(defaultDetail.students || []);
+    // console.log(attendanceHash)
+    draft.students = value.student_ids?.map((id) => attendanceHash[id]) || [];
+    // const list = cloneDeep(draft.students);
+    // const bb = list.filter((item) => item === undefined);
+    // if (bb.length > 0) {
+    //   draft.students = [];
+    // }
+    return draft;
+  },
+  toStudyRequest(detail: DetailStudyAssessment): UpdateStudyAssessmentDataOmitAction {
+    const draft = cloneDeep(detail);
+    const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
+    const lesson_materials = draft.lesson_materials?.filter((lesson_material) => lesson_material.checked);
+    console.log(lesson_materials);
+    return { student_ids, lesson_materials };
+  },
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;
