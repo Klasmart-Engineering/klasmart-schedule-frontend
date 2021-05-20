@@ -73,7 +73,9 @@ function AssessmentRow(props: AssessmentProps) {
         {assessment?.complete_rate ? `${Math.round(assessment?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {assessment.remaining_time ? Math.ceil(assessment.remaining_time / 60 / 60 / 24) : 0}
+        {assessment.remaining_time
+          ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s) ").t("assess_list_remaining_days")}`
+          : 0}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
         {formattedTime(assessment.complete_at)}

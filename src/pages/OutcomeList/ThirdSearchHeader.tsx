@@ -142,7 +142,7 @@ function SubLearningOutcome(props: OutcomeQueryConditionBaseProps) {
             {d("Published").t("assess_label_published")}
           </Button>
         </Permission>
-        <Permission value={PermissionType.pending_page_403}>
+        <Permission value={PermissionType.view_org_pending_learning_outcome_413}>
           <Button
             className={clsx(classes.button, {
               [classes.active]: value?.publish_status === OutcomePublishStatus.pending && value.is_unpub !== UNPUB,

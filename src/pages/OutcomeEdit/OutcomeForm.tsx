@@ -199,7 +199,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="assumed"
                 control={control}
                 // as={Checkbox}
-                // defaultChecked={outcomeDetail.assumed}
+                defaultChecked={outcome_id ? outcomeDetail.assumed : isAssumed}
                 disabled={showEdit}
                 render={() => <Checkbox checked={isAssumed} disabled={showEdit} onChange={handleCheckBoxChange} />}
               />
