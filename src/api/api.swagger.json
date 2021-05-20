@@ -10184,6 +10184,9 @@
         "end_at": {
           "type": "integer"
         },
+        "exist_assessment": {
+          "type": "boolean"
+        },
         "exist_feedback": {
           "type": "boolean"
         },
@@ -10378,6 +10381,9 @@
         },
         "end_at": {
           "type": "integer"
+        },
+        "exist_assessment": {
+          "type": "boolean"
         },
         "exist_feedback": {
           "type": "boolean"

@@ -994,12 +994,15 @@ function EditBox(props: CalendarStateProps) {
     return scheduleId
       ? scheduleDetial.status !== "NotStart" ||
           privilegedMembers("Student") ||
+          (scheduleDetial.exist_assessment as boolean) ||
           ((scheduleDetial.is_home_fun as boolean) && scheduleDetial.role_type === "Student")
       : false;
   };
 
   const isScheduleExpiredMulti = (): boolean => {
-    return scheduleId ? scheduleDetial.status !== "NotStart" || privilegedMembers("Student") : false;
+    return scheduleId
+      ? scheduleDetial.status !== "NotStart" || privilegedMembers("Student") || (scheduleDetial.exist_assessment as boolean)
+      : false;
   };
 
   const isLimit = (): boolean => {

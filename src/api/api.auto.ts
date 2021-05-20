@@ -993,6 +993,7 @@ export interface EntityScheduleDetailsView {
   description?: string;
   due_at?: number;
   end_at?: number;
+  exist_assessment?: boolean;
   exist_feedback?: boolean;
   id?: string;
   is_all_day?: boolean;
@@ -1059,6 +1060,7 @@ export interface EntityScheduleListView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   due_at?: number;
   end_at?: number;
+  exist_assessment?: boolean;
   exist_feedback?: boolean;
   id?: string;
   is_hidden?: boolean;

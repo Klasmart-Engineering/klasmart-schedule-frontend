@@ -311,7 +311,6 @@ interface tableProps {
 
 export function DetailTable(props: tableProps) {
   const { handleElasticLayerControl, studentViewItems, formMethods, formValue, editable, isComplete } = props;
-  console.log(studentViewItems);
   const classes = useStyles();
   return (
     <>
