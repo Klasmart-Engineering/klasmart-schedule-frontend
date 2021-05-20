@@ -26,7 +26,7 @@ const useQuery = (): StudyAssessmentQueryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const querys = new URLSearchParams(search);
-    const query = querys.get("query");
+    const query = querys.get("query") || "";
     const query_type = querys.get("query_type") || ExectSeachType.all;
     const status = (querys.get("status") as AssessmentStatus | null) || undefined;
     const page = Number(querys.get("page")) || 1;
