@@ -64,10 +64,10 @@ function AssessmentRow(props: AssessmentProps) {
         {assessment.teacher_names?.join(",") ?? d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {assessment.class_name ?? d("N/A").t("assess_column_n_a")}
+        {assessment.class_name ? assessment.class_name : d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {formattedTime(assessment.due_at)}
+        {formattedTime(assessment.due_at) ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
         {assessment?.complete_rate ? `${Math.round(assessment?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")}
@@ -102,7 +102,7 @@ export function AssessmentTable(props: AssessmentTableProps) {
           <TableHead className={css.tableHead}>
             <TableRow>
               <TableCell className={css.tableCell} align="center">
-                {"Studt Title"}
+                {d("Study Title").t("assess_list_study_title")}
               </TableCell>
               <TableCell className={css.tableCell} align="center">
                 {d("Teacher Name").t("schedule_label_teacher_name")}

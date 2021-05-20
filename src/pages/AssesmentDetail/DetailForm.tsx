@@ -246,6 +246,7 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
     formMethods.reset();
     return !open;
   }, false);
+
   const attendanceString = useMemo(() => {
     const { students } = ModelAssessment.toDetail(assessmentDetail, { attendance_ids: value || studentIds });
     return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
@@ -510,7 +511,6 @@ export default function DetailForm(props: DetailFormProps) {
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { student_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
-  console.log(student_ids);
   const m = getValues()["lesson_materials"];
   const materials = useMemo(() => ModelAssessment.toStudyAssessment(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
@@ -603,7 +603,7 @@ export default function DetailForm(props: DetailFormProps) {
           <TextField
             fullWidth
             disabled
-            name="completeTime"
+            name="due_at"
             value={formattedTime(assessmentDetail.due_at) || d("N/A").t("assess_column_n_a")}
             className={css.fieldset}
             label={d("Due Date").t("assess_column_due_date")}
@@ -611,25 +611,28 @@ export default function DetailForm(props: DetailFormProps) {
           <TextField
             fullWidth
             disabled
-            name="completeTime"
+            name="complete_rate"
             value={
               assessmentDetail?.complete_rate ? `${Math.round(assessmentDetail?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")
             }
             className={css.fieldset}
             label={d("Completion Rate").t("assess_list_completion_rate")}
           />
+          <Box className={css.editBox}>
+            <TextField
+              fullWidth
+              disabled
+              name="remaining_time"
+              value={assessmentDetail?.remaining_time ? Math.ceil(assessmentDetail?.remaining_time / 60 / 60 / 24) : 0}
+              className={css.fieldset}
+              label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
+            />
+            <Typography className={css.minutes}>{d("Day(s) ").t("assess_list_remaining_days")}</Typography>
+          </Box>
           <TextField
             fullWidth
             disabled
-            name="completeTime"
-            value={assessmentDetail?.remaining_time ? Math.ceil(assessmentDetail?.remaining_time) : 0}
-            className={css.fieldset}
-            label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
-          />
-          <TextField
-            fullWidth
-            disabled
-            name="completeTime"
+            name="complete_at"
             value={formattedTime(assessmentDetail.complete_at) || 0}
             className={css.fieldset}
             label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}

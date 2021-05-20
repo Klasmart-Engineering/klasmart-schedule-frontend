@@ -231,13 +231,15 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
         ? filter_student_view_items.find((item) => item.lesson_materials?.some((m) => !m.attempted))
         : undefined;
     if (!item) {
-      const content = "You cannot change the assessment after clicking Complete";
+      const content = d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete");
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
       if (!isConfirmed) return Promise.reject();
       const res = await api.h5PAssessments.updateH5PAssessment(id, data);
       return res;
     }
-    const content = "There are still students not start their Study activities. You cannot change the assessment after clicking Complete";
+    const content = d(
+      "There are still students not start their Study activities. You cannot change the assessment after clicking Complete. "
+    ).t("assess_popup_students_not_started");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     if (!isConfirmed) return Promise.reject();
     const res = await api.h5PAssessments.updateH5PAssessment(id, data);

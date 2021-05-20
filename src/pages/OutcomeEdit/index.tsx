@@ -137,7 +137,7 @@ export default function CreateOutcomings() {
             AsyncTrunkReturned<typeof updateOutcome>
           >;
           if (payload === "ok") {
-            dispatch(actSuccess("Update Success"));
+            dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
             dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
             setCondition("default");
           }
@@ -145,7 +145,7 @@ export default function CreateOutcomings() {
           const { payload } = ((await dispatch(save(value))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
           if (payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${payload.outcome_id}&status=createDfaft`);
-            dispatch(actSuccess("Save Success"));
+            dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
             setCondition("default");
           }
         }
@@ -187,7 +187,7 @@ export default function CreateOutcomings() {
           >;
           setOpenStatus(false);
           if (payload === "ok") {
-            dispatch(actSuccess("Delete Success"));
+            dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
             history.go(-1);
           }
         },
@@ -201,7 +201,7 @@ export default function CreateOutcomings() {
     const { payload } = ((await dispatch(deleteOutcome(outcome_id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteOutcome>>;
     setOpenStatus(false);
     if (payload === "ok") {
-      dispatch(actSuccess("Delete Success"));
+      dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
       history.go(-1);
     }
   };

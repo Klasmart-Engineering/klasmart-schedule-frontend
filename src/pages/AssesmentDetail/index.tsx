@@ -36,11 +36,10 @@ export function AssessmentDetail() {
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const isMyAssessmentlist = studyAssessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = Boolean(isMyAssessmentlist && isMyAssessmentlist.length > 0);
-  // const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
+  const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
   const isInProgress = studyAssessmentDetail.status === AssessmentStatus.in_progress;
   const isComplete = studyAssessmentDetail.status === AssessmentStatus.complete;
-  // !hasRemainTime &&
-  const editable = isMyAssessment && perm_439 && isInProgress;
+  const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
   const { handleSubmit, watch } = formMethods;
   const formValue = watch();
   const { student_ids, lesson_materials, student_view_items } = formValue;
