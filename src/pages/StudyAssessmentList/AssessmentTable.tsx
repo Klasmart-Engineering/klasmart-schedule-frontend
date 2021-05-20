@@ -114,10 +114,10 @@ export function AssessmentTable(props: AssessmentTableProps) {
                 {d("Due Date").t("assess_column_due_date")}
               </TableCell>
               <TableCell className={css.tableCell} align="center">
-                {"Completion Rate"}
+                {d("Completion Rate").t("assess_list_completion_rate")}
               </TableCell>
               <TableCell className={css.tableCell} align="center">
-                {"Assessment Remaining"}
+                {d("Assessment Remaining").t("assess_list_assessment_remaining")}
               </TableCell>
               <TableCell className={css.tableCell} align="center">
                 {d("Complete Time").t("assess_column_complete_time")}

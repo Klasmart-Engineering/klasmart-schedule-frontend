@@ -515,8 +515,9 @@ export default function DetailForm(props: DetailFormProps) {
   const materials = useMemo(() => ModelAssessment.toStudyAssessment(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
     const list = assessmentDetail.teachers;
-    const length = list && list.length ? list.length : d("N/A").t("assess_column_n_a");
-    return `${list?.map((v) => v.name)?.join(",")} (${length})`;
+    const teacherNames = list?.map((v) => v.name)?.join(",");
+    const teachers = list && list.length ? `${teacherNames} (${list.length})` : d("N/A").t("assess_column_n_a");
+    return teachers;
   }, [assessmentDetail.teachers]);
   const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {
     console.log(materials);
@@ -531,7 +532,16 @@ export default function DetailForm(props: DetailFormProps) {
           </div>
         </Box>
         <Box px={5} py={5}>
-          <TextField fullWidth disabled name="title" value={assessmentDetail.title || ""} className={css.fieldset} label={"Study Title"} />
+          <TextField
+            fullWidth
+            disabled
+            name="title"
+            value={assessmentDetail.title || d("N/A").t("assess_column_n_a")}
+            className={css.fieldset}
+            label={d("Study Title").t("assess_list_study_title")}
+            multiline
+            rowsMax={3}
+          />
           <TextField
             fullWidth
             disabled
@@ -604,7 +614,7 @@ export default function DetailForm(props: DetailFormProps) {
             name="completeTime"
             value={assessmentDetail?.complete_rate || 0}
             className={css.fieldset}
-            label={"Completion Rate"}
+            label={d("Completion Rate").t("assess_list_completion_rate")}
           />
           <TextField
             fullWidth
@@ -612,7 +622,7 @@ export default function DetailForm(props: DetailFormProps) {
             name="completeTime"
             value={assessmentDetail?.remaining_time || 0}
             className={css.fieldset}
-            label={"Assessment Remaining"}
+            label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
           />
           <TextField
             fullWidth
