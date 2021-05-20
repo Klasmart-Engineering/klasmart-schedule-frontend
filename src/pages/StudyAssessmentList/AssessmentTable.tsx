@@ -58,22 +58,22 @@ function AssessmentRow(props: AssessmentProps) {
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell className={css.tableCell} align="center">
-        {assessment.title}
+        {assessment.title ?? d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {assessment.teacher_names?.join(",")}
+        {assessment.teacher_names?.join(",") ?? d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {assessment.class_name}
+        {assessment.class_name ?? d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
         {formattedTime(assessment.due_at)}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {assessment.complete_rate}
+        {assessment?.complete_rate ? `${Math.round(assessment?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
-        {assessment.remaining_time}
+        {assessment.remaining_time ? Math.ceil(assessment.remaining_time / 60 / 60 / 24) : 0}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
         {formattedTime(assessment.complete_at)}

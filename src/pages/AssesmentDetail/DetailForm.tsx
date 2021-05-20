@@ -369,7 +369,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      {assessmentDetail.status === AssessmentStatus.complete ? (
+                      {!editable ? (
                         <MessageOutlinedIcon className={css.mCoverIcon} />
                       ) : (
                         <BorderColorOutlinedIcon className={css.mCoverIcon} />
@@ -612,7 +612,9 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="completeTime"
-            value={assessmentDetail?.complete_rate || 0}
+            value={
+              assessmentDetail?.complete_rate ? `${Math.round(assessmentDetail?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")
+            }
             className={css.fieldset}
             label={d("Completion Rate").t("assess_list_completion_rate")}
           />
@@ -620,7 +622,7 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="completeTime"
-            value={assessmentDetail?.remaining_time || 0}
+            value={assessmentDetail?.remaining_time ? Math.ceil(assessmentDetail?.remaining_time) : 0}
             className={css.fieldset}
             label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
           />

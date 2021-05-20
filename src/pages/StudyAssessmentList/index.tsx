@@ -134,4 +134,4 @@ export function StudyAssessmentList() {
 }
 
 StudyAssessmentList.routeBasePath = "/assessments/study";
-StudyAssessmentList.routeRedirectDefault = `/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._complete_at}&page=1`;
+StudyAssessmentList.routeRedirectDefault = `/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`;

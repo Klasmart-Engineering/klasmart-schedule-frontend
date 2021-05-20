@@ -68,7 +68,7 @@ export function HomeFunAssessmentList() {
       history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
     }
     if (assessmentType === AssessmentType.study) {
-      history.push(`/assessment/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
+      history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
     }
   };
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) => {
