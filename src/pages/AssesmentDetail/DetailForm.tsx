@@ -557,7 +557,7 @@ export default function DetailForm(props: DetailFormProps) {
             control={control}
             isMyAssessment={isMyAssessment}
             editable={editable}
-            studentIds={student_ids}
+            studentIds={student_ids || []}
           />
           {assessmentDetail.lesson_plan && assessmentDetail.lesson_plan.id && (
             <>
