@@ -52,6 +52,7 @@ export function AssessmentDetail() {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
     const { all, attempt } = ModelAssessment.toGetCompleteRate(res);
     if (all === 0) return d("N/A").t("assess_column_n_a");
+    if (attempt === 0) return "0";
     return `${Math.round((attempt / all) * 100)}%`;
   }, [lesson_materials, student_ids, studyAssessmentDetail]);
   const handleGoBack = useCallback(async () => {
