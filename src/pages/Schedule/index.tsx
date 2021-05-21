@@ -17,7 +17,6 @@ import {
   getClassesByOrg,
   getClassesByTeacher,
   getContentsAuthed,
-  getMockOptions,
   getParticipantsData,
   getScheduleInfo,
   getScheduleMockOptions,
@@ -287,7 +286,6 @@ function ScheduleContent() {
   }, [timesTamp]);
 
   React.useEffect(() => {
-    dispatch(getMockOptions());
     dispatch(getScheduleMockOptions({}));
     dispatch(getSchoolInfo());
     dispatch(ScheduleClassTypesFilter());

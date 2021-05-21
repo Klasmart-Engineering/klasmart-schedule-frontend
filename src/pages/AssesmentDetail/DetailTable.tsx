@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../reducers";
 import { d } from "../../locale/LocaleManager";
 import noDataIconUrl from "../../assets/icons/any_time_no_data.png";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles({
   table: {
@@ -177,6 +178,22 @@ function BasicTable(props: BasicTableProps) {
     return ["essay"].includes(type ?? "");
   };
 
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 12;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
   return (
     <Controller
       name={`student_view_items[${index}]`}
@@ -253,7 +270,11 @@ function BasicTable(props: BasicTableProps) {
                       <TableCell component="th" scope="row">
                         {index + 1}
                       </TableCell>
-                      <TableCell align="center">{row.lesson_material_name}</TableCell>
+                      <TableCell align="center">
+                        <Tooltip title={row.lesson_material_name as string} placement="top-start">
+                          <span>{textEllipsis(row.lesson_material_name)}</span>
+                        </Tooltip>
+                      </TableCell>
                       <TableCell align="center">{row.lesson_material_type}</TableCell>
                       <TableCell align="center">
                         <p
@@ -287,7 +308,9 @@ function BasicTable(props: BasicTableProps) {
                           attempted={row.attempted}
                         />
                       </TableCell>
-                      <TableCell align="center">{(row?.achieved_score! / row?.max_score!) * 100 + "%"}</TableCell>
+                      <TableCell align="center">
+                        {row?.max_score! === 0 ? 0 + "%" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
