@@ -475,10 +475,9 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
       <PermissionOr
         value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
         render={(value) =>
-          isMyAssessment &&
           value && (
             <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
-              {assessmentDetail.status === AssessmentStatus.complete
+              {assessmentDetail.status === AssessmentStatus.complete && isMyAssessment
                 ? d("View").t("assess_detail_button_view")
                 : d("Edit").t("assess_button_edit")}
             </Button>

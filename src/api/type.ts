@@ -183,8 +183,8 @@ export type MilestoneDetailResult = NonNullable<MilestoneListResult>[0];
 export enum StudyAssessmentOrderBy {
   create_at = "create_at",
   _create_at = "-create_at",
-  complete_at = "complete_at",
-  _complete_at = "-complete_at",
+  complete_at = "complete_time",
+  _complete_at = "-complete_time",
 }
 
 export type ListStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"];
@@ -196,5 +196,5 @@ export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentR
 export enum ExectSeachType {
   all = "all",
   class_name = "class_name",
-  teacher_name = "teacher_name"
+  teacher_name = "teacher_name",
 }
