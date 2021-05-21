@@ -1,4 +1,5 @@
 import { cloneDeep } from "lodash";
+import { EntityH5PAssessmentStudentViewItem } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
@@ -136,7 +137,7 @@ export const ModelAssessment = {
     detail: DetailStudyAssessment,
     student_ids: UpdataStudyAssessmentRequestData["student_ids"],
     lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]
-  ) {
+  ): EntityH5PAssessmentStudentViewItem[] {
     const { student_view_items } = detail;
     if (student_view_items && student_view_items.length) {
       if (student_ids && student_ids.length) {
@@ -238,6 +239,11 @@ export const ModelAssessment = {
     console.log(lesson_materials);
     return { student_ids, lesson_materials };
   },
+  toGetCompleteRate(
+    detail: DetailStudyAssessment,
+    student_ids: UpdataStudyAssessmentRequestData["student_ids"],
+    lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]
+  ) {},
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;

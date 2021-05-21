@@ -534,9 +534,9 @@ const { reducer } = createSlice({
     [getOutcomeDetail.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeDetail = payload;
     },
-    [getOutcomeDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      state.outcomeDetail = initialState.outcomeDetail;
-    },
+    // [getOutcomeDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   state.outcomeDetail = initialState.outcomeDetail;
+    // },
     [getOutcomeDetail.rejected.type]: (state, { error }: any) => {
       throw error;
     },

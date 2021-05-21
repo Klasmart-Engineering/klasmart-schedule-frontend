@@ -495,10 +495,11 @@ interface DetailFormProps {
   assessmentDetail: DetailStudyAssessment;
   isMyAssessment: boolean;
   editable: boolean;
+  complete_rate: string;
 }
 export default function DetailForm(props: DetailFormProps) {
   const expand = useExpand();
-  const { formMethods, assessmentDetail, isMyAssessment, editable } = props;
+  const { formMethods, assessmentDetail, isMyAssessment, editable, complete_rate } = props;
   const { control, getValues } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
@@ -604,9 +605,7 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="complete_rate"
-            value={
-              assessmentDetail?.complete_rate ? `${Math.round(assessmentDetail?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")
-            }
+            value={complete_rate}
             className={css.fieldset}
             label={d("Completion Rate").t("assess_list_completion_rate")}
           />
