@@ -26,12 +26,12 @@ import clsx from "clsx";
 import React, { forwardRef, Fragment, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { ContentInputSourceType } from "../../api/type";
+import { ContentInputSourceType, ContentType } from "../../api/type";
 import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { ContentDetailForm } from "../../models/ModelContentDetailForm";
+import { ContentDetailForm, ContentDetailMaterialType } from "../../models/ModelContentDetailForm";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -155,7 +155,11 @@ export function ContentHeader(props: HeaderProps) {
     formState: { isDirty },
   } = formMethods;
   const { control, watch } = useForm<{ publishType: PublishAsAssetsType }>();
-  const isShowToggle = inputSourceWatch === ContentInputSourceType.fromFile || Number(teacherManualBatchLengthWatch) > 0;
+  const data: ContentDetailMaterialType["data"] =
+    contentDetail?.content_type === ContentType.material ? JSON.parse(contentDetail?.data || "{}") : false;
+  const isShowToggle = data
+    ? data.input_source === ContentInputSourceType.fromFile || inputSourceWatch === ContentInputSourceType.fromFile
+    : Number(teacherManualBatchLengthWatch) > 0 || contentDetail?.teacher_manual_batch?.length;
   const sm = useMediaQuery(breakpoints.down("sm"));
   const [open, toggle] = useReducer((open) => {
     return !open;
