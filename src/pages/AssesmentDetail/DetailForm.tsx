@@ -392,7 +392,7 @@ interface PupupLessonMaterialProps {
   editable: boolean;
 }
 const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
-  const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA, editable } = props;
+  const { value, assessmentDetail, onChange, onChangeOA, editable } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
@@ -453,7 +453,6 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
       <PermissionOr
         value={[PermissionType.edit_in_progress_assessment_439, PermissionType.edit_attendance_for_in_progress_assessment_438]}
         render={(value) =>
-          isMyAssessment &&
           value && (
             <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
               {!editable ? d("View").t("assess_detail_button_view") : d("Edit").t("assess_button_edit")}
