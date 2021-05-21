@@ -77,8 +77,6 @@ export function ConfirmDialog() {
   const handleConfirm = useMemo(
     () =>
       handleSubmit((values) => {
-        console.log(values);
-        debugger;
         if (type === ConfirmDialogType.text)
           return dispatch(
             actExitConfirm({

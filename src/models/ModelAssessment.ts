@@ -235,7 +235,7 @@ export const ModelAssessment = {
   toStudyRequest(detail: DetailStudyAssessment): UpdateStudyAssessmentDataOmitAction {
     const draft = cloneDeep(detail);
     const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
-    const lesson_materials = draft.lesson_materials?.filter((lesson_material) => lesson_material.checked);
+    const lesson_materials = draft.lesson_materials;
     return { student_ids, lesson_materials };
   },
   toGetCompleteRate(student_view_items: DetailStudyAssessment["student_view_items"]) {
@@ -254,6 +254,25 @@ export const ModelAssessment = {
       });
     }
     return { all, attempt };
+  },
+  toStudyMaterial(
+    defaultDetail: DetailStudyAssessment["lesson_materials"],
+    value: UpdateStudyAssessmentDataOmitAction["lesson_materials"]
+  ): DetailStudyAssessment["lesson_materials"] {
+    const draft = cloneDeep(defaultDetail);
+    console.log(value);
+    if (draft && draft.length && value && value.length) {
+      return draft.map((item, index) => {
+        return {
+          checked: value[index] ? value[index].checked : item.checked,
+          comment: value[index] ? value[index].comment : item.comment,
+          id: item.id,
+          name: item.name,
+        };
+      });
+    } else {
+      return draft;
+    }
   },
 };
 

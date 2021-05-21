@@ -91,7 +91,7 @@ export function AssessmentDetail() {
         if (payload) {
           dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
           history.replace({
-            search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+            search: setQuery(history.location.search, { editindex: editindex + 1 }),
           });
         }
       }),
@@ -107,7 +107,7 @@ export function AssessmentDetail() {
   };
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
-  }, [dispatch, id]);
+  }, [dispatch, id, editindex]);
 
   useEffect(() => {
     if (studyAssessmentDetail.id) {

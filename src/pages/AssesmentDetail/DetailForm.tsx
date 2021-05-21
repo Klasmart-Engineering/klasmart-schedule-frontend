@@ -401,7 +401,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
     return !open;
   }, false);
   const materialString = useMemo(() => {
-    const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, value);
+    const materials = ModelAssessment.toStudyMaterial(assessmentDetail.lesson_materials, value);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
   }, [assessmentDetail.lesson_materials, value]);
   const handleOk = useCallback(() => {
@@ -513,9 +513,7 @@ export default function DetailForm(props: DetailFormProps) {
     const teachers = list && list.length ? `${teacherNames} (${list.length})` : d("N/A").t("assess_column_n_a");
     return teachers;
   }, [assessmentDetail.teachers]);
-  const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {
-    console.log(materials);
-  };
+  const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {};
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
