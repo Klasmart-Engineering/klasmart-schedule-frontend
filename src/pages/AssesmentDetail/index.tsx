@@ -49,20 +49,11 @@ export function AssessmentDetail() {
   }, [studyAssessmentDetail, student_ids, lesson_materials, student_view_items]);
 
   const complete_rate = useMemo(() => {
-    // const rate = ModelAssessment.toGetCompleteRate(studyAssessmentDetail, student_ids, lesson_materials)
-    let all: number = 0;
-    let attempt: number = 0;
-    studyAssessmentDetail.student_view_items.forEach((item) => all + item.lesson_materials.length);
-    studyAssessmentDetail.student_view_items.forEach((item) => {
-      item.lesson_materials.forEach((v) => {
-        if (v.attempted) {
-          attempt += 1;
-        }
-      });
-    });
+    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
+    const { all, attempt } = ModelAssessment.toGetCompleteRate(res);
     if (all === 0) return d("N/A").t("assess_column_n_a");
     return `${Math.round((attempt / all) * 100)}%`;
-  }, [studyAssessmentDetail.student_view_items]);
+  }, [lesson_materials, student_ids, studyAssessmentDetail]);
   const handleGoBack = useCallback(async () => {
     history.goBack();
   }, [history]);

@@ -236,14 +236,25 @@ export const ModelAssessment = {
     const draft = cloneDeep(detail);
     const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
     const lesson_materials = draft.lesson_materials?.filter((lesson_material) => lesson_material.checked);
-    console.log(lesson_materials);
     return { student_ids, lesson_materials };
   },
-  toGetCompleteRate(
-    detail: DetailStudyAssessment,
-    student_ids: UpdataStudyAssessmentRequestData["student_ids"],
-    lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]
-  ) {},
+  toGetCompleteRate(student_view_items: DetailStudyAssessment["student_view_items"]) {
+    let all: number = 0;
+    let attempt: number = 0;
+    if (student_view_items && student_view_items[0]) {
+      student_view_items.forEach((item) => {
+        if (item.lesson_materials && item.lesson_materials[0]) {
+          all += item.lesson_materials.length;
+          item.lesson_materials.forEach((v) => {
+            if (v.attempted) {
+              attempt += 1;
+            }
+          });
+        }
+      });
+    }
+    return { all, attempt };
+  },
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;
