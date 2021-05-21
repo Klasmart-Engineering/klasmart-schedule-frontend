@@ -763,6 +763,7 @@ type LangRecord<T = string> =
   | { id: "general_button_NO "; description: "NO"; values: undefined }
   | { id: "general_button_YES"; description: "YES"; values: undefined }
   | { id: "general_button_DELETE"; description: "DELETE"; values: undefined }
+  | { id: "general_error_no_permission"; description: "You have no permission"; values: undefined }
   | { id: "h5p_label_commonFields"; description: "Text overrides and translations"; values: undefined }
   | {
       id: "h5p_label_commonFieldsDescription";

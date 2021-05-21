@@ -629,6 +629,7 @@
   "general_button_NO ": "NO",
   "general_button_YES": "YES",
   "general_button_DELETE": "DELETE",
+  "general_error_no_permission": "You have no permission",
   "h5p_label_commonFields": "Text overrides and translations",
   "h5p_label_commonFieldsDescription": "Here you can edit settings or translate texts used in this content.",
   "h5p_label_language": "Language",

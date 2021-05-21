@@ -629,6 +629,7 @@
   "general_button_NO ": "否",
   "general_button_YES": "是",
   "general_button_DELETE": "删除",
+  "general_error_no_permission": "您没有权限",
   "h5p_label_commonFields": "文本替换和翻译",
   "h5p_label_commonFieldsDescription": "此处可编辑设置或翻译在此内容中使用的文本。",
   "h5p_label_language": "语言",
