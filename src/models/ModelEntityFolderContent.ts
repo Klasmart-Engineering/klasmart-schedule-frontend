@@ -3,7 +3,7 @@ import { ContentType, FolderFileTyoe } from "../api/type";
 import { Segment } from "./ModelLessonPlan";
 
 function toHash(contents: EntityFolderContentData[]): Partial<Record<string, EntityFolderContentData>> {
-  return contents.reduce((result, content) => {
+  return contents?.reduce((result, content) => {
     result[content.id as string] = content;
     return result;
   }, {} as Record<string, EntityFolderContentData>);

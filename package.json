@@ -84,6 +84,7 @@
     "syncLang": "node ./scripts/syncLang",
     "syncGraphql": "graphql-codegen -c ./scripts/graphqlGenConfig.yml",
     "syncH5p": "node ./scripts/syncH5pVersion.js && cnpm i h5p",
+    "syncPermission": "node ./scripts/syncPermission",
     "lint": "eslint --max-warnings=0 --ext .jsx,.js,.ts,.tsx src/",
     "eject": "react-scripts eject"
   },

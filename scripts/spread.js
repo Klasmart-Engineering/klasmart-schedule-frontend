@@ -112,5 +112,5 @@ async function clearMissByOnlineLocale() {
 }
 
 module.exports = {
-  getOnlineLocale, getOnlineMiss, addOnlineMiss, clearMissByOnlineLocale
+  getOnlineLocale, getOnlineMiss, addOnlineMiss, clearMissByOnlineLocale,createDoc
 }

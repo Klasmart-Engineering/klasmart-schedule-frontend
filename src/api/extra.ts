@@ -201,8 +201,9 @@ export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
+  const premissions = Object.keys(premissionAll);
   const permission = await api.organizationPermissions.hasOrganizationPermissions({
-    permission_name: premissionAll,
+    permission_name: premissions,
   });
   let returnData: NonNullable<QeuryMeQuery> = {
     me: {
