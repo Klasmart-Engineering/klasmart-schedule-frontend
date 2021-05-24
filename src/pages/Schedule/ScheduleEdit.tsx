@@ -684,6 +684,7 @@ function EditBox(props: CalendarStateProps) {
       } as ParticipantsShortInfo);
       setRosterSaveStatus(false);
       setClassItem(value);
+      setIsForce(false);
     }
 
     if (name === "subject_id") {
