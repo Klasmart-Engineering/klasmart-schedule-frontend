@@ -466,7 +466,6 @@ function FilterTemplate(props: FilterProps) {
       const onLyMineData: string[] = [];
       const classesChild = [];
       schoolItem.classes.forEach((classItem: EntityScheduleClassesInfo) => {
-        const classPortfolioId = `class+${classItem.class_id}+${schoolItem.school_id}` as string;
         if (classItem.status === "active") {
           const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
             return teacher.user_id === user_id;
@@ -478,9 +477,10 @@ function FilterTemplate(props: FilterProps) {
           if (!is_exists)
             is_exists =
               !(privilegedMembers("Teacher") || privilegedMembers("Student")) && (isExistTeacher.length > 0 || isExistStudent.length > 0);
-          existData.push(classPortfolioId);
-          AllExistData.push(classPortfolioId);
-          if (isExistTeacher.length > 0 || isExistStudent.length > 0) onLyMineData.push(classPortfolioId);
+          existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          if (isExistTeacher.length > 0 || isExistStudent.length > 0)
+            onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
           classesChild.push(
             subDataStructures(
               `${classItem.class_id}+${schoolItem.school_id}`,
@@ -494,10 +494,9 @@ function FilterTemplate(props: FilterProps) {
         }
       });
       if (classesChild.length > 1) {
-        const classAllPortfolioId = `class+All+${schoolItem.school_id}`;
-        classesChild.unshift(subDataStructures(classAllPortfolioId, d("All").t("assess_filter_all"), "class", false, existData));
-        existData.push(classAllPortfolioId);
-        AllExistData.push(classAllPortfolioId);
+        classesChild.unshift(subDataStructures(`All+${schoolItem.school_id}`, d("All").t("assess_filter_all"), "class", false, existData));
+        existData.push(`class+All+${schoolItem.school_id}`);
+        AllExistData.push(`class+All+${schoolItem.school_id}`);
       }
       if (classesChild.length < 1 && (privilegedMembers("Teacher") || privilegedMembers("Student"))) return;
       classResult.push({
