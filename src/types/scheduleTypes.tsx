@@ -96,10 +96,10 @@ export interface ScheduleFilterProps {
 }
 
 export interface FilterQueryTypeProps {
-  class_types: string;
-  class_ids: string;
-  subject_ids: string;
-  program_ids: string;
+  class_types: string[];
+  class_ids: string[];
+  subject_ids: string[];
+  program_ids: string[];
 }
 
 export interface ClassOptionsItem {

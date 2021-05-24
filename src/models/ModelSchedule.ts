@@ -136,11 +136,11 @@ export class modelSchedule {
    * @constructor
    */
   static AssemblyFilterParameter(stateOnlyMine: string[]) {
-    const filterQuery: FilterQueryTypeProps = { class_types: "", class_ids: "", subject_ids: "", program_ids: "" };
+    const filterQuery: FilterQueryTypeProps = { class_types: [], class_ids: [], subject_ids: [], program_ids: [] };
     stateOnlyMine.forEach((value: string) => {
       const [label, id] = value.split("+");
       const matchValue = this.FILTER_PARAMETER_MATCH[label as filterParameterMatchType];
-      if (id !== "All" && matchValue) filterQuery[matchValue as filterValueMatchType] += `${id},`;
+      if (id !== "All" && matchValue) filterQuery[matchValue as filterValueMatchType].push(id);
     });
     return filterQuery;
   }
