@@ -84,7 +84,7 @@ function MilestoneRow(props: MilestoneProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   const [isDisable, setIsDisable] = useState(false);
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (milestone.locked_by) {
+    if (milestone.locked_by && milestone.locked_by !== "-") {
       setIsDisable(true);
       return dispatch(actWarning(d("You cannot do bulk action for locked milestones.").t("assess_msg_locked_milestone")));
     }
