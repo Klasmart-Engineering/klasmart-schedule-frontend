@@ -260,7 +260,6 @@ export const ModelAssessment = {
     value: UpdateStudyAssessmentDataOmitAction["lesson_materials"]
   ): DetailStudyAssessment["lesson_materials"] {
     const draft = cloneDeep(defaultDetail);
-    console.log(value);
     if (draft && draft.length && value && value.length) {
       return draft.map((item, index) => {
         return {

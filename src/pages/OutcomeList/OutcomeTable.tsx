@@ -87,7 +87,7 @@ function OutomeRow(props: OutcomeProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   const [isDisable, setIsDisable] = useState(false);
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (outcome.locked_by) {
+    if (outcome.locked_by && outcome.locked_by !== "-") {
       setIsDisable(true);
       return dispatch(actWarning(t("assess_msg_locked_lo")));
     }

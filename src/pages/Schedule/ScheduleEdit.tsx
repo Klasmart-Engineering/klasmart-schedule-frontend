@@ -173,6 +173,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     borderRadius: "18px",
     float: "left",
     display: "flex",
+    height: "23px",
   },
   scrollRoster: {
     display: "flex",
@@ -684,6 +685,7 @@ function EditBox(props: CalendarStateProps) {
       } as ParticipantsShortInfo);
       setRosterSaveStatus(false);
       setClassItem(value);
+      setIsForce(false);
     }
 
     if (name === "subject_id") {

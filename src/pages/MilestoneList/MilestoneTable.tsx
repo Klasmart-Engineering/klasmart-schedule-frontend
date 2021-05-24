@@ -84,7 +84,7 @@ function MilestoneRow(props: MilestoneProps) {
   const { registerChange, hashValue } = selectedContentGroupContext;
   const [isDisable, setIsDisable] = useState(false);
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (milestone.locked_by) {
+    if (milestone.locked_by && milestone.locked_by !== "-") {
       setIsDisable(true);
       return dispatch(actWarning(d("You cannot do bulk action for locked milestones.").t("assess_msg_locked_milestone")));
     }
@@ -173,6 +173,7 @@ export function MilestoneTable(props: MilestoneTableProps) {
   const allValue = useMemo(() => {
     if (list && list[0]) {
       return list.map((milestone) => (milestone.locked_by && milestone.locked_by !== "-" ? "" : (milestone.milestone_id as string)));
+      // return list.filter(milestone => (!milestone.locked_by && milestone.locked_by === "-")).map(item => item.milestone_id as string);
     } else {
       return [];
     }
