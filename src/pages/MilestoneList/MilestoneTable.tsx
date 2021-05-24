@@ -173,6 +173,7 @@ export function MilestoneTable(props: MilestoneTableProps) {
   const allValue = useMemo(() => {
     if (list && list[0]) {
       return list.map((milestone) => (milestone.locked_by && milestone.locked_by !== "-" ? "" : (milestone.milestone_id as string)));
+      // return list.filter(milestone => (!milestone.locked_by && milestone.locked_by === "-")).map(item => item.milestone_id as string);
     } else {
       return [];
     }

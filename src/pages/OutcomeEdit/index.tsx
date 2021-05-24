@@ -114,6 +114,8 @@ export default function CreateOutcomings() {
     if (outcome_id) {
       dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
       setShowEdit(true);
+    } else {
+      setIsAssumed(true);
     }
   }, [dispatch, outcome_id]);
 
@@ -347,7 +349,7 @@ export default function CreateOutcomings() {
     if (condition === "development") {
       setValue("skills", []);
     }
-    setIsAssumed(true);
+    // setIsAssumed(true);
   }, [
     condition,
     newOptions.age,
