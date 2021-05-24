@@ -173,6 +173,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     borderRadius: "18px",
     float: "left",
     display: "flex",
+    height: "23px",
   },
   scrollRoster: {
     display: "flex",
