@@ -82,16 +82,8 @@ function ContentEditForm() {
   const formMethods = useForm<ContentDetailForm>();
   const { handleSubmit, control, watch, errors } = formMethods;
 
-  const {
-    contentDetail,
-    mediaList,
-    mediaListTotal,
-    OutcomesListTotal,
-    outcomeList,
-    linkedMockOptions,
-    visibility_settings,
-    lesson_types,
-  } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentDetail, mediaList, mediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions, visibility_settings, lesson_types } =
+    useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams<RouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
   const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch } = useQueryCms();
@@ -134,7 +126,7 @@ function ContentEditForm() {
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
         const input = { ...restValues, content_type, outcomes };
         const contentDetail = ModelContentDetailForm.encode(input);
-        const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
+        const { payload: id } = (await dispatch(save(contentDetail))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
@@ -171,48 +163,50 @@ function ContentEditForm() {
   }, [dispatch, id, history]);
 
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "all", isShare = "org" }) => {
-      history.replace({
-        search: setQuery(history.location.search, { searchMedia: value, isShare }),
-      });
-      const contentNameValue = exactSerch === "all" ? "" : value;
-      const nameValue = exactSerch === "all" ? value : "";
-      isShare === "badanamu" && lesson === "plan"
-        ? dispatch(
-            searchAuthContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: nameValue,
-              content_name: contentNameValue,
-            })
-          )
-        : dispatch(
-            searchContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: nameValue,
-              content_name: contentNameValue,
-            })
-          );
-      setMediaPage(1);
-    },
+    () =>
+      ({ value = "", exactSerch = "all", isShare = "org" }) => {
+        history.replace({
+          search: setQuery(history.location.search, { searchMedia: value, isShare }),
+        });
+        const contentNameValue = exactSerch === "all" ? "" : value;
+        const nameValue = exactSerch === "all" ? value : "";
+        isShare === "badanamu" && lesson === "plan"
+          ? dispatch(
+              searchAuthContentLists({
+                metaLoading: true,
+                content_type: searchContentType,
+                name: nameValue,
+                content_name: contentNameValue,
+              })
+            )
+          : dispatch(
+              searchContentLists({
+                metaLoading: true,
+                content_type: searchContentType,
+                name: nameValue,
+                content_name: contentNameValue,
+              })
+            );
+        setMediaPage(1);
+      },
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "all", assumed }) => {
-      history.replace({
-        search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
-      });
-      dispatch(
-        searchOutcomeList({
-          exactSerch,
-          metaLoading: true,
-          search_key: value,
-          assumed: assumed ? 1 : -1,
-        })
-      );
-      setOutcomePage(1);
-    },
+    () =>
+      ({ value = "", exactSerch = "all", assumed }) => {
+        history.replace({
+          search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
+        });
+        dispatch(
+          searchOutcomeList({
+            exactSerch,
+            metaLoading: true,
+            search_key: value,
+            assumed: assumed ? 1 : -1,
+          })
+        );
+        setOutcomePage(1);
+      },
     [dispatch, history]
   );
   const handleGoBack = useCallback(() => {
@@ -453,7 +447,7 @@ function ContentEditForm() {
                         defaultValue={allDefaultValueAndKey["data.source"]?.value}
                         key={allDefaultValueAndKey["data.source"]?.key}
                         render={(dataSourceProps) =>
-                          inputSource === ContentInputSourceType.h5p ? (
+                          inputSource === ContentInputSourceType.h5p || dataInputSourceProps.value === ContentInputSourceType.h5p ? (
                             <Controller
                               name="source_type"
                               control={control}
