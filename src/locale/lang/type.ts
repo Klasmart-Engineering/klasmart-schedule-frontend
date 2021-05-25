@@ -433,6 +433,11 @@ type LangRecord<T = string> =
       values: { email: string | number };
     }
   | { id: "assess_create_new_milestone"; description: "Create New Milestone"; values: undefined }
+  | {
+      id: "assess_msg_unlocked_milestone";
+      description: "This content has been republished with a new version, please refresh. ";
+      values: undefined;
+    }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
@@ -763,6 +768,7 @@ type LangRecord<T = string> =
   | { id: "general_button_NO "; description: "NO"; values: undefined }
   | { id: "general_button_YES"; description: "YES"; values: undefined }
   | { id: "general_button_DELETE"; description: "DELETE"; values: undefined }
+  | { id: "general_error_no_permission"; description: "You have no permission"; values: undefined }
   | { id: "h5p_label_commonFields"; description: "Text overrides and translations"; values: undefined }
   | {
       id: "h5p_label_commonFieldsDescription";
