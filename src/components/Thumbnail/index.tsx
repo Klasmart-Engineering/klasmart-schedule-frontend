@@ -25,7 +25,7 @@ interface ThumbnailProps extends React.DetailedHTMLProps<React.ImgHTMLAttributes
   type?: ContentType;
 }
 export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, ref) => {
-  const { id } = props;
+  const { id, type: _, style, ...imgProps } = props;
   const type = props.type ?? ContentType.material;
   const [loaded, dispatchLoaded] = useReducer(() => true, false);
   const thumbail = id && apiResourcePathById(id);
@@ -35,7 +35,7 @@ export const Thumbnail = forwardRef<HTMLImageElement, ThumbnailProps>((props, re
   return (
     <Fragment>
       {!loaded && <img {...props} ref={!loaded ? ref : null} alt="thumbail" src={defaultThumbail} />}
-      <img {...props} ref={loaded ? ref : null} alt="thumbail" src={thumbail} onLoad={dispatchLoaded} style={{ display }} />
+      <img {...props} ref={loaded ? ref : null} alt="thumbail" src={thumbail} onLoad={dispatchLoaded} style={{ display, ...style }} {...imgProps} />
     </Fragment>
   );
 });

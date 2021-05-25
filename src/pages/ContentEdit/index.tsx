@@ -1,12 +1,11 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
+import { DndContextAdaptor } from '../../components/DndContextAdaptor';
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
@@ -26,7 +25,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchOutcomeList,
+  searchOutcomeList
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -81,7 +80,6 @@ function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
   const { handleSubmit, control, watch, errors } = formMethods;
-
   const { contentDetail, mediaList, mediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions, visibility_settings, lesson_types } =
     useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams<RouteParams>();
@@ -513,7 +511,7 @@ function ContentEditForm() {
   );
   const leftsideArea = tab === "assetDetails" ? assetDetails : contentTabs;
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndContextAdaptor>
       <ContentHeader
         contentDetail={contentDetail}
         formMethods={formMethods}
@@ -555,7 +553,7 @@ function ContentEditForm() {
         }
       />
       {/* <DevTool control={control} /> */}
-    </DndProvider>
+    </DndContextAdaptor>
   );
 }
 

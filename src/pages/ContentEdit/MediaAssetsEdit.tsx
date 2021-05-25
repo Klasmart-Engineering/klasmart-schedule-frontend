@@ -2,8 +2,8 @@ import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
-import React, { useCallback, useMemo } from "react";
-import { DropTargetMonitor, useDrop } from "react-dnd";
+import React, { useCallback } from "react";
+import { useDroppable } from "_@dnd-kit_core@3.0.3@@dnd-kit/core";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
@@ -11,7 +11,7 @@ import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
 import { ProgressWithText } from "./Details";
-import { DragItem, mapDropSegmentPropsReturn } from "./PlanComposeGraphic";
+import { DragData } from "./PlanComposeGraphic";
 
 const useStyles = makeStyles(({ palette }) => ({
   uploadTool: {
@@ -76,10 +76,6 @@ export const fileFormat = {
   audio: [".mp3", ".wav"],
   pdf: [".pdf"],
 };
-
-const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
-  canDrop: monitor.canDrop(),
-});
 interface AssetEditProps {
   isAsset?: boolean;
   contentDetail: EntityContentInfoWithDetails;
@@ -94,23 +90,14 @@ function AssetEdit(props: AssetEditProps) {
   const uploadCss = useUploadBoxStyles(props);
   const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
-  const setFile = useMemo(
-    () => (item: DragItem) => {
-      const source = JSON.parse(item.data.data).source;
-      onChange(source);
-      onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromAssets);
-    },
-    [onChange, onChangeInputSource]
-  );
+  const setFile = (data: DragData) => {
+    const source = JSON.parse(data.item.data).source;
+    onChange(source);
+    onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromAssets);
+  };
   const dropType = apiIsEnableNewH5p() ? `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}` : "LIBRARY_ITEM";
-  const [{ canDrop: canDropfile }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: dropType,
-    collect: mapDropContainerProps,
-  });
-  const [, fileRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: dropType,
-    drop: setFile,
-  });
+  const { isOver, active, setNodeRef: fileRef } = useDroppable({ id: "MEDIA_ASSETS_EDIT_ID", data: { accept: [dropType], drop: setFile } });
+  const canDropfile = isOver && active?.data.current?.type === dropType;
   const handleChangeFileType = useCallback(() => {
     onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromFile);
   }, [onChangeInputSource]);

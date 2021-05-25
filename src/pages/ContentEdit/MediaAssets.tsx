@@ -1,7 +1,9 @@
+import { DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Box, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
+import clsx from "clsx";
 import React, { useCallback } from "react";
-import { useDrag } from "react-dnd";
+import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
@@ -11,7 +13,7 @@ import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 
-const useStyles = makeStyles(({ breakpoints }) => ({
+const useStyles = makeStyles(({ breakpoints, shadows }) => ({
   mediaAssets: {
     minHeight: 900,
     [breakpoints.down("sm")]: {
@@ -21,6 +23,11 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   assetImage: {
     width: 104,
     height: 64,
+    touchAction: "none",
+    "&.active": {
+      opacity: 0.7,
+      boxShadow: shadows[2],
+    },
   },
   tableContainer: {
     marginTop: 5,
@@ -78,6 +85,12 @@ interface mockAsset {
   action: string;
 }
 
+const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableItemProps["item"]) => {
+  return lesson === "material"
+    ? item.content_type && Number(item.content_type * 10 + (item.data && (JSON.parse(item.data).file_type || 1)))
+    : item.content_type;
+};
+
 interface DraggableItemProps {
   type: string;
   item: EntityContentInfoWithDetails;
@@ -87,12 +100,25 @@ interface DraggableItemProps {
 function DraggableImage(props: DraggableItemProps) {
   const { type, item, lesson, permission } = props;
   const css = useStyles();
-  const [, dragRef] = useDrag({ item: { type, data: item }, canDrag: () => permission });
-  const contentType =
-    lesson === "material"
-      ? item.content_type && Number(item.content_type * 10 + (item.data && (JSON.parse(item.data).file_type || 1)))
-      : item.content_type;
-  return <Thumbnail key={item.id} ref={dragRef} className={css.assetImage} alt="pic" id={item.thumbnail} type={contentType} />;
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: item.id as string,
+    disabled: !permission,
+    data: { type, item },
+  });
+  const contentType = mapContentType(lesson, item);
+  console.log("transform = ", transform);
+  return (
+    <Thumbnail
+      key={item.id}
+      ref={setNodeRef}
+      className={clsx(css.assetImage, { active: isDragging })}
+      alt="pic"
+      id={item.thumbnail}
+      type={contentType}
+      {...listeners}
+      {...attributes}
+    />
+  );
 }
 
 export interface MediaAssetsProps {
@@ -111,6 +137,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
   const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, isShare, permission } = props;
+  const { active } = useDroppable({ id: "MEDIA_ASSETS_TABLE_CONTAINER", disabled: true });
   const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -163,6 +190,17 @@ export default function MediaAssets(props: MediaAssetsProps) {
       />
     </>
   );
+  const overlay = (
+    <DragOverlay dropAnimation={null}>
+      {active && (
+        <Thumbnail
+          className={clsx(css.assetImage, "active")}
+          id={active.data.current?.item.thumbnail}
+          type={mapContentType(lesson, active.data.current?.item)}
+        />
+      )}
+    </DragOverlay>
+  );
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center">
       {comingsoon && lesson !== "plan" ? (
@@ -173,6 +211,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
           {list.length > 0 ? table : resultsTip}
         </Box>
       )}
+      {createPortal(overlay, document.body)}
     </Box>
   );
 }

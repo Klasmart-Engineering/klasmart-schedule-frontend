@@ -7,6 +7,10 @@ import { useParams } from "react-router-dom";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
+  paper: {
+    position: 'relative',
+    zIndex: 1,
+  },
   tabs: {
     backgroundColor: palette.grey[200],
     boxShadow: shadows[3],
@@ -69,7 +73,7 @@ export default function ContentTabs(props: ContentTabsProps) {
   });
 
   return (
-    <Paper elevation={sm ? 0 : 3}>
+    <Paper elevation={sm ? 0 : 3} className={css.paper}>
       <TabContext value={tab}>
         <Tabs
           value={tab}

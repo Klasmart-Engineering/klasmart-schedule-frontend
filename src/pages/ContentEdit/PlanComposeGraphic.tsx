@@ -1,9 +1,9 @@
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, HTMLAttributes, useCallback, useMemo } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
-import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { NavLink } from "react-router-dom";
 import blankImg from "../../assets/icons/deleted.jpg";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
@@ -202,12 +202,14 @@ const ConditionBtn = forwardRef<HTMLDivElement, ConditionBtnProps>((props, ref) 
   }
 });
 
-export interface DragItem {
+export interface DragData {
   type: string;
-  data: any;
+  item: any;
 }
 const DraggableConditionBtn = (props: ConditionBtnProps) => {
-  const [, dragRef] = useDrag<DragItem, unknown, unknown>({ item: { type: "condition", data: props.type } });
+  const { type } = props;
+  // const [, dragRef] = useDrag<DragItem, unknown, unknown>({ item: { type: "condition", data: props.type } });
+  const { setNodeRef: dragRef } = useDraggable({ id: `${type}_CONDITION_BUTTON`, data: { type: "condition", data: type } });
   return <ConditionBtn ref={dragRef} {...props} />;
 };
 
@@ -259,9 +261,6 @@ const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) 
 export interface mapDropSegmentPropsReturn {
   canDrop: boolean;
 }
-const mapDropContainerProps = (monitor: DropTargetMonitor): mapDropSegmentPropsReturn => ({
-  canDrop: monitor.canDrop(),
-});
 
 interface SegmentBoxProps extends Segment {
   first?: boolean;
@@ -278,39 +277,31 @@ function SegmentBox(props: SegmentBoxProps) {
   const createAll = usePermission(PermissionType.create_content_page_201);
   const createplan = usePermission(PermissionType.create_lesson_plan_221);
   const editable = editPlan || editAll || createAll || createplan;
-  const addPlan = useMemo(
-    () => (item: DragItem) => {
-      const type = item.type === "condition" ? "condition" : "material";
-      const newPlan = ModelLessonPlan.add(plan, segmentId, { [type]: item.data }, Boolean(first));
-      if (plan !== newPlan) onChange(newPlan);
-    },
-    [plan, segmentId, first, onChange]
-  );
-  const setPlan = useMemo(
-    () => (item: DragItem) => {
-      const type = item.type === "condition" ? "condition" : "material";
-      const newPlan = ModelLessonPlan.set(plan, segmentId, { [type]: item.data });
-      if (plan !== newPlan) onChange(newPlan);
-    },
-    [segmentId, plan, onChange]
-  );
-
+  const addPlan = (data: DragData) => {
+    const type = data.type === "condition" ? "condition" : "material";
+    const newPlan = ModelLessonPlan.add(plan, segmentId, { [type]: data.item }, Boolean(first));
+    if (plan !== newPlan) onChange(newPlan);
+  };
+  const setPlan = (data: DragData) => {
+    const type = data.type === "condition" ? "condition" : "material";
+    const newPlan = ModelLessonPlan.set(plan, segmentId, { [type]: data.item });
+    if (plan !== newPlan) onChange(newPlan);
+  };
   const handleRemove = useCallback(() => {
     const newPlan = ModelLessonPlan.remove(plan, segmentId);
     if (plan !== newPlan) onChange(newPlan);
   }, [plan, onChange, segmentId]);
-  const [, materialDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: "LIBRARY_ITEM",
-    drop: setPlan,
+  const { setNodeRef: materialDropRef } = useDroppable({ id: `${segmentId}_material`, data: { accept: ["LIBRARY_ITEM"], drop: setPlan } });
+  const { setNodeRef: conditionDropRef } = useDroppable({ id: `${segmentId}_condition`, data: { accept: ["condition"], drop: setPlan } });
+  const { setNodeRef: blankDropRef } = useDroppable({
+    id: `${segmentId}_blank`,
+    data: {
+      accept: first ? ["LIBRARY_ITEM"] : ["LIBRARY_ITEM", "condition"],
+      drop: addPlan,
+    },
   });
-  const [, conditionDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: "condition",
-    drop: setPlan,
-  });
-  const [, blankDropRef] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: first ? "LIBRARY_ITEM" : ["LIBRARY_ITEM", "condition"],
-    drop: addPlan,
-  });
+
+  console.log("editable = ", editable);
   const computedCss = useSegmentComputedStyles({ ...props });
   const insertedNext = next && next.length > 0 ? next : material ? [{ segmentId: `virtual${segmentId}` }] : [];
   const segmentConditionId = `${segmentId}.condition`;
@@ -324,14 +315,6 @@ function SegmentBox(props: SegmentBoxProps) {
     return { sourceAnchor: "bottom", targetAnchor: "top", targetId } as Relation;
   });
   let segmentItemIdx = -1;
-  const segmentNodes = (
-    <Box className="segmentNext" display="flex" flexWrap="nowrap">
-      {insertedNext.map((segmentItem) => (
-        <SegmentBox plan={plan} onChange={onChange} key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
-      ))}
-    </Box>
-  );
-
   // 既没选 material 也没选 condition 的情况
   if (!material && !condition)
     return editable ? (
@@ -363,6 +346,13 @@ function SegmentBox(props: SegmentBoxProps) {
         </ArcherElement>
       </Box>
     );
+  const segmentNodes = (
+    <Box className="segmentNext" display="flex" flexWrap="nowrap">
+      {insertedNext.map((segmentItem) => (
+        <SegmentBox plan={plan} onChange={onChange} key={++segmentItemIdx} {...{ ...segmentItem, canDropCondition, canDropMaterial }} />
+      ))}
+    </Box>
+  );
   // 选 material 但没选 condition 的情况
   if (!condition)
     return (
@@ -393,20 +383,6 @@ function SegmentBox(props: SegmentBoxProps) {
   );
 }
 
-// const useScrollCenter = (once?: boolean, disable = false) => {
-//   const countRef = useRef(0);
-//   const enable = once ? countRef.current < 1 : true;
-//   const ref = useCallback(
-//     (node: HTMLElement | null) => {
-//       if (!enable || !node || disable) return;
-//       countRef.current += 1;
-//       node.scrollIntoView({ inline: "center", behavior: "smooth" });
-//     },
-//     [disable, enable]
-//   );
-//   return ref;
-// };
-
 const doNothing = (arg: any): any => {};
 
 interface PlanComposeGraphicProps {
@@ -415,25 +391,18 @@ interface PlanComposeGraphicProps {
 }
 export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicProps>((props, ref) => {
   const onChange = props.onChange ?? doNothing;
-  const value = props.value ?? {};
-  const plan = ModelLessonPlan.toSegment(JSON.stringify(value));
+  const value = JSON.stringify(props.value ?? {});
+  const plan = useMemo(() => ModelLessonPlan.toSegment(value), [value]);
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(plan);
-  const [{ canDrop: canDropMaterial }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: "LIBRARY_ITEM",
-    collect: mapDropContainerProps,
-  });
-  const [{ canDrop: canDropCondition }] = useDrop<DragItem, unknown, mapDropSegmentPropsReturn>({
-    accept: "condition",
-    collect: mapDropContainerProps,
-  });
+  const { active } = useDroppable({ id: `${plan.segmentId}_PLAN` });
+  const canDropCondition = Boolean(active?.data.current?.type === "LIBRARY_ITEM");
+  const canDropMaterial = Boolean(active?.data.current?.type === "condition");
+  console.log("canDropCondition, canDropMaterial, plan = ", canDropCondition, canDropMaterial, plan);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
-  // const { breakpoints } = useTheme();
-  // const disable = useMediaQuery(breakpoints.down("md"));
-  // const startRef = useScrollCenter(true, disable);
   return (
     <Box className={css.planComposeGraphic} {...{ ref }}>
       {false && (

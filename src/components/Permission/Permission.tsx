@@ -459,7 +459,9 @@ export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(v
 export function usePermission<V extends PermissionType | PermissionType[]>(value: V, key?: string): PermissionResult<V> {
   const [data, setData] = useState<QeuryMeQuery>();
   useEffect(() => {
-    apiMemoizedGetPermission(key).then(setData);
+    let isSubscribe = true;
+    apiMemoizedGetPermission(key).then(isSubscribe ? setData : null);
+    return () => void(isSubscribe = false);
   }, [key]);
   return hasPermissionOfMe<V>(value, data?.me);
 }
