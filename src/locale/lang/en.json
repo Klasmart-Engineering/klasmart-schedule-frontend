@@ -363,6 +363,7 @@
   "assess_msg_delete_milestone": "Are you sure you want to delete this milestone?",
   "assess_error_message_locked": "This content is locked by editor at {email}. To use this content, ask the editor to get it approved.",
   "assess_create_new_milestone": "Create New Milestone",
+  "assess_msg_unlocked_milestone": "This content has been republished with a new version, please refresh. ",
   "schedule_tab_schedule": "Schedule",
   "schedue_button_schedule_class": "Schedule Class",
   "schedule_button_search": "Search",

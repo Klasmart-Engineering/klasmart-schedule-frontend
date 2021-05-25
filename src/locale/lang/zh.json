@@ -363,6 +363,7 @@
   "assess_msg_delete_milestone": "确定要删除这个阶段成果吗？",
   "assess_error_message_locked": "内容被{email}锁定，请联系该作者以解锁。",
   "assess_create_new_milestone": "创建新的阶段成果",
+  "assess_msg_unlocked_milestone": "请刷新查看该阶段成果的最新版本。",
   "schedule_tab_schedule": "课表",
   "schedue_button_schedule_class": "排课",
   "schedule_button_search": "搜索",
