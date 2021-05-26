@@ -106,7 +106,7 @@ export function StudyAssessmentList() {
             onChangeAssessmentType={handleChangeAssessmentType}
           />
           <ThirdSearchHeader value={condition} onChange={handleChange} />
-          <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
+          <ThirdSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
         </>
       )}
       {perm.view_completed_assessments_414 ||

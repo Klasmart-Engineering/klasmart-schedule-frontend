@@ -15,7 +15,7 @@ import { AppDispatch, RootState } from "../../reducers";
 import { actHomeFunAssessmentList } from "../../reducers/assessments";
 import { AssessmentsHomefunEdit } from "../HomefunEdit";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
+import { AssessmentType, SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { HomeFunAssessmentQueryCondition } from "./types";
 
@@ -91,9 +91,9 @@ export function HomeFunAssessmentList() {
         perm.view_school_in_progress_assessments_427) && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
-          <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
+          {/* <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} /> */}
           <ThirdSearchHeader value={condition} onChange={handleChange} />
-          <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
+          <ThirdSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
         </>
       )}
       {perm.view_completed_assessments_414 ||

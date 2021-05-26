@@ -1,6 +1,7 @@
 import { Divider, Grid, Menu, MenuItem, SvgIcon, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
+import FilterListOutlinedIcon from "@material-ui/icons/FilterListOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
@@ -9,6 +10,7 @@ import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-sta
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
+import { AssessmentType } from "./SecondSearchHearder";
 import { StudyAssessmentQueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,8 +88,16 @@ const assessmentStatusOptions = () => [
   { label: d("Complete").t("assess_filter_complete"), value: AssessmentStatus.complete },
   { label: d("Incomplete").t("assess_filter_in_progress"), value: AssessmentStatus.in_progress },
 ];
-
-export interface ThirdSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {}
+export const assessmentTypes = () => {
+  return [
+    { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
+    { label: d("Study").t("assess_study_list_study"), value: AssessmentType.study },
+    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
+  ];
+};
+export interface ThirdSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {
+  onChangeAssessmentType?: (assessmentType: AssessmentType) => any;
+}
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
@@ -111,11 +121,10 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   };
   const handleChangeStatus = (event: ChangeEvent<HTMLInputElement>) => {
     const status = event.target.value as AssessmentStatus | undefined;
-    onChange(
-      produce(value, (draft) => {
-        status ? (draft.status = status) : delete draft.status;
-      })
-    );
+    const newValue = produce(value, (draft) => {
+      status ? (draft.status = status) : delete draft.status;
+    });
+    onChange({ ...newValue, page: 1 });
   };
   const orderbyOptions = sortOptions().map((item) => (
     <MenuItem key={item.label} value={item.value}>
@@ -178,9 +187,10 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
+  const { value, onChange, onChangeAssessmentType } = props;
   const [anchorStatusEl, setAnchorStatusEl] = React.useState<null | HTMLElement>(null);
   const [anchorSortEl, setAnchorSortEl] = React.useState<null | HTMLElement>(null);
+  const [anchorTypeEl, setAnchorTypeEl] = React.useState<null | HTMLElement>(null);
   const showStatus = (event: any) => {
     setAnchorStatusEl(event.currentTarget);
   };
@@ -189,11 +199,10 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   };
   const handleClickStatusbyItem = (event: any, status: AssessmentStatus | undefined) => {
     setAnchorStatusEl(null);
-    onChange(
-      produce(value, (draft) => {
-        status ? (draft.status = status) : delete draft.status;
-      })
-    );
+    const newValue = produce(value, (draft) => {
+      status ? (draft.status = status) : delete draft.status;
+    });
+    onChange({ ...newValue, page: 1 });
   };
   const handleClickOrderbyItem = (event: any, order_by: StudyAssessmentOrderBy | undefined) => {
     setAnchorSortEl(null);
@@ -209,6 +218,18 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleSortClose = () => {
     setAnchorSortEl(null);
   };
+  const showTypes = (event: any) => {
+    setAnchorTypeEl(event.currentTarget);
+  };
+  const handleClickTypebyItem = (event: any, assessmentType: AssessmentType) => {
+    setAnchorSortEl(null);
+    if (onChangeAssessmentType) {
+      onChangeAssessmentType(assessmentType);
+    }
+  };
+  const handleTypeClose = () => {
+    setAnchorTypeEl(null);
+  };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -217,6 +238,18 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
             <Grid item sm={10} xs={10}></Grid>
             <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
+              <FilterListOutlinedIcon onClick={showTypes} />
+              <Menu anchorEl={anchorTypeEl} keepMounted open={Boolean(anchorTypeEl)} onClose={handleTypeClose}>
+                {assessmentTypes().map((item, index) => (
+                  <MenuItem
+                    key={item.label}
+                    selected={item.value === AssessmentType.study}
+                    onClick={(e) => handleClickTypebyItem(e, item.value)}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Menu>
               <SvgIcon component={StatusIcon} onClick={showStatus} />
               <Menu anchorEl={anchorStatusEl} keepMounted open={Boolean(anchorStatusEl)} onClose={handleStatusClose}>
                 {assessmentStatusOptions().map((item, index) => (
