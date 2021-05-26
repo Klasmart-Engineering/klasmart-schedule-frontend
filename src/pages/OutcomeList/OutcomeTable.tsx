@@ -65,6 +65,13 @@ const useStyles = makeStyles((theme) =>
       WebkitLineClamp: 3,
       maxHeight: 93,
     },
+    liCon: {
+      textAlign: "left",
+      textOverflow: "ellipsis",
+      overflow: "hidden",
+      whiteSpace: "nowrap",
+      listStylePosition: "inside",
+    },
   })
 );
 
@@ -119,7 +126,14 @@ function OutomeRow(props: OutcomeProps) {
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
-        <div className={css.outcomeSet}>{outcome.sets?.map((item) => item.set_name).join(";")}</div>
+        <ul>
+          {outcome.sets?.map((item, index) => (
+            <li className={css.liCon} key={`${index}${item.set_name}`}>
+              {item.set_name}
+            </li>
+          ))}
+        </ul>
+        {/* <div className={css.outcomeSet}>{outcome.sets?.map((item) => item.set_name).join(";")}</div> */}
       </TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {outcome.publish_status === OutcomePublishStatus.published && (
