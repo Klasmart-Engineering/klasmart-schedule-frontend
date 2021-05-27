@@ -310,12 +310,14 @@ export interface MaterialInputProps {
   defaultValue?: GetAssessmentResult["materials"];
   assessmentDetail: GetAssessmentResult;
   formMethods: UseFormMethods<UpdateAssessmentRequestDataOmitAction>;
+  isMyAssessment?: boolean;
 }
 export const MaterialInput = (props: MaterialInputProps) => {
   const css = useStyles();
   const {
     defaultValue,
     assessmentDetail,
+    isMyAssessment,
     formMethods: { control, watch },
   } = props;
   const selectedMaterials = useMemo(() => {
@@ -362,7 +364,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
                   control={
                     <Checkbox
                       checked={props.value}
-                      disabled={assessmentDetail.status === AssessmentStatus.complete}
+                      disabled={assessmentDetail.status === AssessmentStatus.complete || !isMyAssessment}
                       onChange={(e) => props.onChange(e.target.checked)}
                       color="primary"
                     />
@@ -381,12 +383,12 @@ export const MaterialInput = (props: MaterialInputProps) => {
                 className={css.commentCon}
                 placeholder={d("Comment here").t("assess_detail_comment_here")}
                 defaultValue={defaultValue ? defaultValue[index].comment : item.comment}
-                disabled={assessmentDetail.status === AssessmentStatus.complete}
+                disabled={assessmentDetail.status === AssessmentStatus.complete || !isMyAssessment}
                 inputProps={{ maxLength: 100 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      {assessmentDetail.status === AssessmentStatus.complete ? (
+                      {assessmentDetail.status === AssessmentStatus.complete || !isMyAssessment ? (
                         <MessageOutlinedIcon className={css.mCoverIcon} />
                       ) : (
                         <BorderColorOutlinedIcon className={css.mCoverIcon} />
@@ -421,6 +423,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
     // formMethods.reset();
     return !open;
   }, false);
+  const editable = assessmentDetail.status === AssessmentStatus.in_progress && isMyAssessment;
   const materialString = useMemo(() => {
     const materials = ModelAssessment.toMaterial(assessmentDetail.materials, value);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
@@ -477,28 +480,33 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
         render={(value) =>
           value && (
             <Button className={css.editButton} color="primary" variant="outlined" onClick={toggle}>
-              {assessmentDetail.status === AssessmentStatus.complete && isMyAssessment
-                ? d("View").t("assess_detail_button_view")
-                : d("Edit").t("assess_button_edit")}
+              {assessmentDetail.status === AssessmentStatus.in_progress && isMyAssessment
+                ? d("Edit").t("assess_button_edit")
+                : d("View").t("assess_detail_button_view")}
             </Button>
           )
         }
       />
       <Dialog maxWidth={"sm"} fullWidth={true} open={open} onClose={toggle}>
         <DialogTitle className={css.title}>
-          {assessmentDetail.status === AssessmentStatus.complete
+          {!editable
             ? d("View Lesson Materials Covered").t("assess_detail_view_covered")
             : d("Edit Lesson Materials Covered").t("assess_detail_edit_covered")}
-          {assessmentDetail.status === AssessmentStatus.complete && (
+          {!editable && (
             <IconButton onClick={toggle} className={css.closeBtn}>
               <Close />
             </IconButton>
           )}
         </DialogTitle>
         <DialogContent dividers style={{ borderBottom: "none" }}>
-          <MaterialInput assessmentDetail={assessmentDetail} formMethods={formMethods} defaultValue={value} />
+          <MaterialInput
+            assessmentDetail={assessmentDetail}
+            formMethods={formMethods}
+            defaultValue={value}
+            isMyAssessment={isMyAssessment}
+          />
         </DialogContent>
-        {assessmentDetail.status !== AssessmentStatus.complete && (
+        {editable && (
           <DialogActions>
             <Button autoFocus onClick={toggle} color="primary" variant="outlined">
               {d("CANCEL").t("general_button_CANCEL")}
