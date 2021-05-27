@@ -344,7 +344,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           )}
         </div>
       </div>
-      {!ScheduleViewInfo.lesson_plan && scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
+      {!ScheduleViewInfo.lesson_plan?.is_auth && scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
         <p className={classes.checkPlan}>
           {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
         </p>

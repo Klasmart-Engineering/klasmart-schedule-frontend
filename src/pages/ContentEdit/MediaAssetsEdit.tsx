@@ -3,7 +3,7 @@ import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import React, { useCallback } from "react";
-import { useDroppable } from "_@dnd-kit_core@3.0.3@@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
