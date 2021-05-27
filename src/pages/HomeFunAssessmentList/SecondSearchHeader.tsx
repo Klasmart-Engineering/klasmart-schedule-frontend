@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
   searchText: {
     width: "34%",
   },
+  searchTextMb: {
+    width: "calc(100% - 140px)",
+  },
   actives: {
     color: "#0E78D5",
   },
@@ -187,6 +190,23 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               </TextField>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}></Grid>
+          </Grid>
+        </Hidden>
+        <Hidden only={["md", "lg", "xl"]}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                size="small"
+                className={classes.searchTextMb}
+                onKeyPress={handleKeyPress}
+                onChange={handleChange}
+                placeholder={d("Search").t("assess_label_search")}
+                defaultValue={value.query}
+              />
+              <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
+                <Search /> {d("Search").t("assess_label_search")}
+              </Button>
+            </Grid>
           </Grid>
         </Hidden>
       </LayoutBox>

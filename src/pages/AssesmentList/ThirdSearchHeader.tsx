@@ -1,6 +1,7 @@
 import { Divider, Grid, Menu, MenuItem, SvgIcon, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
+import FilterListOutlinedIcon from "@material-ui/icons/FilterListOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
@@ -9,7 +10,9 @@ import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-sta
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
+import { AssessmentType } from "./SecondSearchHeader";
 import { AssessmentQueryConditionBaseProps } from "./types";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -86,8 +89,16 @@ const assessmentStatusOptions = () => [
   { label: d("Complete").t("assess_filter_complete"), value: AssessmentStatus.complete },
   { label: d("Incomplete").t("assess_filter_in_progress"), value: AssessmentStatus.in_progress },
 ];
-
-export interface ThirdSearchHeaderProps extends AssessmentQueryConditionBaseProps {}
+export const assessmentTypes = () => {
+  return [
+    { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
+    { label: d("Study").t("assess_study_list_study"), value: AssessmentType.study },
+    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
+  ];
+};
+export interface ThirdSearchHeaderProps extends AssessmentQueryConditionBaseProps {
+  onChangeAssessmentType?: (assessmentType: AssessmentType) => any;
+}
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
@@ -177,14 +188,18 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
+  const { value, onChange, onChangeAssessmentType } = props;
   const [anchorStatusEl, setAnchorStatusEl] = React.useState<null | HTMLElement>(null);
   const [anchorSortEl, setAnchorSortEl] = React.useState<null | HTMLElement>(null);
+  const [anchorTypeEl, setAnchorTypeEl] = React.useState<null | HTMLElement>(null);
   const showStatus = (event: any) => {
     setAnchorStatusEl(event.currentTarget);
   };
   const showSort = (event: any) => {
     setAnchorSortEl(event.currentTarget);
+  };
+  const showTypes = (event: any) => {
+    setAnchorTypeEl(event.currentTarget);
   };
   const handleClickStatusbyItem = (event: any, status: AssessmentStatus | undefined) => {
     setAnchorStatusEl(null);
@@ -202,11 +217,20 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
       })
     );
   };
+  const handleClickTypebyItem = (event: any, assessmentType: AssessmentType) => {
+    setAnchorSortEl(null);
+    if (onChangeAssessmentType) {
+      onChangeAssessmentType(assessmentType);
+    }
+  };
   const handleStatusClose = () => {
     setAnchorStatusEl(null);
   };
   const handleSortClose = () => {
     setAnchorSortEl(null);
+  };
+  const handleTypeClose = () => {
+    setAnchorTypeEl(null);
   };
   return (
     <div className={classes.root}>
@@ -214,8 +238,20 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Divider />
           <Grid container alignItems="center" style={{ marginTop: "6px", position: "relative" }}>
-            <Grid item sm={10} xs={10}></Grid>
-            <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
+            <Grid item sm={9} xs={9}></Grid>
+            <Grid container justify="flex-end" alignItems="center" item sm={3} xs={3}>
+              <FilterListOutlinedIcon onClick={showTypes} />
+              <Menu anchorEl={anchorTypeEl} keepMounted open={Boolean(anchorTypeEl)} onClose={handleTypeClose}>
+                {assessmentTypes().map((item, index) => (
+                  <MenuItem
+                    key={item.label}
+                    selected={item.value === AssessmentType.classLive}
+                    onClick={(e) => handleClickTypebyItem(e, item.value)}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Menu>
               <SvgIcon component={StatusIcon} onClick={showStatus} />
               <Menu anchorEl={anchorStatusEl} keepMounted open={Boolean(anchorStatusEl)} onClose={handleStatusClose}>
                 {assessmentStatusOptions().map((item, index) => (

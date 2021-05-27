@@ -626,7 +626,12 @@ function FilterTemplate(props: FilterProps) {
     },
   ];
   const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {
-    const fullSelectionStatus = modelSchedule.FilterSchoolDigital(schoolByOrgOrUserData, stateOnlyMine);
+    const fullSelectionStatus = modelSchedule.FilterSchoolDigital(
+      schoolByOrgOrUserData,
+      stateOnlyMine,
+      user_id,
+      privilegedMembers("Teacher") || privilegedMembers("Student")
+    );
     const fullOtherSelectionStatus = modelSchedule.FilterOtherDigital(filterOption.others, stateOnlyMine);
     return treeItem.map((item: FilterDataItemsProps) => {
       return (

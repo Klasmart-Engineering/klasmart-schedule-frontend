@@ -10,7 +10,7 @@ import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHeader";
+import { AssessmentType, SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { AssessmentQueryCondition } from "./types";
 
@@ -89,9 +89,9 @@ export function AssessmentList() {
         perm.view_school_in_progress_assessments_427) && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
-          <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
+          {/* <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} /> */}
           <ThirdSearchHeader value={condition} onChange={handleChange} />
-          <ThirdSearchHeaderMb value={condition} onChange={handleChange} />
+          <ThirdSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
         </>
       )}
       {perm.view_completed_assessments_414 ||

@@ -19,7 +19,6 @@ import MilestonesList from "../../pages/MilestoneList";
 import CreateOutcomings from "../../pages/OutcomeEdit";
 import { OutcomeList } from "../../pages/OutcomeList";
 import { LoBlueIcon, LoIcon } from "../../pages/OutcomeList/Icons";
-import { HeaderCategory } from "../../pages/OutcomeList/types";
 import { StudyAssessmentList } from "../../pages/StudyAssessmentList";
 import LayoutBox from "../LayoutBox";
 import { Permission, PermissionType, usePermission } from "../Permission";
@@ -170,6 +169,8 @@ export function FirstSearchHeaderMb() {
     PermissionType.assessments_page_406,
     PermissionType.milestones_page_405,
   ]);
+  const isLiveList = pathname.indexOf(AssessmentList.routeBasePath) >= 0;
+  const isStudyList = pathname.indexOf(StudyAssessmentList.routeBasePath) >= 0;
   const isHomeFunList = pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0;
   return (
     <div className={classes.root}>
@@ -203,11 +204,20 @@ export function FirstSearchHeaderMb() {
                     onClick={() => history.push(MilestonesList.routeBasePath)}
                   />
                 )}
-                <Tab value={HeaderCategory.standards} label={"Standard"} className={classes.capitalize} />
-                {!isHomeFunList && perm.assessments_page_406 && (
+                {/* <Tab value={HeaderCategory.standards} label={"Standard"} className={classes.capitalize} /> */}
+                {isLiveList && perm.assessments_page_406 && (
                   <Tab
                     component={Button}
                     value={AssessmentList.routeBasePath}
+                    label={d("Assessments").t("assess_label_assessments")}
+                    className={classes.capitalize}
+                    onClick={() => history.push(AssessmentList.routeRedirectDefault)}
+                  />
+                )}
+                {isStudyList && perm.assessments_page_406 && (
+                  <Tab
+                    component={Button}
+                    value={StudyAssessmentList.routeBasePath}
                     label={d("Assessments").t("assess_label_assessments")}
                     className={classes.capitalize}
                     onClick={() => history.push(AssessmentList.routeRedirectDefault)}

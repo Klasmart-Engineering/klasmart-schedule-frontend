@@ -74,11 +74,23 @@ export class modelSchedule {
    * @param SchoolDigital
    * @constructor
    */
-  static FilterSchoolDigital(SchoolDigitalAll: EntityScheduleSchoolInfo[], SchoolDigital: string[]) {
+  static FilterSchoolDigital(
+    SchoolDigitalAll: EntityScheduleSchoolInfo[],
+    SchoolDigital: string[],
+    user_id: string,
+    teachersOrstudents: boolean
+  ) {
     const fullElection: { id: string; status: boolean }[] = [];
     SchoolDigitalAll?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
       let isElectionAll = true;
       schoolItem.classes.forEach((classItem: EntityScheduleClassesInfo) => {
+        const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
+          return teacher.user_id === user_id;
+        });
+        const isExistStudent = classItem.students.filter((studen: RolesData) => {
+          return studen.user_id === user_id;
+        });
+        if (teachersOrstudents && !isExistTeacher.length && !isExistStudent.length) return;
         if (classItem.status === "inactive") return;
         const includes = SchoolDigital.filter((id: string) => {
           return id.includes(`${classItem.class_id}+${schoolItem.school_id}`);

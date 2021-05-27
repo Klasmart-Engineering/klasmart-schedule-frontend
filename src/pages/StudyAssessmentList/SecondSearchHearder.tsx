@@ -1,16 +1,14 @@
-import { Grid, InputAdornment, MenuItem } from "@material-ui/core";
+import { Grid, MenuItem } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField/TextField";
-import { Search } from "@material-ui/icons";
-import produce from "immer";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 import { UseFormMethods } from "react-hook-form";
 import { ExectSeachType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { ListSearch } from "../../components/ListSearch";
 import { d } from "../../locale/LocaleManager";
-import { SearchListForm, StudyAssessmentQueryCondition, StudyAssessmentQueryConditionBaseProps } from "./types";
+import { SearchListForm, StudyAssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,38 +85,22 @@ const menuItemList = (list: options[]) =>
   ));
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<StudyAssessmentQueryCondition["query"]>();
-  const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
-  };
+  const { value, onChange, formMethods } = props;
   const handleClickSearch = () => {
-    const newValue = produce(value, (draft) => {
-      searchText ? (draft.query = searchText) : delete draft.query;
-    });
-    onChange({ ...newValue, page: 1 });
+    onChange({ ...value, page: 1 });
   };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={12} style={{ textAlign: "center" }}>
-              <TextField
-                style={{ width: "100%", height: "100%" }}
-                value={searchText}
-                onChange={handleChangeSearchText}
-                onBlur={handleClickSearch}
-                label={d("Search").t("assess_label_search")}
-                variant="outlined"
-                size="small"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search style={{ cursor: "pointer" }} onClick={handleClickSearch} />
-                    </InputAdornment>
-                  ),
-                }}
+            <Grid item xs={12} sm={12}>
+              <ListSearch
+                searchTextDefaultValue={value.query}
+                searchFieldDefaultValue={value.query_type}
+                searchFieldList={searchFieldList()}
+                onSearch={handleClickSearch}
+                formMethods={formMethods}
               />
             </Grid>
           </Grid>

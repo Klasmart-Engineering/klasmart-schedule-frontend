@@ -114,8 +114,6 @@ export default function CreateOutcomings() {
     if (outcome_id) {
       dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
       setShowEdit(true);
-    } else {
-      setIsAssumed(true);
     }
   }, [dispatch, outcome_id]);
 
@@ -125,8 +123,12 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     reset(modelOutcomeDetail(outcomeDetail));
-    setIsAssumed(outcomeDetail.assumed as boolean);
-  }, [outcomeDetail, reset]);
+    if (outcome_id) {
+      setIsAssumed(outcomeDetail.assumed as boolean);
+    } else {
+      setIsAssumed(true);
+    }
+  }, [outcomeDetail, outcome_id, reset]);
 
   const handleClose = () => {
     setOpenStatus(false);
