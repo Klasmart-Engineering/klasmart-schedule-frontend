@@ -326,10 +326,8 @@ export default function CustomizeTempalte(props: InfoProps) {
           {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
-          {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && !scheduleInfo.exist_assessment && (
-            <DeleteOutlined className={classes.disableLastIcon} />
-          )}
-          {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && !scheduleInfo.exist_assessment && (
+          {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+          {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
             <Permission
               value={PermissionType.delete_event_540}
               render={(value) =>
