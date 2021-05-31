@@ -16,6 +16,7 @@ import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
 import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
 import { OutcomesTable } from "./OutcomesTable";
+import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
 
 const useQuery = () => {
@@ -24,13 +25,14 @@ const useQuery = () => {
   const id = query.get("id");
   const editindex: number = Number(query.get("editindex") || 0);
   const filterOutcomes = query.get("filterOutcomes") || "all";
-  return { id, filterOutcomes, editindex };
+  const radioValue = query.get("radioValue") || RadioValue.lessonPlan;
+  return { id, filterOutcomes, editindex, radioValue };
 };
 
 function AssessmentsEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { filterOutcomes, id, editindex } = useQuery();
+  const { filterOutcomes, id, editindex, radioValue } = useQuery();
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
@@ -108,6 +110,11 @@ function AssessmentsEditIner() {
     },
     [history]
   );
+  const handleChangeRadio = (value: RadioValue) => {
+    history.replace({
+      search: setQuery(history.location.search, { radioValue: value }),
+    });
+  };
   useEffect(() => {
     if (id) {
       dispatch(getAssessment({ id, metaLoading: true }));
@@ -120,19 +127,25 @@ function AssessmentsEditIner() {
   }, [assessmentDetail, reset]);
   const rightsideArea = (
     <>
-      <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-      {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-        <OutcomesTable
-          outcomesList={filteredOutcomelist}
-          attendanceList={students}
-          formMethods={formMethods}
-          formValue={formValue}
-          filterOutcomes={filterOutcomes}
-          editable={editable}
-        />
-      ) : (
-        <NoOutComesList />
+      <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
+      {radioValue === RadioValue.lessonPlan && (
+        <>
+          <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+          {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+            <OutcomesTable
+              outcomesList={filteredOutcomelist}
+              attendanceList={students}
+              formMethods={formMethods}
+              formValue={formValue}
+              filterOutcomes={filterOutcomes}
+              editable={editable}
+            />
+          ) : (
+            <NoOutComesList />
+          )}
+        </>
       )}
+      {radioValue === RadioValue.score && <></>}
     </>
   );
 
