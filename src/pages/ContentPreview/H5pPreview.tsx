@@ -297,9 +297,14 @@ export function H5pPreview(props: H5pPreview) {
   //     return <AssetPdf src={path} />;
   //   }
   // };
-
   return (
-    <Box className={css.previewContainer}>
+    <Box
+      className={css.previewContainer}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return false;
+      }}
+    >
       <Box className={css.contentBtnCon}>
         <div className={css.h5pCon}>
           {isEmpty ? (
