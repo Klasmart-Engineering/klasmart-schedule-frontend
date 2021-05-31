@@ -1,4 +1,4 @@
-import { DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
+import { DragOverlay, useDndContext, useDraggable } from "@dnd-kit/core";
 import { Box, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
@@ -100,13 +100,12 @@ interface DraggableItemProps {
 function DraggableImage(props: DraggableItemProps) {
   const { type, item, lesson, permission } = props;
   const css = useStyles();
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: item.id as string,
     disabled: !permission,
     data: { type, item },
   });
   const contentType = mapContentType(lesson, item);
-  console.log("transform = ", transform);
   return (
     <Thumbnail
       key={item.id}
@@ -137,7 +136,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   const { lesson } = useParams();
   const css = useStyles();
   const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, isShare, permission } = props;
-  const { active } = useDroppable({ id: "MEDIA_ASSETS_TABLE_CONTAINER", disabled: true });
+  const { active } = useDndContext();
   const amountPerPage = props.amountPerPage ?? 10;
   const handChangePage = useCallback(
     (event: object, page: number) => {
@@ -209,9 +208,9 @@ export default function MediaAssets(props: MediaAssetsProps) {
         <Box width="100%">
           <SearchcmsList searchType="searchMedia" onSearch={onSearch} value={value} lesson={lesson} isShare={isShare} />
           {list.length > 0 ? table : resultsTip}
+          <div>{createPortal(overlay, document.body)}</div>
         </Box>
       )}
-      {createPortal(overlay, document.body)}
     </Box>
   );
 }

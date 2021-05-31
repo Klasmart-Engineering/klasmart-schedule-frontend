@@ -1,11 +1,22 @@
+import {
+  Active,
+  CollisionDetection,
+  DndContext,
+  DragEndEvent,
+  DragMoveEvent,
+  MouseSensor,
+  rectIntersection,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
-import { DndContextAdaptor } from '../../components/DndContextAdaptor';
 import { PermissionOr, PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
@@ -25,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchOutcomeList
+  searchOutcomeList,
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -42,6 +53,7 @@ import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
 
+const SCROLL_DETECT_INTERVAL = 100;
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
   tab: "details" | "outcomes" | "media" | "assetDetails";
@@ -62,6 +74,26 @@ export const useQueryCms = () => {
   return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch };
 };
 
+const useScrollTop = () => {
+  const [scrollTop, setScrollTop] = useState(0);
+  useEffect(() => {
+    let timer: number;
+    const handleScroll = () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const offset = window.pageYOffset;
+        if (offset === scrollTop) return;
+        setScrollTop(offset);
+      }, SCROLL_DETECT_INTERVAL);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollTop]);
+  return { scrollTop: Math.floor(scrollTop) };
+};
+
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
   const query = new URLSearchParams(search);
   Object.keys(hash).forEach((key) => query.set(key, String(hash[key])));
@@ -79,6 +111,7 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
+  const { scrollTop } = useScrollTop();
   const { handleSubmit, control, watch, errors } = formMethods;
   const { contentDetail, mediaList, mediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions, visibility_settings, lesson_types } =
     useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -89,12 +122,29 @@ function ContentEditForm() {
   const history = useHistory();
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
+  const mouseSensor = useSensor(MouseSensor);
+  const touchSensor = useSensor(TouchSensor);
+  const sensors = useSensors(mouseSensor, touchSensor);
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
   const { program, developmental, subject } = watch(["program", "subject", "developmental"]);
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
+  const activeRectRef = useRef<Active["rect"]>();
+  const adapteredRectIntersection: CollisionDetection = (entries, target) => {
+    const top = (activeRectRef.current?.current.translated?.top as number) + scrollTop;
+    const offsetTop = top + scrollTop;
+    return rectIntersection(entries, { ...target, top, offsetTop });
+  };
+  const handleDragStart = (e: DragMoveEvent) => {
+    activeRectRef.current = e.active?.rect;
+  };
+  const handleDropEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!active || !over || !over.data.current?.accept.includes(active.data.current?.type)) return;
+    over.data.current.drop?.(active.data.current);
+  };
   const allDefaultValueAndKey = ModelMockOptions.createAllDefaultValueAndKey(
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental, subject }
@@ -511,7 +561,13 @@ function ContentEditForm() {
   );
   const leftsideArea = tab === "assetDetails" ? assetDetails : contentTabs;
   return (
-    <DndContextAdaptor>
+    <DndContext
+      sensors={sensors}
+      autoScroll={false}
+      onDragEnd={handleDropEnd}
+      onDragStart={handleDragStart}
+      collisionDetection={adapteredRectIntersection}
+    >
       <ContentHeader
         contentDetail={contentDetail}
         formMethods={formMethods}
@@ -553,7 +609,7 @@ function ContentEditForm() {
         }
       />
       {/* <DevTool control={control} /> */}
-    </DndContextAdaptor>
+    </DndContext>
   );
 }
 

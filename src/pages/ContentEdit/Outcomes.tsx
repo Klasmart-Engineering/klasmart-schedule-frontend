@@ -267,7 +267,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     outcomePage,
   } = props;
   const { lesson } = useParams();
-  console.log(value);
   const handChangePage = useCallback(
     (event: object, page: number) => {
       onChangePage(page);

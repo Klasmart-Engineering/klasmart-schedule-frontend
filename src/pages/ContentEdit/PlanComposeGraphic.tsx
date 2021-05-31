@@ -1,4 +1,4 @@
-import { useDraggable, useDroppable } from "@dnd-kit/core";
+import { useDndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Box, Button, ButtonGroup, Card, CardContent, makeStyles, SvgIconProps, Theme, Typography, useTheme } from "@material-ui/core";
 import { CancelRounded, Close, DashboardOutlined, Done, FlagOutlined, Spellcheck, SvgIconComponent } from "@material-ui/icons";
 import clsx from "clsx";
@@ -17,7 +17,7 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     height: 1030,
     display: "flex",
     flexDirection: "column",
-    overflow: "scroll",
+    overflow: "hide",
   },
   bgImage: {
     background: `url(${lessonPlanBgUrl}) center repeat`,
@@ -300,8 +300,6 @@ function SegmentBox(props: SegmentBoxProps) {
       drop: addPlan,
     },
   });
-
-  console.log("editable = ", editable);
   const computedCss = useSegmentComputedStyles({ ...props });
   const insertedNext = next && next.length > 0 ? next : material ? [{ segmentId: `virtual${segmentId}` }] : [];
   const segmentConditionId = `${segmentId}.condition`;
@@ -396,12 +394,11 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
   const { palette } = useTheme<Theme>();
   const css = useStyles();
   const computedCss = useGraphicComputedStyles(plan);
-  const { active } = useDroppable({ id: `${plan.segmentId}_PLAN` });
+  const { active } = useDndContext();
   const canDropCondition = Boolean(active?.data.current?.type === "LIBRARY_ITEM");
   const canDropMaterial = Boolean(active?.data.current?.type === "condition");
-  console.log("canDropCondition, canDropMaterial, plan = ", canDropCondition, canDropMaterial, plan);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
+  // const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
   return (
     <Box className={css.planComposeGraphic} {...{ ref }}>
@@ -445,7 +442,7 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
           arrowThickness={9}
           arrowLength={9}
           noCurves
-          key={archerRepaintKey}
+          // key={archerRepaintKey}
         >
           <Box className="Box1" display="flex" flexDirection="column" alignItems="center">
             <ArcherElement id="start" relations={startRelations}>
