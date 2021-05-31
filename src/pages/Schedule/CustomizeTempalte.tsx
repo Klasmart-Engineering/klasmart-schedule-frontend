@@ -326,10 +326,8 @@ export default function CustomizeTempalte(props: InfoProps) {
           {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
-          {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && !scheduleInfo.exist_assessment && (
-            <DeleteOutlined className={classes.disableLastIcon} />
-          )}
-          {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && !scheduleInfo.exist_assessment && (
+          {!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart" && <DeleteOutlined className={classes.disableLastIcon} />}
+          {!scheduleInfo.is_hidden && scheduleInfo.status === "NotStart" && (
             <Permission
               value={PermissionType.delete_event_540}
               render={(value) =>
@@ -346,11 +344,13 @@ export default function CustomizeTempalte(props: InfoProps) {
           )}
         </div>
       </div>
-      {!ScheduleViewInfo.lesson_plan && scheduleInfo.class_type !== "Task" && !scheduleInfo.is_home_fun && (
-        <p className={classes.checkPlan}>
-          {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
-        </p>
-      )}
+      {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
+        scheduleInfo.class_type !== "Task" &&
+        !scheduleInfo.is_home_fun && (
+          <p className={classes.checkPlan}>
+            {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
+          </p>
+        )}
       <div className={classes.customizeContentBox}>
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Class Type").t("schedule_detail_class_type")}</span>
