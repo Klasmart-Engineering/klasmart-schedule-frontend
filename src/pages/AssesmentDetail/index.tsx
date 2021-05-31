@@ -15,8 +15,6 @@ import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
 import { DetailTable } from "./DetailTable";
-import ResourcesView from "./ResourcesView";
-import { ElasticLayerControl } from "./types";
 
 export const useQueryDetail = () => {
   const { search } = useLocation();
@@ -97,14 +95,6 @@ export function AssessmentDetail() {
       }),
     [handleSubmit, dispatch, id, filter_student_view_items, history, editindex]
   );
-  const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
-    link: "",
-    openStatus: false,
-    type: "",
-  });
-  const handleElasticLayerControl = (elasticLayerControlData: ElasticLayerControl) => {
-    setElasticLayerControlData(elasticLayerControlData);
-  };
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
   }, [dispatch, id, editindex]);
@@ -131,15 +121,8 @@ export function AssessmentDetail() {
           editable={editable}
           complete_rate={complete_rate}
         />
-        <DetailTable
-          handleElasticLayerControl={handleElasticLayerControl}
-          studentViewItems={filter_student_view_items}
-          formMethods={formMethods}
-          isComplete={isComplete}
-          editable={editable}
-        />
+        <DetailTable studentViewItems={filter_student_view_items} formMethods={formMethods} isComplete={isComplete} editable={editable} />
       </LayoutPair>
-      <ResourcesView elasticLayerControlData={elasticLayerControlData} handleElasticLayerControl={handleElasticLayerControl} />
     </>
   );
 }

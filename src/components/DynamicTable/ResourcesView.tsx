@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
-import { ElasticLayerControl } from "./types";
+import { ElasticLayerControl } from "../../types/assessmentTypes";
 import { Box } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";

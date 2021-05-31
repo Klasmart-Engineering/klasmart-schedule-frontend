@@ -18,6 +18,7 @@ import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOut
 import { OutcomesTable } from "./OutcomesTable";
 import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
+import { DynamicTable } from "../../components/DynamicTable";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -125,6 +126,16 @@ function AssessmentsEditIner() {
       reset(ModelAssessment.toRequest(assessmentDetail));
     }
   }, [assessmentDetail, reset]);
+
+  const TableCellData = [
+    `${d("No").t("assess_detail_no")}.`,
+    d("Lesson Material Name").t("assess_detail_lesson_material_name"),
+    d("Lesson Material Type").t("assess_detail_lesson_material_type"),
+    d("Answer").t("assess_detail_answer"),
+    "Score / Full Marks",
+    d("Learning Outcomes").t("library_label_learning_outcomes"),
+  ];
+
   const rightsideArea = (
     <>
       <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
@@ -145,7 +156,11 @@ function AssessmentsEditIner() {
           )}
         </>
       )}
-      {radioValue === RadioValue.score && <></>}
+      {radioValue === RadioValue.score && (
+        <>
+          <DynamicTable studentViewItems={[]} tableCellData={TableCellData} formMethods={formMethods} isComplete={false} editable={true} />
+        </>
+      )}
     </>
   );
 
