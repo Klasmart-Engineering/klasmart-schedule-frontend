@@ -670,21 +670,23 @@ function EditBox(props: CalendarStateProps) {
     let ids: string[] = [];
     ids = value ? value["id"] : "";
     if (name === "class_id") {
-      let resultInfo: any;
-      const getClassOptionsItem = (item: Maybe<{ __typename?: "User" | undefined } & Pick<User, "user_id" | "user_name">>[]) => {
-        const items = item?.map((val) => {
-          return { id: val?.user_id, name: val?.user_name, enable: true };
-        });
-        return items ?? [];
-      };
-      resultInfo = await getParticipantOptions(value["id"]);
-      handleChangeParticipants("classRoster", {
-        student: getClassOptionsItem(resultInfo.payload.participantList.class.students),
-        teacher: getClassOptionsItem(resultInfo.payload.participantList.class.teachers),
-      } as ParticipantsShortInfo);
-      setRosterSaveStatus(false);
+      if (value?.id) {
+        let resultInfo: any;
+        const getClassOptionsItem = (item: Maybe<{ __typename?: "User" | undefined } & Pick<User, "user_id" | "user_name">>[]) => {
+          const items = item?.map((val) => {
+            return { id: val?.user_id, name: val?.user_name, enable: true };
+          });
+          return items ?? [];
+        };
+        resultInfo = await getParticipantOptions(value["id"]);
+        handleChangeParticipants("classRoster", {
+          student: getClassOptionsItem(resultInfo.payload.participantList.class.students),
+          teacher: getClassOptionsItem(resultInfo.payload.participantList.class.teachers),
+        } as ParticipantsShortInfo);
+        setRosterSaveStatus(false);
+        setIsForce(false);
+      }
       setClassItem(value);
-      setIsForce(false);
     }
 
     if (name === "subject_id") {
@@ -698,10 +700,11 @@ function EditBox(props: CalendarStateProps) {
       }
       setProgramItem(value);
     }
-
     if (name === "lesson_plan_id") {
-      const LinkageLessonData: any = await LinkageLessonPlan(value["id"]);
-      setScheduleList({ ...scheduleList, ...LinkageLessonData, lesson_plan_id: ids });
+      if (value?.id) {
+        const LinkageLessonData: any = await LinkageLessonPlan(value["id"]);
+        setScheduleList({ ...scheduleList, ...LinkageLessonData, lesson_plan_id: ids });
+      }
       setLessonPlan(value);
     } else {
       setScheduleData(name, ids);
@@ -727,7 +730,7 @@ function EditBox(props: CalendarStateProps) {
 
   const setScheduleData = (name: string, value: string | number | object | null) => {
     const newTopocList = { ...scheduleList, [name]: value as string | number | object | null };
-    setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+    setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
   };
   /**
    * form input validator
@@ -741,17 +744,23 @@ function EditBox(props: CalendarStateProps) {
     program_id: false,
     class_type: false,
   };
-  const [validator, setValidator] = React.useState(isValidator);
+  const taskValidator = {
+    title: false,
+    start_at: false,
+    end_at: false,
+    class_type: false,
+  };
+  const [validator, setValidator] = React.useState<{
+    title: boolean;
+    lesson_plan_id?: boolean;
+    start_at: boolean;
+    end_at: boolean;
+    program_id?: boolean;
+    class_type: boolean;
+  }>(isValidator);
 
   const validatorFun = () => {
     let verificaPath = true;
-
-    const taskValidator = {
-      title: false,
-      start_at: false,
-      end_at: false,
-      class_type: false,
-    };
 
     const validator = scheduleList.class_type === "Task" || checkedStatus.homeFunCheck ? taskValidator : isValidator;
 
@@ -767,16 +776,10 @@ function EditBox(props: CalendarStateProps) {
         }
       }
     }
-    if (scheduleList.class_type === "Task") {
-      isValidator.lesson_plan_id = isValidator.program_id = false;
-    }
     if (scheduleList.class_type === "Homework") {
-      isValidator.start_at = isValidator.end_at = false;
+      validator.start_at = validator.end_at = false;
     }
-    if (checkedStatus.homeFunCheck) {
-      isValidator.lesson_plan_id = false;
-    }
-    setValidator({ ...isValidator });
+    setValidator({ ...validator });
     return verificaPath;
   };
   /**
@@ -908,9 +911,9 @@ function EditBox(props: CalendarStateProps) {
     });
 
     let resultInfo: any;
-    resultInfo = (await dispatch(
+    resultInfo = ((await dispatch(
       saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1200,7 +1203,7 @@ function EditBox(props: CalendarStateProps) {
         start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
         end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
-      setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+      setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
@@ -1587,7 +1590,7 @@ function EditBox(props: CalendarStateProps) {
           label={d("Class Type").t("schedule_detail_class_type")}
           value={scheduleList.class_type}
           onChange={(e) => handleTopicListChange(e, "class_type")}
-          error={validator.class_type}
+          error={validator.class_type && !scheduleList.class_type}
           select
           required
           disabled={isScheduleExpired() || scheduleDetial.exist_feedback}
@@ -1607,7 +1610,7 @@ function EditBox(props: CalendarStateProps) {
         )}
         <Box className={css.fieldBox}>
           <TextField
-            error={validator.title}
+            error={validator.title && !scheduleList.title}
             className={css.fieldset}
             multiline
             rows={6}
@@ -1633,7 +1636,6 @@ function EditBox(props: CalendarStateProps) {
                       shrink: true,
                     }}
                     required
-                    error={validator.start_at}
                     value={timestampToTime(scheduleList.start_at)}
                     disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
                     onChange={(e) => handleTopicListChange(e, "start_at")}
@@ -1649,7 +1651,6 @@ function EditBox(props: CalendarStateProps) {
                       shrink: true,
                     }}
                     required
-                    error={validator.end_at}
                     value={timestampToTime(scheduleList.end_at)}
                     disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
                     onChange={(e) => handleTopicListChange(e, "end_at")}
@@ -1946,7 +1947,7 @@ function EditBox(props: CalendarStateProps) {
                 {...params}
                 className={css.fieldset}
                 label={d("Lesson Plan").t("library_label_lesson_plan")}
-                error={validator.lesson_plan_id}
+                error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
                 value={scheduleList.lesson_plan_id}
                 variant="outlined"
                 required={scheduleList.class_type !== "Task"}
@@ -2003,7 +2004,7 @@ function EditBox(props: CalendarStateProps) {
                       className={css.fieldset}
                       label={d("Program").t("assess_label_program")}
                       variant="outlined"
-                      error={validator.program_id}
+                      error={validator.program_id && !scheduleList.program_id}
                       value={scheduleList.program_id}
                       required
                     />
