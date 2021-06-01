@@ -25,8 +25,8 @@ export interface IAssessmentState {
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
-  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"]>;
-  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>>;
+  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>["items"]>;
+  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>>;
 }
 
 interface RootState {
@@ -48,7 +48,7 @@ const initialState: IAssessmentState = {
     // number_of_activities: 0,
     // number_of_outcomes: 0,
     complete_time: 0,
-    outcome_attendances: [],
+    outcomes: [],
   },
   homefunDetail: {
     assess_comment: "",
@@ -179,17 +179,17 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   }
 );
 
-type IQueryStudyAssessmentListParams = Parameters<typeof api.h5PAssessments.listH5PAssessments>[0] & LoadingMetaPayload;
-type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>;
+type IQueryStudyAssessmentListParams = Parameters<typeof api.studyAssessments.listStudyAssessments>[0] & LoadingMetaPayload;
+type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>;
 export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
   "assessments/getStudyAssessmentList",
   async ({ metaLoading, ...query }) => {
-    const { items, total } = await api.h5PAssessments.listH5PAssessments({ ...query, page_size: 20 });
+    const { items, total } = await api.studyAssessments.listStudyAssessments({ ...query, page_size: 20 });
     return { items, total };
   }
 );
 type IQueryStudyAssessmentDetailResult = {
-  detail: AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+  detail: AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>;
   my_id: string;
 };
 export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
@@ -204,21 +204,21 @@ export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDe
       },
     });
     const my_id = meInfo.me?.user_id || "";
-    const detail = await api.h5PAssessments.getH5PAssessmentDetail(id);
+    const detail = await api.studyAssessments.getStudyAssessmentDetail(id);
     return { detail, my_id };
   }
 );
 
 type IQueryUpdateStudyAssessmentParams = {
-  id: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[0];
-  data: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
+  id: Parameters<typeof api.studyAssessments.updateStudyAssessment>[0];
+  data: Parameters<typeof api.studyAssessments.updateStudyAssessment>[1];
   filter_student_view_items?: IQueryStudyAssessmentDetailResult["detail"]["student_view_items"];
 };
 
 export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/updateStudyAssessment",
   async ({ id, data }) => {
-    await api.h5PAssessments.updateH5PAssessment(id, data);
+    await api.studyAssessments.updateStudyAssessment(id, data);
     return id;
   }
 );
@@ -234,7 +234,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
       const content = d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete");
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
       if (!isConfirmed) return Promise.reject();
-      const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+      const res = await api.studyAssessments.updateStudyAssessment(id, data);
       return res;
     }
     const content = d(
@@ -242,7 +242,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
     ).t("assess_popup_students_not_started");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     if (!isConfirmed) return Promise.reject();
-    const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+    const res = await api.studyAssessments.updateStudyAssessment(id, data);
     return res;
   }
 );

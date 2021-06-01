@@ -5,7 +5,6 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
-    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -3143,204 +3142,6 @@
             "description": "Bad Request",
             "schema": {
               "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/h5p_assessments": {
-      "get": {
-        "description": "list h5p assessments",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["h5pAssessments"],
-        "summary": "list h5p assessments",
-        "operationId": "listH5PAssessments",
-        "parameters": [
-          {
-            "enum": ["study_h5p"],
-            "type": "string",
-            "description": "h5p assessment type",
-            "name": "type",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "query teacher name or class name",
-            "name": "query",
-            "in": "query"
-          },
-          {
-            "enum": ["all", "class_name", "teacher_name"],
-            "type": "string",
-            "default": "all",
-            "description": "query type",
-            "name": "query_type",
-            "in": "query"
-          },
-          {
-            "enum": ["all", "in_progress", "complete"],
-            "type": "string",
-            "default": "all",
-            "description": "query status",
-            "name": "status",
-            "in": "query"
-          },
-          {
-            "enum": ["create_at", "-create_at", "complete_time", "-complete_time"],
-            "type": "string",
-            "default": "-complete_time",
-            "description": "list order by",
-            "name": "order_by",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "default": 1,
-            "description": "page number",
-            "name": "page",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int",
-            "default": 10,
-            "description": "page size",
-            "name": "page_size",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/entity.ListH5PAssessmentsResult"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/h5p_assessments/{id}": {
-      "get": {
-        "description": "get h5p assessment detail",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["h5pAssessments"],
-        "summary": "get h5p assessment detail",
-        "operationId": "getH5PAssessmentDetail",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "h5p assessment id",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/entity.GetH5PAssessmentDetailResult"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      },
-      "put": {
-        "description": "update h5p assessment",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["h5pAssessments"],
-        "operationId": "updateH5PAssessment",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "h5p assessment id",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "description": "update h5p assessment args",
-            "name": "update_h5p_assessment_args",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/entity.UpdateH5PAssessmentArgs"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
@@ -6936,6 +6737,197 @@
         }
       }
     },
+    "/study_assessments": {
+      "get": {
+        "description": "list study assessments",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["studyAssessments"],
+        "summary": "list study assessments",
+        "operationId": "listStudyAssessments",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "query teacher name or class name",
+            "name": "query",
+            "in": "query"
+          },
+          {
+            "enum": ["all", "class_name", "teacher_name"],
+            "type": "string",
+            "default": "all",
+            "description": "query type",
+            "name": "query_type",
+            "in": "query"
+          },
+          {
+            "enum": ["all", "in_progress", "complete"],
+            "type": "string",
+            "default": "all",
+            "description": "query status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "enum": ["create_at", "-create_at", "complete_time", "-complete_time"],
+            "type": "string",
+            "default": "-complete_time",
+            "description": "list order by",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "default": 10,
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ListStudyAssessmentsResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/study_assessments/{id}": {
+      "get": {
+        "description": "get study assessment detail",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["studyAssessments"],
+        "summary": "get study assessment detail",
+        "operationId": "getStudyAssessmentDetail",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "study assessment id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.GetStudyAssessmentDetailResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "update study assessment",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["studyAssessments"],
+        "operationId": "updateStudyAssessment",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "study assessment id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "update study assessment args",
+            "name": "update_study_assessment_args",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UpdateStudyAssessmentArgs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/subjects": {
       "get": {
         "description": "get subjects",
@@ -7070,7 +7062,9 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "409": {},
+          "409": {
+            "description": ""
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -7100,7 +7094,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7236,7 +7232,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7272,7 +7270,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7372,7 +7372,16 @@
   },
   "definitions": {
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.BulkBindOutcomeSetRequest": {
       "type": "object",
@@ -7400,7 +7409,16 @@
       }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -7452,7 +7470,16 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -7494,7 +7521,16 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.LoginRequest": {
       "type": "object",
@@ -7519,7 +7555,16 @@
       }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.OrganizationRegionInfoResponse": {
       "type": "object",
@@ -7620,18 +7665,6 @@
         }
       }
     },
-    "api.Response": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
-    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -7668,7 +7701,16 @@
       }
     },
     "api.SuccessRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.TokenResponse": {
       "type": "object",
@@ -7679,7 +7721,16 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -7843,8 +7894,11 @@
         "schedule_id": {
           "type": "string"
         },
-        "type": {
-          "type": "string"
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -7906,34 +7960,10 @@
         }
       }
     },
-    "entity.AssessmentContentView": {
-      "type": "object",
-      "properties": {
-        "checked": {
-          "type": "boolean"
-        },
-        "comment": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "outcome_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "entity.AssessmentDetail": {
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentClass"
         },
         "class_end_time": {
@@ -7945,34 +7975,47 @@
         "complete_time": {
           "type": "integer"
         },
+        "due_at": {
+          "type": "integer"
+        },
         "id": {
           "type": "string"
         },
-        "materials": {
+        "lesson_materials": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.AssessmentContentView"
+            "$ref": "#/definitions/entity.AssessmentDetailContent"
           }
         },
-        "outcome_attendances": {
+        "lesson_plan": {
+          "$ref": "#/definitions/entity.AssessmentDetailContent"
+        },
+        "outcomes": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.OutcomeAttendances"
+            "$ref": "#/definitions/entity.AssessmentDetailOutcome"
           }
-        },
-        "plan": {
-          "type": "object",
-          "$ref": "#/definitions/entity.AssessmentContentView"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
+        },
+        "remaining_time": {
+          "type": "integer"
         },
         "room_id": {
           "type": "string"
         },
+        "schedule_id": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
+        },
+        "student_view_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudentViewH5PItem"
+          }
         },
         "students": {
           "type": "array",
@@ -7997,6 +8040,58 @@
         }
       }
     },
+    "entity.AssessmentDetailContent": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.AssessmentDetailOutcome": {
+      "type": "object",
+      "properties": {
+        "assumed": {
+          "type": "boolean"
+        },
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checked": {
+          "type": "boolean"
+        },
+        "none_achieved": {
+          "type": "boolean"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
     "entity.AssessmentItem": {
       "type": "object",
       "properties": {
@@ -8010,7 +8105,6 @@
           "type": "string"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
@@ -8055,6 +8149,61 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentStudentViewH5PItem": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudentViewH5PLessonMaterial"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "student_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentStudentViewH5PLessonMaterial": {
+      "type": "object",
+      "properties": {
+        "achieved_score": {
+          "type": "number"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "attempted": {
+          "type": "boolean"
+        },
+        "is_h5p": {
+          "type": "boolean"
+        },
+        "lesson_material_id": {
+          "type": "string"
+        },
+        "lesson_material_name": {
+          "type": "string"
+        },
+        "lesson_material_type": {
+          "type": "string"
+        },
+        "max_score": {
+          "type": "number"
+        },
+        "outcome_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -8228,7 +8377,6 @@
           }
         },
         "permission": {
-          "type": "object",
           "$ref": "#/definitions/entity.ContentPermission"
         },
         "program": {
@@ -8545,7 +8693,6 @@
           }
         },
         "permission": {
-          "type": "object",
           "$ref": "#/definitions/entity.ContentPermission"
         },
         "program": {
@@ -8928,7 +9075,6 @@
           "type": "string"
         },
         "permission": {
-          "type": "object",
           "$ref": "#/definitions/entity.ContentPermission"
         },
         "publish_status": {
@@ -9067,64 +9213,6 @@
         }
       }
     },
-    "entity.GetH5PAssessmentDetailResult": {
-      "type": "object",
-      "properties": {
-        "class_name": {
-          "type": "string"
-        },
-        "complete_at": {
-          "type": "integer"
-        },
-        "due_at": {
-          "type": "integer"
-        },
-        "id": {
-          "type": "string"
-        },
-        "lesson_materials": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.H5PAssessmentLessonMaterial"
-          }
-        },
-        "lesson_plan": {
-          "type": "object",
-          "$ref": "#/definitions/entity.H5PAssessmentLessonPlan"
-        },
-        "remaining_time": {
-          "type": "integer"
-        },
-        "schedule_id": {
-          "description": "debug",
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "student_view_items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.H5PAssessmentStudentViewItem"
-          }
-        },
-        "students": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.AssessmentStudent"
-          }
-        },
-        "teachers": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.AssessmentTeacher"
-          }
-        },
-        "title": {
-          "type": "string"
-        }
-      }
-    },
     "entity.GetHomeFunStudyResult": {
       "type": "object",
       "properties": {
@@ -9204,83 +9292,60 @@
         }
       }
     },
-    "entity.H5PAssessmentLessonMaterial": {
+    "entity.GetStudyAssessmentDetailResult": {
       "type": "object",
       "properties": {
-        "checked": {
-          "type": "boolean"
-        },
-        "comment": {
+        "class_name": {
           "type": "string"
+        },
+        "complete_at": {
+          "type": "integer"
+        },
+        "due_at": {
+          "type": "integer"
         },
         "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.H5PAssessmentLessonPlan": {
-      "type": "object",
-      "properties": {
-        "comment": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.H5PAssessmentStudentViewItem": {
-      "type": "object",
-      "properties": {
-        "comment": {
           "type": "string"
         },
         "lesson_materials": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.H5PAssessmentStudentViewLessonMaterial"
+            "$ref": "#/definitions/entity.StudyAssessmentLessonMaterial"
           }
         },
-        "student_id": {
+        "lesson_plan": {
+          "$ref": "#/definitions/entity.StudyAssessmentLessonPlan"
+        },
+        "remaining_time": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "description": "debug",
           "type": "string"
         },
-        "student_name": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.H5PAssessmentStudentViewLessonMaterial": {
-      "type": "object",
-      "properties": {
-        "achieved_score": {
-          "type": "number"
-        },
-        "answer": {
+        "status": {
           "type": "string"
         },
-        "attempted": {
-          "type": "boolean"
+        "student_view_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudentViewH5PItem"
+          }
         },
-        "is_h5p": {
-          "type": "boolean"
+        "students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudent"
+          }
         },
-        "lesson_material_id": {
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentTeacher"
+          }
+        },
+        "title": {
           "type": "string"
-        },
-        "lesson_material_name": {
-          "type": "string"
-        },
-        "lesson_material_type": {
-          "type": "string"
-        },
-        "max_score": {
-          "type": "number"
         }
       }
     },
@@ -9327,59 +9392,6 @@
         },
         "total": {
           "type": "integer"
-        }
-      }
-    },
-    "entity.ListH5PAssessmentsResult": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.ListH5PAssessmentsResultItem"
-          }
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    },
-    "entity.ListH5PAssessmentsResultItem": {
-      "type": "object",
-      "properties": {
-        "class_name": {
-          "type": "string"
-        },
-        "complete_at": {
-          "type": "integer"
-        },
-        "complete_rate": {
-          "type": "number"
-        },
-        "create_at": {
-          "type": "integer"
-        },
-        "due_at": {
-          "type": "integer"
-        },
-        "id": {
-          "type": "string"
-        },
-        "remaining_time": {
-          "type": "integer"
-        },
-        "schedule_id": {
-          "description": "debug",
-          "type": "string"
-        },
-        "teacher_names": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "title": {
-          "type": "string"
         }
       }
     },
@@ -9461,6 +9473,59 @@
           "items": {
             "$ref": "#/definitions/entity.StudentsPerformanceReportItem"
           }
+        }
+      }
+    },
+    "entity.ListStudyAssessmentsResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ListStudyAssessmentsResultItem"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ListStudyAssessmentsResultItem": {
+      "type": "object",
+      "properties": {
+        "class_name": {
+          "type": "string"
+        },
+        "complete_at": {
+          "type": "integer"
+        },
+        "complete_rate": {
+          "type": "number"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "remaining_time": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "description": "debug",
+          "type": "string"
+        },
+        "teacher_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "title": {
+          "type": "string"
         }
       }
     },
@@ -9771,35 +9836,6 @@
         }
       }
     },
-    "entity.OutcomeAttendances": {
-      "type": "object",
-      "properties": {
-        "assumed": {
-          "type": "boolean"
-        },
-        "attendance_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "checked": {
-          "type": "boolean"
-        },
-        "none_achieved": {
-          "type": "boolean"
-        },
-        "outcome_id": {
-          "type": "string"
-        },
-        "outcome_name": {
-          "type": "string"
-        },
-        "skip": {
-          "type": "boolean"
-        }
-      }
-    },
     "entity.RegionOrganizationInfo": {
       "type": "object",
       "properties": {
@@ -9826,7 +9862,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9853,7 +9888,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9880,11 +9914,9 @@
       "type": "object",
       "properties": {
         "daily": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -9892,11 +9924,9 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -9905,7 +9935,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -9924,7 +9953,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -10022,7 +10050,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -10087,7 +10114,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -10114,11 +10140,9 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "class_roster_students": {
@@ -10168,7 +10192,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "org_id": {
@@ -10187,15 +10210,12 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "real_time_status": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleRealTimeView"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "role_type": {
@@ -10348,9 +10368,6 @@
         "end_at": {
           "type": "integer"
         },
-        "exist_assessment": {
-          "type": "boolean"
-        },
         "exist_feedback": {
           "type": "boolean"
         },
@@ -10413,7 +10430,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "end_at": {
@@ -10423,7 +10439,6 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -10433,7 +10448,6 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -10536,7 +10550,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -10604,7 +10617,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {
@@ -10635,18 +10647,15 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
           "type": "string"
         },
         "class_type": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "due_at": {
@@ -10675,7 +10684,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "lesson_plan_id": {
@@ -10828,19 +10836,15 @@
       "type": "object",
       "properties": {
         "activity_flash_cards": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityFlashCards"
         },
         "activity_image_pair": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityImagePair"
         },
         "activity_image_sequencing": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityImageSequencing"
         },
         "activity_memory_game": {
-          "type": "object",
           "$ref": "#/definitions/entity.ActivityMemoryGame"
         },
         "activity_type": {
@@ -10965,6 +10969,37 @@
         }
       }
     },
+    "entity.StudyAssessmentLessonMaterial": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.StudyAssessmentLessonPlan": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.TeacherManualFile": {
       "type": "object",
       "properties": {
@@ -11017,16 +11052,22 @@
         "id": {
           "type": "string"
         },
-        "materials": {
+        "lesson_materials": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.UpdateAssessmentMaterialArgs"
+            "$ref": "#/definitions/entity.UpdateAssessmentContentArgs"
           }
         },
-        "outcome_attendances": {
+        "outcomes": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.UpdateOutcomeAttendancesArgs"
+            "$ref": "#/definitions/entity.UpdateAssessmentOutcomeArgs"
+          }
+        },
+        "student_view_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateStudyAssessmentStudentViewItem"
           }
         }
       }
@@ -11045,17 +11086,23 @@
         }
       }
     },
-    "entity.UpdateAssessmentMaterialArgs": {
+    "entity.UpdateAssessmentOutcomeArgs": {
       "type": "object",
       "properties": {
-        "checked": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "none_achieved": {
           "type": "boolean"
         },
-        "comment": {
+        "outcome_id": {
           "type": "string"
         },
-        "id": {
-          "type": "string"
+        "skip": {
+          "type": "boolean"
         }
       }
     },
@@ -11079,7 +11126,7 @@
         }
       }
     },
-    "entity.UpdateH5PAssessmentArgs": {
+    "entity.UpdateStudyAssessmentArgs": {
       "type": "object",
       "properties": {
         "action": {
@@ -11104,12 +11151,12 @@
         "student_view_items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.UpdateH5PAssessmentStudentViewItem"
+            "$ref": "#/definitions/entity.UpdateStudyAssessmentStudentViewItem"
           }
         }
       }
     },
-    "entity.UpdateH5PAssessmentStudentViewItem": {
+    "entity.UpdateStudyAssessmentStudentViewItem": {
       "type": "object",
       "properties": {
         "comment": {
@@ -11118,7 +11165,7 @@
         "lesson_materials": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.UpdateH5PAssessmentStudentViewMaterialItem"
+            "$ref": "#/definitions/entity.UpdateStudyAssessmentStudentViewMaterialItem"
           }
         },
         "student_id": {
@@ -11126,7 +11173,7 @@
         }
       }
     },
-    "entity.UpdateH5PAssessmentStudentViewMaterialItem": {
+    "entity.UpdateStudyAssessmentStudentViewMaterialItem": {
       "type": "object",
       "properties": {
         "achieved_score": {
@@ -11134,26 +11181,6 @@
         },
         "lesson_material_id": {
           "type": "string"
-        }
-      }
-    },
-    "entity.UpdateOutcomeAttendancesArgs": {
-      "type": "object",
-      "properties": {
-        "attendance_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "none_achieved": {
-          "type": "boolean"
-        },
-        "outcome_id": {
-          "type": "string"
-        },
-        "skip": {
-          "type": "boolean"
         }
       }
     },
@@ -11413,7 +11440,6 @@
           "type": "string"
         },
         "author": {
-          "type": "object",
           "$ref": "#/definitions/model.AuthorView"
         },
         "category": {
@@ -11459,7 +11485,6 @@
           "type": "string"
         },
         "organization": {
-          "type": "object",
           "$ref": "#/definitions/model.OrganizationView"
         },
         "outcome_ancestor_ids": {

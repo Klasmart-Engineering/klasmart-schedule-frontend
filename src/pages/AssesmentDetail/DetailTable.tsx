@@ -1,12 +1,12 @@
 import React from "react";
-import { EntityH5PAssessmentStudentViewItem } from "../../api/api.auto";
 import { UseFormMethods } from "react-hook-form";
-import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
+import { EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
 import { DynamicTable } from "../../components/DynamicTable";
 import { d } from "../../locale/LocaleManager";
+import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 
 interface tableProps {
-  studentViewItems?: EntityH5PAssessmentStudentViewItem[];
+  studentViewItems?: EntityAssessmentStudentViewH5PItem[];
   formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
   formValue?: UpdateAssessmentRequestDataOmitAction;
   editable: boolean;

@@ -1,27 +1,26 @@
-import React from "react";
-import { Box, makeStyles } from "@material-ui/core";
+import { Box, Collapse, makeStyles } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import { Collapse } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import Tooltip from "@material-ui/core/Tooltip";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import { ElasticLayerControl } from "../../types/assessmentTypes";
-import { EntityH5PAssessmentStudentViewItem } from "../../api/api.auto";
+import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
-import { actWarning } from "../../reducers/notify";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../reducers";
-import { d } from "../../locale/LocaleManager";
+import { EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
 import noDataIconUrl from "../../assets/icons/any_time_no_data.png";
-import Tooltip from "@material-ui/core/Tooltip";
-import TextField from "@material-ui/core/TextField";
+import { d } from "../../locale/LocaleManager";
+import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
+import { AppDispatch } from "../../reducers";
+import { actWarning } from "../../reducers/notify";
+import { ElasticLayerControl } from "../../types/assessmentTypes";
 import ResourcesView from "./ResourcesView";
 
 const useStyles = makeStyles({
@@ -81,7 +80,7 @@ const useStyles = makeStyles({
 
 interface BasicTableProps extends tableProps {
   handleElasticLayerControl: (elasticLayerControlData: ElasticLayerControl) => void;
-  studentViewItem: EntityH5PAssessmentStudentViewItem;
+  studentViewItem: EntityAssessmentStudentViewH5PItem;
   index: number;
 }
 
@@ -154,7 +153,7 @@ function BasicTable(props: BasicTableProps) {
   const handleChangeComment = (commentText: string) => {
     const attendance_ids = getValues() as {
       student_ids: string[];
-      student_view_items: EntityH5PAssessmentStudentViewItem[];
+      student_view_items: EntityAssessmentStudentViewH5PItem[];
     };
     setValue(`student_view_items[${index}]`, {
       ...attendance_ids.student_view_items[index],
@@ -166,7 +165,7 @@ function BasicTable(props: BasicTableProps) {
   const handleChangeScore = (score?: number, indexSub?: number) => {
     const attendance_ids = getValues() as {
       student_ids: string[];
-      student_view_items: EntityH5PAssessmentStudentViewItem[];
+      student_view_items: EntityAssessmentStudentViewH5PItem[];
     };
     const lesson_materials = attendance_ids.student_view_items[index].lesson_materials?.map((materials, idx) => {
       return idx === indexSub ? { ...materials, achieved_score: score } : materials;
@@ -327,7 +326,7 @@ function BasicTable(props: BasicTableProps) {
 }
 
 interface tableProps {
-  studentViewItems?: EntityH5PAssessmentStudentViewItem[];
+  studentViewItems?: EntityAssessmentStudentViewH5PItem[];
   formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
   formValue?: UpdateAssessmentRequestDataOmitAction;
   editable: boolean;
@@ -347,7 +346,7 @@ export function DynamicTable(props: tableProps) {
   const classes = useStyles();
   return (
     <>
-      {studentViewItems?.map((item: EntityH5PAssessmentStudentViewItem, index: number) => {
+      {studentViewItems?.map((item: EntityAssessmentStudentViewH5PItem, index: number) => {
         return (
           <BasicTable
             key={item.student_id}

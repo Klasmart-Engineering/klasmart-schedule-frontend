@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { EntityOutcomeAttendances } from "../../api/api.auto";
-import { UpdateAssessmentRequestData } from "../../api/type";
+import { GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
+import { DynamicTable } from "../../components/DynamicTable";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
@@ -18,7 +18,6 @@ import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOut
 import { OutcomesTable } from "./OutcomesTable";
 import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
-import { DynamicTable } from "../../components/DynamicTable";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -39,20 +38,20 @@ function AssessmentsEditIner() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
-  const { materials } = formValue;
+  const { lesson_materials } = formValue;
   const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
   // const filteredOutcomelist = assessmentDetail.outcome_attendances;
   const filteredOutcomelist = useMemo(() => {
-    if (materials) {
-      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
+    if (lesson_materials) {
+      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, lesson_materials);
       return outcome;
     } else {
-      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, assessmentDetail.materials);
+      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, assessmentDetail.lesson_materials);
       setTimeout(() => setValue("outcome_attendances", outcome), 100);
       return outcome;
     }
-  }, [assessmentDetail, materials, setValue]);
+  }, [assessmentDetail, lesson_materials, setValue]);
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
@@ -80,11 +79,9 @@ function AssessmentsEditIner() {
       handleSubmit(async (value) => {
         if (id) {
           const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
-          const errorlist: EntityOutcomeAttendances[] | undefined =
-            data.outcome_attendances &&
-            data.outcome_attendances.filter(
-              (item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0)
-            );
+          const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
+            data.outcomes &&
+            data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
           if (data.action === "complete" && errorlist && errorlist.length > 0)
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<

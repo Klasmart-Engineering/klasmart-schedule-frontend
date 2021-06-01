@@ -1,5 +1,4 @@
 import { cloneDeep } from "lodash";
-import { EntityH5PAssessmentStudentViewItem } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
@@ -24,8 +23,8 @@ export const ModelAssessment = {
   toRequest(detail: GetAssessmentResult): UpdateAssessmentRequestData {
     const draft = cloneDeep(detail);
     const attendance_ids = draft.students?.filter((attendance) => attendance.checked).map((item) => item.id as string);
-    const outcome_attendances = draft.outcome_attendances || [];
-    return { attendance_ids, outcome_attendances };
+    const outcomes = draft.outcomes || [];
+    return { attendance_ids, outcomes };
   },
 
   toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestDataOmitAction): GetAssessmentResult {
@@ -39,16 +38,19 @@ export const ModelAssessment = {
     }
     return draft;
   },
-  toInitMaterial(detail: GetAssessmentResult): GetAssessmentResult["materials"] {
+  toInitMaterial(detail: GetAssessmentResult): GetAssessmentResult["lesson_materials"] {
     const draft = cloneDeep(detail);
-    const { materials } = draft;
-    return materials?.filter((item) => item.checked);
+    const { lesson_materials } = draft;
+    return lesson_materials?.filter((item) => item.checked);
   },
-  toMaterialRequest(detail: GetAssessmentResult, dMaterials: GetAssessmentResult["materials"]): GetAssessmentResult["materials"] {
+  toMaterialRequest(
+    detail: GetAssessmentResult,
+    dMaterials: GetAssessmentResult["lesson_materials"]
+  ): GetAssessmentResult["lesson_materials"] {
     const draft = cloneDeep(detail);
     const materials =
-      dMaterials && dMaterials[0] && draft.materials && draft.materials[0]
-        ? draft.materials.map((item, index) => {
+      dMaterials && dMaterials[0] && draft.lesson_materials && draft.lesson_materials[0]
+        ? draft.lesson_materials.map((item, index) => {
             return {
               checked: dMaterials[index].checked,
               comment: dMaterials[index].comment,
@@ -57,7 +59,7 @@ export const ModelAssessment = {
               outcome_ids: item.outcome_ids,
             };
           })
-        : draft.materials;
+        : draft.lesson_materials;
     return materials;
   },
   toStudyAssessment(
@@ -79,9 +81,9 @@ export const ModelAssessment = {
     return materials;
   },
   toMaterial(
-    defaultDetail: GetAssessmentResult["materials"],
+    defaultDetail: GetAssessmentResult["lesson_materials"],
     value: UpdateAssessmentRequestDataLessonMaterials
-  ): GetAssessmentResult["materials"] {
+  ): GetAssessmentResult["lesson_materials"] {
     const draft = cloneDeep(defaultDetail);
     if (draft && draft.length && value && value.length) {
       return draft.map((item, index) => {
@@ -97,10 +99,7 @@ export const ModelAssessment = {
       return draft;
     }
   },
-  filterOutcomeList(
-    assessment: GetAssessmentResult,
-    materials: GetAssessmentResult["materials"]
-  ): GetAssessmentResult["outcome_attendances"] {
+  filterOutcomeList(assessment: GetAssessmentResult, materials: GetAssessmentResult["lesson_materials"]): GetAssessmentResult["outcomes"] {
     const check_outcome_ids: string[] = [];
     if (materials && materials.length) {
       materials.forEach((item) => {
@@ -109,23 +108,18 @@ export const ModelAssessment = {
         }
       });
     }
-    if (assessment.plan?.outcome_ids && assessment.plan.outcome_ids[0]) {
-      check_outcome_ids.push.apply(check_outcome_ids, assessment.plan.outcome_ids);
+    if (assessment.lesson_plan?.outcome_ids && assessment.lesson_plan.outcome_ids[0]) {
+      check_outcome_ids.push.apply(check_outcome_ids, assessment.lesson_plan.outcome_ids);
     }
     const new_check_outcome_ids = Array.from(check_outcome_ids);
-    if (assessment?.plan && assessment?.plan.id) {
-      if (
-        assessment.outcome_attendances &&
-        assessment.outcome_attendances.length &&
-        new_check_outcome_ids &&
-        new_check_outcome_ids.length
-      ) {
-        return assessment.outcome_attendances.filter((item) => new_check_outcome_ids.indexOf(item.outcome_id as string) >= 0);
+    if (assessment?.lesson_plan && assessment?.lesson_plan.id) {
+      if (assessment.outcomes && assessment.outcomes.length && new_check_outcome_ids && new_check_outcome_ids.length) {
+        return assessment.outcomes.filter((item) => new_check_outcome_ids.indexOf(item.outcome_id as string) >= 0);
       } else {
         return [];
       }
     } else {
-      return assessment.outcome_attendances;
+      return assessment.outcomes;
     }
   },
   toGetStudentIds(detail: DetailStudyAssessment) {
@@ -137,7 +131,7 @@ export const ModelAssessment = {
     detail: DetailStudyAssessment,
     student_ids: UpdataStudyAssessmentRequestData["student_ids"],
     lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]
-  ): EntityH5PAssessmentStudentViewItem[] {
+  ): DetailStudyAssessment["student_view_items"] {
     const { student_view_items } = detail;
     if (student_view_items && student_view_items.length) {
       if (student_ids && student_ids.length) {
