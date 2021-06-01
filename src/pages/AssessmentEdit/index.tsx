@@ -166,6 +166,7 @@ function AssessmentsEditIner() {
             formMethods={formMethods}
             isComplete={false}
             editable={editable}
+            name="student_view_items"
           />
         </>
       )}

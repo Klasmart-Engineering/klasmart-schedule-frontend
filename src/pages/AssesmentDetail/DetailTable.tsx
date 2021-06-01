@@ -30,6 +30,7 @@ export function DetailTable(props: tableProps) {
       formMethods={formMethods}
       isComplete={isComplete}
       editable={editable}
+      name="student_view_items"
     />
   );
 }

@@ -20,7 +20,7 @@ import { d } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { AppDispatch } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
-import { ElasticLayerControl } from "../../types/assessmentTypes";
+import { ElasticLayerControl, dynamicTableName } from "../../types/assessmentTypes";
 import ResourcesView from "./ResourcesView";
 
 const useStyles = makeStyles({
@@ -44,18 +44,6 @@ const useStyles = makeStyles({
         color: "#006CCF",
       },
     },
-  },
-  borderIconStyle: {
-    fontSize: "13px",
-    marginLeft: "8px",
-    cursor: "pointer",
-    color: "#006CCF",
-  },
-  checkIconStyle: {
-    fontSize: "15px",
-    marginLeft: "10px",
-    cursor: "pointer",
-    color: "#006CCF",
   },
   emptyBox: {
     textAlign: "center",
@@ -148,15 +136,16 @@ function BasicTable(props: BasicTableProps) {
     editable,
     isComplete,
     tableCellData,
+    name,
   } = props;
 
   const handleChangeComment = (commentText: string) => {
     const attendance_ids = getValues() as {
       student_ids: string[];
-      student_view_items: EntityAssessmentStudentViewH5PItem[];
+      [name]: EntityAssessmentStudentViewH5PItem[];
     };
-    setValue(`student_view_items[${index}]`, {
-      ...attendance_ids.student_view_items[index],
+    setValue(`${name}[${index}]`, {
+      ...attendance_ids[name][index],
       comment: commentText,
     });
     handleElasticLayerControl({ openStatus: false, type: "" });
@@ -165,13 +154,13 @@ function BasicTable(props: BasicTableProps) {
   const handleChangeScore = (score?: number, indexSub?: number) => {
     const attendance_ids = getValues() as {
       student_ids: string[];
-      student_view_items: EntityAssessmentStudentViewH5PItem[];
+      [name]: EntityAssessmentStudentViewH5PItem[];
     };
-    const lesson_materials = attendance_ids.student_view_items[index].lesson_materials?.map((materials, idx) => {
+    const lesson_materials = attendance_ids[name][index].lesson_materials?.map((materials, idx) => {
       return idx === indexSub ? { ...materials, achieved_score: score } : materials;
     });
-    setValue(`student_view_items[${index}]`, {
-      ...attendance_ids.student_view_items[index],
+    setValue(`${name}[${index}]`, {
+      ...attendance_ids[name][index],
       lesson_materials: lesson_materials,
     });
   };
@@ -198,7 +187,7 @@ function BasicTable(props: BasicTableProps) {
 
   return (
     <Controller
-      name={`student_view_items[${index}]`}
+      name={`${name}[${index}]`}
       control={control}
       defaultValue={studentViewItem || []}
       render={({ ref, ...props }) => (
@@ -333,10 +322,11 @@ interface tableProps {
   editable?: boolean;
   isComplete: boolean;
   tableCellData: string[];
+  name: dynamicTableName;
 }
 
 export function DynamicTable(props: tableProps) {
-  const { studentViewItems, formMethods, formValue, editable, isComplete, tableCellData } = props;
+  const { studentViewItems, formMethods, formValue, editable, isComplete, tableCellData, name } = props;
   const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
     openStatus: false,
     type: "",
@@ -359,6 +349,7 @@ export function DynamicTable(props: tableProps) {
             editable={editable}
             isComplete={isComplete}
             tableCellData={tableCellData}
+            name={name}
           />
         );
       })}
