@@ -21,7 +21,6 @@ import { EntityFolderContentData, EntityOrganizationProperty } from "../../api/a
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
-import { Region } from "../../reducers/content";
 
 export interface OrgInfoProps {
   organization_id: string;
@@ -68,7 +67,7 @@ export interface OrganizationListProps {
 
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
-  const { open, orgList, onClose, onShareFolder, selectedOrg, orgProperty } = props;
+  const { open, orgList, onClose, onShareFolder, selectedOrg } = props;
   const { control, watch } = useForm();
   const values = watch()[SELECTED_ORG];
   const allValue = useMemo(() => orgList.map((org) => org.organization_id), [orgList]);
@@ -98,25 +97,23 @@ export function OrganizationList(props: OrganizationListProps) {
       <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
-          {orgProperty.region === Region.global && (
-            <FormControlLabel
-              value={ShareScope.share_all}
-              control={<Radio />}
-              label={
-                <>
-                  <span>{d("Preset").t("library_label_preset")}</span>{" "}
-                  <LightTooltip
-                    placement="right"
-                    title={d("Choosing this option will make the selected content available to current and future organizations.").t(
-                      "library_msg_preset"
-                    )}
-                  >
-                    <InfoOutlined className={css.tooltipIcon} />
-                  </LightTooltip>
-                </>
-              }
-            />
-          )}
+          <FormControlLabel
+            value={ShareScope.share_all}
+            control={<Radio />}
+            label={
+              <>
+                <span>{d("Preset").t("library_label_preset")}</span>{" "}
+                <LightTooltip
+                  placement="right"
+                  title={d("Choosing this option will make the selected content available to current and future organizations.").t(
+                    "library_msg_preset"
+                  )}
+                >
+                  <InfoOutlined className={css.tooltipIcon} />
+                </LightTooltip>
+              </>
+            }
+          />
           <FormControlLabel
             value={ShareScope.share_to_org}
             control={<Radio />}
