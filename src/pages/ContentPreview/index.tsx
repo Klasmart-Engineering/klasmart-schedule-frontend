@@ -154,7 +154,18 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   }, [class_id, dispatch, id, sid]);
   return (
     <Fragment>
-      <LayoutPair breakpoint="md" leftWidth={434} rightWidth={1400} spacing={0} basePadding={0} padding={0}>
+      <LayoutPair
+        breakpoint="md"
+        leftWidth={434}
+        rightWidth={1400}
+        spacing={0}
+        basePadding={0}
+        padding={0}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          return false;
+        }}
+      >
         {leftside}
         {rightside}
       </LayoutPair>
