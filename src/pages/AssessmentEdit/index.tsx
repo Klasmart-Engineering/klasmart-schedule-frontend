@@ -10,7 +10,7 @@ import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, updateAssessment } from "../../reducers/assessments";
 import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
@@ -38,7 +38,7 @@ function AssessmentsEditIner() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
-  const { lesson_materials } = formValue;
+  const { lesson_materials, student_view_items, attendance_ids } = formValue;
   const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
   // const filteredOutcomelist = assessmentDetail.outcome_attendances;
@@ -52,6 +52,11 @@ function AssessmentsEditIner() {
       return outcome;
     }
   }, [assessmentDetail, lesson_materials, setValue]);
+  const filter_student_view_items = useMemo(() => {
+    const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials);
+    return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
+  }, [assessmentDetail, attendance_ids, lesson_materials, student_view_items]);
+  console.log(filter_student_view_items);
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
@@ -115,7 +120,7 @@ function AssessmentsEditIner() {
   };
   useEffect(() => {
     if (id) {
-      dispatch(getAssessment({ id, metaLoading: true }));
+      // dispatch(getAssessment({ id, metaLoading: true }));
     }
   }, [dispatch, id, editindex]);
   useEffect(() => {

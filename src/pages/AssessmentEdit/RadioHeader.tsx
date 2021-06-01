@@ -38,7 +38,7 @@ export default function RadioHeader(props: RadioHeaderProps) {
   const radioTypography = xs ? "subtitle2" : "h6";
   return (
     <div>
-      <RadioGroup className={css.radioGroup} defaultValue={value} onChange={(e) => onChange(e.target.value as RadioValue)}>
+      <RadioGroup className={css.radioGroup} value={value} onChange={(e) => onChange(e.target.value as RadioValue)}>
         <FormControlLabel
           className={css.radio}
           color="primary"
