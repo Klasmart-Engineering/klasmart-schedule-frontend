@@ -160,7 +160,13 @@ function AssessmentsEditIner() {
       )}
       {radioValue === RadioValue.score && (
         <>
-          <DynamicTable studentViewItems={[]} tableCellData={TableCellData} formMethods={formMethods} isComplete={false} editable={true} />
+          <DynamicTable
+            studentViewItems={filter_student_view_items}
+            tableCellData={TableCellData}
+            formMethods={formMethods}
+            isComplete={false}
+            editable={editable}
+          />
         </>
       )}
     </>

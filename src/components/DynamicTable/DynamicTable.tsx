@@ -88,7 +88,7 @@ interface EditScoreProps {
   score?: number;
   handleChangeScore: (score?: number, indexSub?: number) => void;
   index: number;
-  editable: boolean;
+  editable?: boolean;
   isSubjectiveActivity: boolean;
   maxScore?: number;
   attempted?: boolean;
@@ -303,16 +303,17 @@ function BasicTable(props: BasicTableProps) {
                         />
                       </TableCell>
                       <TableCell align="center">
-                        {row?.max_score! === 0 ? "" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}
+                        {!("outcome_names" in row) && (
+                          <>{row?.max_score! === 0 ? "" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}</>
+                        )}
+                        {"outcome_names" in row && (
+                          <ul className={classes.outcomesBox}>
+                            {row?.outcome_names?.map((name) => (
+                              <li>{name}</li>
+                            ))}
+                          </ul>
+                        )}
                       </TableCell>
-                      {/*                      <TableCell align="center">
-                        <ul className={classes.outcomesBox}>
-                          <li>Able to review all assessment features</li>
-                          <li>Able to review all assessment features</li>
-                          <li>Able to review all assessment features</li>
-                          <li>Able to review all assessment features</li>
-                        </ul>
-                      </TableCell>*/}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -329,7 +330,7 @@ interface tableProps {
   studentViewItems?: EntityAssessmentStudentViewH5PItem[];
   formMethods: UseFormMethods<UpdateStudyAssessmentDataOmitAction>;
   formValue?: UpdateAssessmentRequestDataOmitAction;
-  editable: boolean;
+  editable?: boolean;
   isComplete: boolean;
   tableCellData: string[];
 }

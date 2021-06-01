@@ -119,6 +119,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "image11",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
           {
             achieved_score: 0,
@@ -129,6 +134,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "mp311",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
           {
             achieved_score: 0,
@@ -139,6 +149,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "mp4",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
         ],
       },
@@ -154,6 +169,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "image11",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
           {
             achieved_score: 0,
@@ -164,6 +184,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "mp311",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
           {
             achieved_score: 0,
@@ -174,6 +199,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "mp4",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
         ],
         student_id: "38c81b12-e0bf-5e57-9035-466db7144b53",
@@ -191,6 +221,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "image11",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
           {
             achieved_score: 0,
@@ -201,6 +236,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "mp311",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
           {
             achieved_score: 0,
@@ -211,6 +251,11 @@ const initialState: IAssessmentState = {
             lesson_material_name: "mp4",
             lesson_material_type: "",
             max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
         ],
         student_id: "3e00257f-c53b-5e26-8753-f2168d6fb5fd",
@@ -242,14 +287,19 @@ const initialState: IAssessmentState = {
             max_score: 0,
           },
           {
-            achieved_score: 0,
+            achieved_score: 20,
             answer: "",
             attempted: false,
             is_h5p: false,
             lesson_material_id: "6018fa2f474370357158801e",
             lesson_material_name: "mp4",
             lesson_material_type: "",
-            max_score: 0,
+            max_score: 100,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
           },
         ],
       },
