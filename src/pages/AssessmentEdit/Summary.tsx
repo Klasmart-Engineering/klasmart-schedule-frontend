@@ -30,6 +30,7 @@ import {
   GetAssessmentResult,
   UpdateAssessmentRequestData,
   UpdateAssessmentRequestDatAattendanceIds,
+  UpdateAssessmentRequestDataLessonMaterials,
 } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { PermissionOr, PermissionType } from "../../components/Permission";
@@ -342,20 +343,6 @@ export const MaterialInput = (props: MaterialInputProps) => {
               defaultValue={item.id}
             />
             <Controller
-              style={{ display: "none" }}
-              name={`lesson_materials[${index}].name`}
-              control={control}
-              as={TextField}
-              defaultValue={item.name}
-            />
-            <Controller
-              style={{ display: "none" }}
-              name={`lesson_materials[${index}].outcome_ids`}
-              control={control}
-              as={TextField}
-              defaultValue={item.outcome_ids || []}
-            />
-            <Controller
               name={`lesson_materials[${index}].checked`}
               defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
               render={(props) => (
@@ -410,15 +397,16 @@ export interface MaterialProps {
 interface PupupLessonMaterialProps {
   assessmentDetail: SummaryProps["assessmentDetail"];
   isMyAssessment?: boolean;
-  value: GetAssessmentResult["lesson_materials"];
+  value: UpdateAssessmentRequestDataLessonMaterials;
   onChange?: (value: PupupLessonMaterialProps["value"]) => any;
-  onChangeOA: (materials: GetAssessmentResult["lesson_materials"]) => any;
+  onChangeOA: (materials: PupupLessonMaterialProps["value"]) => any;
 }
 const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
   const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateAssessmentRequestData>();
+  const { getValues } = formMethods;
   const [open, toggle] = useReducer((open) => {
     // formMethods.reset();
     return !open;
@@ -430,7 +418,8 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
   }, [assessmentDetail.lesson_materials, value]);
 
   const handleOk = useCallback(() => {
-    const value = formMethods.getValues()["lesson_materials"];
+    const value = getValues()["lesson_materials"];
+    console.log(value);
     if (value && value.length) {
       const newValue = value?.filter((item) => !item.checked);
       onChangeOA(value);
@@ -442,7 +431,7 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
       toggle();
     }
     if (onChange) return onChange(value || []);
-  }, [dispatch, formMethods, onChange, onChangeOA]);
+  }, [dispatch, getValues, onChange, onChangeOA]);
   return (
     <Box className={clsx(css.editBox, css.materialEditBox)} {...{ ref }}>
       <TextField
@@ -529,8 +518,7 @@ interface SummaryProps {
 }
 export function Summary(props: SummaryProps) {
   const expand = useExpand();
-  const { assessmentDetail, isMyAssessment, outcomesList } = props;
-  const { formMethods } = props;
+  const { assessmentDetail, isMyAssessment, outcomesList, formMethods } = props;
   const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();

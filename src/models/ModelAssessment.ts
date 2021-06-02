@@ -24,7 +24,14 @@ export const ModelAssessment = {
     const draft = cloneDeep(detail);
     const attendance_ids = draft.students?.filter((attendance) => attendance.checked).map((item) => item.id as string);
     const outcomes = draft.outcomes || [];
-    return { attendance_ids, outcomes };
+    const lesson_materials = draft.lesson_materials?.map((item) => {
+      return {
+        checked: item.checked,
+        comment: item.comment,
+        id: item.id,
+      };
+    });
+    return { attendance_ids, outcomes, lesson_materials };
   },
 
   toDetail(defaultDetail: GetAssessmentResult, value: UpdateAssessmentRequestDataOmitAction): GetAssessmentResult {
@@ -88,8 +95,8 @@ export const ModelAssessment = {
     if (draft && draft.length && value && value.length) {
       return draft.map((item, index) => {
         return {
-          checked: value[index] ? value[index].checked : item.checked,
-          comment: value[index] ? value[index].comment : item.comment,
+          checked: value[index].checked,
+          comment: value[index].comment,
           id: item.id,
           name: item.name,
           outcome_ids: item.outcome_ids,
@@ -238,8 +245,10 @@ export const ModelAssessment = {
     if (student_view_items && student_view_items[0]) {
       student_view_items.forEach((item) => {
         if (item.lesson_materials && item.lesson_materials[0]) {
-          all += item.lesson_materials.length;
           item.lesson_materials.forEach((v) => {
+            if (v.is_h5p) {
+              all += 1;
+            }
             if (v.attempted) {
               attempt += 1;
             }
